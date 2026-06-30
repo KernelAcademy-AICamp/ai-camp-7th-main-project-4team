@@ -27,6 +27,12 @@
     <a href="04-fit-experience.html" style="color:var(--warn);font-weight:700">입어본 옷 추가하고 정확히 보기 →</a>
   </div>
 
+  <!-- state: 1벌 기반(보통 신뢰) — 저신뢰보다 약한 정보성 안내 -->
+  <div class="notice hidden" id="midbanner" style="margin-top:20px">
+    <strong>한 벌 기반 추정이에요.</strong> 추천은 충분히 쓸 만하지만, 핏이 다른 옷을 한 벌 더 넣으면 체형이 확정돼요.
+    <a href="04-fit-experience.html" style="color:var(--ink);font-weight:700;text-decoration:underline">상의 한 벌 더 넣기 →</a>
+  </div>
+
   <!-- ① 캐릭터 히어로 -->
   <div class="char-hero mt-24">
     <span class="char-code">FIT TYPE · WTSR</span>
@@ -94,7 +100,10 @@
 
   <!-- ④ 브랜드별 추천 사이즈 (제품 본체) -->
   <div class="card mb-16">
-    <div class="kicker mb-16">Recommended sizes</div>
+    <div class="row-between mb-16">
+      <div class="kicker">Recommended sizes · <b style="color:var(--ink)">상의</b></div>
+      <span class="target-chip" style="margin-bottom:0">이번 진단 · <b>상의</b></span>
+    </div>
     <div class="size-table">
       <div class="st-head"><span>Brand</span><span>Size</span></div>
       <div class="size-row"><span class="brand">유니클로<small>레귤러핏 셔츠 기준</small></span><span class="sz num">M<span class="conf">딱맞음</span></span></div>
@@ -104,6 +113,23 @@
     </div>
   </div>
   <p class="small mb-24">※ 사이즈 수치는 규칙 기반 엔진이 브랜드 실측에 맞춰 계산합니다. 캐릭터·해설 서술만 AI가 생성합니다.</p>
+
+  <!-- 진단 현황(옷장) — 카테고리 간 이어가기 (리텐션 루프) -->
+  <div class="card mb-16">
+    <div class="row-between mb-8">
+      <div class="kicker">My fit · 진단 현황</div>
+      <span class="small" style="font-weight:700"><span class="num">1</span> / 5 종류 완료</span>
+    </div>
+    <p class="small mb-16">체형 기준 · <span class="num">172cm 70kg</span> · 2026-06-30 진단</p>
+    <div class="catstat">
+      <div class="cs done"><span class="cs-nm">상의</span><span class="cs-meta">유니클로 M · 방금 완료</span><span class="cs-go">완료 ✓</span></div>
+      <a class="cs" href="04-fit-experience.html?cat=bottom&reuse=1"><span class="cs-nm">하의</span><span class="soon">곧</span><span class="cs-go">＋ 이어서 진단 →</span></a>
+      <a class="cs" href="04-fit-experience.html?cat=outer&reuse=1"><span class="cs-nm">아우터</span><span class="soon">곧</span><span class="cs-go">＋ 이어서 진단 →</span></a>
+      <a class="cs" href="04-fit-experience.html?cat=dress&reuse=1"><span class="cs-nm">원피스</span><span class="soon">곧</span><span class="cs-go">＋ 이어서 진단 →</span></a>
+      <a class="cs" href="04-fit-experience.html?cat=skirt&reuse=1"><span class="cs-nm">치마</span><span class="soon">곧</span><span class="cs-go">＋ 이어서 진단 →</span></a>
+    </div>
+    <div class="notice mt-16">기본 정보·체형 프로필은 그대로 재사용 — 다음 종류는 <strong>옷만 넣으면 30초</strong>. 체중이 바뀌었다면 <a href="03-basic-info.html" style="color:var(--ink);font-weight:700;text-decoration:underline">새로 진단</a>하세요 — <strong>과거 결과는 이력에 그대로 보존</strong>돼요.</div>
+  </div>
 
   <!-- ⑤ 공유 후크 (바이럴) -->
   <div class="share-hook">
@@ -164,8 +190,15 @@
   }
   function toggleLow(){ setLow(document.getElementById('lowbanner').classList.contains('hidden'),'similar'); }
 
-  // 건너뛰기 유입(?conf=low) → 자동으로 기본 추정(저신뢰) 상태
-  if(new URLSearchParams(location.search).get('conf')==='low'){ setLow(true,'skip'); }
+  function setMid(){
+    document.getElementById('midbanner').classList.remove('hidden');
+    document.querySelector('.char-rarity').innerHTML='<b>보통 신뢰</b> — 한 벌 더 넣으면 유형이 확정돼요';
+  }
+
+  // 입력 벌 수에 따른 신뢰도 상태: 0벌=저신뢰 / 1벌=보통 / 2벌+=정상
+  const conf=new URLSearchParams(location.search).get('conf');
+  if(conf==='low'){ setLow(true,'skip'); }
+  else if(conf==='mid'){ setMid(); }
 </script>
 </body>
 </html>

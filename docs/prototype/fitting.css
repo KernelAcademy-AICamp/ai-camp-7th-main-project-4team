@@ -128,10 +128,24 @@ h2.sec{font-size:clamp(22px,3.2vw,30px);font-weight:var(--dW);letter-spacing:var
 .field .hint{font-size:12px;color:var(--faint);font-weight:500;margin-left:6px}
 input[type=text],input[type=number],select{
   width:100%;font-family:var(--sans);font-size:15px;color:var(--ink);
-  background:var(--field);border:1px solid var(--field-line);border-radius:8px;
+  background-color:var(--field);border:1px solid var(--field-line);border-radius:8px;
   padding:13px 14px;outline:none;transition:.12s;
 }
-input:focus,select:focus{border-color:var(--ink);background:#fff}
+input:focus,select:focus{border-color:var(--ink);background-color:#fff}
+
+/* select — 네이티브 화살표 제거 + Precision 커스텀 셰브론 */
+select{
+  -webkit-appearance:none;-moz-appearance:none;appearance:none;
+  cursor:pointer;padding-right:40px;text-overflow:ellipsis;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center;background-size:16px;
+}
+select:hover{border-color:var(--ink)}
+/* 포커스 시 셰브론을 블랙으로 (배경이 흰색으로 바뀌므로 대비 유지) */
+select:focus{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230a0a0a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+}
+select::-ms-expand{display:none}
 .input-num{font-family:var(--suit);font-feature-settings:"tnum"}
 .input-suffix{position:relative}
 .input-suffix .unit{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--faint);font-family:var(--suit)}
@@ -152,6 +166,39 @@ input:focus,select:focus{border-color:var(--ink);background:#fff}
 /* 선호핏 슬라이더형 세그먼트 */
 .fit-scale{display:flex;gap:6px}
 .fit-scale .opt{flex:1;font-size:12.5px;padding:11px 6px}
+
+/* ---- 카테고리(옷 종류) 선택 — 진단은 카테고리 단위로 진행 ---- */
+.seg.cat{gap:8px}
+.seg.cat .opt{position:relative;flex:0 0 auto;min-width:0;padding:11px 14px;font-size:13.5px}
+.soon{display:inline-block;font-size:9.5px;font-weight:800;color:var(--warn);background:#fef3ec;border-radius:4px;padding:1px 5px;margin-left:5px;vertical-align:middle;letter-spacing:.02em}
+.soon.live{color:#fff;background:var(--ok)}
+.seg .opt.on .soon{background:rgba(255,255,255,.22);color:#fff}
+.seg .opt.on .soon.live{background:rgba(255,255,255,.24);color:#fff}
+
+/* 카테고리별 부위 설계 맵 (발표용 — 종류마다 푸는 부위가 다름) */
+.cat-map{display:flex;flex-direction:column}
+.cat-row{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:9px 0;border-top:1px solid var(--line)}
+.cat-row:first-child{border-top:none}
+.cat-row{opacity:.6}
+.cat-row.on{opacity:1}
+.cat-nm{font-size:13.5px;font-weight:800;color:var(--ink);white-space:nowrap}
+.cat-parts{font-family:var(--suit);font-feature-settings:"tnum";font-size:12.5px;color:var(--muted);text-align:right;line-height:1.5}
+
+/* 진단 대상 고정 표시 (옷 입력 단계 상단) */
+.target-chip{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--muted);background:var(--field);border:1px solid var(--line);border-radius:20px;padding:6px 13px;margin-bottom:18px}
+.target-chip b{color:var(--ink);font-weight:800}
+.target-chip .change{color:var(--accent);text-decoration:underline;cursor:pointer;font-weight:700;font-size:12px}
+
+/* ---- 진단 현황(옷장) — 카테고리 간 이어가기 (리텐션 루프) ---- */
+.catstat{display:flex;flex-direction:column;gap:8px}
+.cs{display:flex;align-items:center;gap:9px;padding:13px 15px;border:1px solid var(--line);border-radius:var(--cardR);text-decoration:none;color:var(--ink);transition:.12s}
+.cs:not(.done){cursor:pointer}
+.cs:not(.done):hover{border-color:var(--ink)}
+.cs.done{background:var(--field)}
+.cs .cs-nm{font-size:14.5px;font-weight:800}
+.cs .cs-meta{font-size:12.5px;color:var(--muted);font-weight:600}
+.cs .cs-go{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:var(--accent);white-space:nowrap}
+.cs.done .cs-go{color:var(--ok)}
 
 /* ---- 부위별 느낌 매트릭스 (착용경험) ---- */
 .feel-row{display:grid;grid-template-columns:64px 1fr;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line)}

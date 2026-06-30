@@ -11,7 +11,7 @@
 <body>
 
 <div class="protobar">
-  <span class="id">1.1.1</span><span class="nm">착용 경험 보정 입력</span><span class="star">★</span> <span class="small" style="color:#9aa3b2">순차 입력 · 역산 핵심</span>
+  <span class="id">1.1.1</span><span class="nm">착용 경험 보정 입력</span><span class="star">★</span> <span class="small" style="color:#9aa3b2">카테고리 단위 · 1~3벌 가변</span>
   <div class="links">
     <a href="index.html">◇ 전체 흐름</a>
     <a href="03-basic-info.html">← 기본정보</a>
@@ -21,28 +21,44 @@
 
 <div class="flow">
   <div class="stepper">
-    <span class="label">STEP 2 / 2 · 착용 경험</span>
+    <span class="label">STEP 2 / 2 · 진단 대상 · 착용 경험</span>
     <span class="dot done"></span><span class="dot now"></span>
   </div>
 
   <div class="wprogress">
-    <span class="frac" id="wfrac">1 / 6</span>
+    <span class="frac" id="wfrac">대상 선택</span>
     <div class="bar"><i id="wfill"></i></div>
   </div>
 
-  <!-- S1 안내 -->
+  <!-- idx0 · 진단 대상 카테고리 선택 -->
   <div class="wstep active">
-    <span class="qnum">착용 경험</span>
-    <h2 class="qhead">입던 옷의 느낌으로<br>체형을 거꾸로 풀어요</h2>
-    <p class="qhelp">정답을 맞히는 게 아니라, 솔직한 느낌이 가장 정확해요. <strong>핏이 다른 옷 2~3벌</strong>을 한 벌씩 천천히 넣어볼게요.</p>
+    <span class="qnum">진단 대상</span>
+    <h2 class="qhead">어떤 옷의 사이즈를<br>알고 싶으세요?</h2>
+    <p class="qhelp">진단은 <strong>옷 종류별로</strong> 따로 풀어요. 상의 경험은 어깨·가슴을, 하의 경험은 허리·엉덩이를 알려주거든요 — 그래서 알고 싶은 종류의 옷으로 입력받아요.</p>
     <div class="qbody">
-      <div class="card-soft">
-        <div class="size-row" style="border:none;padding:7px 0"><span class="brand">① 브랜드·핏·사이즈</span><span class="small">고르기</span></div>
-        <div class="size-row" style="padding:7px 0"><span class="brand">② 부위별 느낌</span><span class="small">큼 / 여유 / 딱맞음 / 끼임</span></div>
-        <div class="size-row" style="padding:7px 0"><span class="brand">③ 한 벌 더</span><span class="small">핏이 다른 옷이면 더 정확</span></div>
+      <div class="notice hidden" id="reusebanner" style="margin-bottom:16px"></div>
+      <div class="seg cat stack" id="target">
+        <div class="opt on" data-cat="top" onclick="pickTarget(this)">상의 <span class="soon live">지원중</span></div>
+        <div class="opt" data-cat="bottom" onclick="pickTarget(this)">하의 <span class="soon">곧</span></div>
+        <div class="opt" data-cat="outer" onclick="pickTarget(this)">아우터 <span class="soon">곧</span></div>
+        <div class="opt" data-cat="dress" onclick="pickTarget(this)">원피스 <span class="soon">곧</span></div>
+        <div class="opt" data-cat="skirt" onclick="pickTarget(this)">치마 <span class="soon">곧</span></div>
       </div>
 
-      <!-- 건너뛰기: 입어본 옷이 없을 때 -->
+      <div class="notice warn hidden mt-16" id="targetnote"></div>
+
+      <div class="card-soft mt-16">
+        <div class="kicker mb-8" style="display:block">종류마다 푸는 부위가 달라요</div>
+        <div class="cat-map" id="catmap">
+          <div class="cat-row on" data-cat="top"><span class="cat-nm">상의</span><span class="cat-parts">어깨 · 가슴 · 소매 · 배 · 총장</span></div>
+          <div class="cat-row" data-cat="bottom"><span class="cat-nm">하의</span><span class="cat-parts">허리 · 엉덩이 · 허벅지 · 밑위 · 기장</span></div>
+          <div class="cat-row" data-cat="outer"><span class="cat-nm">아우터</span><span class="cat-parts">어깨 · 가슴·품 · 소매 · 총장</span></div>
+          <div class="cat-row" data-cat="dress"><span class="cat-nm">원피스</span><span class="cat-parts">가슴 · 허리 · 엉덩이 · 총장</span></div>
+          <div class="cat-row" data-cat="skirt"><span class="cat-nm">치마</span><span class="cat-parts">허리 · 엉덩이 · 기장</span></div>
+        </div>
+        <p class="small mt-8">엔진은 종류별 부위 체계로 설계돼 있어요. <strong>이번 버전은 상의부터</strong> 진단하고, 나머지는 순차 확장돼요.</p>
+      </div>
+
       <div class="center mt-24">
         <a href="05-loading.html?skip=1" class="btn-ghost" style="text-decoration:underline">입어본 옷이 없거나 기억나지 않아요 — 건너뛰기</a>
         <p class="small" style="max-width:360px;margin:6px auto 0">건너뛰면 키·몸무게로만 <strong>기본 추정</strong>을 보여드려요. 정확도는 낮고, 나중에 옷을 추가하면 정교해져요.</p>
@@ -50,18 +66,19 @@
     </div>
   </div>
 
-  <!-- S2 옷1 정보 -->
+  <!-- idx1 · 옷1 정보 -->
   <div class="wstep">
     <span class="qnum num">옷 1 · 정보</span>
-    <h2 class="qhead">어떤 옷이었나요?</h2>
-    <p class="qhelp">자주 입어서 느낌이 또렷한 옷이 좋아요.</p>
+    <div class="target-chip">진단 대상 · <b class="catword">상의</b> <span class="change" onclick="goTo(0)">바꾸기</span></div>
+    <h2 class="qhead">입어본 <span class="catword">상의</span> 하나,<br>알려주세요</h2>
+    <p class="qhelp">자주 입어서 느낌이 또렷한 옷이 좋아요. 한 벌만 넣어도 진단돼요.</p>
     <div class="qbody">
       <div class="grid-2">
         <div class="field"><label>브랜드</label>
           <select><option>유니클로</option><option>무신사 스탠다드</option><option>스파오</option><option>탑텐</option><option>— 목록에 없음 —</option></select>
         </div>
         <div class="field"><label>핏 / 품목</label>
-          <select><option>레귤러핏 셔츠</option><option>슬림핏 셔츠</option><option>오버핏 맨투맨</option><option>레귤러 슬랙스</option></select>
+          <select id="item1"></select>
         </div>
       </div>
       <div class="field"><label>입었던 사이즈</label>
@@ -74,32 +91,44 @@
     </div>
   </div>
 
-  <!-- S3 옷1 느낌 -->
+  <!-- idx2 · 옷1 느낌 -->
   <div class="wstep">
     <span class="qnum num">옷 1 · 느낌</span>
     <h2 class="qhead">입었을 때 어땠어요?</h2>
-    <p class="qhelp">부위별로 떠오르는 느낌 하나씩만 골라주세요.</p>
+    <p class="qhelp"><span class="catword">상의</span> 부위별로 떠오르는 느낌 하나씩만 골라주세요.</p>
     <div class="qbody">
-      <div class="feel-row"><span class="part">어깨</span><div class="feel-opts"><div class="opt" onclick="pick(this)">큼</div><div class="opt on" onclick="pick(this)">여유</div><div class="opt" onclick="pick(this)">딱맞음</div><div class="opt" onclick="pick(this)">끼임</div></div></div>
-      <div class="feel-row"><span class="part">가슴</span><div class="feel-opts"><div class="opt" onclick="pick(this)">큼</div><div class="opt" onclick="pick(this)">여유</div><div class="opt on" onclick="pick(this)">딱맞음</div><div class="opt" onclick="pick(this)">끼임</div></div></div>
-      <div class="feel-row"><span class="part">소매</span><div class="feel-opts"><div class="opt on" onclick="pick(this)">큼</div><div class="opt" onclick="pick(this)">여유</div><div class="opt" onclick="pick(this)">딱맞음</div><div class="opt" onclick="pick(this)">끼임</div></div></div>
-      <div class="feel-row"><span class="part">배</span><div class="feel-opts"><div class="opt" onclick="pick(this)">큼</div><div class="opt on" onclick="pick(this)">여유</div><div class="opt" onclick="pick(this)">딱맞음</div><div class="opt" onclick="pick(this)">끼임</div></div></div>
-      <div class="feel-row"><span class="part">총장</span><div class="feel-opts"><div class="opt" onclick="pick(this)">긺</div><div class="opt" onclick="pick(this)">여유</div><div class="opt on" onclick="pick(this)">딱맞음</div><div class="opt" onclick="pick(this)">짧음</div></div></div>
+      <div class="feelbox" id="feel1"></div>
     </div>
   </div>
 
-  <!-- S4 옷2 정보 -->
+  <!-- idx3 · 입력 점검 (1벌) — 한 벌 더 / 이대로 진단 분기 -->
+  <div class="wstep">
+    <span class="qnum">입력한 옷 · 1벌</span>
+    <h2 class="qhead">한 벌만으로도<br>진단할 수 있어요</h2>
+    <p class="qhelp">지금 한 벌이 들어왔어요. 핏이 다른 옷을 한 벌 더 넣으면 체형이 더 또렷해지지만, <strong>한 벌만으로도 추천은 나와요</strong> — 정확도만 조금 낮아요.</p>
+    <div class="qbody">
+      <div class="card-soft mb-16">
+        <div class="size-row" style="border:none;padding:9px 0;opacity:.5"><span class="brand">0벌 · 건너뛰기</span><span class="small">기본 추정</span></div>
+        <div class="size-row" style="padding:9px 0"><span class="brand">1벌 · 지금 <span class="soon live">현재</span></span><span class="small">보통 — 추천 가능</span></div>
+        <div class="size-row" style="padding:9px 0;opacity:.5"><span class="brand">2~3벌</span><span class="small">정확 — 권장</span></div>
+      </div>
+      <button class="add-garment" onclick="next()">+ 핏이 다른 <span class="catword">상의</span> 한 벌 더 <span style="color:var(--faint)">(정확도 ↑)</span></button>
+    </div>
+  </div>
+
+  <!-- idx4 · 옷2 정보 -->
   <div class="wstep">
     <span class="qnum num">옷 2 · 정보</span>
-    <h2 class="qhead">핏이 다른 옷도<br>하나 넣어볼까요?</h2>
-    <p class="qhelp">옷 1과 핏이 다를수록 체형이 또렷해져요.</p>
+    <div class="target-chip">진단 대상 · <b class="catword">상의</b></div>
+    <h2 class="qhead">핏이 다른 <span class="catword">상의</span>도<br>하나 넣어볼까요?</h2>
+    <p class="qhelp">옷 1과 핏이 다를수록 체형이 또렷해져요. <span class="small">(같은 종류로 — 그래야 같은 부위를 교차 검증해요)</span></p>
     <div class="qbody">
       <div class="grid-2">
         <div class="field"><label>브랜드</label>
           <select><option>무신사 스탠다드</option><option>유니클로</option><option>스파오</option><option>탑텐</option><option>— 목록에 없음 —</option></select>
         </div>
         <div class="field"><label>핏 / 품목</label>
-          <select><option>오버핏 맨투맨</option><option>레귤러핏 셔츠</option><option>슬림핏 셔츠</option></select>
+          <select id="item2"></select>
         </div>
       </div>
       <div class="field"><label>입었던 사이즈</label>
@@ -111,27 +140,23 @@
     </div>
   </div>
 
-  <!-- S5 옷2 느낌 -->
+  <!-- idx5 · 옷2 느낌 -->
   <div class="wstep">
     <span class="qnum num">옷 2 · 느낌</span>
     <h2 class="qhead">이 옷은 어땠어요?</h2>
-    <p class="qhelp">부위별로 하나씩만요.</p>
+    <p class="qhelp"><span class="catword">상의</span> 부위별로 하나씩만요.</p>
     <div class="qbody">
-      <div class="feel-row"><span class="part">어깨</span><div class="feel-opts"><div class="opt on" onclick="pick(this)">큼</div><div class="opt" onclick="pick(this)">여유</div><div class="opt" onclick="pick(this)">딱맞음</div><div class="opt" onclick="pick(this)">끼임</div></div></div>
-      <div class="feel-row"><span class="part">가슴</span><div class="feel-opts"><div class="opt" onclick="pick(this)">큼</div><div class="opt on" onclick="pick(this)">여유</div><div class="opt" onclick="pick(this)">딱맞음</div><div class="opt" onclick="pick(this)">끼임</div></div></div>
-      <div class="feel-row"><span class="part">소매</span><div class="feel-opts"><div class="opt" onclick="pick(this)">큼</div><div class="opt on" onclick="pick(this)">여유</div><div class="opt" onclick="pick(this)">딱맞음</div><div class="opt" onclick="pick(this)">끼임</div></div></div>
-      <div class="feel-row"><span class="part">배</span><div class="feel-opts"><div class="opt" onclick="pick(this)">큼</div><div class="opt" onclick="pick(this)">여유</div><div class="opt on" onclick="pick(this)">딱맞음</div><div class="opt" onclick="pick(this)">끼임</div></div></div>
-      <div class="feel-row"><span class="part">총장</span><div class="feel-opts"><div class="opt" onclick="pick(this)">긺</div><div class="opt on" onclick="pick(this)">여유</div><div class="opt" onclick="pick(this)">딱맞음</div><div class="opt" onclick="pick(this)">짧음</div></div></div>
+      <div class="feelbox" id="feel2"></div>
     </div>
   </div>
 
-  <!-- S6 마무리 -->
+  <!-- idx6 · 입력 점검 (2벌) -->
   <div class="wstep">
-    <span class="qnum">거의 끝났어요</span>
-    <h2 class="qhead">2벌 입력 완료!</h2>
-    <p class="qhelp">한 벌 더 넣으면 정확도가 올라가요. 이대로 진단해도 좋아요.</p>
+    <span class="qnum">입력한 옷 · 2벌</span>
+    <h2 class="qhead"><span class="catword">상의</span> 2벌 입력 완료!</h2>
+    <p class="qhelp">정확도 좋은 상태예요. 한 벌 더 넣어도 좋고, 이대로 진단해도 됩니다. 다른 종류(하의·아우터…)는 진단 후 따로 돌릴 수 있어요.</p>
     <div class="qbody">
-      <button class="add-garment" onclick="alert('프로토타입: 옷 3을 추가하면 위저드에 정보·느낌 2단계가 더 생깁니다 (최대 3벌)')">+ 옷 한 벌 더 추가 <span style="color:var(--faint)">(권장: 핏이 다른 옷)</span></button>
+      <button class="add-garment" onclick="alert('프로토타입: 같은 카테고리 옷을 한 벌 더 추가하면 정보·느낌 2단계가 더 생깁니다 (최대 3벌)')">+ <span class="catword">상의</span> 한 벌 더 추가 <span style="color:var(--faint)">(권장: 핏이 다른 옷)</span></button>
       <div class="notice mt-16">입력은 자동 저장돼요. 결과 화면에서 언제든 수정·재진단할 수 있어요.</div>
     </div>
   </div>
@@ -140,25 +165,100 @@
   <div class="wnav">
     <button class="btn-line" onclick="prev()">이전</button>
     <span class="spacer"></span>
-    <button class="btn-primary" id="nextbtn" onclick="next()">다음</button>
+    <button class="btn-primary" id="nextbtn" onclick="footerAction()">다음</button>
   </div>
   <p class="cta-note center" style="margin-top:-12px;margin-bottom:26px" id="wnote">한 벌씩 천천히 — 부담 없이 진행돼요.</p>
 </div>
 
 <script>
-  const NEXT_URL='05-loading.html', PREV_URL='03-basic-info.html';
+  const PREV_URL='03-basic-info.html';
+
+  /* 진단은 카테고리(옷 종류) 단위. 역산은 신체 부위를 넘지 못하므로
+     알고 싶은 종류의 옷으로 입력받고 그 종류의 사이즈를 출력한다. ready=true 만 실제 진단. */
+  const CATS={
+    top:   {label:'상의',  ready:true,  items:['레귤러핏 셔츠','슬림핏 셔츠','오버핏 맨투맨','니트'],
+            parts:[{n:'어깨'},{n:'가슴'},{n:'소매'},{n:'배'},{n:'총장',len:1}]},
+    bottom:{label:'하의',  ready:false, items:['레귤러 슬랙스','와이드 팬츠','스키니 진','트레이닝 팬츠'],
+            parts:[{n:'허리'},{n:'엉덩이'},{n:'허벅지'},{n:'밑위'},{n:'기장',len:1}]},
+    outer: {label:'아우터', ready:false, items:['싱글 코트','블레이저','패딩','바람막이'],
+            parts:[{n:'어깨'},{n:'가슴·품'},{n:'소매'},{n:'총장',len:1}]},
+    dress: {label:'원피스', ready:false, items:['A라인 원피스','셔츠 원피스','니트 원피스'],
+            parts:[{n:'가슴'},{n:'허리'},{n:'엉덩이'},{n:'총장',len:1}]},
+    skirt: {label:'치마',  ready:false, items:['A라인 스커트','플리츠 스커트','미니 스커트'],
+            parts:[{n:'허리'},{n:'엉덩이'},{n:'기장',len:1}]},
+  };
+  let target='top';
+
+  /* 입력 점검(분기) 단계: 여기서 '진단하기'를 누르면 그 시점 벌 수로 진단을 끝낸다. */
+  const DIAGNOSE_AT={3:1, 6:2};   // step idx → 진단 시 입력된 벌 수
+  const FRAC=['대상 선택','옷 1 · 정보','옷 1 · 느낌','입력 점검','옷 2 · 정보','옷 2 · 느낌','입력 점검'];
+
+  function renderFeel(g){
+    const c=CATS[target], box=document.getElementById('feel'+g);
+    box.innerHTML=c.parts.map(p=>{
+      const opts=p.len?['긺','여유','딱맞음','짧음']:['큼','여유','딱맞음','끼임'];
+      return '<div class="feel-row"><span class="part">'+p.n+'</span><div class="feel-opts">'+
+        opts.map((o,i)=>'<div class="opt'+(i===2?' on':'')+'" onclick="pick(this)">'+o+'</div>').join('')+
+        '</div></div>';
+    }).join('');
+  }
+
+  function applyTarget(){
+    const c=CATS[target];
+    ['item1','item2'].forEach(id=>document.getElementById(id).innerHTML=c.items.map(i=>'<option>'+i+'</option>').join(''));
+    document.querySelectorAll('.catword').forEach(e=>e.textContent=c.label);
+    document.querySelectorAll('#catmap .cat-row').forEach(r=>r.classList.toggle('on',r.dataset.cat===target));
+    renderFeel(1); renderFeel(2);
+    const note=document.getElementById('targetnote');
+    if(c.ready){ note.classList.add('hidden'); }
+    else{
+      note.classList.remove('hidden');
+      note.innerHTML='<strong>'+c.label+'</strong> 진단은 부위 설계가 끝났고 <strong>곧 열려요</strong>. '+
+        '이번 발표 버전은 <strong>상의</strong>만 실제로 풀립니다 — 아래에서 '+c.label+'은 어떤 부위를 묻는지 미리 보여드릴게요.';
+    }
+  }
+  function pickTarget(el){ pick(el); target=el.dataset.cat; applyTarget(); }
+
   const steps=[...document.querySelectorAll('.wstep')];
   let cur=0;
   function render(){
     steps.forEach((s,k)=>s.classList.toggle('active',k===cur));
     document.getElementById('wfill').style.width=((cur+1)/steps.length*100)+'%';
-    document.getElementById('wfrac').textContent=(cur+1)+' / '+steps.length;
-    document.getElementById('nextbtn').textContent = cur===steps.length-1 ? '진단하기' : (cur===0 ? '시작하기' : '다음');
+    document.getElementById('wfrac').textContent=FRAC[cur]||'';
+    const btn=document.getElementById('nextbtn');
+    if(DIAGNOSE_AT[cur]) btn.textContent='이대로 진단하기 ('+DIAGNOSE_AT[cur]+'벌)';
+    else btn.textContent = cur===0 ? '이 종류로 시작' : '다음';
     window.scrollTo({top:0,behavior:'smooth'});
   }
-  function next(){ if(cur<steps.length-1){cur++;render()} else location.href=NEXT_URL; }
+  function goTo(i){ cur=i; render(); }
+  function next(){ if(cur<steps.length-1){cur++;render()} }
   function prev(){ if(cur>0){cur--;render()} else location.href=PREV_URL; }
+  function footerAction(){
+    if(DIAGNOSE_AT[cur]) location.href='05-loading.html?g='+DIAGNOSE_AT[cur];
+    else next();
+  }
   function pick(el){[...el.parentElement.children].forEach(c=>c.classList.remove('on'));el.classList.add('on')}
+
+  /* 결과 화면의 "이어서 진단"으로 들어온 경우:
+     ?cat= 으로 대상 카테고리를 미리 선택, ?reuse=1 이면 기본 정보(03)를 재사용했음을 알린다.
+     체형 프로필(B)은 신체 단위라 카테고리 간 재사용 → 두 번째부터 옷만 새로 넣으면 된다(리텐션). */
+  function initFromQuery(){
+    const q=new URLSearchParams(location.search);
+    const qcat=q.get('cat');
+    if(qcat && CATS[qcat]){
+      target=qcat;
+      document.querySelectorAll('#target .opt').forEach(o=>o.classList.toggle('on',o.dataset.cat===qcat));
+    }
+    if(q.get('reuse')==='1'){
+      const b=document.getElementById('reusebanner');
+      b.classList.remove('hidden');
+      b.innerHTML='<strong>이어서 진단</strong> · 이전 진단의 기본 정보(성별·키·몸무게·선호핏)와 체형 프로필을 그대로 써요. <strong>'+CATS[target].label+'</strong> 옷만 새로 넣으면 돼요.';
+      document.querySelector('.stepper .label').textContent='이어가기 · '+CATS[target].label+' 착용 경험';
+    }
+  }
+
+  initFromQuery();
+  applyTarget();
   render();
 </script>
 </body>
