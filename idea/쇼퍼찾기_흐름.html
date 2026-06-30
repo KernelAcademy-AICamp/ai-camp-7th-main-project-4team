@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fitting · 쇼퍼찾기 (미니멀 · 무채색 + 포인트)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --bg:#ffffff; --bg2:#f7f8fa; --ink:#191a1c; --sub:#71717a; --sub2:#a6a7ae;
+    --line:#eeeff1; --line2:#e3e4e8; --soft:#f2f3f5;
+    --ac:#2563eb; --ac-d:#1d4ed8; --ac-soft:#e8eefc;   /* 포인트: 차분한 블루 (버튼은 검정) */
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; letter-spacing:-.02em; -webkit-font-smoothing:antialiased;}
+  a{color:inherit; text-decoration:none; cursor:pointer;}
+  header{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--line);}
+  .nav{max-width:1080px; margin:0 auto; height:64px; display:flex; align-items:center; gap:26px; padding:0 28px;}
+  .logo{font-size:21px; font-weight:800; letter-spacing:-.06em; color:var(--ink);}
+  .menu{display:flex; gap:2px;}
+  .menu a{padding:8px 13px; border-radius:9px; font-weight:600; font-size:15px; color:var(--sub);}
+  .menu a.on{color:var(--ink); font-weight:700; background:var(--soft);}
+  .right{margin-left:auto; font-size:14px; color:var(--sub);}
+
+  .wrap{max-width:1080px; margin:0 auto; padding:44px 28px 96px;}
+  .page{display:none; animation:fade .26s cubic-bezier(.2,.8,.2,1);}
+  .page.active{display:block;}
+  @keyframes fade{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;}}
+  .crumb{font-size:14px; color:var(--sub); font-weight:600; margin-bottom:14px;}
+  .crumb a:hover{color:var(--ink);}
+  h1{font-size:32px; font-weight:800; letter-spacing:-.045em;}
+  .lead{font-size:16px; color:var(--sub); margin-top:8px;}
+  .feat{font-size:13px; color:var(--sub2); font-weight:700; margin:22px 0 9px;}
+  .btn{display:inline-block; background:var(--ink); color:#fff; border:none; padding:14px 22px; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; transition:.15s;}
+  .btn:hover{background:#000;} .btn.full{width:100%; text-align:center; padding:16px;}
+  .btn.dis{background:var(--line2); color:var(--sub2); pointer-events:none;}
+  .btn.dark{background:var(--ink);} .btn.dark:hover{background:#000;}
+  .btn.ghost{background:#fff; color:var(--ink); border:1.5px solid var(--line2);} .btn.ghost:hover{background:var(--soft);}
+
+  .listhead{display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap; margin-bottom:6px;}
+  .matchcta{display:flex; align-items:center; gap:12px; flex-wrap:wrap; background:var(--bg2); border:1px solid var(--line); border-radius:14px; padding:14px 18px; margin:18px 0; font-size:14px; color:var(--sub);}
+  .matchcta b{color:var(--ink);}
+  .matchcta a{margin-left:auto; font-weight:700; color:var(--ac); white-space:nowrap;}
+  .banner{display:flex; align-items:center; gap:12px; flex-wrap:wrap; background:var(--ink); color:#fff; border-radius:14px; padding:14px 18px; margin:18px 0;}
+  .banner .bt{font-size:14px; font-weight:600; color:#d9dade;} .banner .bt b{color:#fff;}
+  .banner .acts{margin-left:auto; display:flex; gap:8px;}
+  .banner .acts a{font-size:13px; font-weight:700; color:#fff; border:1px solid rgba(255,255,255,.28); border-radius:20px; padding:6px 12px;}
+  .banner .acts a:hover{background:rgba(255,255,255,.12);}
+
+  .tabs{display:flex; gap:2px; margin:22px 0 16px; border-bottom:1px solid var(--line); flex-wrap:wrap;}
+  .tabs .t{padding:11px 14px; font-size:15px; font-weight:700; color:var(--sub); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:.15s;}
+  .tabs .t:hover{color:var(--ink);} .tabs .t.on{color:var(--ink); border-color:var(--ink);}
+  .searchbar{display:flex; align-items:center; gap:8px; margin-bottom:14px; max-width:380px;}
+  .searchbar .ip{flex:1; display:flex; align-items:center; gap:8px; border:1.5px solid var(--line2); border-radius:11px; padding:0 14px; transition:.15s;}
+  .searchbar .ip:focus-within{border-color:var(--ac);}
+  .searchbar input{border:none; padding:12px 0; width:100%; font-size:15px; font-family:inherit; background:none;}
+  .searchbar input:focus{outline:none;}
+  .searchbar .sbtn{background:var(--ink); color:#fff; border:none; border-radius:11px; padding:0 18px; height:46px; font-weight:700; font-size:14px; cursor:pointer; font-family:inherit;}
+  .searchbar .sbtn:hover{background:#000;}
+  .filters{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:16px;}
+  .filters .lbl{font-size:13px; color:var(--sub2); font-weight:700; margin-right:2px;}
+  .chip{display:inline-block; padding:9px 14px; border:1.5px solid var(--line2); border-radius:30px; cursor:pointer; font-size:14px; font-weight:600; color:var(--sub); background:#fff; transition:.14s;}
+  .chip:hover{border-color:var(--ink); color:var(--ink);} .chip.on,.chip.sel{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .chip.dis{opacity:.32; pointer-events:none;}
+  .sort{margin-left:auto;} .sort select{padding:10px 12px; border:1.5px solid var(--line2); border-radius:11px; font-size:14px; font-weight:600; font-family:inherit; background:#fff; color:var(--ink); cursor:pointer;}
+  .count{font-size:14px; color:var(--sub2); font-weight:600; margin-bottom:14px;}
+
+  .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .card{background:#fff; border:1px solid var(--line); border-radius:18px; overflow:hidden; cursor:pointer; transition:.18s;}
+  .card:hover{transform:translateY(-3px); box-shadow:0 14px 34px rgba(20,22,28,.09); border-color:var(--line2);}
+  .cover{height:156px; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.82); font-weight:600; font-size:13px; position:relative;}
+  .match{position:absolute; top:12px; left:12px; background:var(--ac); color:#fff; font-size:12px; font-weight:800; padding:5px 11px; border-radius:30px;}
+  .svcbadge{position:absolute; top:12px; right:12px; background:#fff; color:var(--ink); font-size:11px; font-weight:700; padding:5px 10px; border-radius:30px;}
+  .body{padding:17px;}
+  .body .nm{font-size:16px; font-weight:800; letter-spacing:-.03em;}
+  .body .star{font-weight:700; font-size:14px; color:var(--ink);}
+  .body .spec{font-size:13px; color:var(--sub); margin:5px 0 10px;}
+  .body .tags span{display:inline-block; font-size:12px; background:var(--soft); color:#55565c; padding:4px 9px; border-radius:20px; margin:0 5px 5px 0; font-weight:600;}
+  .body .price{margin-top:9px; font-size:15px; font-weight:800;} .body .price small{font-weight:600; color:var(--sub2);}
+  .empty{grid-column:1/-1; text-align:center; padding:56px 0; color:var(--sub2); font-weight:600;}
+  .secmark{font-size:12px; color:#d2d3d8; margin-top:42px; text-align:center;}
+
+  .form{max-width:640px;}
+  label.f{font-size:15px; font-weight:700; display:block; margin:24px 0 9px;}
+  label.f .req{color:var(--ac); font-size:12px; background:var(--ac-soft); padding:2px 8px; border-radius:20px; margin-left:4px;}
+  label.f .opt{color:var(--sub2); font-weight:500; font-size:13px;}
+  input,select,textarea{width:100%; padding:14px 16px; border:1.5px solid var(--line2); border-radius:12px; font-size:15px; background:#fff; font-family:inherit; color:var(--ink); transition:.15s;}
+  input:focus,select:focus,textarea:focus{outline:none; border-color:var(--ac);}
+  textarea{resize:none; height:74px;}
+  .svc{display:grid; grid-template-columns:repeat(3,1fr); gap:12px;}
+  .svc .s{border:1.5px solid var(--line2); border-radius:14px; padding:18px 14px; cursor:pointer; transition:.16s; text-align:center;}
+  .svc .s:hover{border-color:var(--ink);} .svc .s.sel{border-color:var(--ink); background:var(--soft);}
+  .svc .s .si{font-size:25px;} .svc .s b{display:block; margin:8px 0 2px; font-size:15px;} .svc .s span{font-size:12px; color:var(--sub2);}
+  .single{display:flex; gap:8px; flex-wrap:wrap;} .single .o{flex:1; min-width:84px; text-align:center; padding:13px 8px; border:1.5px solid var(--line2); border-radius:11px; cursor:pointer; font-weight:600; font-size:14px; transition:.14s;}
+  .single .o:hover{border-color:var(--ink);} .single .o.sel{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .charcnt{font-size:12px; color:var(--sub2); text-align:right; margin-top:5px;}
+  .attach{display:flex; align-items:center; justify-content:space-between; background:var(--bg2); border-radius:14px; padding:16px 18px; margin-top:12px;}
+  .attach b{font-size:15px;} .attach .tag{font-size:13px; color:var(--sub);}
+  .toggle{width:48px; height:28px; border-radius:30px; background:var(--line2); position:relative; cursor:pointer; transition:.15s; flex:none;}
+  .toggle::after{content:''; position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:#fff; transition:.15s; box-shadow:0 1px 3px rgba(0,0,0,.18);}
+  .toggle.on{background:var(--ac);} .toggle.on::after{left:23px;}
+
+  .scrim{position:fixed; inset:0; background:rgba(15,16,20,.42); opacity:0; pointer-events:none; transition:.2s; z-index:60;}
+  .scrim.on{opacity:1; pointer-events:auto;}
+  .modal{position:fixed; top:0; right:0; height:100%; width:460px; max-width:92vw; overflow-y:auto; background:#fff; box-shadow:-22px 0 60px rgba(0,0,0,.18); z-index:61; transform:translateX(100%); transition:.3s cubic-bezier(.2,.8,.2,1);}
+  .modal.on{transform:none;}
+  .mhead{min-height:184px; display:flex; align-items:flex-end; padding:22px; color:#fff;}
+  .mhead .hbadge{font-size:12px; background:rgba(255,255,255,.22); display:inline-block; padding:4px 10px; border-radius:20px; font-weight:700; margin-bottom:8px;}
+  .mhead .hname{font-size:24px; font-weight:800; letter-spacing:-.03em;}
+  .mhead .hsub{font-size:14px; opacity:.92; margin-top:2px;}
+  .mbody{padding:24px;}
+  .dclose{position:absolute; top:16px; right:18px; width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.92); display:flex; align-items:center; justify-content:center; font-size:19px; cursor:pointer; border:none; z-index:62;}
+  .tags-row span{display:inline-block; font-size:13px; background:var(--soft); color:#55565c; padding:6px 12px; border-radius:20px; margin:0 6px 6px 0; font-weight:600;}
+  .gal{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
+  .gal div{height:80px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.9); font-size:12px; font-weight:600; cursor:pointer;}
+  .review{border-bottom:1px solid var(--line); padding:12px 0; font-size:14px; color:#44464c; line-height:1.55;}
+  .review .who{font-size:12px; color:var(--sub2); font-weight:600; margin-top:4px;}
+  .noreview{color:var(--sub2); font-size:14px; padding:14px 0;}
+  .svcinfo{background:var(--bg2); border-radius:14px; padding:16px 18px;}
+  .svcinfo .r{display:flex; justify-content:space-between; padding:7px 0; font-size:14px;}
+  .svcinfo .r span{color:var(--sub);} .svcinfo .r b{font-weight:700;}
+
+  @media(max-width:880px){ .svc{grid-template-columns:1fr;} .grid{grid-template-columns:1fr 1fr;} }
+  @media(max-width:560px){ .grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <span class="logo">fitting</span>
+    <nav class="menu"><a>홈</a><a>체형진단</a><a class="on">쇼퍼찾기</a><a>마이</a></nav>
+    <div class="right">김도현 님 · <b style="color:var(--ink)">📏 시크 스트레이트</b></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ========== 1.2 전문가 둘러보기 ========== -->
+  <section class="page active" id="list">
+    <div class="crumb">쇼퍼찾기 · 전문가 둘러보기</div>
+    <div class="listhead">
+      <div><h1>나에게 맞는 전문가</h1><p class="lead">내 체형·사이즈 기준 <b style="color:var(--ink)">매칭도 순</b> · 결과물·후기로 검증된 전문가만</p></div>
+      <button class="btn" onclick="go('request')">🤖 AI 전문가 매칭</button>
+    </div>
+
+    <div class="matchcta" id="matchCTA">
+      <span>🎯 상황·예산만 알려주면, AI가 딱 맞는 전문가만 <b>매칭도 순</b>으로 추려드려요</span>
+      <a onclick="go('request')">AI 전문가 매칭 →</a>
+    </div>
+    <div class="banner" id="banner" style="display:none">
+      <div class="bt" id="bannerText"></div>
+      <div class="acts"><a onclick="go('request')">조건 수정</a><a onclick="browseAll()">전체 보기</a></div>
+    </div>
+
+    <div class="tabs" id="tabs">
+      <div class="t on" data-svc="all" onclick="setTab(this)">전체</div>
+      <div class="t" data-svc="online" onclick="setTab(this)">온라인 스타일링</div>
+      <div class="t" data-svc="shopping" onclick="setTab(this)">동행 쇼핑</div>
+      <div class="t" data-svc="image" onclick="setTab(this)">이미지 컨설팅</div>
+    </div>
+
+    <div class="searchbar">
+      <div class="ip">🔎<input id="q" placeholder="전문가 이름·키워드 검색" onkeydown="if(event.key==='Enter')render()" oninput="if(!this.value)render()"></div>
+      <button class="sbtn" onclick="render()">검색</button>
+    </div>
+
+    <div class="filters" id="occ">
+      <span class="lbl">상황</span>
+      <span class="chip on" data-occ="all" onclick="setOcc(this)">전체</span>
+      <span class="chip" data-occ="date" onclick="setOcc(this)">소개팅</span>
+      <span class="chip" data-occ="interview" onclick="setOcc(this)">면접·발표</span>
+      <span class="chip" data-occ="wedding" onclick="setOcc(this)">결혼식 하객</span>
+      <span class="chip" data-occ="travel" onclick="setOcc(this)">여행</span>
+      <span class="chip" data-occ="daily" onclick="setOcc(this)">일상 코디</span>
+      <span class="sort"><select id="sortSel" onchange="render()">
+        <option value="match">정렬: 매칭도순</option><option value="rating">평점순</option><option value="priceA">가격 낮은순</option><option value="priceD">가격 높은순</option>
+      </select></span>
+    </div>
+
+    <div class="count" id="count"></div>
+    <div class="grid" id="grid"></div>
+    <div class="secmark">1.2 전문가 둘러보기 · 무채색 + 포인트(파랑) 최소 사용</div>
+  </section>
+
+  <!-- ========== 1.3 AI 전문가 매칭 ========== -->
+  <section class="page" id="request">
+    <div class="crumb"><a onclick="go('list')">‹ 전문가 둘러보기</a> · AI 전문가 매칭</div>
+    <h1>AI 전문가 매칭</h1>
+    <p class="lead">조건만 알려주면 내 체형·사이즈에 맞는 전문가를 <b style="color:var(--ink)">매칭도 순</b>으로 추려드려요.</p>
+    <div id="reqExpertNote" style="display:none; margin-top:14px; background:var(--ac-soft); border-radius:13px; padding:13px 16px; font-size:14px; font-weight:600; color:var(--ac-d)"></div>
+
+    <div class="form">
+      <label class="f">서비스 유형 <span class="req">필수 · 택1</span></label>
+      <div class="svc" id="rSvc">
+        <div class="s" data-v="online" onclick="pickSvc(this)"><div class="si">💻</div><b>온라인 스타일링</b><span>상품·구매링크</span></div>
+        <div class="s" data-v="shopping" onclick="pickSvc(this)"><div class="si">🛍️</div><b>동행 쇼핑</b><span>같이 가서</span></div>
+        <div class="s" data-v="image" onclick="pickSvc(this)"><div class="si">✨</div><b>이미지 컨설팅</b><span>전체 인상</span></div>
+      </div>
+
+      <label class="f">상황 <span class="opt">선택 · 최대 2개</span></label>
+      <div id="rOcc">
+        <span class="chip" data-v="date" onclick="toggleOcc(this)">소개팅</span>
+        <span class="chip" data-v="interview" onclick="toggleOcc(this)">면접·발표</span>
+        <span class="chip" data-v="wedding" onclick="toggleOcc(this)">결혼식 하객</span>
+        <span class="chip" data-v="travel" onclick="toggleOcc(this)">여행</span>
+        <span class="chip" data-v="daily" onclick="toggleOcc(this)">일상 코디</span>
+      </div>
+
+      <label class="f">예산 <span class="opt">선택</span></label>
+      <div class="single" id="rBudget">
+        <div class="o" data-v="b1" onclick="one(this)">~5만</div>
+        <div class="o" data-v="b2" onclick="one(this)">5~10만</div>
+        <div class="o" data-v="b3" onclick="one(this)">10~15만</div>
+        <div class="o" data-v="b4" onclick="one(this)">15만+</div>
+      </div>
+
+      <label class="f">일정 <span class="opt">선택 · 희망 날짜</span></label>
+      <input type="date" id="rDate" onchange="this.blur()">
+
+      <label class="f">한 줄 요청 <span class="opt">선택</span></label>
+      <textarea id="rMemo" maxlength="100" placeholder="예) 과하지 않게, 깔끔한 첫인상 원해요" oninput="document.getElementById('cc').textContent=this.value.length+'/100'"></textarea>
+      <div class="charcnt" id="cc">0/100</div>
+
+      <div class="attach">
+        <div><b>📏 내 체형·사이즈 프로필 첨부</b><div class="tag" id="attachTag">시크 스트레이트 · 브랜드별 추천 사이즈 카드 (첨부됨)</div></div>
+        <div class="toggle on" id="attach" onclick="toggleAttach()"></div>
+      </div>
+
+      <button class="btn full dis" id="matchBtn" style="margin-top:22px" onclick="submitRequest()">전문가 매칭하기</button>
+      <p class="tag" style="text-align:center; color:var(--sub2); font-size:13px; margin-top:10px" id="reqHint">서비스 유형을 선택하면 매칭 버튼이 활성화돼요</p>
+    </div>
+    <div class="secmark">1.3 AI 전문가 매칭 · 스타일링 요청</div>
+  </section>
+
+</div>
+
+<div class="scrim" id="scrim" onclick="closeP()"></div>
+<div class="modal" id="modal">
+  <button class="dclose" onclick="closeP()">✕</button>
+  <div class="mhead" id="mhead"></div>
+  <div class="mbody" id="mbody"></div>
+</div>
+
+<script>
+  var COVERS=['linear-gradient(135deg,#1c1d22,#3c3d45)','linear-gradient(135deg,#2a2b32,#54555f)','linear-gradient(135deg,#3c3d46,#6e6f7a)','linear-gradient(135deg,#232429,#494a54)','linear-gradient(135deg,#33343d,#5e5f6b)','linear-gradient(135deg,#44454f,#7a7b88)','linear-gradient(135deg,#5a5b66,#9697a3)'];
+  var SVC={online:'온라인 스타일링',shopping:'동행 쇼핑',image:'이미지 컨설팅'};
+  var SVCINFO={online:{mode:'온라인(비대면)',dur:'약 3일'},shopping:{mode:'오프라인 동행',dur:'방문 1회 · 약 3시간'},image:{mode:'오프라인 세션',dur:'세션 1회 · 약 2시간'}};
+  var OCC={date:'소개팅',interview:'면접·발표',wedding:'결혼식 하객',travel:'여행',daily:'일상 코디'};
+  var BUD={b1:'~5만',b2:'5~10만',b3:'10~15만',b4:'15만+'};
+  function budOf(p){ return p<50000?'b1':(p<=100000?'b2':(p<=150000?'b3':'b4')); }
+
+  var EXPERTS=[
+    {nm:'민지',svc:'online',occ:['date','daily'],spec:'데일리·소개팅룩 시크 스트레이트 전문',rating:4.9,review:128,price:120000,match:98,c:0,bio:'온라인 쇼핑몰 MD 7년 → 퍼스널 스타일리스트. 비대면으로 상품·코디·구매링크까지 큐레이션해요.',tags:['시크 스트레이트','데일리','소개팅'],reviews:[['비대면인데도 사이즈가 정확해서 반품 없이 한 번에 성공했어요.','33세 · 소개팅룩'],['내 체형 설명을 안 해도 이미 알고 골라주셔서 편했어요.','29세 · 데일리']]},
+    {nm:'서연',svc:'image',occ:['interview'],spec:'면접·오피스 이미지 컨설팅',rating:4.8,review:94,price:200000,match:91,c:1,bio:'이미지 컨설턴트 협회 정회원. 첫인상이 중요한 자리의 전체 인상을 설계합니다.',tags:['면접','오피스','이미지'],reviews:[['면접관 입장에서 어떻게 보일지까지 짚어주셔서 자신감이 생겼어요.','31세 · 면접']]},
+    {nm:'하늘',svc:'shopping',occ:['wedding','travel'],spec:'하객룩·여행룩 동행 쇼핑',rating:4.7,review:61,price:150000,match:85,c:2,bio:'백화점 퍼스널 쇼퍼 출신. 같이 매장을 돌며 체형에 맞는 옷을 현장에서 골라드려요.',tags:['하객룩','여행','동행'],reviews:[['혼자 갔으면 절대 안 골랐을 옷인데 너무 잘 맞았어요.','27세 · 하객룩'],['시착까지 같이 봐주셔서 사이즈 고민이 없었어요.','35세 · 여행']]},
+    {nm:'도윤',svc:'online',occ:['interview','wedding'],spec:'포멀·세미정장 온라인 스타일링',rating:4.9,review:142,price:135000,match:88,c:3,bio:'남성 포멀 전문. 결혼식·면접 등 격식 있는 자리의 핏을 비대면으로 잡아드립니다.',tags:['포멀','세미정장','남성'],reviews:[['남자 정장 핏을 이렇게 디테일하게 봐주는 분 처음이에요.','38세 · 결혼식'],['링크 그대로 사니 한 번에 맞았습니다.','30세 · 면접']]},
+    {nm:'채원',svc:'shopping',occ:['date','interview'],spec:'첫인상 동행 쇼핑',rating:4.6,review:38,price:140000,match:80,c:4,bio:'소개팅·면접 등 잘 보여야 하는 날 전문. 현장에서 시착하며 사이즈를 함께 확정해요.',tags:['소개팅','면접','첫인상'],reviews:[['예산 안에서 최대한 뽑아주셔서 만족했어요.','28세 · 소개팅']]},
+    {nm:'유나',svc:'image',occ:['wedding','daily'],spec:'토탈 이미지 컨설팅',rating:4.8,review:76,price:230000,match:83,c:5,bio:'헤어·메이크업까지 연계한 토탈 이미지 설계. 인생 사진이 필요한 날을 위한 컨설팅.',tags:['토탈','웨딩','컬러'],reviews:[['단순 옷이 아니라 전체 분위기를 바꿔주셨어요.','34세 · 웨딩']]},
+    {nm:'지호',svc:'online',occ:['daily'],spec:'1기 신규 · 캐주얼 데일리 스타일링',rating:0,review:0,price:110000,match:79,c:6,bio:'fitting 1기로 합류한 신규 전문가예요. 캐주얼·데일리 코디가 강점입니다.',tags:['캐주얼','데일리','신규'],reviews:[]}
+  ];
+
+  var curSvc='all', curOcc='all', curBudget='all', fromReq=false;
+  function go(id){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+
+  function setTab(el){ document.querySelectorAll('#tabs .t').forEach(t=>t.classList.remove('on')); el.classList.add('on'); curSvc=el.dataset.svc; render(); }
+  function setOcc(el){ document.querySelectorAll('#occ .chip').forEach(c=>c.classList.remove('on')); el.classList.add('on'); curOcc=el.dataset.occ; render(); }
+  function browseAll(){ fromReq=false; curSvc='all'; curOcc='all'; curBudget='all'; syncControls(); document.getElementById('banner').style.display='none'; document.getElementById('matchCTA').style.display='flex'; render(); }
+  function syncControls(){
+    document.querySelectorAll('#tabs .t').forEach(t=>t.classList.toggle('on', t.dataset.svc===curSvc));
+    document.querySelectorAll('#occ .chip').forEach(c=>c.classList.toggle('on', c.dataset.occ===curOcc));
+    document.getElementById('sortSel').value='match'; document.getElementById('q').value='';
+  }
+
+  function render(){
+    var q=(document.getElementById('q').value||'').trim();
+    var list=EXPERTS.filter(function(e){
+      return (curSvc==='all'||e.svc===curSvc)
+        && (curOcc==='all'||e.occ.indexOf(curOcc)>=0)
+        && (curBudget==='all'||budOf(e.price)===curBudget)
+        && (!q || e.nm.indexOf(q)>=0 || e.spec.indexOf(q)>=0 || e.tags.join(' ').indexOf(q)>=0);
+    });
+    var s=document.getElementById('sortSel').value;
+    list.sort((a,b)=> s==='rating'?b.rating-a.rating : s==='priceA'?a.price-b.price : s==='priceD'?b.price-a.price : b.match-a.match);
+    document.getElementById('count').textContent=list.length+'명 · '+(curSvc==='all'?'전체 유형':SVC[curSvc])+(curOcc==='all'?'':' · '+OCC[curOcc])+(curBudget==='all'?'':' · 예산 '+BUD[curBudget])+(q?' · "'+q+'"':'');
+    var g=document.getElementById('grid');
+    if(!list.length){ g.innerHTML='<div class="empty">조건에 맞는 전문가가 아직 없어요.<br><a style="color:var(--ac); font-weight:800" onclick="browseAll()">조건 넓혀서 전체 보기 →</a></div>'; return; }
+    g.innerHTML=list.map(function(e){ var idx=EXPERTS.indexOf(e); var rt=e.rating>0?('★ '+e.rating):'<span style="color:var(--sub2)">신규</span>';
+      return '<div class="card" onclick="openP('+idx+')"><div class="cover" style="background:'+COVERS[e.c]+'"><span class="match">매칭도 '+e.match+'%</span><span class="svcbadge">'+SVC[e.svc]+'</span>'+e.nm+' 전문가의 결과물</div>'+
+        '<div class="body"><div style="display:flex; justify-content:space-between; align-items:center"><span class="nm">'+e.nm+' 전문가</span><span class="star">'+rt+'</span></div>'+
+        '<div class="spec">'+e.spec+'</div><div class="tags">'+e.tags.map(t=>'<span>'+t+'</span>').join('')+'</div>'+
+        '<div class="price">'+e.price.toLocaleString()+'원 <small>· 후기 '+e.review+'</small></div></div></div>';
+    }).join('');
+  }
+
+  function openP(idx){ var e=EXPERTS[idx]; var inf=SVCINFO[e.svc]; var rt=e.rating>0?('★ '+e.rating+' · 후기 '+e.review):'신규 전문가';
+    document.getElementById('mhead').style.background=COVERS[e.c];
+    document.getElementById('mhead').innerHTML='<div><div class="hbadge">'+SVC[e.svc]+' · 매칭도 '+e.match+'%</div><div class="hname">'+e.nm+' 전문가</div><div class="hsub">'+rt+'</div><div class="hsub">'+SVC[e.svc]+' 패키지 · '+e.price.toLocaleString()+'원</div></div>';
+    var reviewsHtml = e.reviews.length
+      ? e.reviews.map(r=>'<div class="review">"'+r[0]+'"<div class="who">— '+r[1]+'</div></div>').join('')
+      : '<div class="noreview">등록된 후기가 없습니다.</div>';
+    document.getElementById('mbody').innerHTML=
+      '<p style="font-size:15px; color:#44464c; line-height:1.6">'+e.bio+'</p>'+
+      '<div class="feat">전문 분야</div><div class="tags-row">'+e.tags.map(t=>'<span>'+t+'</span>').join('')+'</div>'+
+      '<div class="feat">포트폴리오</div>'+
+      '<div class="gal">'+[0,1,2,3,4].map(i=>'<div style="background:'+COVERS[(e.c+i)%COVERS.length]+'" onclick="alert(\'(프로토타입) 결과 이미지 확대\')">결과 '+(i+1)+'</div>').join('')+'<div style="background:#26272e" onclick="alert(\'(프로토타입) 전체 포트폴리오 보기\')">+24장</div></div>'+
+      '<div class="feat">실제 후기</div>'+reviewsHtml+
+      '<div class="feat">서비스 정보</div><div class="svcinfo">'+
+        '<div class="r"><span>서비스명</span><b>'+SVC[e.svc]+' 패키지</b></div>'+
+        '<div class="r"><span>가격</span><b>'+e.price.toLocaleString()+'원</b></div>'+
+        '<div class="r"><span>제공 방식</span><b>'+inf.mode+'</b></div>'+
+        '<div class="r"><span>예상 진행 기간</span><b>'+inf.dur+'</b></div>'+
+      '</div>'+
+      '<button class="btn full" style="margin-top:18px" onclick="requestFor('+idx+')">이 전문가에게 요청하기 →</button>';
+    document.getElementById('scrim').classList.add('on'); document.getElementById('modal').classList.add('on');
+  }
+  function closeP(){ document.getElementById('scrim').classList.remove('on'); document.getElementById('modal').classList.remove('on'); }
+
+  function requestFor(idx){ var e=EXPERTS[idx]; closeP();
+    document.querySelectorAll('#rSvc .s').forEach(s=>s.classList.toggle('sel', s.dataset.v===e.svc));
+    reqSvc=e.svc; document.getElementById('matchBtn').classList.remove('dis'); document.getElementById('reqHint').textContent='조건을 확인하고 매칭 버튼을 눌러주세요';
+    var note=document.getElementById('reqExpertNote'); note.style.display='block'; note.innerHTML='👤 <b>'+e.nm+' 전문가</b>에게 요청합니다 · 서비스 유형이 자동 선택됐어요';
+    go('request');
+  }
+
+  var reqSvc=null, attachOn=true;
+  function pickSvc(el){ [...el.parentNode.children].forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); reqSvc=el.dataset.v;
+    document.getElementById('matchBtn').classList.remove('dis'); document.getElementById('reqHint').textContent='조건을 확인하고 매칭 버튼을 눌러주세요'; }
+  function toggleOcc(el){
+    if(el.classList.contains('sel')){ el.classList.remove('sel'); }
+    else { if(document.querySelectorAll('#rOcc .chip.sel').length>=2) return; el.classList.add('sel'); }
+    var full=document.querySelectorAll('#rOcc .chip.sel').length>=2;
+    document.querySelectorAll('#rOcc .chip').forEach(c=>{ if(!c.classList.contains('sel')) c.classList.toggle('dis', full); });
+  }
+  function one(el){ [...el.parentNode.children].forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); }
+  function toggleAttach(){ var t=document.getElementById('attach'); t.classList.toggle('on'); attachOn=t.classList.contains('on'); document.getElementById('attachTag').textContent= attachOn?'시크 스트레이트 · 브랜드별 추천 사이즈 카드 (첨부됨)':'프로필 없이 요청 (전문가가 다시 물어볼 수 있어요)'; }
+
+  function submitRequest(){
+    if(!reqSvc) return;
+    curSvc=reqSvc;
+    var occs=[...document.querySelectorAll('#rOcc .chip.sel')].map(c=>c.dataset.v);
+    curOcc=occs[0]||'all';
+    curBudget=(document.querySelector('#rBudget .o.sel')||{dataset:{v:'all'}}).dataset.v;
+    fromReq=true;
+    syncControls();
+    document.querySelectorAll('#tabs .t').forEach(t=>t.classList.toggle('on', t.dataset.svc===curSvc));
+    document.querySelectorAll('#occ .chip').forEach(c=>c.classList.toggle('on', c.dataset.occ===curOcc));
+    var parts=[ '<b>'+SVC[curSvc]+'</b>' ];
+    if(occs.length) parts.push(occs.map(o=>OCC[o]).join('·'));
+    if(curBudget!=='all') parts.push('예산 '+BUD[curBudget]);
+    parts.push(attachOn?'📏 체형 첨부됨':'체형 미첨부');
+    document.getElementById('bannerText').innerHTML=parts.join(' · ')+' 조건으로 매칭했어요';
+    document.getElementById('matchCTA').style.display='none';
+    document.getElementById('banner').style.display='flex';
+    go('list'); render();
+  }
+
+  (function(){ var d=document.getElementById('rDate'); if(d){ var t=new Date(), z=n=>(n<10?'0':'')+n; d.min=t.getFullYear()+'-'+z(t.getMonth()+1)+'-'+z(t.getDate()); } })();
+  render();
+</script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fitting · 체형진단 결과 (웹)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{ --bg:#ffffff; --bg2:#f7f8fa; --ink:#191a1c; --sub:#71717a; --sub2:#a6a7ae; --line:#eeeff1; --line2:#e3e4e8; --soft:#f2f3f5; --ac:#2563eb; --ok:#2f9e6f; --ok-soft:#e7f4ee; }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; letter-spacing:-.02em; -webkit-font-smoothing:antialiased;}
+  a{color:inherit; text-decoration:none; cursor:pointer;}
+  header{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--line);}
+  .nav{max-width:1040px; margin:0 auto; height:64px; display:flex; align-items:center; gap:26px; padding:0 28px;}
+  .logo{font-size:21px; font-weight:800; letter-spacing:-.06em; color:var(--ink);}
+  .topmenu{display:flex; gap:2px;}
+  .topmenu a{padding:8px 14px; border-radius:9px; font-weight:600; font-size:15px; color:var(--sub);}
+  .topmenu a.on{color:var(--ink); font-weight:700; background:var(--soft);}
+  .right{margin-left:auto; font-size:14px; color:var(--sub);}
+
+  .wrap{max-width:1040px; margin:0 auto; padding:34px 28px 90px;}
+  .crumb{font-size:13px; color:var(--sub2); font-weight:600; margin-bottom:8px;}
+  h1{font-size:30px; font-weight:800; letter-spacing:-.045em;}
+  .lead{font-size:16px; color:var(--sub); margin-top:8px;}
+  .feat{font-size:13px; color:var(--sub2); font-weight:700; margin:0 0 10px;}
+
+  .gtoggle{display:inline-flex; border:1.5px solid var(--line2); border-radius:30px; overflow:hidden; margin-top:14px;}
+  .gtoggle .g{padding:9px 20px; font-size:14px; font-weight:700; background:#fff; color:var(--sub); border:none; cursor:pointer; font-family:inherit;}
+  .gtoggle .g.on{background:var(--ink); color:#fff;}
+  .grid{display:grid; grid-template-columns:392px 1fr; gap:32px; align-items:stretch; margin-top:22px;}
+
+  /* ===== 결과 카드 (블랙 + 포인트, 도트 실루엣) ===== */
+  .card{width:392px; max-width:100%; min-height:664px; border-radius:30px; overflow:hidden; color:#fff; position:relative; box-shadow:0 24px 54px rgba(10,11,14,.34); display:flex; flex-direction:column; align-items:center; padding:24px 26px 26px; background:#16171b;}
+  .card::after{content:""; position:absolute; right:-46px; bottom:-44px; font-size:220px; font-weight:900; opacity:.045; letter-spacing:-.07em; line-height:1; color:#fff;}
+  .ctop{width:100%; display:flex; justify-content:space-between; align-items:center; font-size:11.5px; font-weight:800; letter-spacing:.16em;}
+  .cacts{display:flex; gap:8px;}
+  .cacts button{width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.14); border:none; color:#fff; font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; line-height:1; transition:.14s;}
+  .cacts button:hover{background:rgba(255,255,255,.26);}
+  .clogo{font-size:17px; font-weight:800; letter-spacing:-.05em; opacity:1;}
+  .fig{position:relative; width:120px; height:184px; margin:8px 0 4px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; animation:bob 3.4s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0) scale(.85)} 50%{transform:translateY(-6px) scale(.85)}}
+  .fig .head{width:32px; height:36px; margin-bottom:-3px; z-index:2; position:relative;}
+  .fig .head .face{position:absolute; inset:0; border-radius:10px 10px 8px 8px; background:#ecd9c9; z-index:2; background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px),repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px);}
+  .fig .head .cap{position:absolute; top:-3px; left:-3px; right:-3px; height:13px; border-radius:10px 10px 45% 45%; background:#2a2b30; z-index:3;}
+  .fig .head.female .cap{background:#9a7350;}
+  .fig .head .longhair{position:absolute; top:-5px; left:-7px; right:-7px; bottom:1px; background:#9a7350; border-radius:50% 50% 36% 36% / 46% 46% 30% 30%; z-index:1;}
+  .fig .head .ey{position:absolute; top:18px; width:4px; height:5px; border-radius:50%; background:#2a2b30; z-index:4;} .fig .head .ey.l{left:9px;} .fig .head .ey.r{right:9px;}
+  .fig .body{width:120px; position:relative; image-rendering:pixelated; background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 8px),repeating-linear-gradient(90deg,rgba(0,0,0,.16) 0 1px,transparent 1px 8px);}
+  .fig .body::before{content:""; position:absolute; left:0; top:0; bottom:0; width:42%; background:rgba(255,255,255,.18);}
+  .fig .body.straight{clip-path:polygon(38% 0,62% 0,62% 64%,64% 100%,36% 100%,38% 64%);}
+  .fig .body.aline{clip-path:polygon(40% 0,60% 0,60% 30%,88% 100%,12% 100%,40% 30%);}
+  .fig .body.vline{clip-path:polygon(13% 0,87% 0,64% 40%,60% 100%,40% 100%,36% 40%);}
+  .fig .body.xline{clip-path:polygon(17% 0,83% 0,57% 46%,87% 100%,13% 100%,43% 46%);}
+  .fig .body.balance{clip-path:polygon(33% 0,67% 0,60% 50%,67% 100%,33% 100%,40% 50%);}
+  .fig .body.diamond{clip-path:polygon(37% 0,63% 0,85% 50%,61% 100%,39% 100%,15% 50%);}
+  .fig .body.round{clip-path:ellipse(45% 47% at 50% 53%);}
+  .fig .body.tube{clip-path:polygon(43% 0,57% 0,57% 100%,43% 100%);}
+  .code{margin-top:12px; font-size:12.5px; font-weight:800; letter-spacing:.22em; opacity:.92;}
+  .word{font-size:32px; font-weight:800; letter-spacing:-.03em; line-height:1.08; margin-top:12px;}
+  .info{width:100%; text-align:left; margin-top:20px;}
+  .sl{font-size:11px; font-weight:800; letter-spacing:.04em; margin:0 0 7px; display:flex; align-items:center; gap:6px;} .sl .n{font-size:13px;}
+  .desc{font-size:14px; line-height:1.55; opacity:.92;}
+  .desc.two{min-height:43px;} .desc.ins{min-height:22px;}
+  .fits{margin-top:11px; display:flex; flex-direction:column; gap:5px;}
+  .fr{display:flex; align-items:flex-start; gap:9px; flex-wrap:wrap;} .fl{font-size:11px; font-weight:800; white-space:nowrap; padding-top:6px; min-width:46px;} .fl.no{opacity:.55;}
+  .fr.ok{min-height:32px;} .fr.no{min-height:32px;}
+  .ps{display:flex; flex-wrap:wrap; gap:6px;} .ps span{font-size:12.5px; font-weight:600; background:rgba(255,255,255,.1); padding:6px 11px; border-radius:9px;}
+  .sec2{margin-top:18px;}
+  .sigrow{margin-top:18px; font-size:13.5px; font-weight:700;}
+  .match{margin-top:11px; font-size:13.5px; font-weight:600; opacity:.95; width:100%;} .match b{font-weight:800;}
+  .grow{flex:1; min-height:16px; width:100%;}
+  .cardacts{width:100%; display:flex; gap:10px; margin-top:20px;}
+  .cardacts button{flex:1; background:transparent; border:1.5px solid rgba(255,255,255,.32); color:#fff; padding:13px; border-radius:13px; font-weight:700; font-size:14px; cursor:pointer; font-family:inherit;}
+  .cardacts button:hover{background:rgba(255,255,255,.1);}
+
+  /* ===== 우측 컨텍스트 ===== */
+  .panel{background:#fff; border:1px solid var(--line); border-radius:20px; padding:22px; margin-bottom:16px;}
+  .panel.soft{background:var(--bg2); border-color:transparent;}
+  .sztable{width:100%; border-collapse:collapse; margin-top:6px;}
+  .sztable th,.sztable td{text-align:left; padding:12px 10px; border-bottom:1px solid var(--line); font-size:15px;}
+  .sztable th{font-size:11px; color:var(--sub2); font-weight:700;}
+  .sztable .sz{font-weight:800; color:var(--ac); font-size:17px;} .sztable .why{font-size:12.5px; color:var(--sub);}
+  .kill{display:flex; gap:8px; margin-top:10px;} .kill .k{flex:1; text-align:center; padding:12px; border:1.5px solid var(--line2); border-radius:12px; cursor:pointer; font-weight:700; font-size:13px; transition:.14s;} .kill .k:hover{border-color:var(--ink);} .kill .k.sel{background:var(--ac); color:#fff; border-color:var(--ac);}
+  .btn{display:block; width:100%; text-align:center; background:var(--ink); color:#fff; border:none; padding:16px; border-radius:14px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit;}
+  .btn:hover{background:#000;} .btn.ac{background:var(--ac);} .btn.ac:hover{background:#1d4ed8;}
+  .btn.ghost{background:#fff; color:var(--ink); border:1.5px solid var(--line2);} .btn.ghost:hover{background:var(--soft);}
+  .row2{display:flex; gap:10px; margin-top:10px;} .row2 .btn{margin:0;}
+  .bridge{background:var(--ink); color:#fff; border-radius:20px; padding:22px;}
+  .bridge b{font-size:18px; letter-spacing:-.03em;} .bridge p{font-size:13px; opacity:.78; margin:8px 0 14px;}
+
+  .more{margin-top:30px;}
+  .chips{display:flex; flex-wrap:wrap; gap:7px; margin-top:10px;}
+  .chips .c{font-size:13px; font-weight:700; padding:8px 13px; border-radius:30px; border:1.5px solid var(--line2); background:#fff; color:var(--sub); cursor:pointer;}
+  .chips .c:hover{border-color:var(--ink); color:var(--ink);} .chips .c.on{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .secmark{font-size:12px; color:#cfd0d5; margin-top:40px; text-align:center;}
+  .toast{position:fixed; left:50%; bottom:30px; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 20px; border-radius:30px; font-size:14px; font-weight:600; opacity:0; pointer-events:none; transition:.25s; z-index:80;} .toast.on{opacity:1;}
+
+  @media(max-width:840px){ .grid{grid-template-columns:1fr;} .card{margin:0 auto;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <span class="logo">fitting</span>
+    <nav class="topmenu"><a>홈</a><a class="on">체형진단</a><a>쇼퍼찾기</a><a>마이</a></nav>
+    <div class="right">김도현 님</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="crumb">체형진단 · 결과</div>
+  <h1>진단 완료! 내 핏 타입이에요 ✨</h1>
+  <p class="lead">평소 입던 옷으로 분석한 결과예요 — 카드를 저장·공유하고 브랜드별 추천 사이즈도 확인해보세요</p>
+  <div class="gtoggle"><button class="g on" data-g="female" onclick="setG(this)">여성</button><button class="g" data-g="male" onclick="setG(this)">남성</button></div>
+
+  <div class="grid">
+    <!-- 좌: 결과 카드 -->
+    <div class="card" id="card"></div>
+
+    <!-- 우: 컨텍스트 -->
+    <div>
+      <div class="panel">
+        <div class="feat">📏 브랜드별 추천 사이즈 <span style="color:var(--sub); font-weight:600">· 「무신사 M·딱맞음」 기준</span></div>
+        <table class="sztable">
+          <thead><tr><th>브랜드</th><th>추천</th><th>근거</th></tr></thead>
+          <tbody>
+            <tr><td><b>유니클로</b></td><td><span class="sz">M</span></td><td class="why">정사이즈</td></tr>
+            <tr><td><b>COS</b></td><td><span class="sz">S</span></td><td class="why">크게 나와요 → 한 치수 작게</td></tr>
+            <tr><td><b>ZARA</b></td><td><span class="sz">L</span></td><td class="why">작게 나와요 → 한 치수 크게</td></tr>
+            <tr><td><b>무신사 스탠다드</b></td><td><span class="sz">M</span></td><td class="why">기준 옷</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel soft">
+        <div class="feat">이 추천, 실제로 맞아요? <span style="color:var(--sub); font-weight:600">(정확도 검증)</span></div>
+        <div class="kill"><div class="k" onclick="sel(this)">✅ 맞아요</div><div class="k" onclick="sel(this)">➖ 애매</div><div class="k" onclick="sel(this)">❌ 틀려요</div></div>
+      </div>
+
+      <div class="bridge">
+        <b>사이즈는 끝. 스타일까지 전문가에게?</b>
+        <p>내 체형·사이즈 프로필을 그대로 넘겨드려요.</p>
+        <button class="btn" style="background:#fff; color:var(--ink)" onclick="toast('쇼퍼찾기로 이동 (체형·사이즈 프로필 첨부)')">전문가에게 받기 →</button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="more">
+    <div class="feat">다른 타입은 어떻게 나올까? <span style="color:var(--sub); font-weight:600">(미리보기)</span></div>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div class="secmark">체형진단 결과 (웹) · 좌: 공유 카드 / 우: 브랜드별 추천 사이즈 + 정확도 검증 + 전문가 전환</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+  var T={
+   STR:{word:'시크 스트레이트', code:'사각체형', line:'straight', pt:'#9db8ff', profile:'어깨–허리–힙이 일직선인 직선 라인, 군더더기 없는 깔끔함이 가장 멋있어요', ok:['셔츠','일자 바지'], no:['펑퍼짐한 옷','프릴 장식'], insight:'벨트로 허리에 곡선 더하기', sig:['#미니멀','#클린','#직선'], match:'엘레강스 X라인'},
+   TRI:{word:'소프트 A라인', code:'삼각체형', line:'aline', pt:'#76d6c6', profile:'어깨는 좁고 하체에 볼륨이 있는 A라인, 시선을 위로 올리면 균형이 좋아요', ok:['A라인 치마','어두운 바지'], no:['스키니 바지','밝은 하의'], insight:'상의에 포인트 하의는 차분하게', sig:['#내추럴','#와이드','#에이라인'], match:'모던 V라인'},
+   INV:{word:'모던 V라인', code:'역삼각체형', line:'vline', pt:'#c2c7d0', profile:'어깨가 넓고 힙은 좁은 V라인, 상의는 덜고 아래로 균형을 잡으면 멋있어요', ok:['브이넥','통 넓은 바지'], no:['어깨 부풀린 옷','어깨 파인 옷'], insight:'상의는 깔끔하게 하의로 시선 분산', sig:['#모던','#시크','#브이넥'], match:'소프트 A라인'},
+   HRG:{word:'엘레강스 X라인', code:'모래시계형', line:'xline', pt:'#cf9bff', profile:'어깨·힙이 균형 잡히고 허리가 잘록한 X라인, 허리를 살리면 우아하게 떨어져요', ok:['허리 들어간 옷','벨트'], no:['펑퍼짐한 옷','허리 낮은 바지'], insight:'허리를 강조하고 세로로 길게', sig:['#엘레강스','#랩','#하이웨스트'], match:'시크 스트레이트'},
+   BAL:{word:'이지 밸런스', code:'표준체형', line:'balance', pt:'#8fd6a8', profile:'어깨·허리·힙이 고르게 균형 잡힌 표준 라인, 뭘 입어도 무난하게 잘 어울려요', ok:['웬만한 핏 OK','벨트 포인트'], no:['너무 큰 옷'], insight:'트렌드 자유롭게 포인트는 한 곳만', sig:['#밸런스','#베이직','#데일리'], match:'코지 라운드'},
+   DIA:{word:'소프트 다이아', code:'마름모꼴체형', line:'diamond', pt:'#ff9ec5', profile:'어깨·다리는 슬림하고 허리·배에 볼륨이 있는 다이아 라인, 세로로 길게 흐르면 깔끔해요', ok:['A라인 원피스','어깨 드러내기'], no:['허리 꽉 끼는 옷','짧은 상의'], insight:'중앙은 흐르게 어깨·다리는 살리기', sig:['#소프트','#세로라인','#플로우'], match:'슬릭 라인'},
+   RND:{word:'코지 라운드', code:'둥근체형', line:'round', pt:'#ff9d7a', profile:'전체적으로 부드러운 볼륨의 둥근 라인, 세로 라인과 여유 핏으로 길게 떨어뜨려요', ok:['세로 줄무늬','여유 있는 핏'], no:['딱 붙는 옷','큰 무늬'], insight:'세로로 길게 다크 톤으로 정돈', sig:['#코지','#세로라인','#다크'], match:'이지 밸런스'},
+   TUB:{word:'슬릭 라인', code:'튜브체형', line:'tube', pt:'#b6a8ff', profile:'가늘고 굴곡이 적은 일자 라인, 레이어와 디테일로 입체감을 더하면 멋져요', ok:['겹쳐 입기','소매 볼륨'], no:['딱 붙는 옷','밋밋한 일자'], insight:'레이어·디테일로 입체감 더하기', sig:['#슬릭','#레이어드','#디테일'], match:'소프트 다이아'}
+  };
+  var ORDER=['STR','TRI','INV','HRG','BAL','DIA','RND','TUB'];
+  var cur='HRG', gender='female';
+  var wmStyle=document.createElement('style'); document.head.appendChild(wmStyle);
+  function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(()=>t.classList.remove('on'),2000); }
+  function sel(el){ [...el.parentNode.children].forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); }
+  function pick(code){ cur=code; render(); }
+  function figHTML(d){ var h=150; var head='<div class="head '+gender+'">'+(gender==='female'?'<span class="longhair"></span>':'')+'<span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div>'; return '<div class="fig">'+head+'<div class="body '+d.line+'" style="background-color:'+d.pt+'; height:'+h+'px"></div></div>'; }
+  function setG(el){ document.querySelectorAll('.gtoggle .g').forEach(b=>b.classList.remove('on')); el.classList.add('on'); gender=el.dataset.g; render(); }
+  function pills(a){ return '<div class="ps">'+a.map(x=>'<span>'+x+'</span>').join('')+'</div>'; }
+  function render(){
+    document.querySelectorAll('#chips .c').forEach(c=>c.classList.toggle('on', c.dataset.k===cur));
+    var d=T[cur], card=document.getElementById('card');
+    var pi=d.profile.indexOf(','), p1=pi>0?d.profile.slice(0,pi):d.profile, p2=pi>0?d.profile.slice(pi+1).trim():'';
+    card.style.background='radial-gradient(ellipse 70% 34% at 50% 11%, '+d.pt+'2b, transparent 60%), linear-gradient(160deg,#191a1f,#0f1014)';
+    wmStyle.textContent='.card::after{content:"'+cur+'";}';
+    card.innerHTML=
+      '<div class="ctop"><span class="clogo">fitting</span><span class="cacts"><button title="결과 저장" onclick="toast(\'결과 저장 — 가입 시 영구 보관\')">🔖</button><button title="카드 공유" onclick="toast(\'카드 공유 — 인스타 스토리\')">🔗</button></span></div>'+
+      figHTML(d)+
+      '<div class="code" style="color:'+d.pt+'">'+cur+'</div>'+
+      '<div class="word">'+d.word+'</div>'+
+      '<div class="info">'+
+        '<div class="sl" style="color:'+d.pt+'">MY FIT</div><div class="desc two">'+p1+(p2?'<br>'+p2:'')+'</div>'+
+        '<div class="sl sec2" style="color:'+d.pt+'">FIT INSIGHT</div><div class="desc ins">'+d.insight+'</div>'+
+        '<div class="fits sec2"><div class="fr ok"><span class="fl" style="color:'+d.pt+'">잘맞 FIT</span>'+pills(d.ok)+'</div><div class="fr no"><span class="fl no">피할 FIT</span>'+pills(d.no)+'</div></div>'+
+      '</div>'+
+      '<div class="grow"></div>'+
+      '<div class="match">🩷 환상의 궁합 · <b style="color:'+d.pt+'">'+d.match+'</b></div>';
+  }
+  document.getElementById('chips').innerHTML=ORDER.map(k=>'<span class="c" data-k="'+k+'" onclick="pick(\''+k+'\')">'+T[k].word+'</span>').join('');
+  render();
+</script>
+</body>
+</html>
