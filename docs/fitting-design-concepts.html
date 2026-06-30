@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅(Fitting) — 디자인 컨셉 10</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Segoe UI",Roboto,sans-serif;
+    background:#0e1014;color:#e8eaed;line-height:1.5;padding:34px 16px 90px;
+  }
+  .wrap{max-width:1280px;margin:0 auto}
+  .head h1{font-size:26px;margin-bottom:6px}
+  .head p{color:#9aa3b2;font-size:13.5px;max-width:760px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;margin-top:28px}
+
+  .concept{border-radius:16px;overflow:hidden;border:1px solid #232a35;background:#141821;display:flex;flex-direction:column}
+  .c-head{padding:16px 18px 13px;color:#fff}
+  .c-no{font-size:11px;font-weight:800;opacity:.7;letter-spacing:1px}
+  .c-name{font-size:18px;font-weight:800;letter-spacing:-.3px;margin-top:2px}
+  .c-tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;opacity:.9;margin-top:3px}
+  .c-ref{font-size:11px;opacity:.8;margin-top:7px}
+
+  .palette{display:flex;height:34px}
+  .palette div{flex:1}
+
+  .preview{padding:15px 16px 17px;display:flex;flex-direction:column;gap:12px}
+  .device{border-radius:13px;padding:14px}
+  .progress{height:6px;border-radius:6px;overflow:hidden;margin-bottom:10px}
+  .progress i{display:block;height:100%;width:60%}
+  .step{font-size:10px;font-weight:800;margin-bottom:5px;letter-spacing:.4px}
+  .q{font-size:14px;font-weight:800;margin-bottom:9px;letter-spacing:-.3px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px}
+  .chip{font-size:11px;font-weight:700;padding:5px 11px;border-radius:18px;border:1.5px solid}
+  .btn{text-align:center;font-size:12.5px;font-weight:800;padding:10px;border-radius:10px}
+
+  .result{border-radius:13px;padding:14px}
+  .res-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .avatar{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+  .res-type{font-size:10px;font-weight:800;letter-spacing:.5px;opacity:.85}
+  .res-title{font-size:15px;font-weight:800;letter-spacing:-.3px}
+  .res-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:7px 0;border-top:1px solid rgba(128,128,128,.16)}
+  .sz{font-size:11px;font-weight:800;padding:2px 9px;border-radius:7px}
+
+  .when{font-size:11.5px;color:#9aa3b2;border-top:1px dashed #2c333f;padding-top:10px}
+  .when b{color:#cdd3de}
+
+  .closing{margin-top:38px;background:#141821;border:1px solid #232a35;border-left:3px solid #a78bfa;border-radius:0 12px 12px 0;padding:18px 22px;font-size:13.5px;color:#cdd3de}
+  .closing h3{font-size:15px;margin-bottom:8px}
+  .closing table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12.5px}
+  .closing td,.closing th{border:1px solid #2c333f;padding:7px 10px;text-align:left}
+  .closing th{background:#1b1f28}
+  footer{text-align:center;color:#7a8294;font-size:12px;margin-top:44px}
+
+  /* section divider */
+  .divider{margin:46px 0 4px;padding-bottom:10px;border-bottom:1px solid #2c333f}
+  .divider h2{font-size:20px}
+  .divider p{font-size:13px;color:#9aa3b2;margin-top:5px;max-width:760px}
+
+  /* design idiom effects */
+  .glass{background:rgba(255,255,255,.16);backdrop-filter:blur(11px);-webkit-backdrop-filter:blur(11px);border:1px solid rgba(255,255,255,.35);color:#fff}
+  .neu{background:#e0e5ec;box-shadow:6px 6px 13px #b9bfca,-6px -6px 13px #ffffff;border:none;color:#3a4252}
+  .neu-chip{background:#e0e5ec;box-shadow:3px 3px 6px #b9bfca,-3px -3px 6px #fff;border:none !important;color:#52607a}
+  .neu-in{background:#e0e5ec;box-shadow:inset 3px 3px 6px #b9bfca,inset -3px -3px 6px #fff}
+  .brut{border:2.5px solid #000 !important;box-shadow:4px 4px 0 #000;border-radius:4px !important}
+  .brut .btn,.brut .chip{border-radius:3px !important}
+  .clay{border-radius:22px;box-shadow:7px 7px 15px rgba(80,70,120,.18),inset -4px -4px 8px rgba(120,100,160,.12),inset 4px 4px 9px rgba(255,255,255,.8);border:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <h1>핏팅(Fitting) — 디자인 컨셉 10</h1>
+    <p>서비스의 세 긴장(사이즈 <b>신뢰</b> · 체형 캐릭터 <b>친근함</b> · 패션 <b>감각</b>)을 서로 다른 비중으로 푼 10개 방향.
+       각 컨셉을 실제 컬러로 진단 입력·결과 카드에 렌더링했습니다.</p>
+  </div>
+
+  <div class="grid">
+
+  <!-- 1 Trust Calm -->
+  <div class="concept">
+    <div class="c-head" style="background:linear-gradient(135deg,#0b2545,#13315c)">
+      <div class="c-no">01</div><div class="c-name">Trust Calm</div>
+      <div class="c-tag" style="color:#7fb0ff">신뢰 우선 · 핀테크 블루</div>
+      <div class="c-ref">ref. 토스 · Noom</div>
+    </div>
+    <div class="palette"><div style="background:#1d4ed8"></div><div style="background:#3b82f6"></div><div style="background:#dbeafe"></div><div style="background:#0f172a"></div><div style="background:#f8fafc"></div></div>
+    <div class="preview">
+      <div class="device" style="background:#f8fafc;color:#0f172a">
+        <div class="progress" style="background:#e2e8f0"><i style="background:#1d4ed8"></i></div>
+        <div class="step" style="color:#1d4ed8">STEP 3/5 · 착용 경험</div>
+        <div class="q">가슴은 어떻게 맞았나요?</div>
+        <div class="chips"><span class="chip" style="background:#1d4ed8;border-color:#1d4ed8;color:#fff">딱맞음</span><span class="chip" style="border-color:#cbd5e1;color:#475569">여유</span><span class="chip" style="border-color:#cbd5e1;color:#475569">큼</span></div>
+        <div class="btn" style="background:#1d4ed8;color:#fff">다음</div>
+      </div>
+      <div class="result" style="background:#fff;color:#0f172a;border:1px solid #e2e8f0">
+        <div class="res-top"><div class="avatar" style="background:#dbeafe">📐</div><div><div class="res-type" style="color:#1d4ed8">체형 프로필</div><div class="res-title">표준 균형형</div></div></div>
+        <div class="res-row"><span>유니클로</span><span class="sz" style="background:#dbeafe;color:#1d4ed8">M</span></div>
+        <div class="res-row"><span>무신사 스탠다드</span><span class="sz" style="background:#dbeafe;color:#1d4ed8">L</span></div>
+      </div>
+      <div class="when"><b>언제:</b> 정확도 신뢰가 1순위. 가장 안전한 기본값.</div>
+    </div>
+  </div>
+
+  <!-- 2 Soft Pop -->
+  <div class="concept">
+    <div class="c-head" style="background:linear-gradient(135deg,#3b1d63,#6d28d9)">
+      <div class="c-no">02</div><div class="c-name">Soft Pop</div>
+      <div class="c-tag" style="color:#d8b4fe">공유 후크 · 캐릭터 파스텔</div>
+      <div class="c-ref">ref. 16Personalities</div>
+    </div>
+    <div class="palette"><div style="background:#7c3aed"></div><div style="background:#f472b6"></div><div style="background:#fde68a"></div><div style="background:#ede9fe"></div><div style="background:#faf5ff"></div></div>
+    <div class="preview">
+      <div class="device" style="background:#faf5ff;color:#3b0764">
+        <div class="progress" style="background:#ede9fe"><i style="background:linear-gradient(90deg,#7c3aed,#f472b6)"></i></div>
+        <div class="step" style="color:#7c3aed">STEP 3/5 · 착용 경험 ✨</div>
+        <div class="q">가슴은 어떻게 맞았나요?</div>
+        <div class="chips"><span class="chip" style="background:#7c3aed;border-color:#7c3aed;color:#fff">딱맞음</span><span class="chip" style="border-color:#d8b4fe;color:#7c3aed">여유</span><span class="chip" style="border-color:#d8b4fe;color:#7c3aed">큼</span></div>
+        <div class="btn" style="background:linear-gradient(90deg,#7c3aed,#f472b6);color:#fff">다음</div>
+      </div>
+      <div class="result" style="background:linear-gradient(160deg,#ede9fe,#fff);color:#3b0764;border:1px solid #e9d5ff">
+        <div class="res-top"><div class="avatar" style="background:#fde68a">🦒</div><div><div class="res-type" style="color:#7c3aed">체형 캐릭터</div><div class="res-title">늘씬한 기린형</div></div></div>
+        <div class="res-row" style="border-color:#e9d5ff"><span>유니클로</span><span class="sz" style="background:#7c3aed;color:#fff">M</span></div>
+        <div class="res-row" style="border-color:#e9d5ff"><span>무신사 스탠다드</span><span class="sz" style="background:#f472b6;color:#fff">L</span></div>
+      </div>
+      <div class="when"><b>언제:</b> 공유·재미가 성장 동력. 수치 신뢰는 별도 보강.</div>
+    </div>
+  </div>
+
+  <!-- 3 Warm Editorial -->
+  <div class="concept">
+    <div class="c-head" style="background:linear-gradient(135deg,#2a2422,#3f3531)">
+      <div class="c-no">03</div><div class="c-name">Warm Editorial</div>
+      <div class="c-tag" style="color:#e0c9a6">패션 감각 · 매거진 크림</div>
+      <div class="c-ref">ref. 무신사 · Stitch Fix</div>
+    </div>
+    <div class="palette"><div style="background:#1c1917"></div><div style="background:#a16207"></div><div style="background:#e7e2d9"></div><div style="background:#f5f1ea"></div><div style="background:#d97706"></div></div>
+    <div class="preview">
+      <div class="device" style="background:#f5f1ea;color:#1c1917">
+        <div class="progress" style="background:#e7e2d9"><i style="background:#1c1917"></i></div>
+        <div class="step" style="color:#a16207;letter-spacing:1px">STEP 3/5 — FIT</div>
+        <div class="q">가슴은 어떻게 맞았나요?</div>
+        <div class="chips"><span class="chip" style="background:#1c1917;border-color:#1c1917;color:#f5f1ea">딱맞음</span><span class="chip" style="border-color:#1c1917;color:#1c1917">여유</span><span class="chip" style="border-color:#1c1917;color:#1c1917">큼</span></div>
+        <div class="btn" style="background:#1c1917;color:#f5f1ea">다음</div>
+      </div>
+      <div class="result" style="background:#1c1917;color:#f5f1ea;border:1px solid #3f3531">
+        <div class="res-top"><div class="avatar" style="background:#a16207">◆</div><div><div class="res-type" style="color:#e0c9a6;letter-spacing:1px">BODY PROFILE</div><div class="res-title">밸런스드 슬림</div></div></div>
+        <div class="res-row" style="border-color:#3f3531"><span>유니클로</span><span class="sz" style="background:#a16207;color:#fff">M</span></div>
+        <div class="res-row" style="border-color:#3f3531"><span>무신사 스탠다드</span><span class="sz" style="background:#d97706;color:#fff">L</span></div>
+      </div>
+      <div class="when"><b>언제:</b> 패션 큐레이션 포지셔닝·전문가 매칭(v2).</div>
+    </div>
+  </div>
+
+  <!-- 4 Mono Premium -->
+  <div class="concept">
+    <div class="c-head" style="background:linear-gradient(135deg,#111,#2b2b2b)">
+      <div class="c-no">04</div><div class="c-name">Mono Premium</div>
+      <div class="c-tag" style="color:#cfcfcf">미니멀 럭스 · 흑백 절제</div>
+      <div class="c-ref">ref. COS · Apple</div>
+    </div>
+    <div class="palette"><div style="background:#000"></div><div style="background:#404040"></div><div style="background:#a3a3a3"></div><div style="background:#e5e5e5"></div><div style="background:#fff"></div></div>
+    <div class="preview">
+      <div class="device" style="background:#fff;color:#111">
+        <div class="progress" style="background:#e5e5e5"><i style="background:#111"></i></div>
+        <div class="step" style="color:#111">STEP 3/5 · 착용 경험</div>
+        <div class="q">가슴은 어떻게 맞았나요?</div>
+        <div class="chips"><span class="chip" style="background:#111;border-color:#111;color:#fff">딱맞음</span><span class="chip" style="border-color:#d4d4d4;color:#525252">여유</span><span class="chip" style="border-color:#d4d4d4;color:#525252">큼</span></div>
+        <div class="btn" style="background:#111;color:#fff">다음</div>
+      </div>
+      <div class="result" style="background:#fafafa;color:#111;border:1px solid #e5e5e5">
+        <div class="res-top"><div class="avatar" style="background:#111;color:#fff">▲</div><div><div class="res-type" style="color:#737373">BODY PROFILE</div><div class="res-title">스탠다드 핏</div></div></div>
+        <div class="res-row"><span>유니클로</span><span class="sz" style="background:#111;color:#fff">M</span></div>
+        <div class="res-row"><span>무신사 스탠다드</span><span class="sz" style="background:#111;color:#fff">L</span></div>
+      </div>
+      <div class="when"><b>언제:</b> 고급·중립. 데이터가 주인공, 색은 비움.</div>
+    </div>
+  </div>
+
+  <!-- 5 Mint Wellness -->
+  <div class="concept">
+    <div class="c-head" style="background:linear-gradient(135deg,#064e3b,#0d9488)">
+      <div class="c-no">05</div><div class="c-name">Mint Wellness</div>
+      <div class="c-tag" style="color:#99f6e4">건강·청량 · 민트 그린</div>
+      <div class="c-ref">ref. 캐시워크 · 눔</div>
+    </div>
+    <div class="palette"><div style="background:#0d9488"></div><div style="background:#2dd4bf"></div><div style="background:#ccfbf1"></div><div style="background:#134e4a"></div><div style="background:#f0fdfa"></div></div>
+    <div class="preview">
+      <div class="device" style="background:#f0fdfa;color:#134e4a">
+        <div class="progress" style="background:#ccfbf1"><i style="background:#0d9488"></i></div>
+        <div class="step" style="color:#0d9488">STEP 3/5 · 착용 경험</div>
+        <div class="q">가슴은 어떻게 맞았나요?</div>
+        <div class="chips"><span class="chip" style="background:#0d9488;border-color:#0d9488;color:#fff">딱맞음</span><span class="chip" style="border-color:#5eead4;color:#0f766e">여유</span><span class="chip" style="border-color:#5eead4;color:#0f766e">큼</span></div>
+        <div class="btn" style="background:#0d9488;color:#fff">다음</div>
+      </div>
+      <div class="result" style="background:#fff;color:#134e4a;border:1px solid #ccfbf1">
+        <div class="res-top"><div class="avatar" style="background:#ccfbf1">🌿</div><div><div class="res-type" style="color:#0d9488">체형 프로필</div><div class="res-title">탄탄한 균형형</div></div></div>
+        <div class="res-row" style="border-color:#ccfbf1"><span>유니클로</span><span class="sz" style="background:#ccfbf1;color:#0f766e">M</span></div>
+        <div class="res-row" style="border-color:#ccfbf1"><span>무신사 스탠다드</span><span class="sz" style="background:#ccfbf1;color:#0f766e">L</span></div>
+      </div>
+      <div class="when"><b>언제:</b> 자기관리·웰니스 톤. 신선하고 부담 없음.</div>
+    </div>
+  </div>
+
+  <!-- 6 Coral Warmth -->
+  <div class="concept">
+    <div class="c-head" style="background:linear-gradient(135deg,#7c2d12,#ea580c)">
+      <div class="c-no">06</div><div class="c-name">Coral Warmth</div>
+      <div class="c-tag" style="color:#fed7aa">다정함 · 코랄 피치</div>
+      <div class="c-ref">ref. 당근 · 배민 톤</div>
+    </div>
+    <div class="palette"><div style="background:#f97316"></div><div style="background:#fb7185"></div><div style="background:#ffedd5"></div><div style="background:#7c2d12"></div><div style="background:#fff7ed"></div></div>
+    <div class="preview">
+      <div class="device" style="background:#fff7ed;color:#7c2d12">
+        <div class="progress" style="background:#ffedd5"><i style="background:#f97316"></i></div>
+        <div class="step" style="color:#ea580c">STEP 3/5 · 착용 경험</div>
+        <div class="q">가슴은 어떻게 맞았나요?</div>
+        <div class="chips"><span class="chip" style="background:#f97316;border-color:#f97316;color:#fff">딱맞음</span><span class="chip" style="border-color:#fdba74;color:#c2410c">여유</span><span class="chip" style="border-color:#fdba74;color:#c2410c">큼</span></div>
+        <div class="btn" style="background:#f97316;color:#fff">다음</div>
+      </div>
+      <div class="result" style="background:#fff;color:#7c2d12;border:1px solid #ffedd5">
+        <div class="res-top"><div class="avatar" style="background:#ffedd5">🧡</div><div><div class="res-type" style="color:#ea580c">체형 캐릭터</div><div class="res-title">포근한 곰돌이형</div></div></div>
+        <div class="res-row" style="border-color:#ffedd5"><span>유니클로</span><span class="sz" style="background:#f97316;color:#fff">L</span></div>
+        <div class="res-row" style="border-color:#ffedd5"><span>무신사 스탠다드</span><span class="sz" style="background:#fb7185;color:#fff">XL</span></div>
+      </div>
+      <div class="when"><b>언제:</b> 대중·친근 대량 유입. 따뜻해서 진입장벽↓.</div>
+    </div>
+  </div>
+
+  <!-- 7 Neo Pop Y2K -->
+  <div class="concept">
+    <div class="c-head" style="background:linear-gradient(135deg,#1e1b4b,#db2777)">
+      <div class="c-no">07</div><div class="c-name">Neo Pop</div>
+      <div class="c-tag" style="color:#f5d0fe">Y2K · 비비드 그라데이션</div>
+      <div class="c-ref">ref. 제트 · Gen-Z 앱</div>
+    </div>
+    <div class="palette"><div style="background:#7c3aed"></div><div style="background:#ec4899"></div><div style="background:#22d3ee"></div><div style="background:#facc15"></div><div style="background:#0f0a1e"></div></div>
+    <div class="preview">
+      <div class="device" style="background:#150f29;color:#f5d0fe">
+        <div class="progress" style="background:#2e2152"><i style="background:linear-gradient(90deg,#22d3ee,#ec4899,#facc15)"></i></div>
+        <div class="step" style="color:#22d3ee">STEP 3/5 · FIT CHECK</div>
+        <div class="q">가슴은 어떻게 맞았나요?</div>
+        <div class="chips"><span class="chip" style="background:linear-gradient(90deg,#ec4899,#7c3aed);border-color:transparent;color:#fff">딱맞음</span><span class="chip" style="border-color:#6d28d9;color:#d8b4fe">여유</span><span class="chip" style="border-color:#6d28d9;color:#d8b4fe">큼</span></div>
+        <div class="btn" style="background:linear-gradient(90deg,#22d3ee,#ec4899);color:#0f0a1e">다음</div>
+      </div>
+      <div class="result" style="background:#0f0a1e;color:#f5d0fe;border:1px solid #2e2152">
+        <div class="res-top"><div class="avatar" style="background:linear-gradient(135deg,#22d3ee,#ec4899)">⚡</div><div><div class="res-type" style="color:#22d3ee">BODY TYPE</div><div class="res-title">샤프 슬림형</div></div></div>
+        <div class="res-row" style="border-color:#2e2152"><span>유니클로</span><span class="sz" style="background:#ec4899;color:#fff">M</span></div>
+        <div class="res-row" style="border-color:#2e2152"><span>무신사 스탠다드</span><span class="sz" style="background:#22d3ee;color:#0f0a1e">L</span></div>
+      </div>
+      <div class="when"><b>언제:</b> 10~20대 타깃·SNS 바이럴. 강렬·개성.</div>
+    </div>
+  </div>
+
+  <!-- 8 Midnight Neon -->
+  <div class="concept">
+    <div class="c-head" style="background:linear-gradient(135deg,#020617,#0e7490)">
+      <div class="c-no">08</div><div class="c-name">Midnight Neon</div>
+      <div class="c-tag" style="color:#67e8f9">다크 · 테크 네온</div>
+      <div class="c-ref">ref. Linear · Whoop</div>
+    </div>
+    <div class="palette"><div style="background:#06b6d4"></div><div style="background:#22d3ee"></div><div style="background:#a3e635"></div><div style="background:#0f172a"></div><div style="background:#020617"></div></div>
+    <div class="preview">
+      <div class="device" style="background:#0b1220;color:#e2e8f0;border:1px solid #1e293b">
+        <div class="progress" style="background:#1e293b"><i style="background:#22d3ee"></i></div>
+        <div class="step" style="color:#22d3ee">STEP 3/5 · 착용 경험</div>
+        <div class="q">가슴은 어떻게 맞았나요?</div>
+        <div class="chips"><span class="chip" style="background:#22d3ee;border-color:#22d3ee;color:#020617">딱맞음</span><span class="chip" style="border-color:#334155;color:#94a3b8">여유</span><span class="chip" style="border-color:#334155;color:#94a3b8">큼</span></div>
+        <div class="btn" style="background:#22d3ee;color:#020617">다음</div>
+      </div>
+      <div class="result" style="background:#020617;color:#e2e8f0;border:1px solid #1e293b">
+        <div class="res-top"><div class="avatar" style="background:#0e7490;color:#a5f3fc">◉</div><div><div class="res-type" style="color:#22d3ee">BODY PROFILE</div><div class="res-title">밸런스드 핏</div></div></div>
+        <div class="res-row" style="border-color:#1e293b"><span>유니클로</span><span class="sz" style="background:#0e7490;color:#a5f3fc">M</span></div>
+        <div class="res-row" style="border-color:#1e293b"><span>무신사 스탠다드</span><span class="sz" style="background:#0e7490;color:#a5f3fc">L</span></div>
+      </div>
+      <div class="when"><b>언제:</b> 테크·데이터 신뢰감 + 힙함. 다크 선호층.</div>
+    </div>
+  </div>
+
+  <!-- 9 Oat Neutral -->
+  <div class="concept">
+    <div class="c-head" style="background:linear-gradient(135deg,#44403c,#78716c)">
+      <div class="c-no">09</div><div class="c-name">Oat Neutral</div>
+      <div class="c-tag" style="color:#e7e5e4">차분 미니멀 · 오트·세이지</div>
+      <div class="c-ref">ref. 무지 · 모노하</div>
+    </div>
+    <div class="palette"><div style="background:#78716c"></div><div style="background:#a8a29e"></div><div style="background:#d6d3d1"></div><div style="background:#84a98c"></div><div style="background:#f5f5f4"></div></div>
+    <div class="preview">
+      <div class="device" style="background:#f5f5f4;color:#44403c">
+        <div class="progress" style="background:#e7e5e4"><i style="background:#84a98c"></i></div>
+        <div class="step" style="color:#78716c">STEP 3/5 · 착용 경험</div>
+        <div class="q">가슴은 어떻게 맞았나요?</div>
+        <div class="chips"><span class="chip" style="background:#84a98c;border-color:#84a98c;color:#fff">딱맞음</span><span class="chip" style="border-color:#d6d3d1;color:#78716c">여유</span><span class="chip" style="border-color:#d6d3d1;color:#78716c">큼</span></div>
+        <div class="btn" style="background:#52525b;color:#fff">다음</div>
+      </div>
+      <div class="result" style="background:#fff;color:#44403c;border:1px solid #e7e5e4">
+        <div class="res-top"><div class="avatar" style="background:#dce4dd">🌾</div><div><div class="res-type" style="color:#84a98c">체형 프로필</div><div class="res-title">내추럴 균형형</div></div></div>
+        <div class="res-row" style="border-color:#e7e5e4"><span>유니클로</span><span class="sz" style="background:#e7e5e4;color:#57534e">M</span></div>
+        <div class="res-row" style="border-color:#e7e5e4"><span>무신사 스탠다드</span><span class="sz" style="background:#e7e5e4;color:#57534e">L</span></div>
+      </div>
+      <div class="when"><b>언제:</b> 조용한 고급·30대+. 자극 없이 오래 봐도 편함.</div>
+    </div>
+  </div>
+
+  <!-- 10 Swiss Bold -->
+  <div class="concept">
+    <div class="c-head" style="background:linear-gradient(135deg,#171717,#dc2626)">
+      <div class="c-no">10</div><div class="c-name">Swiss Bold</div>
+      <div class="c-tag" style="color:#fca5a5">그래픽 · 흑+시그널 컬러</div>
+      <div class="c-ref">ref. 토스증권 · 스위스 타이포</div>
+    </div>
+    <div class="palette"><div style="background:#171717"></div><div style="background:#dc2626"></div><div style="background:#facc15"></div><div style="background:#e5e5e5"></div><div style="background:#fff"></div></div>
+    <div class="preview">
+      <div class="device" style="background:#fff;color:#171717">
+        <div class="progress" style="background:#e5e5e5"><i style="background:#dc2626"></i></div>
+        <div class="step" style="color:#dc2626;letter-spacing:1px">STEP 3/5 — 착용 경험</div>
+        <div class="q">가슴은 어떻게 맞았나요?</div>
+        <div class="chips"><span class="chip" style="background:#171717;border-color:#171717;color:#fff;border-radius:4px">딱맞음</span><span class="chip" style="border-color:#171717;color:#171717;border-radius:4px">여유</span><span class="chip" style="border-color:#171717;color:#171717;border-radius:4px">큼</span></div>
+        <div class="btn" style="background:#dc2626;color:#fff;border-radius:4px">다음 →</div>
+      </div>
+      <div class="result" style="background:#171717;color:#fff;border:1px solid #171717">
+        <div class="res-top"><div class="avatar" style="background:#dc2626;border-radius:4px">★</div><div><div class="res-type" style="color:#facc15;letter-spacing:1px">BODY PROFILE</div><div class="res-title">SLIM BALANCE</div></div></div>
+        <div class="res-row" style="border-color:#3f3f3f"><span>유니클로</span><span class="sz" style="background:#facc15;color:#171717;border-radius:4px">M</span></div>
+        <div class="res-row" style="border-color:#3f3f3f"><span>무신사 스탠다드</span><span class="sz" style="background:#facc15;color:#171717;border-radius:4px">L</span></div>
+      </div>
+      <div class="when"><b>언제:</b> 강한 브랜드 각인·임팩트. 직각 모서리로 단단함.</div>
+    </div>
+  </div>
+
+  </div>
+
+  <div class="divider">
+    <h2>＋ 내장 스타일 샘플 — 디자인 이디엄(Design Idioms)</h2>
+    <p>위 10개가 우리 서비스에 맞춘 <em>방향</em>이라면, 아래는 제가 기본으로 즐겨 쓰는 <b>보편적 디자인 언어</b> 8종입니다.
+       같은 화면(진단 입력·결과 카드)에 입혀 톤을 비교해 보세요. 색이 아니라 <b>형태·질감·그림자 어휘</b>의 차이입니다.</p>
+  </div>
+
+  <div class="grid">
+
+  <!-- I1 shadcn/ui -->
+  <div class="concept">
+    <div class="c-head" style="background:linear-gradient(135deg,#18181b,#3f3f46)">
+      <div class="c-no">IDIOM A</div><div class="c-name">shadcn / ui</div>
+      <div class="c-tag" style="color:#d4d4d8">모던 기본값 · 뉴트럴·미세 보더</div>
+      <div class="c-ref">요즘 웹앱의 사실상 표준</div>
+    </div>
+    <div class="palette"><div style="background:#18181b"></div><div style="background:#71717a"></div><div style="background:#e4e4e7"></div><div style="background:#f4f4f5"></div><div style="background:#fff"></div></div>
+    <div class="preview">
+      <div class="device" style="background:#fff;color:#18181b;border:1px solid #e4e4e7">
+        <div class="progress" style="background:#f4f4f5"><i style="background:#18181b"></i></div>
+        <div class="step" style="color:#71717a">STEP 3/5 · 착용 경험</div>
+        <div class="q">가슴은 어떻게 맞았나요?</div>
+        <div class="chips"><span class="chip" style="background:#18181b;border-color:#18181b;color:#fff;border-radius:8px">딱맞음</span><span class="chip" style="border-color:#e4e4e7;color:#52525b;border-radius:8px">여유</span><span class="chip" style="border-color:#e4e4e7;color:#52525b;border-radius:8px">큼</span></div>
+        <div class="btn" style="background:#18181b;color:#fff;border-radius:8px">다음</div>
+      </div>
+      <div class="result" style="background:#fff;color:#18181b;border:1px solid #e4e4e7">
+        <div class="res-top"><div class="avatar" style="background:#f4f4f5;border:1px solid #e4e4e7">📐</div><div><div class="res-type" style="color:#71717a">체형 프로필</div><div class="res-title">표준 균형형</div></div></div>
+        <div class="res-row"><span>유니클로</span><span class="sz" style="background:#f4f4f5;color:#18181b;border:1px solid #e4e4e7">M</span></div>
+        <div class="res-row"><span>무신사 스탠다드</span><span class="sz" style="background:#f4f4f5;color:#18181b;border:1px solid #e4e4e7">L</span></div>
+      </div>
+      <div class="when"><b>특징:</b> 깔끔·중립·어떤 색도 얹기 쉬움. 가장 무난한 베이스.</div>
+    </div>
+  </div>
+
+  <!-- I2 Material 3 -->
+  <div class="concept">
+    <div class="c-head" style="background:linear-gradient(135deg,#21005d,#6750a4)">
+      <div class="c-no">IDIOM B</div><div class="c-name">Material 3</div>
+      <div class="c-tag" style="color:#d0bcff">구글 · 토널·둥근 고저감</div>
+      <div class="c-ref">안드로이드 네이티브 톤</div>
+    </div>
+    <div class="palette"><div style="background:#6750a4"></div><div style="background:#7d5260"></div><div style="background:#eaddff"></div><div style="background:#e8def8"></div><div style="background:#fffbfe"></div></div>
+    <div class="preview">
+      <div class="device" style="background:#fffbfe;color:#1d1b20">
+        <div class="progress" style="background:#e8def8;border-radius:99px"><i style="background:#6750a4"></i></div>
+        <div class="step" style="color:#6750a4">STEP 3/5 · 착용 경험</div>
+        <div class="q">가슴은 어떻게 맞았나요?</div>
+        <div class="chips"><span class="chip" style="background:#eaddff;border-color:#eaddff;color:#21005d;border-radius:8px">딱맞음</span><span class="chip" style="border-color:#cac4d0;color:#49454f;border-radius:8px">여유</span><span class="chip" style="border-color:#cac4d0;color:#49454f;border-radius:8px">큼</span></div>
+        <div class="btn" style="background:#6750a4;color:#fff;border-radius:99px">다음</div>
+      </div>
+      <div class="result" style="background:#f7f2fa;color:#1d1b20;border:none;box-shadow:0 1px 3px rgba(0,0,0,.2)">
+        <div class="res-top"><div class="avatar" style="background:#eaddff">📐</div><div><div class="res-type" style="color:#6750a4">체형 프로필</div><div class="res-title">표준 균형형</div></div></div>
+        <div class="res-row" style="border-color:#e7e0ec"><span>유니클로</span><span class="sz" style="background:#eaddff;color:#21005d;border-radius:99px;padding:2px 11px">M</span></div>
+        <div class="res-row" style="border-color:#e7e0ec"><span>무신사 스탠다드</span><span class="sz" style="background:#eaddff;color:#21005d;border-radius:99px;padding:2px 11px">L</span></div>
+      </div>
+      <div class="when"><b>특징:</b> 알약형 버튼·고저감(elevation)·토널 팔레트. 친근·안드로이드.</div>
+    </div>
+  </div>
+
+  <!-- I3 iOS HIG -->
+  <div class="concept">
+    <div class="c-head" style="background:linear-gradient(135deg,#1c1c1e,#3a3a3c)">
+      <div class="c-no">IDIOM C</div><div class="c-name">iOS · HIG</div>
+      <div class="c-tag" style="color:#7fb0ff">애플 · 시스템 블루·그룹 리스트</div>
+      <div class="c-ref">아이폰 네이티브 톤</div>
+    </div>
+    <div class="palette"><div style="background:#007aff"></div><div style="background:#34c759"></div><div style="background:#f2f2f7"></div><div style="background:#8e8e93"></div><div style="background:#fff"></div></div>
+    <div class="preview">
+      <div class="device" style="background:#f2f2f7;color:#000">
+        <div class="progress" style="background:#e5e5ea"><i style="background:#007aff"></i></div>
+        <div class="step" style="color:#8e8e93">STEP 3/5 · 착용 경험</div>
+        <div class="q">가슴은 어떻게 맞았나요?</div>
+        <div class="chips"><span class="chip" style="background:#007aff;border-color:#007aff;color:#fff;border-radius:9px">딱맞음</span><span class="chip" style="background:#fff;border-color:#e5e5ea;color:#007aff;border-radius:9px">여유</span><span class="chip" style="background:#fff;border-color:#e5e5ea;color:#007aff;border-radius:9px">큼</span></div>
+        <div class="btn" style="background:#007aff;color:#fff;border-radius:12px">다음</div>
+      </div>
+      <div class="result" style="background:#fff;color:#000;border-radius:13px;border:none">
+        <div class="res-top"><div class="avatar" style="background:#f2f2f7">📐</div><div><div class="res-type" style="color:#8e8e93">체형 프로필</div><div class="res-title">표준 균형형</div></div></div>
+        <div class="res-row" style="border-color:#f2f2f7"><span>유니클로</span><span class="sz" style="color:#8e8e93;font-weight:600">M ›</span></div>
+        <div class="res-row" style="border-color:#f2f2f7"><span>무신사 스탠다드</span><span class="sz" style="color:#8e8e93;font-weight:600">L ›</span></div>
+      </div>
+      <div class="when"><b>특징:</b> 시스템 블루·둥근 그룹 카드·› 셰브론. 깨끗·익숙.</div>
+    </div>
+  </div>
+
+  <!-- I4 Glassmorphism -->
+  <div class="concept">
+    <div class="c-head" style="background:linear-gradient(135deg,#4f46e5,#db2777)">
+      <div class="c-no">IDIOM D</div><div class="c-name">Glassmorphism</div>
+      <div class="c-tag" style="color:#fbcfe8">프로스트 글래스 · 블러·투명</div>
+      <div class="c-ref">비전OS·화려한 배경 위</div>
+    </div>
+    <div class="palette"><div style="background:#6366f1"></div><div style="background:#ec4899"></div><div style="background:#22d3ee"></div><div style="background:rgba(255,255,255,.4)"></div><div style="background:rgba(255,255,255,.15)"></div></div>
+    <div class="preview" style="background:linear-gradient(135deg,#6366f1,#ec4899);border-radius:12px;margin:0 2px">
+      <div class="device glass">
+        <div class="progress" style="background:rgba(255,255,255,.25)"><i style="background:#fff"></i></div>
+        <div class="step" style="color:#fff">STEP 3/5 · 착용 경험</div>
+        <div class="q" style="color:#fff">가슴은 어떻게 맞았나요?</div>
+        <div class="chips"><span class="chip" style="background:rgba(255,255,255,.85);border-color:transparent;color:#4f46e5">딱맞음</span><span class="chip" style="border-color:rgba(255,255,255,.5);color:#fff">여유</span><span class="chip" style="border-color:rgba(255,255,255,.5);color:#fff">큼</span></div>
+        <div class="btn" style="background:rgba(255,255,255,.9);color:#4f46e5">다음</div>
+      </div>
+      <div class="result glass">
+        <div class="res-top"><div class="avatar" style="background:rgba(255,255,255,.3)">📐</div><div><div class="res-type" style="color:#fff;opacity:.9">체형 프로필</div><div class="res-title" style="color:#fff">표준 균형형</div></div></div>
+        <div class="res-row" style="border-color:rgba(255,255,255,.25);color:#fff"><span>유니클로</span><span class="sz" style="background:rgba(255,255,255,.85);color:#4f46e5">M</span></div>
+        <div class="res-row" style="border-color:rgba(255,255,255,.25);color:#fff"><span>무신사 스탠다드</span><span class="sz" style="background:rgba(255,255,255,.85);color:#4f46e5">L</span></div>
+      </div>
+      <div class="when" style="color:#fff;opacity:.9;border-color:rgba(255,255,255,.3)"><b style="color:#fff">특징:</b> 반투명 블러로 깊이감. 화려한 배경 필수, 가독성 주의.</div>
+    </div>
+  </div>
+
+  <!-- I5 Neumorphism -->
+  <div class="concept">
+    <div class="c-head" style="background:linear-gradient(135deg,#8a94a6,#aab2c0)">
+      <div class="c-no">IDIOM E</div><div class="c-name">Neumorphism</div>
+      <div class="c-tag" style="color:#f0f3f8">소프트 UI · 압출 그림자</div>
+      <div class="c-ref">단색 위 부드러운 입체</div>
+    </div>
+    <div class="palette"><div style="background:#e0e5ec"></div><div style="background:#b9bfca"></div><div style="background:#ffffff"></div><div style="background:#6d7787"></div><div style="background:#9aa3b2"></div></div>
+    <div class="preview" style="background:#e0e5ec;border-radius:12px;margin:0 2px">
+      <div class="device neu">
+        <div class="progress neu-in"><i style="background:#6d7787;border-radius:6px"></i></div>
+        <div class="step" style="color:#6d7787">STEP 3/5 · 착용 경험</div>
+        <div class="q" style="color:#3a4252">가슴은 어떻게 맞았나요?</div>
+        <div class="chips"><span class="chip neu-chip" style="color:#3a4252">딱맞음</span><span class="chip neu-chip">여유</span><span class="chip neu-chip">큼</span></div>
+        <div class="btn neu" style="color:#3a4252">다음</div>
+      </div>
+      <div class="result neu">
+        <div class="res-top"><div class="avatar neu-in" style="color:#6d7787">📐</div><div><div class="res-type" style="color:#6d7787">체형 프로필</div><div class="res-title" style="color:#3a4252">표준 균형형</div></div></div>
+        <div class="res-row" style="border-color:#cfd5de"><span>유니클로</span><span class="sz neu-chip" style="padding:3px 11px">M</span></div>
+        <div class="res-row" style="border-color:#cfd5de"><span>무신사 스탠다드</span><span class="sz neu-chip" style="padding:3px 11px">L</span></div>
+      </div>
+      <div class="when" style="border-color:#cfd5de"><b>특징:</b> 같은 배경색의 부드러운 음/양각. 감성적이나 대비·접근성 약점.</div>
+    </div>
+  </div>
+
+  <!-- I6 Neo-Brutalism -->
+  <div class="concept">
+    <div class="c-head" style="background:linear-gradient(135deg,#000,#1f2937)">
+      <div class="c-no">IDIOM F</div><div class="c-name">Neo-Brutalism</div>
+      <div class="c-tag" style="color:#fde047">두꺼운 보더·하드 섀도</div>
+      <div class="c-ref">개성·임팩트 강한 인디</div>
+    </div>
+    <div class="palette"><div style="background:#000"></div><div style="background:#fde047"></div><div style="background:#4ade80"></div><div style="background:#f472b6"></div><div style="background:#fff"></div></div>
+    <div class="preview" style="background:#fde047;border-radius:12px;margin:0 2px">
+      <div class="device brut" style="background:#fff;color:#000">
+        <div class="progress" style="background:#fff;border:2px solid #000"><i style="background:#4ade80"></i></div>
+        <div class="step" style="color:#000;font-weight:900">STEP 3/5 · 착용 경험</div>
+        <div class="q">가슴은 어떻게 맞았나요?</div>
+        <div class="chips"><span class="chip brut" style="background:#4ade80;color:#000;box-shadow:2px 2px 0 #000">딱맞음</span><span class="chip" style="border:2px solid #000;color:#000;border-radius:3px">여유</span><span class="chip" style="border:2px solid #000;color:#000;border-radius:3px">큼</span></div>
+        <div class="btn brut" style="background:#f472b6;color:#000;box-shadow:3px 3px 0 #000">다음 →</div>
+      </div>
+      <div class="result brut" style="background:#fff;color:#000">
+        <div class="res-top"><div class="avatar brut" style="background:#fde047;box-shadow:2px 2px 0 #000">📐</div><div><div class="res-type" style="color:#000;font-weight:900">체형 프로필</div><div class="res-title">표준 균형형</div></div></div>
+        <div class="res-row" style="border-color:#000;border-top-width:2px"><span style="font-weight:700">유니클로</span><span class="sz brut" style="background:#4ade80;color:#000;box-shadow:2px 2px 0 #000">M</span></div>
+        <div class="res-row" style="border-color:#000;border-top-width:2px"><span style="font-weight:700">무신사 스탠다드</span><span class="sz brut" style="background:#4ade80;color:#000;box-shadow:2px 2px 0 #000">L</span></div>
+      </div>
+      <div class="when" style="border-color:#000"><b>특징:</b> 검정 두꺼운 테두리+오프셋 그림자. 강렬·재밌으나 신뢰감엔 불리.</div>
+    </div>
+  </div>
+
+  <!-- I7 Claymorphism -->
+  <div class="concept">
+    <div class="c-head" style="background:linear-gradient(135deg,#7c3aed,#c084fc)">
+      <div class="c-no">IDIOM G</div><div class="c-name">Claymorphism</div>
+      <div class="c-tag" style="color:#f3e8ff">말랑 3D · 푹신한 파스텔</div>
+      <div class="c-ref">3D 일러스트·아동친화 톤</div>
+    </div>
+    <div class="palette"><div style="background:#a78bfa"></div><div style="background:#f0abfc"></div><div style="background:#fda4af"></div><div style="background:#ddd6fe"></div><div style="background:#f5f3ff"></div></div>
+    <div class="preview" style="background:#ede9fe;border-radius:12px;margin:0 2px">
+      <div class="device clay" style="background:#faf5ff;color:#5b21b6">
+        <div class="progress" style="background:#ede9fe;border-radius:99px"><i style="background:#a78bfa;border-radius:99px"></i></div>
+        <div class="step" style="color:#7c3aed">STEP 3/5 · 착용 경험</div>
+        <div class="q">가슴은 어떻게 맞았나요?</div>
+        <div class="chips"><span class="chip clay" style="background:#a78bfa;color:#fff;padding:7px 14px">딱맞음</span><span class="chip clay" style="background:#f5f3ff;color:#7c3aed;padding:7px 14px">여유</span><span class="chip clay" style="background:#f5f3ff;color:#7c3aed;padding:7px 14px">큼</span></div>
+        <div class="btn clay" style="background:#a78bfa;color:#fff;padding:12px">다음</div>
+      </div>
+      <div class="result clay" style="background:#fff;color:#5b21b6">
+        <div class="res-top"><div class="avatar clay" style="background:#fda4af">🧸</div><div><div class="res-type" style="color:#7c3aed">체형 캐릭터</div><div class="res-title">포근 균형형</div></div></div>
+        <div class="res-row" style="border-color:#ede9fe"><span>유니클로</span><span class="sz clay" style="background:#a78bfa;color:#fff;padding:3px 11px">M</span></div>
+        <div class="res-row" style="border-color:#ede9fe"><span>무신사 스탠다드</span><span class="sz clay" style="background:#f0abfc;color:#fff;padding:3px 11px">L</span></div>
+      </div>
+      <div class="when"><b>특징:</b> 큰 라운드+푹신 그림자. 귀엽고 캐릭터 친화. 결과카드 후보.</div>
+    </div>
+  </div>
+
+  <!-- I8 Notion Minimal -->
+  <div class="concept">
+    <div class="c-head" style="background:linear-gradient(135deg,#37352f,#605c54)">
+      <div class="c-no">IDIOM H</div><div class="c-name">Notion · Docs</div>
+      <div class="c-tag" style="color:#e3e2df">절제 미니멀 · 문서 톤</div>
+      <div class="c-ref">조용한 생산성 앱 무드</div>
+    </div>
+    <div class="palette"><div style="background:#37352f"></div><div style="background:#787066"></div><div style="background:#e9e5dc"></div><div style="background:#f7f6f3"></div><div style="background:#fff"></div></div>
+    <div class="preview">
+      <div class="device" style="background:#fff;color:#37352f;border:1px solid #e9e5dc">
+        <div class="progress" style="background:#f1efea"><i style="background:#37352f"></i></div>
+        <div class="step" style="color:#9b9588">STEP 3/5 · 착용 경험</div>
+        <div class="q" style="font-weight:700">가슴은 어떻게 맞았나요?</div>
+        <div class="chips"><span class="chip" style="background:#37352f;border-color:#37352f;color:#fff;border-radius:5px;font-weight:600">딱맞음</span><span class="chip" style="border-color:#e0ddd5;color:#605c54;border-radius:5px;font-weight:600">여유</span><span class="chip" style="border-color:#e0ddd5;color:#605c54;border-radius:5px;font-weight:600">큼</span></div>
+        <div class="btn" style="background:#37352f;color:#fff;border-radius:6px">다음</div>
+      </div>
+      <div class="result" style="background:#f7f6f3;color:#37352f;border:1px solid #e9e5dc">
+        <div class="res-top"><div class="avatar" style="background:#e9e5dc;border-radius:8px">📐</div><div><div class="res-type" style="color:#9b9588">체형 프로필</div><div class="res-title">표준 균형형</div></div></div>
+        <div class="res-row" style="border-color:#e9e5dc"><span>유니클로</span><span class="sz" style="background:#e9e5dc;color:#37352f;border-radius:4px">M</span></div>
+        <div class="res-row" style="border-color:#e9e5dc"><span>무신사 스탠다드</span><span class="sz" style="background:#e9e5dc;color:#37352f;border-radius:4px">L</span></div>
+      </div>
+      <div class="when"><b>특징:</b> 따뜻한 그레이·각진 라운드·문서 느낌. 차분한 신뢰.</div>
+    </div>
+  </div>
+
+  </div>
+
+  <div class="closing">
+    <h3>🎯 우리 서비스 관점 정리</h3>
+    <p>킬 메트릭이 <b>사이즈 정확도(신뢰)</b>이므로 <b>신뢰 계열(01·04·08)</b>을 골격으로, <b>결과 카드</b>엔
+       <b>캐릭터 계열(02·06·07)</b>의 공유 후크를 얹는 하이브리드가 안전합니다.</p>
+    <table>
+      <tr><th>목표</th><th>1순위 후보</th><th>성격</th></tr>
+      <tr><td>신뢰·정확도 최우선(기본값)</td><td><b>01 Trust Calm</b> / 04 Mono / 08 Neon</td><td>믿게 만드는 톤</td></tr>
+      <tr><td>공유·바이럴 성장</td><td><b>02 Soft Pop</b> / 07 Neo Pop</td><td>캐릭터·재미</td></tr>
+      <tr><td>대중 친근 유입</td><td>06 Coral / 05 Mint</td><td>따뜻·청량</td></tr>
+      <tr><td>패션 큐레이션·고급(v2)</td><td>03 Editorial / 09 Oat / 10 Swiss</td><td>감각·절제</td></tr>
+    </table>
+    <p style="margin-top:10px">추천 조합 한 줄: <b>01(골격) + 02(결과카드)</b> — "신뢰는 블루로, 재미는 결과에서."</p>
+  </div>
+
+  <footer>핏팅(Fitting) Design Concepts ×10 · 컬러·UI 시안 (채택 후 디자인 시스템으로 토큰 확정)</footer>
+</div>
+</body>
+</html>
+</content>

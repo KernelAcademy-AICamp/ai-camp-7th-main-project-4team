@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅 — 기본 정보 입력</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/variable/woff2/SUIT-Variable.css">
+<link rel="stylesheet" href="fitting.css">
+</head>
+<body>
+
+<div class="protobar">
+  <span class="id">1.1</span><span class="nm">기본 정보 입력</span><span class="star">★</span> <span class="small" style="color:#9aa3b2">순차 입력</span>
+  <div class="links">
+    <a href="index.html">◇ 전체 흐름</a>
+    <a href="02-consent.html">← 동의</a>
+    <a href="04-fit-experience.html">다음: 착용경험 →</a>
+  </div>
+</div>
+
+<div class="flow">
+  <div class="stepper">
+    <span class="label">STEP 1 / 2 · 기본 정보</span>
+    <span class="dot now"></span><span class="dot"></span>
+  </div>
+
+  <div class="wprogress">
+    <span class="frac" id="wfrac">1 / 4</span>
+    <div class="bar"><i id="wfill"></i></div>
+  </div>
+
+  <!-- Q1 성별 -->
+  <div class="wstep active">
+    <span class="qnum">Question 1</span>
+    <h2 class="qhead">성별을 알려주세요</h2>
+    <p class="qhelp">브랜드 사이즈 체계가 성별로 갈려서 먼저 여쭤요.</p>
+    <div class="qbody">
+      <div class="seg stack">
+        <div class="opt" onclick="pickNext(this)">남성</div>
+        <div class="opt" onclick="pickNext(this)">여성</div>
+        <div class="opt" onclick="pickNext(this)">선택 안 함</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q2 나이·키 -->
+  <div class="wstep">
+    <span class="qnum">Question 2</span>
+    <h2 class="qhead">나이와 키는요?</h2>
+    <p class="qhelp">연령대와 키는 체형 분포를 좁히는 데 쓰여요.</p>
+    <div class="qbody">
+      <div class="grid-2">
+        <div class="field">
+          <label>나이</label>
+          <div class="input-suffix"><input type="number" class="input-num" placeholder="00" inputmode="numeric"><span class="unit">세</span></div>
+        </div>
+        <div class="field">
+          <label>키</label>
+          <div class="input-suffix"><input type="number" class="input-num" placeholder="000" inputmode="numeric"><span class="unit">cm</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q3 몸무게 -->
+  <div class="wstep">
+    <span class="qnum">Question 3</span>
+    <h2 class="qhead">몸무게를 알려주세요</h2>
+    <p class="qhelp">사이즈 정확도에 가장 큰 영향을 줘요. 정확할수록 좋아요.</p>
+    <div class="qbody">
+      <div class="field" style="max-width:220px">
+        <label>몸무게</label>
+        <div class="input-suffix"><input type="number" class="input-num" placeholder="00" inputmode="numeric"><span class="unit">kg</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q4 선호핏 -->
+  <div class="wstep">
+    <span class="qnum">Question 4</span>
+    <h2 class="qhead">평소 좋아하는 핏은?</h2>
+    <p class="qhelp">같은 치수라도 즐겨 입는 여유감이 사람마다 달라요.</p>
+    <div class="qbody">
+      <div class="seg stack">
+        <div class="opt" onclick="pickGo(this)">스키니 — 몸에 딱 붙는</div>
+        <div class="opt" onclick="pickGo(this)">슬림 — 군더더기 없이</div>
+        <div class="opt on" onclick="pickGo(this)">레귤러 — 적당한 여유</div>
+        <div class="opt" onclick="pickGo(this)">루즈 — 넉넉하게</div>
+        <div class="opt" onclick="pickGo(this)">오버 — 크게 떨어지는</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 내비 -->
+  <div class="wnav">
+    <button class="btn-line" onclick="prev()">이전</button>
+    <span class="spacer"></span>
+    <button class="btn-primary" id="nextbtn" onclick="next()">다음</button>
+  </div>
+  <p class="cta-note center" style="margin-top:-12px;margin-bottom:26px">한 번에 하나씩만 — 부담 없이 진행돼요.</p>
+</div>
+
+<script>
+  const NEXT_URL='04-fit-experience.html', PREV_URL='02-consent.html';
+  const steps=[...document.querySelectorAll('.wstep')];
+  let cur=0;
+  function render(){
+    steps.forEach((s,k)=>s.classList.toggle('active',k===cur));
+    document.getElementById('wfill').style.width=((cur+1)/steps.length*100)+'%';
+    document.getElementById('wfrac').textContent=(cur+1)+' / '+steps.length;
+    document.getElementById('nextbtn').textContent = cur===steps.length-1 ? '입던 옷 입력하기' : '다음';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function next(){ if(cur<steps.length-1){cur++;render()} else location.href=NEXT_URL; }
+  function prev(){ if(cur>0){cur--;render()} else location.href=PREV_URL; }
+  function pick(el){[...el.parentElement.children].forEach(c=>c.classList.remove('on'));el.classList.add('on')}
+  function pickNext(el){pick(el);setTimeout(next,220)}   // 단일 선택 → 자동 진행
+  function pickGo(el){pick(el)}                          // 마지막 단계는 '다음' 버튼으로
+  render();
+</script>
+</body>
+</html>

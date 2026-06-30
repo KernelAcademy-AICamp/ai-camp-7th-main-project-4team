@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅 — 전문가 매칭</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/variable/woff2/SUIT-Variable.css">
+<link rel="stylesheet" href="fitting.css">
+</head>
+<body>
+
+<div class="protobar">
+  <span class="id">1.2</span><span class="nm">전문가 매칭 진입 (페이크도어)</span><span class="star">★</span> <span class="small" style="color:#facc15">전환신호 측정 ≥25%</span>
+  <div class="links">
+    <a href="index.html">◇ 전체 흐름</a>
+    <a href="08-expert-bridge.html">← 전환</a>
+    <a href="10-notify-done.html">다음: 완료 →</a>
+  </div>
+</div>
+
+<div class="flow">
+  <a href="08-expert-bridge.html" class="backlink">← 이전</a>
+
+  <span class="kicker mt-16">Coming soon</span>
+  <h2 class="step-h">어떤 도움이<br>필요하세요?</h2>
+  <p class="lead mb-24">관심 있는 서비스를 골라주세요. 1기 스타일리스트를 모으는 중이라, 오픈하면 가장 먼저 알려드릴게요.</p>
+
+  <div class="svc-grid mb-16">
+    <div class="svc" onclick="toggleSvc(this)">
+      <div class="check"></div>
+      <div><h4>온라인 스타일링</h4><p>비대면으로 코디·상품·구매링크를 받아요. 가장 가볍게 시작.</p></div>
+    </div>
+    <div class="svc" onclick="toggleSvc(this)">
+      <div class="check"></div>
+      <div><h4>동행 쇼핑</h4><p>스타일리스트가 매장에 함께 가서 직접 골라줘요.</p></div>
+    </div>
+    <div class="svc" onclick="toggleSvc(this)">
+      <div class="check"></div>
+      <div><h4>이미지 컨설팅</h4><p>체형·퍼스널컬러까지 오프라인 세션으로 점검해요.</p></div>
+    </div>
+  </div>
+
+  <div class="notice mb-24">초기엔 전문가가 아직 모이는 중이에요. 알림 신청 = 오픈 우선 안내. <span style="color:var(--ink);font-weight:700">실제 이용 시점에만 가입을 요청</span>해요.</div>
+
+  <div class="mt-8 mb-24">
+    <a href="10-notify-done.html" class="btn-primary btn-block" onclick="return needPick(event)">오픈 알림 신청</a>
+    <p class="cta-note center" id="picknote">하나 이상 골라주세요. 가입 게이트는 이 다음 단계예요(lazy registration ②).</p>
+  </div>
+
+  <hr class="divider">
+  <div class="row-between">
+    <p class="small">스타일리스트세요?</p>
+    <a href="e22-products.html" class="btn-line btn-sm">1기 전문가 지원 →</a>
+  </div>
+</div>
+
+<script>
+  function toggleSvc(el){el.classList.toggle('on');document.getElementById('picknote').textContent='선택됨. 가입 게이트는 이 다음 단계예요(lazy registration ②).'}
+  function needPick(e){
+    if(![...document.querySelectorAll('.svc')].some(s=>s.classList.contains('on'))){
+      e.preventDefault();
+      document.getElementById('picknote').textContent='관심 서비스를 하나 이상 골라주세요.';
+      document.getElementById('picknote').style.color='var(--warn)';
+      return false;
+    }
+    return true;
+  }
+</script>
+</body>
+</html>

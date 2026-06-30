@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅 — 진단 결과</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/variable/woff2/SUIT-Variable.css">
+<link rel="stylesheet" href="fitting.css">
+</head>
+<body>
+
+<div class="protobar">
+  <span class="id">1.1.1.2</span><span class="nm">결과 카드 (캐릭터형)</span><span class="star">★</span>
+  <div class="links">
+    <a href="index.html">◇ 전체 흐름</a>
+    <a href="#" onclick="toggleLow();return false">상태: 저신뢰 보기</a>
+    <a href="07-feedback.html">다음: 피드백 →</a>
+  </div>
+</div>
+
+<div class="flow">
+
+  <!-- state: 추정 실패 / 저신뢰 배너 (건너뛰기·저신뢰 공용) -->
+  <div class="notice warn hidden" id="lowbanner" style="margin-top:20px">
+    <strong>기본 추정이에요.</strong> <span id="lowtext">입력한 옷이 비슷한 핏뿐이라 유형을 충분히 못 풀었어요.</span>
+    <a href="04-fit-experience.html" style="color:var(--warn);font-weight:700">입어본 옷 추가하고 정확히 보기 →</a>
+  </div>
+
+  <!-- ① 캐릭터 히어로 -->
+  <div class="char-hero mt-24">
+    <span class="char-code">FIT TYPE · WTSR</span>
+    <div class="char-avatar">
+      <svg viewBox="0 0 120 120" fill="none" stroke="#0a0a0a" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="60" cy="33" r="17"/>
+        <!-- 넓은 어깨 강조 -->
+        <path d="M18 92 C18 70 34 60 60 60 C86 60 102 70 102 92"/>
+        <path d="M18 92 L18 100 M102 92 L102 100"/>
+        <!-- 어깨 라인 강조 점 -->
+        <circle cx="24" cy="74" r="2.2" fill="#0a0a0a" stroke="none"/>
+        <circle cx="96" cy="74" r="2.2" fill="#0a0a0a" stroke="none"/>
+      </svg>
+    </div>
+    <div class="char-name">어깨로 완성하는<br>균형가</div>
+    <p class="char-tag">상체 골격이 또렷하고 허리·기장은 표준에 가까운 유형. "어깨로 고르고 기장은 확인"이 핵심인 사람.</p>
+    <div class="char-rarity">진단자 중 <b>상위 18%</b>의 유형이에요</div>
+  </div>
+
+  <!-- ② 스펙트럼 측정 -->
+  <div class="card mt-16 mb-16">
+    <div class="kicker mb-16">Your measurements</div>
+    <div class="spectrum">
+      <div class="spec">
+        <div class="spec-top"><span class="pole dom">넓은 어깨</span><span class="pct"><span class="num">72</span>%</span><span class="pole">좁은 어깨</span></div>
+        <div class="track"><i data-pct="72"></i></div>
+        <div class="axis">골격 폭 — 어깨 기준으로 한 치수가 갈려요</div>
+      </div>
+      <div class="spec">
+        <div class="spec-top"><span class="pole dom">상체 중심</span><span class="pct"><span class="num">58</span>%</span><span class="pole">하체 중심</span></div>
+        <div class="track"><i data-pct="58"></i></div>
+        <div class="axis">상하 균형 — 거의 균형, 살짝 상체형</div>
+      </div>
+      <div class="spec">
+        <div class="spec-top"><span class="pole dom">짧은 팔·기장</span><span class="pct"><span class="num">66</span>%</span><span class="pole">긴 팔·기장</span></div>
+        <div class="track"><i data-pct="66"></i></div>
+        <div class="axis">기장 비율 — 어깨에 맞추면 소매가 남는 편</div>
+      </div>
+      <div class="spec">
+        <div class="spec-top"><span class="pole dom">여유 핏 선호</span><span class="pct"><span class="num">61</span>%</span><span class="pole">타이트 선호</span></div>
+        <div class="track"><i data-pct="61"></i></div>
+        <div class="axis">핏 취향 — 적당히 여유 있는 핏을 즐김</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 해설 -->
+  <div class="card mb-16">
+    <div class="kicker mb-16">What it means</div>
+    <div class="explain">
+      <div class="ex-block">
+        <div class="lbl"><span class="mk">＋</span> 강점</div>
+        <p>어깨 골격이 또렷해서 <strong>재킷·셔츠가 잘 받는 체형</strong>이에요. 어깨만 맞으면 전체 실루엣이 안정적으로 떨어집니다.</p>
+      </div>
+      <div class="ex-block">
+        <div class="lbl"><span class="mk">＝</span> 핏 공식</div>
+        <p>항상 <strong>어깨 기준으로 사이즈를 고르고, 소매·기장은 따로 확인</strong>하세요. 레귤러핏은 어깨 기준 M, 오버핏은 한 치수 내려도 충분히 여유로워요.</p>
+      </div>
+      <div class="ex-block">
+        <div class="lbl"><span class="mk">！</span> 주의</div>
+        <p>슬림핏 셔츠는 가슴이 끼일 수 있어 <strong>같은 치수에서 한 단계 위</strong>를 권해요. 소매가 남는 건 체형 특성이라 수선을 염두에 두면 좋아요.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ 브랜드별 추천 사이즈 (제품 본체) -->
+  <div class="card mb-16">
+    <div class="kicker mb-16">Recommended sizes</div>
+    <div class="size-table">
+      <div class="st-head"><span>Brand</span><span>Size</span></div>
+      <div class="size-row"><span class="brand">유니클로<small>레귤러핏 셔츠 기준</small></span><span class="sz num">M<span class="conf">딱맞음</span></span></div>
+      <div class="size-row"><span class="brand">무신사 스탠다드<small>오버핏은 M도 가능</small></span><span class="sz num">L<span class="conf">여유</span></span></div>
+      <div class="size-row"><span class="brand">스파오<small>슬림핏은 L 권장</small></span><span class="sz num">M<span class="conf">딱맞음</span></span></div>
+      <div class="size-row"><span class="brand">탑텐<small>기장 짧을 수 있음</small></span><span class="sz num">M<span class="conf">확인 필요</span></span></div>
+    </div>
+  </div>
+  <p class="small mb-24">※ 사이즈 수치는 규칙 기반 엔진이 브랜드 실측에 맞춰 계산합니다. 캐릭터·해설 서술만 AI가 생성합니다.</p>
+
+  <!-- ⑤ 공유 후크 (바이럴) -->
+  <div class="share-hook">
+    <h3>나는 <span class="num">WTSR</span> · 어깨로 완성하는 균형가</h3>
+    <p>친구는 어떤 핏 유형일까? 결과 카드를 공유해보세요.</p>
+    <div class="share-row">
+      <a href="#" class="share-btn solid" onclick="alert('프로토타입: 결과 카드 이미지 생성 → 저장/공유 (1.1.1.5)');return false">📷 카드 이미지 저장</a>
+      <a href="#" class="share-btn" onclick="alert('프로토타입: 링크 복사');return false">🔗 링크 복사</a>
+      <a href="#" class="share-btn" onclick="alert('프로토타입: 카카오 공유');return false">💬 카카오톡</a>
+    </div>
+  </div>
+
+  <!-- 저장 → 가입 (lazy registration ①) -->
+  <div class="card-soft mt-16 mb-16">
+    <div class="row-between">
+      <div>
+        <div style="font-size:14px;font-weight:800">이 결과 저장하기</div>
+        <p class="small" style="margin-top:4px">지금은 임시 링크로 보관돼요(만료 있음). 가입하면 영구 보관됩니다.</p>
+      </div>
+      <a href="#" class="btn-line btn-sm" onclick="alert('프로토타입: 회원가입(1.3)으로 분기 — lazy registration ①');return false">저장 → 가입</a>
+    </div>
+  </div>
+
+  <!-- ⑥ 다른 유형 둘러보기 (바이럴 탐색) -->
+  <div class="mb-16">
+    <div class="kicker mb-8" style="display:block">16가지 핏 유형</div>
+    <div class="type-strip">
+      <span class="type-chip" onclick="alert('프로토타입: 유형 도감 — 다른 유형 설명');return false"><b>NTSR</b> 슬림 미니멀러</span>
+      <span class="type-chip" onclick="alert('프로토타입: 유형 도감');return false"><b>WLBT</b> 롱라인 시크</span>
+      <span class="type-chip" onclick="alert('프로토타입: 유형 도감');return false"><b>NLBR</b> 편안한 레이어러</span>
+      <span class="type-chip" onclick="alert('프로토타입: 유형 도감');return false">＋ 전체 보기</span>
+    </div>
+  </div>
+
+  <!-- 액션 -->
+  <div class="btn-row mb-24">
+    <a href="07-feedback.html" class="btn-primary" style="flex:1">결과가 맞는지 알려주기</a>
+    <a href="04-fit-experience.html" class="btn-line">재진단</a>
+  </div>
+
+</div>
+
+<script>
+  // 스펙트럼 막대 애니메이션 (로드 후 채움)
+  function animate(){document.querySelectorAll('.spec .track i').forEach(i=>{i.style.width=i.dataset.pct+'%'})}
+  setTimeout(animate,200);
+
+  function setLow(on,reason){
+    document.getElementById('lowbanner').classList.toggle('hidden',!on);
+    document.querySelector('.char-rarity').innerHTML = on
+      ? '신뢰도가 낮은 <b>임시 유형</b>이에요 — 옷을 추가하면 확정돼요'
+      : '진단자 중 <b>상위 18%</b>의 유형이에요';
+    if(on){
+      document.getElementById('lowtext').textContent = reason==='skip'
+        ? '입어본 옷 없이 키·몸무게로만 추정했어요. 실제와 다를 수 있어요.'
+        : '입력한 옷이 비슷한 핏뿐이라 유형을 충분히 못 풀었어요.';
+    }
+  }
+  function toggleLow(){ setLow(document.getElementById('lowbanner').classList.contains('hidden'),'similar'); }
+
+  // 건너뛰기 유입(?conf=low) → 자동으로 기본 추정(저신뢰) 상태
+  if(new URLSearchParams(location.search).get('conf')==='low'){ setLow(true,'skip'); }
+</script>
+</body>
+</html>

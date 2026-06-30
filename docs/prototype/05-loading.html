@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅 — 진단 중</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/variable/woff2/SUIT-Variable.css">
+<link rel="stylesheet" href="fitting.css">
+</head>
+<body>
+
+<div class="protobar">
+  <span class="id">1.1.1.1</span><span class="nm">진단 로딩</span><span class="star">★</span>
+  <div class="links">
+    <a href="index.html">◇ 전체 흐름</a>
+    <a href="04-fit-experience.html">← 착용경험</a>
+    <a href="06-result.html">결과 카드 →</a>
+  </div>
+</div>
+
+<div class="flow">
+  <div class="loading-wrap">
+    <div class="spinner"></div>
+    <span class="kicker">Translating your size</span>
+    <h2 class="step-h center" style="margin-top:6px" id="ltitle">체형을 역산하고 있어요</h2>
+    <p class="lead center" style="max-width:360px" id="lsub">착용 경험을 거꾸로 풀어 부위별 치수와 여유 선호를 추정합니다.</p>
+
+    <ul class="load-steps" id="steps">
+      <li data-i="0"><span class="tick"></span>착용 경험 → 부위별 여유(cm) 환산</li>
+      <li data-i="1"><span class="tick"></span>체형 프로필 역산</li>
+      <li data-i="2"><span class="tick"></span>브랜드 실측 DB에 투영</li>
+      <li data-i="3"><span class="tick"></span>핏 인사이트 서술 생성</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  // 건너뛰기(입어본 옷 없음) 모드면 키·몸무게만으로 추정 → 저신뢰 결과로 연결
+  const SKIP=new URLSearchParams(location.search).get('skip')==='1';
+  const RESULT = SKIP ? '06-result.html?conf=low' : '06-result.html';
+  if(SKIP){
+    document.getElementById('ltitle').textContent='기본 추정을 만들고 있어요';
+    document.getElementById('lsub').textContent='착용 경험 없이 키·몸무게로만 추정합니다. 정확도는 낮을 수 있어요.';
+    const first=document.querySelector('#steps li[data-i="0"]');
+    if(first)first.textContent='착용 경험 없음 — 통계 기반 추정으로 진행';
+  }
+  // 프로토타입: 단계 점등 애니메이션 후 결과로 자동 이동
+  const lis=[...document.querySelectorAll('#steps li')];
+  let i=0;
+  function tick(){
+    if(i>0)lis[i-1].classList.replace('active','done');
+    if(i<lis.length){lis[i].classList.add('active');i++;setTimeout(tick,750)}
+    else{lis[lis.length-1].classList.replace('active','done');setTimeout(()=>location.href=RESULT,500)}
+  }
+  setTimeout(tick,400);
+</script>
+</body>
+</html>
