@@ -39,41 +39,22 @@
     <p class="qhelp">브랜드 사이즈 체계가 성별로 갈려서 먼저 여쭤요.</p>
     <div class="qbody">
       <div class="seg stack">
-        <div class="opt" onclick="pickNext(this)">남성</div>
-        <div class="opt" onclick="pickNext(this)">여성</div>
-        <div class="opt" onclick="pickNext(this)">선택 안 함</div>
+        <div class="opt" onclick="pickSex(this)">남성</div>
+        <div class="opt" onclick="pickSex(this)">여성</div>
       </div>
     </div>
   </div>
 
-  <!-- Q2 나이·키 -->
+  <!-- Q2 나이·키·몸무게 (한 화면) -->
   <div class="wstep">
     <span class="qnum">Question 2</span>
-    <h2 class="qhead">나이와 키는요?</h2>
-    <p class="qhelp">연령대와 키는 체형 분포를 좁히는 데 쓰여요.</p>
+    <h2 class="qhead">나이 · 키 · 몸무게를<br>알려주세요</h2>
+    <p class="qhelp">체형 분포를 좁히는 데 쓰여요. 특히 <strong>몸무게가 사이즈 정확도에 가장 큰 영향</strong>을 줘요.</p>
     <div class="qbody">
-      <div class="grid-2">
-        <div class="field">
-          <label>나이</label>
-          <div class="input-suffix"><input type="number" class="input-num" placeholder="00" inputmode="numeric"><span class="unit">세</span></div>
-        </div>
-        <div class="field">
-          <label>키</label>
-          <div class="input-suffix"><input type="number" class="input-num" placeholder="000" inputmode="numeric"><span class="unit">cm</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Q3 몸무게 -->
-  <div class="wstep">
-    <span class="qnum">Question 3</span>
-    <h2 class="qhead">몸무게를 알려주세요</h2>
-    <p class="qhelp">사이즈 정확도에 가장 큰 영향을 줘요. 정확할수록 좋아요.</p>
-    <div class="qbody">
-      <div class="field" style="max-width:220px">
-        <label>몸무게</label>
-        <div class="input-suffix"><input type="number" class="input-num" placeholder="00" inputmode="numeric"><span class="unit">kg</span></div>
+      <div class="grid-3">
+        <div class="field"><label>나이</label><select id="age"></select></div>
+        <div class="field"><label>키</label><select id="height"></select></div>
+        <div class="field"><label>몸무게</label><select id="weight"></select></div>
       </div>
     </div>
   </div>
@@ -84,7 +65,6 @@
     <span class="spacer"></span>
     <button class="btn-primary" id="nextbtn" onclick="next()">다음</button>
   </div>
-  <p class="cta-note center" style="margin-top:-12px;margin-bottom:26px">한 번에 하나씩만 — 부담 없이 진행돼요.</p>
 </div>
 
 <script>
@@ -102,6 +82,23 @@
   function prev(){ if(cur>0){cur--;render()} else location.href=PREV_URL; }
   function pick(el){[...el.parentElement.children].forEach(c=>c.classList.remove('on'));el.classList.add('on')}
   function pickNext(el){pick(el);setTimeout(next,220)}   // 단일 선택 → 자동 진행
+
+  /* 나이·키·몸무게는 셀렉트. 디폴트 = 이 서비스 주 사용자(2030 온라인 쇼핑층) +
+     방금 고른 성별의 한국 성인 평균 근사치 → '가장 많이 쓸 값'을 미리 선택해 둔다. */
+  let sex='남성';
+  const AGE=['10대','20대','30대','40대','50대','60대 이상'];
+  function fill(id,list,def){ document.getElementById(id).innerHTML=list.map(v=>'<option'+(v===def?' selected':'')+'>'+v+'</option>').join(''); }
+  // 양 끝은 '이하/이상' 열린 구간 — 범위 밖(아주 크거나 작은) 사용자도 반드시 선택지가 있게.
+  function scaleOpen(a,b,u){ const r=[a+u+' 이하']; for(let i=a+1;i<b;i++) r.push(i+u); r.push(b+u+' 이상'); return r; }
+  function applyDefaults(){
+    const m = sex==='남성';
+    fill('age', AGE, '20대');
+    fill('height', scaleOpen(140,200,'cm'), m?'173cm':'160cm');
+    fill('weight', scaleOpen(35,150,'kg'), m?'72kg':'55kg');
+  }
+  function pickSex(el){ sex=el.textContent.trim(); applyDefaults(); pickNext(el); }
+
+  applyDefaults();
   render();
 </script>
 </body>

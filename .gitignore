@@ -1,1 +1,6 @@
 .DS_Store
+node_modules
+
+# 대용량 원본 데이터 바이너리 — 로컬 보관(source-of-truth). 파생 seed JSON·clean CSV만 커밋.
+data/body/raw/*.xlsx
+docs/*.pdf

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fitting Theme Demo</title>
+<style>
+:root{
+ --bg:#F8F7F4; --surface:#fff; --text:#1d1d1f;
+ --primary:#243447; --secondary:#6F8B7A; --accent:#D8A45D;
+}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);transition:.3s}
+.wrap{max-width:1100px;margin:auto;padding:32px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.themes button{padding:10px 14px;border:none;border-radius:999px;margin:4px;cursor:pointer;background:var(--surface);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.hero{margin-top:30px;background:var(--surface);border-radius:28px;padding:48px;display:grid;grid-template-columns:1.3fr 1fr;gap:30px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.badge{display:inline-block;padding:8px 14px;border-radius:999px;background:rgba(0,0,0,.05);margin-bottom:18px}
+h1{font-size:52px;line-height:1.1;margin:0 0 16px;color:var(--primary)}
+p{font-size:18px;line-height:1.7}
+.cta{display:flex;gap:12px;margin-top:24px}
+.cta button{padding:16px 24px;border:none;border-radius:14px;font-size:16px;cursor:pointer}
+.primary{background:var(--primary);color:white}
+.secondary{background:transparent;border:1px solid #ccc}
+.card{background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;border-radius:24px;padding:28px}
+.score{font-size:64px;font-weight:700}
+.small{opacity:.85}
+ul{padding-left:18px}
+@media(max-width:800px){.hero{grid-template-columns:1fr} h1{font-size:38px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top">
+<div>
+<h2>핏팅(Fitting) — 테마 실험</h2>
+<div class="small">버튼을 눌러 브랜드 무드를 비교해보세요.</div>
+</div>
+<div class="themes">
+<button onclick="setTheme('lab')">🧪 Fashion Lab</button>
+<button onclick="setTheme('premium')">✨ Premium Concierge</button>
+<button onclick="setTheme('playful')">👕 Friendly Coach</button>
+</div>
+</div>
+
+<section class="hero">
+<div>
+<div class="badge">AI Size Translation</div>
+<h1>처음 보는 브랜드도<br>내 사이즈로 번역하다.</h1>
+<p>평소 입던 옷과 착용 경험을 알려주면, 핏팅이 브랜드를 넘어 당신에게 맞는 사이즈를 추천합니다.</p>
+<div class="cta">
+<button class="primary">3분 진단 시작</button>
+<button class="secondary">샘플 결과 보기</button>
+</div>
+</div>
+
+<div class="card">
+<div class="small">추천 신뢰도</div>
+<div class="score">92%</div>
+<h3>추천 사이즈</h3>
+<ul>
+<li>무신사 스탠다드 : M</li>
+<li>유니클로 : L</li>
+<li>COS : 48</li>
+</ul>
+</div>
+</section>
+</div>
+
+<script>
+const themes={
+ lab:{bg:'#F8F7F4',surface:'#fff',text:'#1d1d1f',primary:'#243447',secondary:'#6F8B7A'},
+ premium:{bg:'#F5F2EC',surface:'#fff',text:'#1E1B18',primary:'#1E293B',secondary:'#B58A50'},
+ playful:{bg:'#F4F8FF',surface:'#fff',text:'#202124',primary:'#4F46E5',secondary:'#58B6A3'}
+};
+function setTheme(name){
+ let t=themes[name];
+ for(let k in t) document.documentElement.style.setProperty('--'+k,t[k]);
+}
+</script>
+</body>
+</html>

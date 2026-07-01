@@ -38,26 +38,14 @@
     <div class="qbody">
       <div class="notice hidden" id="reusebanner" style="margin-bottom:16px"></div>
       <div class="seg cat stack" id="target">
-        <div class="opt on" data-cat="top" onclick="pickTarget(this)">상의 <span class="soon live">지원중</span></div>
-        <div class="opt" data-cat="bottom" onclick="pickTarget(this)">하의 <span class="soon">곧</span></div>
-        <div class="opt" data-cat="outer" onclick="pickTarget(this)">아우터 <span class="soon">곧</span></div>
-        <div class="opt" data-cat="dress" onclick="pickTarget(this)">원피스 <span class="soon">곧</span></div>
-        <div class="opt" data-cat="skirt" onclick="pickTarget(this)">치마 <span class="soon">곧</span></div>
+        <div class="opt on" data-cat="top" onclick="pickTarget(this)">상의</div>
+        <div class="opt" data-cat="bottom" onclick="pickTarget(this)">하의</div>
+        <div class="opt" data-cat="outer" onclick="pickTarget(this)">아우터</div>
+        <div class="opt" data-cat="dress" onclick="pickTarget(this)">원피스</div>
+        <div class="opt" data-cat="skirt" onclick="pickTarget(this)">치마</div>
       </div>
 
       <div class="notice warn hidden mt-16" id="targetnote"></div>
-
-      <div class="card-soft mt-16">
-        <div class="kicker mb-8" style="display:block">종류마다 푸는 부위가 달라요</div>
-        <div class="cat-map" id="catmap">
-          <div class="cat-row on" data-cat="top"><span class="cat-nm">상의</span><span class="cat-parts">어깨 · 가슴 · 소매 · 배 · 총장</span></div>
-          <div class="cat-row" data-cat="bottom"><span class="cat-nm">하의</span><span class="cat-parts">허리 · 엉덩이 · 허벅지 · 밑위 · 기장</span></div>
-          <div class="cat-row" data-cat="outer"><span class="cat-nm">아우터</span><span class="cat-parts">어깨 · 가슴·품 · 소매 · 총장</span></div>
-          <div class="cat-row" data-cat="dress"><span class="cat-nm">원피스</span><span class="cat-parts">가슴 · 허리 · 엉덩이 · 총장</span></div>
-          <div class="cat-row" data-cat="skirt"><span class="cat-nm">치마</span><span class="cat-parts">허리 · 엉덩이 · 기장</span></div>
-        </div>
-        <p class="small mt-8">엔진은 종류별 부위 체계로 설계돼 있어요. <strong>이번 버전은 상의부터</strong> 진단하고, 나머지는 순차 확장돼요.</p>
-      </div>
 
       <div class="center mt-24">
         <a href="05-loading.html?skip=1" class="btn-ghost" style="text-decoration:underline">입어본 옷이 없거나 기억나지 않아요 — 건너뛰기</a>
@@ -87,8 +75,8 @@
   <div class="wstep">
     <span class="qnum num">옷 1 · 정보</span>
     <div class="target-chip">진단 대상 · <b class="catword">상의</b> <span class="change" onclick="goTo(0)">바꾸기</span></div>
-    <h2 class="qhead">입어본 <span class="catword">상의</span> 하나,<br>알려주세요</h2>
-    <p class="qhelp">자주 입어서 느낌이 또렷한 옷이 좋아요. 한 벌만 넣어도 진단돼요.</p>
+    <h2 class="qhead"><span class="catword">상의</span>는 <span class="longword">긴팔</span>로<br>입어본 걸 알려주세요</h2>
+    <p class="qhelp"><strong>정확한 진단을 위해 <span class="longword">긴팔</span>을 부탁해요</strong> — 팔·다리까지 알려줘야 몸을 제대로 재거든요. 자주 입어 느낌이 또렷한 옷이면 더 좋고, 한 벌만으로도 진단돼요.</p>
     <div class="qbody">
       <div class="grid-2">
         <div class="field"><label>브랜드</label>
@@ -98,6 +86,7 @@
           <select id="item1"></select>
         </div>
       </div>
+      <div class="field hidden" id="facet1"></div>
       <div class="field"><label>입었던 사이즈</label>
         <div class="seg compact">
           <div class="opt" onclick="pick(this)">XS</div><div class="opt" onclick="pick(this)">S</div>
@@ -112,7 +101,7 @@
   <div class="wstep">
     <span class="qnum num">옷 1 · 느낌</span>
     <h2 class="qhead">입었을 때 어땠어요?</h2>
-    <p class="qhelp"><span class="catword">상의</span> 부위별로 떠오르는 느낌 하나씩만 골라주세요.</p>
+    <p class="qhelp"><span class="catword">상의</span> 부위별 느낌을 골라주세요. 걸린 곳·기장은 <strong>있으면만</strong> — 없으면 그대로 넘겨도 돼요.</p>
     <div class="qbody">
       <div class="feelbox" id="feel1"></div>
     </div>
@@ -138,7 +127,7 @@
     <span class="qnum num">옷 2 · 정보</span>
     <div class="target-chip">진단 대상 · <b class="catword">상의</b></div>
     <h2 class="qhead">핏이 다른 <span class="catword">상의</span>도<br>하나 넣어볼까요?</h2>
-    <p class="qhelp">옷 1과 핏이 다를수록 체형이 또렷해져요. <span class="small">(같은 종류로 — 그래야 같은 부위를 교차 검증해요)</span></p>
+    <p class="qhelp">옷 1과 핏이 다를수록 체형이 또렷해져요. 이번에도 <strong><span class="longword">긴팔</span></strong>이면 가장 정확해요. <span class="small">(같은 종류로 — 그래야 같은 부위를 교차 검증해요)</span></p>
     <div class="qbody">
       <div class="grid-2">
         <div class="field"><label>브랜드</label>
@@ -148,6 +137,7 @@
           <select id="item2"></select>
         </div>
       </div>
+      <div class="field hidden" id="facet2"></div>
       <div class="field"><label>입었던 사이즈</label>
         <div class="seg compact">
           <div class="opt" onclick="pick(this)">XS</div><div class="opt" onclick="pick(this)">S</div>
@@ -236,45 +226,95 @@
      알고 싶은 종류의 옷으로 입력받고 그 종류의 사이즈를 출력한다. ready=true 만 실제 진단. */
   /* kind: base=실착 경험으로 체형(부위) 잠금 / derived=체형 재사용 + 선호핏만.
      provides=이 기반이 채우는 신체 영역, needs=이 파생이 필요로 하는 영역. */
+  /* 착용경험 입력 4층(schema/wearexperience.ts와 동일):
+     fit=주부위(둘레·너비 → 체형 역산) / flag=병목(미표기∩페인, A학습 전용) /
+     pref=기장(취향·키, 역산 아님) / 개방 인테이크(자유서술)는 renderFeel에서 항상 추가. */
   const CATS={
     top:   {label:'상의',  ready:true,  kind:'base', provides:'upper',
             items:['레귤러핏 셔츠','슬림핏 셔츠','오버핏 맨투맨','니트'],
-            parts:[{n:'어깨'},{n:'가슴'},{n:'소매'},{n:'배'},{n:'총장',len:1}]},
-    bottom:{label:'하의',  ready:false, kind:'base', provides:'lower',
+            fit:['어깨','가슴','배'], flag:['팔(소매통)','목'], pref:['소매 기장','총장']},
+    bottom:{label:'하의',  ready:true,  kind:'base', provides:'lower',
             items:['레귤러 슬랙스','와이드 팬츠','스키니 진','트레이닝 팬츠'],
-            parts:[{n:'허리'},{n:'엉덩이'},{n:'허벅지'},{n:'밑위'},{n:'기장',len:1}]},
+            fit:['허리','엉덩이','허벅지'], flag:['종아리'], pref:['밑위','기장']},
     outer: {label:'아우터', ready:false, kind:'derived', needs:['upper'],
             items:['싱글 코트','블레이저','패딩','바람막이'],
-            parts:[{n:'어깨'},{n:'가슴·품'},{n:'소매'},{n:'총장',len:1}]},
+            fit:['어깨','가슴·품'], flag:['팔(소매통)','목/칼라','암홀'], pref:['소매 기장','총장']},
     dress: {label:'원피스', ready:false, kind:'derived', needs:['upper','lower'],
             items:['A라인 원피스','셔츠 원피스','니트 원피스'],
-            parts:[{n:'가슴'},{n:'허리'},{n:'엉덩이'},{n:'총장',len:1}]},
+            fit:['가슴','허리','엉덩이'], flag:['팔','목','상하 비율'], pref:['총장']},
     skirt: {label:'치마',  ready:false, kind:'derived', needs:['lower'],
             items:['A라인 스커트','플리츠 스커트','미니 스커트'],
-            parts:[{n:'허리'},{n:'엉덩이'},{n:'기장',len:1}]},
+            fit:['허리','엉덩이'], flag:['밑단'], pref:['기장']},
   };
   let target='top';
+  /* 품목 길이 facet — 옷별(feel1/feel2). 조회키 속성이자 ②③ 조건화. ①(체형)엔 무관.
+     소매(상의류): long=소매취향+팔flag / short=팔flag만 / sleeveless=둘 다 스킵.
+     하의: long=종아리flag / short(반바지)=종아리flag 제거(기장 취향은 유지). */
+  const SLEEVE_CATS=['top','outer','dress'], LEG_CATS=['bottom'];
+  // 정확한 진단을 위해 요청하는 '긴 옷' 표현(카테고리별). 긴 옷일수록 팔·다리까지 신호가 나옴.
+  const LONGWORD={top:'긴팔',outer:'긴팔',dress:'긴팔',bottom:'긴바지',skirt:'긴 기장'};
+  const sleeveType={1:'long',2:'long'}, legLength={1:'long',2:'long'};
+  // facet(소매/기장)은 조회키 → '옷 N · 정보' 단계에 렌더. 바꾸면 정보 하이라이트+느낌 질문을 함께 갱신.
+  function setSleeve(g,v){ sleeveType[g]=v; renderFacet(g); renderFeel(g); }
+  function setLeg(g,v){ legLength[g]=v; renderFacet(g); renderFeel(g); }
+  function facetSeg(g,opts,cur,fn){
+    return '<div class="seg compact">'+opts.map(([v,lab])=>'<div class="opt'+(v===cur?' on':'')+'" onclick="'+fn+'('+g+',\''+v+'\')">'+lab+'</div>').join('')+'</div>';
+  }
+  function renderFacet(g){
+    const el=document.getElementById('facet'+g); if(!el) return;
+    const hasSleeve=SLEEVE_CATS.includes(target), hasLeg=LEG_CATS.includes(target);
+    if(!hasSleeve && !hasLeg){ el.innerHTML=''; el.classList.add('hidden'); return; }
+    el.classList.remove('hidden');
+    // 긴팔/긴바지가 기본·권장(팔·다리까지 신호 최대 + 브랜드 경향성 오염 방지). 짧은 건 예외.
+    const hint='<span style="font-weight:600;color:var(--faint);font-size:11.5px;margin-left:4px">정확한 진단을 위해 긴 걸로 부탁해요</span>';
+    el.innerHTML = hasSleeve
+      ? '<label>소매 '+hint+'</label>'+facetSeg(g,[['long','긴팔'],['short','반팔'],['sleeveless','민소매']],sleeveType[g]||'long','setSleeve')
+      : '<label>기장 '+hint+'</label>'+facetSeg(g,[['long','긴바지'],['short','반바지']],legLength[g]||'long','setLeg');
+  }
 
   /* 입력 점검(분기) 단계: 여기서 '진단하기'를 누르면 그 시점 벌 수로 진단을 끝낸다. */
   const DIAGNOSE_AT={4:1, 7:2};   // step idx → 진단 시 입력된 벌 수 (선호핏 단계 추가로 +1 밀림)
   const FRAC=['대상 선택','선호핏','옷 1 · 정보','옷 1 · 느낌','입력 점검','옷 2 · 정보','옷 2 · 느낌','입력 점검'];
 
+  function feelRow(name,opts,defIdx){
+    return '<div class="feel-row"><span class="part">'+name+'</span><div class="feel-opts">'+
+      opts.map((o,i)=>'<div class="opt'+(i===defIdx?' on':'')+'" onclick="pick(this)">'+o+'</div>').join('')+
+      '</div></div>';
+  }
+  function feelGroup(title,help,rows){
+    return '<div class="feel-group"><h4>'+title+(help?' <span class="ghelp">'+help+'</span>':'')+'</h4>'+rows+'</div>';
+  }
   function renderFeel(g){
     const c=CATS[target], box=document.getElementById('feel'+g);
-    box.innerHTML=c.parts.map(p=>{
-      const opts=p.len?['긺','여유','딱맞음','짧음']:['큼','여유','딱맞음','끼임'];
-      return '<div class="feel-row"><span class="part">'+p.n+'</span><div class="feel-opts">'+
-        opts.map((o,i)=>'<div class="opt'+(i===2?' on':'')+'" onclick="pick(this)">'+o+'</div>').join('')+
-        '</div></div>';
-    }).join('');
+    const hasSleeve=SLEEVE_CATS.includes(target), st=sleeveType[g]||'long';
+    const hasLeg=LEG_CATS.includes(target), lg=legLength[g]||'long';
+    // ②③ 조건화: 반팔·민소매 → 소매 기장 제거 / 민소매 → 팔 flag 제거 / 반바지 → 종아리 flag 제거. ①은 불변.
+    let flags=(c.flag||[]), prefs=(c.pref||[]);
+    if(hasSleeve){
+      if(st==='sleeveless') flags=flags.filter(n=>!n.includes('팔'));
+      if(st!=='long')       prefs=prefs.filter(n=>!n.includes('소매'));
+    }
+    if(hasLeg && lg==='short') flags=flags.filter(n=>!n.includes('종아리'));
+    // ① 주부위 — 쪼임→헐렁 4단계(기본 딱맞음)
+    const fit =(c.fit||[]).map(n=>feelRow(n,['끼임','딱맞음','여유','큼'],1)).join('');
+    // ② 병목 플래그 — 최소 2값(음성 '괜찮았어요' 기본). 이 신호가 브랜드 치수를 채움.
+    const flag=flags.map(n=>feelRow(n,['꼈어요','괜찮았어요'],1)).join('');
+    // ③ 기장 — 취향(선택), 역산 아님
+    const pref=prefs.map(n=>feelRow(n,['짧음','딱 좋음','긺'],1)).join('');
+    box.innerHTML=
+      feelGroup('착용감 · 부위별','한 부위씩 떠오르는 느낌 하나',fit)+
+      (flag?feelGroup('혹시 걸린 곳','없으면 괜찮았어요 — 이 신호가 브랜드 치수를 채워요',flag):'')+
+      (pref?feelGroup('기장','취향 · 선택',pref):'')+
+      '<div class="feel-group"><h4>그 외 <span class="ghelp">선택 · 자유롭게</span></h4>'+
+        '<textarea class="open-note" placeholder="예: 소매 끝이 조였어요 / 밑단이 걸렸어요"></textarea></div>';
   }
 
   function applyTarget(){
     const c=CATS[target];
     ['item1','item2'].forEach(id=>document.getElementById(id).innerHTML=c.items.map(i=>'<option>'+i+'</option>').join(''));
     document.querySelectorAll('.catword').forEach(e=>e.textContent=c.label);
-    document.querySelectorAll('#catmap .cat-row').forEach(r=>r.classList.toggle('on',r.dataset.cat===target));
-    renderFeel(1); renderFeel(2);
+    document.querySelectorAll('.longword').forEach(e=>e.textContent=LONGWORD[target]||'긴 옷');
+    renderFacet(1); renderFacet(2); renderFeel(1); renderFeel(2);
     const note=document.getElementById('targetnote');
     if(c.ready){ note.classList.add('hidden'); }
     else{
@@ -283,7 +323,10 @@
         '이번 발표 버전은 <strong>상의</strong>만 실제로 풀립니다 — 아래에서 '+c.label+'은 어떤 부위를 묻는지 미리 보여드릴게요.';
     }
   }
-  function pickTarget(el){ pick(el); target=el.dataset.cat; applyTarget(); }
+  function pickTarget(el){
+    if(el.dataset.locked==='1'){ blockedHint(el.dataset.cat); return; }   // 파생: 기반 미완성이면 잠금
+    pick(el); target=el.dataset.cat; applyTarget();
+  }
 
   const steps=[...document.querySelectorAll('.wstep')];
   let cur=0;
@@ -311,6 +354,25 @@
   /* 신체 영역: 기반(상의=upper, 하의=lower)이 파생 카테고리의 필요 부위를 채운다. */
   const REGION={upper:{label:'상체',cat:'top',catLabel:'상의'}, lower:{label:'하체',cat:'bottom',catLabel:'하의'}};
   function providedRegions(list){ const s=new Set(); list.forEach(c=>{const p=CATS[c]&&CATS[c].provides; if(p)s.add(p);}); return s; }
+  /* 첫 화면 게이팅: 파생(아우터=상체 / 원피스=상+하체 / 치마=하체)은 필요한 기반이 진단돼야 열린다.
+     진단된 기반은 ?have= 로 들어온다(결과화면의 '이어서 진단'). 첫 진단이면 상/하의만 선택 가능. */
+  function diagnosedRegions(){ return providedRegions((new URLSearchParams(location.search).get('have')||'').split(',').filter(Boolean)); }
+  function missingFor(cat){ const done=diagnosedRegions(); return (CATS[cat].needs||[]).filter(r=>!done.has(r)); }
+  function gateTargets(){
+    document.querySelectorAll('#target .opt').forEach(el=>{
+      const c=CATS[el.dataset.cat], miss=missingFor(el.dataset.cat);
+      if(c.kind==='derived' && miss.length){
+        el.classList.add('locked'); el.dataset.locked='1';
+        el.innerHTML=c.label+'<span class="lockhint">🔒 '+miss.map(r=>REGION[r].catLabel).join('·')+' 먼저</span>';
+      } else { el.classList.remove('locked'); el.dataset.locked=''; el.textContent=c.label; }
+    });
+  }
+  function blockedHint(cat){
+    const miss=missingFor(cat), c=CATS[cat], note=document.getElementById('targetnote');
+    note.classList.remove('hidden');
+    note.innerHTML='<strong>'+c.label+'</strong>는 '+miss.map(r=>REGION[r].label).join('·')+' 치수가 필요해요 — <strong>'+
+      miss.map(r=>REGION[r].catLabel).join('·')+'</strong>를 먼저 진단하면 열려요.';
+  }
   // 기반 위저드만 숨김 — 파생 패널(#derived-flow/#blocked) 내부의 .wnav는 건드리지 않도록 직계 자식만 선택
   function hideBaseWizard(){ document.querySelectorAll('.flow > .stepper, .flow > .wprogress, .flow > .wstep, .flow > .wnav, #wnote').forEach(e=>e.classList.add('hidden')); }
   function enterDerivedFlow(){
@@ -357,7 +419,7 @@
 
   const routed=initFromQuery();
   applyTarget();
-  if(routed==='base') render();
+  if(routed==='base'){ gateTargets(); render(); }
 </script>
 </body>
 </html>

@@ -150,6 +150,7 @@ select::-ms-expand{display:none}
 .input-suffix{position:relative}
 .input-suffix .unit{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--faint);font-family:var(--suit)}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
 
 /* ---- 세그먼트 / 칩 선택 (성별·선호핏·부위 느낌) ---- */
 .seg{display:flex;gap:8px;flex-wrap:wrap}
@@ -170,19 +171,12 @@ select::-ms-expand{display:none}
 /* ---- 카테고리(옷 종류) 선택 — 진단은 카테고리 단위로 진행 ---- */
 .seg.cat{gap:8px}
 .seg.cat .opt{position:relative;flex:0 0 auto;min-width:0;padding:11px 14px;font-size:13.5px}
+.seg.cat .opt.locked{opacity:.5;cursor:not-allowed}
+.seg.cat .opt .lockhint{font-size:11.5px;font-weight:600;color:var(--faint);margin-left:8px}
 .soon{display:inline-block;font-size:9.5px;font-weight:800;color:var(--warn);background:#fef3ec;border-radius:4px;padding:1px 5px;margin-left:5px;vertical-align:middle;letter-spacing:.02em}
 .soon.live{color:#fff;background:var(--ok)}
 .seg .opt.on .soon{background:rgba(255,255,255,.22);color:#fff}
 .seg .opt.on .soon.live{background:rgba(255,255,255,.24);color:#fff}
-
-/* 카테고리별 부위 설계 맵 (발표용 — 종류마다 푸는 부위가 다름) */
-.cat-map{display:flex;flex-direction:column}
-.cat-row{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:9px 0;border-top:1px solid var(--line)}
-.cat-row:first-child{border-top:none}
-.cat-row{opacity:.6}
-.cat-row.on{opacity:1}
-.cat-nm{font-size:13.5px;font-weight:800;color:var(--ink);white-space:nowrap}
-.cat-parts{font-family:var(--suit);font-feature-settings:"tnum";font-size:12.5px;color:var(--muted);text-align:right;line-height:1.5}
 
 /* 진단 대상 고정 표시 (옷 입력 단계 상단) */
 .target-chip{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--muted);background:var(--field);border:1px solid var(--line);border-radius:20px;padding:6px 13px;margin-bottom:18px}
@@ -208,6 +202,14 @@ select::-ms-expand{display:none}
 .feel-opts .opt{flex:1;font-size:12px;font-weight:700;padding:8px 4px;text-align:center;background:var(--field);border:1px solid var(--field-line);border-radius:7px;cursor:pointer;color:var(--muted);transition:.12s}
 .feel-opts .opt:hover{border-color:var(--ink);color:var(--ink)}
 .feel-opts .opt.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+/* 4층 그룹(주부위/병목/기장/개방) */
+.feel-group{margin-top:18px}
+.feel-group:first-child{margin-top:0}
+.feel-group>h4{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.02em;margin:0 0 6px}
+.feel-group .ghelp{font-weight:600;color:var(--faint);font-size:11.5px;margin-left:4px}
+.open-note{width:100%;box-sizing:border-box;margin-top:2px;padding:12px 14px;font:inherit;font-size:13.5px;line-height:1.5;background:var(--field);border:1px solid var(--field-line);border-radius:8px;color:var(--ink);resize:vertical;min-height:56px}
+.open-note:focus{outline:none;border-color:var(--ink)}
+.open-note::placeholder{color:var(--faint)}
 
 /* ---- 입은 옷 카드 (착용경험 ×2~3벌) ---- */
 .garment{border:1px solid var(--line);border-radius:var(--cardR);padding:18px;margin-bottom:16px}
@@ -479,5 +481,6 @@ footer.foot a:hover{color:var(--ink)}
   .hero{grid-template-columns:1fr;gap:28px;padding:40px 0}
   .steps3{grid-template-columns:1fr;gap:22px}
   .grid-2{grid-template-columns:1fr}
+  .grid-3{grid-template-columns:1fr}
   .protobar .links{width:100%;margin-left:0;margin-top:4px}
 }
