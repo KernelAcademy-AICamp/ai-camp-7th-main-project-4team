@@ -40,6 +40,7 @@
   const params=new URLSearchParams(location.search);
   const SKIP=params.get('skip')==='1';
   const G=params.get('g');                 // 입력된 옷 벌 수 (1, 2, …)
+  const DERIVED=params.get('derived')==='1'; // 파생 카테고리 — 체형 재사용, 선호핏만
   let RESULT='06-result.html';
   if(SKIP) RESULT='06-result.html?conf=low';
   else if(G==='1') RESULT='06-result.html?conf=mid';
@@ -48,6 +49,11 @@
     document.getElementById('lsub').textContent='착용 경험 없이 키·몸무게로만 추정합니다. 정확도는 낮을 수 있어요.';
     const first=document.querySelector('#steps li[data-i="0"]');
     if(first)first.textContent='착용 경험 없음 — 통계 기반 추정으로 진행';
+  } else if(DERIVED){
+    document.getElementById('ltitle').textContent='이미 아는 체형으로 맞춰요';
+    document.getElementById('lsub').textContent='실측을 다시 재지 않아요 — 저장된 체형에 선호핏만 반영해 이 종류 사이즈로 번역합니다.';
+    const first=document.querySelector('#steps li[data-i="0"]');
+    if(first)first.textContent='저장된 체형 프로필 재사용 (재측정 없음)';
   } else if(G==='1'){
     document.getElementById('lsub').textContent='한 벌의 착용 경험을 거꾸로 풀어 추정합니다. 한 벌 더 넣으면 더 정교해져요.';
     const first=document.querySelector('#steps li[data-i="0"]');

@@ -114,21 +114,28 @@
   </div>
   <p class="small mb-24">※ 사이즈 수치는 규칙 기반 엔진이 브랜드 실측에 맞춰 계산합니다. 캐릭터·해설 서술만 AI가 생성합니다.</p>
 
-  <!-- 진단 현황(옷장) — 카테고리 간 이어가기 (리텐션 루프) -->
+  <!-- 체형 완성도 지도 — 기반(상·하의)이 체형을 잠그면 파생은 선호핏만으로 해금 -->
   <div class="card mb-16">
     <div class="row-between mb-8">
-      <div class="kicker">My fit · 진단 현황</div>
-      <span class="small" style="font-weight:700"><span class="num">1</span> / 5 종류 완료</span>
+      <div class="kicker">체형 지도 · 옷장 해금</div>
+      <span class="small" style="font-weight:700"><span class="num">1</span> / 5 종류</span>
     </div>
-    <p class="small mb-16">체형 기준 · <span class="num">172cm 70kg</span> · 2026-06-30 진단</p>
+    <p class="small mb-16">체형 기준 · <span class="num">172cm 70kg</span> · 상의 완료</p>
+
+    <div class="fitmap-lbl">기반 — 실착 경험으로 <b>체형을 잠가요</b> (상체·하체)</div>
+    <div class="catstat mb-16">
+      <div class="cs done"><span class="cs-nm">상의</span><span class="kind base">기반</span><span class="cs-meta">상체 잠금 · 유니클로 M</span><span class="cs-go">완료 ✓</span></div>
+      <a class="cs" href="04-fit-experience.html?cat=bottom&reuse=1&have=top"><span class="cs-nm">하의</span><span class="kind base">기반</span><span class="cs-meta">하체 잠금 필요 · 옷 입력</span><span class="cs-go">＋ 옷 넣고 진단 →</span></a>
+    </div>
+
+    <div class="fitmap-lbl">파생 — 체형 재사용, <b>선호핏만</b> 있으면 진단</div>
     <div class="catstat">
-      <div class="cs done"><span class="cs-nm">상의</span><span class="cs-meta">유니클로 M · 방금 완료</span><span class="cs-go">완료 ✓</span></div>
-      <a class="cs" href="04-fit-experience.html?cat=bottom&reuse=1"><span class="cs-nm">하의</span><span class="soon">곧</span><span class="cs-go">＋ 이어서 진단 →</span></a>
-      <a class="cs" href="04-fit-experience.html?cat=outer&reuse=1"><span class="cs-nm">아우터</span><span class="soon">곧</span><span class="cs-go">＋ 이어서 진단 →</span></a>
-      <a class="cs" href="04-fit-experience.html?cat=dress&reuse=1"><span class="cs-nm">원피스</span><span class="soon">곧</span><span class="cs-go">＋ 이어서 진단 →</span></a>
-      <a class="cs" href="04-fit-experience.html?cat=skirt&reuse=1"><span class="cs-nm">치마</span><span class="soon">곧</span><span class="cs-go">＋ 이어서 진단 →</span></a>
+      <a class="cs unlocked" href="04-fit-experience.html?cat=outer&reuse=1&have=top"><span class="cs-nm">아우터</span><span class="kind der">파생</span><span class="cs-meta">상체 기반 · 해금됨</span><span class="cs-go">선호핏만 30초 →</span></a>
+      <a class="cs lock" href="04-fit-experience.html?cat=skirt&reuse=1&have=top"><span class="cs-nm">치마</span><span class="kind der">파생</span><span class="cs-meta">하체 필요</span><span class="cs-go">하의 먼저 →</span></a>
+      <a class="cs lock" href="04-fit-experience.html?cat=dress&reuse=1&have=top"><span class="cs-nm">원피스</span><span class="kind der">파생</span><span class="cs-meta">상체+하체 필요</span><span class="cs-go">하의 먼저 →</span></a>
     </div>
-    <div class="notice mt-16">기본 정보·체형 프로필은 그대로 재사용 — 다음 종류는 <strong>옷만 넣으면 30초</strong>. 체중이 바뀌었다면 <a href="03-basic-info.html" style="color:var(--ink);font-weight:700;text-decoration:underline">새로 진단</a>하세요 — <strong>과거 결과는 이력에 그대로 보존</strong>돼요.</div>
+
+    <div class="notice mt-16"><strong>상의·하의(기반)만 마치면</strong> 아우터·원피스·치마는 옷을 다시 넣지 않고 <strong>선호핏만으로</strong> 열려요. 체형 프로필은 재사용 — 체중이 바뀌었다면 <a href="03-basic-info.html" style="color:var(--ink);font-weight:700;text-decoration:underline">새로 진단</a>(과거 결과는 이력 보존).</div>
   </div>
 
   <!-- ⑤ 공유 후크 (바이럴) -->
