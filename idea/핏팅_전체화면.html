@@ -103,7 +103,7 @@
   .ecard{background:#fff; border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 6px 18px rgba(20,18,16,.08); cursor:pointer; transition:.18s;}
   .ecard:hover{transform:translateY(-3px); box-shadow:0 16px 36px rgba(20,18,16,.12);}
   .ecard .cover{height:170px; position:relative; overflow:hidden; background:#EDE8E0;}
-  .ecard .cover img{width:100%; height:100%; object-fit:cover; display:block;}
+  .ecard .cover img{width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.55) brightness(1.03) contrast(.98);}
   .ecard .match{position:absolute; top:12px; left:12px; font-size:12px; font-weight:800; padding:5px 12px; border-radius:30px; background:var(--accent-deep); color:#fff; box-shadow:0 2px 9px rgba(60,42,12,.28);}
   .ecard .eb{padding:17px 18px;}
   .ecard .top{display:flex; justify-content:space-between; align-items:center;}
@@ -171,7 +171,7 @@
   .drawer.on{transform:none;}
   .dclose{position:absolute; top:14px; right:14px; z-index:3;}
   .dhead{height:200px; position:relative; overflow:hidden; display:flex; align-items:flex-end;}
-  .dhead img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
+  .dhead img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(.55) brightness(1.03) contrast(.98);}
   .dhead .dov{position:relative; padding:20px; color:#fff; background:linear-gradient(transparent, rgba(18,16,10,.8)); width:100%;}
   .dhead .dm{font-size:12px; font-weight:800; background:var(--accent-deep); display:inline-block; padding:4px 10px; border-radius:20px;}
   .dhead .dn{font-size:23px; font-weight:800; margin-top:8px; letter-spacing:-.03em;}
@@ -179,7 +179,7 @@
   .dbody .bio{font-size:14.5px; color:var(--ink-soft); line-height:1.6;}
   .feat{font-size:12px; font-weight:800; color:var(--sub2); margin:20px 0 9px; letter-spacing:.02em;}
   .pgal{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
-  .pgal div{height:82px; border-radius:10px; background-size:cover; background-position:center; background-color:var(--soft);}
+  .pgal div{height:82px; border-radius:10px; background-size:cover; background-position:center; background-color:var(--soft); filter:saturate(.6);}
   .rev{border-bottom:1px solid var(--line); padding:11px 0; font-size:13.5px; color:var(--ink-soft); line-height:1.5;}
   .rev .who{font-size:12px; color:var(--sub2); margin-top:3px; font-weight:600;}
   .svcinfo{background:var(--soft); border-radius:14px; padding:14px 16px;}
@@ -276,7 +276,7 @@
         <h1>안 입어본 브랜드도<br><b>내 사이즈</b>로 딱.</h1>
         <p>평소 잘 맞는 옷의 착용 경험만으로, 브랜드를 가로질러 내 사이즈를 번역해 드려요. 반품 없이 한 번에.</p>
         <div class="cta">
-          <button class="btn beige" onclick="startDiag()">내 사이즈 진단 시작 →</button>
+          <button class="btn beige" onclick="startDiag()">내 사이즈 진단 시작하기 →</button>
           <button class="btn ghost" onclick="go('shop')">전문가 둘러보기</button>
         </div>
       </div>
@@ -295,7 +295,7 @@
     </div>
 
     <div class="promo" style="margin-top:26px">
-      <div><b>👔 스타일까지 전문가에게</b><p>진단 결과에 맞는 전문가 매칭 서비스가 곧 열려요.</p></div>
+      <div><b>스타일까지 전문가에게</b><p>진단 결과에 맞는 전문가 매칭 서비스가 곧 열려요.</p></div>
       <span class="pin" style="cursor:pointer" onclick="openLogin('오픈 알림 신청')">1기 전문가 모집 중 · 오픈 알림받기</span>
     </div>
   </section>
@@ -304,8 +304,8 @@
   <section class="page" id="diag">
     <div class="diaghead">
       <div>
-        <h1>진단 완료! 내 핏 타입이에요 ✨</h1>
-        <p>평소 입던 옷으로 분석한 결과예요 — 카드를 저장·공유하고 브랜드별 추천 사이즈도 확인해보세요.</p>
+        <h1>내 핏 타입이 나왔어요</h1>
+        <p>평소 입던 옷으로 분석한 결과예요. 핏 카드를 저장·공유하고 브랜드별 추천 사이즈도 확인해보세요.</p>
       </div>
       <button class="btn ghost" onclick="startDiag()">다시 진단하기</button>
     </div>
@@ -337,7 +337,7 @@
   <section class="page" id="shop">
     <div class="listhead" style="margin-top:6px">
       <div><h2 class="sec" style="margin:0">나에게 맞는 전문가</h2><p style="font-size:14px; color:var(--sub); margin-top:8px">내 체형·사이즈 기준 <b style="color:var(--ink)">매칭도순</b> · 결과물·후기로 검증된 전문가만</p></div>
-      <button class="btn" onclick="openMatch()">🤖 AI 전문가 매칭</button>
+      <button class="btn" onclick="openMatch()">AI 전문가 매칭하기</button>
     </div>
 
     <div class="svctab">
@@ -389,7 +389,7 @@
               <div class="field"><span>핏 취향</span><span class="v">슬림</span></div>
             </div>
           </div>
-          <button class="btn" onclick="toast('프로필 편집 — 신체정보 변경 시 재진단 안내')">정보 수정</button>
+          <button class="btn" onclick="toast('프로필 편집 — 신체정보 변경 시 재진단 안내')">수정하기</button>
         </section>
 
         <!-- 1.4·B 내 진단 결과 -->
@@ -412,7 +412,7 @@
                 <div class="field"><span>과거 진단 목록·비교</span><span class="v ph">2026.06 · 1건</span></div>
               </div>
               <div class="msub"><div class="subhead">재진단 / 공유·저장 <span class="pr core">★ MVP</span></div>
-                <div style="display:flex; gap:10px; flex-wrap:wrap"><button class="btn" onclick="startDiag()">다시 진단하기</button><button class="btn ghost" onclick="openLogin('카드 저장')">카드 공유·저장</button></div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap"><button class="btn" onclick="startDiag()">다시 진단하기</button><button class="btn ghost" onclick="openLogin('카드 저장')">공유·저장하기</button></div>
               </div>
             </div>
           </div>
@@ -502,13 +502,13 @@
       </div>
       <!-- 3 로딩 -->
       <div class="wstep" id="ws3">
-        <div class="loadwrap"><div class="spinner"></div><h2 style="font-size:22px">AI가 체형을 분석 중...</h2><p class="sub">부위 신호로 8체형을 역산하고 브랜드 사이즈를 매칭하고 있어요.</p></div>
+        <div class="loadwrap"><div class="spinner"></div><h2 style="font-size:22px">내 핏을 분석하고 있어요</h2><p class="sub">부위 신호로 8체형을 역산하고 브랜드 사이즈를 맞춰보고 있어요.</p></div>
       </div>
       <!-- 4 결과 -->
       <div class="wstep" id="ws4">
         <div style="margin-bottom:24px">
-          <h2>진단 완료! 내 핏 타입이에요 ✨</h2>
-          <p class="sub">평소 입던 옷으로 분석한 결과예요 — 저장하고 브랜드별 추천 사이즈도 확인해보세요.</p>
+          <h2>내 핏 타입이 나왔어요</h2>
+          <p class="sub">평소 입던 옷으로 분석한 결과예요. 저장하고 브랜드별 추천 사이즈도 확인해보세요.</p>
         </div>
         <div class="resultwrap">
           <iframe class="cardframe" src="결과카드_단독.html?type=STR" scrolling="no"></iframe>
@@ -526,8 +526,8 @@
               <div class="seg" style="margin-top:12px"><span class="o" onclick="pickOne(this)">✅ 맞아요</span><span class="o" onclick="pickOne(this)">➖ 애매</span><span class="o" onclick="pickOne(this)">❌ 틀려요</span></div>
             </div>
             <div style="display:flex; gap:12px">
-              <button class="btn" style="flex:1" onclick="openLogin('결과 저장')">🔖 결과 저장하기</button>
-              <button class="btn ghost" style="flex:1" onclick="closeAll();go('shop')">전문가에게 →</button>
+              <button class="btn" style="flex:1" onclick="openLogin('결과 저장')">결과 저장하기</button>
+              <button class="btn ghost" style="flex:1" onclick="closeAll();go('shop')">전문가에게 받기</button>
             </div>
           </div>
         </div>
@@ -578,7 +578,7 @@
     {lock:52, nm:'유나', spec:'토탈 이미지 컨설팅', rating:4.8, price:230000, review:76, match:83, tags:['토탈','웨딩','컬러'], mode:'오프라인 세션', dur:'세션 1회 · 약 2시간', bio:'헤어·메이크업까지 연계한 토탈 이미지 설계. 인생 사진이 필요한 날을 위한 컨설팅.', reviews:[['단순 옷이 아니라 전체 분위기를 바꿔주셨어요.','34세 · 웨딩']]}
   ];
   document.getElementById('experts').innerHTML = EX.map(function(e,i){
-    var img='https://loremflickr.com/480/340/fashion,portrait?lock='+e.lock;
+    var img='https://loremflickr.com/480/340/model,portrait?lock='+e.lock;
     return '<div class="ecard" onclick="openProfile('+i+')"><div class="cover"><img src="'+img+'" alt="" onerror="'+FB+'"><span class="match">매칭도 '+e.match+'%</span></div>'+
       '<div class="eb"><div class="top"><span class="nm">'+e.nm+' 전문가</span><span class="star">★ '+e.rating+'</span></div>'+
       '<div class="spec">'+e.spec+'</div><div class="tags">'+e.tags.map(t=>'<span>'+t+'</span>').join('')+'</div>'+
@@ -614,7 +614,7 @@
   function wizPrev(){ if(wstep>1) wizGo(wstep-1); }
 
   /* ===== 전문가 프로필 드로어 ===== */
-  function openProfile(idx){ var e=EX[idx], img='https://loremflickr.com/480/340/fashion,portrait?lock='+e.lock;
+  function openProfile(idx){ var e=EX[idx], img='https://loremflickr.com/480/340/model,portrait?lock='+e.lock;
     document.getElementById('drawerBody').innerHTML=
       '<div class="dhead"><img src="'+img+'" onerror="'+FB+'"><div class="dov"><span class="dm">매칭도 '+e.match+'%</span><div class="dn">'+e.nm+' 전문가</div><div style="font-size:13px;opacity:.9;margin-top:2px">★ '+e.rating+' · 후기 '+e.review+'</div></div></div>'+
       '<div class="dbody"><p class="bio">'+e.bio+'</p>'+
@@ -641,7 +641,7 @@
 
   /* ===== 로그인/가입 시트 ===== */
   function openLogin(ctx){ document.getElementById('loginTitle').textContent=(ctx?ctx+' — ':'')+'로그인하고 이어가기'; document.getElementById('sheet').classList.add('on'); scrim(true); }
-  function loginDone(){ closeAll(); toast('로그인 완료 — 결과가 계정에 저장됐어요 ✓'); }
+  function loginDone(){ closeAll(); toast('로그인했어요. 결과가 계정에 저장됐어요'); }
 
   /* ===== 마이페이지 사이드 네비 ===== */
   function myNav(el){
