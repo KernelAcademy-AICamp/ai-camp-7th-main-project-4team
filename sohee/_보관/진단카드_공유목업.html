@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fitting · 진단 결과 카드 (8유형 · 구조화)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{ --bg:#f4f4f6; --ink:#191a1c; --sub:#71717a; --sub2:#a6a7ae; --line:#e6e7ea; --ac:#2563eb; }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; letter-spacing:-.02em; -webkit-font-smoothing:antialiased; padding:32px 18px 70px;}
+  .head{max-width:860px; margin:0 auto 18px; text-align:center;}
+  .head h1{font-size:23px; font-weight:800; letter-spacing:-.04em;}
+  .head p{font-size:14px; color:var(--sub); margin-top:6px;}
+  .picker{max-width:880px; margin:0 auto 22px; display:flex; flex-wrap:wrap; gap:7px; justify-content:center;}
+  .picker .c{font-size:13px; font-weight:700; padding:8px 13px; border-radius:30px; border:1.5px solid var(--line); background:#fff; color:var(--sub); cursor:pointer; transition:.14s;}
+  .picker .c:hover{border-color:var(--ink); color:var(--ink);} .picker .c.on{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .picker .rnd{background:var(--ac); color:#fff; border-color:var(--ac);}
+
+  .stage{display:flex; flex-direction:column; align-items:center; gap:16px;}
+  .card{width:392px; max-width:94vw; border-radius:30px; overflow:hidden; color:#fff; position:relative; box-shadow:0 30px 70px rgba(10,11,14,.4); display:flex; flex-direction:column; align-items:center; padding:24px 26px 26px; transition:.4s; background:#16171b;}
+  .card::after{content:""; position:absolute; right:-46px; bottom:-44px; font-size:220px; font-weight:900; opacity:.045; letter-spacing:-.07em; line-height:1; color:#fff;}
+  .ctop{width:100%; display:flex; justify-content:space-between; align-items:center; font-size:11.5px; font-weight:800; letter-spacing:.16em; opacity:.7;}
+  .clogo{font-size:17px; font-weight:800; letter-spacing:-.05em; opacity:1;}
+
+  /* 도트 패션 실루엣 */
+  .fig{position:relative; width:120px; margin:16px 0 4px; display:flex; flex-direction:column; align-items:center; animation:bob 3.4s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)}}
+  .fig .head{width:32px; height:36px; border-radius:10px 10px 8px 8px; background:#ecd9c9; margin-bottom:-3px; z-index:2; position:relative;
+    background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px),repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px);}
+  .fig .head::after{content:""; position:absolute; top:-3px; left:-3px; right:-3px; height:13px; border-radius:10px 10px 45% 45%; background:#2a2b30;}
+  .fig .head .ey{position:absolute; top:18px; width:4px; height:5px; border-radius:50%; background:#2a2b30; z-index:3;}
+  .fig .head .ey.l{left:9px;} .fig .head .ey.r{right:9px;}
+  .fig .head .ck{position:absolute; top:23px; width:5px; height:3px; border-radius:50%; background:#ff9bb0; opacity:.7; z-index:3;} .fig .head .ck.l{left:5px;} .fig .head .ck.r{right:5px;}
+  .fig .head .sm{position:absolute; top:24px; left:50%; transform:translateX(-50%); width:8px; height:4px; border:1.5px solid #2a2b30; border-top:none; border-radius:0 0 8px 8px; z-index:3;}
+  .fig .body{width:120px; position:relative; image-rendering:pixelated;
+    background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 8px),repeating-linear-gradient(90deg,rgba(0,0,0,.16) 0 1px,transparent 1px 8px);}
+  .fig .body::before{content:""; position:absolute; left:0; top:0; bottom:0; width:42%; background:rgba(255,255,255,.18);}
+  .fig .body.straight{clip-path:polygon(38% 0,62% 0,62% 64%,64% 100%,36% 100%,38% 64%);}
+  .fig .body.aline{clip-path:polygon(40% 0,60% 0,60% 30%,88% 100%,12% 100%,40% 30%);}
+  .fig .body.vline{clip-path:polygon(13% 0,87% 0,64% 40%,60% 100%,40% 100%,36% 40%);}
+  .fig .body.xline{clip-path:polygon(17% 0,83% 0,57% 46%,87% 100%,13% 100%,43% 46%);}
+
+  .code{margin-top:12px; font-size:12.5px; font-weight:800; letter-spacing:.2em;}
+  .word{font-size:38px; font-weight:800; letter-spacing:-.03em; line-height:1.08; margin-top:3px;}
+
+  /* 정보 영역 (좌측 정렬, 섹션 구조) */
+  .info{width:100%; text-align:left; margin-top:20px;}
+  .sl{font-size:11px; font-weight:800; letter-spacing:.04em; margin:0 0 7px; display:flex; align-items:center; gap:6px;}
+  .sl .n{font-size:13px;}
+  .desc{font-size:14px; line-height:1.55; opacity:.92;}
+  .fits{margin-top:11px; display:flex; flex-direction:column; gap:8px;}
+  .fr{display:flex; align-items:flex-start; gap:9px; flex-wrap:wrap;}
+  .fl{font-size:11px; font-weight:800; white-space:nowrap; padding-top:6px; min-width:46px;}
+  .fl.no{opacity:.55;}
+  .ps{display:flex; flex-wrap:wrap; gap:6px;}
+  .ps span{font-size:12.5px; font-weight:600; background:rgba(255,255,255,.1); padding:6px 11px; border-radius:9px;}
+  .sec2{margin-top:18px;}
+  .sigrow{margin-top:18px; font-size:13.5px; font-weight:700;}
+  .sigrow b{font-weight:800;}
+  .match{margin-top:11px; font-size:13.5px; font-weight:600; opacity:.95;} .match b{font-weight:800;}
+
+  .cbot{width:100%; display:flex; align-items:center; gap:13px; margin-top:22px; padding-top:16px; border-top:1px solid rgba(255,255,255,.16); text-align:left;}
+  .qr{width:48px; height:48px; flex:none; background:#fff; border-radius:9px; padding:5px;}
+  .qr div{width:100%; height:100%; background-color:#fff; background-image:repeating-linear-gradient(0deg,#191a1c 0 3px,#fff 3px 6px),repeating-linear-gradient(90deg,#191a1c 0 3px,transparent 3px 6px); background-blend-mode:multiply; border-radius:2px;}
+  .cta{font-size:14.5px; font-weight:800;} .cta .s{display:block; font-size:11.5px; font-weight:600; opacity:.7;}
+
+  .share{display:flex; gap:10px;}
+  .share button{background:#fff; color:var(--ink); border:1.5px solid var(--line); border-radius:14px; padding:13px 18px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit;}
+  .share button:hover{border-color:var(--ink);} .share .story{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .note{max-width:860px; margin:24px auto 0; font-size:12.5px; color:var(--sub2); text-align:center; line-height:1.7;}
+  .toast{position:fixed; left:50%; bottom:30px; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 20px; border-radius:30px; font-size:14px; font-weight:600; opacity:0; pointer-events:none; transition:.25s;} .toast.on{opacity:1;}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>fitting · 진단 결과 카드</h1>
+  <p>① 체형 프로필 + 잘맞/피할(쉬운 말) · ② 핏 인사이트 · 시그니처 · 궁합 · 블랙+포인트</p>
+</div>
+
+<div class="picker" id="picker"></div>
+
+<div class="stage">
+  <div class="card" id="card"></div>
+  <div class="share">
+    <button class="story" onclick="toast('📸 인스타 스토리로 공유')">스토리 공유</button>
+    <button onclick="toast('🔗 결과 링크 복사됨')">링크 복사</button>
+    <button onclick="toast('🏷️ 친구 소환 — 내 친구는 무슨 핏?')">친구 소환</button>
+  </div>
+</div>
+
+<div class="note">
+  코드 = [상체 V/S][하체 v/s][프레임 L/C] · 잘맞/피할은 어려운 패션용어 대신 쉬운 말<br>
+  ① 체형 프로필 → ② 핏 인사이트 → 시그니처 → 궁합 순으로 구조화
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+  var T={
+   SsL:{word:'시크 스트레이트', line:'straight', frame:'L', pt:'#9db8ff',
+     profile:'곧고 길게 떨어지는 직선 라인. 군더더기 없는 깔끔함이 가장 멋있어요.',
+     ok:['일자 바지','각진 재킷','셔츠'], no:['프릴','퍼지는 옷'],
+     insight:'디테일은 덜고, 깔끔한 한 벌로 끝내기.', sig:['#미니멀','#클린','#직선'], match:'엘레강스 X라인'},
+   SsC:{word:'미니 스트레이트', line:'straight', frame:'C', pt:'#b6a8ff',
+     profile:'슬림하고 아담한 직선 라인. 비율을 살리면 훨씬 또렷해 보여요.',
+     ok:['짧은 상의','허리 위로 올려 입기','셔츠'], no:['긴 기장','넉넉한 옷'],
+     insight:'상의는 짧게, 허리선은 위로 — 다리 길어 보이게.', sig:['#단정','#미니','#깔끔'], match:'스위트 A라인'},
+   SvL:{word:'소프트 A라인', line:'aline', frame:'L', pt:'#76d6c6',
+     profile:'아래로 부드럽게 퍼지는 A라인. 시선을 위로 올리면 균형이 좋아요.',
+     ok:['통 넓은 바지','퍼지는 치마','어두운 하의'], no:['딱 붙는 바지','밝은 하의'],
+     insight:'상의에 포인트, 하의는 차분하게.', sig:['#내추럴','#와이드','#에이라인'], match:'모던 V라인'},
+   SvC:{word:'스위트 A라인', line:'aline', frame:'C', pt:'#ff9ec5',
+     profile:'사랑스럽게 퍼지는 A라인. 허리선을 올리면 비율이 살아나요.',
+     ok:['허리 위로 올려 입기','퍼지는 치마','무릎 기장'], no:['딱 붙는 옷','짧은 기장'],
+     insight:'허리 위로, 아래는 살짝 퍼지게.', sig:['#로맨틱','#에이라인','#하이웨스트'], match:'미니 스트레이트'},
+   VsL:{word:'모던 V라인', line:'vline', frame:'L', pt:'#c2c7d0',
+     profile:'어깨가 시원한 V라인. 상의는 덜고 아래로 균형을 잡으면 멋있어요.',
+     ok:['브이넥','통 넓은 바지','세로로 길게'], no:['부풀린 소매','어깨 파인 옷'],
+     insight:'상의는 깔끔하게, 하의로 시선 분산.', sig:['#모던','#시크','#브이넥'], match:'소프트 A라인'},
+   VsC:{word:'볼드 V라인', line:'vline', frame:'C', pt:'#b6e36a',
+     profile:'다부진 어깨의 V라인. 세로로 정리하면 깔끔하게 떨어져요.',
+     ok:['어두운 브이넥','일자 바지','겹쳐 입기'], no:['딱 붙는 밝은 상의'],
+     insight:'어두운 상의로 상체를 차분하게 정리.', sig:['#스트릿','#볼드','#브이넥'], match:'러블리 X라인'},
+   VvL:{word:'엘레강스 X라인', line:'xline', frame:'L', pt:'#cf9bff',
+     profile:'어깨–허리–힙이 흐르는 X라인. 허리를 살리면 우아하게 떨어져요.',
+     ok:['여밈(랩) 원피스','허리 위로 올려 입기','세로로 길게'], no:['넉넉한 옷','허리 낮은 바지'],
+     insight:'허리를 강조하고, 세로로 길게.', sig:['#엘레강스','#랩','#하이웨스트'], match:'시크 스트레이트'},
+   VvC:{word:'러블리 X라인', line:'xline', frame:'C', pt:'#ff9d7a',
+     profile:'어깨–허리–힙 곡선의 X라인. 벨트로 허리를 잡으면 완성돼요.',
+     ok:['벨트로 허리 잡기','여밈(랩) 옷','허리 위로 올려 입기'], no:['넉넉한 옷','허리 낮은 바지'],
+     insight:'허리 라인을 살리는 게 핵심.', sig:['#러블리','#벨트','#하이웨스트'], match:'볼드 V라인'}
+  };
+  var ORDER=['SsL','SsC','SvL','SvC','VsL','VsC','VvL','VvC'];
+  var cur='VvC';
+  var wmStyle=document.createElement('style'); document.head.appendChild(wmStyle);
+
+  function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(()=>t.classList.remove('on'),2000); }
+  function pick(code){ cur=code; render(); }
+  function rnd(){ window._r=((window._r||0)+3)%8; pick(ORDER[window._r]); }
+  function figHTML(d){ var h=d.frame==='L'?150:120; return '<div class="fig"><div class="head"><span class="ey l"></span><span class="ey r"></span></div><div class="body '+d.line+'" style="background-color:'+d.pt+'; height:'+h+'px"></div></div>'; }
+  function pills(arr){ return '<div class="ps">'+arr.map(x=>'<span>'+x+'</span>').join('')+'</div>'; }
+
+  function render(){
+    document.querySelectorAll('#picker .c').forEach(c=>c.classList.toggle('on', c.dataset.k===cur));
+    var d=T[cur], card=document.getElementById('card');
+    card.style.background='radial-gradient(ellipse 70% 34% at 50% 11%, '+d.pt+'2b, transparent 60%), linear-gradient(160deg,#191a1f,#0f1014)';
+    wmStyle.textContent='.card::after{content:"'+cur+'";}';
+    card.innerHTML=
+      '<div class="ctop"><span>MY FIT TYPE</span><span class="clogo">fitting</span></div>'+
+      figHTML(d)+
+      '<div class="code" style="color:'+d.pt+'">'+cur+'</div>'+
+      '<div class="word">'+d.word+'</div>'+
+      '<div class="info">'+
+        '<div class="sl" style="color:'+d.pt+'"><span class="n">①</span> 체형 프로필</div>'+
+        '<div class="desc">'+d.profile+'</div>'+
+        '<div class="fits">'+
+          '<div class="fr"><span class="fl" style="color:'+d.pt+'">잘 맞는</span>'+pills(d.ok)+'</div>'+
+          '<div class="fr"><span class="fl no">피할 핏</span>'+pills(d.no)+'</div>'+
+        '</div>'+
+        '<div class="sl sec2" style="color:'+d.pt+'"><span class="n">②</span> 핏 인사이트</div>'+
+        '<div class="desc">'+d.insight+'</div>'+
+        '<div class="sigrow">시그니처 · '+d.sig.join(' ')+'</div>'+
+        '<div class="match">환상의 궁합 · <b style="color:'+d.pt+'">'+d.match+'</b></div>'+
+      '</div>'+
+      '<div class="cbot"><div class="qr"><div></div></div><div class="cta">나도 내 핏 찾기 →<span class="s">fitting.app · 1분 무료 진단</span></div></div>';
+  }
+
+  document.getElementById('picker').innerHTML=ORDER.map(k=>'<span class="c" data-k="'+k+'" onclick="pick(\''+k+'\')">'+T[k].word+'</span>').join('')+'<span class="c rnd" onclick="rnd()">🎲 랜덤</span>';
+  render();
+</script>
+</body>
+</html>
