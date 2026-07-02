@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="diag.css">
 <style>
   .rwrap{ max-width:920px; margin:0 auto; padding:32px 24px 80px; display:flex; gap:32px; align-items:flex-start; flex-wrap:wrap; }
+  .dhead-in{ max-width:920px; padding-left:24px; padding-right:24px; }  /* 헤더를 결과 콘텐츠(920) 폭에 정렬 */
   .rcard{ flex:0 0 392px; max-width:100%; }
   .rcard iframe{ width:392px; max-width:100%; height:684px; border:0; }
   .rcol{ flex:1; min-width:300px; display:flex; flex-direction:column; gap:18px; }
@@ -18,7 +19,7 @@
 </head>
 <body>
 
-<div class="dhead"><a class="logo" href="index.html">Fitting<i></i></a><a class="dx" href="index.html" title="닫기">✕</a></div>
+<div class="dhead"><div class="dhead-in"><a class="logo" href="index.html">Fitting<i></i></a><a class="dx" href="index.html" title="닫기">✕</a></div></div>
 
 <div class="rwrap">
   <div class="rcard"><iframe id="rescard" src="card.html?type=STR&g=female" scrolling="no" title="내 결과 카드"></iframe></div>
