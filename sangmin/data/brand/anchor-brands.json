@@ -1,0 +1,25 @@
+{
+  "$meta": {
+    "purpose": "착용경험 질문 기본 브랜드 축 (입력/기준점 anchor). 사용자의 '평소 입던 옷' 핏 진술을 받을 7종. brands.json A축 카탈로그에 이미 존재하는 엔티티를 brandId로 참조만 한다(중복 금지).",
+    "schemaRef": "src/lib/schema/anchorbrands.ts#AnchorBrandSeed",
+    "selectedAt": "2026-07-01",
+    "roleNote": "입력 축 ≠ 추천 카탈로그. 이 7종은 착용경험 입력이지 추천 출력 목록이 아니다(추천은 brands.json이 방대하게 담당). 브랜드 수 확장은 전부 target(추천) 쪽에서 일어난다.",
+    "validation": "소규모 조사 n=10 중 9명이 2+ 브랜드 착용경험 보유, 남은 1명은 옷 무관심(페르소나 밖). → 타깃 세그먼트 내 입력 커버리지 사실상 10/10. 단 이는 '입력 깔때기' 검증일 뿐 킬 메트릭(번역 정확도 동의율 ≥65%)과는 별개.",
+    "pending": "커버리지 집중도(누가 anchor 값을 지는지)는 미검증 — 추후 브랜드×응답자 매트릭스로 확인. 십중팔구 유니클로가 대부분을 커버할 것."
+  },
+  "criteria": {
+    "gate": "오프라인 매장 시착 편의(전국 매장 밀도·몰 입점). 착용경험은 실제로 입어봤어야 나오고, 그 경험을 만드는 가장 넓은 깔때기가 오프라인 시착이다. 오프라인 편재성은 anchor를 능동 보정 도구('가까운 유니클로 가서 M 입어보고 오세요')로 만들어 진단 신뢰성을 직접 올린다.",
+    "demoted": "온라인 실측 제공 여부는 anchor 자격이 아니라 엔진 수집 편의 스코어로 강등(데이터가 쉬운 것 ≠ 사용자가 입어봤/입어볼 수 있는 것).",
+    "score": "sizeStandard(표준성)는 게이트가 아니라 번역 품질 스코어. 통과한 것들 안에서 역산 신뢰도 차이를 표시.",
+    "appliesTo": "카테고리 단위(CLAUDE.md #6) — 상의(TOP)부터 착용경험 입력에 사용."
+  },
+  "anchors": [
+    { "brandId": "uniqlo", "name": "유니클로", "offlineFitting": "high", "sizeStandard": "high", "engineBootstrap": true, "note": "전국·대형 매장, 시착 자유 + 사이즈표 실측 제공. anchor 핵심이자 부트스트랩 1순위." },
+    { "brandId": "topten", "name": "탑텐", "offlineFitting": "high", "sizeStandard": "high", "note": "매장 약 700개(국내 SPA 최다급), 저가·표준. 시착 편재성 최상." },
+    { "brandId": "spao", "name": "스파오", "offlineFitting": "high", "sizeStandard": "high", "note": "이랜드 SPA, 몰 입점 다수(약 120개). 표준 사이즈." },
+    { "brandId": "8seconds", "name": "에잇세컨즈", "offlineFitting": "mid", "sizeStandard": "high", "note": "삼성물산 SPA, 오프라인·온라인 병행." },
+    { "brandId": "zara", "name": "자라", "offlineFitting": "high", "sizeStandard": "low", "translationVariance": true, "note": "주요 몰 입점(시착 편함)이나 유럽핏으로 사이즈 작게/특이. 입력 자격 OK, 역산 편차 큼." },
+    { "brandId": "hm", "name": "H&M", "offlineFitting": "high", "sizeStandard": "low", "translationVariance": true, "note": "주요 몰 입점. 사이즈 불안정 → 번역 편차 플래그." },
+    { "brandId": "musinsa-standard", "name": "무신사 스탠다드", "offlineFitting": "mid", "sizeStandard": "high", "engineBootstrap": true, "note": "오프라인 밀도는 중간(online-native)이나 실측이 깨끗해 엔진 역산 검증 1차 배치에 유지. 온라인 판매 1위." }
+  ]
+}

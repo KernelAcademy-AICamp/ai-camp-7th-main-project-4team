@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅(Fitting) — 랜딩 시안 (디자인 토글)</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Segoe UI",Roboto,sans-serif;background:#0b0d11}
+
+  /* ===== theme switcher bar ===== */
+  .switcher{position:sticky;top:0;z-index:50;background:#0b0d11;border-bottom:1px solid #232a35;padding:11px 16px;color:#e8eaed}
+  .switcher .row1{display:flex;align-items:center;gap:12px;margin-bottom:9px;flex-wrap:wrap}
+  .switcher .title{font-size:13px;font-weight:800}
+  .switcher .now{font-size:12px;color:#9aa3b2}
+  .switcher .now b{color:#7fb0ff}
+  .grp{display:flex;align-items:center;gap:7px;overflow-x:auto;padding-bottom:4px}
+  .grp .glabel{font-size:10px;font-weight:800;color:#6a7382;white-space:nowrap;letter-spacing:.5px;flex-shrink:0}
+  .chip-t{flex-shrink:0;font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;border:1px solid #2c333f;background:#141821;color:#c3c9d4;cursor:pointer;white-space:nowrap;transition:.12s}
+  .chip-t:hover{border-color:#3b82f6;color:#fff}
+  .chip-t.on{background:#1d4ed8;border-color:#1d4ed8;color:#fff}
+
+  /* ===== app default tokens (overridden per theme) ===== */
+  #app{
+    --bg:#eef2f9; --surface:#ffffff; --surface2:#f8fafc; --ink:#0f172a; --muted:#64748b;
+    --primary:#1d4ed8; --primaryInk:#ffffff; --accent:#3b82f6; --soft:#dbeafe; --border:#e2e8f0;
+    --radius:18px; --btnRadius:12px; --shadow:0 12px 34px rgba(29,78,216,.12);
+    --heroBg:linear-gradient(135deg,#dbeafe 0%,#eef2f9 60%); --font:inherit;
+    --extra:'';
+    background:var(--bg);color:var(--ink);font-family:var(--font);min-height:100vh;
+    transition:background .25s;padding-bottom:40px;
+  }
+  .container{max-width:980px;margin:0 auto;padding:0 18px}
+
+  /* nav */
+  nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+  .logo{font-size:20px;font-weight:900;letter-spacing:-.5px;color:var(--ink)}
+  .logo .dot{color:var(--primary)}
+  .nav-r{display:flex;gap:8px;align-items:center}
+  .nav-link{font-size:13px;color:var(--muted);font-weight:600;padding:7px 10px}
+  .btn-ghost{font-size:13px;font-weight:700;padding:8px 14px;border-radius:var(--btnRadius);border:1px solid var(--border);background:var(--surface);color:var(--ink)}
+
+  /* hero */
+  .hero{background:var(--heroBg);border-radius:var(--radius);padding:46px 38px;margin-top:6px;display:grid;grid-template-columns:1.15fr .85fr;gap:30px;align-items:center}
+  .eyebrow{display:inline-block;font-size:12px;font-weight:800;color:var(--primary);background:var(--soft);padding:5px 12px;border-radius:20px;margin-bottom:16px;letter-spacing:.2px}
+  h1.head{font-size:34px;line-height:1.25;font-weight:900;letter-spacing:-1px;color:var(--ink);margin-bottom:14px}
+  .sub{font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:24px;max-width:420px}
+  .btn-primary{display:inline-block;font-size:15px;font-weight:800;padding:15px 26px;border-radius:var(--btnRadius);background:var(--primary);color:var(--primaryInk);border:none;cursor:pointer;box-shadow:var(--shadow)}
+  .cta-note{font-size:12.5px;color:var(--muted);margin-top:12px;font-weight:600}
+
+  /* hero mini result card */
+  .minicard{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+  .mc-top{display:flex;align-items:center;gap:10px;margin-bottom:13px}
+  .mc-av{width:42px;height:42px;border-radius:13px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:21px}
+  .mc-type{font-size:10.5px;font-weight:800;color:var(--primary);letter-spacing:.4px}
+  .mc-title{font-size:15px;font-weight:800;color:var(--ink)}
+  .mc-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--ink);padding:8px 0;border-top:1px solid var(--border)}
+  .sz{font-size:12px;font-weight:800;padding:3px 11px;border-radius:8px;background:var(--soft);color:var(--primary)}
+
+  /* sections */
+  section{margin-top:42px}
+  .sec-head{text-align:center;margin-bottom:26px}
+  .sec-head .k{font-size:12px;font-weight:800;color:var(--primary);letter-spacing:1px}
+  .sec-head h2{font-size:24px;font-weight:900;color:var(--ink);letter-spacing:-.5px;margin-top:6px}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .step{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px 20px;box-shadow:var(--shadow)}
+  .stepnum{width:34px;height:34px;border-radius:11px;background:var(--soft);color:var(--primary);font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+  .step h3{font-size:16px;font-weight:800;color:var(--ink);margin-bottom:7px}
+  .step p{font-size:13px;color:var(--muted);line-height:1.55}
+
+  /* expert recruit (empty state) */
+  .expert{background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius);padding:30px;text-align:center;box-shadow:var(--shadow)}
+  .expert .tagm{display:inline-block;font-size:11.5px;font-weight:800;color:var(--accent);background:var(--soft);padding:4px 11px;border-radius:20px;margin-bottom:12px}
+  .expert h3{font-size:19px;font-weight:900;color:var(--ink);margin-bottom:8px;letter-spacing:-.4px}
+  .expert p{font-size:13.5px;color:var(--muted);margin-bottom:18px}
+
+  footer{margin-top:44px;padding-top:22px;border-top:1px solid var(--border);display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
+  footer a{font-size:12.5px;color:var(--muted);font-weight:600;text-decoration:none}
+
+  @media(max-width:720px){.hero{grid-template-columns:1fr;padding:32px 24px}.steps{grid-template-columns:1fr}h1.head{font-size:28px}}
+
+  /* ============================================================
+     THEME OVERRIDES
+     ============================================================ */
+  /* 01 Trust Calm = default */
+
+  #app[data-theme="pop"]{--bg:#faf5ff;--surface:#fff;--surface2:#faf5ff;--ink:#3b0764;--muted:#7e6a98;--primary:#7c3aed;--primaryInk:#fff;--accent:#f472b6;--soft:#ede9fe;--border:#e9d5ff;--shadow:0 12px 34px rgba(124,58,237,.16);--heroBg:linear-gradient(135deg,#ede9fe,#fbe8ff 70%)}
+  #app[data-theme="pop"] .btn-primary{background:linear-gradient(90deg,#7c3aed,#f472b6)}
+
+  #app[data-theme="editorial"]{--bg:#f5f1ea;--surface:#fff;--surface2:#f5f1ea;--ink:#1c1917;--muted:#78716c;--primary:#1c1917;--primaryInk:#f5f1ea;--accent:#a16207;--soft:#e7e2d9;--border:#e0d9cd;--radius:6px;--btnRadius:4px;--shadow:0 14px 34px rgba(28,25,23,.12);--heroBg:linear-gradient(135deg,#ece5d8,#f5f1ea);--font:Georgia,'Times New Roman',serif}
+  #app[data-theme="editorial"] .eyebrow,#app[data-theme="editorial"] .mc-type,#app[data-theme="editorial"] .sec-head .k{letter-spacing:1.5px;text-transform:uppercase}
+
+  #app[data-theme="mono"]{--bg:#ededed;--surface:#fff;--surface2:#fafafa;--ink:#111;--muted:#737373;--primary:#111;--primaryInk:#fff;--accent:#404040;--soft:#ededed;--border:#e5e5e5;--radius:12px;--btnRadius:8px;--shadow:0 12px 30px rgba(0,0,0,.10);--heroBg:linear-gradient(135deg,#e5e5e5,#f5f5f5)}
+
+  #app[data-theme="mint"]{--bg:#f0fdfa;--surface:#fff;--surface2:#f0fdfa;--ink:#134e4a;--muted:#5b8a85;--primary:#0d9488;--primaryInk:#fff;--accent:#2dd4bf;--soft:#ccfbf1;--border:#bdf0e6;--shadow:0 12px 32px rgba(13,148,136,.15);--heroBg:linear-gradient(135deg,#ccfbf1,#f0fdfa)}
+
+  #app[data-theme="coral"]{--bg:#fff7ed;--surface:#fff;--surface2:#fff7ed;--ink:#7c2d12;--muted:#a8654a;--primary:#f97316;--primaryInk:#fff;--accent:#fb7185;--soft:#ffedd5;--border:#fcdcc0;--shadow:0 12px 32px rgba(249,115,22,.16);--heroBg:linear-gradient(135deg,#ffedd5,#ffe4e6 80%)}
+
+  #app[data-theme="neopop"]{--bg:#0f0a1e;--surface:#171030;--surface2:#150f29;--ink:#f5d0fe;--muted:#a78bca;--primary:#ec4899;--primaryInk:#fff;--accent:#22d3ee;--soft:#2e2152;--border:#2e2152;--shadow:0 16px 40px rgba(236,72,153,.25);--heroBg:linear-gradient(135deg,#3b0764,#831843 90%)}
+  #app[data-theme="neopop"] .btn-primary{background:linear-gradient(90deg,#22d3ee,#ec4899);color:#0f0a1e}
+  #app[data-theme="neopop"] .sz{color:#0f0a1e;background:#22d3ee}
+
+  #app[data-theme="midnight"]{--bg:#020617;--surface:#0b1220;--surface2:#0b1220;--ink:#e2e8f0;--muted:#94a3b8;--primary:#22d3ee;--primaryInk:#020617;--accent:#a3e635;--soft:#0e7490;--border:#1e293b;--shadow:0 16px 40px rgba(34,211,238,.14);--heroBg:linear-gradient(135deg,#0e7490,#020617 80%)}
+  #app[data-theme="midnight"] .sz{color:#a5f3fc;background:#0e7490}
+  #app[data-theme="midnight"] .mc-type,#app[data-theme="midnight"] .eyebrow{color:#22d3ee}
+
+  #app[data-theme="oat"]{--bg:#f5f5f4;--surface:#fff;--surface2:#fafaf9;--ink:#44403c;--muted:#857f78;--primary:#84a98c;--primaryInk:#fff;--accent:#52525b;--soft:#dce4dd;--border:#e7e5e4;--shadow:0 12px 30px rgba(68,64,60,.08);--heroBg:linear-gradient(135deg,#e3e8e3,#f5f5f4);--font:Georgia,serif}
+
+  #app[data-theme="swiss"]{--bg:#fff;--surface:#fff;--surface2:#fafafa;--ink:#171717;--muted:#525252;--primary:#dc2626;--primaryInk:#fff;--accent:#facc15;--soft:#fef2f2;--border:#171717;--radius:4px;--btnRadius:4px;--shadow:5px 5px 0 #171717;--heroBg:#facc15}
+  #app[data-theme="swiss"] .hero,#app[data-theme="swiss"] .step,#app[data-theme="swiss"] .minicard,#app[data-theme="swiss"] .expert{border:2.5px solid #171717}
+  #app[data-theme="swiss"] .sz{background:#facc15;color:#171717;border:1.5px solid #171717}
+  #app[data-theme="swiss"] h1.head,#app[data-theme="swiss"] .sec-head h2{text-transform:uppercase}
+
+  /* ---- idioms ---- */
+  #app[data-theme="shadcn"]{--bg:#fafafa;--surface:#fff;--surface2:#f4f4f5;--ink:#18181b;--muted:#71717a;--primary:#18181b;--primaryInk:#fafafa;--accent:#52525b;--soft:#f4f4f5;--border:#e4e4e7;--radius:12px;--btnRadius:8px;--shadow:0 1px 3px rgba(0,0,0,.07),0 8px 24px rgba(0,0,0,.04);--heroBg:linear-gradient(135deg,#f4f4f5,#fafafa)}
+  #app[data-theme="shadcn"] .sz{border:1px solid var(--border)}
+
+  #app[data-theme="material"]{--bg:#fef7ff;--surface:#fff;--surface2:#f7f2fa;--ink:#1d1b20;--muted:#625b71;--primary:#6750a4;--primaryInk:#fff;--accent:#7d5260;--soft:#eaddff;--border:#e7e0ec;--radius:20px;--btnRadius:99px;--shadow:0 1px 3px rgba(0,0,0,.18);--heroBg:linear-gradient(135deg,#eaddff,#fef7ff)}
+  #app[data-theme="material"] .sz{border-radius:99px}
+  #app[data-theme="material"] .stepnum{border-radius:99px}
+
+  #app[data-theme="ios"]{--bg:#f2f2f7;--surface:#fff;--surface2:#f2f2f7;--ink:#000;--muted:#8e8e93;--primary:#007aff;--primaryInk:#fff;--accent:#34c759;--soft:#e9f0ff;--border:#e5e5ea;--radius:14px;--btnRadius:12px;--shadow:0 8px 26px rgba(0,0,0,.06);--heroBg:linear-gradient(135deg,#e9f0ff,#f2f2f7)}
+
+  #app[data-theme="glass"]{--bg:#5b21b6;--surface:rgba(255,255,255,.14);--surface2:rgba(255,255,255,.1);--ink:#fff;--muted:rgba(255,255,255,.78);--primary:rgba(255,255,255,.92);--primaryInk:#6d28d9;--accent:#f0abfc;--soft:rgba(255,255,255,.22);--border:rgba(255,255,255,.32);--radius:20px;--shadow:0 14px 40px rgba(0,0,0,.2);--heroBg:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.06))}
+  #app[data-theme="glass"]{background:linear-gradient(135deg,#6366f1,#db2777 90%)}
+  #app[data-theme="glass"] .hero,#app[data-theme="glass"] .step,#app[data-theme="glass"] .minicard,#app[data-theme="glass"] .expert,#app[data-theme="glass"] .btn-ghost{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  #app[data-theme="glass"] .eyebrow,#app[data-theme="glass"] .mc-type,#app[data-theme="glass"] .sec-head .k{color:#fff}
+  #app[data-theme="glass"] .sz{color:#6d28d9}
+
+  #app[data-theme="neu"]{--bg:#e0e5ec;--surface:#e0e5ec;--surface2:#e0e5ec;--ink:#3a4252;--muted:#6d7787;--primary:#5a6783;--primaryInk:#fff;--accent:#8a94a6;--soft:#e0e5ec;--border:transparent;--radius:20px;--btnRadius:14px;--shadow:6px 6px 14px #b9bfca,-6px -6px 14px #fff;--heroBg:#e0e5ec}
+  #app[data-theme="neu"] .stepnum,#app[data-theme="neu"] .mc-av,#app[data-theme="neu"] .sz{box-shadow:inset 3px 3px 6px #b9bfca,inset -3px -3px 6px #fff;color:#5a6783}
+  #app[data-theme="neu"] .mc-row{border-color:#cfd5de}
+  #app[data-theme="neu"] .step,#app[data-theme="neu"] .expert{border:none}
+
+  #app[data-theme="brut"]{--bg:#fde047;--surface:#fff;--surface2:#fff;--ink:#000;--muted:#3f3f3f;--primary:#f472b6;--primaryInk:#000;--accent:#4ade80;--soft:#4ade80;--border:#000;--radius:6px;--btnRadius:4px;--shadow:5px 5px 0 #000;--heroBg:#4ade80}
+  #app[data-theme="brut"] .hero,#app[data-theme="brut"] .step,#app[data-theme="brut"] .minicard,#app[data-theme="brut"] .expert{border:2.5px solid #000}
+  #app[data-theme="brut"] .btn-primary,#app[data-theme="brut"] .stepnum,#app[data-theme="brut"] .sz,#app[data-theme="brut"] .eyebrow,#app[data-theme="brut"] .mc-av{border:2px solid #000}
+  #app[data-theme="brut"] h1.head,#app[data-theme="brut"] .sec-head h2{font-weight:900}
+
+  #app[data-theme="clay"]{--bg:#ede9fe;--surface:#fff;--surface2:#faf5ff;--ink:#5b21b6;--muted:#8b73c4;--primary:#a78bfa;--primaryInk:#fff;--accent:#f0abfc;--soft:#f3e8ff;--border:transparent;--radius:24px;--btnRadius:18px;--shadow:8px 8px 18px rgba(120,90,200,.22),inset -3px -3px 8px rgba(120,90,200,.12),inset 4px 4px 9px rgba(255,255,255,.8);--heroBg:linear-gradient(135deg,#ddd6fe,#fae8ff)}
+  #app[data-theme="clay"] .sz,#app[data-theme="clay"] .stepnum,#app[data-theme="clay"] .mc-av{box-shadow:inset -2px -2px 5px rgba(120,90,200,.15),inset 2px 2px 5px rgba(255,255,255,.7)}
+
+  #app[data-theme="notion"]{--bg:#f7f6f3;--surface:#fff;--surface2:#f7f6f3;--ink:#37352f;--muted:#9b9588;--primary:#37352f;--primaryInk:#fff;--accent:#787066;--soft:#e9e5dc;--border:#e9e5dc;--radius:8px;--btnRadius:6px;--shadow:0 6px 20px rgba(55,53,47,.07);--heroBg:linear-gradient(135deg,#efece5,#f7f6f3)}
+
+  /* ===== imported: fitting-theme-demo.html (3) ===== */
+  #app[data-theme="fashionlab"]{--bg:#f8f7f4;--surface:#fff;--surface2:#f8f7f4;--ink:#1d1d1f;--muted:#71757a;--primary:#243447;--primaryInk:#fff;--accent:#d8a45d;--soft:#e7ece9;--border:#e7e3da;--radius:24px;--btnRadius:14px;--shadow:0 12px 30px rgba(36,52,71,.12);--heroBg:linear-gradient(135deg,#e6ebe8,#f8f7f4)}
+  #app[data-theme="fashionlab"] .minicard{background:linear-gradient(135deg,#243447,#6f8b7a);color:#fff;border:none}
+  #app[data-theme="fashionlab"] .minicard .mc-title,#app[data-theme="fashionlab"] .minicard .mc-row{color:#fff}
+  #app[data-theme="fashionlab"] .minicard .mc-type{color:#d8a45d}
+  #app[data-theme="fashionlab"] .minicard .mc-row{border-color:rgba(255,255,255,.18)}
+  #app[data-theme="fashionlab"] .minicard .sz{background:rgba(255,255,255,.18);color:#fff}
+
+  #app[data-theme="premium"]{--bg:#f5f2ec;--surface:#fff;--surface2:#f5f2ec;--ink:#1e1b18;--muted:#857c70;--primary:#1e293b;--primaryInk:#fff;--accent:#b58a50;--soft:#efe7d8;--border:#e6ddc9;--radius:22px;--btnRadius:12px;--shadow:0 14px 34px rgba(30,41,59,.12);--heroBg:linear-gradient(135deg,#ece4d4,#f5f2ec);--font:Georgia,serif}
+  #app[data-theme="premium"] .minicard{background:linear-gradient(135deg,#1e293b,#b58a50);color:#fff;border:none}
+  #app[data-theme="premium"] .minicard .mc-title,#app[data-theme="premium"] .minicard .mc-row{color:#fff}
+  #app[data-theme="premium"] .minicard .mc-type{color:#e7cfa6}
+  #app[data-theme="premium"] .minicard .mc-row{border-color:rgba(255,255,255,.18)}
+  #app[data-theme="premium"] .minicard .sz{background:rgba(255,255,255,.18);color:#fff}
+
+  #app[data-theme="friendly"]{--bg:#f4f8ff;--surface:#fff;--surface2:#f4f8ff;--ink:#202124;--muted:#6b6f86;--primary:#4f46e5;--primaryInk:#fff;--accent:#58b6a3;--soft:#e6e9ff;--border:#e2e6f5;--radius:22px;--btnRadius:14px;--shadow:0 12px 32px rgba(79,70,229,.15);--heroBg:linear-gradient(135deg,#e6e9ff,#f4f8ff)}
+  #app[data-theme="friendly"] .minicard{background:linear-gradient(135deg,#4f46e5,#58b6a3);color:#fff;border:none}
+  #app[data-theme="friendly"] .minicard .mc-title,#app[data-theme="friendly"] .minicard .mc-row{color:#fff}
+  #app[data-theme="friendly"] .minicard .mc-type{color:#c7f0e6}
+  #app[data-theme="friendly"] .minicard .mc-row{border-color:rgba(255,255,255,.2)}
+  #app[data-theme="friendly"] .minicard .sz{background:rgba(255,255,255,.2);color:#fff}
+
+  /* ===== imported: fitting_expanded_tester.html (13) ===== */
+  #app[data-theme="tc1"]{--bg:#f8fafc;--surface:#fff;--surface2:#f8fafc;--ink:#1e293b;--muted:#64748b;--primary:#f97316;--primaryInk:#fff;--accent:#fb923c;--soft:#ffedd5;--border:#e2e8f0;--shadow:0 12px 30px rgba(249,115,22,.14);--heroBg:linear-gradient(135deg,#ffedd5,#f8fafc)}
+  #app[data-theme="tc2"]{--bg:#f4f1ea;--surface:#fff;--surface2:#f4f1ea;--ink:#2c3e2b;--muted:#6e7e65;--primary:#1e3e2b;--primaryInk:#fff;--accent:#5b7a52;--soft:#dde7dc;--border:#e4dccf;--shadow:0 12px 30px rgba(30,62,43,.12);--heroBg:linear-gradient(135deg,#dde7dc,#f4f1ea)}
+  #app[data-theme="tc3"]{--bg:#0b0f19;--surface:#161b26;--surface2:#161b26;--ink:#f8fafc;--muted:#94a3b8;--primary:#84cc16;--primaryInk:#0b0f19;--accent:#a3e635;--soft:#1e293b;--border:#1e293b;--shadow:0 16px 40px rgba(132,204,22,.16);--heroBg:linear-gradient(135deg,#1a2a12,#0b0f19)}
+  #app[data-theme="tc4"]{--bg:#1f2421;--surface:#2d312e;--surface2:#2d312e;--ink:#f4f4f9;--muted:#9b9b9b;--primary:#9a1b36;--primaryInk:#fff;--accent:#c0405b;--soft:#3f4441;--border:#3f4441;--shadow:0 16px 40px rgba(154,27,54,.22);--heroBg:linear-gradient(135deg,#3a2a2d,#1f2421)}
+  #app[data-theme="tc5"]{--bg:#e5e7eb;--surface:#fff;--surface2:#f3f4f6;--ink:#374151;--muted:#4b5563;--primary:#0284c7;--primaryInk:#fff;--accent:#38bdf8;--soft:#e0f2fe;--border:#d1d5db;--shadow:0 12px 30px rgba(2,132,199,.13);--heroBg:linear-gradient(135deg,#e0f2fe,#e5e7eb)}
+  #app[data-theme="tc6"]{--bg:#2b2118;--surface:#3b3025;--surface2:#3b3025;--ink:#f5ebe6;--muted:#cbb4a4;--primary:#d97706;--primaryInk:#fff;--accent:#f59e0b;--soft:#4a3e33;--border:#4a3e33;--shadow:0 16px 40px rgba(217,119,6,.2);--heroBg:linear-gradient(135deg,#46362a,#2b2118)}
+  #app[data-theme="tc7"]{--bg:#0f0c1b;--surface:#1d1830;--surface2:#1d1830;--ink:#e2e8f0;--muted:#94a3b8;--primary:#06b6d4;--primaryInk:#04222a;--accent:#22d3ee;--soft:#2a2440;--border:#2a2440;--shadow:0 16px 40px rgba(6,182,212,.2);--heroBg:linear-gradient(135deg,#1a1340,#0f0c1b)}
+  #app[data-theme="tc8"]{--bg:#2f3130;--surface:#3e4140;--surface2:#3e4140;--ink:#eceff1;--muted:#b0bec5;--primary:#d35400;--primaryInk:#fff;--accent:#e8743b;--soft:#4f5251;--border:#4f5251;--shadow:0 16px 40px rgba(211,84,0,.2);--heroBg:linear-gradient(135deg,#46403a,#2f3130)}
+  #app[data-theme="tc9"]{--bg:#edf2f7;--surface:#fff;--surface2:#edf2f7;--ink:#2d3748;--muted:#718096;--primary:#2b6cb0;--primaryInk:#fff;--accent:#4299e1;--soft:#dce7f3;--border:#e2e8f0;--shadow:0 12px 30px rgba(43,108,176,.14);--heroBg:linear-gradient(135deg,#dce7f3,#edf2f7)}
+  #app[data-theme="tc10"]{--bg:#f7fafc;--surface:#fff;--surface2:#f7fafc;--ink:#2d3748;--muted:#718096;--primary:#ed8936;--primaryInk:#fff;--accent:#f6ad55;--soft:#feebc8;--border:#e2e8f0;--shadow:0 12px 30px rgba(237,137,54,.14);--heroBg:linear-gradient(135deg,#feebc8,#f7fafc)}
+  #app[data-theme="tc11"]{--bg:#000;--surface:#111;--surface2:#111;--ink:#fff;--muted:#888;--primary:#fff;--primaryInk:#000;--accent:#aaa;--soft:#222;--border:#222;--radius:6px;--btnRadius:6px;--shadow:0 16px 40px rgba(255,255,255,.08);--heroBg:linear-gradient(135deg,#181818,#000)}
+  #app[data-theme="tc12"]{--bg:#ebf8fa;--surface:#fff;--surface2:#ebf8fa;--ink:#1a365d;--muted:#4a5568;--primary:#2c5282;--primaryInk:#fff;--accent:#3182ce;--soft:#d6eaf8;--border:#e2e8f0;--shadow:0 12px 30px rgba(44,82,130,.14);--heroBg:linear-gradient(135deg,#d6eaf8,#ebf8fa)}
+  #app[data-theme="tc13"]{--bg:#f5f2eb;--surface:#fff;--surface2:#f5f2eb;--ink:#4a3728;--muted:#8c7a6b;--primary:#a04000;--primaryInk:#fff;--accent:#c2641f;--soft:#f2e2d0;--border:#e5dec9;--shadow:0 12px 30px rgba(160,64,0,.14);--heroBg:linear-gradient(135deg,#f2e2d0,#f5f2eb)}
+</style>
+</head>
+<body>
+
+  <div class="switcher">
+    <div class="row1">
+      <span class="title">🎨 디자인 토글</span>
+      <span class="now">현재: <b id="now">01 Trust Calm</b> — 칩을 눌러 즉시 교체</span>
+    </div>
+    <div class="grp">
+      <span class="glabel">컬러 컨셉</span>
+      <button class="chip-t on" data-k="trust" data-n="01 Trust Calm">Trust Calm</button>
+      <button class="chip-t" data-k="pop" data-n="02 Soft Pop">Soft Pop</button>
+      <button class="chip-t" data-k="editorial" data-n="03 Warm Editorial">Warm Editorial</button>
+      <button class="chip-t" data-k="mono" data-n="04 Mono Premium">Mono</button>
+      <button class="chip-t" data-k="mint" data-n="05 Mint Wellness">Mint</button>
+      <button class="chip-t" data-k="coral" data-n="06 Coral Warmth">Coral</button>
+      <button class="chip-t" data-k="neopop" data-n="07 Neo Pop">Neo Pop</button>
+      <button class="chip-t" data-k="midnight" data-n="08 Midnight Neon">Midnight</button>
+      <button class="chip-t" data-k="oat" data-n="09 Oat Neutral">Oat</button>
+      <button class="chip-t" data-k="swiss" data-n="10 Swiss Bold">Swiss</button>
+    </div>
+    <div class="grp" style="margin-top:7px">
+      <span class="glabel">내장 이디엄</span>
+      <button class="chip-t" data-k="shadcn" data-n="A shadcn/ui">shadcn/ui</button>
+      <button class="chip-t" data-k="material" data-n="B Material 3">Material 3</button>
+      <button class="chip-t" data-k="ios" data-n="C iOS HIG">iOS</button>
+      <button class="chip-t" data-k="glass" data-n="D Glassmorphism">Glass</button>
+      <button class="chip-t" data-k="neu" data-n="E Neumorphism">Neumorphism</button>
+      <button class="chip-t" data-k="brut" data-n="F Neo-Brutalism">Brutalism</button>
+      <button class="chip-t" data-k="clay" data-n="G Claymorphism">Clay</button>
+      <button class="chip-t" data-k="notion" data-n="H Notion Docs">Notion</button>
+    </div>
+    <div class="grp" style="margin-top:7px">
+      <span class="glabel">가져온 테마 · demo</span>
+      <button class="chip-t" data-k="fashionlab" data-n="🧪 Fashion Lab">Fashion Lab</button>
+      <button class="chip-t" data-k="premium" data-n="✨ Premium Concierge">Premium Concierge</button>
+      <button class="chip-t" data-k="friendly" data-n="👕 Friendly Coach">Friendly Coach</button>
+    </div>
+    <div class="grp" style="margin-top:7px">
+      <span class="glabel">가져온 테마 · tester</span>
+      <button class="chip-t" data-k="tc1" data-n="T1 Trusted Classic">Trusted Classic</button>
+      <button class="chip-t" data-k="tc2" data-n="T2 Smart Analog">Smart Analog</button>
+      <button class="chip-t" data-k="tc3" data-n="T3 Cyber Bold">Cyber Bold</button>
+      <button class="chip-t" data-k="tc4" data-n="T4 Executive Move">Executive Move</button>
+      <button class="chip-t" data-k="tc5" data-n="T5 Minimal Concrete">Minimal Concrete</button>
+      <button class="chip-t" data-k="tc6" data-n="T6 Classic Tailor">Classic Tailor</button>
+      <button class="chip-t" data-k="tc7" data-n="T7 Urban Night">Urban Night</button>
+      <button class="chip-t" data-k="tc8" data-n="T8 Nordic Eco">Nordic Eco</button>
+      <button class="chip-t" data-k="tc9" data-n="T9 Techno Logic">Techno Logic</button>
+      <button class="chip-t" data-k="tc10" data-n="T10 Gentle Sunset">Gentle Sunset</button>
+      <button class="chip-t" data-k="tc11" data-n="T11 Noir Monologue">Noir Monologue</button>
+      <button class="chip-t" data-k="tc12" data-n="T12 Clean Fit">Clean Fit</button>
+      <button class="chip-t" data-k="tc13" data-n="T13 Heritage Brick">Heritage Brick</button>
+    </div>
+  </div>
+
+  <div id="app" data-theme="trust">
+    <div class="container">
+
+      <nav>
+        <div class="logo">핏팅<span class="dot">.</span></div>
+        <div class="nav-r">
+          <a class="nav-link">전문가 지원</a>
+          <button class="btn-ghost">로그인</button>
+        </div>
+      </nav>
+
+      <!-- HERO -->
+      <div class="hero">
+        <div>
+          <span class="eyebrow">AI 사이즈 번역 · 가입 불필요</span>
+          <h1 class="head">안 입어본 브랜드도,<br>내 사이즈를 안다</h1>
+          <p class="sub">평소 입던 옷의 착용 경험만으로 브랜드를 가로질러 사이즈를 번역해드려요. 실패 걱정 없이 새 브랜드에 도전하세요.</p>
+          <button class="btn-primary">1분 만에 무료 진단 시작 →</button>
+          <div class="cta-note">✓ 구매 이력 불필요 &nbsp;·&nbsp; ✓ 가입 없이 결과 확인</div>
+        </div>
+        <div class="minicard">
+          <div class="mc-top">
+            <div class="mc-av">📐</div>
+            <div><div class="mc-type">체형 프로필</div><div class="mc-title">표준 균형형</div></div>
+          </div>
+          <div class="mc-row"><span>유니클로</span><span class="sz">M</span></div>
+          <div class="mc-row"><span>무신사 스탠다드</span><span class="sz">L</span></div>
+          <div class="mc-row"><span>스파오</span><span class="sz">M</span></div>
+        </div>
+      </div>
+
+      <!-- HOW IT WORKS -->
+      <section>
+        <div class="sec-head">
+          <div class="k">HOW IT WORKS</div>
+          <h2>3단계면 끝나요</h2>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <div class="stepnum">1</div>
+            <h3>입던 옷 입력</h3>
+            <p>입어본 옷을 [브랜드·핏·사이즈]로 고르고, 부위별 느낌(딱맞음/여유/큼)만 골라주세요.</p>
+          </div>
+          <div class="step">
+            <div class="stepnum">2</div>
+            <h3>체형 역산</h3>
+            <p>규칙 기반 엔진이 착용 경험을 거꾸로 풀어 당신의 부위별 치수와 여유 선호를 추정해요.</p>
+          </div>
+          <div class="step">
+            <div class="stepnum">3</div>
+            <h3>브랜드별 사이즈</h3>
+            <p>안 입어본 브랜드에 그 체형을 투영해 "여기선 당신 사이즈는 ○○"로 번역해드려요.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- EXPERT RECRUIT (empty state) -->
+      <section>
+        <div class="expert">
+          <span class="tagm">COMING SOON · 1기 전문가 모집</span>
+          <h3>사이즈는 도구가, 스타일은 전문가가</h3>
+          <p>진단 그 다음 — 스타일리스트 매칭이 곧 열려요. 오픈 시 가장 먼저 알려드릴게요.</p>
+          <button class="btn-primary">오픈 알림 신청</button>
+        </div>
+      </section>
+
+      <footer>
+        <a>서비스 소개</a><a>이용약관</a><a>개인정보 처리방침</a><a>전문가 지원</a>
+      </footer>
+
+    </div>
+  </div>
+
+<script>
+  const app = document.getElementById('app');
+  const now = document.getElementById('now');
+  document.querySelectorAll('.chip-t').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.chip-t').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      app.setAttribute('data-theme', btn.dataset.k);
+      now.textContent = btn.dataset.n;
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  });
+  // keyboard: arrow keys cycle
+  const chips=[...document.querySelectorAll('.chip-t')];
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft')return;
+    const i=chips.findIndex(c=>c.classList.contains('on'));
+    const n=(i+(e.key==='ArrowRight'?1:-1)+chips.length)%chips.length;
+    chips[n].click();
+  });
+</script>
+</body>
+</html>
+</content>

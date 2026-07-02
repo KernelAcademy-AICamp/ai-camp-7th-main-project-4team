@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅(Fitting) — 화면 흐름도</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --ink:#e8eaed; --muted:#9aa3b2;
+    --line:#3a4252; --mvp:#4f8cff; --mvp-bg:#16243f; --mock:#7a8294; --mock-bg:#1d212a;
+    --state:#f0a020; --state-bg:#2a2210; --branch:#ff6b6b; --kill:#22c55e; --kill-bg:#0f2a1a;
+    --accent:#a78bfa;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Segoe UI",Roboto,sans-serif;
+    line-height:1.5; padding:32px 20px 80px;
+  }
+  .wrap{max-width:1080px;margin:0 auto}
+  header h1{font-size:26px;margin:0 0 6px}
+  header p{color:var(--muted);margin:2px 0;font-size:14px}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 8px}
+  .legend span{font-size:12px;padding:4px 10px;border-radius:20px;border:1px solid var(--line);color:var(--muted)}
+  .legend .mvp{border-color:var(--mvp);color:#a9c8ff}
+  .legend .mock{border-color:var(--mock)}
+  .legend .state{border-color:var(--state);color:#f5c873}
+  .legend .branch{border-color:var(--branch);color:#ff9d9d}
+  .legend .kill{border-color:var(--kill);color:#7ee2a8}
+  h2{font-size:18px;margin:40px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  h2 .num{color:var(--accent);font-variant-numeric:tabular-nums;margin-right:8px}
+
+  /* flow */
+  .flow{display:flex;flex-direction:column;align-items:center;gap:0}
+  .node{
+    position:relative;background:var(--panel);border:1.5px solid var(--line);
+    border-radius:12px;padding:12px 16px;width:min(440px,92%);text-align:center;
+  }
+  .node .tag{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.3px}
+  .node .title{font-size:15px;font-weight:700;margin:2px 0 4px}
+  .node .desc{font-size:12.5px;color:var(--muted)}
+  .node.mvp{border-color:var(--mvp);background:var(--mvp-bg)}
+  .node.mvp .tag{color:#7fa9ff}
+  .node.mock{border-color:var(--mock);background:var(--mock-bg);border-style:dashed}
+  .node.kill{border-color:var(--kill);background:var(--kill-bg)}
+  .node.kill .tag{color:var(--kill)}
+  .node .badge{position:absolute;top:-10px;right:-8px;font-size:10px;font-weight:700;
+    padding:2px 8px;border-radius:10px;background:var(--kill);color:#06210f}
+  .node .state{display:block;margin-top:6px;font-size:11.5px;color:#f5c873;
+    background:var(--state-bg);border:1px solid #4a3a12;border-radius:7px;padding:4px 8px}
+
+  .conn{width:2px;height:26px;background:var(--line)}
+  .conn.short{height:16px}
+  .label{font-size:11px;color:var(--muted);padding:3px 0}
+  .branch-label{color:var(--branch);font-weight:600}
+
+  /* two-column branch */
+  .split{display:flex;gap:20px;width:min(900px,96%);justify-content:center;align-items:flex-start}
+  .split .col{flex:1;display:flex;flex-direction:column;align-items:center}
+  .diamond{
+    background:#221a2e;border:1.5px solid var(--branch);color:#ffb3b3;
+    padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:600;
+    transform:none;text-align:center;
+  }
+
+  /* tables */
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#1b1f28;color:#c7cedb;font-weight:600}
+  td code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .arrow{color:var(--accent)}
+  .pill{display:inline-block;font-size:11px;padding:1px 7px;border-radius:9px;border:1px solid var(--line);color:var(--muted)}
+  .pill.s{border-color:var(--mvp);color:#a9c8ff}
+  .note{background:var(--panel);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 8px 8px 0;color:#cdd3de;font-size:13.5px;margin-top:14px}
+  footer{margin-top:50px;color:var(--muted);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>핏팅(Fitting) — 화면 흐름도</h1>
+    <p>IA(화면 <em>목록</em>)를 실제 <strong>전환·분기·state 흐름</strong>으로 확정한다.</p>
+    <p>범위: MVP(★) 진단 플로우를 끝까지 · ○(목업)은 흐름의 착지점으로만 표시</p>
+    <div class="legend">
+      <span class="mvp">★ 구현(MVP)</span>
+      <span class="mock">○ 목업 종착</span>
+      <span class="state">[state] 화면 상태</span>
+      <span class="branch">◇ 분기</span>
+      <span class="kill">★ 킬 메트릭 측정</span>
+    </div>
+  </header>
+
+  <h2><span class="num">1.</span>메인 플로우</h2>
+  <div class="flow">
+
+    <div class="node mvp">
+      <span class="tag">1.0 · 랜딩</span>
+      <div class="title">랜딩</div>
+      <div class="desc">진단 시작 CTA · 전문가 리스트(모집/예고) · 작동방식 3스텝</div>
+    </div>
+    <div class="conn"></div><div class="label">진단 시작 클릭</div>
+
+    <div class="node mvp">
+      <span class="tag">G.5 · 진입 게이트</span>
+      <div class="title">수집·이용 동의</div>
+      <div class="desc">민감정보(체형·치수) 직전 · 필수/선택 구분</div>
+    </div>
+    <div class="conn short"></div>
+    <div class="label"><span class="branch-label">◇ 동의</span> &nbsp; 거부 <span class="arrow">⟶</span> 1.0 복귀 / 필수동의 ✓ 진행</div>
+
+    <div class="node mvp">
+      <span class="tag">1.1 · 진단 1단계</span>
+      <div class="title">기본 정보 입력</div>
+      <div class="desc">성별 · 나이 · 키 · 몸무게 · 선호핏</div>
+    </div>
+    <div class="conn"></div>
+
+    <div class="node mvp">
+      <span class="tag">1.1.1 · 진단 2단계</span>
+      <div class="title">착용 경험 보정 입력</div>
+      <div class="desc">입어본 옷[브랜드+핏+사이즈] ×2~3벌 · 부위별 느낌(큼/여유/딱맞음/불편)</div>
+      <span class="state">[state] 진행표시 + 이전수정 &nbsp;·&nbsp; ◇ 옷 목록에 없음 → 직접입력 / 해당없음</span>
+    </div>
+    <div class="conn"></div><div class="label">제출</div>
+
+    <div class="node mvp">
+      <span class="tag">1.1.1.1</span>
+      <div class="title">진단 로딩</div>
+      <div class="desc">역산 + 매칭 + LLM 서술 (수 초)</div>
+    </div>
+    <div class="conn short"></div>
+    <div class="diamond">◇ 엔진 판정</div>
+    <div class="conn short"></div>
+
+    <!-- branch -->
+    <div class="split">
+      <div class="col">
+        <div class="label branch-label">추정 실패 / 저신뢰</div>
+        <div class="node mvp" style="border-style:dashed">
+          <span class="tag">1.1.1.2 [state]</span>
+          <div class="title">추정 실패 / 저신뢰</div>
+          <div class="desc">"옷을 더 추가해주세요" <span class="arrow">⟶</span> 1.1.1 복귀</div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="label" style="color:var(--kill)">추정 성공</div>
+        <div class="node mvp">
+          <span class="tag">1.1.1.2 · 제품의 얼굴</span>
+          <div class="title">결과 카드</div>
+          <div class="desc">① 체형 프로필(캐릭터) · ② 핏 인사이트 · ③ 브랜드별 추천 사이즈</div>
+          <span class="state">[state] 재진단 ⟶ 1.1.1 &nbsp;·&nbsp; ◇ 결과 저장 → 가입유도 ①</span>
+        </div>
+      </div>
+    </div>
+    <div class="conn"></div>
+
+    <div class="node kill">
+      <span class="badge">KILL METRIC</span>
+      <span class="tag">1.1.1.3</span>
+      <div class="title">피드백 수집</div>
+      <div class="desc">"실제 내 사이즈와 맞나?" 동의 · "안 사본 브랜드도 사보겠다" 의향</div>
+      <div class="desc" style="color:#7ee2a8;margin-top:4px">★ 추천 정확도 동의율 ≥ 65% 측정</div>
+    </div>
+    <div class="conn"></div>
+
+    <div class="node mvp">
+      <span class="tag">1.1.1.4 · 무료→유료 다리</span>
+      <div class="title">결과 → 전문가 전환</div>
+      <div class="desc">"스타일까지 전문가에게" CTA</div>
+    </div>
+    <div class="conn"></div><div class="label">클릭</div>
+
+    <div class="node mvp">
+      <span class="tag">1.2 · 페이크도어</span>
+      <div class="title">전문가 매칭 진입</div>
+      <div class="desc">관심 서비스 선택(온라인 스타일링/동행 쇼핑/이미지 컨설팅) → 클릭 로깅</div>
+      <span class="state">◇ 실이용(요청·알림신청) → 가입 게이트 ② &nbsp;·&nbsp; 전환신호 ≥ 25% 측정</span>
+    </div>
+    <div class="conn"></div><div class="label">알림 신청</div>
+
+    <div class="node mvp">
+      <span class="tag">1.2.1 · 착지</span>
+      <div class="title">매칭 알림 완료 / 준비중</div>
+      <div class="desc">"오픈 시 알려드릴게요" — 페이크도어 착지 = 흐름 종료</div>
+    </div>
+  </div>
+
+  <h2><span class="num">2.</span>전환 트리거(가입) — Lazy Registration</h2>
+  <div class="note">
+    흐름 본선은 <strong>비회원 그대로</strong> 끝까지 통과한다. 가입(1.3)은 두 지점에서만 옆으로 분기한다 —
+    <strong>가치를 경험한 뒤</strong> 가입을 요구해 전환율↑·표본 손실 방지.
+  </div>
+  <table>
+    <tr><th>트리거</th><th>지점</th><th>비회원 동작</th><th>가입 분기</th></tr>
+    <tr>
+      <td><span class="pill s">①</span> 결과 저장</td>
+      <td>1.1.1.2 결과카드</td>
+      <td>결과를 임시 URL로 보존(만료 있음)</td>
+      <td>"결과 저장하기" <span class="arrow">⟶</span> 1.3 가입 <span class="arrow">⟶</span> 1.4 마이페이지 영구귀속 (저장 안 해도 흐름 계속)</td>
+    </tr>
+    <tr>
+      <td><span class="pill s">②</span> 매칭 실이용</td>
+      <td>1.2 페이크도어</td>
+      <td>둘러보기·유형선택 허용</td>
+      <td>"요청/알림신청" <span class="arrow">⟶</span> 가입 게이트 <span class="arrow">⟶</span> 1.2.1 착지 (실매칭 1.2.2~ 는 v2)</td>
+    </tr>
+  </table>
+
+  <h2><span class="num">3.</span>State / 엣지 케이스 (막다른 길 제거)</h2>
+  <table>
+    <tr><th>화면</th><th>state / 케이스</th><th>트리거</th><th>처리 흐름</th></tr>
+    <tr><td>1.1.1</td><td>진행 표시·이전 수정</td><td>입력 길어짐</td><td>스텝 인디케이터·뒤로가기로 이탈 방지</td></tr>
+    <tr><td>1.1.1</td><td>옷 목록에 없음</td><td>MVP 브랜드 N개 한정</td><td>"직접 입력" / "해당 없음" 분기(빈발)</td></tr>
+    <tr><td>1.1.1.2</td><td>추정 실패/저신뢰</td><td>엔진 신뢰도 낮음</td><td>"옷을 더 추가" <span class="arrow">⟶</span> 1.1.1 복귀</td></tr>
+    <tr><td>1.1.1.2</td><td>재진단</td><td>결과 불만족</td><td>입력 수정 <span class="arrow">⟶</span> 1.1.1 재시도</td></tr>
+    <tr><td>G.7</td><td>404 / 공유URL 만료</td><td>잘못된 링크</td><td><span class="arrow">⟶</span> 1.0 랜딩 (○, 엣지)</td></tr>
+  </table>
+
+  <h2><span class="num">4.</span>MVP 흐름 경계</h2>
+  <table>
+    <tr><th>항목</th><th>내용</th></tr>
+    <tr><td>본선 종료점</td><td>1.2.1 알림 완료. 이후 전문가 목록·요청·결제(1.2.2~)는 ○(v2 목업)</td></tr>
+    <tr><td>측정 지점 2곳</td><td>1.1.1.3 킬 메트릭(≥65%) · 1.2 페이크도어 클릭(≥25%)</td></tr>
+    <tr><td>연결만 하는 ○</td><td>가입(1.3) · 마이페이지(1.4) · 공유(1.1.1.5) — 내부는 v2</td></tr>
+  </table>
+
+  <div class="note">
+    <strong>다음 단계로의 연결:</strong> 1.1.1.1의 <span class="mono">◇ 엔진 판정</span>(성공/저신뢰)의 기준값과
+    결과카드 ③의 계산 규칙이 곧 <strong>엔진 스펙</strong>의 요구사항이다. 이 흐름의 ◇ 분기가 데이터 스키마·엔진 명세의 입력이 된다.
+  </div>
+
+  <footer>핏팅(Fitting) User Flow · MVP(★) 진단 플로우 · 원본: docs/fitting-user-flow.md</footer>
+</div>
+</body>
+</html>
+</content>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅 — 수집·이용 동의</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/variable/woff2/SUIT-Variable.css">
+<link rel="stylesheet" href="fitting.css">
+</head>
+<body>
+
+<div class="protobar">
+  <span class="id">G.5</span><span class="nm">개인정보 수집·이용 동의</span><span class="star">★</span>
+  <div class="links">
+    <a href="index.html">◇ 전체 흐름</a>
+    <a href="01-landing.html">← 랜딩</a>
+    <a href="03-basic-info.html">다음: 기본정보 →</a>
+  </div>
+</div>
+
+<div class="flow">
+  <a href="01-landing.html" class="backlink">← 나가기</a>
+
+  <span class="kicker mt-16">Before we start</span>
+  <h2 class="step-h">진단을 위해<br>동의가 필요해요</h2>
+  <p class="lead mb-24">정확한 사이즈 번역을 위해 키·몸무게·체형 정보를 받습니다. 이는 <strong>민감정보</strong>로 분류돼, 받기 전 동의를 먼저 구합니다.</p>
+
+  <div class="card pad-lg">
+    <div class="consent-item">
+      <div class="cb" data-required="1" onclick="toggle(this)"></div>
+      <div class="ctxt">
+        <div>개인정보 수집·이용 동의 <span class="req">필수</span></div>
+        <p>수집 항목: 성별·나이·키·몸무게·선호핏·착용 경험. 목적: 사이즈 번역 진단. 보유: 진단 완료 후 6개월(비회원 임시). <a href="g4-privacy.html">처리방침 보기</a></p>
+      </div>
+    </div>
+    <div class="consent-item">
+      <div class="cb" data-required="1" onclick="toggle(this)"></div>
+      <div class="ctxt">
+        <div>민감정보(신체치수·체형) 처리 동의 <span class="req">필수</span></div>
+        <p>키·몸무게·부위별 치수는 「개인정보 보호법」상 민감정보에 준해 별도 동의를 받습니다. 진단 외 목적으로 사용하지 않습니다.</p>
+      </div>
+    </div>
+    <div class="consent-item">
+      <div class="cb" onclick="toggle(this)"></div>
+      <div class="ctxt">
+        <div>진단 결과·피드백의 엔진 개선 활용 동의 <span class="opt">선택</span></div>
+        <p>"맞았나?" 피드백을 익명 통계로 번역 정확도 개선에 활용합니다. 미동의해도 진단은 가능합니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-soft mt-16" style="display:flex;gap:12px;align-items:center">
+    <div class="cb" id="all" onclick="toggleAll(this)"></div>
+    <div class="ctxt" style="font-size:14px;font-weight:700">전체 동의</div>
+  </div>
+
+  <div class="mt-24">
+    <a href="03-basic-info.html" class="btn-primary btn-block disabled" id="next" onclick="return guard(event)">동의하고 진단 시작</a>
+    <p class="cta-note center">필수 항목에 동의해야 진단을 시작할 수 있어요.</p>
+  </div>
+</div>
+
+<script>
+  function refresh(){
+    const items=[...document.querySelectorAll('.consent-item .cb')];
+    const reqOk=items.filter(c=>c.dataset.required).every(c=>c.classList.contains('on'));
+    const next=document.getElementById('next');
+    next.classList.toggle('disabled',!reqOk);
+    document.getElementById('all').classList.toggle('on',items.every(c=>c.classList.contains('on')));
+  }
+  function toggle(el){el.classList.toggle('on');refresh()}
+  function toggleAll(el){
+    const on=!el.classList.contains('on');
+    document.querySelectorAll('.consent-item .cb').forEach(c=>c.classList.toggle('on',on));
+    refresh();
+  }
+  function guard(e){
+    if(document.getElementById('next').classList.contains('disabled')){e.preventDefault();return false}
+    return true;
+  }
+</script>
+</body>
+</html>
