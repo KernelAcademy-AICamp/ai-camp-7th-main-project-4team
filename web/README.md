@@ -1,20 +1,24 @@
-# _통합/app — 통합 프로토타입 (서비스 기반)
+# web — 통합 프로토타입 (서비스 기반)
 
 두 작업물을 하나로 합친 **딥그린 통합 프로토타입**. sohee 디자인을 기반으로, sangmin 엔진·진단 플로우를 이식해 나가는 substrate.
+(구 경로 `_통합/app` → Vercel 배포용 ASCII 경로 `web/`로 이동)
 
-## 실행
+## 실행 (로컬)
 결과 카드가 `data/bodytypes.json`을 `fetch`하므로 **로컬 서버로 열어야 함**(file:// 직접 열기는 CORS로 데이터 로드 실패).
 
 ```bash
-cd _통합/app
+cd web
 python3 -m http.server 8000
 # 브라우저: http://localhost:8000/         (4탭 앱)
 #           http://localhost:8000/card.html?type=HRG&g=female  (결과 카드 단독)
 ```
 
+## 배포 (Vercel)
+빌드 없는 정적 사이트. Vercel 프로젝트에서 **Root Directory = `web`**, Framework Preset = **Other**로 설정하면 그대로 서빙된다(빌드 명령·output 불필요).
+
 ## 구조
 ```
-_통합/app/
+web/
   index.html            # 4탭 셸 (홈·쇼퍼찾기·마이) — sohee 핏팅_전체화면 재스킨
   card.html             # 결과 카드 (8유형, 다크+포인트색 예외) — JSON 단일출처 렌더
   tokens.css            # 디자인 토큰 (딥그린) — 셸/카드용
