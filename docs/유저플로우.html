@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅 · 사용자 흐름 (핵심 여정)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --bg:#F6F6F5; --surface:#FFFFFF; --ink:#16140F; --ink-soft:#3A382F;
+    --sub:#6E6B63; --sub2:#A6A29A; --line:#E6E5E1; --line2:#DAD8D2; --soft:#EDEDEA;
+    --green:#2E4A3B; --green-mid:#5A7A68; --green-light:#9CC1AE; --green-soft:#E7EFEA;
+    --warn:#B0553F;
+    --ac:var(--green);      /* 체형진단(MVP 핵심) */
+    --shop:var(--green-mid);/* 쇼퍼찾기(페이크도어) */
+    --ok:var(--green);      /* 킬 메트릭(지표) */
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; letter-spacing:-.02em; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:920px; margin:0 auto; padding:64px 24px 110px;}
+
+  .logo{font-size:22px; font-weight:800; letter-spacing:-.06em;}
+  h1{font-size:30px; font-weight:800; letter-spacing:-.045em; margin-top:14px;}
+  .lead{font-size:15px; color:var(--sub); margin-top:9px; line-height:1.6;}
+  .lead b{color:var(--ink); font-weight:700;}
+
+  .legend{display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:22px; padding:16px 18px; background:var(--surface); border:1px solid var(--line); border-radius:14px; font-size:12.5px; color:var(--sub);}
+  .legend b{color:var(--ink);}
+  .legend span{display:inline-flex; align-items:center; gap:6px;}
+  .dot{width:9px; height:9px; border-radius:50%; flex:none;}
+  .tag{display:inline-block; font-size:10.5px; font-weight:700; padding:1px 7px; border-radius:20px;}
+  .tag.mvp{background:var(--green-soft); color:var(--green);}
+  .tag.soon{background:var(--soft); color:var(--sub);}
+
+  .flow{margin-top:40px; display:flex; flex-direction:column; align-items:center;}
+
+  .phase{align-self:stretch; display:flex; align-items:center; gap:9px; margin:30px 0 4px; font-size:13px; font-weight:800; color:var(--ink); letter-spacing:-.03em;}
+  .phase:first-child{margin-top:0;}
+  .phase .pd{width:10px; height:10px; border-radius:50%;}
+  .phase .sub{font-weight:600; color:var(--sub2); font-size:12px;}
+
+  .node{width:100%; max-width:520px; background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:16px 20px; text-align:left; position:relative; box-shadow:0 1px 2px rgba(20,22,28,.03);}
+  .node .nh{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .node .step{font-size:11px; font-weight:800; color:#fff; background:var(--ac); padding:2px 8px; border-radius:7px; letter-spacing:.02em; flex:none;}
+  .node b{font-size:15.5px; font-weight:800; letter-spacing:-.03em;}
+  .node p{font-size:13px; color:var(--sub); margin-top:6px;}
+  .node .tag{margin-left:2px; vertical-align:middle;}
+
+  .node.hero{background:var(--ink); color:#fff; border-color:transparent; box-shadow:0 18px 40px rgba(20,22,28,.16);}
+  .node.hero p{color:rgba(255,255,255,.74);}
+  .node.hero .step{background:#fff; color:var(--ink);}
+  .node.hero .tag.mvp{background:rgba(255,255,255,.16); color:#fff;}
+
+  .node.gate{max-width:440px; background:#FBF3EF; border:1.5px dashed #d8a793; text-align:center;}
+  .node.gate b{font-size:14px;}
+  .node.gate .gi{font-size:18px;}
+  .node.gate p{color:var(--warn);}
+  .node.gate .trig{display:inline-block; margin-top:7px; font-size:11px; font-weight:800; color:#fff; background:var(--warn); padding:2px 9px; border-radius:20px;}
+
+  .conn{width:2px; height:30px; background:var(--line2); position:relative;}
+  .conn::after{content:''; position:absolute; bottom:-1px; left:50%; transform:translateX(-50%); border-left:5px solid transparent; border-right:5px solid transparent; border-top:7px solid var(--line2);}
+  .conn.short{height:18px;}
+  .conn .lbl{position:absolute; left:14px; top:50%; transform:translateY(-50%); white-space:nowrap; font-size:11.5px; font-weight:700; color:var(--sub); background:var(--bg); padding:1px 6px;}
+
+  /* 엔진 판정 분기 */
+  .split{width:100%; max-width:520px; display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:4px;}
+  .splitlabel{align-self:center; margin-top:14px; font-size:12px; font-weight:800; color:var(--sub2);}
+  .snode{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:13px 15px;}
+  .snode.fail{border-color:#e0c3b8; background:#FBF3EF;}
+  .snode .st{font-size:12.5px; font-weight:800; letter-spacing:-.02em;}
+  .snode .st.warnt{color:var(--warn);}
+  .snode p{font-size:12px; color:var(--sub); margin-top:5px;}
+  .snode .back{display:inline-block; margin-top:7px; font-size:11px; font-weight:800; color:var(--warn);}
+
+  .metric{display:inline-flex; align-items:center; gap:6px; margin-top:10px; font-size:11.5px; font-weight:800; color:var(--green); background:var(--green-soft); padding:4px 10px; border-radius:20px;}
+  .metric::before{content:'📊';}
+
+  .branches{width:100%; display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:14px;}
+  .bnode{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px 16px;}
+  .bnode .bh{display:flex; align-items:center; gap:7px; flex-wrap:wrap;}
+  .bnode .ic{font-size:16px;}
+  .bnode b{font-size:14px; font-weight:800; letter-spacing:-.03em;}
+  .bnode p{font-size:12.5px; color:var(--sub); margin-top:5px;}
+  .bnode .sub2{font-size:11.5px; color:var(--sub2); margin-top:6px; padding-top:8px; border-top:1px dashed var(--line2);}
+  .bnode.lead-on{border-color:var(--shop); box-shadow:0 0 0 3px rgba(90,122,104,.10);}
+  .bnode .arrow-down{font-size:12px; color:var(--shop); font-weight:800; margin-top:8px;}
+
+  .loopnote{align-self:stretch; max-width:520px; margin:10px auto 0; font-size:11.5px; color:var(--sub2); display:flex; gap:7px; align-items:flex-start; line-height:1.5;}
+  .loopnote::before{content:'↻'; font-size:15px; color:var(--green); flex:none;}
+
+  .foot{margin-top:54px; font-size:12.5px; color:var(--sub2); line-height:1.8; border-top:1px solid var(--line); padding-top:18px;}
+  .foot b{color:var(--sub);}
+
+  @media(max-width:560px){ .branches,.split{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="logo">fitting</span>
+  <h1>사용자 흐름 · 핵심 여정</h1>
+  <p class="lead">비회원으로 진단을 끝까지 경험 → <b>가치를 본 뒤</b> 저장·매칭 시점에만 가입(lazy). 이탈을 최소화하는 무료→유료 퍼널. <b>막다른 길 없음</b> — 실패·빈 화면에도 되돌아갈 길을 둡니다.</p>
+
+  <div class="legend">
+    <span><b>범례</b></span>
+    <span><i class="dot" style="background:var(--ac)"></i> 체형진단(MVP 핵심)</span>
+    <span><i class="dot" style="background:var(--shop)"></i> 쇼퍼찾기(페이크도어)</span>
+    <span><i class="dot" style="background:var(--warn)"></i> 게이트 · 가입 트리거</span>
+    <span><i class="dot" style="background:var(--green)"></i> 킬 메트릭(지표)</span>
+    <span><span class="tag mvp" style="margin:0">★</span> 실제 구현 · <span class="tag soon" style="margin:0">후속</span> v2~</span>
+  </div>
+
+  <div class="flow">
+
+    <!-- 홈 -->
+    <div class="phase"><i class="pd" style="background:var(--ink)"></i> 🏠 탭1 홈 <span class="sub">— 입구</span></div>
+    <div class="node">
+      <div class="nh"><b>홈 랜딩</b><span class="tag mvp">★</span></div>
+      <p>"이게 뭐 하는 서비스" 3초 전달 + <b>[내 사이즈 진단 시작]</b> CTA · 상황별 쇼퍼 리스트(오픈예정/1기 모집) · 작동 3스텝</p>
+    </div>
+
+    <div class="conn"><span class="lbl">진단 시작</span></div>
+
+    <!-- 동의 게이트 -->
+    <div class="node gate">
+      <div class="gi">🔒</div>
+      <b>G.5 개인정보 수집·이용 동의</b>
+      <p>체형·신체치수 = 민감정보 · 진단 진입 필수 게이트</p>
+    </div>
+    <div class="loopnote">동의 거부 ✗ → 탭1 홈으로 되돌아감 (막다른 길 없음)</div>
+
+    <div class="conn short"><span class="lbl">동의 ✓</span></div>
+
+    <!-- 체형진단 -->
+    <div class="phase"><i class="pd" style="background:var(--ac)"></i> 🔍 탭2 체형진단 <span class="sub">— 무료 퍼널 · 제품의 얼굴</span></div>
+
+    <div class="node">
+      <div class="nh"><span class="step">2-1</span><b>기본 정보 입력</b><span class="tag mvp">★</span></div>
+      <p>성별 · 나이 · 키 · 몸무게 (성별 선택 시 평균값 미리 채움 · 선호핏은 2-2에서)</p>
+    </div>
+    <div class="conn short"></div>
+
+    <div class="node">
+      <div class="nh"><span class="step">2-2</span><b>착용경험 보정</b><span class="tag mvp">★</span></div>
+      <p>옷 종류(상의/하의)·선호핏 · 입어본 옷 <b>[브랜드+핏+사이즈] ×1~3벌</b> · 부위별 느낌(큼/여유/딱맞음/끼임)</p>
+      <p style="color:var(--green); font-weight:700; margin-top:7px">★ 체형 역산 정확도의 핵심 입력 · 기반=상의+하의 / 파생(아우터·원피스·치마)=선호핏만</p>
+    </div>
+    <div class="loopnote">[state] 입어본 옷 0벌 → 건너뛰기(신뢰도 낮음) · 브랜드 목록에 없음 ◇ → 직접 입력</div>
+    <div class="conn short"><span class="lbl">제출</span></div>
+
+    <div class="node">
+      <div class="nh"><span class="step">2-3</span><b>진단 로딩</b><span class="tag mvp">★</span></div>
+      <p>엔진 처리 — 체형 역산 + 브랜드 사이즈 매칭 + AI 설명 문장 (초기엔 수동 번역도 가능)</p>
+    </div>
+
+    <div class="conn"><span class="lbl">◇ 엔진 판정</span></div>
+
+    <!-- 엔진 판정 분기 -->
+    <div class="split">
+      <div class="snode fail">
+        <div class="st warnt">확신 못 함 · 신뢰도 낮음</div>
+        <p>2-4 [상태] 추정 실패 — "옷을 더 추가해 주세요"</p>
+        <span class="back">⟶ 2-2 착용경험으로 되돌아감</span>
+      </div>
+      <div class="snode">
+        <div class="st">잘 나옴</div>
+        <p>결과 카드 표시 ↓</p>
+      </div>
+    </div>
+
+    <div class="conn short"></div>
+
+    <!-- 결과 카드 (hero) -->
+    <div class="node hero">
+      <div class="nh"><span class="step">2-4</span><b>결과 카드</b><span class="tag mvp">★ 제품의 얼굴</span></div>
+      <p>① 체형 프로필(8유형 캐릭터) ② 핏 인사이트 ③ <b>브랜드별 추천 사이즈</b> · 옷장<br>· 신뢰도 3단계(0벌 낮음 / 1벌 보통 / 2~3벌 정확) · 비회원 = URL 임시보존 → 가입 시 영구</p>
+    </div>
+    <div class="loopnote">재진단(결과 불만족) · 옷장 → 이어서 다음 종류 진단 → <b>2-2로 되돌아감</b> (기본정보·체형 재사용)</div>
+
+    <div class="conn"><span class="lbl">결과 후 분기</span></div>
+
+    <!-- 분기 -->
+    <div class="branches">
+      <div class="bnode">
+        <div class="bh"><span class="ic">📝</span><b>2-5 피드백</b><span class="tag mvp">★</span></div>
+        <p>"실제 내 사이즈와 맞나요?" 동의/비동의 · "안 사본 브랜드도 사보겠어요?" 의향</p>
+        <div class="sub2"><span class="metric">킬 메트릭 · 사이즈 정확도 ≥ 65%</span></div>
+      </div>
+
+      <div class="bnode">
+        <div class="bh"><span class="ic">🔖</span><b>결과 저장</b><span class="tag mvp">★</span></div>
+        <p>결과를 영구 보존하려면 → <b>가입 모달(트리거 ①)</b></p>
+        <div class="sub2" style="color:var(--warn); font-weight:700">🔒 lazy 가입 트리거 ① → 👤 마이 · 저장 안 해도 2-5로 계속</div>
+      </div>
+
+      <div class="bnode">
+        <div class="bh"><span class="ic">📱</span><b>2-7 결과 공유</b><span class="tag soon">후속</span></div>
+        <p>카드 이미지 / 링크 공유 — 입소문 유도</p>
+        <div class="sub2">v2 (여력 시)</div>
+      </div>
+
+      <div class="bnode lead-on">
+        <div class="bh"><span class="ic">👔</span><b>2-6 전문가 전환</b><span class="tag mvp">★</span></div>
+        <p>"스타일까지 전문가에게 받기" — 무료→유료 퍼널의 다리</p>
+        <div class="arrow-down">↓ 탭3 쇼퍼찾기로 이동</div>
+      </div>
+    </div>
+
+    <div class="conn"><span class="lbl">2-6 누름</span></div>
+
+    <!-- 쇼퍼찾기 -->
+    <div class="phase"><i class="pd" style="background:var(--shop)"></i> 👔 탭3 쇼퍼찾기 <span class="sub">— 전문가 매칭 · 페이크도어</span></div>
+
+    <div class="node" style="border-color:rgba(90,122,104,.4)">
+      <div class="nh"><span class="step" style="background:var(--shop)">3-1</span><b>매칭 진입 (페이크도어)</b><span class="tag mvp">★</span></div>
+      <p>관심 서비스 선택(온라인 스타일링 / 동행 쇼핑 / 이미지 컨설팅) · 상황 선택 · 클릭 기록 · 오픈 알림 신청 + 1기 모집</p>
+      <span class="metric">전환신호 · 유형별 클릭·알림신청 ≥ 25%</span>
+    </div>
+
+    <div class="conn short"><span class="lbl">알림 신청 시</span></div>
+
+    <div class="node gate">
+      <div class="gi">🔒</div>
+      <b>가입 게이트</b>
+      <p>실제 이용(알림신청/요청) 시점에 모달로 진입</p>
+      <span class="trig">lazy 가입 트리거 ②</span>
+    </div>
+
+    <div class="conn short"></div>
+
+    <div class="node" style="border-color:rgba(90,122,104,.4)">
+      <div class="nh"><span class="step" style="background:var(--shop)">3-2</span><b>알림 완료 / 준비중</b><span class="tag mvp">★</span></div>
+      <p>"오픈하면 알려드릴게요" 확인 — <b>여기가 MVP 흐름의 끝(도착)</b></p>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    <b>출처</b> · 2_화면과흐름.md §9(메인 흐름) + §9-1 전이표(들어오는 조건 → 나가는 곳)<br>
+    <b>핵심 원칙</b> · ① 가입은 나중에(lazy — 저장 ①·매칭 ② 두 지점만) · ② 동의는 입력 직전(G.5) · ③ 막다른 길 금지(추정 실패→옷 추가, 신뢰도 낮음→재진단, 거부→홈)<br>
+    <b>데이터 자산</b> · garment_experience(부위별 느낌)·validation(정확도 동의)·fakedoor_event(전환신호) = v3 B2B 사이즈 API의 씨앗
+  </div>
+</div>
+</body>
+</html>
