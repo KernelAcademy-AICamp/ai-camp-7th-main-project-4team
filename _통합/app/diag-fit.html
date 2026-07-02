@@ -93,7 +93,7 @@
   <div class="wstep">
     <span class="qnum num">옷 1 · 느낌</span>
     <h2 class="qhead">입었을 때 어땠어요?</h2>
-    <p class="qhelp"><span class="catword">상의</span> 부위별 느낌을 골라주세요. 걸린 곳은 <strong>있으면만</strong> — 없으면 그대로 넘겨도 돼요.</p>
+    <p class="qhelp"><span class="catword">상의</span> 부위별 느낌을 골라주세요. 걸린 곳·기장은 <strong>있으면만</strong> — 없으면 그대로 넘겨도 돼요.</p>
     <div class="qbody">
       <div class="feelbox" id="feel1"></div>
     </div>
@@ -253,15 +253,9 @@
     return '<div class="seg compact">'+opts.map(([v,lab])=>'<div class="opt'+(v===cur?' on':'')+'" onclick="'+fn+'('+g+',\''+v+'\')">'+lab+'</div>').join('')+'</div>';
   }
   function renderFacet(g){
+    // 소매/기장 선택기 제거 — 긴팔/긴바지를 전제로 요청하므로 항상 long으로 가정(옷 정보 단계에서 묻지 않음).
     const el=document.getElementById('facet'+g); if(!el) return;
-    const hasSleeve=SLEEVE_CATS.includes(target), hasLeg=LEG_CATS.includes(target);
-    if(!hasSleeve && !hasLeg){ el.innerHTML=''; el.classList.add('hidden'); return; }
-    el.classList.remove('hidden');
-    // 긴팔/긴바지가 기본·권장(팔·다리까지 신호 최대 + 브랜드 경향성 오염 방지). 짧은 건 예외.
-    const hint='<span style="font-weight:600;color:var(--faint);font-size:11.5px;margin-left:4px">정확한 진단을 위해 긴 걸로 부탁해요</span>';
-    el.innerHTML = hasSleeve
-      ? '<label>소매 '+hint+'</label>'+facetSeg(g,[['long','긴팔'],['short','반팔'],['sleeveless','민소매']],sleeveType[g]||'long','setSleeve')
-      : '<label>기장 '+hint+'</label>'+facetSeg(g,[['long','긴바지'],['short','반바지']],legLength[g]||'long','setLeg');
+    el.innerHTML=''; el.classList.add('hidden');
   }
 
   /* 입력 점검(분기) 단계: 여기서 '진단하기'를 누르면 그 시점 벌 수로 진단을 끝낸다. */
@@ -294,14 +288,14 @@
     // ③ 기장 — 취향(선택), 역산 아님
     const pref=prefs.map(n=>feelRow(n,['짧음','딱 좋음','긺'],1)).join('');
     // 선택 항목(걸린 곳·기장·그 외)은 접어둠 — 필수인 착용감만 먼저 보여 압도감↓ (값은 접혀도 수집됨)
-    // 기장(pref: 소매·총장·기장)은 제외 — 체형 역산 아닌 취향 보조이고 키로 대부분 커버 + 긴팔/긴바지 전제라 중복.
     var optional=
       (flag?feelGroup('혹시 걸린 곳','없으면 괜찮았어요 — 이 신호가 브랜드 치수를 채워요',flag):'')+
+      (pref?feelGroup('기장','취향 · 선택',pref):'')+
       '<div class="feel-group"><h4>그 외 <span class="ghelp">선택 · 자유롭게</span></h4>'+
         '<textarea class="open-note" placeholder="예: 소매 끝이 조였어요 / 밑단이 걸렸어요"></textarea></div>';
     box.innerHTML=
       feelGroup('착용감 · 부위별','한 부위씩 떠오르는 느낌 하나',fit)+
-      '<details class="feel-more"><summary>혹시 걸린 곳 더 알려주기 <span class="opt">선택 · 없으면 넘겨도 돼요</span></summary>'+optional+'</details>';
+      '<details class="feel-more"><summary>걸린 곳·기장 등 더 알려주기 <span class="opt">선택 · 없으면 넘겨도 돼요</span></summary>'+optional+'</details>';
   }
 
   function applyTarget(){
