@@ -54,5 +54,5 @@ web/
 
 ## 관련 문서
 - 기획 전체 인덱스: [`../docs/README.md`](../docs/README.md)
-- 정보구조·화면·흐름: [`../docs/ia.md`](../docs/ia.md) · 엔진: [`../docs/engine.md`](../docs/engine.md) · 디자인: [`../docs/design.md`](../docs/design.md)
+- 정보구조·화면·흐름: [`../docs/2_화면과흐름.md`](../docs/2_화면과흐름.md) · 엔진: [`../docs/3_사이즈엔진.md`](../docs/3_사이즈엔진.md) · 디자인: [`../docs/4_디자인가이드.md`](../docs/4_디자인가이드.md)
 </content>
