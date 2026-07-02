@@ -42,10 +42,11 @@
   .content pre code{background:none;border:none;color:inherit;font-size:13px;padding:0}
   .content blockquote{border-left:3px solid var(--green);background:var(--green-soft);border-radius:0 12px 12px 0;padding:14px 18px;margin:18px 0}
   .content blockquote p{margin:6px 0;font-size:16px;line-height:1.8;color:var(--ink-soft)}
-  .content table{border-collapse:collapse;width:100%;margin:18px 0;font-size:15px;display:block;overflow-x:auto;line-height:1.65}
-  .content th,.content td{border:1px solid var(--line);padding:11px 14px;text-align:left;vertical-align:top}
-  .content th{background:var(--green-soft);color:var(--green);font-weight:800;white-space:nowrap}
-  .content tbody tr:nth-child(even) td{background:#faf9f7}
+  .content table{border-collapse:collapse;width:100%;margin:20px 0;font-size:14.5px;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;line-height:1.6}
+  .content th,.content td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+  .content th{font-size:11.5px;color:var(--sub2);font-weight:800;letter-spacing:.03em;text-transform:uppercase;background:#F0F1ED;white-space:nowrap}
+  .content tbody tr:last-child td{border-bottom:none}
+  .content td strong{font-weight:800}
   .content hr{border:none;border-top:1px solid var(--line);margin:34px 0}
   .content>*:first-child{margin-top:0}
 
@@ -94,7 +95,7 @@
   .cmp .good::before{content:"✓ ";font-weight:800;color:var(--green)}
 
   .num{font-family:'SUIT Variable',var(--sans);font-feature-settings:'tnum'}
-  @media(max-width:860px){.layout{grid-template-columns:1fr}.side{display:none}.content{padding:28px 22px 90px}.content p{font-size:16.5px}.cmp{grid-template-columns:1fr}}
+  @media(max-width:860px){.layout{grid-template-columns:1fr}.side{display:none}.content{padding:28px 22px 90px}.content p{font-size:16.5px}.cmp{grid-template-columns:1fr}.content table{display:block;overflow-x:auto}}
 </style>
 </head>
 <body>
@@ -109,10 +110,7 @@
     <div id="docnav"></div>
     <div class="tl">그림으로 보기</div>
     <div class="viz">
-      <a href="정보구조.html" target="_blank">IA 트리 (정보구조)</a>
-      <a href="유저플로우.html" target="_blank">유저플로우</a>
-      <a href="디자인시스템.html" target="_blank">디자인시스템</a>
-      <a href="UX라이팅.html" target="_blank">UX라이팅</a>
+      <a href="유저플로우.html" target="_blank">유저플로우 (흐름도)</a>
     </div>
     <div class="tl">이 문서 목차</div>
     <div class="toc" id="toc-list"></div>
@@ -143,14 +141,11 @@
 | 4 | **[4_디자인가이드.md](4_디자인가이드.md)** | **어떤 색·글꼴·모양·말투로 만드나** — 딥그린 디자인 언어(실제 토큰은 `web/tokens.css`) |
 
 ## 그림으로 보기 (시각 자료 · 브라우저로 열기)
-위 문서 내용을 한눈에 보는 HTML입니다. 더블클릭하면 브라우저에서 열려요.
+IA·색·UX 라이팅 등은 이제 [문서.html](문서.html) 뷰어가 직접 리치하게 렌더합니다(정보구조=IA 트리, 디자인가이드=색 스와치, 말투=Before/After). 아래는 md에 대응 렌더러가 없는 흐름도만 별도 HTML로 둡니다.
 
 | 파일 | 무엇 |
 |---|---|
-| **[정보구조.html](정보구조.html)** | IA — 전체 화면 구조를 접었다 펼치는 트리 + MVP/v2 필터 (= 2_화면과흐름) |
 | **[유저플로우.html](유저플로우.html)** | User Flow — 진단 시작→결과→전문가까지 사용자 이동 흐름도 |
-| **[디자인시스템.html](디자인시스템.html)** | Design System — 색·글꼴·컴포넌트 스와치 (= 4_디자인가이드) |
-| **[UX라이팅.html](UX라이팅.html)** | UX Writing — 화면 문구 말투·예시 (Before→After) |
 
 ## 핵심만 빠르게
 - **문제**: 무신사 같은 몰은 자기 안 + 구매이력으로만 사이즈를 추천해서, **새 브랜드로 넘어가는 순간** 아무도 번역해주지 않는다.
@@ -158,6 +153,9 @@
 - **원칙**: 사이즈 계산은 **규칙 기반**(검증 가능), 자연어 서술만 LLM. 진단은 **옷 종류(카테고리) 단위**(기반=상의+하의). 성공/실패는 **킬 메트릭 ≥65%** 하나로 판단.
 - **디자인**: 오프화이트 + 딥그린 1포인트 + 잉크블랙. 결과 카드만 예외(다크+8유형색).
 - **분담(참고)**: 디자인·결과카드·마이·전문가 화면 / 엔진·나머지 진단 플로우 로 나눠 만든 뒤 하나로 통합.
+
+## 문서를 고칠 때 (기여자·AI용)
+내용은 `.md`가 원본, [문서.html](문서.html)은 자동 생성 뷰어입니다. 색·Before/After·IA는 전용 블록(`swatch`/`compare`/`iatree`)으로, 대비·매핑은 표로 쓰면 리치하게 렌더됩니다. **작성 규칙과 블록 문법은 👉 [문서작성규칙.md](문서작성규칙.md)**. 고친 뒤엔 `python3 docs/문서생성.py`로 재생성하세요.
 
 ## 지금 상태 (2026-07 기준)
 - 통합 프로토타입은 **`web/`** 에 있고 Vercel로 배포됨. 단, 엔진은 아직 **목업**(`web/js/engine-mock.js`) — 실제 사이즈 계산·역산은 후속(엔진 문서 §6 로드맵 참고).
