@@ -53,7 +53,6 @@ web/
 - 8유형 표현(이름·색·프로필·핏·궁합·실루엣)은 오직 `data/bodytypes.json`에서. 화면 코드에 재기입 금지.
 
 ## 관련 문서
-- 통합 설계·뼈대·모듈화: [`../docs/통합/`](../docs/통합/) (통합-설계정리·서비스구조-뼈대·구조화-sohee·모듈화-sangmin)
-- 디자인 언어·토큰: [`../docs/design/`](../docs/design/)
 - 기획 전체 인덱스: [`../docs/README.md`](../docs/README.md)
+- 정보구조·화면·흐름: [`../docs/ia.md`](../docs/ia.md) · 엔진: [`../docs/engine.md`](../docs/engine.md) · 디자인: [`../docs/design.md`](../docs/design.md)
 </content>
