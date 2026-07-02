@@ -50,7 +50,7 @@
 @media(min-width:900px){
   .wstep.active{ display:grid; grid-template-columns:340px 1fr; column-gap:60px; align-items:start; }
   .wstep.active > *{ grid-column:1; }               /* 헤딩·키커·칩 등은 좌측 열 */
-  .wstep.active > .qbody{ grid-column:2; grid-row:1 / span 30; margin-top:0; }
+  .wstep.active > .qbody{ grid-column:2; grid-row:1 / span 30; align-self:center; margin-top:0; }  /* 선택지를 질문 내용 높이에 맞춰 중앙 정렬 */
   .qnum{ margin-top:0; }
   .qhelp{ margin-bottom:0; }
 }
