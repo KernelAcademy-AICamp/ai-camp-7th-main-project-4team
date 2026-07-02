@@ -165,6 +165,12 @@ __DOCS__
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
   marked.setOptions({ gfm:true, breaks:false });
+  // 한국어 요체(~해요)·범위(1~3벌, E0~E3)의 단일 물결표가 GFM 취소선으로 잘못 묶여
+  // 사이의 **볼드**를 삼키는 문제를 막는다 — '~'를 인라인에서 리터럴 텍스트로 처리(취소선 미사용).
+  marked.use({ extensions: [{ name:'litTilde', level:'inline',
+    start:function(src){ return src.indexOf('~'); },
+    tokenizer:function(src){ if(src.charCodeAt(0)===126){ return { type:'litTilde', raw:'~' }; } },
+    renderer:function(){ return '~'; } }] });
   function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   var srcs=[].slice.call(document.querySelectorAll('script[data-doc]'));
   var fileToId={}; srcs.forEach(function(s){ fileToId[s.dataset.file]=s.dataset.doc; });
