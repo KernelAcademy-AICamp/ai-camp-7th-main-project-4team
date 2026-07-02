@@ -13,7 +13,10 @@
 
 <div class="dhead">
   <a class="logo" href="index.html">Fitting<i></i></a>
-  <div class="wprogress hd"><div class="bar"><i id="wfill"></i></div><span class="frac" id="wfrac">대상 선택</span></div>
+  <div class="dprog">
+    <div class="stepper"><span class="label">STEP 2 / 2 · 착용 경험</span><span class="dot done"></span><span class="dot now"></span></div>
+    <div class="wprogress hd"><div class="bar"><i id="wfill"></i></div><span class="frac" id="wfrac">대상 선택</span></div>
+  </div>
   <a class="dx" href="index.html" title="닫기">✕</a>
 </div>
 
@@ -407,7 +410,7 @@
       miss.map(r=>REGION[r].catLabel).join('·')+'</strong>를 먼저 진단하면 열려요.';
   }
   // 기반 위저드만 숨김 — 파생 패널(#derived-flow/#blocked) 내부의 .wnav는 건드리지 않도록 직계 자식만 선택
-  function hideBaseWizard(){ document.querySelectorAll('.dhead .wprogress, .flow > .stepper, .flow > .wprogress, .flow > .wstep, .flow > .wnav, #wnote').forEach(e=>e.classList.add('hidden')); }
+  function hideBaseWizard(){ document.querySelectorAll('.dhead .dprog, .flow > .wstep, .flow > .wnav, #wnote').forEach(e=>e.classList.add('hidden')); }
   function enterDerivedFlow(){
     document.getElementById('derived-flow').classList.remove('hidden');
     var go=document.getElementById('derived-go');

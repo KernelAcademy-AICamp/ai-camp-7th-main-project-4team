@@ -31,11 +31,11 @@
   background:var(--canvas); border-bottom:1px solid var(--line); padding:14px 24px; }
 .dhead .logo{ font-size:20px; font-weight:800; letter-spacing:-.05em; color:var(--ink); text-decoration:none; }
 .dhead .logo i{ display:inline-block; width:6px; height:6px; background:var(--green); margin-left:1px; vertical-align:baseline; }
-.dhead .dx{ width:34px; height:34px; border-radius:50%; border:1px solid var(--line);
+.dhead .dx{ margin-left:auto; flex:none; width:34px; height:34px; border-radius:50%; border:1px solid var(--line);
   display:flex; align-items:center; justify-content:center; color:var(--muted); text-decoration:none; font-size:15px; }
 .dhead .dx:hover{ background:#EDEDEA; }
-/* 진행율 = 상단 헤더(로고 옆). 콘텐츠 영역이 아니라 여기 표시. */
-.dhead .wprogress.hd{ flex:1; padding:0; margin:0; gap:12px; max-width:520px; }
-.dhead .wprogress.hd .bar{ flex:1; }
-.dhead .wprogress.hd .frac{ order:2; min-width:0; }
-.dhead .spacer{ flex:1; }
+/* 진행율 = 상단 헤더(로고 옆) · 2단: 전체(stepper 단계) + 세부(wprogress 단계 내) */
+.dhead .dprog{ flex:1; display:flex; flex-direction:column; gap:7px; max-width:600px; margin-left:6px; }
+.dhead .dprog .stepper{ padding:0; }                          /* 전체 진행율: 2세그 + 라벨 */
+.dhead .dprog .wprogress.hd{ padding:0; margin:0; gap:12px; } /* 세부 진행율: 단계 내 채움 바 */
+.dhead .dprog .wprogress.hd .bar{ flex:1; }
