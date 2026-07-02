@@ -604,7 +604,7 @@
     {lock:52, nm:'유나', spec:'토탈 이미지 컨설팅', rating:4.8, price:230000, review:76, match:83, tags:['토탈','웨딩','컬러'], mode:'오프라인 세션', dur:'세션 1회 · 약 2시간', bio:'헤어·메이크업까지 연계한 토탈 이미지 설계 · 인생 사진이 필요한 날을 위한 컨설팅', reviews:[['단순 옷이 아니라 전체 분위기를 바꿔주셨어요.','34세 · 웨딩']]}
   ];
   document.getElementById('experts').innerHTML = EX.map(function(e,i){
-    var img='https://loremflickr.com/480/340/model,portrait?lock='+e.lock;
+    var img='photos/p'+(i+1)+'.jpg';   // 전문가 6명 개별 사진 (p1~p6)
     return '<div class="ecard" onclick="openProfile('+i+')"><div class="cover"><img src="'+img+'" alt="" onerror="'+FB+'"><span class="match">매칭도 <span class="num">'+e.match+'</span>%</span></div>'+
       '<div class="eb"><div class="top"><span class="nm">'+e.nm+' 전문가</span><span class="star">★ <span class="num">'+e.rating+'</span></span></div>'+
       '<div class="spec">'+e.spec+'</div><div class="tags">'+e.tags.map(t=>'<span>'+t+'</span>').join('')+'</div>'+
@@ -717,12 +717,12 @@
   function wizPrev(){ if(wstep>1) wizGo(wstep-1); }
 
   /* ===== 전문가 프로필 드로어 ===== */
-  function openProfile(idx){ var e=EX[idx], img='https://loremflickr.com/480/340/model,portrait?lock='+e.lock;
+  function openProfile(idx){ var e=EX[idx], img='photos/p'+(idx+1)+'.jpg';
     document.getElementById('drawerBody').innerHTML=
       '<div class="dhead"><img src="'+img+'" onerror="'+FB+'"><div class="dov"><span class="dm">매칭도 <span class="num">'+e.match+'</span>%</span><div class="dn">'+e.nm+' 전문가</div><div style="font-size:13px;opacity:.9;margin-top:2px">★ <span class="num">'+e.rating+'</span> · 후기 <span class="num">'+e.review+'</span></div></div></div>'+
       '<div class="dbody"><p class="bio">'+e.bio+'</p>'+
       '<div class="feat">전문 분야</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+e.tags.map(function(t){return '<span style="font-size:12.5px;background:var(--soft);color:#6a6258;padding:6px 12px;border-radius:20px;font-weight:600">'+t+'</span>';}).join('')+'</div>'+
-      '<div class="feat">포트폴리오</div><div class="pgal">'+[1,2,3,4,5,6].map(function(i){return '<div style="background-image:url(\'https://loremflickr.com/200/200/fashion,outfit?lock='+(e.lock*6+i)+'\')"></div>';}).join('')+'</div>'+
+      '<div class="feat">포트폴리오</div><div class="pgal">'+[1,2,3,4,5,6].map(function(i){return '<div style="background-image:url(\'photos/folio'+i+'.jpg\')"></div>';}).join('')+'</div>'+
       '<div class="feat">실제 후기</div>'+e.reviews.map(function(r){return '<div class="rev">"'+r[0]+'"<div class="who">— '+r[1]+'</div></div>';}).join('')+
       '<div class="feat">서비스 정보</div><div class="svcinfo"><div class="r"><span>가격</span><b><span class="num">'+e.price.toLocaleString()+'</span>원</b></div><div class="r"><span>제공 방식</span><b>'+e.mode+'</b></div><div class="r"><span>예상 기간</span><b>'+e.dur+'</b></div></div>'+
       '<button class="btn full" style="margin-top:18px" onclick="openLogin(\''+e.nm+' 전문가 요청\')">이 전문가에게 요청하기 →</button></div>';
