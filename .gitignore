@@ -1,3 +1,6 @@
 .DS_Store
 .vercel
 node_modules
+
+# IR 덱 등 대용량 PDF는 로컬 보관 (기존 정책 유지)
+docs/ir/*.pdf
