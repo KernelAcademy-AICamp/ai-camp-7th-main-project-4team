@@ -39,3 +39,30 @@
 .dhead .dprog .stepper{ padding:0; }                          /* 전체 진행율: 2세그 + 라벨 */
 .dhead .dprog .wprogress.hd{ padding:0; margin:0; gap:12px; } /* 세부 진행율: 단계 내 채움 바 */
 .dhead .dprog .wprogress.hd .bar{ flex:1; }
+
+/* ── 시스템 수렴: 각진 Precision → sohee 딥그린 리듬 (라운드·폼·간격) ───────────
+   fitting.css의 하드코딩 라운드/폼 스타일을 앱 셸과 같은 결로 통일. */
+.flow{ max-width:600px; padding:0 26px; }                 /* 앱 좌우 패딩과 정렬 */
+
+/* 입력·선택 컨트롤: 흰 표면 + 부드러운 라운드, 포커스는 딥그린(브랜드색 노출) */
+.flow input[type=text], .flow input[type=number], .flow select, .open-note{
+  background-color:#FFFFFF; border:1.5px solid var(--field-line); border-radius:12px;
+}
+.flow input:focus, .flow select:focus, .open-note:focus{ border-color:var(--green); background-color:#fff; }
+.seg .opt{ border-radius:12px; }
+.seg.compact .opt{ border-radius:10px; }
+.feel-opts .opt{ border-radius:10px; }
+.feel-opts .opt.on{ background:var(--green); border-color:var(--green); }
+
+/* 카드·패널·고지: 앱 카드와 같은 라운드/톤 */
+.card, .card-soft, .result-hero, .char-hero{ border-radius:18px; }
+.notice{ border-radius:12px; }
+.add-garment{ border-radius:14px; }
+.stepper .dot{ border-radius:3px; }
+
+/* 옵션 카드(선택 상태)도 딥그린 계열로 */
+.seg.stack .opt.on{ background:var(--green); border-color:var(--green); }
+
+/* 잠긴 파생 행: 시각 무게 낮추기 (죽은 행이 첫 화면을 덜 먹도록) */
+.seg.cat .opt.locked{ opacity:.4; }
+.seg.cat .opt .lockhint{ color:var(--sub2); }
