@@ -49,7 +49,7 @@
   .content hr{border:none;border-top:1px solid var(--line);margin:34px 0}
   .content>*:first-child{margin-top:0}
 
-  /* ── iatree: md의 ```iatree 블록 → 접기·펼치기·필터 트리 ── */
+  /* iatree */
   .iatree{border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:20px 0;background:#fff;letter-spacing:-.01em;line-height:1.5}
   .iatree .bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
   .iatree .fb{border:1.5px solid var(--line2);background:#fff;color:var(--sub);font:inherit;font-size:12.5px;font-weight:700;padding:6px 13px;border-radius:20px;cursor:pointer}
@@ -75,8 +75,26 @@
   .iatree.f-mvp .ianode[data-pri="v2"],.iatree.f-mvp .ianode[data-pri="mock"]{opacity:.24}
   .iatree.f-later .ianode[data-pri="mvp"],.iatree.f-later .ianode[data-pri="mvpp"]{opacity:.24}
 
+  /* swatch */
+  .swatch{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:12px;margin:20px 0}
+  .sw{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+  .sw .chip{height:66px}
+  .sw .m{padding:9px 12px}
+  .sw .m .u{font-size:12.5px;font-weight:700;letter-spacing:-.01em}
+  .sw .m .h{font-size:11.5px;color:var(--sub);font-family:ui-monospace,Menlo,monospace;margin-top:3px}
+  .sw .m .t{font-size:11px;color:var(--sub2);font-family:ui-monospace,Menlo,monospace;margin-top:1px}
+
+  /* compare */
+  .compare{display:flex;flex-direction:column;gap:10px;margin:20px 0}
+  .cmp{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .cmp .bad,.cmp .good{padding:12px 15px;font-size:14.5px;line-height:1.6}
+  .cmp .bad{background:#FBEEEA;color:#8a4a3a}
+  .cmp .good{background:var(--green-soft);color:var(--ink)}
+  .cmp .bad::before{content:"✗ ";font-weight:800;color:var(--warn)}
+  .cmp .good::before{content:"✓ ";font-weight:800;color:var(--green)}
+
   .num{font-family:'SUIT Variable',var(--sans);font-feature-settings:'tnum'}
-  @media(max-width:860px){.layout{grid-template-columns:1fr}.side{display:none}.content{padding:28px 22px 90px}.content p{font-size:16.5px}}
+  @media(max-width:860px){.layout{grid-template-columns:1fr}.side{display:none}.content{padding:28px 22px 90px}.content p{font-size:16.5px}.cmp{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -102,7 +120,7 @@
   <main class="content" id="content"></main>
 </div>
 
-<script type="text/markdown" data-doc="README" data-file="README.md" data-label="개요 (README)">
+<script type="text/markdown" data-doc="README" data-file="README.md" data-label="개요">
 # 핏팅(Fitting) 기획 문서
 
 > **처음 오셨나요?** 이 폴더의 문서 **5개만** 순서대로 읽으면 핏팅이 뭘 하는 서비스이고, 어떻게 만들지 파악됩니다. 신입 기획자 기준으로 쉽게 풀어 썼어요.
@@ -147,7 +165,7 @@
 </content>
 
 </script>
-<script type="text/markdown" data-doc="doc1" data-file="1_제품정의.md" data-label="1 · 제품 정의">
+<script type="text/markdown" data-doc="doc1" data-file="1_제품정의.md" data-label="1 · 제품정의">
 # 핏팅(Fitting) — 제품 정의 (PRD + 발표 서사)
 
 > **이 문서는 무엇?** 핏팅을 "왜, 누구를 위해, 무엇부터 만드나"로 설명한 제품 정의서입니다. 처음 읽는 사람이 방향을 잡는 문서예요.
@@ -223,7 +241,7 @@
 - 페이크도어 클릭의 허수 보정.
 
 </script>
-<script type="text/markdown" data-doc="doc2" data-file="2_화면과흐름.md" data-label="2 · 화면과 흐름">
+<script type="text/markdown" data-doc="doc2" data-file="2_화면과흐름.md" data-label="2 · 화면과흐름">
 # 핏팅(Fitting) — 정보구조 · 화면 · 흐름
 
 > **이 문서는 무엇인가요?**
@@ -951,7 +969,7 @@ settlement        expert_id · request_id · amount · fee · status
 | v2 운영 | 매칭 성사율 · 거래액(GMV) · 분쟁율 |
 
 </script>
-<script type="text/markdown" data-doc="doc3" data-file="3_사이즈엔진.md" data-label="3 · 사이즈 엔진">
+<script type="text/markdown" data-doc="doc3" data-file="3_사이즈엔진.md" data-label="3 · 사이즈엔진">
 # 핏팅 엔진 — 정본 스펙
 
 > **무엇인가:** 사용자가 "평소 입던 옷이 어땠는지"를 답하면 → 그 사람의 체형을 거꾸로 계산하고 → 다른 브랜드에서 맞을 사이즈를 추천하고 → 주의할 점을 경고하는, **사이즈 번역 엔진**의 모든 규칙·데이터·약속을 담은 **하나의 정본 문서**. (구 `engine/reverse-inference.md` · `engine/diagnosis-questions.md` · `engine/hidden-fit-dimensions.md` · `engine/build.md` · `통합/모듈화-sangmin.md`를 합침)
@@ -1230,7 +1248,7 @@ settlement        expert_id · request_id · amount · fee · status
 **아직 못 정한 질문:** 옷 몇 벌·어느 부위까지 받아야 오차가 실용 수준(±2cm)에 드나 / 실착 보정을 언제부터 섞나 / 느낌↔센티 표 초기값을 어떻게 잡나 / 페이크도어 클릭의 허수 보정.
 
 </script>
-<script type="text/markdown" data-doc="doc4" data-file="4_디자인가이드.md" data-label="4 · 디자인 가이드">
+<script type="text/markdown" data-doc="doc4" data-file="4_디자인가이드.md" data-label="4 · 디자인가이드">
 # 디자인 언어 — 핏팅
 
 > **이 문서는 무엇?** 핏팅의 화면을 만들 때 지켜야 할 **색·글꼴·모양·말투 규칙**을 모았습니다. 디자이너가 아니어도 이 규칙만 따르면 화면이 한 덩어리처럼 보입니다.
@@ -1257,16 +1275,16 @@ settlement        expert_id · request_id · amount · fee · status
 ## 3. 색 (무엇을 어디에)
 배경·표면·글자·선은 무채색으로, **딥그린은 "의미 있는 강조"에만** 씁니다.
 
-| 쓰임 | 색 | 토큰 |
-|---|---|---|
-| 기본 배경(오프화이트) | `#F6F6F5` | `--bg` |
-| 카드 표면(흰색) | `#FFFFFF` | `--surface` |
-| 본문·버튼(잉크블랙) | `#16140F` | `--ink` |
-| 보조 텍스트 | `#6E6B63` | `--sub` |
-| 경계선 | `#E6E5E1` | `--line` |
-| **강조·활성·매칭도 뱃지(딥그린)** | `#2E4A3B` | `--green` |
-| 활성 메뉴·뱃지 배경(연한 초록) | `#E7EFEA` | `--green-soft` |
-| 경고·오류 | `#B0553F` | `--warn` |
+```swatch
+#F6F6F5 | 기본 배경 (오프화이트) | --bg
+#FFFFFF | 카드 표면 (흰색) | --surface
+#16140F | 본문·버튼 (잉크블랙) | --ink
+#6E6B63 | 보조 텍스트 | --sub
+#E6E5E1 | 경계선 | --line
+#2E4A3B | 강조·활성·매칭도 (딥그린) | --green
+#E7EFEA | 활성 배경 (연한 초록) | --green-soft
+#B0553F | 경고·오류 | --warn
+```
 
 - 버튼 주요 = 검정 채움/흰 글자, 보조 = 흰 배경 + 얇은 테두리.
 - 활성 상태(선택한 칩·탭·토글) = 딥그린.
@@ -1274,7 +1292,17 @@ settlement        expert_id · request_id · amount · fee · status
 
 ## 4. 결과 카드는 예외
 체형진단 **결과 카드**만 **어두운 배경 + 8유형별 포인트색 1개**를 씁니다(카드가 유형마다 색이 달라지는 게 핵심이라). 여기엔 위의 딥그린 규칙을 적용하지 않습니다. — 8유형 색·데이터는 `web/data/bodytypes.json` 한 곳에서만 가져옵니다.
-`STR #9DB8FF · TRI #76D6C6 · INV #C2C7D0 · HRG #CF9BFF · BAL #8FD6A8 · DIA #FF9EC5 · RND #FF9D7A · TUB #B6A8FF`
+
+```swatch
+#9DB8FF | STR · 시크 스트레이트 |
+#76D6C6 | TRI · 소프트 A라인 |
+#C2C7D0 | INV · 모던 V라인 |
+#CF9BFF | HRG · 엘레강스 X라인 |
+#8FD6A8 | BAL · 이지 밸런스 |
+#FF9EC5 | DIA · 소프트 다이아 |
+#FF9D7A | RND · 코지 라운드 |
+#B6A8FF | TUB · 슬릭 라인 |
+```
 
 ## 5. 글꼴(타이포)
 - **본문·한글 = Pretendard.** 세리프(장식 있는 글꼴) 안 씀.
@@ -1302,6 +1330,16 @@ settlement        expert_id · request_id · amount · fee · status
 - **문장 속 이모지 지양**, 어려운 패션 전문용어 금지(테일러드·박시 등 → 누구나 아는 쉬운 말).
 - 결과 카드의 '잘맞/피할 FIT'은 각 1줄·쉬운 말. 방향 팁은 'FIT INSIGHT'로.
 
+**좋은 예 / 나쁜 예** (왼쪽처럼 쓰지 말고 오른쪽처럼)
+
+```compare
+당신의 체형은 역삼각형입니다 => 어깨가 넓은 편이라, 위는 여유 있게 입는 게 좋아요
+Fit Type: STRAIGHT (사각) => 시크 스트레이트
+사이즈 오류가 발생했습니다 => 사이즈를 못 찾았어요. 옷을 하나만 더 알려주실래요?
+✨진단 완료! 지금 바로 확인하세요 🎉 => 진단이 끝났어요. 결과를 확인해 보세요
+로우라이즈·크롭 기장 추천 => 밑위가 낮고 짧은 기장이 잘 어울려요
+```
+
 ## 9. 토큰은 어디에?
 - 실제 값 = **`web/tokens.css`** (라이브에서 쓰는 정본). 색을 바꾸려면 이 파일의 변수만 고치면 전체 반영됩니다.
 - 진단 화면은 `web/tokens.css` 규칙을 그대로 따르도록 `web/diag.css`가 맞춰져 있습니다.
@@ -1317,9 +1355,10 @@ settlement        expert_id · request_id · amount · fee · status
   var docnav=document.getElementById('docnav'), toc=document.getElementById('toc-list'), content=document.getElementById('content');
   srcs.forEach(function(s){ var a=document.createElement('a'); a.href='#'+s.dataset.doc; a.textContent=s.dataset.label; a.dataset.doc=s.dataset.doc; docnav.appendChild(a); });
 
-  /* ── iatree 파서 & 렌더 ── */
-  var PRI={'★':'mvp','◐':'mvpp','○':'v2','목업':'mock','■':'mock'};
-  var BADGE={mvp:'★',mvpp:'◐',v2:'○',mock:'목업'};
+  function codeBlocks(lang){ return [].slice.call(content.querySelectorAll('pre > code')).filter(function(c){ return new RegExp('(^|\\s)language-'+lang+'(\\s|$)').test(c.className); }); }
+
+  /* iatree */
+  var PRI={'★':'mvp','◐':'mvpp','○':'v2','목업':'mock','■':'mock'}, BADGE={mvp:'★',mvpp:'◐',v2:'○',mock:'목업'};
   function parseIA(text){
     var lines=text.split('\n').filter(function(l){return l.trim().length;});
     var root=[], stack=[{depth:-1,kids:root,node:null}];
@@ -1329,40 +1368,51 @@ settlement        expert_id · request_id · amount · fee · status
       var p=c.split('|').map(function(x){return x.trim();});
       var node={pri:(PRI[p[0]]||'v2'), no:p[1]||'', name:p[2]||'', note:p[3]||'', kids:[]};
       while(stack.length && stack[stack.length-1].depth>=depth) stack.pop();
-      stack[stack.length-1].kids.push(node);
-      stack.push({depth:depth, kids:node.kids, node:node});
+      stack[stack.length-1].kids.push(node); stack.push({depth:depth, kids:node.kids, node:node});
     });
     return root;
   }
   function iaNode(n, depth){
-    var has=n.kids.length || (n.actions&&n.actions.length), open=depth<1;
-    var h='<div class="ianode'+(open?' open':'')+'" data-pri="'+n.pri+'">';
-    h+='<div class="row'+(has?' has':'')+'"'+(has?' data-tog="1"':'')+'>';
-    h+='<span class="tw">'+(has?'▸':'')+'</span>';
-    h+='<span class="ia-b '+n.pri+'">'+BADGE[n.pri]+'</span>';
+    var has=n.kids.length||(n.actions&&n.actions.length), open=depth<1;
+    var h='<div class="ianode'+(open?' open':'')+'" data-pri="'+n.pri+'"><div class="row'+(has?' has':'')+'"'+(has?' data-tog="1"':'')+'>';
+    h+='<span class="tw">'+(has?'▸':'')+'</span><span class="ia-b '+n.pri+'">'+BADGE[n.pri]+'</span>';
     if(n.no) h+='<span class="no">'+esc(n.no)+'</span>';
-    h+='<span class="nm">'+esc(n.name)+'</span>';
-    if(n.note) h+='<span class="nt">'+esc(n.note)+'</span>';
-    h+='</div>';
+    h+='<span class="nm">'+esc(n.name)+'</span>'+(n.note?'<span class="nt">'+esc(n.note)+'</span>':'')+'</div>';
     if(n.actions&&n.actions.length) h+='<div class="iaacts'+(open?'':' hide')+'">'+n.actions.map(function(a){return '<div class="iaact">'+esc(a)+'</div>';}).join('')+'</div>';
     if(n.kids.length) h+='<div class="iakids'+(open?'':' hide')+'">'+n.kids.map(function(k){return iaNode(k,depth+1);}).join('')+'</div>';
     return h+'</div>';
   }
   function upgradeTrees(){
-    [].forEach.call(content.querySelectorAll('pre > code'), function(code){
-      if(!/(^|\s)language-iatree(\s|$)/.test(code.className)) return;
-      var nodes=parseIA(code.textContent);
+    codeBlocks('iatree').forEach(function(code){
       var el=document.createElement('div'); el.className='iatree';
-      el.innerHTML='<div class="bar"><button class="fb on" data-f="all">전체</button><button class="fb" data-f="mvp">MVP만</button><button class="fb" data-f="later">v2·이후</button>'+
-        '<button class="tbtn" data-all="1">모두 펼치기</button><button class="tbtn" data-all="0">모두 접기</button>'+
-        '<span class="lg">★ MVP · ◐ 최소 · ○ v2 · 목업</span></div>'+
-        nodes.map(function(n){return iaNode(n,0);}).join('');
-      var pre=code.parentNode; pre.parentNode.replaceChild(el, pre);
+      el.innerHTML='<div class="bar"><button class="fb on" data-f="all">전체</button><button class="fb" data-f="mvp">MVP만</button><button class="fb" data-f="later">v2·이후</button><button class="tbtn" data-all="1">모두 펼치기</button><button class="tbtn" data-all="0">모두 접기</button><span class="lg">★ MVP · ◐ 최소 · ○ v2 · 목업</span></div>'+parseIA(code.textContent).map(function(n){return iaNode(n,0);}).join('');
+      code.parentNode.parentNode.replaceChild(el, code.parentNode);
       el.addEventListener('click', function(e){
         var f=e.target.closest('.fb'); if(f){ el.querySelectorAll('.fb').forEach(function(b){b.classList.remove('on');}); f.classList.add('on'); el.classList.remove('f-mvp','f-later'); if(f.dataset.f==='mvp')el.classList.add('f-mvp'); if(f.dataset.f==='later')el.classList.add('f-later'); return; }
         var t=e.target.closest('.tbtn'); if(t){ var op=t.dataset.all==='1'; el.querySelectorAll('.ianode').forEach(function(nd){ nd.classList.toggle('open',op); [].forEach.call(nd.children,function(c){ if(c.classList.contains('iakids')||c.classList.contains('iaacts')) c.classList.toggle('hide',!op); }); }); return; }
-        var row=e.target.closest('.row.has'); if(row){ var nd=row.parentNode; nd.classList.toggle('open'); var op2=nd.classList.contains('open'); [].forEach.call(nd.children,function(c){ if(c.classList.contains('iakids')||c.classList.contains('iaacts')) c.classList.toggle('hide',!op2); }); }
+        var row=e.target.closest('.row.has'); if(row){ var nd=row.parentNode; nd.classList.toggle('open'); var o=nd.classList.contains('open'); [].forEach.call(nd.children,function(c){ if(c.classList.contains('iakids')||c.classList.contains('iaacts')) c.classList.toggle('hide',!o); }); }
       });
+    });
+  }
+  /* swatch */
+  function upgradeSwatch(){
+    codeBlocks('swatch').forEach(function(code){
+      var rows=code.textContent.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+      var el=document.createElement('div'); el.className='swatch';
+      el.innerHTML=rows.map(function(r){ var p=r.split('|').map(function(x){return x.trim();}); var hex=p[0]||'',u=p[1]||'',t=p[2]||'';
+        var b=/#f{2}f{2}f{2}/i.test(hex.replace(/[^#0-9a-f]/gi,''))||/#fff/i.test(hex)?';border-bottom:1px solid var(--line)':'';
+        return '<div class="sw"><div class="chip" style="background:'+esc(hex)+b+'"></div><div class="m"><div class="u">'+esc(u)+'</div><div class="h">'+esc(hex)+'</div>'+(t?'<div class="t">'+esc(t)+'</div>':'')+'</div></div>';
+      }).join('');
+      code.parentNode.parentNode.replaceChild(el, code.parentNode);
+    });
+  }
+  /* compare */
+  function upgradeCompare(){
+    codeBlocks('compare').forEach(function(code){
+      var rows=code.textContent.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+      var el=document.createElement('div'); el.className='compare';
+      el.innerHTML=rows.map(function(r){ var i=r.indexOf('=>'); if(i<0) return ''; return '<div class="cmp"><div class="bad">'+esc(r.slice(0,i).trim())+'</div><div class="good">'+esc(r.slice(i+2).trim())+'</div></div>'; }).join('');
+      code.parentNode.parentNode.replaceChild(el, code.parentNode);
     });
   }
 
@@ -1385,7 +1435,7 @@ settlement        expert_id · request_id · amount · fee · status
   function render(id){
     var s=document.querySelector('script[data-doc="'+id+'"]'); if(!s){ s=srcs[0]; id=s.dataset.doc; }
     content.innerHTML=marked.parse(s.textContent);
-    upgradeTrees();
+    upgradeTrees(); upgradeSwatch(); upgradeCompare();
     [].forEach.call(docnav.children,function(a){ a.classList.toggle('active', a.dataset.doc===id); });
     var h1=content.querySelector('h1'); document.getElementById('crumb').textContent=h1?h1.textContent.replace(/^\s+/,''):s.dataset.label;
     buildTOC(); wireLinks(); window.scrollTo(0,0);
