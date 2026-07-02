@@ -29,7 +29,7 @@
 /* 통합 앱 헤더 (진단 화면 상단) */
 /* 헤더 배경·보더는 전체 폭, 안쪽 콘텐츠(.dhead-in)는 본문과 같은 600px 중앙 정렬 */
 .dhead{ position:sticky; top:0; z-index:40; background:var(--canvas); border-bottom:1px solid var(--line); padding:14px 0; display:flex; justify-content:center; }
-.dhead-in{ width:100%; max-width:600px; padding:0 26px; display:flex; align-items:center; gap:14px; }
+.dhead-in{ width:100%; max-width:1040px; padding:0 40px; display:flex; align-items:center; gap:14px; }
 .dhead .logo{ font-size:20px; font-weight:800; letter-spacing:-.05em; color:var(--ink); text-decoration:none; }
 .dhead .logo i{ display:inline-block; width:6px; height:6px; background:var(--green); margin-left:1px; vertical-align:baseline; }
 .dhead .dx{ margin-left:auto; flex:none; width:34px; height:34px; border-radius:50%; border:1px solid var(--line);
@@ -43,7 +43,25 @@
 
 /* ── 시스템 수렴: 각진 Precision → sohee 딥그린 리듬 (라운드·폼·간격) ───────────
    fitting.css의 하드코딩 라운드/폼 스타일을 앱 셸과 같은 결로 통일. */
-.flow{ max-width:600px; padding:0 26px; }                 /* 앱 좌우 패딩과 정렬 */
+.flow{ max-width:1040px; padding:0 40px; }                /* 넓은 화면 활용 (헤더도 동폭 정렬) */
+.qhelp, .sub{ max-width:520px; }                          /* 본문은 가독 폭 유지 */
+
+/* 데스크톱: 2단 위저드 — 좌 질문/맥락, 우 입력. 모바일은 1단(아래 미디어쿼리 없이 fitting 기본 block) */
+@media(min-width:900px){
+  .wstep.active{ display:grid; grid-template-columns:340px 1fr; column-gap:60px; align-items:start; }
+  .wstep.active > *{ grid-column:1; }               /* 헤딩·키커·칩 등은 좌측 열 */
+  .wstep.active > .qbody{ grid-column:2; grid-row:1 / span 30; margin-top:0; }
+  .qnum{ margin-top:0; }
+  .qhelp{ margin-bottom:0; }
+}
+/* 모바일: 좌우 패딩 축소 + 헤더 진행율은 바만(라벨·분수 숨겨 넘침 방지) */
+@media(max-width:600px){
+  .flow{ padding:0 20px; }
+  .dhead-in{ padding:0 20px !important; }
+  .dhead .dprog{ margin-left:0; }
+  .dhead .stepper .label{ display:none; }
+  .dhead .wprogress.hd .frac{ display:none; }
+}
 
 /* 입력·선택 컨트롤: 흰 표면 + 부드러운 라운드, 포커스는 딥그린(브랜드색 노출) */
 .flow input[type=text], .flow input[type=number], .flow select, .open-note{
