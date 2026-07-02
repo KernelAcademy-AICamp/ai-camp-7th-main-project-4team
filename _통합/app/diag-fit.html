@@ -293,12 +293,15 @@
     const flag=flags.map(n=>feelRow(n,['꼈어요','괜찮았어요'],1)).join('');
     // ③ 기장 — 취향(선택), 역산 아님
     const pref=prefs.map(n=>feelRow(n,['짧음','딱 좋음','긺'],1)).join('');
-    box.innerHTML=
-      feelGroup('착용감 · 부위별','한 부위씩 떠오르는 느낌 하나',fit)+
+    // 선택 항목(걸린 곳·기장·그 외)은 접어둠 — 필수인 착용감만 먼저 보여 압도감↓ (값은 접혀도 수집됨)
+    var optional=
       (flag?feelGroup('혹시 걸린 곳','없으면 괜찮았어요 — 이 신호가 브랜드 치수를 채워요',flag):'')+
       (pref?feelGroup('기장','취향 · 선택',pref):'')+
       '<div class="feel-group"><h4>그 외 <span class="ghelp">선택 · 자유롭게</span></h4>'+
         '<textarea class="open-note" placeholder="예: 소매 끝이 조였어요 / 밑단이 걸렸어요"></textarea></div>';
+    box.innerHTML=
+      feelGroup('착용감 · 부위별','한 부위씩 떠오르는 느낌 하나',fit)+
+      '<details class="feel-more"><summary>걸린 곳·기장 등 더 알려주기 <span class="opt">선택 · 없으면 넘겨도 돼요</span></summary>'+optional+'</details>';
   }
 
   function applyTarget(){

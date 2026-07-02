@@ -27,23 +27,23 @@
 .notice.warn{ background:#FBEEEA; border-color:#E8D6CF; color:var(--warn); }
 
 /* 통합 앱 헤더 (진단 화면 상단) */
-/* 헤더 배경·보더는 전체 폭, 안쪽 콘텐츠(.dhead-in)는 본문과 같은 600px 중앙 정렬 */
-.dhead{ position:sticky; top:0; z-index:40; background:var(--canvas); border-bottom:1px solid var(--line); padding:14px 0; display:flex; justify-content:center; }
-.dhead-in{ width:100%; max-width:1040px; padding:0 40px; display:flex; align-items:center; gap:14px; }
-.dhead .logo{ font-size:20px; font-weight:800; letter-spacing:-.05em; color:var(--ink); text-decoration:none; }
+/* 헤더는 전체 폭: 로고=좌 끝 · 닫기=우 끝 · 진행율=중앙 고정폭(자동 확장 안 함) */
+.dhead{ position:sticky; top:0; z-index:40; background:var(--canvas); border-bottom:1px solid var(--line); }
+.dhead-in{ display:grid; grid-template-columns:1fr minmax(0,420px) 1fr; align-items:center; gap:14px; padding:14px 30px; }
+.dhead .logo{ justify-self:start; white-space:nowrap; font-size:20px; font-weight:800; letter-spacing:-.05em; color:var(--ink); text-decoration:none; }
 .dhead .logo i{ display:inline-block; width:6px; height:6px; background:var(--green); margin-left:1px; vertical-align:baseline; }
-.dhead .dx{ margin-left:auto; flex:none; width:34px; height:34px; border-radius:50%; border:1px solid var(--line);
+.dhead .dx{ justify-self:end; flex:none; width:34px; height:34px; border-radius:50%; border:1px solid var(--line);
   display:flex; align-items:center; justify-content:center; color:var(--muted); text-decoration:none; font-size:15px; }
 .dhead .dx:hover{ background:#EDEDEA; }
 /* 진행율 = 상단 헤더(로고 옆) · 2단: 전체(stepper 단계) + 세부(wprogress 단계 내) */
-.dhead .dprog{ flex:1; display:flex; flex-direction:column; gap:7px; margin-left:6px; }
+.dhead .dprog{ justify-self:center; width:100%; display:flex; flex-direction:column; gap:7px; }
 .dhead .dprog .stepper{ padding:0; }                          /* 전체 진행율: 2세그 + 라벨 */
 .dhead .dprog .wprogress.hd{ padding:0; margin:0; gap:12px; } /* 세부 진행율: 단계 내 채움 바 */
 .dhead .dprog .wprogress.hd .bar{ flex:1; }
 
 /* ── 시스템 수렴: 각진 Precision → sohee 딥그린 리듬 (라운드·폼·간격) ───────────
    fitting.css의 하드코딩 라운드/폼 스타일을 앱 셸과 같은 결로 통일. */
-.flow{ max-width:1040px; padding:0 40px; }                /* 넓은 화면 활용 (헤더도 동폭 정렬) */
+.flow{ max-width:1040px; padding:32px 40px 48px; }        /* 넓은 화면 활용 + 헤더와 여백 */
 .qhelp, .sub{ max-width:520px; }                          /* 본문은 가독 폭 유지 */
 
 /* 데스크톱: 2단 위저드 — 좌 질문/맥락, 우 입력. 모바일은 1단(아래 미디어쿼리 없이 fitting 기본 block) */
@@ -56,9 +56,10 @@
 }
 /* 모바일: 좌우 패딩 축소 + 헤더 진행율은 바만(라벨·분수 숨겨 넘침 방지) */
 @media(max-width:600px){
-  .flow{ padding:0 20px; }
-  .dhead-in{ padding:0 20px !important; }
-  .dhead .dprog{ margin-left:0; }
+  .flow{ padding:24px 20px 40px; }
+  /* 모바일 헤더: 그리드 대신 유연 배치(로고 좌·바 중앙 확장·닫기 우), 넘침/줄바꿈 방지 */
+  .dhead-in{ display:flex !important; align-items:center; gap:12px; padding:14px 20px !important; }
+  .dhead .dprog{ flex:1; width:auto; }
   .dhead .stepper .label{ display:none; }
   .dhead .wprogress.hd .frac{ display:none; }
 }
@@ -111,6 +112,14 @@
 .seg.stack .opt{ font-size:15px; padding:15px 18px; }
 .feel-row .part{ font-size:14px; font-weight:700; }
 .feel-opts .opt{ font-size:12.5px; padding:9px 6px; }
+
+/* 느낌 입력: 선택 항목 접기(압도감↓) — 필수 착용감만 먼저 노출 */
+.feel-more{ margin-top:10px; border-top:1px solid var(--line); }
+.feel-more > summary{ cursor:pointer; list-style:none; font-size:13.5px; font-weight:700; color:var(--green); padding:12px 0 4px; display:flex; align-items:center; gap:7px; }
+.feel-more > summary::-webkit-details-marker{ display:none; }
+.feel-more > summary::before{ content:"＋"; font-weight:800; }
+.feel-more[open] > summary::before{ content:"−"; }
+.feel-more > summary .opt{ font-size:11.5px; font-weight:600; color:var(--sub2); }
 
 /* 결과 사이즈표 — 셸 .szbox 룩(값 18/ink · 태그 딥그린 pill) */
 .size-row .brand{ font-size:14.5px; font-weight:700; }
