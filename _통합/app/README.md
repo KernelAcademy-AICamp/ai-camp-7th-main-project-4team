@@ -20,14 +20,17 @@ _통합/app/
   tokens.css            # 디자인 토큰 (딥그린) — _통합/tokens.css 사본
   data/
     bodytypes.json      # ★ 8유형 마스터 데이터 단일 출처 (원본: sohee 진단카드_8유형.json)
-  js/                   # (예정) 공용 스크립트
+  js/
+    survey.js           # M1 진단입력 4층 설문 (category.ts·wearexperience.ts 미러)
+    engine-mock.js      # M2 엔진 계약 목업 (diagnose() — Phase D에 실엔진 교체)
 ```
 
 ## 통합 상태
 - ✅ **sohee 디자인 기반**: 4탭 셸·결과카드·마이·전문가 화면을 딥그린 토큰으로 재스킨.
 - ✅ **8유형 데이터 단일출처**: `data/bodytypes.json` 하나에서 렌더(하드코딩 `T` 객체 제거).
-- ⏳ **sangmin 이식 대기(⑤⑥)**: 진단 입력 내용(착용경험 스키마)·엔진 계산·엔진 데이터 주입.
-- ⏳ **8유형↔엔진 매핑(Phase C 전)**: 엔진 upper×lower 역산 결과 → 8유형 `code` 매핑 테이블.
+- ✅ **sangmin 이식(⑥)**: 착용경험 4층 설문(M1) + 엔진 계약 목업(M2) + 결과 주입(M4: 카드·사이즈표·신뢰도) + 피드백 로깅(M5, localStorage). 위저드 진단→결과 엔드투엔드 동작.
+- ⏳ **Phase D(실엔진)**: `engine-mock.js` → sangmin `src/lib/engine` 실연결. `garmentCm` 시드 수집. 하의 `EASE_BANDS` 정식화.
+- ⏳ **8유형↔엔진 매핑(Phase C 전)**: 현재 `engine-mock.mapToBodyType()`는 스텁. 엔진 upper×lower → 8유형 `code` 정식 테이블 필요.
 
 ## 규칙
 - 색·폰트는 `tokens.css` 변수만 참조. 블루는 폐기(→딥그린). 측정 수치는 `.num`(SUIT).
