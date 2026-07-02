@@ -44,12 +44,18 @@
   .chip{padding:9px 16px; border-radius:30px; font-size:14px; font-weight:600; background:#fff;}
 
   /* ===== 홈 ===== */
-  .hero{padding:46px 0 20px;}
+  .hero{padding:46px 0 20px; display:grid; grid-template-columns:1.05fr .95fr; gap:44px; align-items:center;} /* 자식 1개(텍스트)면 우측 빈 채로 현행과 동일 · HERO-ANCHOR 있을 때 2단 */
   .hero .kicker{display:inline-block; font-size:13px; font-weight:800; color:var(--green); background:var(--green-soft); padding:6px 13px; border-radius:20px; text-transform:none; letter-spacing:-.02em;}
   .hero h1{font-size:46px; font-weight:800; letter-spacing:-.05em; margin-top:18px; line-height:1.22;}
   .hero h1 b{color:var(--green);}
   .hero p{font-size:17px; color:var(--sub); margin-top:16px; line-height:1.6; max-width:480px;}
   .hero .cta{display:flex; gap:11px; margin-top:26px;}
+  /* ▼ HERO-ANCHOR 스타일 (요청 시 이 주석~블록 삭제하면 원복) ▼ */
+  .hero-anchor{justify-self:center; display:flex; flex-direction:column; align-items:center; gap:12px;}
+  .cardprev{width:252px; height:440px; border-radius:24px; overflow:hidden; box-shadow:0 24px 54px rgba(10,11,14,.22);}
+  .cardprev iframe{width:392px; height:684px; border:0; transform:scale(.643); transform-origin:top left; pointer-events:none;}
+  .anchor-cap{font-size:12px; color:var(--sub2); font-weight:600;}
+  /* ▲ HERO-ANCHOR 스타일 끝 ▲ */
   .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
   .step{background:#fff; border:1px solid var(--line); border-radius:18px; padding:22px; box-shadow:0 6px 18px rgba(20,18,16,.05);}
   .step .no{width:30px; height:30px; border-radius:50%; background:var(--green-soft); color:var(--green); font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center;}
@@ -281,6 +287,12 @@
           <button class="btn ghost" onclick="go('shop')">전문가 둘러보기</button>
         </div>
       </div>
+      <!-- ▼▼ HERO-ANCHOR: 예시 결과 카드 미리보기 — 요청 시 이 블록 통째로 삭제하면 원복 ▼▼ -->
+      <div class="hero-anchor" aria-hidden="true">
+        <div class="cardprev"><iframe src="card.html?type=HRG&g=female" scrolling="no" tabindex="-1" title="예시 결과 카드"></iframe></div>
+        <span class="anchor-cap">이런 결과 카드를 받아요 · 예시</span>
+      </div>
+      <!-- ▲▲ HERO-ANCHOR 끝 ▲▲ -->
     </div>
 
     <h2 class="sec">이렇게 작동해요</h2>
