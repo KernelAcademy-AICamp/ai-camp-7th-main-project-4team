@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅 — 진단 결과</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/variable/woff2/SUIT-Variable.css">
+<link rel="stylesheet" href="fitting.css">
+<link rel="stylesheet" href="diag.css">
+<style>
+  .rwrap{ max-width:920px; margin:0 auto; padding:32px 24px 80px; display:flex; gap:32px; align-items:flex-start; flex-wrap:wrap; }
+  .rcard{ flex:0 0 392px; max-width:100%; }
+  .rcard iframe{ width:392px; max-width:100%; height:684px; border:0; }
+  .rcol{ flex:1; min-width:300px; display:flex; flex-direction:column; gap:18px; }
+  @media(max-width:760px){ .rcard{flex:1 1 100%;} .rcard iframe{width:100%;} }
+</style>
+</head>
+<body>
+
+<div class="dhead"><a class="logo" href="index.html">Fitting<i></i></a><a class="dx" href="index.html" title="닫기">✕</a></div>
+
+<div class="rwrap">
+  <div class="rcard"><iframe id="rescard" src="card.html?type=STR&g=female" scrolling="no" title="내 결과 카드"></iframe></div>
+  <div class="rcol">
+    <div id="confbadge"></div>
+    <div class="card">
+      <h2 class="sec" style="font-size:19px;margin-bottom:6px">브랜드별 추천 사이즈</h2>
+      <p class="small" style="margin-bottom:10px">평소 착용감 기준으로 브랜드를 가로질러 번역했어요</p>
+      <div class="size-table" id="sztable"></div>
+    </div>
+    <div class="card">
+      <div class="fb-q" style="padding-top:0">
+        <div class="q">이 추천, 실제 내 사이즈와 맞아요? <span class="small">· 정확도 검증</span></div>
+        <div class="seg"><div class="opt" onclick="fb(this,'맞음')">✅ 맞아요</div><div class="opt" onclick="fb(this,'애매')">➖ 애매</div><div class="opt" onclick="fb(this,'틀림')">❌ 틀려요</div></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <a class="btn-primary btn-block" href="index.html" style="flex:1">결과 저장하기</a>
+      <a class="btn-line" href="index.html#shop" style="flex:1">전문가에게 받기</a>
+    </div>
+    <p class="cta-note center">비회원 진단은 끝까지 무료예요 · 저장·전문가 매칭은 로그인 후 이어져요</p>
+  </div>
+</div>
+
+<script src="js/engine-mock.js"></script>
+<script>
+  // 진단 입력(diag-fit이 stash) → 엔진 계약(diagnose) → 결과 렌더. 엔진 목업은 Phase D에 실엔진 교체.
+  var payload={}; try{ payload=JSON.parse(sessionStorage.getItem('fitting.dx')||'{}'); }catch(e){}
+  if(!payload.experiences) payload={ basic:{gender:'female'}, prefs:{TOP:'regular'}, experiences:[] };
+  var gender=(payload.basic&&payload.basic.gender)||'female';
+  var dx=FittingEngine.diagnose(payload);
+
+  // 결과 카드 (sohee · 다크+8유형색 예외) — 엔진이 준 유형·성별
+  document.getElementById('rescard').src='card.html?type='+dx.bodyType+'&g='+gender;
+
+  // 브랜드별 추천 사이즈 (엔진 recs)
+  document.getElementById('sztable').innerHTML=
+    '<div class="st-head"><span>브랜드</span><span>추천 사이즈</span></div>'+
+    dx.recs.map(function(r){
+      return '<div class="size-row"><div class="brand">'+r.brandName+'<small>'+r.bottleneck+' 기준</small></div>'+
+        '<div class="sz num">'+r.size+'<span class="conf">'+(r.warnings[0]||'추천')+'</span></div></div>';
+    }).join('');
+
+  // 신뢰도 배지 (0벌 low / 1벌 mid / 2+ high)
+  var CB={ low:['badge low','기본 추정 · 옷을 더 넣으면 정확해져요'],
+           mid:['badge low','보통 · 핏이 다른 옷 한 벌 더 넣으면 더 정확해요'],
+           high:['badge high','정확 · 2벌 이상 입력됨'] }[dx.confidenceTier];
+  if(CB) document.getElementById('confbadge').innerHTML='<span class="'+CB[0]+'">신뢰도 · '+CB[1]+'</span>';
+
+  // 피드백 로깅(M5) — 킬 메트릭 원천. 프로토타입=localStorage.
+  function fb(el,verdict){
+    [...el.parentElement.children].forEach(function(c){c.classList.remove('on');}); el.classList.add('on');
+    var rec={ ts:new Date().toISOString(), bodyType:dx.bodyType, verdict:verdict, confidenceTier:dx.confidenceTier };
+    try{ var k='fitting.feedback', arr=JSON.parse(localStorage.getItem(k)||'[]'); arr.push(rec); localStorage.setItem(k,JSON.stringify(arr)); }catch(e){}
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅 — 착용 경험 보정 입력</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/variable/woff2/SUIT-Variable.css">
+<link rel="stylesheet" href="fitting.css">
+<link rel="stylesheet" href="diag.css">
+</head>
+<body>
+
+<div class="dhead"><a class="logo" href="index.html">Fitting<i></i></a><a class="dx" href="index.html" title="닫기">✕</a></div>
+
+<div class="flow">
+  <div class="stepper">
+    <span class="label">STEP 2 / 2 · 진단 대상 · 착용 경험</span>
+    <span class="dot done"></span><span class="dot now"></span>
+  </div>
+
+  <div class="wprogress">
+    <span class="frac" id="wfrac">대상 선택</span>
+    <div class="bar"><i id="wfill"></i></div>
+  </div>
+
+  <!-- idx0 · 진단 대상 카테고리 선택 -->
+  <div class="wstep active">
+    <span class="qnum">진단 대상</span>
+    <h2 class="qhead">어떤 옷의 사이즈를<br>알고 싶으세요?</h2>
+    <p class="qhelp">진단은 <strong>옷 종류별로</strong> 따로 풀어요. 상의 경험은 어깨·가슴을, 하의 경험은 허리·엉덩이를 알려주거든요 — 그래서 알고 싶은 종류의 옷으로 입력받아요.</p>
+    <div class="qbody">
+      <div class="notice hidden" id="reusebanner" style="margin-bottom:16px"></div>
+      <div class="seg cat stack" id="target">
+        <div class="opt on" data-cat="top" onclick="pickTarget(this)">상의</div>
+        <div class="opt" data-cat="bottom" onclick="pickTarget(this)">하의</div>
+        <div class="opt" data-cat="outer" onclick="pickTarget(this)">아우터</div>
+        <div class="opt" data-cat="dress" onclick="pickTarget(this)">원피스</div>
+        <div class="opt" data-cat="skirt" onclick="pickTarget(this)">치마</div>
+      </div>
+
+      <div class="notice warn hidden mt-16" id="targetnote"></div>
+
+      <div class="center mt-24">
+        <a href="diag-loading.html?skip=1" class="btn-ghost" style="text-decoration:underline">입어본 옷이 없거나 기억나지 않아요 — 건너뛰기</a>
+        <p class="small" style="max-width:360px;margin:6px auto 0">건너뛰면 키·몸무게로만 <strong>기본 추정</strong>을 보여드려요. 정확도는 낮고, 나중에 옷을 추가하면 정교해져요.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- idx1 · 선호핏 (카테고리 스코프 — 종류마다 취향이 다름) -->
+  <div class="wstep">
+    <span class="qnum num"><span class="catword">상의</span> · 선호핏</span>
+    <div class="target-chip">진단 대상 · <b class="catword">상의</b> <span class="change" onclick="goTo(0)">바꾸기</span></div>
+    <h2 class="qhead"><span class="catword">상의</span>는 평소<br>어떤 핏으로 입어요?</h2>
+    <p class="qhelp">선호하는 여유감은 <strong>옷 종류마다 달라서</strong> 종류를 고른 뒤 물어봐요. 이 취향은 <span class="catword">상의</span> 추천에만 적용돼요.</p>
+    <div class="qbody">
+      <div class="seg stack">
+        <div class="opt" onclick="pick(this)">스키니 — 몸에 딱 붙는</div>
+        <div class="opt" onclick="pick(this)">슬림 — 군더더기 없이</div>
+        <div class="opt on" onclick="pick(this)">레귤러 — 적당한 여유</div>
+        <div class="opt" onclick="pick(this)">루즈 — 넉넉하게</div>
+        <div class="opt" onclick="pick(this)">오버 — 크게 떨어지는</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- idx2 · 옷1 정보 -->
+  <div class="wstep">
+    <span class="qnum num">옷 1 · 정보</span>
+    <div class="target-chip">진단 대상 · <b class="catword">상의</b> <span class="change" onclick="goTo(0)">바꾸기</span></div>
+    <h2 class="qhead"><span class="catword">상의</span>는 <span class="longword">긴팔</span>로<br>입어본 걸 알려주세요</h2>
+    <p class="qhelp"><strong>정확한 진단을 위해 <span class="longword">긴팔</span>을 부탁해요</strong> — 팔·다리까지 알려줘야 몸을 제대로 재거든요. 자주 입어 느낌이 또렷한 옷이면 더 좋고, 한 벌만으로도 진단돼요.</p>
+    <div class="qbody">
+      <div class="grid-2">
+        <div class="field"><label>브랜드</label>
+          <select><option>유니클로</option><option>무신사 스탠다드</option><option>스파오</option><option>탑텐</option><option>— 목록에 없음 —</option></select>
+        </div>
+        <div class="field"><label>핏 / 품목</label>
+          <select id="item1"></select>
+        </div>
+      </div>
+      <div class="field hidden" id="facet1"></div>
+      <div class="field"><label>입었던 사이즈</label>
+        <div class="seg compact">
+          <div class="opt" onclick="pick(this)">XS</div><div class="opt" onclick="pick(this)">S</div>
+          <div class="opt on" onclick="pick(this)">M</div><div class="opt" onclick="pick(this)">L</div><div class="opt" onclick="pick(this)">XL</div>
+        </div>
+      </div>
+      <p class="small"><a href="#" style="color:var(--ink);font-weight:700" onclick="alert('프로토타입: 직접 입력 / 해당 없음 분기');return false">찾는 브랜드가 없어요</a> — 직접 입력하거나 건너뛸 수 있어요.</p>
+    </div>
+  </div>
+
+  <!-- idx3 · 옷1 느낌 -->
+  <div class="wstep">
+    <span class="qnum num">옷 1 · 느낌</span>
+    <h2 class="qhead">입었을 때 어땠어요?</h2>
+    <p class="qhelp"><span class="catword">상의</span> 부위별 느낌을 골라주세요. 걸린 곳·기장은 <strong>있으면만</strong> — 없으면 그대로 넘겨도 돼요.</p>
+    <div class="qbody">
+      <div class="feelbox" id="feel1"></div>
+    </div>
+  </div>
+
+  <!-- idx4 · 입력 점검 (1벌) — 한 벌 더 / 이대로 진단 분기 -->
+  <div class="wstep">
+    <span class="qnum">입력한 옷 · 1벌</span>
+    <h2 class="qhead">한 벌만으로도<br>진단할 수 있어요</h2>
+    <p class="qhelp">지금 한 벌이 들어왔어요. 핏이 다른 옷을 한 벌 더 넣으면 체형이 더 또렷해지지만, <strong>한 벌만으로도 추천은 나와요</strong> — 정확도만 조금 낮아요.</p>
+    <div class="qbody">
+      <div class="card-soft mb-16">
+        <div class="size-row" style="border:none;padding:9px 0;opacity:.5"><span class="brand">0벌 · 건너뛰기</span><span class="small">기본 추정</span></div>
+        <div class="size-row" style="padding:9px 0"><span class="brand">1벌 · 지금 <span class="soon live">현재</span></span><span class="small">보통 — 추천 가능</span></div>
+        <div class="size-row" style="padding:9px 0;opacity:.5"><span class="brand">2~3벌</span><span class="small">정확 — 권장</span></div>
+      </div>
+      <button class="add-garment" onclick="next()">+ 핏이 다른 <span class="catword">상의</span> 한 벌 더 <span style="color:var(--faint)">(정확도 ↑)</span></button>
+    </div>
+  </div>
+
+  <!-- idx5 · 옷2 정보 -->
+  <div class="wstep">
+    <span class="qnum num">옷 2 · 정보</span>
+    <div class="target-chip">진단 대상 · <b class="catword">상의</b></div>
+    <h2 class="qhead">핏이 다른 <span class="catword">상의</span>도<br>하나 넣어볼까요?</h2>
+    <p class="qhelp">옷 1과 핏이 다를수록 체형이 또렷해져요. 이번에도 <strong><span class="longword">긴팔</span></strong>이면 가장 정확해요. <span class="small">(같은 종류로 — 그래야 같은 부위를 교차 검증해요)</span></p>
+    <div class="qbody">
+      <div class="grid-2">
+        <div class="field"><label>브랜드</label>
+          <select><option>무신사 스탠다드</option><option>유니클로</option><option>스파오</option><option>탑텐</option><option>— 목록에 없음 —</option></select>
+        </div>
+        <div class="field"><label>핏 / 품목</label>
+          <select id="item2"></select>
+        </div>
+      </div>
+      <div class="field hidden" id="facet2"></div>
+      <div class="field"><label>입었던 사이즈</label>
+        <div class="seg compact">
+          <div class="opt" onclick="pick(this)">XS</div><div class="opt" onclick="pick(this)">S</div>
+          <div class="opt" onclick="pick(this)">M</div><div class="opt on" onclick="pick(this)">L</div><div class="opt" onclick="pick(this)">XL</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- idx6 · 옷2 느낌 -->
+  <div class="wstep">
+    <span class="qnum num">옷 2 · 느낌</span>
+    <h2 class="qhead">이 옷은 어땠어요?</h2>
+    <p class="qhelp"><span class="catword">상의</span> 부위별로 하나씩만요.</p>
+    <div class="qbody">
+      <div class="feelbox" id="feel2"></div>
+    </div>
+  </div>
+
+  <!-- idx7 · 입력 점검 (2벌) -->
+  <div class="wstep">
+    <span class="qnum">입력한 옷 · 2벌</span>
+    <h2 class="qhead"><span class="catword">상의</span> 2벌 입력 완료!</h2>
+    <p class="qhelp">정확도 좋은 상태예요. 한 벌 더 넣어도 좋고, 이대로 진단해도 됩니다. 다른 종류(하의·아우터…)는 진단 후 따로 돌릴 수 있어요.</p>
+    <div class="qbody">
+      <button class="add-garment" onclick="alert('프로토타입: 같은 카테고리 옷을 한 벌 더 추가하면 정보·느낌 2단계가 더 생깁니다 (최대 3벌)')">+ <span class="catword">상의</span> 한 벌 더 추가 <span style="color:var(--faint)">(권장: 핏이 다른 옷)</span></button>
+      <div class="notice mt-16">입력은 자동 저장돼요. 결과 화면에서 언제든 수정·재진단할 수 있어요.</div>
+    </div>
+  </div>
+
+  <!-- 내비 -->
+  <div class="wnav">
+    <button class="btn-line" onclick="prev()">이전</button>
+    <span class="spacer"></span>
+    <button class="btn-primary" id="nextbtn" onclick="footerAction()">다음</button>
+  </div>
+  <p class="cta-note center" style="margin-top:-12px;margin-bottom:26px" id="wnote">한 벌씩 천천히 — 부담 없이 진행돼요.</p>
+
+  <!-- ===== 파생 카테고리 · 선호핏만 (빠른 경로) — 기반(상/하의)이 체형을 잠근 뒤 진입 ===== -->
+  <div id="derived-flow" class="hidden">
+    <span class="derived-badge">파생 진단 · 체형 재사용</span>
+    <div class="target-chip">진단 대상 · <b class="catword">아우터</b></div>
+    <h2 class="qhead"><span class="catword">아우터</span>는<br>선호핏만 알려주세요</h2>
+    <p class="qhelp">체형은 이미 <strong>상의·하의 진단으로 확정</strong>됐어요. <span class="catword">아우터</span>는 몸 치수를 다시 잴 필요 없이, <strong>얼마나 여유 있게 입을지</strong>만 정하면 진단돼요.</p>
+    <div class="notice mb-16">체형 프로필 재사용 · <strong>새로 입력할 옷 없음</strong></div>
+    <div class="seg stack mb-8">
+      <div class="opt" onclick="pick(this)">타이트 — 몸에 붙게</div>
+      <div class="opt" onclick="pick(this)">슬림 — 군더더기 없이</div>
+      <div class="opt on" onclick="pick(this)">레귤러 — 적당한 여유</div>
+      <div class="opt" onclick="pick(this)">루즈 — 넉넉하게</div>
+      <div class="opt" onclick="pick(this)">오버 — 크게 레이어링</div>
+    </div>
+    <div class="center mt-16">
+      <a href="#" class="btn-ghost" style="text-decoration:underline" onclick="alert('프로토타입: 정밀 보정 — 이 종류 실착 1벌을 옵션으로 받아 브랜드 여유폭 오차를 줄입니다(선택).');return false">＋ 실착 1벌로 정밀 보정 (선택)</a>
+    </div>
+    <div class="wnav">
+      <a href="index.html" class="btn-line">이전</a>
+      <span class="spacer" style="flex:1"></span>
+      <a href="diag-loading.html?derived=1" class="btn-primary" id="derived-go">이대로 진단하기</a>
+    </div>
+  </div>
+
+  <!-- ===== 파생 카테고리 · 기반 미완성 안내 — 필요한 기반(상/하의)부터 ===== -->
+  <div id="derived-blocked" class="hidden">
+    <span class="derived-badge" style="background:var(--warn)">기반 진단 필요</span>
+    <div class="target-chip">진단 대상 · <b class="catword">치마</b></div>
+    <h2 class="qhead">먼저 <b id="blocked-need">하의</b>를<br>진단해야 해요</h2>
+    <p class="qhelp"><span class="catword">치마</span>는 <b id="blocked-region">하체</b> 치수가 필요해요. 그 부위는 <b id="blocked-basecat">하의</b> 실착 경험에서만 나와요 — 한 번 해두면 이후엔 <span class="catword">치마</span>도 선호핏만으로 열려요.</p>
+    <div class="card-soft mb-16">
+      <div class="size-row" style="border:none;padding:9px 0"><span class="brand">지금</span><span class="small">상의만 완료(상체 잠금)</span></div>
+      <div class="size-row" style="padding:9px 0"><span class="brand" id="blocked-todo">하의 진단</span><span class="small">→ 하체 잠금</span></div>
+      <div class="size-row" style="padding:9px 0;opacity:.6"><span class="brand"><span class="catword">치마</span> 진단</span><span class="small">→ 선호핏만 30초</span></div>
+    </div>
+    <div class="wnav">
+      <a href="index.html" class="btn-line">앱으로</a>
+      <span class="spacer" style="flex:1"></span>
+      <a href="#" class="btn-primary" id="blocked-go">하의 먼저 진단</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const PREV_URL='diag-basic.html';
+
+  /* 진단은 카테고리(옷 종류) 단위. 역산은 신체 부위를 넘지 못하므로
+     알고 싶은 종류의 옷으로 입력받고 그 종류의 사이즈를 출력한다. ready=true 만 실제 진단. */
+  /* kind: base=실착 경험으로 체형(부위) 잠금 / derived=체형 재사용 + 선호핏만.
+     provides=이 기반이 채우는 신체 영역, needs=이 파생이 필요로 하는 영역. */
+  /* 착용경험 입력 4층(schema/wearexperience.ts와 동일):
+     fit=주부위(둘레·너비 → 체형 역산) / flag=병목(미표기∩페인, A학습 전용) /
+     pref=기장(취향·키, 역산 아님) / 개방 인테이크(자유서술)는 renderFeel에서 항상 추가. */
+  const CATS={
+    top:   {label:'상의',  ready:true,  kind:'base', provides:'upper',
+            items:['레귤러핏 셔츠','슬림핏 셔츠','오버핏 맨투맨','니트'],
+            fit:['어깨','가슴','배'], flag:['팔(소매통)','목'], pref:['소매 기장','총장']},
+    bottom:{label:'하의',  ready:true,  kind:'base', provides:'lower',
+            items:['레귤러 슬랙스','와이드 팬츠','스키니 진','트레이닝 팬츠'],
+            fit:['허리','엉덩이','허벅지'], flag:['종아리'], pref:['밑위','기장']},
+    outer: {label:'아우터', ready:false, kind:'derived', needs:['upper'],
+            items:['싱글 코트','블레이저','패딩','바람막이'],
+            fit:['어깨','가슴·품'], flag:['팔(소매통)','목/칼라','암홀'], pref:['소매 기장','총장']},
+    dress: {label:'원피스', ready:false, kind:'derived', needs:['upper','lower'],
+            items:['A라인 원피스','셔츠 원피스','니트 원피스'],
+            fit:['가슴','허리','엉덩이'], flag:['팔','목','상하 비율'], pref:['총장']},
+    skirt: {label:'치마',  ready:false, kind:'derived', needs:['lower'],
+            items:['A라인 스커트','플리츠 스커트','미니 스커트'],
+            fit:['허리','엉덩이'], flag:['밑단'], pref:['기장']},
+  };
+  let target='top';
+  /* 품목 길이 facet — 옷별(feel1/feel2). 조회키 속성이자 ②③ 조건화. ①(체형)엔 무관.
+     소매(상의류): long=소매취향+팔flag / short=팔flag만 / sleeveless=둘 다 스킵.
+     하의: long=종아리flag / short(반바지)=종아리flag 제거(기장 취향은 유지). */
+  const SLEEVE_CATS=['top','outer','dress'], LEG_CATS=['bottom'];
+  // 정확한 진단을 위해 요청하는 '긴 옷' 표현(카테고리별). 긴 옷일수록 팔·다리까지 신호가 나옴.
+  const LONGWORD={top:'긴팔',outer:'긴팔',dress:'긴팔',bottom:'긴바지',skirt:'긴 기장'};
+  const sleeveType={1:'long',2:'long'}, legLength={1:'long',2:'long'};
+  // facet(소매/기장)은 조회키 → '옷 N · 정보' 단계에 렌더. 바꾸면 정보 하이라이트+느낌 질문을 함께 갱신.
+  function setSleeve(g,v){ sleeveType[g]=v; renderFacet(g); renderFeel(g); }
+  function setLeg(g,v){ legLength[g]=v; renderFacet(g); renderFeel(g); }
+  function facetSeg(g,opts,cur,fn){
+    return '<div class="seg compact">'+opts.map(([v,lab])=>'<div class="opt'+(v===cur?' on':'')+'" onclick="'+fn+'('+g+',\''+v+'\')">'+lab+'</div>').join('')+'</div>';
+  }
+  function renderFacet(g){
+    const el=document.getElementById('facet'+g); if(!el) return;
+    const hasSleeve=SLEEVE_CATS.includes(target), hasLeg=LEG_CATS.includes(target);
+    if(!hasSleeve && !hasLeg){ el.innerHTML=''; el.classList.add('hidden'); return; }
+    el.classList.remove('hidden');
+    // 긴팔/긴바지가 기본·권장(팔·다리까지 신호 최대 + 브랜드 경향성 오염 방지). 짧은 건 예외.
+    const hint='<span style="font-weight:600;color:var(--faint);font-size:11.5px;margin-left:4px">정확한 진단을 위해 긴 걸로 부탁해요</span>';
+    el.innerHTML = hasSleeve
+      ? '<label>소매 '+hint+'</label>'+facetSeg(g,[['long','긴팔'],['short','반팔'],['sleeveless','민소매']],sleeveType[g]||'long','setSleeve')
+      : '<label>기장 '+hint+'</label>'+facetSeg(g,[['long','긴바지'],['short','반바지']],legLength[g]||'long','setLeg');
+  }
+
+  /* 입력 점검(분기) 단계: 여기서 '진단하기'를 누르면 그 시점 벌 수로 진단을 끝낸다. */
+  const DIAGNOSE_AT={4:1, 7:2};   // step idx → 진단 시 입력된 벌 수 (선호핏 단계 추가로 +1 밀림)
+  const FRAC=['대상 선택','선호핏','옷 1 · 정보','옷 1 · 느낌','입력 점검','옷 2 · 정보','옷 2 · 느낌','입력 점검'];
+
+  function feelRow(name,opts,defIdx){
+    return '<div class="feel-row"><span class="part">'+name+'</span><div class="feel-opts">'+
+      opts.map((o,i)=>'<div class="opt'+(i===defIdx?' on':'')+'" onclick="pick(this)">'+o+'</div>').join('')+
+      '</div></div>';
+  }
+  function feelGroup(title,help,rows){
+    return '<div class="feel-group"><h4>'+title+(help?' <span class="ghelp">'+help+'</span>':'')+'</h4>'+rows+'</div>';
+  }
+  function renderFeel(g){
+    const c=CATS[target], box=document.getElementById('feel'+g);
+    const hasSleeve=SLEEVE_CATS.includes(target), st=sleeveType[g]||'long';
+    const hasLeg=LEG_CATS.includes(target), lg=legLength[g]||'long';
+    // ②③ 조건화: 반팔·민소매 → 소매 기장 제거 / 민소매 → 팔 flag 제거 / 반바지 → 종아리 flag 제거. ①은 불변.
+    let flags=(c.flag||[]), prefs=(c.pref||[]);
+    if(hasSleeve){
+      if(st==='sleeveless') flags=flags.filter(n=>!n.includes('팔'));
+      if(st!=='long')       prefs=prefs.filter(n=>!n.includes('소매'));
+    }
+    if(hasLeg && lg==='short') flags=flags.filter(n=>!n.includes('종아리'));
+    // ① 주부위 — 쪼임→헐렁 4단계(기본 딱맞음)
+    const fit =(c.fit||[]).map(n=>feelRow(n,['끼임','딱맞음','여유','큼'],1)).join('');
+    // ② 병목 플래그 — 최소 2값(음성 '괜찮았어요' 기본). 이 신호가 브랜드 치수를 채움.
+    const flag=flags.map(n=>feelRow(n,['꼈어요','괜찮았어요'],1)).join('');
+    // ③ 기장 — 취향(선택), 역산 아님
+    const pref=prefs.map(n=>feelRow(n,['짧음','딱 좋음','긺'],1)).join('');
+    box.innerHTML=
+      feelGroup('착용감 · 부위별','한 부위씩 떠오르는 느낌 하나',fit)+
+      (flag?feelGroup('혹시 걸린 곳','없으면 괜찮았어요 — 이 신호가 브랜드 치수를 채워요',flag):'')+
+      (pref?feelGroup('기장','취향 · 선택',pref):'')+
+      '<div class="feel-group"><h4>그 외 <span class="ghelp">선택 · 자유롭게</span></h4>'+
+        '<textarea class="open-note" placeholder="예: 소매 끝이 조였어요 / 밑단이 걸렸어요"></textarea></div>';
+  }
+
+  function applyTarget(){
+    const c=CATS[target];
+    ['item1','item2'].forEach(id=>document.getElementById(id).innerHTML=c.items.map(i=>'<option>'+i+'</option>').join(''));
+    document.querySelectorAll('.catword').forEach(e=>e.textContent=c.label);
+    document.querySelectorAll('.longword').forEach(e=>e.textContent=LONGWORD[target]||'긴 옷');
+    renderFacet(1); renderFacet(2); renderFeel(1); renderFeel(2);
+    const note=document.getElementById('targetnote');
+    if(c.ready){ note.classList.add('hidden'); }
+    else{
+      note.classList.remove('hidden');
+      note.innerHTML='<strong>'+c.label+'</strong> 진단은 부위 설계가 끝났고 <strong>곧 열려요</strong>. '+
+        '이번 발표 버전은 <strong>상의</strong>만 실제로 풀립니다 — 아래에서 '+c.label+'은 어떤 부위를 묻는지 미리 보여드릴게요.';
+    }
+  }
+  function pickTarget(el){
+    if(el.dataset.locked==='1'){ blockedHint(el.dataset.cat); return; }   // 파생: 기반 미완성이면 잠금
+    pick(el); target=el.dataset.cat; applyTarget();
+  }
+
+  const steps=[...document.querySelectorAll('.wstep')];
+  let cur=0;
+  function render(){
+    steps.forEach((s,k)=>s.classList.toggle('active',k===cur));
+    document.getElementById('wfill').style.width=((cur+1)/steps.length*100)+'%';
+    document.getElementById('wfrac').textContent=FRAC[cur]||'';
+    const btn=document.getElementById('nextbtn');
+    if(DIAGNOSE_AT[cur]) btn.textContent='이대로 진단하기 ('+DIAGNOSE_AT[cur]+'벌)';
+    else btn.textContent = cur===0 ? '이 종류로 시작' : '다음';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function goTo(i){ cur=i; render(); }
+  function next(){ if(cur<steps.length-1){cur++;render()} }
+  function prev(){ if(cur>0){cur--;render()} else location.href=PREV_URL; }
+  function footerAction(){
+    if(DIAGNOSE_AT[cur]){ collectExp(); location.href='diag-loading.html?g='+DIAGNOSE_AT[cur]; }
+    else next();
+  }
+  function pick(el){[...el.parentElement.children].forEach(c=>c.classList.remove('on'));el.classList.add('on')}
+
+  /* 착용경험 수집 → sessionStorage(fitting.dx). 결과 화면(result.html)이 엔진 계약(diagnose)에 넘긴다.
+     부위 라벨→스키마 key, 선택 라벨→값(FitRating/PainVerdict/LengthPref). 레이어는 옵션 수로 판별(4=fit·2=flag·3=pref). */
+  var CATMAP={top:'TOP',bottom:'BOTTOM',outer:'OUTER',dress:'DRESS',skirt:'SKIRT'};
+  var LABELKEY={'어깨':'shoulder','가슴':'chest','가슴·품':'chest','배':'belly','소매':'sleeve','총장':'length',
+    '허리':'waist','엉덩이':'hip','허벅지':'thigh','밑위':'rise','기장':'length',
+    '팔(소매통)':'arm','팔':'arm','목':'neck','목/칼라':'neck','암홀':'armhole','종아리':'calf','밑단':'hem','상하 비율':'ratio'};
+  var FITV={'끼임':'TIGHT','딱맞음':'SNUG','여유':'RELAXED','큼':'BIG'};
+  var FLAGV={'꼈어요':'TIGHT','괜찮았어요':'OK'};
+  var PREFV={'짧음':'SHORT','딱 좋음':'GOOD','긺':'LONG'};
+  var FITLINE={'스키니':'skinny','슬림':'slim','레귤러':'regular','루즈':'loose','오버':'oversize','타이트':'skinny'};
+  function fitLineFromPref(){
+    var sel=document.querySelector('.wstep .seg.stack .opt.on') || document.querySelector('#derived-flow .seg.stack .opt.on');
+    if(!sel) return 'regular';
+    var word=sel.textContent.trim().split(' ')[0];
+    return FITLINE[word]||'regular';
+  }
+  function collectFeel(boxId){
+    var fits={}, flags={}, prefs={};
+    document.querySelectorAll('#'+boxId+' .feel-row').forEach(function(row){
+      var part=row.querySelector('.part'), sel=row.querySelector('.feel-opts .opt.on');
+      if(!part||!sel) return;
+      var key=LABELKEY[part.textContent.trim()], lab=sel.textContent.trim();
+      var n=row.querySelectorAll('.feel-opts .opt').length;
+      if(!key) return;
+      if(n===4 && FITV[lab]) fits[key]=FITV[lab];
+      else if(n===2 && FLAGV[lab]) flags[key]=FLAGV[lab];
+      else if(n===3 && PREFV[lab]) prefs[key]=PREFV[lab];
+    });
+    var note=document.querySelector('#'+boxId+' .open-note');
+    return { fits:fits, painFlags:flags, lengthPrefs:prefs, openNote:note?note.value:'' };
+  }
+  function collectExp(){
+    var basic={}; try{ basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'{}'); }catch(e){}
+    var cat=CATMAP[target]||'TOP', fitLine=fitLineFromPref();
+    var exps=[], n=DIAGNOSE_AT[cur]||1;
+    [1,2].slice(0,n).forEach(function(g){
+      var f=collectFeel('feel'+g);
+      exps.push({ category:cat, brandId:'unknown', fitLine:fitLine, sizeLabel:'M',
+        fits:f.fits, painFlags:f.painFlags, lengthPrefs:f.lengthPrefs, openNote:f.openNote });
+    });
+    var prefs={}; prefs[cat]=fitLine;
+    try{ sessionStorage.setItem('fitting.dx', JSON.stringify({ basic:basic, prefs:prefs, experiences:exps })); }catch(e){}
+  }
+
+  /* 결과 화면의 "이어서 진단"으로 들어온 경우:
+     ?cat= 으로 대상 카테고리를 미리 선택, ?reuse=1 이면 기본 정보(03)를 재사용했음을 알린다.
+     체형 프로필(B)은 신체 단위라 카테고리 간 재사용 → 두 번째부터 옷만 새로 넣으면 된다(리텐션). */
+  /* 신체 영역: 기반(상의=upper, 하의=lower)이 파생 카테고리의 필요 부위를 채운다. */
+  const REGION={upper:{label:'상체',cat:'top',catLabel:'상의'}, lower:{label:'하체',cat:'bottom',catLabel:'하의'}};
+  function providedRegions(list){ const s=new Set(); list.forEach(c=>{const p=CATS[c]&&CATS[c].provides; if(p)s.add(p);}); return s; }
+  /* 첫 화면 게이팅: 파생(아우터=상체 / 원피스=상+하체 / 치마=하체)은 필요한 기반이 진단돼야 열린다.
+     진단된 기반은 ?have= 로 들어온다(결과화면의 '이어서 진단'). 첫 진단이면 상/하의만 선택 가능. */
+  function diagnosedRegions(){ return providedRegions((new URLSearchParams(location.search).get('have')||'').split(',').filter(Boolean)); }
+  function missingFor(cat){ const done=diagnosedRegions(); return (CATS[cat].needs||[]).filter(r=>!done.has(r)); }
+  function gateTargets(){
+    document.querySelectorAll('#target .opt').forEach(el=>{
+      const c=CATS[el.dataset.cat], miss=missingFor(el.dataset.cat);
+      if(c.kind==='derived' && miss.length){
+        el.classList.add('locked'); el.dataset.locked='1';
+        el.innerHTML=c.label+'<span class="lockhint">🔒 '+miss.map(r=>REGION[r].catLabel).join('·')+' 먼저</span>';
+      } else { el.classList.remove('locked'); el.dataset.locked=''; el.textContent=c.label; }
+    });
+  }
+  function blockedHint(cat){
+    const miss=missingFor(cat), c=CATS[cat], note=document.getElementById('targetnote');
+    note.classList.remove('hidden');
+    note.innerHTML='<strong>'+c.label+'</strong>는 '+miss.map(r=>REGION[r].label).join('·')+' 치수가 필요해요 — <strong>'+
+      miss.map(r=>REGION[r].catLabel).join('·')+'</strong>를 먼저 진단하면 열려요.';
+  }
+  // 기반 위저드만 숨김 — 파생 패널(#derived-flow/#blocked) 내부의 .wnav는 건드리지 않도록 직계 자식만 선택
+  function hideBaseWizard(){ document.querySelectorAll('.flow > .stepper, .flow > .wprogress, .flow > .wstep, .flow > .wnav, #wnote').forEach(e=>e.classList.add('hidden')); }
+  function enterDerivedFlow(){
+    document.getElementById('derived-flow').classList.remove('hidden');
+    var go=document.getElementById('derived-go');
+    go.href='diag-loading.html?derived=1&cat='+target;
+    // 파생: 실측 없이 선호핏만 — 기존 체형(이전 진단)의 dx가 있으면 재사용, 없으면 기본 페이로드 stash
+    go.addEventListener('click',function(){
+      var basic={}; try{ basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'{}'); }catch(e){}
+      if(!sessionStorage.getItem('fitting.dx')){
+        var cat=CATMAP[target]||'OUTER', prefs={}; prefs[cat]=fitLineFromPref();
+        try{ sessionStorage.setItem('fitting.dx', JSON.stringify({ basic:basic, prefs:prefs, experiences:[] })); }catch(e){}
+      }
+    });
+  }
+  function enterDerivedBlocked(missing){
+    const r=REGION[missing[0]];
+    document.getElementById('blocked-need').textContent=r.catLabel;
+    document.getElementById('blocked-region').textContent=r.label;
+    document.getElementById('blocked-basecat').textContent=r.catLabel;
+    document.getElementById('blocked-todo').textContent=r.catLabel+' 진단';
+    const go=document.getElementById('blocked-go');
+    go.href='diag-fit.html?cat='+r.cat+'&reuse=1&have=top';
+    go.textContent=r.catLabel+' 먼저 진단';
+    document.getElementById('derived-blocked').classList.remove('hidden');
+  }
+
+  function initFromQuery(){
+    const q=new URLSearchParams(location.search);
+    const qcat=q.get('cat');
+    if(qcat && CATS[qcat]){
+      target=qcat;
+      document.querySelectorAll('#target .opt').forEach(o=>o.classList.toggle('on',o.dataset.cat===qcat));
+    }
+    const c=CATS[target];
+    // 파생 카테고리: 체형 재사용 → 선호핏만 (기반 미완성이면 안내로 분기)
+    if(c && c.kind==='derived'){
+      const have=(q.get('have')||'').split(',').filter(Boolean);
+      const reg=providedRegions(have);
+      const missing=(c.needs||[]).filter(x=>!reg.has(x));
+      hideBaseWizard();
+      if(missing.length===0) enterDerivedFlow(); else enterDerivedBlocked(missing);
+      return 'derived';
+    }
+    if(q.get('reuse')==='1'){
+      const b=document.getElementById('reusebanner');
+      b.classList.remove('hidden');
+      b.innerHTML='<strong>이어서 진단</strong> · 이전 진단의 기본 정보(성별·키·몸무게)와 체형 프로필을 그대로 써요. <strong>'+c.label+'</strong>의 선호핏과 옷만 새로 정해주면 돼요.';
+      document.querySelector('.stepper .label').textContent='이어가기 · '+c.label+' 착용 경험';
+    }
+    return 'base';
+  }
+
+  const routed=initFromQuery();
+  applyTarget();
+  if(routed==='base'){ gateTargets(); render(); }
+</script>
+</body>
+</html>
