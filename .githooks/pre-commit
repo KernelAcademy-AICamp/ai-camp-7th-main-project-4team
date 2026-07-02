@@ -1,0 +1,17 @@
+#!/bin/sh
+# docs/*.md 또는 뷰어 템플릿(_tpl.html)이 커밋에 포함되면 통합문서.html을 자동 재생성해 함께 스테이징한다.
+# 설정: git config core.hooksPath .githooks  (클론 후 한 번)
+changed=$(git -c core.quotepath=false diff --cached --name-only --diff-filter=ACM \
+  | grep -E '^docs/([^/]+\.md|html/_src/_tpl\.html)$')
+[ -z "$changed" ] && exit 0
+
+# web 배포 임시본이 있으면 그것도 같이 갱신(미추적이라 커밋엔 안 들어감)
+if [ -f web/docs.html ]; then FLAG="--web"; else FLAG=""; fi
+
+if ! python3 docs/html/_src/build.py $FLAG >/dev/null; then
+  echo "✗ 통합문서.html 자동 재생성 실패 — python3 / docs/html/_src/build.py 확인" >&2
+  exit 1
+fi
+git add docs/html/통합문서.html
+echo "✓ 통합문서.html 자동 재생성 (docs md/템플릿 변경 감지)"
+exit 0
