@@ -24,6 +24,7 @@
   <div class="rcard"><iframe id="rescard" src="card.html?type=STR&g=female" scrolling="no" title="내 결과 카드"></iframe></div>
   <div class="rcol">
     <div id="confbadge"></div>
+    <div class="card" id="bodyest" style="display:none"></div>
     <div class="card">
       <h2 class="sec" style="font-size:19px;margin-bottom:6px">브랜드별 추천 사이즈</h2>
       <p class="small" style="margin-bottom:10px">평소 착용감 기준으로 브랜드를 가로질러 번역했어요</p>
@@ -43,6 +44,7 @@
   </div>
 </div>
 
+<script src="js/body-model.js"></script>
 <script src="js/engine-mock.js"></script>
 <script>
   // 진단 입력(diag-fit이 stash) → 엔진 계약(diagnose) → 결과 렌더. 엔진 목업은 Phase D에 실엔진 교체.
@@ -67,6 +69,23 @@
            mid:['badge low','보통 · 핏이 다른 옷 한 벌 더 넣으면 더 정확해요'],
            high:['badge high','정확 · 2벌 이상 입력됨'] }[dx.confidenceTier];
   if(CB) document.getElementById('confbadge').innerHTML='<span class="'+CB[0]+'">신뢰도 · '+CB[1]+'</span>';
+
+  // 추정 신체 치수 (§1.6 실계산) — 목업이 아니라 사이즈코리아 8차 회귀로 basic → 부위 cm.
+  // 착용경험 0벌이어도 여기는 실제로 계산된다. recs·8유형 카드는 아직 목업/잠정.
+  if(window.BodyModel){ BodyModel.load().then(function(){
+    var est=BodyModel.estimate(payload.basic||{});
+    if(!est.ready) return;
+    var el=document.getElementById('bodyest'); el.style.display='';
+    el.innerHTML=
+      '<h2 class="sec" style="font-size:19px;margin-bottom:4px">추정 신체 치수</h2>'+
+      '<p class="small" style="margin-bottom:10px">키·몸무게·나이 기반 <b>기본 추정</b>이에요 · 사이즈코리아 8차 실측 기준. 착용경험을 넣을수록 정밀해져요</p>'+
+      '<div class="size-table"><div class="st-head"><span>부위</span><span>추정 (오차범위)</span></div>'+
+      est.parts.map(function(p){
+        return '<div class="size-row"><div class="brand">'+p.name+
+          (p.pct?'<small>또래 중 P'+p.pct+'</small>':'')+'</div>'+
+          '<div class="sz num">'+p.cm.toFixed(1)+'<span class="conf">±'+p.rmse+'cm</span></div></div>';
+      }).join('')+'</div>';
+  }).catch(function(){ /* file:// 등 로드 실패 시 패널 생략 */ }); }
 
   // 피드백 로깅(M5) — 킬 메트릭 원천. 프로토타입=localStorage.
   function fb(el,verdict){
