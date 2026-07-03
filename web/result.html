@@ -9,11 +9,64 @@
 <link rel="stylesheet" href="fitting.css">
 <link rel="stylesheet" href="diag.css">
 <style>
-  .rwrap{ max-width:920px; margin:0 auto; padding:32px 24px 80px; display:flex; gap:32px; align-items:flex-start; flex-wrap:wrap; }
-  .rcard{ flex:0 0 392px; max-width:100%; }
-  .rcard iframe{ width:392px; max-width:100%; height:684px; border:0; }
-  .rcol{ flex:1; min-width:300px; display:flex; flex-direction:column; gap:18px; }
-  @media(max-width:760px){ .rcard{flex:1 1 100%;} .rcard iframe{width:100%;} }
+  /* 결과 화면 — sohee 디자인 언어 + sangmin 콘텐츠 (자체 팔레트로 클래스 격리) */
+  .rwrap{ --g:#2E4A3B; --gs:#E7EFEA; --ink:#16140F; --ink2:#3A382F; --sub:#6E6B63; --sub2:#A6A29A;
+          --line:#E6E5E1; --line2:#DAD8D2; --warn:#B0553F; --wsoft:#F7ECE8;
+          max-width:1180px; margin:0 auto; padding:36px 30px 90px; }
+  .rwrap h1{ font-size:28px; font-weight:800; letter-spacing:-.04em; color:var(--ink); }
+  .rwrap .subttl{ font-size:14.5px; color:var(--sub); margin-top:8px; }
+  .rgrid{ display:grid; grid-template-columns:392px 1fr; gap:34px; align-items:start; margin-top:28px; }
+  @media(max-width:840px){ .rgrid{ grid-template-columns:1fr; } }
+  .rcard iframe{ width:392px; max-width:100%; height:684px; border:0; border-radius:22px; display:block; position:sticky; top:80px; box-shadow:0 18px 44px rgba(20,22,28,.14); }
+  .rlock{ border:1.5px dashed var(--line2); border-radius:22px; background:repeating-linear-gradient(135deg,#fbfaf8,#fbfaf8 10px,#f5f4f1 10px,#f5f4f1 20px);
+          min-height:520px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px 26px; position:sticky; top:80px; }
+  .rlock .lk{ font-size:30px; } .rlock .t1{ font-size:16px; font-weight:800; color:var(--sub); margin-top:12px; }
+  .rlock .t2{ font-size:13px; color:var(--sub2); margin-top:8px; line-height:1.55; max-width:240px; }
+  .rlock .b{ margin-top:18px; background:var(--g); color:#fff; font-size:14px; font-weight:800; padding:12px 18px; border-radius:12px; text-decoration:none; }
+
+  .rcol{ display:flex; flex-direction:column; gap:18px; min-width:0; }
+  .rpanel{ background:#fff; border:1px solid var(--line); border-radius:18px; padding:22px 24px; }
+  .rkicker{ font-size:16px; font-weight:800; letter-spacing:-.03em; color:var(--ink); }
+  .rrow{ display:flex; justify-content:space-between; align-items:center; }
+  .rchip{ font-size:11.5px; font-weight:700; color:var(--g); background:var(--gs); padding:5px 11px; border-radius:20px; white-space:nowrap; }
+  .rnote{ font-size:12.5px; color:var(--sub); margin-top:6px; line-height:1.5; }
+  .rfoot{ font-size:12px; color:var(--sub2); margin-top:14px; line-height:1.5; }
+  /* 추천 */
+  .rsthead{ display:flex; justify-content:space-between; font-size:11px; font-weight:800; color:var(--sub2); letter-spacing:.06em; padding:14px 0 2px; }
+  .rszrow{ display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--line); }
+  .rszrow:last-child{ border:0; padding-bottom:0; }
+  .rbd{ font-size:15.5px; font-weight:700; color:var(--ink); } .rbd small{ display:block; font-size:12.5px; color:var(--sub2); font-weight:500; margin-top:3px; }
+  .rsz{ display:flex; align-items:center; gap:10px; } .rsz .n{ font-size:22px; font-weight:800; font-family:var(--suit,inherit); font-feature-settings:"tnum"; }
+  .rpill{ font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:20px; background:var(--gs); color:var(--g); white-space:nowrap; }
+  .rpill.warn{ background:var(--wsoft); color:var(--warn); }
+  /* 스펙트럼 */
+  .rgrp{ font-size:11.5px; font-weight:800; color:var(--sub2); margin:18px 0 2px; }
+  .rspec{ margin-top:16px; } .rspec:first-of-type{ margin-top:14px; }
+  .rspec .top{ display:flex; justify-content:space-between; align-items:baseline; font-size:12.5px; }
+  .rspec .pole{ color:var(--sub2); font-weight:600; } .rspec .pole.dom{ color:var(--ink); font-weight:800; }
+  .rspec .pct{ color:var(--g); font-weight:800; } .rspec .pct .n{ font-size:14px; font-feature-settings:"tnum"; }
+  .rtrack{ height:7px; background:#EDECE8; border-radius:4px; margin:8px 0 7px; overflow:hidden; } .rtrack i{ display:block; height:100%; background:var(--g); border-radius:4px; }
+  .raxis{ font-size:12px; color:var(--sub); }
+  /* 결과 풀이 */
+  .rex{ margin-top:16px; } .rex:first-of-type{ margin-top:14px; }
+  .rex .lbl{ display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:800; color:var(--ink); }
+  .rex .mk{ width:22px; height:22px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; }
+  .rex.plus .mk{ background:var(--gs); color:var(--g); } .rex.eq .mk{ background:#EDEEF1; color:var(--ink2); } .rex.warn .mk{ background:var(--wsoft); color:var(--warn); }
+  .rex p{ font-size:13.5px; color:var(--sub); line-height:1.6; margin-top:7px; } .rex p strong{ color:var(--ink); font-weight:700; }
+  /* 옷장 게이트 */
+  .rcat{ display:flex; align-items:center; gap:10px; padding:13px 0; border-bottom:1px solid var(--line); } .rcat:last-child{ border:0; padding-bottom:0; }
+  .rcat .nm{ font-size:15px; font-weight:700; color:var(--ink); min-width:52px; }
+  .rkind{ font-size:10px; font-weight:800; padding:2px 7px; border-radius:6px; } .rkind.base{ background:var(--gs); color:var(--g); } .rkind.der{ background:#EDEEF1; color:var(--sub); }
+  .rcat .meta{ font-size:12.5px; color:var(--sub); flex:1; } .rcat .go{ font-size:13px; font-weight:800; color:var(--g); white-space:nowrap; text-decoration:none; }
+  .rcat.done .go{ color:var(--sub2); } .rcat.lock{ opacity:.5; } .rcat.lock .go{ color:var(--sub2); }
+  .rgnotice{ background:var(--gs); border-radius:12px; padding:13px 15px; font-size:12.5px; color:var(--ink2); line-height:1.55; margin-top:16px; } .rgnotice b{ font-weight:800; }
+  /* 피드백·버튼 */
+  .rfbq{ font-size:15px; font-weight:700; color:var(--ink); } .rfbq span{ font-size:12.5px; color:var(--sub); font-weight:500; }
+  .rseg{ display:flex; gap:10px; margin-top:14px; } .rseg .o{ flex:1; text-align:center; padding:13px; border:1px solid var(--line); border-radius:12px; font-size:14px; font-weight:700; color:var(--ink); cursor:pointer; }
+  .rseg .o.on{ background:var(--g); border-color:var(--g); color:#fff; }
+  .rcta{ display:flex; gap:12px; } .rbtn{ flex:1; text-align:center; padding:16px; border-radius:13px; font-size:15px; font-weight:800; text-decoration:none; }
+  .rbtn.p{ background:var(--ink); color:#fff; } .rbtn.l{ background:#fff; border:1.5px solid var(--line2); color:var(--ink); }
+  .rcta-note{ text-align:center; font-size:12.5px; color:var(--sub2); margin-top:4px; }
 </style>
 </head>
 <body>
@@ -21,26 +74,20 @@
 <div class="dhead"><div class="dhead-in"><a class="logo" href="index.html">Fitting<i></i></a><div class="dprog"><div class="prog"><span class="seg done"></span><span class="seg done"></span></div></div><a class="dx" href="index.html" title="닫기">✕</a></div></div>
 
 <div class="rwrap">
-  <div class="rcard"><iframe id="rescard" src="card.html?type=STR&g=female" scrolling="no" title="내 결과 카드"></iframe></div>
-  <div class="rcol">
-    <div id="confbadge"></div>
-    <div class="card" id="bodyest" style="display:none"></div>
-    <div class="card">
-      <h2 class="sec" style="font-size:19px;margin-bottom:6px">브랜드별 추천 사이즈</h2>
-      <p class="small" style="margin-bottom:10px">평소 착용감 기준으로 브랜드를 가로질러 번역했어요</p>
-      <div class="size-table" id="sztable"></div>
+  <h1 id="rtitle">내 핏 타입이 나왔어요</h1>
+  <div class="subttl">평소 입던 옷으로 분석한 결과예요 · 저장하고 브랜드별 추천 사이즈도 확인해보세요</div>
+  <div class="rgrid">
+    <div id="cardslot"></div>
+    <div class="rcol">
+      <div id="recs" class="rpanel"></div>
+      <div class="rpanel"><div class="rfbq">이 추천, 실제로 맞아요? <span>· 정확도 검증</span></div>
+        <div class="rseg"><div class="o" onclick="fb(this,'맞음')">✅ 맞아요</div><div class="o" onclick="fb(this,'애매')">➖ 애매</div><div class="o" onclick="fb(this,'틀림')">❌ 틀려요</div></div></div>
+      <div id="meas" class="rpanel"></div>
+      <div id="means" class="rpanel"></div>
+      <div id="gate" class="rpanel"></div>
+      <div class="rcta"><a class="rbtn p" href="index.html">결과 저장하기</a><a class="rbtn l" href="index.html#shop">전문가에게 받기</a></div>
+      <p class="rcta-note">비회원 진단은 끝까지 무료예요 · 저장·전문가 매칭은 로그인 후 이어져요</p>
     </div>
-    <div class="card">
-      <div class="fb-q" style="padding-top:0">
-        <div class="q">이 추천, 실제 내 사이즈와 맞아요? <span class="small">· 정확도 검증</span></div>
-        <div class="seg"><div class="opt" onclick="fb(this,'맞음')">✅ 맞아요</div><div class="opt" onclick="fb(this,'애매')">➖ 애매</div><div class="opt" onclick="fb(this,'틀림')">❌ 틀려요</div></div>
-      </div>
-    </div>
-    <div class="btn-row">
-      <a class="btn-primary btn-block" href="index.html" style="flex:1">결과 저장하기</a>
-      <a class="btn-line" href="index.html#shop" style="flex:1">전문가에게 받기</a>
-    </div>
-    <p class="cta-note center">비회원 진단은 끝까지 무료예요 · 저장·전문가 매칭은 로그인 후 이어져요</p>
   </div>
 </div>
 
@@ -48,68 +95,109 @@
 <script src="js/engine.js"></script>
 <script src="js/engine-mock.js"></script>
 <script>
-  // 진단 입력(diag-fit이 stash) → 엔진 계약(diagnose) → 결과 렌더. 엔진 목업은 Phase D에 실엔진 교체.
   var payload={}; try{ payload=JSON.parse(sessionStorage.getItem('fitting.dx')||'{}'); }catch(e){}
   if(!payload.experiences) payload={ basic:{gender:'female'}, prefs:{TOP:'regular'}, experiences:[] };
   var gender=(payload.basic&&payload.basic.gender)||'female';
   var dx=FittingEngine.diagnose(payload);
 
-  // 결과 카드 (sohee · 다크+8유형색 예외) — 엔진이 준 유형·성별
-  document.getElementById('rescard').src='card.html?type='+dx.bodyType+'&g='+gender;
+  // 완료 카테고리 — 착용경험 or (0벌이면) 이번 진단 선호핏 키
+  var doneCats={}; (payload.experiences||[]).forEach(function(e){ if(e.category) doneCats[e.category]=1; });
+  if(!Object.keys(doneCats).length && payload.prefs) Object.keys(payload.prefs).forEach(function(c){ doneCats[c]=1; });
+  var upperDone=!!doneCats.TOP, lowerDone=!!doneCats.BOTTOM, cardReady=upperDone&&lowerDone;
 
-  // 브랜드별 추천 사이즈 (엔진 recs)
-  document.getElementById('sztable').innerHTML=
-    '<div class="st-head"><span>브랜드</span><span>추천 사이즈</span></div>'+
-    dx.recs.map(function(r){
-      return '<div class="size-row"><div class="brand">'+r.brandName+'<small>'+r.bottleneck+' 기준</small></div>'+
-        '<div class="sz num">'+r.size+'<span class="conf">'+(r.warnings[0]||'추천')+'</span></div></div>';
-    }).join('');
+  // ── 카드 게이팅: 상·하의(기반) 모두 끝나야 8유형 체형 카드 노출 ──
+  var slot=document.getElementById('cardslot');
+  if(cardReady){
+    slot.className='rcard';
+    slot.innerHTML='<iframe src="card.html?type='+dx.bodyType+'&g='+gender+'" scrolling="no" title="내 결과 카드"></iframe>';
+  }else{
+    document.getElementById('rtitle').textContent='상체 부분 진단이 끝났어요';
+    slot.className='rlock';
+    slot.innerHTML='<div class="lk">🔒</div><div class="t1">체형 카드는 상·하의를 모두 진단하면 나와요</div>'+
+      '<div class="t2">지금은 상체만 파악됐어요 — 8유형 체형은 하의까지 해야 확정돼요</div>'+
+      '<a class="b" href="diag-fit.html?cat=bottom&reuse=1&have=top">하의 진단하기 →</a>';
+  }
 
-  // 신뢰도 배지 (0벌 low / 1벌 mid / 2+ high)
-  var CB={ low:['badge low','기본 추정 · 옷을 더 넣으면 정확해져요'],
-           mid:['badge low','보통 · 핏이 다른 옷 한 벌 더 넣으면 더 정확해요'],
-           high:['badge high','정확 · 2벌 이상 입력됨'] }[dx.confidenceTier];
-  if(CB) document.getElementById('confbadge').innerHTML='<span class="'+CB[0]+'">신뢰도 · '+CB[1]+'</span>';
+  // ── 브랜드별 추천 사이즈(실계산: 규칙①②③ + garments) ──
+  var FLK={slim:'슬림',regular:'레귤러',loose:'루즈',oversize:'오버',skinny:'스키니'};
+  function renderRecs(recs, real){
+    document.getElementById('recs').innerHTML=
+      '<div class="rrow"><div class="rkicker">브랜드별 추천 사이즈</div><span class="rchip">이번 진단 · 상의</span></div>'+
+      '<div class="rnote">평소 착용감 기준으로 브랜드를 가로질러 번역했어요</div>'+
+      '<div class="rsthead"><span>브랜드</span><span>사이즈</span></div>'+
+      recs.map(function(r){
+        var note=(FLK[r.fitLine]||'')+' · '+r.bottleneck+' 기준'+(r.variance?' · '+r.variance:'');
+        return '<div class="rszrow"><div class="rbd">'+r.brandName+'<small>'+note+'</small></div>'+
+          '<div class="rsz"><span class="n">'+r.size+'</span><span class="rpill'+(r.warn?' warn':'')+'">'+r.fit+'</span></div></div>';
+      }).join('')+
+      (real?'<div class="rfoot">※ 규칙 기반 엔진이 브랜드 실측(단면)에 맞춰 계산 · 상의 긴팔 기준 · 착용경험을 넣으면 정밀해져요</div>':'');
+  }
+  // 목업 초기 렌더(로드 전) — 엔진 recs 형태 변환
+  renderRecs((dx.recs||[]).map(function(r){ return { brandName:r.brandName, fitLine:'regular', bottleneck:r.bottleneck, size:r.size, fit:(r.warnings&&r.warnings[0])||'추천', warn:false, variance:null }; }), false);
 
-  // 추정 신체 치수 (§1.6 실계산) — 목업이 아니라 사이즈코리아 8차 회귀로 basic → 부위 cm.
-  // 착용경험 0벌이어도 여기는 실제로 계산된다. recs·8유형 카드는 아직 목업/잠정.
+  // ── 내 체형 측정 + 실추천(회귀·garments) ──
+  function specRow(dom,pct,poleR,axis){
+    pct=Math.max(3,Math.min(97,Math.round(pct||50)));
+    return '<div class="rspec"><div class="top"><span class="pole dom">'+dom+'</span><span class="pct"><span class="n">'+pct+'</span>%</span><span class="pole">'+poleR+'</span></div>'+
+      '<div class="rtrack"><i style="width:'+pct+'%"></i></div><div class="raxis">'+axis+'</div></div>';
+  }
+  var FITPCT={skinny:20,slim:32,regular:55,loose:70,oversize:85};
   if(window.BodyModel){ BodyModel.load().then(function(){
     var est=BodyModel.estimate(payload.basic||{});
     if(!est.ready) return;
-    var el=document.getElementById('bodyest'); el.style.display='';
-    el.innerHTML=
-      '<h2 class="sec" style="font-size:19px;margin-bottom:4px">추정 신체 치수</h2>'+
-      '<p class="small" style="margin-bottom:10px">키·몸무게·나이 기반 <b>기본 추정</b>이에요 · 사이즈코리아 8차 실측 기준. 착용경험을 넣을수록 정밀해져요</p>'+
-      '<div class="size-table"><div class="st-head"><span>부위</span><span>추정 (오차범위)</span></div>'+
-      est.parts.map(function(p){
-        return '<div class="size-row"><div class="brand">'+p.name+
-          (p.pct?'<small>또래 중 P'+p.pct+'</small>':'')+'</div>'+
-          '<div class="sz num">'+p.cm.toFixed(1)+'<span class="conf">±'+p.rmse+'cm</span></div></div>';
-      }).join('')+'</div>';
+    var pm={}, cm={}; est.parts.forEach(function(p){ pm[p.key]=p.pct; cm[p.key]=p.cm; });
+    var pref=(payload.prefs&&payload.prefs.TOP)||'regular';
 
-    // 브랜드별 추천 사이즈 실계산(규칙①②③ + garmentCm) — 목업 sztable 교체.
-    var bp={}; est.parts.forEach(function(p){ bp[p.key]=p.cm; });
-    var bodyVec={ chest:bp.chestFull, shoulder:bp.shoulder };
-    if(!window.FitEngine || bodyVec.chest==null) return;
-    return fetch('data/garments.json').then(function(r){return r.json();}).then(function(gj){
-      var pref=(payload.prefs&&payload.prefs.TOP)||'regular';
-      var recs=FitEngine.recommend(bodyVec, pref, est.sex, 'long_sleeve', gj.specs);
-      if(!recs.length) return;
-      document.getElementById('sztable').innerHTML=
-        '<div class="st-head"><span>브랜드</span><span>추천 사이즈</span></div>'+
-        recs.map(function(r){
-          var FLK={slim:'슬림',regular:'레귤러',loose:'루즈',oversize:'오버',skinny:'스키니'};
-          var note=(FLK[r.fitLine]||r.fitLine)+' · '+r.bottleneck+' 기준'+(r.variance?' · '+r.variance:'');
-          return '<div class="size-row"><div class="brand">'+r.brandName+'<small>'+note+'</small></div>'+
-            '<div class="sz num">'+r.size+'<span class="conf'+(r.warn?' warn':'')+'">'+r.fit+'</span></div></div>';
-        }).join('')+
-        '<p class="small" style="margin-top:10px">※ 규칙 기반 엔진이 브랜드 실측(단면)에 맞춰 계산 · 상의 긴팔 기준 · 착용경험을 넣으면 정밀해져요</p>';
-    });
-  }).catch(function(){ /* file:// 등 로드 실패 시 목업 유지 */ }); }
+    // 측정: 필수 부위(어깨·가슴·배) + 총장 + 여유 선호핏 — 상의 기준
+    document.getElementById('meas').innerHTML=
+      '<div class="rrow"><div class="rkicker">내 체형 측정</div><span class="rchip">상의 기준</span></div>'+
+      '<div class="rgrp">필수 부위 — 역산으로 잡은 몸</div>'+
+      specRow('넓은 어깨',pm.shoulder,'좁은 어깨','어깨 — 어깨 기준으로 사이즈가 갈려요')+
+      specRow('볼륨 있는 가슴',pm.chestFull,'슬림한 가슴','가슴 — 슬림핏은 여유를 확인해요')+
+      specRow('볼륨 있는 배',pm.waist,'슬림한 배','배 — 표준 대비 위치')+
+      specRow('긴 상체·팔',pm.arm,'짧은 상체·팔','총장·소매 — 기장이 맞는지')+
+      '<div class="rgrp">선호</div>'+
+      specRow('여유 핏 선호',FITPCT[pref]||55,'타이트 선호','여유 선호핏 — 고른 핏 취향')+
+      '<div class="rnote" style="margin-top:16px">부위는 <b style="color:var(--ink2)">카테고리별로 달라져요</b>(하의=허리·엉덩이·허벅지·밑위·기장). 상하 균형·전신 비율은 하의까지 하면 나와요.</div>';
 
-  // 피드백 로깅(M5) — 킬 메트릭 원천. 프로토타입=localStorage.
+    // 실추천 교체
+    var bodyVec={ chest:cm.chestFull, shoulder:cm.shoulder };
+    if(window.FitEngine && bodyVec.chest!=null){
+      return fetch('data/garments.json').then(function(r){return r.json();}).then(function(gj){
+        var recs=FitEngine.recommend(bodyVec, pref, est.sex, 'long_sleeve', gj.specs);
+        if(recs.length) renderRecs(recs, true);
+      });
+    }
+  }).catch(function(){ /* file:// 등 실패 시 목업/기본 유지 */ }); }
+
+  // ── 결과 풀이 (＋강점 / ＝핏 공식 / ！주의) — 규칙 기반 골격, 서술은 AI 자리 ──
+  document.getElementById('means').innerHTML=
+    '<div class="rkicker">결과 풀이</div>'+
+    '<div class="rex plus"><div class="lbl"><span class="mk">＋</span> 강점</div><p>가장 또렷한 부위를 기준으로 맞추면 <strong>실루엣이 안정적으로</strong> 떨어져요.</p></div>'+
+    '<div class="rex eq"><div class="lbl"><span class="mk">＝</span> 핏 공식</div><p><strong>어깨·가슴 중 큰 쪽을 기준으로</strong> 사이즈를 고르고, 나머지는 여유로 조절하세요.</p></div>'+
+    '<div class="rex warn"><div class="lbl"><span class="mk">！</span> 주의</div><p>슬림핏은 가슴이 끼일 수 있어 <strong>같은 치수에서 한 단계 위</strong>를 고려하세요.</p></div>'+
+    '<div class="rfoot">※ 캐릭터·해설 서술은 AI가 생성하는 자리예요(현재는 규칙 기반 예시).</div>';
+
+  // ── 옷장 · 이어서 진단 ──
+  function catRow(nm,kind,kcls,meta,go,href,cls){
+    var g = href?'<a class="go" href="'+href+'">'+go+'</a>':'<span class="go">'+go+'</span>';
+    return '<div class="rcat '+(cls||'')+'"><span class="nm">'+nm+'</span><span class="rkind '+kcls+'">'+kind+'</span><span class="meta">'+meta+'</span>'+g+'</div>';
+  }
+  var doneCount=(upperDone?1:0)+(lowerDone?1:0);
+  document.getElementById('gate').innerHTML=
+    '<div class="rrow"><div class="rkicker">옷장 · 이어서 진단</div><span class="rchip">'+doneCount+' / 5 종류</span></div>'+
+    '<div class="rgrp">기반 — 실착으로 <b style="color:var(--ink2)">체형을 잠가요</b></div>'+
+    catRow('상의','기반','base', upperDone?'상체 잠금 완료':'상체 잠금 필요 · 옷 입력', upperDone?'완료 ✓':'＋ 옷 넣고 진단 →', upperDone?null:'diag-fit.html?cat=top', upperDone?'done':'')+
+    catRow('하의','기반','base', lowerDone?'하체 잠금 완료':'하체 잠금 필요 · 옷 입력', lowerDone?'완료 ✓':'＋ 옷 넣고 진단 →', lowerDone?null:'diag-fit.html?cat=bottom&reuse=1&have=top', lowerDone?'done':'')+
+    '<div class="rgrp">파생 — 체형 재사용, <b style="color:var(--ink2)">선호핏만</b></div>'+
+    catRow('아우터','파생','der', upperDone?'상체 기반 · 해금됨':'상체 필요', upperDone?'선호핏만 30초 →':'상의 먼저 →', upperDone?'diag-fit.html?cat=outer&reuse=1&have=top':null, upperDone?'':'lock')+
+    catRow('치마','파생','der','하체 필요', cardReady?'선호핏만 30초 →':'하의 먼저 →', cardReady?'diag-fit.html?cat=skirt&reuse=1':null, lowerDone?'':'lock')+
+    catRow('원피스','파생','der','상체+하체 필요', cardReady?'선호핏만 30초 →':'하의 먼저 →', cardReady?'diag-fit.html?cat=dress&reuse=1':null, cardReady?'':'lock')+
+    '<div class="rgnotice"><b>상의·하의(기반)</b>만 마치면 체형 카드가 완성되고, 아우터·원피스·치마는 옷을 다시 넣지 않고 <b>선호핏만으로</b> 열려요.</div>';
+
+  // ── 피드백 로깅(킬 메트릭 원천) ──
   function fb(el,verdict){
-    [...el.parentElement.children].forEach(function(c){c.classList.remove('on');}); el.classList.add('on');
+    [].forEach.call(el.parentElement.children,function(c){c.classList.remove('on');}); el.classList.add('on');
     var rec={ ts:new Date().toISOString(), bodyType:dx.bodyType, verdict:verdict, confidenceTier:dx.confidenceTier };
     try{ var k='fitting.feedback', arr=JSON.parse(localStorage.getItem(k)||'[]'); arr.push(rec); localStorage.setItem(k,JSON.stringify(arr)); }catch(e){}
   }
