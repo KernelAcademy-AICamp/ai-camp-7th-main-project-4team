@@ -13,10 +13,7 @@
 
 <div class="dhead"><div class="dhead-in">
   <a class="logo" href="index.html">Fitting<i></i></a>
-  <div class="dprog">
-    <div class="stepper"><span class="label">STEP 1 / 2 · 기본 정보</span><span class="dot now"></span><span class="dot"></span></div>
-    <div class="wprogress hd"><div class="bar"><i id="wfill"></i></div><span class="frac" id="wfrac">1 / 2</span></div>
-  </div>
+  <div class="dprog"><div class="prog"><span class="seg"><i id="wfill"></i></span><span class="seg"></span></div></div>
   <a class="dx" href="index.html" title="닫기">✕</a>
 </div></div>
 
@@ -63,7 +60,6 @@
   function render(){
     steps.forEach((s,k)=>s.classList.toggle('active',k===cur));
     document.getElementById('wfill').style.width=((cur+1)/steps.length*100)+'%';
-    document.getElementById('wfrac').textContent=(cur+1)+' / '+steps.length;
     document.getElementById('nextbtn').textContent = cur===steps.length-1 ? '옷 종류 고르기' : '다음';
     window.scrollTo({top:0,behavior:'smooth'});
   }
