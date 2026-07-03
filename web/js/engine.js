@@ -31,6 +31,44 @@
     var b = BANDS["TOP:chest"];
     return e <= b.tight ? "TIGHT" : e <= b.snug ? "SNUG" : e <= b.big ? "RELAXED" : "BIG";
   }
+  // ③역: 등급 → 여유(ease) 대표점 (chestRating의 역). 착용경험 역산에 사용.
+  function ratingToEase(part, rating) {
+    var b = BANDS["TOP:" + part];
+    if (!b) return null;
+    if (rating === "TIGHT") return b.tight - 1;              // 끼임: 여유 경계 아래
+    if (rating === "SNUG") return (b.tight + b.snug) / 2;    // 딱맞음: 밴드 중앙
+    if (rating === "RELAXED") return (b.snug + b.big) / 2;   // 여유
+    if (rating === "BIG") return b.big + (b.big - b.snug) / 2; // 큼
+    return null;
+  }
+  // 규칙④~⑧: 착용경험 → 부위별 인체 치수 역산.
+  //   body = 의류축(단면×2 등) − ratingToEase(등급). 같은(브랜드·핏·사이즈) 제품 여럿=평균, 여러 경험=부위별 평균.
+  //   garmentCm이 있는 부위(chest·shoulder)만 역산 가능 → recommend가 쓰는 축과 일치.
+  function bodyFromExperiences(experiences, specs) {
+    var acc = { chest: [], shoulder: [] };
+    (experiences || []).forEach(function (e) {
+      if (e.category !== "TOP" || !e.fits) return;
+      var m = (specs || []).filter(function (s) {
+        return s.category === "TOP" && s.brandId === e.brandId && s.fitLine === e.fitLine &&
+          s.sizeLabel === e.sizeLabel && (s.gender === e.gender || s.gender === "unisex") &&
+          (!e.subtype || s.subtype === e.subtype);
+      });
+      if (!m.length) return;
+      ["chest", "shoulder"].forEach(function (part) {
+        var rating = e.fits[part]; if (!rating) return;
+        var flats = m.map(function (s) { return s.garmentCm[part]; }).filter(function (v) { return v != null; });
+        if (!flats.length) return;
+        var flat = flats.reduce(function (a, b) { return a + b; }, 0) / flats.length;
+        var easePt = ratingToEase(part, rating); if (easePt == null) return;
+        acc[part].push(toBodyAxis(part, flat) - easePt);
+      });
+    });
+    var out = {};
+    Object.keys(acc).forEach(function (k) {
+      if (acc[k].length) out[k] = Math.round((acc[k].reduce(function (a, b) { return a + b; }, 0) / acc[k].length) * 10) / 10;
+    });
+    return out; // { chest?, shoulder? }
+  }
 
   var PILL = { TIGHT: { ko: "끼임", warn: true }, SNUG: { ko: "딱맞음", warn: false },
                RELAXED: { ko: "여유", warn: false }, BIG: { ko: "넉넉", warn: false } };
@@ -39,6 +77,17 @@
   // A축 편차 경고(anchor-brands translationVariance)
   var VARIANCE = { hm: "사이즈 편차 큼", zara: "유럽핏 편차 큼" };
   var TARGET_CHEST_EASE = 5; // 가슴 여유 목표(cm) — SNUG 중앙. 사이즈는 이 근처를 겨눔.
+
+  // 핏 지수(0~100%): 이상 여유에서 벗어난 정도로 감점. 가슴(이상 5cm)+어깨(이상 ~1cm).
+  function scoreFit(ce, se) {
+    var chestDev = Math.abs(ce - TARGET_CHEST_EASE);
+    var shDev;
+    if (se == null || se >= 900) shDev = 0;         // 어깨 데이터 없음 → 감점 안 함
+    else if (se < 0) shDev = (-se) * 1.8 + 1;       // 어깨 끼임 = 큰 감점
+    else shDev = Math.max(0, Math.abs(se - 1) - 1); // 어깨 여유 1cm 근처는 관대
+    var penalty = chestDev * 5.5 + shDev * 7;
+    return Math.max(35, Math.min(99, Math.round(100 - penalty)));
+  }
 
   /**
    * 추천 사이즈 계산.
@@ -95,16 +144,19 @@
         brandId: bid, brandName: list[0].brandName, fitLine: fl, size: pick.size,
         fit: pill.ko, warn: pill.warn, bottleneck: bottleneck,
         variance: VARIANCE[bid] || null, chestEase: Math.round(pick.ce * 10) / 10,
+        fitScore: scoreFit(pick.ce, pick.se),
       });
     });
 
-    // 딱맞음 우선 → 편차 브랜드는 뒤로
-    var rank = { "딱맞음": 0, "여유": 1, "넉넉": 2, "끼임": 3 };
+    // 핏 지수 높은 순 → 편차 브랜드는 뒤로(동점 시)
     recs.sort(function (a, b) {
-      return (rank[a.fit] - rank[b.fit]) || ((a.variance ? 1 : 0) - (b.variance ? 1 : 0));
+      return (b.fitScore - a.fitScore) || ((a.variance ? 1 : 0) - (b.variance ? 1 : 0));
     });
     return recs;
   }
 
-  global.FitEngine = { recommend: recommend, ease: ease, chestRating: chestRating, _real: true };
+  global.FitEngine = {
+    recommend: recommend, ease: ease, chestRating: chestRating,
+    ratingToEase: ratingToEase, bodyFromExperiences: bodyFromExperiences, _real: true
+  };
 })(typeof window !== "undefined" ? window : this);

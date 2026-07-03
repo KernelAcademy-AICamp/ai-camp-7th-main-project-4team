@@ -38,6 +38,25 @@
   function tierOf(n) { return n <= 0 ? "low" : n === 1 ? "mid" : "high"; }
 
   /**
+   * [스텁] 회귀 체형(키·몸무게 → 부위 백분위) → 8유형 code (0벌 저신뢰 카드용).
+   * ⚠️ 키·몸무게만으론 V/A/X(어깨·힙 실루엣) 구분이 불가 — 부위 백분위 차는 사실상 BMI를
+   *    재인코딩할 뿐이다. 그래서 여기선 **볼륨(BMI) 축**만 정직하게 매핑한다:
+   *    가는 일자(TUB) → 직선(STR) → 밸런스(BAL) → 둥근(RND).
+   *    V/A/X/다이아는 착용경험(fit 신호)이 있어야 나오며 mapToBodyType가 담당한다.
+   *   pct = { shoulder, chest, waist, hip }  (0~100, 성별 내 백분위)
+   */
+  function bodyTypeFromMeasure(pct) {
+    pct = pct || {};
+    var vals = [pct.shoulder, pct.chest, pct.waist, pct.hip].filter(function (v) { return v != null; });
+    if (vals.length < 2) return null; // 데이터 부족 → 호출측 폴백
+    var overall = vals.reduce(function (a, b) { return a + b; }, 0) / vals.length; // ≈ BMI 백분위
+    if (overall >= 80) return "RND";  // 볼륨 큼 = 부드러운 둥근
+    if (overall >= 55) return "BAL";  // 표준
+    if (overall >= 32) return "STR";  // 슬림·직선
+    return "TUB";                     // 매우 슬림 = 가는 일자
+  }
+
+  /**
    * [목업] 착용경험 fits → 체형카드 upper/lower 요약.
    * 실엔진은 여유(ease)=의류실측−인체 역산으로 채운다(reverse-inference §2~3). 여기선 신호를 직역.
    */
@@ -113,6 +132,7 @@
   global.FittingEngine = {
     diagnose: diagnose,
     mapToBodyType: mapToBodyType,
+    bodyTypeFromMeasure: bodyTypeFromMeasure,
     CODES: CODES,
     _isMock: true
   };

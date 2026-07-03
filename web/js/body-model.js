@@ -80,5 +80,12 @@
     return { ready: true, sex: sex, input: { h: h, w: w, age: a }, parts: parts };
   }
 
-  global.BodyModel = { load: load, estimate: estimate, _num: num, _age: ageYears };
+  // 임의 cm → 성별 내 백분위(%). 착용경험 역산으로 덮어쓴 부위의 측정 표시에 사용.
+  function pctOf(sex, key, cm) {
+    var dp = ((DIST && DIST[sex]) || {})[key];
+    if (!dp || !dp.sd || cm == null) return null;
+    return pctFromZ((cm - dp.mean) / dp.sd);
+  }
+
+  global.BodyModel = { load: load, estimate: estimate, pctOf: pctOf, _num: num, _age: ageYears };
 })(typeof window !== "undefined" ? window : this);
