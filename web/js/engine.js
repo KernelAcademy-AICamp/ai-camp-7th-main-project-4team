@@ -31,14 +31,16 @@
     var b = BANDS["TOP:chest"];
     return e <= b.tight ? "TIGHT" : e <= b.snug ? "SNUG" : e <= b.big ? "RELAXED" : "BIG";
   }
-  // ③역: 등급 → 여유(ease) 대표점 (chestRating의 역). 착용경험 역산에 사용.
+  // ③역: 등급 → 여유(ease) 대표점 (chestRating의 역). 정본 subjective.ts#ratingToEasePoint 미러:
+  //   중간 두 등급=구간 중앙, 열린 끝(TIGHT·BIG)=경계에서 한 폭(span=big−tight)의 절반만큼 외삽.
   function ratingToEase(part, rating) {
     var b = BANDS["TOP:" + part];
     if (!b) return null;
-    if (rating === "TIGHT") return b.tight - 1;              // 끼임: 여유 경계 아래
-    if (rating === "SNUG") return (b.tight + b.snug) / 2;    // 딱맞음: 밴드 중앙
-    if (rating === "RELAXED") return (b.snug + b.big) / 2;   // 여유
-    if (rating === "BIG") return b.big + (b.big - b.snug) / 2; // 큼
+    var span = b.big - b.tight;
+    if (rating === "TIGHT") return b.tight - span / 2;
+    if (rating === "SNUG") return (b.tight + b.snug) / 2;
+    if (rating === "RELAXED") return (b.snug + b.big) / 2;
+    if (rating === "BIG") return b.big + span / 2;
     return null;
   }
   // 규칙④~⑧: 착용경험 → 부위별 인체 치수 역산.
