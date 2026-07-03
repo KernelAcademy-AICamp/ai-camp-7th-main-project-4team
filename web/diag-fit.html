@@ -50,6 +50,7 @@
     <h2 class="qhead"><span class="catword">상의</span>는 평소<br>어떤 핏으로 입어요?</h2>
     <p class="qhelp">선호하는 여유감은 <strong>옷 종류마다 달라서</strong> 종류를 고른 뒤 물어봐요. 이 취향은 <span class="catword">상의</span> 추천에만 적용돼요.</p>
     <div class="qbody">
+      <div class="notice hidden" id="prefonlynote" style="margin-bottom:14px"></div>
       <div class="seg stack">
         <div class="opt" onclick="pick(this)">스키니 — 몸에 딱 붙는</div>
         <div class="opt" onclick="pick(this)">슬림 — 군더더기 없이</div>
@@ -69,8 +70,8 @@
     <div class="qbody">
       <div class="grid-2">
         <div class="field"><label>브랜드</label>
-          <!-- 앵커 브랜드 7종 (착용경험 입력 축) · 출처: sangmin/data/brand/anchor-brands.json · 자라·H&M=translationVariance(사이즈 편차 큼) -->
-          <select><option>유니클로</option><option>무신사 스탠다드</option><option>탑텐</option><option>스파오</option><option>에잇세컨즈</option><option>자라 (편차 큼)</option><option>H&amp;M (편차 큼)</option><option>— 목록에 없음 —</option></select>
+          <!-- 앵커 브랜드 (착용경험 입력 축) · 출처: sangmin/data/brand/anchor-brands.json · 자라·H&M=translationVariance(사이즈 편차 큼) -->
+          <select id="brand1" onchange="renderSizes(1)"><option>유니클로</option><option>무신사 스탠다드</option><option>나이키</option><option>탑텐</option><option>스파오</option><option>에잇세컨즈</option><option>노스페이스</option><option>H&amp;M (편차 큼)</option><option>자라 (편차 큼)</option><option>— 목록에 없음 —</option></select>
         </div>
         <div class="field"><label>핏 / 품목</label>
           <select id="item1"></select>
@@ -78,10 +79,7 @@
       </div>
       <div class="field hidden" id="facet1"></div>
       <div class="field"><label>입었던 사이즈</label>
-        <div class="seg compact">
-          <div class="opt" onclick="pick(this)">XS</div><div class="opt" onclick="pick(this)">S</div>
-          <div class="opt on" onclick="pick(this)">M</div><div class="opt" onclick="pick(this)">L</div><div class="opt" onclick="pick(this)">XL</div>
-        </div>
+        <div class="seg compact" id="size1"></div>
       </div>
       <p class="small"><a href="#" style="color:var(--ink);font-weight:700" onclick="alert('프로토타입: 직접 입력 / 해당 없음 분기');return false">찾는 브랜드가 없어요</a> — 직접 입력하거나 건너뛸 수 있어요.</p>
     </div>
@@ -121,7 +119,7 @@
     <div class="qbody">
       <div class="grid-2">
         <div class="field"><label>브랜드</label>
-          <select><option>유니클로</option><option>무신사 스탠다드</option><option>탑텐</option><option>스파오</option><option>에잇세컨즈</option><option>자라 (편차 큼)</option><option>H&amp;M (편차 큼)</option><option>— 목록에 없음 —</option></select>
+          <select id="brand2" onchange="renderSizes(2)"><option>유니클로</option><option>무신사 스탠다드</option><option>나이키</option><option>탑텐</option><option>스파오</option><option>에잇세컨즈</option><option>노스페이스</option><option>H&amp;M (편차 큼)</option><option>자라 (편차 큼)</option><option>— 목록에 없음 —</option></select>
         </div>
         <div class="field"><label>핏 / 품목</label>
           <select id="item2"></select>
@@ -129,10 +127,7 @@
       </div>
       <div class="field hidden" id="facet2"></div>
       <div class="field"><label>입었던 사이즈</label>
-        <div class="seg compact">
-          <div class="opt" onclick="pick(this)">XS</div><div class="opt" onclick="pick(this)">S</div>
-          <div class="opt" onclick="pick(this)">M</div><div class="opt on" onclick="pick(this)">L</div><div class="opt" onclick="pick(this)">XL</div>
-        </div>
+        <div class="seg compact" id="size2"></div>
       </div>
     </div>
   </div>
@@ -301,7 +296,14 @@
     ['item1','item2'].forEach(id=>document.getElementById(id).innerHTML=c.items.map(i=>'<option>'+i+'</option>').join(''));
     document.querySelectorAll('.catword').forEach(e=>e.textContent=c.label);
     document.querySelectorAll('.longword').forEach(e=>e.textContent=LONGWORD[target]||'긴 옷');
-    renderFacet(1); renderFacet(2); renderFeel(1); renderFeel(2);
+    renderFacet(1); renderFacet(2); renderFeel(1); renderFeel(2); renderSizes(1); renderSizes(2);
+    // 선호핏 단계(idx1) 안내: 실측 데이터 없는 기반은 착용경험 없이 선호핏만 받는다고 알림
+    var pnote=document.getElementById('prefonlynote');
+    if(pnote){
+      if(isPrefOnlyBase()){ pnote.classList.remove('hidden');
+        pnote.innerHTML='<strong>'+c.label+'</strong>는 아직 브랜드 사이즈 데이터를 모으는 중이라, 지금은 <strong>선호핏만</strong> 받아 키·몸무게 기반으로 추정해요. 착용경험은 데이터가 준비되면 물어봐요.'; }
+      else pnote.classList.add('hidden');
+    }
     const note=document.getElementById('targetnote');
     if(c.ready){ note.classList.add('hidden'); }
     else{
@@ -317,11 +319,14 @@
 
   const steps=[...document.querySelectorAll('.wstep')];
   let cur=0;
+  // 실측 데이터 없는 기반 카테고리(구조적 예외): 선호핏(idx1) 단계에서 착용경험 없이 바로 진단.
+  function isPrefOnlyBase(){ return CATS[target] && CATS[target].kind==='base' && !hasData(target); }
   function render(){
     steps.forEach((s,k)=>s.classList.toggle('active',k===cur));
     document.getElementById('wfill').style.width=((cur+1)/steps.length*100)+'%';
     const btn=document.getElementById('nextbtn');
-    if(DIAGNOSE_AT[cur]) btn.textContent='이대로 진단하기 ('+DIAGNOSE_AT[cur]+'벌)';
+    if(isPrefOnlyBase() && cur===1) btn.textContent='이대로 진단하기 (선호핏만)';
+    else if(DIAGNOSE_AT[cur]) btn.textContent='이대로 진단하기 ('+DIAGNOSE_AT[cur]+'벌)';
     else btn.textContent = cur===0 ? '이 종류로 시작' : '다음';
     window.scrollTo({top:0,behavior:'smooth'});
   }
@@ -329,7 +334,8 @@
   function next(){ if(cur<steps.length-1){cur++;render()} }
   function prev(){ if(cur>0){cur--;render()} else location.href=PREV_URL; }
   function footerAction(){
-    if(DIAGNOSE_AT[cur]){ collectExp(); location.href='diag-loading.html?g='+DIAGNOSE_AT[cur]; }
+    if(isPrefOnlyBase() && cur===1){ collectPrefOnly(); location.href='diag-loading.html?cat='+target; return; }
+    if(DIAGNOSE_AT[cur]){ collectExp(); location.href='diag-loading.html?g='+DIAGNOSE_AT[cur]+'&cat='+target; }
     else next();
   }
   function pick(el){[...el.parentElement.children].forEach(c=>c.classList.remove('on'));el.classList.add('on')}
@@ -337,6 +343,57 @@
   /* 착용경험 수집 → sessionStorage(fitting.dx). 결과 화면(result.html)이 엔진 계약(diagnose)에 넘긴다.
      부위 라벨→스키마 key, 선택 라벨→값(FitRating/PainVerdict/LengthPref). 레이어는 옵션 수로 판별(4=fit·2=flag·3=pref). */
   var CATMAP={top:'TOP',bottom:'BOTTOM',outer:'OUTER',dress:'DRESS',skirt:'SKIRT'};
+  /* 사이즈 옵션은 브랜드·성별·서브타입별로 다르다(유니클로 남성=4XL까지, H&M=XXS부터…).
+     garments.json(A축)에서 실제 sizeLabel 집합을 뽑아 렌더 → 하드코딩 XS~XL 제거.
+     드롭다운 표기 → garments의 brandId 매핑. 데이터 없는 브랜드/카테고리는 DEFAULT_SIZES. */
+  var BRANDID={'유니클로':'uniqlo','무신사 스탠다드':'musinsa-standard','나이키':'nike','탑텐':'topten',
+    '스파오':'spao','에잇세컨즈':'8seconds','노스페이스':'northface','H&M (편차 큼)':'hm','자라 (편차 큼)':'zara'};
+  var SIZE_ORDER=['XXS','XS','S','M','L','XL','XXL','2XL','3XL','4XL','5XL'];
+  var DEFAULT_SIZES=['XS','S','M','L','XL'];
+  var GARMENTS=null;
+  // 실측(garment cm) 데이터가 있는 카테고리 = 착용경험 역산 대상. 없으면 선호핏만 받아 진단.
+  // 실제 서비스에선 전 카테고리 데이터가 들어오므로 자동으로 착용경험 플로우로 전환된다.
+  var DATA_CATS={TOP:1};   // fetch 실패(file:// 등) 시 현재 데이터 반영 폴백
+  function categoriesWithData(specs){ var s={}; (specs||[]).forEach(function(g){ if(g&&g.category) s[g.category]=1; }); return s; }
+  function hasData(cat){ return !!DATA_CATS[CATMAP[cat]]; }
+  var BASIC={}; try{ BASIC=JSON.parse(sessionStorage.getItem('fitting.basic')||'{}'); }catch(e){}
+  // 조회키 서브타입: 상의류=긴/반팔, 하의=긴/반바지(데이터 없으면 무의미).
+  function subtypeOf(g){
+    if(SLEEVE_CATS.includes(target)) return (sleeveType[g]==='short')?'short_sleeve':'long_sleeve';
+    if(LEG_CATS.includes(target))    return (legLength[g]==='short')?'shorts':'long_pants';
+    return null;
+  }
+  // 특정 브랜드·성별·서브타입에서 실제 존재하는 사이즈 라벨(정렬) — 없으면 null.
+  function garmentSizeLabels(brandId, gender, subtype){
+    if(!GARMENTS || !brandId) return null;
+    var set={};
+    GARMENTS.forEach(function(s){
+      if(s.brandId!==brandId) return;
+      if(!(s.gender===gender || s.gender==='unisex')) return;
+      if(subtype && s.subtype!==subtype) return;
+      set[s.sizeLabel]=1;
+    });
+    var labels=Object.keys(set);
+    if(!labels.length) return null;
+    labels.sort(function(a,b){
+      var ia=SIZE_ORDER.indexOf(a), ib=SIZE_ORDER.indexOf(b);
+      return (ia<0?99:ia)-(ib<0?99:ib);
+    });
+    return labels;
+  }
+  // 사이즈 세그를 브랜드·카테고리에 맞춰 렌더. TOP만 데이터 기반, 나머지는 기본값.
+  function renderSizes(g){
+    var el=document.getElementById('size'+g); if(!el) return;
+    var bsel=document.getElementById('brand'+g);
+    var brandId=bsel?BRANDID[bsel.value]:null;
+    var gender=BASIC.gender||'female';
+    var labels=(target==='top') ? garmentSizeLabels(brandId, gender, subtypeOf(g)) : null;
+    if(!labels || !labels.length) labels=DEFAULT_SIZES;
+    var prev=el.querySelector('.opt.on'); var prevLab=prev?prev.textContent.trim():null;
+    var def = (prevLab && labels.indexOf(prevLab)>=0) ? prevLab
+            : (labels.indexOf('M')>=0 ? 'M' : labels[Math.floor(labels.length/2)]);
+    el.innerHTML=labels.map(function(l){ return '<div class="opt'+(l===def?' on':'')+'" onclick="pick(this)">'+l+'</div>'; }).join('');
+  }
   var LABELKEY={'어깨':'shoulder','가슴':'chest','가슴·품':'chest','배':'belly','소매':'sleeve','총장':'length',
     '허리':'waist','엉덩이':'hip','허벅지':'thigh','밑위':'rise','기장':'length',
     '팔(소매통)':'arm','팔':'arm','목':'neck','목/칼라':'neck','암홀':'armhole','종아리':'calf','밑단':'hem','상하 비율':'ratio'};
@@ -365,17 +422,41 @@
     var note=document.querySelector('#'+boxId+' .open-note');
     return { fits:fits, painFlags:flags, lengthPrefs:prefs, openNote:note?note.value:'' };
   }
+  // 입은 옷의 핏라인(garments 조회키) — '핏/품목' 선택 라벨에서 파싱. 선호핏과 별개.
+  function garmentFitLine(itemTxt){
+    itemTxt=itemTxt||'';
+    var keys=Object.keys(FITLINE);
+    for(var i=0;i<keys.length;i++){ if(itemTxt.indexOf(keys[i])>=0) return FITLINE[keys[i]]; }
+    return 'regular';
+  }
   function collectExp(){
     var basic={}; try{ basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'{}'); }catch(e){}
-    var cat=CATMAP[target]||'TOP', fitLine=fitLineFromPref();
+    var cat=CATMAP[target]||'TOP', prefLine=fitLineFromPref();
     var exps=[], n=DIAGNOSE_AT[cur]||1;
     [1,2].slice(0,n).forEach(function(g){
       var f=collectFeel('feel'+g);
-      exps.push({ category:cat, brandId:'unknown', fitLine:fitLine, sizeLabel:'M',
+      var bsel=document.getElementById('brand'+g), brandTxt=bsel?bsel.value:'';
+      var isel=document.getElementById('item'+g), itemTxt=isel?isel.value:'';
+      var szEl=document.querySelector('#size'+g+' .opt.on');
+      // fitLine = 입은 옷의 핏(역산 조회용). 선호핏(prefLine)은 prefs로 따로 저장.
+      exps.push({ category:cat, brandId:BRANDID[brandTxt]||'unknown', brandName:brandTxt,
+        fitLine:garmentFitLine(itemTxt), item:itemTxt, sizeLabel:szEl?szEl.textContent.trim():'M',
+        subtype:subtypeOf(g), gender:BASIC.gender||'female',
         fits:f.fits, painFlags:f.painFlags, lengthPrefs:f.lengthPrefs, openNote:f.openNote });
     });
-    var prefs={}; prefs[cat]=fitLine;
-    try{ sessionStorage.setItem('fitting.dx', JSON.stringify({ basic:basic, prefs:prefs, experiences:exps })); }catch(e){}
+    // 기존 진단 결과에 병합 — 다른 카테고리(상↔하)는 보존하고, 같은 카테고리는 교체
+    var prev={}; try{ prev=JSON.parse(sessionStorage.getItem('fitting.dx')||'{}'); }catch(e){}
+    var prefs=(prev.prefs&&typeof prev.prefs==='object')?prev.prefs:{}; prefs[cat]=prefLine;
+    var keep=(prev.experiences||[]).filter(function(e){ return e.category!==cat; });
+    try{ sessionStorage.setItem('fitting.dx', JSON.stringify({ basic:basic, prefs:prefs, experiences:keep.concat(exps) })); }catch(e){}
+  }
+  // 선호핏만 진단(실측 데이터 없는 기반): 착용경험은 넣지 않고 선호핏만 병합. 체형은 결과화면이 회귀로 추정.
+  function collectPrefOnly(){
+    var basic={}; try{ basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'{}'); }catch(e){}
+    var cat=CATMAP[target]||'TOP', fitLine=fitLineFromPref();
+    var prev={}; try{ prev=JSON.parse(sessionStorage.getItem('fitting.dx')||'{}'); }catch(e){}
+    var prefs=(prev.prefs&&typeof prev.prefs==='object')?prev.prefs:{}; prefs[cat]=fitLine;
+    try{ sessionStorage.setItem('fitting.dx', JSON.stringify({ basic:basic, prefs:prefs, experiences:prev.experiences||[] })); }catch(e){}
   }
 
   /* 결과 화면의 "이어서 진단"으로 들어온 경우:
@@ -412,10 +493,11 @@
     // 파생: 실측 없이 선호핏만 — 기존 체형(이전 진단)의 dx가 있으면 재사용, 없으면 기본 페이로드 stash
     go.addEventListener('click',function(){
       var basic={}; try{ basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'{}'); }catch(e){}
-      if(!sessionStorage.getItem('fitting.dx')){
-        var cat=CATMAP[target]||'OUTER', prefs={}; prefs[cat]=fitLineFromPref();
-        try{ sessionStorage.setItem('fitting.dx', JSON.stringify({ basic:basic, prefs:prefs, experiences:[] })); }catch(e){}
-      }
+      // 파생: 선호핏만 — 기존 dx(상·하의 등)에 병합해 카테고리 선호핏 추가
+      var prev={}; try{ prev=JSON.parse(sessionStorage.getItem('fitting.dx')||'{}'); }catch(e){}
+      var cat=CATMAP[target]||'OUTER';
+      var prefs=(prev.prefs&&typeof prev.prefs==='object')?prev.prefs:{}; prefs[cat]=fitLineFromPref();
+      try{ sessionStorage.setItem('fitting.dx', JSON.stringify({ basic:basic, prefs:prefs, experiences:prev.experiences||[] })); }catch(e){}
     });
   }
   function enterDerivedBlocked(missing){
@@ -455,9 +537,17 @@
     return 'base';
   }
 
-  const routed=initFromQuery();
-  applyTarget();
-  if(routed==='base'){ gateTargets(); render(); }
+  function boot(){
+    const routed=initFromQuery();
+    applyTarget();
+    if(routed==='base'){ gateTargets(); render(); }
+  }
+  // A축 사이즈 시드 로드 → 데이터 보유 카테고리(DATA_CATS) 판별 + 브랜드별 사이즈 라벨.
+  // 로드 후 플로우 시작(실패=file:// 등 → 현재 데이터 반영 폴백으로 boot).
+  fetch('data/garments.json').then(function(r){return r.json();})
+    .then(function(j){ GARMENTS=j.specs; DATA_CATS=categoriesWithData(j.specs); })
+    .catch(function(){})
+    .then(boot);
 </script>
 </body>
 </html>

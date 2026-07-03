@@ -619,8 +619,12 @@
   function pickCard(el){ pickOne(el); }
 
   /* ===== 진단 = 별도 화면 플로우 (sangmin 실제 UI 이식) =====
-     diag-basic → diag-fit → diag-loading → result. 진단 시작은 첫 화면으로 이동. */
-  function startDiag(){ location.href='diag-basic.html'; }
+     diag-basic → diag-fit → diag-loading → result. 진단 시작은 첫 화면으로 이동.
+     '시작/다시 진단하기'는 새 진단이므로 이전 입력을 초기화(이어서 진단은 result의 옷장 게이트 링크가 담당). */
+  function startDiag(){
+    try{ ['fitting.dx','fitting.basic'].forEach(function(k){ sessionStorage.removeItem(k); }); }catch(e){}
+    location.href='diag-basic.html';
+  }
 
   /* ⚠️ legacy(미사용): 아래 오버레이 위저드 함수들은 진단을 별도 화면(diag-*)으로 옮기며 쓰지 않음.
      호출 지점이 없어 무해하나, 정리 대상. */

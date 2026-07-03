@@ -34,9 +34,11 @@
   const SKIP=params.get('skip')==='1';
   const G=params.get('g');
   const DERIVED=params.get('derived')==='1';
+  const CAT=params.get('cat');
   let RESULT='result.html';
   if(SKIP) RESULT='result.html?conf=low';
   else if(G==='1') RESULT='result.html?conf=mid';
+  if(CAT) RESULT += (RESULT.indexOf('?')>=0?'&':'?')+'cat='+encodeURIComponent(CAT);
   if(SKIP){
     document.getElementById('ltitle').textContent='기본 추정을 만들고 있어요';
     document.getElementById('lsub').textContent='착용 경험 없이 키·몸무게로만 추정합니다. 정확도는 낮을 수 있어요.';
