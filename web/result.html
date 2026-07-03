@@ -70,6 +70,9 @@
   /* 피드백·버튼 */
   .rfbq{ font-size:15px; font-weight:700; color:var(--ink); } .rfbq span{ font-size:12.5px; color:var(--sub); font-weight:500; }
   .rseg{ display:flex; gap:10px; margin-top:14px; } .rseg .o{ flex:1; text-align:center; padding:13px; border:1px solid var(--line); border-radius:12px; font-size:14px; font-weight:700; color:var(--ink); cursor:pointer; }
+  .rconsent{ display:flex; align-items:flex-start; gap:8px; margin-top:14px; font-size:12.5px; color:var(--sub); line-height:1.55; cursor:pointer; }
+  .rconsent input{ margin-top:2px; width:15px; height:15px; accent-color:var(--g); flex:none; }
+  .rconsent b{ color:var(--ink2); font-weight:700; } .rconsent span{ color:var(--sub2); }
   .rseg .o.on{ background:var(--g); border-color:var(--g); color:#fff; }
   .rcta{ display:flex; gap:12px; } .rbtn{ flex:1; text-align:center; padding:16px; border-radius:13px; font-size:15px; font-weight:800; text-decoration:none; }
   .rbtn.p{ background:var(--ink); color:#fff; } .rbtn.l{ background:#fff; border:1.5px solid var(--line2); color:var(--ink); }
@@ -88,7 +91,8 @@
     <div class="rcol">
       <div id="recs" class="rpanel"></div>
       <div class="rpanel"><div class="rfbq">이 추천, 실제로 맞아요? <span>· 정확도 검증</span></div>
-        <div class="rseg"><div class="o" onclick="fb(this,'맞음')">✅ 맞아요</div><div class="o" onclick="fb(this,'애매')">➖ 애매</div><div class="o" onclick="fb(this,'틀림')">❌ 틀려요</div></div></div>
+        <div class="rseg"><div class="o" onclick="fb(this,'맞음')">✅ 맞아요</div><div class="o" onclick="fb(this,'애매')">➖ 애매</div><div class="o" onclick="fb(this,'틀림')">❌ 틀려요</div></div>
+        <label class="rconsent"><input type="checkbox" id="eiConsent" onchange="setEngineConsent(this.checked)"> 이 진단·피드백을 <b>익명으로 엔진 개선</b>에 활용하는 데 동의 <span>· 선택</span></label></div>
       <div id="meas" class="rpanel"></div>
       <div id="means" class="rpanel"></div>
       <div id="gate" class="rpanel"></div>
@@ -302,15 +306,23 @@
     gateEl.style.display='none';
   }
 
-  // ── 피드백 로깅(킬 메트릭 원천) ──
+  // ── 엔진 개선 활용: 선택 동의(opt-in). 진단 이용엔 영향 없음(서비스 제공 근거로 수집·처리). ──
+  function engineConsented(){ try{ return JSON.parse(sessionStorage.getItem('fitting.consent')||'{}').engineImprove===true; }catch(e){ return false; } }
+  function setEngineConsent(on){
+    try{ sessionStorage.setItem('fitting.consent', JSON.stringify({ engineImprove:!!on, at:new Date().toISOString() })); }catch(e){}
+  }
+  // 저장된 동의 상태를 체크박스에 반영(재방문·재렌더 시)
+  (function(){ var el=document.getElementById('eiConsent'); if(el) el.checked=engineConsented(); })();
+
+  // ── 피드백 로깅(킬 메트릭 원천). 엔진 개선 활용은 동의(engineImprove)한 경우로 표기 ──
   function fb(el,verdict){
     [].forEach.call(el.parentElement.children,function(c){c.classList.remove('on');}); el.classList.add('on');
-    var rec={ ts:new Date().toISOString(), bodyType:dx.bodyType, verdict:verdict, confidenceTier:dx.confidenceTier };
+    var rec={ ts:new Date().toISOString(), bodyType:dx.bodyType, verdict:verdict, confidenceTier:dx.confidenceTier, engineImprove:engineConsented() };
     try{ var k='fitting.feedback', arr=JSON.parse(localStorage.getItem(k)||'[]'); arr.push(rec); localStorage.setItem(k,JSON.stringify(arr)); }catch(e){}
   }
-  // 진단 초기화 — 누적된 입력(dx·기본정보·피드백)을 지우고 처음부터. (목업 테스트용)
+  // 진단 초기화 — 누적된 입력(dx·기본정보·동의·피드백)을 지우고 처음부터. (목업 테스트용)
   function resetDiag(){
-    try{ ['fitting.dx','fitting.basic'].forEach(function(k){ sessionStorage.removeItem(k); }); }catch(e){}
+    try{ ['fitting.dx','fitting.basic','fitting.consent'].forEach(function(k){ sessionStorage.removeItem(k); }); }catch(e){}
     try{ localStorage.removeItem('fitting.feedback'); }catch(e){}
     location.href='diag-basic.html';
   }

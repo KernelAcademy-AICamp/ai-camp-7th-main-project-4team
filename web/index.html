@@ -644,10 +644,11 @@
   function pickCard(el){ pickOne(el); }
 
   /* ===== 진단 = 별도 화면 플로우 (sangmin 실제 UI 이식) =====
-     diag-basic → diag-fit → diag-loading → result. 진단 시작은 첫 화면으로 이동.
+     diag-basic → diag-fit → diag-loading → result. 진단 수집은 서비스 제공에 필요한 최소로 이뤄지며
+     동의 없이도 이용 가능(엔진 개선 활용만 결과화면에서 선택 동의).
      '시작/다시 진단하기'는 새 진단이므로 이전 입력을 초기화(이어서 진단은 result의 옷장 게이트 링크가 담당). */
   function startDiag(){
-    try{ ['fitting.dx','fitting.basic'].forEach(function(k){ sessionStorage.removeItem(k); }); }catch(e){}
+    try{ ['fitting.dx','fitting.basic','fitting.consent'].forEach(function(k){ sessionStorage.removeItem(k); }); }catch(e){}
     location.href='diag-basic.html';
   }
 
