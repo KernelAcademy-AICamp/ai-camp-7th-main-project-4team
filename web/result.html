@@ -45,6 +45,7 @@
 </div>
 
 <script src="js/body-model.js"></script>
+<script src="js/engine.js"></script>
 <script src="js/engine-mock.js"></script>
 <script>
   // 진단 입력(diag-fit이 stash) → 엔진 계약(diagnose) → 결과 렌더. 엔진 목업은 Phase D에 실엔진 교체.
@@ -85,7 +86,26 @@
           (p.pct?'<small>또래 중 P'+p.pct+'</small>':'')+'</div>'+
           '<div class="sz num">'+p.cm.toFixed(1)+'<span class="conf">±'+p.rmse+'cm</span></div></div>';
       }).join('')+'</div>';
-  }).catch(function(){ /* file:// 등 로드 실패 시 패널 생략 */ }); }
+
+    // 브랜드별 추천 사이즈 실계산(규칙①②③ + garmentCm) — 목업 sztable 교체.
+    var bp={}; est.parts.forEach(function(p){ bp[p.key]=p.cm; });
+    var bodyVec={ chest:bp.chestFull, shoulder:bp.shoulder };
+    if(!window.FitEngine || bodyVec.chest==null) return;
+    return fetch('data/garments.json').then(function(r){return r.json();}).then(function(gj){
+      var pref=(payload.prefs&&payload.prefs.TOP)||'regular';
+      var recs=FitEngine.recommend(bodyVec, pref, est.sex, 'long_sleeve', gj.specs);
+      if(!recs.length) return;
+      document.getElementById('sztable').innerHTML=
+        '<div class="st-head"><span>브랜드</span><span>추천 사이즈</span></div>'+
+        recs.map(function(r){
+          var FLK={slim:'슬림',regular:'레귤러',loose:'루즈',oversize:'오버',skinny:'스키니'};
+          var note=(FLK[r.fitLine]||r.fitLine)+' · '+r.bottleneck+' 기준'+(r.variance?' · '+r.variance:'');
+          return '<div class="size-row"><div class="brand">'+r.brandName+'<small>'+note+'</small></div>'+
+            '<div class="sz num">'+r.size+'<span class="conf'+(r.warn?' warn':'')+'">'+r.fit+'</span></div></div>';
+        }).join('')+
+        '<p class="small" style="margin-top:10px">※ 규칙 기반 엔진이 브랜드 실측(단면)에 맞춰 계산 · 상의 긴팔 기준 · 착용경험을 넣으면 정밀해져요</p>';
+    });
+  }).catch(function(){ /* file:// 등 로드 실패 시 목업 유지 */ }); }
 
   // 피드백 로깅(M5) — 킬 메트릭 원천. 프로토타입=localStorage.
   function fb(el,verdict){
