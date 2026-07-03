@@ -138,20 +138,21 @@
   var curLabel=CATLABEL[curCat]||'상의';
   var isTop=(curCat==='TOP');
   // 카테고리별 체형 측정 부위 — body-model.js 키(chestFull·waist·hip·shoulder·arm) 기준.
+  // 형식: [key, 왼쪽(낮은/좁은 끝), 오른쪽(높은/넓은 끝), axis]. 막대는 백분위만큼 왼→오 채워짐.
   var MEAS={
-    TOP:   [['shoulder','넓은 어깨','좁은 어깨','어깨 — 어깨 기준으로 사이즈가 갈려요'],
-            ['chestFull','볼륨 있는 가슴','슬림한 가슴','가슴 — 슬림핏은 여유를 확인해요'],
-            ['waist','볼륨 있는 배','슬림한 배','배 — 표준 대비 위치'],
-            ['arm','긴 상체·팔','짧은 상체·팔','총장·소매 — 기장이 맞는지']],
-    BOTTOM:[['waist','볼륨 있는 허리','슬림한 허리','허리 — 밴드·버튼 기준'],
-            ['hip','볼륨 있는 엉덩이','슬림한 엉덩이','엉덩이 — 힙 기준으로 사이즈가 갈려요']],
-    OUTER: [['shoulder','넓은 어깨','좁은 어깨','어깨 — 아우터는 어깨·품 기준'],
-            ['chestFull','볼륨 있는 가슴','슬림한 가슴','가슴·품 — 레이어링 여유']],
-    SKIRT: [['waist','볼륨 있는 허리','슬림한 허리','허리 — 치마 밴드 기준'],
-            ['hip','볼륨 있는 엉덩이','슬림한 엉덩이','엉덩이 — 힙 기준']],
-    DRESS: [['chestFull','볼륨 있는 가슴','슬림한 가슴','가슴 — 상의 기준'],
-            ['waist','볼륨 있는 허리','슬림한 허리','허리 — 잘록 정도'],
-            ['hip','볼륨 있는 엉덩이','슬림한 엉덩이','엉덩이 — 힙 기준']]
+    TOP:   [['shoulder','좁은 어깨','넓은 어깨','어깨 — 어깨 기준으로 사이즈가 갈려요'],
+            ['chestFull','슬림한 가슴','볼륨 있는 가슴','가슴 — 슬림핏은 여유를 확인해요'],
+            ['waist','슬림한 배','볼륨 있는 배','배 — 표준 대비 위치'],
+            ['arm','짧은 상체·팔','긴 상체·팔','총장·소매 — 기장이 맞는지']],
+    BOTTOM:[['waist','슬림한 허리','볼륨 있는 허리','허리 — 밴드·버튼 기준'],
+            ['hip','슬림한 엉덩이','볼륨 있는 엉덩이','엉덩이 — 힙 기준으로 사이즈가 갈려요']],
+    OUTER: [['shoulder','좁은 어깨','넓은 어깨','어깨 — 아우터는 어깨·품 기준'],
+            ['chestFull','슬림한 가슴','볼륨 있는 가슴','가슴·품 — 레이어링 여유']],
+    SKIRT: [['waist','슬림한 허리','볼륨 있는 허리','허리 — 치마 밴드 기준'],
+            ['hip','슬림한 엉덩이','볼륨 있는 엉덩이','엉덩이 — 힙 기준']],
+    DRESS: [['chestFull','슬림한 가슴','볼륨 있는 가슴','가슴 — 상의 기준'],
+            ['waist','슬림한 허리','볼륨 있는 허리','허리 — 잘록 정도'],
+            ['hip','슬림한 엉덩이','볼륨 있는 엉덩이','엉덩이 — 힙 기준']]
   };
 
   // ── 8유형 체형 카드 노출 규칙 ──
@@ -225,9 +226,11 @@
   }
 
   // ── 내 체형 측정 + 실추천(회귀·garments) ──
-  function specRow(dom,pct,poleR,axis){
+  // 왼쪽 poleL=낮은 끝, 오른쪽 poleR=높은 끝. 막대는 백분위만큼 왼→오. 강조(dom)는 가까운 쪽.
+  function specRow(poleL,pct,poleR,axis){
     pct=Math.max(3,Math.min(97,Math.round(pct||50)));
-    return '<div class="rspec"><div class="top"><span class="pole dom">'+dom+'</span><span class="pct"><span class="n">'+pct+'</span>%</span><span class="pole">'+poleR+'</span></div>'+
+    var lc=pct<50?' dom':'', rc=pct>=50?' dom':'';
+    return '<div class="rspec"><div class="top"><span class="pole'+lc+'">'+poleL+'</span><span class="pct"><span class="n">'+pct+'</span>%</span><span class="pole'+rc+'">'+poleR+'</span></div>'+
       '<div class="rtrack"><i style="width:'+pct+'%"></i></div><div class="raxis">'+axis+'</div></div>';
   }
   var FITPCT={skinny:20,slim:32,regular:55,loose:70,oversize:85};
@@ -259,7 +262,7 @@
         '<div class="rgrp">필수 부위 — '+(expUsed?'착용경험으로 <b style="color:var(--ink2)">역산</b>한 몸':'키·몸무게로 추정한 몸')+'</div>'+
         rows+
         '<div class="rgrp">선호</div>'+
-        specRow('여유 핏 선호',FITPCT[pref]||55,'타이트 선호','여유 선호핏 — 고른 핏 취향')+
+        specRow('타이트 선호',FITPCT[pref]||55,'여유 핏 선호','여유 선호핏 — 고른 핏 취향')+
         '<div class="rnote" style="margin-top:16px">부위는 <b style="color:var(--ink2)">카테고리별로 달라져요</b>. '+(cardReady?'상·하의를 모두 마쳐 전신 비율까지 볼 수 있어요.':'다른 카테고리까지 진단하면 상하 균형·전신 비율이 나와요.')+'</div>';
 
       // 추천 — 브랜드 사이즈 데이터가 있는 TOP만 (역산 반영된 bodyVec)
