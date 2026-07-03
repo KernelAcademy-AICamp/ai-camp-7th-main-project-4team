@@ -514,7 +514,9 @@
 
   function initFromQuery(){
     const q=new URLSearchParams(location.search);
-    const qcat=q.get('cat');
+    let qcat=q.get('cat');
+    // 남성이 여성 전용 카테고리로 직접 진입(?cat=dress/skirt)하면 무시(기본 상의로)
+    if((BASIC.gender||'')==='male' && FEMALE_ONLY.indexOf(qcat)>=0) qcat=null;
     if(qcat && CATS[qcat]){
       target=qcat;
       document.querySelectorAll('#target .opt').forEach(o=>o.classList.toggle('on',o.dataset.cat===qcat));
@@ -537,7 +539,17 @@
     return 'base';
   }
 
+  // 남성이면 여성 전용 카테고리(치마·원피스)를 선택기에서 숨김(결과 옷장 게이트와 동일 규칙)
+  var FEMALE_ONLY=['dress','skirt'];
+  function applyGenderFilter(){
+    if((BASIC.gender||'')!=='male') return;
+    FEMALE_ONLY.forEach(function(c){
+      var el=document.querySelector('#target .opt[data-cat="'+c+'"]');
+      if(el) el.style.display='none';
+    });
+  }
   function boot(){
+    applyGenderFilter();
     const routed=initFromQuery();
     applyTarget();
     if(routed==='base'){ gateTargets(); render(); }
