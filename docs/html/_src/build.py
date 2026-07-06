@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""통합문서.html 재생성기 — docs/의 md 5종을 뷰어 템플릿(_tpl.html)에 주입한다.
+"""통합문서.html 재생성기 — docs/의 md 문서를 뷰어 템플릿(_tpl.html)에 주입한다.
 
 원칙: 내용은 docs/*.md가 원본, _tpl.html은 렌더 껍데기(스타일·렌더러). 둘 다 git에 보관.
 도구(_tpl.html·build.py)는 docs/html/_src/, 산출물(통합문서.html)은 docs/html/.
@@ -14,11 +14,17 @@ outdir = here.parent                             # docs/html (산출물 위치)
 docsdir = outdir.parent                          # docs
 repo = docsdir.parent                            # repo root
 DOCS = [
-    ("README", "README.md",        "개요"),
-    ("doc1",   "1_제품정의.md",    "1 · 제품정의"),
-    ("doc2",   "2_화면과흐름.md",  "2 · 화면과흐름"),
-    ("doc3",   "3_사이즈엔진.md",  "3 · 사이즈엔진"),
-    ("doc4",   "4_디자인가이드.md","4 · 디자인가이드"),
+    ("README",    "README.md",          "개요"),
+    ("doc0",      "0_용어집.md",         "0 · 용어집"),
+    ("doc1",      "1_제품정의.md",       "1 · 제품정의"),
+    ("doc2",      "2_정보구조.md",       "2 · 정보구조"),
+    ("doc3",      "3_사용자플로우.md",   "3 · 사용자플로우"),
+    ("doc4",      "4_화면정의.md",       "4 · 화면정의"),
+    ("doc5",      "5_정책·데이터.md",    "5 · 정책·데이터"),
+    ("doc6",      "6_사이즈엔진.md",     "6 · 사이즈엔진"),
+    ("doc7",      "7_전문가매칭.md",     "7 · 전문가매칭"),
+    ("doc8",      "8_디자인가이드.md",   "8 · 디자인가이드"),
+    ("decisions", "의사결정기록.md",     "의사결정기록"),
 ]
 
 blocks = []
