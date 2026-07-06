@@ -9,12 +9,12 @@
  * length 부위(소매·총장·기장)는 '여유'가 아니라 '기장감'이라 이 표에 넣지 않는다(별도 축).
  */
 
-import type { Category } from "../../schema/category.js";
-import type { FitRating } from "../../schema/fitrating.js";
+import type { Category } from "../schema/category.js";
+import type { FitRating } from "../schema/fitrating.js";
 
 // FitRating·라벨은 스키마 층으로 이동(엔진·데이터·설문이 같은 어휘 공유). 재노출로 기존 소비자 유지.
-export type { FitRating } from "../../schema/fitrating.js";
-export { FIT_RATING_LABEL } from "../../schema/fitrating.js";
+export type { FitRating } from "../schema/fitrating.js";
+export { FIT_RATING_LABEL } from "../schema/fitrating.js";
 
 /**
  * 부위별 여유 경계(cm). 의미:

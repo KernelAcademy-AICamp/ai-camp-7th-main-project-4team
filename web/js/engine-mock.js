@@ -1,9 +1,9 @@
 /* ==========================================================================
    engine-mock.js — 엔진 계약(M2)의 목업 어댑터
    ---
-   모듈화-sangmin.md §2의 diagnose() 계약을 충족한다. UI는 이 계약만 호출하고,
-   Phase D에서 실제 엔진(sangmin/src/lib/engine: convert/ease/subjective + 역산 §1~8)으로
-   이 파일만 교체한다. 여기의 수치·매핑은 전부 목업(placeholder)이다.
+   diagnose() 계약(카드/recs/tier)을 충족하는 어댑터. UI는 이 계약만 호출한다.
+   실계산 엔진(convert/ease/subjective + 역산)은 web/js/engine.js(FitEngine)에 있고,
+   여기 buildCard/buildRecs 등 수치·서술 매핑은 목업(placeholder)이다.
 
    계약:
      FittingEngine.diagnose({ basic, prefs, experiences }) →

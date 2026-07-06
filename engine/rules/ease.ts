@@ -7,7 +7,7 @@
  * length 부위(소매·총장·기장)는 '여유'가 아니라 '기장감'이라 별도 함수로 다룬다.
  */
 
-import type { PartDef } from "../../schema/category.js";
+import type { PartDef } from "../schema/category.js";
 import { garmentToBodyAxis } from "./convert.js";
 
 /**

@@ -4,7 +4,7 @@
  *       산술 왕복이 성립하는지 눈으로 확인. (정식 엔진은 Phase 2)
  */
 
-import { partDef } from "../../schema/index.js";
+import { partDef } from "../schema/index.js";
 import { ease, bodyFromEase } from "./ease.js";
 import { ratingToEasePoint, easeToRating, FIT_RATING_LABEL } from "./subjective.js";
 

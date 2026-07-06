@@ -6,7 +6,7 @@
  * 단, 모든 게 ×2는 아니다 — 어깨(너비)·소매/총장(길이)은 ×2 하지 않는다(부위의 comparison으로 분기).
  */
 
-import type { PartDef } from "../../schema/category.js";
+import type { PartDef } from "../schema/category.js";
 
 /** 의류 단면(flat) → 둘레 환산. */
 export function flatToCircumference(flatCm: number): number {

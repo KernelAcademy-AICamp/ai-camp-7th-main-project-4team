@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 """A축 garmentCm 시드 빌더 — raw/*.csv (브랜드 사이즈표) → web/data/garments.json.
 
-원본: sangmin/data/brand/raw/브랜드별 사이즈 수집 - {긴팔,반팔}.csv (수동 수집, 자사몰 사이즈표).
+원본: data/brand/raw/브랜드별 사이즈 수집 - {긴팔,반팔}.csv (수동 수집, 자사몰 사이즈표).
 CSV 열: 브랜드,fit,성별,product,size,총장,어깨너비,가슴단면,소매길이,비고
-스키마: sizespec.ts SizeSpec — 값은 '단면(flat) 원본 그대로' 저장(×2·여유는 규칙 모듈이).
-사용법: python3 sangmin/data/brand/build-sizespec.py
+스키마: garmentCm 계약(web/js/engine.js) — 값은 '단면(flat) 원본 그대로' 저장(×2·여유는 규칙 모듈이).
+사용법: python3 data/brand/build-sizespec.py
 """
 import csv, json, pathlib, re, unicodedata
 
 def nfc(s):
     return unicodedata.normalize("NFC", s or "")
 
-here = pathlib.Path(__file__).resolve().parent          # sangmin/data/brand
-repo = here.parents[2]                                   # repo root
+here = pathlib.Path(__file__).resolve().parent          # data/brand
+repo = here.parents[1]                                   # repo root
 raw = here / "raw"
 out = repo / "web" / "data" / "garments.json"
 
@@ -73,7 +73,7 @@ for f in sorted(raw.glob("*.csv")):
 doc = {
     "$meta": {
         "purpose": "A축 garmentCm 시드 — 착용경험 역산(규칙①②③)·추천 사이즈 실계산의 재료.",
-        "schemaRef": "sangmin/src/lib/schema/sizespec.ts#SizeSpec (+ gender·subtype 확장)",
+        "schemaRef": "web/js/engine.js — garmentCm 계약(chest·shoulder·sleeve·length, flat)",
         "source": "브랜드 자사몰 사이즈표 수동 수집",
         "collectedAt": "2026-07-03",
         "category": "TOP",

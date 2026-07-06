@@ -1,7 +1,7 @@
 {
  "$meta": {
   "purpose": "A축 garmentCm 시드 — 착용경험 역산(규칙①②③)·추천 사이즈 실계산의 재료.",
-  "schemaRef": "sangmin/src/lib/schema/sizespec.ts#SizeSpec (+ gender·subtype 확장)",
+  "schemaRef": "web/js/engine.js — garmentCm 계약(chest·shoulder·sleeve·length, flat)",
   "source": "브랜드 자사몰 사이즈표 수동 수집",
   "collectedAt": "2026-07-03",
   "category": "TOP",
