@@ -1,33 +1,40 @@
-# 수집 엔진 — 규칙·스키마 (Phase 0)
+# engine — 사이즈 엔진 (정본 위치 안내)
 
-사이즈 번역 엔진의 **A축(브랜드 실측)** 토대. 빌드플랜 Phase 1의 "스키마 + 변환규칙"에 해당.
-지금 단계는 **규칙·스키마만** — 수집/정규화 코드(collect·extract·normalize…)는 다음 턴.
+이 폴더는 **엔진의 실행 코드를 담지 않습니다.** 사이즈 엔진의 유일 구현은
+[`../web/js/engine.js`](../web/js/engine.js) 한 곳이며, 브라우저(`<script>`)와
+node(`require()`) 양쪽에서 같은 파일이 돕니다. 규칙을 고칠 땐 그 파일만 고칩니다.
 
-## 구조
+## 세 층의 역할
 
-```
-schema/
-  category.ts   카테고리·부위 모델. 부위마다 둘레/너비/길이 성격(comparison)을 박음.
-                상의(TOP)만 작동, 5종 모두 표현(잠금 금지). ACTIVE_CATEGORIES=['TOP'].
-  sizespec.ts   A축: Brand·FitLine·SizeSpec(부위별 의류 실측 cm) + 출처·시점·신뢰도 메타.
-                원본(단면/길이) 그대로 저장 — 환산·여유는 조회 시 규칙이 수행.
-engine/rules/   build.md §4-0 핵심 규칙(이게 없으면 수집해도 비교 불가)
-  convert.ts    ① 인체↔의류 변환. 둘레는 단면×2, 너비/길이는 그대로.
-  ease.ts       ② 여유(ease)=의류환산−인체. 역산용 bodyFromEase 포함.
-  subjective.ts ③ 주관(큼/여유/딱맞음/불편)↔cm. 키=(category,part) — 부위마다 폭이 다름. 가설값.
-  demo.ts       착용경험→인체 역산→다른 사이즈 투영 왕복 스모크. `npm run demo`.
-```
+| 무엇 | 어디 | 성격 |
+|---|---|---|
+| **규칙 명세(정본)** | [`docs/3_사이즈엔진.md`](../docs/3_사이즈엔진.md) | 밴드 값·변환/여유/역산 규칙의 원본 서술 |
+| **규칙 구현(유일)** | [`../web/js/engine.js`](../web/js/engine.js) | convert①·ease②·subjective③ + recommend·scoreFit·역산 |
+| **회귀 안전망** | [`test.js`](test.js) | 명세와 어긋나면 실패 (`npm test`, 무의존성) |
+| **데이터 계약(형)** | [`schema/`](schema) | TypeScript 타입 참조용 — **빌드/실행하지 않음** |
+
+> 과거 `engine/rules/*.ts`는 engine.js와 **중복된 두 번째 구현**이라 드리프트의 원천이었고
+> (커밋 470d72f에서 수동 정렬), 제거했습니다. 규칙은 이제 engine.js 한 곳에서만 삽니다.
 
 ## 실행
 
+```bash
+npm test            # 골든 테스트 (node engine/test.js) — 설치 불필요
+node engine/test.js # 위와 동일
 ```
-npm install
-npm run check   # 타입체크
-npm run demo    # 규칙 왕복 데모
-```
+
+`test.js`는 가슴 `2/8/16`·어깨 `0/1.5/4`·배 `0/8/18` 밴드를 **동작으로 잠가**,
+누군가 값을 건드리면 CI가 잡습니다.
+
+## schema/ 는 왜 남겼나
+
+`schema/*.ts`는 실행 규칙의 복제가 아니라 **데이터 모양(Brand·SizeSpec·WearExperience·
+Category…)의 타입 계약**입니다. 지금은 컴파일하지 않고 문서형 참조로만 둡니다.
+엔진 규칙이 충분히 커져 타입 안전성이 실이익이 될 때(예: A축 검열추정·하의 밴드 정식화),
+engine.js를 TS로 옮기고 `tsc`로 `engine.js`를 산출하는 방식으로 졸업합니다 — 그전엔 빌드 없음.
 
 ## 다음
 
-1. 유니클로 상의 사이즈표를 SizeSpec 시드(JSON)로 수동 입력 (1브랜드 수직 관통, build.md §4-4).
-2. collect/extract/normalize/validate/store 스테이지 추가(브랜드별 어댑터 + 공통 정규화).
-3. 가설값(EASE_BANDS) 보정 — FeedbackLog 연결 후 킬 메트릭으로 판정.
+1. `garmentCm` 시드 확장(브랜드·핏라인·사이즈별 A축 실측).
+2. 하의 `EASE_BANDS` 정식화 — 현재 상의만 활성(docs/3 §, 가설값은 하의도 명세돼 있음).
+3. FeedbackLog 연결 후 밴드 가설값을 킬 메트릭으로 보정.

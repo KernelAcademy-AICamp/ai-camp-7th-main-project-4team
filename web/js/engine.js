@@ -1,9 +1,15 @@
 /* ==========================================================================
    engine.js — 착용경험 역산 규칙 ①②③ + 브랜드 추천 사이즈 실계산
    ---
-   docs/3_사이즈엔진.md §3. 엔진 규칙(convert·ease·subjective)의 JS 구현
-   + garments.json(A축 garmentCm)으로 "몸 → 브랜드별 맞는 사이즈"를 결정론적 계산.
+   ★ 사이즈 엔진의 유일 구현(single source of truth).
+     · 규칙 명세(정본)  : docs/3_사이즈엔진.md  ← 밴드 값·규칙 서술은 여기가 원본
+     · 데이터 계약(형)   : engine/schema/*.ts   ← 타입 참조용(빌드/실행 안 함)
+     · 회귀 안전망       : engine/test.js       ← `npm test`(무의존성 node)
+     예전 engine/rules/*.ts(중복 구현)는 제거됨 — 규칙은 이 파일 한 곳에서만 고친다.
+   ---
+   garments.json(A축 garmentCm)으로 "몸 → 브랜드별 맞는 사이즈"를 결정론적 계산.
    목업(engine-mock buildRecs)을 대체한다. 서술(캐릭터)만 여전히 목업/LLM.
+   브라우저는 <script>로, node는 require()로 같은 파일을 로드(global=window|module.exports).
 
    규칙:
      ① convert : 의류 단면 → 인체 축 (둘레=단면×2, 너비/길이=그대로)
