@@ -2,7 +2,7 @@
    engine/test.js — 사이즈 엔진 골든 테스트 (무의존성)
    ---
    실행: `node engine/test.js`  또는  `npm test`  (설치 불필요)
-   목적: web/js/engine.js(유일 정본)의 규칙이 명세(docs/3_사이즈엔진.md)와
+   목적: web/js/engine.js(유일 정본)의 규칙이 명세(docs/6_사이즈엔진.md)와
          어긋나면 즉시 빨간불. 특히 밴드 값(가슴 2/8/16·어깨 0/1.5/4·배 0/8/18)을
          '동작'으로 잠가, 과거 470d72f 같은 드리프트를 CI가 잡게 한다.
    값은 현재 engine.js 출력 스냅샷 — scoreFit 등 공식을 의도적으로 바꿀 땐 함께 갱신.
@@ -103,4 +103,4 @@ try {
   console.log(`  (실데이터 스모크 건너뜀: ${e.message})`);
 }
 
-console.log(`\n✓ 골든 테스트 ${pass}건 통과 — engine.js가 명세(docs/3)와 일치.`);
+console.log(`\n✓ 골든 테스트 ${pass}건 통과 — engine.js가 명세(docs/6)와 일치.`);

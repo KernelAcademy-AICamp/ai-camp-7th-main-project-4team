@@ -29,11 +29,16 @@ web/
   diag-loading.html     # 진단 ③ 로딩      (sangmin 05 재스킨)
   result.html           # 진단 ④ 결과      (sohee 카드 iframe + 엔진 recs·신뢰도·피드백)
   data/
-    bodytypes.json      # ★ 8유형 마스터 데이터 단일 출처 (원본: sohee 진단카드_8유형.json)
+    bodytypes.json      # ★ 8유형 마스터 데이터 단일 출처 (표시용)
+    body-base-model.json / body-distribution.json / archetypes.json  # 인체 시드(B축, 파생물 — data/ 참조)
+    garments.json       # 브랜드 실측 garmentCm(A축, data/brand/build-sizespec.py 산출)
   js/
-    survey.js           # 진단입력 4층 설문 스키마 미러 (category.ts·wearexperience.ts)
-    engine-mock.js      # M2 엔진 계약 목업 (diagnose() — Phase D에 실엔진 교체)
+    body-model.js       # 0벌 체형 추정(사이즈코리아 8차 회귀) — 실계산
+    engine.js           # ★ 사이즈 엔진 유일 구현 — 추천·역산·핏지수(규칙①②③). 브라우저·node 공용
+    engine-mock.js      # diagnose() 계약 어댑터(카드·신뢰도 조립) — 사이즈 계산은 FitEngine에 위임.
+                        #   아직 목업: 8유형 매핑(mapToBodyType 스텁)·character 서술(LLM 자리)
 ```
+> 엔진 규칙 명세·구현 관계는 [`../docs/6_사이즈엔진.md`](../docs/6_사이즈엔진.md), 회귀 테스트는 `../engine/test.js`(`npm test`).
 
 ## 진단 플로우
 홈 "내 사이즈 진단 시작하기" → `diag-basic` → `diag-fit` → `diag-loading` → `result`.
@@ -42,10 +47,10 @@ web/
 ## 통합 상태
 - ✅ **sohee 디자인 기반**: 4탭 셸·결과카드·마이·전문가 화면을 딥그린 토큰으로 재스킨.
 - ✅ **8유형 데이터 단일출처**: `data/bodytypes.json` 하나에서 렌더(하드코딩 `T` 객체 제거).
-- ✅ **sangmin 이식(⑥)**: 진단 UI = **sangmin 실제 화면(03·04·05) 딥그린 재스킨 이식** + 엔진 계약 목업(M2) + 결과 주입(M4) + 피드백 로깅(M5). 홈→기본정보→착용경험→로딩→결과 엔드투엔드 동작.
+- ✅ **진단 UI 이식**: 진단 화면(기본정보·착용경험·로딩) 딥그린 재스킨 + 결과 주입 + 피드백 로깅. 홈→기본정보→착용경험→로딩→결과 엔드투엔드 동작.
   - 참고: `index.html` 안의 구 오버레이 위저드 마크업/JS는 **미사용 잔재(legacy)** — 진단이 별도 화면으로 이동. 정리 대상.
-- ⏳ **Phase D(실엔진)**: `engine-mock.js` → sangmin `src/lib/engine` 실연결. `garmentCm` 시드 수집. 하의 `EASE_BANDS` 정식화.
-- ⏳ **8유형↔엔진 매핑(Phase C 전)**: 현재 `engine-mock.mapToBodyType()`는 스텁. 엔진 upper×lower → 8유형 `code` 정식 테이블 필요.
+- ✅ **실엔진 연결**: 추천·역산·핏지수는 `engine.js`가 실계산(구 목업 대체). 남은 목업은 `engine-mock.js`의 서술·8유형 라벨뿐.
+- ⏳ **남은 작업**: `garmentCm` 시드 확장 · 하의 `EASE_BANDS` 정식화 · **8유형↔엔진 매핑**(`engine-mock.mapToBodyType()` 스텁 → upper×lower → 8유형 `code` 정식 테이블).
 
 ## 규칙
 - 색·폰트는 `tokens.css` 변수만 참조. 블루는 폐기(→딥그린). 측정 수치는 `.num`(SUIT).
@@ -54,5 +59,6 @@ web/
 
 ## 관련 문서
 - 기획 전체 인덱스: [`../docs/README.md`](../docs/README.md)
-- 정보구조·화면·흐름: [`../docs/2_화면과흐름.md`](../docs/2_화면과흐름.md) · 엔진: [`../docs/3_사이즈엔진.md`](../docs/3_사이즈엔진.md) · 디자인: [`../docs/4_디자인가이드.md`](../docs/4_디자인가이드.md)
+- 정보구조: [`../docs/2_정보구조.md`](../docs/2_정보구조.md) · 흐름: [`../docs/3_사용자플로우.md`](../docs/3_사용자플로우.md) · 화면: [`../docs/4_화면정의.md`](../docs/4_화면정의.md) · 엔진: [`../docs/6_사이즈엔진.md`](../docs/6_사이즈엔진.md) · 디자인: [`../docs/8_디자인가이드.md`](../docs/8_디자인가이드.md)
+- 데이터 파이프라인: [`../data/README.md`](../data/README.md)
 </content>

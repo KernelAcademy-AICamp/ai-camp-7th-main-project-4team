@@ -2,7 +2,7 @@
    engine.js — 착용경험 역산 규칙 ①②③ + 브랜드 추천 사이즈 실계산
    ---
    ★ 사이즈 엔진의 유일 구현(single source of truth).
-     · 규칙 명세(정본)  : docs/3_사이즈엔진.md  ← 밴드 값·규칙 서술은 여기가 원본
+     · 규칙 명세(정본)  : docs/6_사이즈엔진.md  ← 밴드 값·규칙 서술은 여기가 원본
      · 데이터 계약(형)   : engine/schema/*.ts   ← 타입 참조용(빌드/실행 안 함)
      · 회귀 안전망       : engine/test.js       ← `npm test`(무의존성 node)
      예전 engine/rules/*.ts(중복 구현)는 제거됨 — 규칙은 이 파일 한 곳에서만 고친다.

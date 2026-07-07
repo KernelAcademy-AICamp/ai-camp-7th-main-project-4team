@@ -19,7 +19,7 @@
 **② 체형 분류 (사람이 아니라 체형이 관측단위 → 별도 유지)**
 | 파일 | 내용 |
 |---|---|
-| `표준체형.csv` | 표준체형 38개(1행=1체형). `derived/archetypes.json`의 소스 |
+| `표준체형.csv` | 표준체형 38개(1행=1체형). `web/data/archetypes.json`의 소스 |
 | `비만체형.csv` | 비만체형 32개(1행=1체형). 〃 |
 
 > **코호트별 무손실 raw(mm) 분할본은 두지 않는다.** 그 데이터는 (a) `통합_직접측정.csv`에 정렬 병합돼 있고 (b) 원본 `data/body/raw/*.xlsx`에 그대로 보존된다. 원본 mm 코드 그대로가 필요하면 xlsx에서 재생성(생성 스크립트는 일회성 `scratchpad`).
@@ -32,8 +32,9 @@
 
 ## 데이터 계층 (전체)
 ```
-data/body/raw/*.xlsx      원본 소스(최종 진실, 무손실 mm 포함)
-data/body/clean/*.csv     ① 통합 정규화(cm) + ② 체형 분류   ← 분석/재생성
-data/body/derived/*.json  엔진 소비용 derived(회귀계수·분포·아키타입)
+data/body/raw/*.xlsx   원본 소스(최종 진실, 무손실 mm). 공개데이터라 git 제외(.gitignore)
+data/body/clean/*.csv  ① 통합 정규화(cm) + ② 체형 분류   ← 분석 기반(git 추적)
+web/data/*.json        엔진 소비용 파생물(회귀계수·분포·아키타입) — 런타임이 여기서 fetch
 ```
-> derived JSON은 현재 1-2차만으로 생성됨. 통합본(6,106명)으로 재생성하면 표본 ↑.
+> - 파생 JSON(`web/data/body-base-model·body-distribution·archetypes.json`)은 위 clean CSV에서 만든 산출물이다. **다만 그 생성 스크립트는 repo에 없다**(일회성 작업). 재생성하려면 스크립트부터 복원해야 한다 — 전체 안내는 [`../../README.md`](../../README.md).
+> - 현재 파생 JSON은 1-2차 코호트만으로 생성됨. 통합본(6,106명)으로 재생성하면 표본 ↑.
