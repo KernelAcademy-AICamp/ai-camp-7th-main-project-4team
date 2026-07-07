@@ -4,14 +4,13 @@
 (구 경로 `_통합/app` → Vercel 배포용 ASCII 경로 `web/`로 이동)
 
 ## 실행 (로컬)
-결과 카드가 `data/bodytypes.json`을 `fetch`하므로 **로컬 서버로 열어야 함**(file:// 직접 열기는 CORS로 데이터 로드 실패).
+실행 방법은 **루트 [`../README.md`](../README.md) "로컬에서 앱 실행하기"** 로 통일(크로스플랫폼). 요약:
 
 ```bash
-cd web
-python3 -m http.server 8000
-# 브라우저: http://localhost:8000/         (4탭 앱)
-#           http://localhost:8000/card.html?type=HRG&g=female  (결과 카드 단독)
+npm run serve      # 저장소 루트에서 → http://localhost:8000
+# 결과 카드 단독:  http://localhost:8000/card.html?type=HRG&g=female
 ```
+> `data/*.json`을 `fetch`하므로 반드시 로컬 서버로 열 것(file:// 더블클릭은 CORS로 로드 실패).
 
 ## 배포 (Vercel)
 빌드 없는 정적 사이트. Vercel 프로젝트에서 **Root Directory = `web`**, Framework Preset = **Other**로 설정하면 그대로 서빙된다(빌드 명령·output 불필요).
