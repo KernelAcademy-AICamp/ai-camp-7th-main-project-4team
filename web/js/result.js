@@ -140,7 +140,7 @@
         });
       }
 
-      // 8유형 판정 — 역산(가슴)+회귀(허리·엉덩이) 몸으로 KS드롭 분류(bodytype.js). 스텁(mapToBodyType) 대체.
+      // 8유형 판정 — 역산(상의:가슴 / 하의:허리·엉덩이)+회귀 폴백 몸으로 KS드롭 분류(bodytype.js). 스텁(mapToBodyType) 대체.
       if(showCard && window.FitBodyType){
         var bt=FitBodyType.classify({ gender:est.sex,
           heightCm:(payload.basic&&payload.basic.height), weightKg:(payload.basic&&payload.basic.weight),
