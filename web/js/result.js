@@ -77,8 +77,9 @@
       '<a class="b" href="'+needHref+'">'+needLabel+' 진단하기 →</a>';
   }
 
-  // ── 브랜드별 추천 사이즈 — TOP만 실계산(규칙①②③+garments), 나머지는 정직하게 '준비중' ──
-  var FLK={slim:'슬림',regular:'레귤러',loose:'루즈',oversize:'오버',skinny:'스키니'};
+  // ── 브랜드별 추천 사이즈 — TOP(가슴·어깨)·BOTTOM(허리·엉덩이+실루엣) 실계산, 파생은 '준비중' ──
+  var FLK={slim:'슬림',regular:'레귤러',loose:'루즈',oversize:'오버',skinny:'스키니',
+    straight:'스트레이트',tapered:'테이퍼드',wide:'와이드',bootcut:'부츠컷'};
   function renderRecs(recs, real){
     // 몸에 가장 잘 맞을 브랜드만 — 핏 지수 상위. real(엔진 실계산)이면 60%+ 중 상위 3(없으면 상위 3).
     var ranked=(recs||[]).slice().sort(function(a,b){ return (b.fitScore||0)-(a.fitScore||0); });
@@ -96,7 +97,7 @@
         return '<div class="rszrow"><div class="rbd">'+r.brandName+'<small>'+note+'</small></div>'+
           '<div class="rsz"><span class="n">'+r.size+'</span><span class="rpill'+pillCls+'">'+r.fit+scoreTxt+'</span></div></div>';
       }).join('')+
-      (real?'<div class="rfoot">※ 핏 지수 = 브랜드 실측(단면) 대비 가슴·어깨 여유로 계산 · '+curLabel+' 긴팔 기준 · 착용경험을 넣으면 정밀해져요</div>':'');
+      (real?'<div class="rfoot">※ 핏 지수 = 브랜드 실측(단면) 대비 '+(curCat==='BOTTOM'?'허리·엉덩이·허벅지 여유로 계산 · 바지':'가슴·어깨 여유로 계산 · 긴팔')+' 기준 · 착용경험을 넣으면 정밀해져요</div>':'');
   }
   // 추천은 A축 사이즈 시드가 있는 TOP만 실제. 나머지 카테고리는 측정만 보여주고 추천은 '준비중'.
   function renderRecsPending(){
@@ -162,10 +163,14 @@
           : specRow('타이트 선호',FITPCT[pref]||55,'여유 핏 선호','여유 선호핏 — 고른 핏 취향'))+
         '<div class="rnote" style="margin-top:16px">부위는 <b style="color:var(--ink2)">카테고리별로 달라져요</b>. '+(cardReady?'상·하의를 모두 마쳐 전신 비율까지 볼 수 있어요.':'다른 카테고리까지 진단하면 상하 균형·전신 비율이 나와요.')+'</div>';
 
-      // 추천 — 브랜드 사이즈 데이터가 있는 TOP만 (역산 반영된 bodyVec)
+      // 추천 — TOP(가슴·어깨) / BOTTOM(허리·엉덩이+선호 실루엣). 역산 반영된 bodyVec.
       if(isTop && specs && cm.chestFull!=null){
         var recs=FitEngine.recommend({ chest:cm.chestFull, shoulder:cm.shoulder }, pref, est.sex, 'long_sleeve', specs);
         if(recs.length) renderRecs(recs, true);
+      } else if(curCat==='BOTTOM' && specs && FitEngine.recommendBottom && cm.waist!=null){
+        // pref = prefs[BOTTOM] = 선호 실루엣. 허리를 사이즈 게이트로, 엉덩이·허벅지 수용 확인.
+        var brecs=FitEngine.recommendBottom({ waist:cm.waist, hip:cm.hip, thigh:cm.thigh }, pref, est.sex, 'long_pants', specs);
+        if(brecs.length) renderRecs(brecs, true);
       }
     });
   }).catch(function(){ /* file:// 등 실패 시 목업/기본 유지 */ }); }
