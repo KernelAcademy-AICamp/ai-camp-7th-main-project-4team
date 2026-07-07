@@ -126,13 +126,18 @@
     var pm={}, cm={}; est.parts.forEach(function(p){ pm[p.key]=p.pct; cm[p.key]=p.cm; });
     var pref=(payload.prefs&&payload.prefs[curCat])||'regular';
 
-    // garments 로드 → 착용경험 역산(규칙④~⑧)으로 chest·shoulder prior 덮어쓰기 → 측정·추천 모두 반영.
+    // garments 로드 → 착용경험 역산으로 부위별 prior 덮어쓰기(TOP: 가슴·어깨 / BOTTOM: 허리·엉덩이·허벅지) → 측정·추천 반영.
     return fetch('data/garments.json').then(function(r){return r.json();}).catch(function(){return null;}).then(function(gj){
       var specs=gj&&gj.specs, expUsed=false;
-      if(isTop && specs && window.FitEngine && FitEngine.bodyFromExperiences){
+      if(specs && window.FitEngine && FitEngine.bodyFromExperiences){
         var eb=FitEngine.bodyFromExperiences(payload.experiences, specs);
-        if(eb.chest!=null){ cm.chestFull=eb.chest; var pc=BodyModel.pctOf(est.sex,'chestFull',eb.chest); if(pc!=null)pm.chestFull=pc; expUsed=true; }
-        if(eb.shoulder!=null){ cm.shoulder=eb.shoulder; var ps=BodyModel.pctOf(est.sex,'shoulder',eb.shoulder); if(ps!=null)pm.shoulder=ps; expUsed=true; }
+        var EBMAP={chest:'chestFull',shoulder:'shoulder',waist:'waist',hip:'hip',thigh:'thigh'};
+        Object.keys(EBMAP).forEach(function(k){
+          if(eb[k]==null) return;
+          var key=EBMAP[k]; cm[key]=eb[k];
+          var pc=BodyModel.pctOf(est.sex,key,eb[k]); if(pc!=null)pm[key]=pc;
+          expUsed=true;
+        });
       }
 
       // 0벌: 착용경험 신호가 없어 dx.bodyType는 무의미(BAL) → 회귀 볼륨축 추정으로 교체(showCard·low일 때만).

@@ -19,14 +19,20 @@
 (function (global) {
   "use strict";
 
-  // ③ 부위별 여유 경계(cm) — subjective.ts EASE_BANDS. 상의만 활성.
+  // ③ 부위별 여유 경계(cm) — EASE_BANDS(docs/6 §3). 하의는 가설값(실피드백으로 튜닝).
   var BANDS = {
     "TOP:chest":    { tight: 2, snug: 8, big: 16 },
     "TOP:shoulder": { tight: 0, snug: 1.5, big: 4 },
     "TOP:belly":    { tight: 0, snug: 8, big: 18 },
+    "BOTTOM:waist": { tight: 0, snug: 4, big: 10 },
+    "BOTTOM:hip":   { tight: 0, snug: 6, big: 14 },
+    "BOTTOM:thigh": { tight: 0, snug: 5, big: 12 },
   };
   // 부위 비교 성격(category.ts comparison): 둘레=circ(×2), 너비/길이=그대로.
-  var CMP = { chest: "circ", belly: "circ", shoulder: "width", sleeve: "len", length: "len" };
+  var CMP = { chest: "circ", belly: "circ", shoulder: "width", sleeve: "len", length: "len",
+              waist: "circ", hip: "circ", thigh: "circ", rise: "len", hem: "width" };
+  // 카테고리별 역산 가능 부위(garmentCm에 있고 밴드가 있는 둘레/너비 부위)
+  var CAT_PARTS = { TOP: ["chest", "shoulder"], BOTTOM: ["waist", "hip", "thigh"] };
 
   // ① 의류 단면(flat) → 인체 축
   function toBodyAxis(part, flatCm) { return CMP[part] === "circ" ? flatCm * 2 : flatCm; }
@@ -39,8 +45,8 @@
   }
   // ③역: 등급 → 여유(ease) 대표점 (chestRating의 역). 정본 subjective.ts#ratingToEasePoint 미러:
   //   중간 두 등급=구간 중앙, 열린 끝(TIGHT·BIG)=경계에서 한 폭(span=big−tight)의 절반만큼 외삽.
-  function ratingToEase(part, rating) {
-    var b = BANDS["TOP:" + part];
+  function ratingToEase(part, rating, category) {
+    var b = BANDS[(category || "TOP") + ":" + part];
     if (!b) return null;
     var span = b.big - b.tight;
     if (rating === "TIGHT") return b.tight - span / 2;
@@ -51,31 +57,32 @@
   }
   // 규칙④~⑧: 착용경험 → 부위별 인체 치수 역산.
   //   body = 의류축(단면×2 등) − ratingToEase(등급). 같은(브랜드·핏·사이즈) 제품 여럿=평균, 여러 경험=부위별 평균.
-  //   garmentCm이 있는 부위(chest·shoulder)만 역산 가능 → recommend가 쓰는 축과 일치.
+  //   카테고리별 역산 부위(CAT_PARTS): TOP=chest·shoulder / BOTTOM=waist·hip·thigh.
   function bodyFromExperiences(experiences, specs) {
-    var acc = { chest: [], shoulder: [] };
+    var acc = {};
     (experiences || []).forEach(function (e) {
-      if (e.category !== "TOP" || !e.fits) return;
+      var parts = CAT_PARTS[e.category];
+      if (!parts || !e.fits) return;
       var m = (specs || []).filter(function (s) {
-        return s.category === "TOP" && s.brandId === e.brandId && s.fitLine === e.fitLine &&
+        return s.category === e.category && s.brandId === e.brandId && s.fitLine === e.fitLine &&
           s.sizeLabel === e.sizeLabel && (s.gender === e.gender || s.gender === "unisex") &&
           (!e.subtype || s.subtype === e.subtype);
       });
       if (!m.length) return;
-      ["chest", "shoulder"].forEach(function (part) {
+      parts.forEach(function (part) {
         var rating = e.fits[part]; if (!rating) return;
         var flats = m.map(function (s) { return s.garmentCm[part]; }).filter(function (v) { return v != null; });
         if (!flats.length) return;
         var flat = flats.reduce(function (a, b) { return a + b; }, 0) / flats.length;
-        var easePt = ratingToEase(part, rating); if (easePt == null) return;
-        acc[part].push(toBodyAxis(part, flat) - easePt);
+        var easePt = ratingToEase(part, rating, e.category); if (easePt == null) return;
+        (acc[part] = acc[part] || []).push(toBodyAxis(part, flat) - easePt);
       });
     });
     var out = {};
     Object.keys(acc).forEach(function (k) {
       if (acc[k].length) out[k] = Math.round((acc[k].reduce(function (a, b) { return a + b; }, 0) / acc[k].length) * 10) / 10;
     });
-    return out; // { chest?, shoulder? }
+    return out; // TOP:{chest?,shoulder?} / BOTTOM:{waist?,hip?,thigh?}
   }
 
   var PILL = { TIGHT: { ko: "끼임", warn: true }, SNUG: { ko: "딱맞음", warn: false },

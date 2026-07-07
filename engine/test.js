@@ -66,6 +66,19 @@ eq(FitEngine.bodyFromExperiences(exp, specsMatch), { chest: 95, shoulder: 43.3 }
    "SNUG 착용경험 → 인체 가슴95·어깨43.3 역산");
 eq(FitEngine.bodyFromExperiences([], specsMatch), {}, "경험 없으면 빈 역산");
 
+/* ── 하의(BOTTOM) 밴드·역산 — waist{0,4,10}·hip{0,6,14}·thigh{0,5,12} (가설값) ──── */
+close(FitEngine.ratingToEase("waist", "SNUG", "BOTTOM"), 2, "하의 허리 SNUG=(0+4)/2");
+close(FitEngine.ratingToEase("waist", "BIG", "BOTTOM"), 15, "하의 허리 BIG=10+10/2");
+close(FitEngine.ratingToEase("hip", "SNUG", "BOTTOM"), 3, "하의 엉덩이 SNUG=(0+6)/2");
+close(FitEngine.ratingToEase("thigh", "SNUG", "BOTTOM"), 2.5, "하의 허벅지 SNUG=(0+5)/2");
+const bspec = [{ category: "BOTTOM", brandId: "m", fitLine: "regular", sizeLabel: "30",
+  gender: "male", subtype: "long_pants", garmentCm: { waist: 40, hip: 50, thigh: 30 } }];
+const bexp = [{ category: "BOTTOM", brandId: "m", fitLine: "regular", sizeLabel: "30",
+  gender: "male", subtype: "long_pants", fits: { waist: "SNUG", hip: "SNUG", thigh: "SNUG" } }];
+// waist 40×2−2=78 · hip 50×2−3=97 · thigh 30×2−2.5=57.5
+eq(FitEngine.bodyFromExperiences(bexp, bspec), { waist: 78, hip: 97, thigh: 57.5 },
+   "하의 SNUG 경험 → 허리78·엉덩이97·허벅지57.5 역산");
+
 /* ── 추천 사이즈 (recommend): 어깨 들어가는 것 우선 → 가슴 여유 5cm에 근접 ────── */
 const specs = [
   { category: "TOP", brandId: "a", brandName: "A", fitLine: "regular", sizeLabel: "M",
