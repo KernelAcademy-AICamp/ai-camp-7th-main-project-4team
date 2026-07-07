@@ -1,0 +1,7 @@
+.DS_Store
+.vercel
+node_modules
+
+# 대용량 원본(사이즈코리아 XLSX) — clean CSV가 사용본
+data/body/raw/
+demo/

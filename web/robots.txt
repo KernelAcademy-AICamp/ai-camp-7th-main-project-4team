@@ -1,0 +1,15 @@
+# 핏팅 — 공개 페이지만 색인, 내부 문서·앱 상태는 차단
+User-agent: *
+Allow: /$
+Allow: /index.html
+Allow: /about.html
+Allow: /terms.html
+Allow: /privacy.html
+# 내부 기획 문서(비공개)
+Disallow: /docs.html
+# 앱 상태·개인 화면(색인 불필요)
+Disallow: /diag-basic.html
+Disallow: /diag-fit.html
+Disallow: /diag-loading.html
+Disallow: /result.html
+Disallow: /card.html

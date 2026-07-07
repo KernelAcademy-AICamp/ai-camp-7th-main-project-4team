@@ -1,0 +1,13 @@
+{
+  "name": "fitting",
+  "version": "0.1.0",
+  "private": true,
+  "description": "핏팅 — 착용경험 기반 브랜드 사이즈 번역. 규칙 엔진(web/js/engine.js)이 정본.",
+  "scripts": {
+    "test": "node engine/test.js",
+    "serve": "cd web && python3 -m http.server 8000"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

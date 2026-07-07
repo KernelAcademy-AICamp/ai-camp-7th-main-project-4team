@@ -1,0 +1,29 @@
+# CODEOWNERS — 경로별 소유자. PR 시 해당 소유자에게 리뷰가 자동 요청된다.
+#   @rjsgud1996-png = 팀장   — 시드 데이터 수집
+#   @sohee0810      = 디자이너 — 화면 레이아웃·디자인 컨셉
+#   @trubard        = 개발자   — 엔진·구현
+# 규칙: 아래로 갈수록 우선(마지막 매칭이 이김).
+
+# 기본 — 셋 공동
+*                                   @rjsgud1996-png @sohee0810 @trubard
+/docs/                              @rjsgud1996-png @sohee0810 @trubard
+
+# ── 팀장: 시드 데이터 ──────────────────────────────
+/data/                              @rjsgud1996-png
+
+# ── 개발자: 엔진·로직 ──────────────────────────────
+/engine/                            @trubard
+/web/js/                            @trubard
+
+# ── 디자이너: 레이아웃·디자인·에셋 ─────────────────
+/web/*.html                         @sohee0810
+/web/*.css                          @sohee0810
+/web/photos/                        @sohee0810
+
+# ── web/data: 생성물은 팀장, 표현 데이터는 디자이너 ──
+#   (파일별 지정 — 위 패턴보다 뒤라 이 지정이 이김)
+/web/data/garments.json             @rjsgud1996-png
+/web/data/body-base-model.json      @rjsgud1996-png
+/web/data/body-distribution.json    @rjsgud1996-png
+/web/data/archetypes.json           @rjsgud1996-png
+/web/data/bodytypes.json            @sohee0810

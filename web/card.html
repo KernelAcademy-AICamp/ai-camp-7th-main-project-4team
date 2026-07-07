@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fitting · 결과 카드</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<!--
+  결과 카드 (통합판). 원본: sohee/데모/결과카드_단독.html
+  변경점: 하드코딩 T 객체 제거 → data/bodytypes.json 단일 출처에서 렌더(디자인언어 §4 / 구조화-sohee §3).
+  디자인 원칙 5의 예외: 이 카드만 "다크 배경 + 8유형 포인트색". UI 딥그린 토큰 적용 안 함(의도).
+  사용: card.html?type=STR&g=female  (iframe 임베드용)
+-->
+<style>
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; background:transparent; -webkit-font-smoothing:antialiased; display:flex; justify-content:center; align-items:flex-start; overflow:hidden;}
+
+  .card{width:392px; max-width:100%; min-height:664px; border-radius:30px; overflow:hidden; color:#fff; position:relative; box-shadow:0 24px 54px rgba(10,11,14,.30); display:flex; flex-direction:column; align-items:center; padding:24px 26px 26px; background:#16171b;}
+  .card::after{content:""; position:absolute; right:-46px; bottom:-44px; font-size:220px; font-weight:900; opacity:.045; letter-spacing:-.07em; line-height:1; color:#fff;}
+  .ctop{width:100%; display:flex; justify-content:space-between; align-items:center; font-size:11.5px; font-weight:800; letter-spacing:.16em;}
+  .cacts{display:flex; gap:8px;}
+  .cacts button{width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.14); border:none; color:#fff; font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; line-height:1; transition:.14s;}
+  .cacts button:hover{background:rgba(255,255,255,.26);}
+  .clogo{font-size:17px; font-weight:800; letter-spacing:-.05em;}
+  .fig{position:relative; width:120px; height:184px; margin:8px 0 4px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; animation:bob 3.4s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0) scale(.85)} 50%{transform:translateY(-6px) scale(.85)}}
+  .fig .head{width:32px; height:36px; margin-bottom:-3px; z-index:2; position:relative;}
+  .fig .head .face{position:absolute; inset:0; border-radius:10px 10px 8px 8px; background:#ecd9c9; z-index:2; background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px),repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px);}
+  .fig .head .cap{position:absolute; top:-3px; left:-3px; right:-3px; height:13px; border-radius:10px 10px 45% 45%; background:#2a2b30; z-index:3;}
+  .fig .head.female .cap{background:#9a7350;}
+  .fig .head .longhair{position:absolute; top:-5px; left:-7px; right:-7px; bottom:1px; background:#9a7350; border-radius:50% 50% 36% 36% / 46% 46% 30% 30%; z-index:1;}
+  .fig .head .ey{position:absolute; top:18px; width:4px; height:5px; border-radius:50%; background:#2a2b30; z-index:4;} .fig .head .ey.l{left:9px;} .fig .head .ey.r{right:9px;}
+  .fig .body{width:120px; position:relative; image-rendering:pixelated; background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 8px),repeating-linear-gradient(90deg,rgba(0,0,0,.16) 0 1px,transparent 1px 8px);}
+  .fig .body::before{content:""; position:absolute; left:0; top:0; bottom:0; width:42%; background:rgba(255,255,255,.18);}
+  .fig .body.straight{clip-path:polygon(38% 0,62% 0,62% 64%,64% 100%,36% 100%,38% 64%);}
+  .fig .body.aline{clip-path:polygon(40% 0,60% 0,60% 30%,88% 100%,12% 100%,40% 30%);}
+  .fig .body.vline{clip-path:polygon(13% 0,87% 0,64% 40%,60% 100%,40% 100%,36% 40%);}
+  .fig .body.xline{clip-path:polygon(17% 0,83% 0,57% 46%,87% 100%,13% 100%,43% 46%);}
+  .fig .body.balance{clip-path:polygon(33% 0,67% 0,60% 50%,67% 100%,33% 100%,40% 50%);}
+  .fig .body.diamond{clip-path:polygon(37% 0,63% 0,85% 50%,61% 100%,39% 100%,15% 50%);}
+  .fig .body.round{clip-path:ellipse(45% 47% at 50% 53%);}
+  .fig .body.tube{clip-path:polygon(43% 0,57% 0,57% 100%,43% 100%);}
+  .code{margin-top:12px; font-size:12.5px; font-weight:800; letter-spacing:.22em; opacity:.92;}
+  .word{font-size:32px; font-weight:800; letter-spacing:-.03em; line-height:1.08; margin-top:12px;}
+  .info{width:100%; text-align:left; margin-top:20px;}
+  .sl{font-size:11px; font-weight:800; letter-spacing:.04em; margin:0 0 7px;}
+  .desc{font-size:14px; line-height:1.55; opacity:.92;}
+  .desc.two{min-height:43px;} .desc.ins{min-height:22px;}
+  .fits{margin-top:11px; display:flex; flex-direction:column; gap:5px;}
+  .fr{display:flex; align-items:flex-start; gap:9px; flex-wrap:wrap;} .fl{font-size:11px; font-weight:800; white-space:nowrap; padding-top:6px; min-width:46px;} .fl.no{opacity:.55;}
+  .fr.ok{min-height:32px;} .fr.no{min-height:32px;}
+  .ps{display:flex; flex-wrap:wrap; gap:6px;} .ps span{font-size:12.5px; font-weight:600; background:rgba(255,255,255,.1); padding:6px 11px; border-radius:9px;}
+  .sec2{margin-top:18px;}
+  .match{margin-top:11px; font-size:13.5px; font-weight:600; opacity:.95; width:100%;} .match b{font-weight:800;}
+  .grow{flex:1; min-height:16px; width:100%;}
+</style>
+</head>
+<body>
+<div class="card" id="card"></div>
+<script src="js/card.js"></script>
+</body>
+</html>

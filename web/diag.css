@@ -1,0 +1,119 @@
+/* ==========================================================================
+   diag.css — sangmin 진단 화면(fitting.css "Precision 블랙")을 sohee 딥그린으로 재스킨.
+   fitting.css 뒤에 로드. 토큰만 덮고, sohee 원칙(버튼=잉크블랙 · 활성=딥그린)만 보정한다.
+   sangmin의 마크업·레이아웃·로직은 그대로 보존.
+   ========================================================================== */
+:root{
+  --canvas:#F6F6F5; --ink:#16140F; --muted:#6E6B63; --faint:#A6A29A;
+  --line:#E6E5E1; --field:#FFFFFF; --field-line:#DAD8D2;
+  --accent:#2E4A3B; --accentInk:#FFFFFF;   /* 키커·사이즈값·강조 = 딥그린 */
+  --ok:#2E4A3B; --warn:#B0553F;
+  --btnR:12px; --cardR:18px;               /* sohee 라운드 */
+  --green:#2E4A3B; --green-soft:#E7EFEA;
+}
+/* 개발용 상단 배너 숨김 (통합 앱은 자체 헤더 사용) */
+.protobar{ display:none !important; }
+
+/* 버튼(주요) = 잉크블랙 (딥그린 원칙 2 — 초록 버튼 금지) */
+.btn-primary{ background:var(--ink); color:#fff; }
+.btn-primary:hover{ background:#000; opacity:1; }
+
+/* 활성 선택 = 딥그린 (칩·부위느낌·진행바·스텝·체크·서비스) */
+.seg .opt.on, .feel-opts .opt.on{ background:var(--green) !important; border-color:var(--green) !important; color:#fff; }
+.wprogress .bar i, .stepper .dot.now, .stepper .dot.done{ background:var(--green); }
+.cb.on, .svc.on .check{ background:var(--green); border-color:var(--green); }
+.svc.on{ border-color:var(--green); background:var(--green-soft); }
+.soon.live{ background:var(--green); }
+.notice.warn{ background:#FBEEEA; border-color:#E8D6CF; color:var(--warn); }
+
+/* 통합 앱 헤더 (진단 화면 상단) */
+/* 헤더: 로고=좌 · 진행율=로고 옆 왼쪽 정렬(sohee 스타일) · 닫기=우 끝 */
+.dhead{ position:sticky; top:0; z-index:40; background:rgba(255,255,255,.9); backdrop-filter:blur(12px); border-bottom:1px solid var(--line); }  /* 메인 헤더와 동일 */
+.dhead-in{ display:flex; align-items:center; gap:16px; padding:14px 30px; }
+.dhead .logo{ white-space:nowrap; font-size:20px; font-weight:800; letter-spacing:-.05em; color:var(--green); text-decoration:none; }  /* 메인 로고와 동일 딥그린 */
+.dhead .logo i{ display:inline-block; width:6px; height:6px; background:var(--green); margin-left:1px; vertical-align:baseline; }
+.dhead .dx{ margin-left:auto; flex:none; width:34px; height:34px; border-radius:50%; border:1px solid var(--line);
+  display:flex; align-items:center; justify-content:center; color:var(--muted); text-decoration:none; font-size:15px; }
+.dhead .dx:hover{ background:#EDEDEA; }
+/* 진행율 = 2세그먼트(기본·경험). 완료=꽉 참, 현재 단계=하위 스텝만큼 내부가 늘어남 */
+.dhead .dprog .prog{ display:flex; gap:8px; }
+.dhead .dprog .prog .seg{ width:60px; height:5px; border-radius:3px; background:var(--line); overflow:hidden; }
+.dhead .dprog .prog .seg.done{ background:var(--green); }
+.dhead .dprog .prog .seg i{ display:block; height:100%; width:0; background:var(--green); border-radius:3px; transition:width .4s cubic-bezier(.4,0,.2,1); }
+
+/* ── 시스템 수렴: 각진 Precision → sohee 딥그린 리듬 (라운드·폼·간격) ───────────
+   fitting.css의 하드코딩 라운드/폼 스타일을 앱 셸과 같은 결로 통일. */
+/* 질문 → 선택지(위→아래) 단일 컬럼. 답답하지 않게 폭은 넉넉히, 중앙 정렬. */
+.flow{ max-width:700px; padding:32px 32px 48px; }
+.qhelp, .sub{ max-width:560px; }                          /* 본문은 가독 폭 유지 */
+/* 모바일: 좌우 패딩 축소 + 헤더 진행율은 바만(라벨·분수 숨겨 넘침 방지) */
+@media(max-width:600px){
+  .flow{ padding:24px 20px 40px; }
+  /* 모바일 헤더: 좌우 패딩만 축소 (로고 좌·진행율 옆·닫기 우 유지) */
+  .dhead-in{ gap:12px; padding:14px 20px; }
+  .dhead .dprog .prog .seg{ width:52px; }
+}
+
+/* 입력·선택 컨트롤: 흰 표면 + 부드러운 라운드, 포커스는 딥그린(브랜드색 노출) */
+.flow input[type=text], .flow input[type=number], .flow select, .open-note{
+  background-color:#FFFFFF; border:1.5px solid var(--field-line); border-radius:12px;
+}
+.flow input:focus, .flow select:focus, .open-note:focus{ border-color:var(--green); background-color:#fff; }
+.seg .opt{ border-radius:12px; }
+.seg.compact .opt{ border-radius:10px; }
+.feel-opts .opt{ border-radius:10px; }
+.feel-opts .opt.on{ background:var(--green); border-color:var(--green); }
+
+/* 카드·패널·고지: 앱 카드와 같은 라운드/톤 */
+.card, .card-soft, .result-hero, .char-hero{ border-radius:18px; }
+.notice{ border-radius:12px; }
+.add-garment{ border-radius:14px; }
+.stepper .dot{ border-radius:3px; }
+
+/* 옵션 카드(선택 상태)도 딥그린 계열로 */
+.seg.stack .opt.on{ background:var(--green); border-color:var(--green); }
+
+/* 잠긴 파생 행: 시각 무게 낮추기 (죽은 행이 첫 화면을 덜 먹도록) */
+.seg.cat .opt.locked{ opacity:.4; }
+.seg.cat .opt .lockhint{ color:var(--sub2); }
+
+/* ── 타이포·버튼·여백을 셸 디자인 언어에 맞춤 (index.html 값 기준) ─────────── */
+:root{ --dS:-.045em; --btnR:13px; }   /* 헤딩 자간·버튼 라운드를 셸과 동일하게 */
+
+/* 질문 헤드/보조/키커 — 셸 diaghead(h1 31/-.045)·p(15/sub)·kicker 스케일 */
+.qnum{ font-size:12px; font-weight:800; letter-spacing:.10em; color:var(--green); margin:22px 0 8px; }
+.qhead{ font-size:clamp(24px,3.4vw,29px); letter-spacing:-.045em; line-height:1.2; margin-bottom:10px; }
+.qhelp{ font-size:15px; color:var(--muted); line-height:1.6; margin-bottom:24px; }
+.step-h{ letter-spacing:-.045em; }
+.sub, .lead{ font-size:15px; }
+.small{ font-size:13.5px; }
+
+/* 버튼 — 셸 .btn(패딩 14×24 · r13 · 15/800), 보조=흰 배경+테두리 */
+.btn-primary, .btn-line, .btn-ghost{ font-size:15px; padding:14px 24px; border-radius:13px; }
+.btn-ghost{ padding:13px 18px; }
+.btn-line{ background:#fff; border:1.5px solid var(--field-line); color:var(--ink); }
+.btn-line:hover{ border-color:var(--ink); }
+.wnav{ margin:28px 0 24px; }
+
+/* 폼 라벨·세그·간격 */
+.field{ margin-bottom:20px; }
+.field > label{ font-size:13px; font-weight:700; color:var(--ink); margin-bottom:8px; }
+.seg .opt{ font-size:14px; }
+.seg.stack .opt{ font-size:15px; padding:15px 18px; }
+.feel-row .part{ font-size:14px; font-weight:700; }
+.feel-opts .opt{ font-size:12.5px; padding:9px 6px; }
+
+/* 느낌 입력: 선택 항목 접기(압도감↓) — 필수 착용감만 먼저 노출 */
+.feel-more{ margin-top:10px; border-top:1px solid var(--line); }
+.feel-more > summary{ cursor:pointer; list-style:none; font-size:13.5px; font-weight:700; color:var(--green); padding:12px 0 4px; display:flex; align-items:center; gap:7px; }
+.feel-more > summary::-webkit-details-marker{ display:none; }
+.feel-more > summary::before{ content:"＋"; font-weight:800; }
+.feel-more[open] > summary::before{ content:"−"; }
+.feel-more > summary .opt{ font-size:11.5px; font-weight:600; color:var(--sub2); }
+
+/* 결과 사이즈표 — 셸 .szbox 룩(값 18/ink · 태그 딥그린 pill) */
+.size-row .brand{ font-size:14.5px; font-weight:700; }
+.size-row .brand small{ color:var(--sub2); }
+.size-row .sz{ font-size:18px; font-weight:800; color:var(--ink); }
+.size-row .sz .conf{ font-family:var(--sans); font-size:11.5px; font-weight:800; color:var(--green); background:var(--green-soft); padding:4px 10px; border-radius:16px; margin-left:8px; }
+.st-head{ font-size:11px; }
