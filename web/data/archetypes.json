@@ -762,7 +762,7 @@
     },
     {
       "gender": "female",
-      "type": "역삼각 비만  (상체 비만)",
+      "type": "역삼각 비만 (상체 비만)",
       "description": "배가 나오고 어깨가 넓은 비만",
       "ageBand": "10대",
       "measurements_cm": {
@@ -774,7 +774,7 @@
     },
     {
       "gender": "female",
-      "type": "역삼각 비만  (상체 비만)",
+      "type": "역삼각 비만 (상체 비만)",
       "description": "배가 나오고 어깨가 넓은 비만",
       "ageBand": "20~30대",
       "measurements_cm": {
@@ -786,7 +786,7 @@
     },
     {
       "gender": "female",
-      "type": "역삼각 비만  (상체 비만)",
+      "type": "역삼각 비만 (상체 비만)",
       "description": "배가 나오고 어깨가 넓은 비만",
       "ageBand": "40~50대",
       "measurements_cm": {
@@ -798,7 +798,7 @@
     },
     {
       "gender": "female",
-      "type": "역삼각 비만  (상체 비만)",
+      "type": "역삼각 비만 (상체 비만)",
       "description": "배가 나오고 어깨가 넓은 비만",
       "ageBand": "60대 이상",
       "measurements_cm": {
@@ -810,7 +810,7 @@
     },
     {
       "gender": "female",
-      "type": "삼각 비만  (하체 비만)",
+      "type": "삼각 비만 (하체 비만)",
       "description": "주로 젊은 층에 나타나는 하체 비만",
       "ageBand": "10대",
       "measurements_cm": {
@@ -822,7 +822,7 @@
     },
     {
       "gender": "female",
-      "type": "삼각 비만  (하체 비만)",
+      "type": "삼각 비만 (하체 비만)",
       "description": "주로 젊은 층에 나타나는 하체 비만",
       "ageBand": "20~30대",
       "measurements_cm": {
@@ -834,7 +834,7 @@
     },
     {
       "gender": "female",
-      "type": "삼각 비만  (하체 비만)",
+      "type": "삼각 비만 (하체 비만)",
       "description": "주로 젊은 층에 나타나는 하체 비만",
       "ageBand": "40~50대",
       "measurements_cm": {
@@ -846,7 +846,7 @@
     },
     {
       "gender": "female",
-      "type": "삼각 비만  (하체 비만)",
+      "type": "삼각 비만 (하체 비만)",
       "description": "주로 젊은 층에 나타나는 하체 비만",
       "ageBand": "60대 이상",
       "measurements_cm": {

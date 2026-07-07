@@ -6,7 +6,7 @@
 
 | 축 | 무엇 | 소스 | → 파생물(런타임) |
 |---|---|---|---|
-| **B축 — 인체 시드** | 성별·키·몸무게로 몸을 추정하는 회귀·분포·체형 라벨 | `data/body/` | `web/data/body-base-model·body-distribution·archetypes.json` |
+| **B축 — 인체 시드** | 성별·키·몸무게로 몸을 추정하는 회귀·분포·체형 라벨 | `data/body/` (+ `build-bodyseed.py`) | `web/data/body-base-model·body-distribution·archetypes.json` |
 | **A축 — 브랜드 실측** | 브랜드×핏×사이즈 옷 치수(garmentCm) | `data/brand/` | `web/data/garments.json` |
 
 ```
@@ -14,6 +14,7 @@ data/
   body/
     raw/*.xlsx        원본(사이즈코리아 8차). 공개데이터라 git 제외(.gitignore) — 아래 '출처'에서 재다운로드
     clean/*.csv       raw→정규화(cm) + 체형분류. git 추적. 분석/재생성 기반 (설명: body/clean/README.md)
+    build-bodyseed.py B축 시드 빌더 (clean/*.csv → web/data 3종 JSON)
   brand/
     raw/*.csv         브랜드 사이즈표 수동 수집(긴팔·반팔). git 추적
     build-sizespec.py A축 시드 빌더 (raw csv → web/data/garments.json)
@@ -28,11 +29,16 @@ data/
 python3 data/brand/build-sizespec.py     # raw/*.csv → web/data/garments.json
 ```
 
-**B축(인체 시드) — 생성기 미복원 ⚠️**
-`web/data/{body-base-model,body-distribution,archetypes}.json`은 `data/body/clean/*.csv`에서 만든 회귀 산출물이지만, **그 생성 스크립트가 repo에 없습니다**(리팩터 전 일회성 작업, scratchpad에만 존재). 지금은 이 JSON들이 **체크인된 산출물**로만 존재하며, 재생성하려면:
-1. 회귀 추정 스크립트를 복원(입력: `data/body/clean/통합_직접측정.csv` 6,106명 + `표준체형.csv`·`비만체형.csv`).
-2. 출력 스키마는 현재 `web/data/*.json` 형태에 맞춘다.
-> 협업 착수 전 이 생성기 복원이 B축 재현성의 선결 과제. (지금은 산출물만으로도 런타임 동작함)
+**B축(인체 시드) — 재현 가능 ✅**
+```bash
+python3 data/body/build-bodyseed.py       # clean/*.csv → web/data 3종 JSON
+```
+- `body-base-model.json` = 성별별 부위 OLS 회귀(`부위 = a·키 + b·몸무게 + c·나이 + intercept`, r²·rmse·n 포함).
+- `body-distribution.json` = 성별×부위 mean/sd/p5·p50·p95.
+- `archetypes.json` = 표준체형 38 + 비만체형 32 = 70종 실측 라벨.
+- 입력: `data/body/clean/통합_직접측정.csv`(6,106명) + `표준체형.csv` + `비만체형.csv`.
+- **코호트**: 현재 산출물은 스크립트 상수 `COHORT='1-2차'`로 생성됨(어깨가쪽사이길이가 3차 미측정이라). 통합본 전체로 넓히면 표본↑ 대신 값이 달라진다 — 상수만 바꾸면 됨.
+- 검증: 이 스크립트는 기존 체크인 3종을 **byte 단위로 재현**한다(archetypes의 체형명 공백 정규화 1건만 소스에 맞게 교정됨).
 
 **raw xlsx → clean csv**: 이 변환 스크립트도 일회성이었다. clean CSV가 이미 git에 있으니 평소엔 불필요하고, 무손실 mm 원본이 필요할 때만 xlsx에서 재생성.
 
