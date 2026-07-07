@@ -140,10 +140,12 @@
         });
       }
 
-      // 0벌: 착용경험 신호가 없어 dx.bodyType는 무의미(BAL) → 회귀 볼륨축 추정으로 교체(showCard·low일 때만).
-      if(showCard && dx.confidenceTier==='low' && FittingEngine.bodyTypeFromMeasure){
-        var mtype=FittingEngine.bodyTypeFromMeasure({shoulder:pm.shoulder,chest:pm.chestFull,waist:pm.waist,hip:pm.hip});
-        if(mtype && mtype!==cardType){ cardType=mtype; renderCard(mtype); }
+      // 8유형 판정 — 역산(가슴)+회귀(허리·엉덩이) 몸으로 KS드롭 분류(bodytype.js). 스텁(mapToBodyType) 대체.
+      if(showCard && window.FitBodyType){
+        var bt=FitBodyType.classify({ gender:est.sex,
+          heightCm:(payload.basic&&payload.basic.height), weightKg:(payload.basic&&payload.basic.weight),
+          chestFull:cm.chestFull, chestUpper:cm.chestUpper, waist:cm.waist, hip:cm.hip });
+        if(bt && bt!==cardType){ cardType=bt; renderCard(bt); }
       }
 
       // 측정: 이번 진단 카테고리의 필수 부위 + 여유 선호핏 (역산 반영된 pm)
@@ -217,7 +219,7 @@
   function fb(el,verdict){
     [].forEach.call(el.parentElement.children,function(c){c.classList.remove('on');}); el.classList.add('on');
     var consent={}; try{ consent=JSON.parse(sessionStorage.getItem('fitting.consent')||'{}'); }catch(e){}
-    var rec={ ts:new Date().toISOString(), bodyType:dx.bodyType, verdict:verdict, confidenceTier:dx.confidenceTier, engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true };
+    var rec={ ts:new Date().toISOString(), bodyType:cardType, verdict:verdict, confidenceTier:dx.confidenceTier, engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true };
     try{ var k='fitting.feedback', arr=JSON.parse(localStorage.getItem(k)||'[]'); arr.push(rec); localStorage.setItem(k,JSON.stringify(arr)); }catch(e){}
   }
   // 진단 초기화 — 누적된 입력(dx·기본정보·동의·피드백)을 지우고 처음부터. (목업 테스트용)
