@@ -11,14 +11,19 @@ AI Camp 7기 메인 프로젝트 - 4팀
 
 ## 빠른 시작
 
-**필요한 것**: [Node.js](https://nodejs.org) 18+ (`node -v`로 확인). 그 외 설치할 것 없음.
+**필요한 것**: [Node.js](https://nodejs.org) (버전은 `.nvmrc`에 고정 — nvm 쓰면 `nvm use`).
 
 ```bash
 git clone https://github.com/KernelAcademy-AICamp/ai-camp-7th-main-project-4team.git
 cd ai-camp-7th-main-project-4team
-npm run serve      # 로컬 서버 → http://localhost:8000 접속
+npm run serve      # 로컬 서버 → http://localhost:8000 접속 (실행만 하면 설치 불필요)
 npm test           # 엔진 골든 테스트(36건)
 ```
+
+**기여할 때(개발 환경 통일)**: `npm install` 한 번 → 포매터(Prettier) 준비됨.
+- 에디터 설정은 `.editorconfig`, 줄바꿈은 `.gitattributes`(LF)로 3인 PC 자동 통일.
+- **VS Code**: 저장소 열면 권장 확장(Prettier·EditorConfig·Live Server) 안내가 뜸 → 설치하면 **저장 시 자동 포맷**.
+- 수동 포맷: `npm run format` (검사만: `npm run format:check`).
 
 ## 로컬에서 앱 실행하기
 

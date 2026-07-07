@@ -1,0 +1,19 @@
+# 포맷 대상 제외 — 생성물·데이터·의존성 (byte 정합·원본 보존)
+# ⚠️ 주석은 반드시 독립 줄에. 패턴 뒤 인라인 주석은 패턴을 깨뜨림(gitignore 문법).
+
+node_modules/
+package-lock.json
+
+# 통합문서.html 등은 build.py 생성물(직접 수정 금지)
+docs/html/
+
+# 시드 JSON은 생성기 산출물 — 재생성 byte 정합 유지
+web/data/
+
+# 원본 CSV·수집 데이터
+data/
+
+web/.vercel/
+
+*.min.js
+*.min.css

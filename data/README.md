@@ -16,11 +16,13 @@ data/
     clean/*.csv       raw→정규화(cm) + 체형분류. git 추적. 분석/재생성 기반 (설명: body/clean/README.md)
     build-bodyseed.py B축 시드 빌더 (clean/*.csv → web/data 3종 JSON)
   brand/
-    raw/*.csv         브랜드 사이즈표 수동 수집(긴팔·반팔). git 추적
-    build-sizespec.py A축 시드 빌더 (raw csv → web/data/garments.json)
+    raw/*.csv         브랜드 사이즈표 수동 수집(긴팔·반팔·바지). git 추적
+    build-sizespec.py A축 시드 빌더 (raw csv → web/data/garments.json, TOP+BOTTOM)
     *.json            보조 데이터(anchor-brands·brand-rankings·brands·fitlines)
 → web/data/*.json     엔진이 fetch하는 파생 산출물 (여기가 아니라 web/에 산다)
 ```
+
+> **📌 다음 수집 과제 — 바지 `밴딩` 컬럼** (팀장): 허리 밴딩(풀/사이드/히든/없음)은 허리 수용범위·역산 신뢰도를 크게 바꾸는데, 지금은 product명에서 히든밴딩만 부분 추출됨(hidden 102·partial 17·미표기 454). 바지 CSV에 **`밴딩` 열**(없음/사이드/히든/풀 + 가능하면 신축 cm)을 채우면 엔진이 풀밴딩까지 정확히 처리. → 엔진은 이미 `waistband` 있으면 허리 역산을 스킵(회귀 폴백).
 
 ## 재생성
 

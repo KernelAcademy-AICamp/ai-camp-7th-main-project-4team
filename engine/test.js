@@ -66,6 +66,31 @@ eq(FitEngine.bodyFromExperiences(exp, specsMatch), { chest: 95, shoulder: 43.3 }
    "SNUG 착용경험 → 인체 가슴95·어깨43.3 역산");
 eq(FitEngine.bodyFromExperiences([], specsMatch), {}, "경험 없으면 빈 역산");
 
+/* ── 하의(BOTTOM) 밴드·역산 — waist{0,4,10}·hip{0,6,14}·thigh{0,5,12} (가설값) ──── */
+close(FitEngine.ratingToEase("waist", "SNUG", "BOTTOM"), 2, "하의 허리 SNUG=(0+4)/2");
+close(FitEngine.ratingToEase("waist", "BIG", "BOTTOM"), 15, "하의 허리 BIG=10+10/2");
+close(FitEngine.ratingToEase("hip", "SNUG", "BOTTOM"), 3, "하의 엉덩이 SNUG=(0+6)/2");
+close(FitEngine.ratingToEase("thigh", "SNUG", "BOTTOM"), 2.5, "하의 허벅지 SNUG=(0+5)/2");
+const bspec = [{ category: "BOTTOM", brandId: "m", fitLine: "regular", sizeLabel: "30",
+  gender: "male", subtype: "long_pants", garmentCm: { waist: 40, hip: 50, thigh: 30 } }];
+const bexp = [{ category: "BOTTOM", brandId: "m", fitLine: "regular", sizeLabel: "30",
+  gender: "male", subtype: "long_pants", fits: { waist: "SNUG", hip: "SNUG", thigh: "SNUG" } }];
+// waist 40×2−2=78 · hip 50×2−3=97 · thigh 30×2−2.5=57.5
+eq(FitEngine.bodyFromExperiences(bexp, bspec), { waist: 78, hip: 97, thigh: 57.5 },
+   "하의 SNUG 경험 → 허리78·엉덩이97·허벅지57.5 역산");
+// 밴딩 바지: 허리는 신축이라 역산 스킵, 엉덩이·허벅지만
+const bandspec = [{ category: "BOTTOM", brandId: "m", fitLine: "loose", sizeLabel: "30", gender: "male",
+  subtype: "long_pants", waistband: "hidden", garmentCm: { waist: 40, hip: 50, thigh: 30 } }];
+const bandexp = [{ category: "BOTTOM", brandId: "m", fitLine: "loose", sizeLabel: "30", gender: "male",
+  subtype: "long_pants", fits: { waist: "SNUG", hip: "SNUG", thigh: "SNUG" } }];
+eq(FitEngine.bodyFromExperiences(bandexp, bandspec), { hip: 97, thigh: 57.5 },
+   "밴딩 바지 → 허리 역산 스킵(엉덩이·허벅지만)");
+// 사용자 응답(e.waistband) 우선: 있음→고정 그룹이어도 스킵 / 없음→밴딩 그룹이어도 사용
+eq(FitEngine.bodyFromExperiences([Object.assign({}, bexp[0], { waistband: "banded" })], bspec),
+   { hip: 97, thigh: 57.5 }, "사용자 '밴딩 있음' → 허리 스킵(그룹 무관)");
+eq(FitEngine.bodyFromExperiences([Object.assign({}, bandexp[0], { waistband: "none" })], bandspec),
+   { waist: 78, hip: 97, thigh: 57.5 }, "사용자 '밴딩 없음' → 허리 사용(그룹 무관)");
+
 /* ── 추천 사이즈 (recommend): 어깨 들어가는 것 우선 → 가슴 여유 5cm에 근접 ────── */
 const specs = [
   { category: "TOP", brandId: "a", brandName: "A", fitLine: "regular", sizeLabel: "M",
@@ -103,4 +128,22 @@ try {
   console.log(`  (실데이터 스모크 건너뜀: ${e.message})`);
 }
 
-console.log(`\n✓ 골든 테스트 ${pass}건 통과 — engine.js가 명세(docs/6)와 일치.`);
+/* ── 8유형 분류기 (bodytype.js) — KS드롭+로우데이터 절단값 ─────────────── */
+const { FitBodyType } = require("../web/js/bodytype.js");
+assert.ok(FitBodyType && Array.isArray(FitBodyType.CODES), "bodytype.js가 FitBodyType export"); pass++;
+[
+  ["INV", { gender: "male", heightCm: 175, weightKg: 70, chestFull: 100, chestUpper: 100, waist: 88, hip: 96 }],
+  ["TRI", { gender: "female", heightCm: 160, weightKg: 52, chestFull: 82, waist: 66, hip: 96 }],
+  ["HRG", { gender: "female", heightCm: 162, weightKg: 52, chestFull: 88, waist: 66, hip: 92 }],
+  ["STR", { gender: "male", heightCm: 172, weightKg: 68, chestFull: 92, chestUpper: 93, waist: 86, hip: 92 }],
+  ["BAL", { gender: "male", heightCm: 174, weightKg: 70, chestFull: 94, chestUpper: 95, waist: 82, hip: 94 }],
+  ["RND", { gender: "male", heightCm: 170, weightKg: 92, chestFull: 108, chestUpper: 110, waist: 95, hip: 106 }],
+  ["DIA", { gender: "male", heightCm: 170, weightKg: 92, chestFull: 99, chestUpper: 100, waist: 96, hip: 98 }],
+  ["TUB", { gender: "female", heightCm: 166, weightKg: 45, chestFull: 80, waist: 62, hip: 86 }],
+].forEach(([want, inp]) => eq(FitBodyType.classify(inp), want, `8유형 분류 → ${want}`));
+eq(FitBodyType.classify({ gender: "male" }), null, "측정 부족 → null");
+eq(FitBodyType.classify({ gender: "x", chestFull: 90, waist: 80, hip: 92 }), null, "미지 성별 → null");
+const _bt = { gender: "female", heightCm: 160, weightKg: 52, chestFull: 82, waist: 66, hip: 96 };
+eq(FitBodyType.classify(_bt), FitBodyType.classify(_bt), "분류 결정론적");
+
+console.log(`\n✓ 골든 테스트 ${pass}건 통과 — engine.js·bodytype.js가 명세(docs/6)와 일치.`);
