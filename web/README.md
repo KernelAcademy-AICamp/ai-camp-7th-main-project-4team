@@ -37,7 +37,9 @@ web/
     engine.js           # ★ 사이즈 엔진 유일 구현 — 추천·역산·핏지수(규칙①②③). 브라우저·node 공용
     engine-mock.js      # diagnose() 계약 어댑터(카드·신뢰도 조립) — 사이즈 계산은 FitEngine에 위임.
                         #   아직 목업: 8유형 매핑(mapToBodyType 스텁)·character 서술(LLM 자리)
+    index/result/card/diag-*.js  # 각 화면 로직 — HTML에서 분리(디자이너=마크업 / 개발자=이 JS)
 ```
+> 화면 로직은 인라인 `<script>`가 아니라 `js/<화면>.js`로 분리돼 있습니다(역할 분담·충돌 최소화 — [`../docs/협업가이드.md`](../docs/협업가이드.md)). HTML은 `<script src="js/<화면>.js">`로 로드.
 > 엔진 규칙 명세·구현 관계는 [`../docs/6_사이즈엔진.md`](../docs/6_사이즈엔진.md), 회귀 테스트는 `../engine/test.js`(`npm test`).
 
 ## 진단 플로우
