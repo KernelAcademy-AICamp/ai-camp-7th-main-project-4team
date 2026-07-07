@@ -79,8 +79,12 @@
       (pref?feelGroup('기장','취향 · 선택',pref):'')+
       '<div class="feel-group"><h4>그 외 <span class="ghelp">선택 · 자유롭게</span></h4>'+
         '<textarea class="open-note" placeholder="예: 소매 끝이 조였어요 / 밑단이 걸렸어요"></textarea></div>';
+    // 하의: 허리 밴드 토글 — 밴딩이면 허리가 신축이라 허리 역산을 건너뜀(엔진). 기본 '모름'(보수적).
+    var wband=(target==='bottom')?feelGroup('허리 밴드','고무밴드 있었나요 · 허리 사이즈 판정에 사용 · 선택',
+      '<div class="seg wband-seg">'+['모름','없음','있음'].map(function(l,i){
+        return '<div class="opt'+(i===0?' on':'')+'" onclick="pick(this)">'+l+'</div>'; }).join('')+'</div>'):'';
     box.innerHTML=
-      feelGroup('착용감 · 부위별','한 부위씩 떠오르는 느낌 하나',fit)+
+      feelGroup('착용감 · 부위별','한 부위씩 떠오르는 느낌 하나',fit)+ wband+
       '<details class="feel-more"><summary>걸린 곳·기장 등 더 알려주기 <span class="opt">선택 · 없으면 넘겨도 돼요</span></summary>'+optional+'</details>';
   }
 
@@ -169,6 +173,7 @@
     var labels=Object.keys(set);
     if(!labels.length) return null;
     labels.sort(function(a,b){
+      if(/^\d/.test(a) && /^\d/.test(b)) return parseFloat(a)-parseFloat(b);  // 숫자 사이즈(바지 26·73…) 오름차순
       var ia=SIZE_ORDER.indexOf(a), ib=SIZE_ORDER.indexOf(b);
       return (ia<0?99:ia)-(ib<0?99:ib);
     });
@@ -180,7 +185,7 @@
     var bsel=document.getElementById('brand'+g);
     var brandId=bsel?BRANDID[bsel.value]:null;
     var gender=BASIC.gender||'female';
-    var labels=(target==='top') ? garmentSizeLabels(brandId, gender, subtypeOf(g)) : null;
+    var labels=hasData(target) ? garmentSizeLabels(brandId, gender, subtypeOf(g)) : null;  // 데이터 있는 카테고리(TOP·BOTTOM)는 실 사이즈
     if(!labels || !labels.length) labels=DEFAULT_SIZES;
     var prev=el.querySelector('.opt.on'); var prevLab=prev?prev.textContent.trim():null;
     var def = (prevLab && labels.indexOf(prevLab)>=0) ? prevLab
@@ -231,10 +236,13 @@
       var bsel=document.getElementById('brand'+g), brandTxt=bsel?bsel.value:'';
       var isel=document.getElementById('item'+g), itemTxt=isel?isel.value:'';
       var szEl=document.querySelector('#size'+g+' .opt.on');
+      // 하의 허리 밴드 응답 → waistband(엔진이 허리 역산 스킵 판정에 사용). 없으면 undefined('모름').
+      var wbEl=document.querySelector('#feel'+g+' .wband-seg .opt.on'), wbLab=wbEl?wbEl.textContent.trim():'';
+      var waistband=wbLab==='없음'?'none':(wbLab==='있음'?'banded':undefined);
       // fitLine = 입은 옷의 핏(역산 조회용). 선호핏(prefLine)은 prefs로 따로 저장.
       exps.push({ category:cat, brandId:BRANDID[brandTxt]||'unknown', brandName:brandTxt,
         fitLine:garmentFitLine(itemTxt), item:itemTxt, sizeLabel:szEl?szEl.textContent.trim():'M',
-        subtype:subtypeOf(g), gender:BASIC.gender||'female',
+        subtype:subtypeOf(g), gender:BASIC.gender||'female', waistband:waistband,
         fits:f.fits, painFlags:f.painFlags, lengthPrefs:f.lengthPrefs, openNote:f.openNote });
     });
     // 기존 진단 결과에 병합 — 다른 카테고리(상↔하)는 보존하고, 같은 카테고리는 교체

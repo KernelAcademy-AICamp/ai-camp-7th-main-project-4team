@@ -85,6 +85,11 @@ const bandexp = [{ category: "BOTTOM", brandId: "m", fitLine: "loose", sizeLabel
   subtype: "long_pants", fits: { waist: "SNUG", hip: "SNUG", thigh: "SNUG" } }];
 eq(FitEngine.bodyFromExperiences(bandexp, bandspec), { hip: 97, thigh: 57.5 },
    "밴딩 바지 → 허리 역산 스킵(엉덩이·허벅지만)");
+// 사용자 응답(e.waistband) 우선: 있음→고정 그룹이어도 스킵 / 없음→밴딩 그룹이어도 사용
+eq(FitEngine.bodyFromExperiences([Object.assign({}, bexp[0], { waistband: "banded" })], bspec),
+   { hip: 97, thigh: 57.5 }, "사용자 '밴딩 있음' → 허리 스킵(그룹 무관)");
+eq(FitEngine.bodyFromExperiences([Object.assign({}, bandexp[0], { waistband: "none" })], bandspec),
+   { waist: 78, hip: 97, thigh: 57.5 }, "사용자 '밴딩 없음' → 허리 사용(그룹 무관)");
 
 /* ── 추천 사이즈 (recommend): 어깨 들어가는 것 우선 → 가슴 여유 5cm에 근접 ────── */
 const specs = [

@@ -71,9 +71,14 @@
       if (!m.length) return;
       parts.forEach(function (part) {
         var rating = e.fits[part]; if (!rating) return;
-        // 밴딩 바지는 허리가 신축이라 역산 신뢰 불가. 경험은 브랜드·핏·사이즈 수준이라 어느 제품(밴딩?)인지 모름
-        //  → 매칭에 밴딩 제품이 하나라도 있으면 허리는 스킵(회귀값 폴백). 허벅지·엉덩이는 전부 유효.
-        if (part === "waist" && m.some(function (s) { return s.waistband; })) return;
+        // 밴딩 바지는 허리가 신축이라 역산 신뢰 불가 → 허리 스킵(회귀값 폴백). 허벅지·엉덩이는 전부 유효.
+        //  판정: 사용자 응답(e.waistband: 'banded'=있음 / 'none'=없음) 우선. '모름'/미응답이면 매칭 그룹의 밴딩 여부로 추정.
+        if (part === "waist") {
+          var banded = e.waistband === "banded" ? true
+            : e.waistband === "none" ? false
+            : m.some(function (s) { return s.waistband; });
+          if (banded) return;
+        }
         var flats = m.map(function (s) { return s.garmentCm[part]; }).filter(function (v) { return v != null; });
         if (!flats.length) return;
         var flat = flats.reduce(function (a, b) { return a + b; }, 0) / flats.length;
