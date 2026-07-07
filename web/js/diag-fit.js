@@ -209,11 +209,16 @@
   var PREF_DEFAULT={ease:'레귤러', silhouette:'스트레이트'};
   var PREF_SIL={'스키니':'skinny','슬림':'slim','스트레이트':'straight','테이퍼드':'tapered','와이드':'wide','부츠컷':'bootcut'};
   function prefAxis(cat){ return (cat||target)==='bottom'?'silhouette':'ease'; }
+  var PREFHELP={
+    ease:'선호하는 여유감은 <strong>옷 종류마다 달라서</strong> 종류를 고른 뒤 물어봐요. 이 취향은 추천에 반영돼요.',
+    silhouette:'바지는 <strong>실루엣마다 핏이 크게 달라서</strong>, 평소 즐겨 입는 실루엣을 골라주세요. 결과의 선호 실루엣에 반영돼요.'
+  };
   function renderPrefOpts(){
     var pseg=document.getElementById('prefseg'); if(!pseg) return;
     var ax=prefAxis(), def=PREF_DEFAULT[ax];
     pseg.innerHTML=PREFOPTS[ax].map(function(o){
       return '<div class="opt'+(o[0]===def?' on':'')+'" onclick="pick(this)">'+o[0]+' — '+o[1]+'</div>'; }).join('');
+    var ph=document.getElementById('prefhelp'); if(ph) ph.innerHTML=PREFHELP[ax];
   }
   // 선호핏 선택 → enum. 하의=실루엣(형태축), 그 외=fitLine(여유축). prefs[cat]에 저장.
   function fitLineFromPref(){
