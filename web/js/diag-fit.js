@@ -12,7 +12,8 @@
             items:['레귤러핏 셔츠','슬림핏 셔츠','오버핏 맨투맨','니트'],
             fit:['어깨','가슴','배'], flag:['팔(소매통)','목'], pref:['소매 기장','총장']},
     bottom:{label:'하의',  ready:true,  kind:'base', provides:'lower',
-            items:['레귤러 슬랙스','와이드 팬츠','스키니 진','트레이닝 팬츠'],
+            // 품목=실루엣(형태축). 바지는 같은 허리여도 실루엣별 허벅지·밑단이 달라 매칭 1차 키(engine silhouette).
+            items:['스키니 진','슬림 팬츠','스트레이트 팬츠','테이퍼드 팬츠','와이드 팬츠','부츠컷'],
             fit:['허리','엉덩이','허벅지'], flag:['종아리'], pref:['밑위','기장']},
     outer: {label:'아우터', ready:false, kind:'derived', needs:['upper'],
             items:['싱글 코트','블레이저','패딩','바람막이'],
@@ -227,6 +228,15 @@
     for(var i=0;i<keys.length;i++){ if(itemTxt.indexOf(keys[i])>=0) return FITLINE[keys[i]]; }
     return 'regular';
   }
+  // 하의 실루엣(형태축) — 품목 라벨에서 파싱. build-sizespec.py silhouette_of와 동일 규칙(1차 매칭키).
+  var SILH=[['부츠컷','bootcut'],['스키니','skinny'],['세미와이드','wide'],['리얼와이드','wide'],
+    ['와이드','wide'],['벌룬','wide'],['배기','wide'],['테이퍼','tapered'],['스트레이트','straight'],
+    ['커브드','slim'],['슬림','slim']];
+  function garmentSilhouette(itemTxt){
+    itemTxt=itemTxt||'';
+    for(var i=0;i<SILH.length;i++){ if(itemTxt.indexOf(SILH[i][0])>=0) return SILH[i][1]; }
+    return null;
+  }
   function collectExp(){
     var basic={}; try{ basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'{}'); }catch(e){}
     var cat=CATMAP[target]||'TOP', prefLine=fitLineFromPref();
@@ -243,6 +253,8 @@
       exps.push({ category:cat, brandId:BRANDID[brandTxt]||'unknown', brandName:brandTxt,
         fitLine:garmentFitLine(itemTxt), item:itemTxt, sizeLabel:szEl?szEl.textContent.trim():'M',
         subtype:subtypeOf(g), gender:BASIC.gender||'female', waistband:waistband,
+        // 하의는 실루엣(형태축)이 엔진 1차 매칭키. 상의는 undefined(fitLine 사용).
+        silhouette:cat==='BOTTOM'?garmentSilhouette(itemTxt):undefined,
         fits:f.fits, painFlags:f.painFlags, lengthPrefs:f.lengthPrefs, openNote:f.openNote });
     });
     // 기존 진단 결과에 병합 — 다른 카테고리(상↔하)는 보존하고, 같은 카테고리는 교체

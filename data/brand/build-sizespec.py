@@ -73,6 +73,32 @@ def waistband_of(product):
     return None            # 미표기(고정인지 불명)
 
 
+# 하의 실루엣(silhouette) — 상품명에서 파싱. fitLine(여유축)과 직교하는 '형태축'.
+#   6종: skinny·slim·straight·tapered·wide·bootcut. 바지는 같은 허리여도 실루엣별 허벅지·밑단이 크게 달라
+#   역산·매칭의 1차 키다(fitLine 여유축만으론 스트레이트·테이퍼드·와이드가 뭉개짐).
+#   특수 표기: 세미/리얼와이드·벌룬·배기→wide, 커브드→slim, 크링클=소재라 실루엣 무시(다른 토큰/폴백).
+SILHOUETTE = [   # (토큰, 실루엣) — 위에서부터 우선 매칭(더 구체적인 걸 먼저)
+    ("부츠컷", "bootcut"), ("부츠 컷", "bootcut"), ("bootcut", "bootcut"),
+    ("스키니", "skinny"), ("skinny", "skinny"),
+    ("세미와이드", "wide"), ("세미 와이드", "wide"), ("리얼와이드", "wide"),
+    ("와이드", "wide"), ("wide", "wide"), ("벌룬", "wide"), ("배기", "wide"),
+    ("테이퍼", "tapered"), ("taper", "tapered"),
+    ("스트레이트", "straight"), ("straight", "straight"),
+    ("커브드", "slim"), ("슬림", "slim"), ("slim", "slim"),
+]
+_SIL_FROM_FIT = {"skinny": "skinny", "slim": "slim", "regular": "straight",
+                 "loose": "wide", "oversize": "wide"}
+
+
+def silhouette_of(product, fitline):
+    """상품명에서 하의 실루엣 6종 추출. 없으면 fitLine(여유)에서 근사 폴백."""
+    p = nfc(product or "")
+    for tok, sil in SILHOUETTE:
+        if tok in p:
+            return sil
+    return _SIL_FROM_FIT.get(fitline, "straight")
+
+
 specs, skipped = [], 0
 for f in sorted(raw.glob("*.csv")):
     cs = next(((cat, sub) for k, (cat, sub) in FILES.items() if k in nfc(f.name)), None)
@@ -108,6 +134,7 @@ for f in sorted(raw.glob("*.csv")):
         }
         if category == "BOTTOM":
             spec["waistband"] = waistband_of(row.get("product"))  # 허리 밴딩(수용범위·역산에 영향)
+            spec["silhouette"] = silhouette_of(spec["product"], fit)  # 형태축(1차 매칭키)
         specs.append(spec)
 
 cats = sorted(set(s["category"] for s in specs))
@@ -120,7 +147,8 @@ doc = {
         "categories": cats,
         "note": "값은 사이즈표 '단면(flat) 원본' 그대로. 둘레=단면×2 환산·여유 계산은 규칙 모듈이 조회 시 수행. "
                 "BOTTOM.waistband=밴딩 유형(hidden/side/full/partial/null) — 허리 수용범위·역산 신뢰도에 영향. "
-                "현재 product명 추출이라 부분 커버(대부분 히든밴딩만) — 정식은 수집단 `밴딩` 컬럼 필요.",
+                "BOTTOM.silhouette=형태축(skinny/slim/straight/tapered/wide/bootcut) — 상품명 파싱, 역산·매칭의 1차 키"
+                "(fitLine 여유축과 직교). 둘 다 현재 product명 추출이라 부분 커버 — 정식은 수집단 `밴딩`·`실루엣` 컬럼 필요.",
         "parts": {
             "TOP": {"chest": "가슴단면(circ,flat→×2)", "shoulder": "어깨너비(width)",
                     "sleeve": "소매길이(len)", "length": "총장(len)"},

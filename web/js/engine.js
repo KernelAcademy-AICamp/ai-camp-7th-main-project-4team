@@ -64,9 +64,14 @@
       var parts = CAT_PARTS[e.category];
       if (!parts || !e.fits) return;
       var m = (specs || []).filter(function (s) {
-        return s.category === e.category && s.brandId === e.brandId && s.fitLine === e.fitLine &&
-          s.sizeLabel === e.sizeLabel && (s.gender === e.gender || s.gender === "unisex") &&
-          (!e.subtype || s.subtype === e.subtype);
+        if (s.category !== e.category || s.brandId !== e.brandId) return false;
+        if (s.sizeLabel !== e.sizeLabel) return false;
+        if (!(s.gender === e.gender || s.gender === "unisex")) return false;
+        if (e.subtype && s.subtype !== e.subtype) return false;
+        // 형태 매칭: 하의는 silhouette(형태축)이 1차 키 — 같은 허리여도 실루엣별 허벅지·밑단이 달라
+        //   fitLine(여유축)만으론 스트레이트·테이퍼드·와이드가 뭉개짐. 실루엣 없으면 fitLine 폴백.
+        if (e.category === "BOTTOM" && e.silhouette) return s.silhouette === e.silhouette;
+        return s.fitLine === e.fitLine;
       });
       if (!m.length) return;
       parts.forEach(function (part) {
