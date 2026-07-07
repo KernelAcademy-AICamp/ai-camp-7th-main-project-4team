@@ -190,7 +190,8 @@ def build_archetypes():
 
     with open(clean / "표준체형.csv", encoding="utf-8-sig", newline="") as f:
         for r in csv.DictReader(f):
-            # 소스 결함 교정: 50대 블록(행23~29)은 성별↔연령 열이 뒤바뀜 → 스왑
+            # 방어 가드: 성별↔연령이 뒤바뀐 행 교정. (과거 50대 블록 결함은 소스 CSV에서
+            # 고쳤으나, 원본 재import로 다시 섞여 들어올 때를 대비해 남겨둠 — 정상 행엔 무영향)
             sex, age = r["성별"], r["연령"]
             if sex not in GENDER and age in GENDER:
                 sex, age = age, sex
