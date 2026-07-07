@@ -71,6 +71,9 @@
       if (!m.length) return;
       parts.forEach(function (part) {
         var rating = e.fits[part]; if (!rating) return;
+        // 밴딩 바지는 허리가 신축이라 역산 신뢰 불가. 경험은 브랜드·핏·사이즈 수준이라 어느 제품(밴딩?)인지 모름
+        //  → 매칭에 밴딩 제품이 하나라도 있으면 허리는 스킵(회귀값 폴백). 허벅지·엉덩이는 전부 유효.
+        if (part === "waist" && m.some(function (s) { return s.waistband; })) return;
         var flats = m.map(function (s) { return s.garmentCm[part]; }).filter(function (v) { return v != null; });
         if (!flats.length) return;
         var flat = flats.reduce(function (a, b) { return a + b; }, 0) / flats.length;

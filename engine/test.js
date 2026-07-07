@@ -78,6 +78,13 @@ const bexp = [{ category: "BOTTOM", brandId: "m", fitLine: "regular", sizeLabel:
 // waist 40×2−2=78 · hip 50×2−3=97 · thigh 30×2−2.5=57.5
 eq(FitEngine.bodyFromExperiences(bexp, bspec), { waist: 78, hip: 97, thigh: 57.5 },
    "하의 SNUG 경험 → 허리78·엉덩이97·허벅지57.5 역산");
+// 밴딩 바지: 허리는 신축이라 역산 스킵, 엉덩이·허벅지만
+const bandspec = [{ category: "BOTTOM", brandId: "m", fitLine: "loose", sizeLabel: "30", gender: "male",
+  subtype: "long_pants", waistband: "hidden", garmentCm: { waist: 40, hip: 50, thigh: 30 } }];
+const bandexp = [{ category: "BOTTOM", brandId: "m", fitLine: "loose", sizeLabel: "30", gender: "male",
+  subtype: "long_pants", fits: { waist: "SNUG", hip: "SNUG", thigh: "SNUG" } }];
+eq(FitEngine.bodyFromExperiences(bandexp, bandspec), { hip: 97, thigh: 57.5 },
+   "밴딩 바지 → 허리 역산 스킵(엉덩이·허벅지만)");
 
 /* ── 추천 사이즈 (recommend): 어깨 들어가는 것 우선 → 가슴 여유 5cm에 근접 ────── */
 const specs = [

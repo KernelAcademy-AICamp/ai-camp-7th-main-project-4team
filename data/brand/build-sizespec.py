@@ -58,6 +58,21 @@ def num(s):
     return float(m.group(0)) if m else None
 
 
+def waistband_of(product):
+    """product명에서 허리 밴딩 유형 추출(수집 임시). 허리 수용범위·역산 신뢰도에 영향.
+    ⚠️ product명 의존 = 부분 커버(대부분 히든밴딩만 표기, 나머지는 불명). 정식은 수집단 `밴딩` 컬럼."""
+    p = nfc(product or "")
+    if "풀밴딩" in p or "전체밴딩" in p:
+        return "full"
+    if "사이드" in p and "밴" in p:
+        return "side"
+    if "히든" in p and "밴" in p:
+        return "hidden"
+    if "밴딩" in p or "밴드" in p:
+        return "partial"   # 밴딩 있으나 유형 불명
+    return None            # 미표기(고정인지 불명)
+
+
 specs, skipped = [], 0
 for f in sorted(raw.glob("*.csv")):
     cs = next(((cat, sub) for k, (cat, sub) in FILES.items() if k in nfc(f.name)), None)
@@ -85,12 +100,15 @@ for f in sorted(raw.glob("*.csv")):
         if keypart not in garment:          # 최소 기준부위 없으면 제외
             skipped += 1
             continue
-        specs.append({
+        spec = {
             "brandId": bid, "brandName": brand, "category": category,
             "fitLine": fit, "gender": g, "subtype": subtype,
             "sizeLabel": size, "garmentCm": garment,
             "product": (row.get("product") or "").strip(),
-        })
+        }
+        if category == "BOTTOM":
+            spec["waistband"] = waistband_of(row.get("product"))  # 허리 밴딩(수용범위·역산에 영향)
+        specs.append(spec)
 
 cats = sorted(set(s["category"] for s in specs))
 doc = {
@@ -100,7 +118,9 @@ doc = {
         "source": "브랜드 자사몰 사이즈표 수동 수집",
         "collectedAt": "2026-07-07",
         "categories": cats,
-        "note": "값은 사이즈표 '단면(flat) 원본' 그대로. 둘레=단면×2 환산·여유 계산은 규칙 모듈이 조회 시 수행.",
+        "note": "값은 사이즈표 '단면(flat) 원본' 그대로. 둘레=단면×2 환산·여유 계산은 규칙 모듈이 조회 시 수행. "
+                "BOTTOM.waistband=밴딩 유형(hidden/side/full/partial/null) — 허리 수용범위·역산 신뢰도에 영향. "
+                "현재 product명 추출이라 부분 커버(대부분 히든밴딩만) — 정식은 수집단 `밴딩` 컬럼 필요.",
         "parts": {
             "TOP": {"chest": "가슴단면(circ,flat→×2)", "shoulder": "어깨너비(width)",
                     "sleeve": "소매길이(len)", "length": "총장(len)"},
