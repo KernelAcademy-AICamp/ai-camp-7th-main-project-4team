@@ -103,4 +103,22 @@ try {
   console.log(`  (실데이터 스모크 건너뜀: ${e.message})`);
 }
 
-console.log(`\n✓ 골든 테스트 ${pass}건 통과 — engine.js가 명세(docs/6)와 일치.`);
+/* ── 8유형 분류기 (bodytype.js) — KS드롭+로우데이터 절단값 ─────────────── */
+const { FitBodyType } = require("../web/js/bodytype.js");
+assert.ok(FitBodyType && Array.isArray(FitBodyType.CODES), "bodytype.js가 FitBodyType export"); pass++;
+[
+  ["INV", { gender: "male", heightCm: 175, weightKg: 70, chestFull: 100, chestUpper: 100, waist: 88, hip: 96 }],
+  ["TRI", { gender: "female", heightCm: 160, weightKg: 52, chestFull: 82, waist: 66, hip: 96 }],
+  ["HRG", { gender: "female", heightCm: 162, weightKg: 52, chestFull: 88, waist: 66, hip: 92 }],
+  ["STR", { gender: "male", heightCm: 172, weightKg: 68, chestFull: 92, chestUpper: 93, waist: 86, hip: 92 }],
+  ["BAL", { gender: "male", heightCm: 174, weightKg: 70, chestFull: 94, chestUpper: 95, waist: 82, hip: 94 }],
+  ["RND", { gender: "male", heightCm: 170, weightKg: 92, chestFull: 108, chestUpper: 110, waist: 95, hip: 106 }],
+  ["DIA", { gender: "male", heightCm: 170, weightKg: 92, chestFull: 99, chestUpper: 100, waist: 96, hip: 98 }],
+  ["TUB", { gender: "female", heightCm: 166, weightKg: 45, chestFull: 80, waist: 62, hip: 86 }],
+].forEach(([want, inp]) => eq(FitBodyType.classify(inp), want, `8유형 분류 → ${want}`));
+eq(FitBodyType.classify({ gender: "male" }), null, "측정 부족 → null");
+eq(FitBodyType.classify({ gender: "x", chestFull: 90, waist: 80, hip: 92 }), null, "미지 성별 → null");
+const _bt = { gender: "female", heightCm: 160, weightKg: 52, chestFull: 82, waist: 66, hip: 96 };
+eq(FitBodyType.classify(_bt), FitBodyType.classify(_bt), "분류 결정론적");
+
+console.log(`\n✓ 골든 테스트 ${pass}건 통과 — engine.js·bodytype.js가 명세(docs/6)와 일치.`);
