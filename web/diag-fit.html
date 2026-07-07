@@ -51,7 +51,8 @@
     <p class="qhelp">선호하는 여유감은 <strong>옷 종류마다 달라서</strong> 종류를 고른 뒤 물어봐요. 이 취향은 <span class="catword">상의</span> 추천에만 적용돼요.</p>
     <div class="qbody">
       <div class="notice hidden" id="prefonlynote" style="margin-bottom:14px"></div>
-      <div class="seg stack">
+      <!-- 옵션은 카테고리 축에 따라 JS(applyTarget)가 채움: 상의/파생=여유, 하의=실루엣 -->
+      <div class="seg stack" id="prefseg">
         <div class="opt" onclick="pick(this)">스키니 — 몸에 딱 붙는</div>
         <div class="opt" onclick="pick(this)">슬림 — 군더더기 없이</div>
         <div class="opt on" onclick="pick(this)">레귤러 — 적당한 여유</div>

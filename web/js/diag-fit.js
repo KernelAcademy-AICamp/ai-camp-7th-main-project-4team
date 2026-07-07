@@ -92,6 +92,7 @@
   function applyTarget(){
     const c=CATS[target];
     ['item1','item2'].forEach(id=>document.getElementById(id).innerHTML=c.items.map(i=>'<option>'+i+'</option>').join(''));
+    renderPrefOpts();   // 선호핏 옵션(하의=실루엣 / 그 외=여유)
     document.querySelectorAll('.catword').forEach(e=>e.textContent=c.label);
     document.querySelectorAll('.longword').forEach(e=>e.textContent=LONGWORD[target]||'긴 옷');
     renderFacet(1); renderFacet(2); renderFeel(1); renderFeel(2); renderSizes(1); renderSizes(2);
@@ -200,11 +201,28 @@
   var FLAGV={'꼈어요':'TIGHT','괜찮았어요':'OK'};
   var PREFV={'짧음':'SHORT','딱 좋음':'GOOD','긺':'LONG'};
   var FITLINE={'스키니':'skinny','슬림':'slim','레귤러':'regular','루즈':'loose','오버':'oversize','타이트':'skinny'};
+  // 선호핏(idx1) 옵션 — 카테고리 축이 다름: 상의/파생=여유(ease), 하의=실루엣(형태).
+  var PREFOPTS={
+    ease:[['스키니','몸에 딱 붙는'],['슬림','군더더기 없이'],['레귤러','적당한 여유'],['루즈','넉넉하게'],['오버','크게 떨어지는']],
+    silhouette:[['스키니','몸에 딱'],['슬림','다리 라인 슬림'],['스트레이트','일자'],['테이퍼드','아래로 좁아지는'],['와이드','넓게'],['부츠컷','아래로 벌어지는']]
+  };
+  var PREF_DEFAULT={ease:'레귤러', silhouette:'스트레이트'};
+  var PREF_SIL={'스키니':'skinny','슬림':'slim','스트레이트':'straight','테이퍼드':'tapered','와이드':'wide','부츠컷':'bootcut'};
+  function prefAxis(cat){ return (cat||target)==='bottom'?'silhouette':'ease'; }
+  function renderPrefOpts(){
+    var pseg=document.getElementById('prefseg'); if(!pseg) return;
+    var ax=prefAxis(), def=PREF_DEFAULT[ax];
+    pseg.innerHTML=PREFOPTS[ax].map(function(o){
+      return '<div class="opt'+(o[0]===def?' on':'')+'" onclick="pick(this)">'+o[0]+' — '+o[1]+'</div>'; }).join('');
+  }
+  // 선호핏 선택 → enum. 하의=실루엣(형태축), 그 외=fitLine(여유축). prefs[cat]에 저장.
   function fitLineFromPref(){
-    var sel=document.querySelector('.wstep .seg.stack .opt.on') || document.querySelector('#derived-flow .seg.stack .opt.on');
-    if(!sel) return 'regular';
+    var inDerived = CATS[target] && CATS[target].kind==='derived';
+    var sel = inDerived ? document.querySelector('#derived-flow .seg.stack .opt.on')
+                        : document.querySelector('#prefseg .opt.on');
+    if(!sel) return target==='bottom'?'straight':'regular';
     var word=sel.textContent.trim().split(' ')[0];
-    return FITLINE[word]||'regular';
+    return target==='bottom' ? (PREF_SIL[word]||'straight') : (FITLINE[word]||'regular');
   }
   function collectFeel(boxId){
     var fits={}, flags={}, prefs={};

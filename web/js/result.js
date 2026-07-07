@@ -119,7 +119,9 @@
     return '<div class="rspec"><div class="top"><span class="pole'+lc+'">'+poleL+'</span><span class="pct"><span class="n">'+pct+'</span>%</span><span class="pole'+rc+'">'+poleR+'</span></div>'+
       '<div class="rtrack"><i style="width:'+pct+'%"></i></div><div class="raxis">'+axis+'</div></div>';
   }
-  var FITPCT={skinny:20,slim:32,regular:55,loose:70,oversize:85};
+  // 여유축(상의): skinny..oversize / 형태축(하의 실루엣): slim..wide 슬림도로 근사 배치.
+  var FITPCT={skinny:20,slim:32,regular:55,loose:70,oversize:85,
+    straight:50,tapered:45,wide:78,bootcut:62};
   if(window.BodyModel){ BodyModel.load().then(function(){
     var est=BodyModel.estimate(payload.basic||{});
     if(!est.ready) return;
@@ -155,7 +157,9 @@
         '<div class="rgrp">필수 부위 — '+(expUsed?'착용경험으로 <b style="color:var(--ink2)">역산</b>한 몸':'키·몸무게로 추정한 몸')+'</div>'+
         rows+
         '<div class="rgrp">선호</div>'+
-        specRow('타이트 선호',FITPCT[pref]||55,'여유 핏 선호','여유 선호핏 — 고른 핏 취향')+
+        (curCat==='BOTTOM'
+          ? specRow('슬림 실루엣',FITPCT[pref]||50,'와이드 실루엣','선호 실루엣 — 고른 바지 형태')
+          : specRow('타이트 선호',FITPCT[pref]||55,'여유 핏 선호','여유 선호핏 — 고른 핏 취향'))+
         '<div class="rnote" style="margin-top:16px">부위는 <b style="color:var(--ink2)">카테고리별로 달라져요</b>. '+(cardReady?'상·하의를 모두 마쳐 전신 비율까지 볼 수 있어요.':'다른 카테고리까지 진단하면 상하 균형·전신 비율이 나와요.')+'</div>';
 
       // 추천 — 브랜드 사이즈 데이터가 있는 TOP만 (역산 반영된 bodyVec)
