@@ -60,8 +60,9 @@
   function saveLS(k, v){ try{ localStorage.setItem('fitting.'+k, JSON.stringify(v)); }catch(e){} }
   var favs = loadLS('favs', [ {nm:'소희', svc:'online', rating:4.9, photo:'photos/p1.jpg'} ]);
   var reqs = loadLS('reqs', [
-    {nm:'상민', svc:'shopping', occ:['결혼식 하객'], budget:'10~15만', date:'2026.06.30', status:'진행중'},
-    {nm:'소희', svc:'online',   occ:['소개팅'],     budget:'5~10만',  date:'2026.06.28', status:'완료'}
+    {nm:'상민', svc:'shopping', occ:['결혼식 하객'], budget:'10~15만', date:'2026.06.30', status:'제안도착', offer:{price:150000, msg:'결혼식 하객 코디, 체형에 맞게 현장에서 딱 잡아드릴게요'}},
+    {nm:'건형', svc:'image',    occ:['면접·발표'],   budget:'15만+',   date:'2026.06.25', status:'진행중'},
+    {nm:'소희', svc:'online',   occ:['소개팅'],     budget:'5~10만',  date:'2026.06.20', status:'완료'}
   ]);
   function svcLabel(v){ return SVC[v]||v; }
   function isFav(nm){ return favs.some(function(f){ return f.nm===nm; }); }
@@ -84,17 +85,44 @@
         '<div class="fb"><b>'+f.nm+' 쇼퍼</b><small>'+svcLabel(f.svc)+' · ★ <span class="num">'+f.rating+'</span></small></div></div>';
     }).join('');
   }
-  /* 마이페이지 · 코디 요청 내역 렌더 */
-  function stClass(s){ return s==='완료'?'done':(s==='진행중'?'prog':'wait'); }
+  /* 마이페이지 · 코디 요청 내역 렌더 (라이프사이클) */
+  function stClass(s){ return (s==='완료'||s==='후기완료')?'done':(s==='진행중'?'prog':(s==='제안도착'?'offer':(s==='취소'?'cancel':'wait'))); }
+  function statusLabel(s){ return s==='제안도착'?'제안 도착':(s==='후기완료'?'후기 완료':s); }
+  function starsRO(n){ var s=''; for(var k=1;k<=5;k++) s+='<span style="color:'+(k<=n?'var(--ink)':'var(--line2)')+'">★</span>'; return s; }
+  function reviewForm(r,i){ var rt=r._rating||5, st='';
+    for(var k=1;k<=5;k++) st+='<span class="'+(k<=rt?'on':'')+'" onclick="setStar('+i+','+k+')">★</span>';
+    return '<div class="reqact"><div class="reviewform"><div class="stars">'+st+'</div><textarea class="rtext" id="rtext'+i+'" placeholder="쇼퍼와의 경험을 남겨주세요">'+(r._text||'')+'</textarea><div class="rbtns"><button class="tinybtn ghost" onclick="cancelReview('+i+')">취소</button><button class="tinybtn" onclick="submitReview('+i+')">후기 등록</button></div></div></div>';
+  }
+  function reqAction(r,i){ var s=r.status;
+    if(s==='대기') return '<div class="reqact"><span>쇼퍼가 요청을 검토하고 있어요</span><button class="tinybtn ghost" style="margin-left:auto" onclick="reqOffer('+i+')">제안 받기 · 데모</button></div>';
+    if(s==='제안도착'){ var o=r.offer||{}; return '<div class="reqact"><div class="offerbox"><b>제안 도착</b> · 견적 <span class="num">'+(o.price?o.price.toLocaleString():'—')+'</span>원<div class="omsg">"'+(o.msg||'')+'"</div></div><div class="obtns"><button class="tinybtn ghost" onclick="reqReject('+i+')">거절</button><button class="tinybtn" onclick="reqAccept('+i+')">수락하기</button></div></div>'; }
+    if(s==='진행중') return '<div class="reqact"><span>진행 중 · 완료되면 후기를 남겨주세요</span><button class="tinybtn ghost" style="margin-left:auto" onclick="reqComplete('+i+')">완료 처리 · 데모</button></div>';
+    if(s==='완료'){ if(r._reviewing) return reviewForm(r,i); return '<div class="reqact"><span>서비스가 완료됐어요 · 어떠셨나요?</span><button class="tinybtn" style="margin-left:auto" onclick="openReviewForm('+i+')">후기 작성하기</button></div>'; }
+    if(s==='후기완료'){ var rv=r.review||{}; return '<div class="reqact"><div class="revshow"><span class="starsRO">'+starsRO(rv.rating||5)+'</span> <span class="rtx">"'+(rv.text||'')+'"</span></div></div>'; }
+    if(s==='취소') return '<div class="reqact"><span class="muted">요청이 취소됐어요</span></div>';
+    return '';
+  }
   function renderReqs(){
     var el=document.getElementById('reqList'); if(!el) return;
     if(!reqs.length){ el.innerHTML='<p class="note">아직 보낸 요청이 없어요 · 쇼퍼에게 견적을 요청해보세요</p>'; return; }
-    el.innerHTML=reqs.map(function(r){
-      var title = r.kind==='notify' ? '1기 오픈 알림 신청' : (r.nm ? r.nm+' 쇼퍼 · '+svcLabel(r.svc) : '견적 요청 · '+svcLabel(r.svc));
-      var sub = r.kind==='notify' ? (svcLabel(r.svc)+' · 오픈 대기') : ([(r.occ&&r.occ.length?r.occ.join('·'):''), (r.date||'')].filter(Boolean).join(' · '));
-      return '<div class="req"><div class="ic"></div><div class="info"><b>'+title+'</b><small>'+sub+'</small></div><span class="st '+stClass(r.status)+'">'+r.status+'</span></div>';
+    el.innerHTML=reqs.map(function(r,i){
+      if(r.kind==='notify') return '<div class="req"><div class="reqtop"><div class="ic"></div><div class="info"><b>1기 오픈 알림 신청</b><small>'+svcLabel(r.svc)+' · 오픈 대기</small></div><span class="st wait">대기</span></div></div>';
+      var title = r.nm ? r.nm+' 쇼퍼 · '+svcLabel(r.svc) : '견적 요청 · '+svcLabel(r.svc);
+      var sub = [(r.occ&&r.occ.length?r.occ.join('·'):''), (r.date||'')].filter(Boolean).join(' · ');
+      return '<div class="req"><div class="reqtop"><div class="ic"></div><div class="info"><b>'+title+'</b><small>'+sub+'</small></div><span class="st '+stClass(r.status)+'">'+statusLabel(r.status)+'</span></div>'+reqAction(r,i)+'</div>';
     }).join('');
   }
+  /* 요청 라이프사이클 액션 (목업) */
+  function makeOffer(r){ var sh=EX.filter(function(x){return x.nm===r.nm;})[0]; var price=sh?sh.price:120000; var occ=(r.occ&&r.occ[0])||'이번'; return {price:price, msg:occ+' 코디, 체형·사이즈에 맞게 딱 잡아드릴게요'}; }
+  function reqOffer(i){ var r=reqs[i]; r.status='제안도착'; r.offer=makeOffer(r); saveLS('reqs',reqs); renderReqs(); toast((r.nm||'')+' 쇼퍼가 제안을 보냈어요'); }
+  function reqAccept(i){ reqs[i].status='진행중'; saveLS('reqs',reqs); renderReqs(); toast('제안을 수락했어요 · 진행을 시작해요'); }
+  function reqReject(i){ reqs[i].status='취소'; saveLS('reqs',reqs); renderReqs(); toast('제안을 거절했어요'); }
+  function reqComplete(i){ reqs[i].status='완료'; saveLS('reqs',reqs); renderReqs(); toast('서비스가 완료됐어요 · 후기를 남겨보세요'); }
+  function captureReview(i){ var ta=document.getElementById('rtext'+i); if(ta) reqs[i]._text=ta.value; }
+  function openReviewForm(i){ reqs[i]._reviewing=true; reqs[i]._rating=reqs[i]._rating||5; renderReqs(); }
+  function cancelReview(i){ captureReview(i); reqs[i]._reviewing=false; renderReqs(); }
+  function setStar(i,n){ captureReview(i); reqs[i]._rating=n; renderReqs(); }
+  function submitReview(i){ captureReview(i); var r=reqs[i]; r.review={rating:r._rating||5, text:(r._text||'').trim()||'만족스러웠어요'}; r.status='후기완료'; r._reviewing=false; delete r._text; delete r._rating; saveLS('reqs',reqs); renderReqs(); toast('후기를 등록했어요 · 감사합니다'); }
 
   /* 빈 상태 · 오픈 알림 신청 → 로그인 후 요청내역에 대기로 기록 */
   function notifySignup(){ var done=function(){ addReq({kind:'notify', svc:'image', status:'대기'}); toast('오픈 알림을 신청했어요 · 마이 > 코디 요청 내역에서 확인'); }; if(loggedIn()) done(); else openLogin('오픈 알림 신청', done); }
