@@ -1,0 +1,11 @@
+# 줄바꿈 정규화 — Windows/mac 혼용 시 CRLF/LF 충돌·diff 노이즈 방지.
+# 모든 텍스트는 저장소에 LF로 저장, 체크아웃 시 OS에 맞춤(text=auto).
+* text=auto eol=lf
+
+# 바이너리(줄바꿈 처리 안 함)
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.webp binary
+*.ico  binary
+*.xlsx binary

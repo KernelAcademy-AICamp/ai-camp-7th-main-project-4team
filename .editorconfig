@@ -1,0 +1,20 @@
+# 에디터 공통 설정 — 들여쓰기·문자셋·줄끝을 3인 PC에서 통일.
+# 대부분 에디터가 기본 지원(VS Code는 EditorConfig 확장 권장).
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false   # 마크다운 줄바꿈(끝 두 칸) 보존
+
+[*.py]
+indent_size = 4
+
+[Makefile]
+indent_style = tab
