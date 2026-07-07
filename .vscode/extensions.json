@@ -1,0 +1,8 @@
+{
+  "// ": "VS Code가 이 저장소를 열면 추천하는 확장. 설치는 선택.",
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "EditorConfig.EditorConfig",
+    "ritwickdey.LiveServer"
+  ]
+}

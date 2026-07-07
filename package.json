@@ -5,9 +5,14 @@
   "description": "핏팅 — 착용경험 기반 브랜드 사이즈 번역. 규칙 엔진(web/js/engine.js)이 정본.",
   "scripts": {
     "test": "node engine/test.js",
-    "serve": "node scripts/serve.js"
+    "serve": "node scripts/serve.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "prettier": "3.9.4"
   }
 }
