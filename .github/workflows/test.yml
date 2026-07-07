@@ -1,0 +1,18 @@
+name: test
+# 매 PR·main push마다 엔진 골든 테스트 실행 → 엔진 정본(engine.js)이 명세와 어긋나면 빨간불.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  engine-golden:
+    name: 엔진 골든 테스트
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      # 현재 의존성 0 → npm ci 불필요. 패키지 의존성이 생기면 여기에 `npm ci` 추가.
+      - run: npm test

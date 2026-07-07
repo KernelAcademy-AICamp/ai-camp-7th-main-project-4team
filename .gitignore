@@ -2,6 +2,16 @@
 .vercel
 node_modules
 
+# 비밀키·환경변수 — 절대 커밋 금지 (.env.example만 추적)
+.env
+.env.local
+.env.*.local
+
+# Next.js·빌드 산출물 (마일스톤1 이후)
+.next/
+out/
+dist/
+
 # 대용량 원본(사이즈코리아 XLSX) — clean CSV가 사용본
 data/body/raw/
 demo/
