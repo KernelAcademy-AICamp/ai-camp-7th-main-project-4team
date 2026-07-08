@@ -91,7 +91,7 @@
 
   function applyTarget(){
     const c=CATS[target];
-    ['item1','item2'].forEach(id=>document.getElementById(id).innerHTML=c.items.map(i=>'<option>'+i+'</option>').join(''));
+    renderItems(1); renderItems(2);   // 품목 = 브랜드별 실 수집 제품(데이터 없으면 CATS 기본)
     renderPrefOpts();   // 선호핏 옵션(하의=실루엣 / 그 외=여유)
     document.querySelectorAll('.catword').forEach(e=>e.textContent=c.label);
     document.querySelectorAll('.longword').forEach(e=>e.textContent=LONGWORD[target]||'긴 옷');
@@ -194,6 +194,35 @@
             : (labels.indexOf('M')>=0 ? 'M' : labels[Math.floor(labels.length/2)]);
     el.innerHTML=labels.map(function(l){ return '<div class="opt'+(l===def?' on':'')+'" onclick="pick(this)">'+l+'</div>'; }).join('');
   }
+  // 품목 = 우리가 수집한 실제 제품(브랜드·성별·subtype별). 데이터 없으면 CATS 기본 목록.
+  function garmentProducts(brandId, gender, subtype){
+    if(!GARMENTS || !brandId) return null;
+    var seen={}, list=[];
+    GARMENTS.forEach(function(s){
+      if(s.brandId!==brandId) return;
+      if(!(s.gender===gender || s.gender==='unisex')) return;
+      if(subtype && s.subtype!==subtype) return;
+      if(s.product && !seen[s.product]){ seen[s.product]=1; list.push(s.product); }
+    });
+    return list.length?list:null;
+  }
+  function renderItems(g){
+    var el=document.getElementById('item'+g); if(!el) return;
+    var bsel=document.getElementById('brand'+g);
+    var brandId=bsel?BRANDID[bsel.value]:null;
+    var prods=hasData(target) ? garmentProducts(brandId, BASIC.gender||'female', subtypeOf(g)) : null;
+    var items=prods || (CATS[target]?CATS[target].items:[]);
+    var prev=el.value;
+    el.innerHTML=items.map(function(i){ return '<option'+(i===prev?' selected':'')+'>'+i+'</option>'; }).join('');
+  }
+  // 선택한 실제 제품의 시드 스펙 조회 — fitLine·silhouette·waistband를 제품명 재파싱 대신 정본값으로.
+  function specOfItem(brandId, product, gender, subtype){
+    if(!GARMENTS || !brandId || !product) return null;
+    for(var i=0;i<GARMENTS.length;i++){ var s=GARMENTS[i];
+      if(s.brandId===brandId && s.product===product &&
+         (s.gender===gender || s.gender==='unisex') && (!subtype || s.subtype===subtype)) return s; }
+    return null;
+  }
   var LABELKEY={'어깨':'shoulder','가슴':'chest','가슴·품':'chest','배':'belly','소매':'sleeve','총장':'length',
     '허리':'waist','엉덩이':'hip','허벅지':'thigh','밑위':'rise','기장':'length',
     '팔(소매통)':'arm','팔':'arm','목':'neck','목/칼라':'neck','암홀':'armhole','종아리':'calf','밑단':'hem','상하 비율':'ratio'};
@@ -269,15 +298,17 @@
       var bsel=document.getElementById('brand'+g), brandTxt=bsel?bsel.value:'';
       var isel=document.getElementById('item'+g), itemTxt=isel?isel.value:'';
       var szEl=document.querySelector('#size'+g+' .opt.on');
-      // 하의 허리 밴드 응답 → waistband(엔진이 허리 역산 스킵 판정에 사용). 없으면 undefined('모름').
+      var brandId=BRANDID[brandTxt]||'unknown', gen=BASIC.gender||'female';
+      // 선택한 실제 제품의 시드 스펙 — fitLine·silhouette·waistband를 정본값으로(없으면 제품명 파싱 폴백).
+      var sp=specOfItem(brandId, itemTxt, gen, subtypeOf(g));
+      // 허리 밴드: 사용자 토글 우선 → '모름'이면 선택 제품의 밴딩값(hidden/side/full/partial→있음).
       var wbEl=document.querySelector('#feel'+g+' .wband-seg .opt.on'), wbLab=wbEl?wbEl.textContent.trim():'';
-      var waistband=wbLab==='없음'?'none':(wbLab==='있음'?'banded':undefined);
-      // fitLine = 입은 옷의 핏(역산 조회용). 선호핏(prefLine)은 prefs로 따로 저장.
-      exps.push({ category:cat, brandId:BRANDID[brandTxt]||'unknown', brandName:brandTxt,
-        fitLine:garmentFitLine(itemTxt), item:itemTxt, sizeLabel:szEl?szEl.textContent.trim():'M',
-        subtype:subtypeOf(g), gender:BASIC.gender||'female', waistband:waistband,
+      var waistband=wbLab==='없음'?'none':(wbLab==='있음'?'banded':((sp&&sp.waistband)?'banded':undefined));
+      exps.push({ category:cat, brandId:brandId, brandName:brandTxt,
+        fitLine: sp?sp.fitLine:garmentFitLine(itemTxt), item:itemTxt, sizeLabel:szEl?szEl.textContent.trim():'M',
+        subtype:subtypeOf(g), gender:gen, waistband:waistband,
         // 하의는 실루엣(형태축)이 엔진 1차 매칭키. 상의는 undefined(fitLine 사용).
-        silhouette:cat==='BOTTOM'?garmentSilhouette(itemTxt):undefined,
+        silhouette: cat==='BOTTOM' ? (sp?sp.silhouette:garmentSilhouette(itemTxt)) : undefined,
         fits:f.fits, painFlags:f.painFlags, lengthPrefs:f.lengthPrefs, openNote:f.openNote });
     });
     // 기존 진단 결과에 병합 — 다른 카테고리(상↔하)는 보존하고, 같은 카테고리는 교체
