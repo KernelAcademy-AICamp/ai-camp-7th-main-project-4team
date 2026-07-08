@@ -48,10 +48,11 @@
     <span class="qnum num"><span class="catword">상의</span> · 선호핏</span>
     <div class="target-chip">진단 대상 · <b class="catword">상의</b> <span class="change" onclick="goTo(0)">바꾸기</span></div>
     <h2 class="qhead"><span class="catword">상의</span>는 평소<br>어떤 핏으로 입어요?</h2>
-    <p class="qhelp">선호하는 여유감은 <strong>옷 종류마다 달라서</strong> 종류를 고른 뒤 물어봐요. 이 취향은 <span class="catword">상의</span> 추천에만 적용돼요.</p>
+    <p class="qhelp" id="prefhelp">선호하는 여유감은 <strong>옷 종류마다 달라서</strong> 종류를 고른 뒤 물어봐요. 이 취향은 <span class="catword">상의</span> 추천에만 적용돼요.</p>
     <div class="qbody">
       <div class="notice hidden" id="prefonlynote" style="margin-bottom:14px"></div>
-      <div class="seg stack">
+      <!-- 옵션은 카테고리 축에 따라 JS(applyTarget)가 채움: 상의/파생=여유, 하의=실루엣 -->
+      <div class="seg stack" id="prefseg">
         <div class="opt" onclick="pick(this)">스키니 — 몸에 딱 붙는</div>
         <div class="opt" onclick="pick(this)">슬림 — 군더더기 없이</div>
         <div class="opt on" onclick="pick(this)">레귤러 — 적당한 여유</div>
@@ -71,7 +72,7 @@
       <div class="grid-2">
         <div class="field"><label>브랜드</label>
           <!-- 앵커 브랜드 (착용경험 입력 축) · 출처: data/brand/anchor-brands.json · 자라·H&M=translationVariance(사이즈 편차 큼) -->
-          <select id="brand1" onchange="renderSizes(1)"><option>유니클로</option><option>무신사 스탠다드</option><option>나이키</option><option>탑텐</option><option>스파오</option><option>에잇세컨즈</option><option>노스페이스</option><option>H&amp;M (편차 큼)</option><option>자라 (편차 큼)</option><option>— 목록에 없음 —</option></select>
+          <select id="brand1" onchange="renderItems(1);renderSizes(1)"><option>유니클로</option><option>무신사 스탠다드</option><option>나이키</option><option>탑텐</option><option>스파오</option><option>에잇세컨즈</option><option>노스페이스</option><option>H&amp;M (편차 큼)</option><option>자라 (편차 큼)</option><option>— 목록에 없음 —</option></select>
         </div>
         <div class="field"><label>핏 / 품목</label>
           <select id="item1"></select>
@@ -119,7 +120,7 @@
     <div class="qbody">
       <div class="grid-2">
         <div class="field"><label>브랜드</label>
-          <select id="brand2" onchange="renderSizes(2)"><option>유니클로</option><option>무신사 스탠다드</option><option>나이키</option><option>탑텐</option><option>스파오</option><option>에잇세컨즈</option><option>노스페이스</option><option>H&amp;M (편차 큼)</option><option>자라 (편차 큼)</option><option>— 목록에 없음 —</option></select>
+          <select id="brand2" onchange="renderItems(2);renderSizes(2)"><option>유니클로</option><option>무신사 스탠다드</option><option>나이키</option><option>탑텐</option><option>스파오</option><option>에잇세컨즈</option><option>노스페이스</option><option>H&amp;M (편차 큼)</option><option>자라 (편차 큼)</option><option>— 목록에 없음 —</option></select>
         </div>
         <div class="field"><label>핏 / 품목</label>
           <select id="item2"></select>

@@ -64,9 +64,14 @@
       var parts = CAT_PARTS[e.category];
       if (!parts || !e.fits) return;
       var m = (specs || []).filter(function (s) {
-        return s.category === e.category && s.brandId === e.brandId && s.fitLine === e.fitLine &&
-          s.sizeLabel === e.sizeLabel && (s.gender === e.gender || s.gender === "unisex") &&
-          (!e.subtype || s.subtype === e.subtype);
+        if (s.category !== e.category || s.brandId !== e.brandId) return false;
+        if (s.sizeLabel !== e.sizeLabel) return false;
+        if (!(s.gender === e.gender || s.gender === "unisex")) return false;
+        if (e.subtype && s.subtype !== e.subtype) return false;
+        // 형태 매칭: 하의는 silhouette(형태축)이 1차 키 — 같은 허리여도 실루엣별 허벅지·밑단이 달라
+        //   fitLine(여유축)만으론 스트레이트·테이퍼드·와이드가 뭉개짐. 실루엣 없으면 fitLine 폴백.
+        if (e.category === "BOTTOM" && e.silhouette) return s.silhouette === e.silhouette;
+        return s.fitLine === e.fitLine;
       });
       if (!m.length) return;
       parts.forEach(function (part) {
@@ -178,8 +183,83 @@
     return recs;
   }
 
+  /* ── 하의 추천 (recommendBottom) ─────────────────────────────────────────────
+     상의(recommend)와 축이 다름: 실루엣(형태)로 후보를 좁히고, 허리를 사이즈 게이트로,
+     엉덩이·허벅지 수용을 확인한다. bodyVec={waist,hip,thigh}, prefSil=선호 실루엣. */
+  var TARGET_WAIST_EASE = 2; // 허리 여유 목표(cm) — BOTTOM:waist SNUG 중앙
+  var SIL_FALLBACK = ["straight", "slim", "tapered", "wide", "skinny", "bootcut"];
+
+  // 허리 여유 → 등급. 밴딩이면 신축이라 끼임을 완화(음수 여유도 어느 정도 수용).
+  function waistRating(e, waistband) {
+    var b = BANDS["BOTTOM:waist"], lo = waistband ? b.tight - 4 : b.tight;
+    return e <= lo ? "TIGHT" : e <= b.snug ? "SNUG" : e <= b.big ? "RELAXED" : "BIG";
+  }
+  // 핏 지수: 허리 이상편차 + 엉덩이·허벅지 끼임 감점. 여유(≥0)는 관대, 끼임(<0)은 큰 감점.
+  function scoreFitBottom(we, he, te) {
+    var wDev = Math.abs(we - TARGET_WAIST_EASE);
+    var hDev = he >= 900 ? 0 : he < 0 ? -he * 1.6 + 1 : Math.max(0, Math.abs(he - 3) - 3);
+    var tDev = te >= 900 ? 0 : te < 0 ? -te * 1.4 + 1 : Math.max(0, Math.abs(te - 2.5) - 3);
+    return Math.max(35, Math.min(99, Math.round(100 - (wDev * 4 + hDev * 3.5 + tDev * 2.5))));
+  }
+
+  function recommendBottom(bodyVec, prefSil, gender, subtype, specs) {
+    var byBrand = {};
+    (specs || []).forEach(function (s) {
+      if (s.category !== "BOTTOM") return;
+      if (!(s.gender === gender || s.gender === "unisex")) return;
+      if (subtype && s.subtype !== subtype) return;
+      (byBrand[s.brandId] = byBrand[s.brandId] || []).push(s);
+    });
+
+    var recs = [];
+    Object.keys(byBrand).forEach(function (bid) {
+      var list = byBrand[bid];
+      var haveSil = {}; list.forEach(function (s) { haveSil[s.silhouette] = 1; });
+      var sil = haveSil[prefSil] ? prefSil : SIL_FALLBACK.filter(function (f) { return haveSil[f]; })[0];
+      if (!sil) return;
+
+      var bySize = {};
+      list.forEach(function (s) {
+        if (s.silhouette !== sil || s.garmentCm.waist == null) return;
+        var e = bySize[s.sizeLabel] || (bySize[s.sizeLabel] = { size: s.sizeLabel, waist: [], hip: [], thigh: [], waistband: s.waistband });
+        e.waist.push(s.garmentCm.waist);
+        if (s.garmentCm.hip != null) e.hip.push(s.garmentCm.hip);
+        if (s.garmentCm.thigh != null) e.thigh.push(s.garmentCm.thigh);
+      });
+      function avg(a) { return a.reduce(function (x, y) { return x + y; }, 0) / a.length; }
+      var scored = Object.keys(bySize).map(function (k) {
+        var e = bySize[k];
+        return { size: k, waistband: e.waistband,
+          we: ease("waist", avg(e.waist), bodyVec.waist),
+          he: e.hip.length && bodyVec.hip ? ease("hip", avg(e.hip), bodyVec.hip) : 999,
+          te: e.thigh.length && bodyVec.thigh ? ease("thigh", avg(e.thigh), bodyVec.thigh) : 999 };
+      });
+      if (!scored.length) return;
+
+      // 엉덩이·허벅지가 들어가는(여유≥0) 사이즈 우선, 그 안에서 허리 여유가 목표에 가장 가까운 것
+      var okp = scored.filter(function (x) { return x.he >= 0 && x.te >= 0; });
+      var pool = okp.length ? okp : scored;
+      pool.sort(function (a, b) { return Math.abs(a.we - TARGET_WAIST_EASE) - Math.abs(b.we - TARGET_WAIST_EASE); });
+      var pick = pool[0];
+      var pill = PILL[waistRating(pick.we, pick.waistband)];
+      var bottleneck = (pick.he < BANDS["BOTTOM:hip"].snug && pick.he < 900) ? "엉덩이"
+        : (pick.te < BANDS["BOTTOM:thigh"].snug && pick.te < 900) ? "허벅지" : "허리";
+
+      recs.push({
+        brandId: bid, brandName: list[0].brandName, fitLine: sil, silhouette: sil, size: pick.size,
+        fit: pill.ko, warn: pill.warn, bottleneck: bottleneck, variance: VARIANCE[bid] || null,
+        waistEase: Math.round(pick.we * 10) / 10, fitScore: scoreFitBottom(pick.we, pick.he, pick.te),
+      });
+    });
+
+    recs.sort(function (a, b) {
+      return (b.fitScore - a.fitScore) || ((a.variance ? 1 : 0) - (b.variance ? 1 : 0));
+    });
+    return recs;
+  }
+
   global.FitEngine = {
-    recommend: recommend, ease: ease, chestRating: chestRating,
+    recommend: recommend, recommendBottom: recommendBottom, ease: ease, chestRating: chestRating,
     ratingToEase: ratingToEase, bodyFromExperiences: bodyFromExperiences, _real: true
   };
 })(typeof window !== "undefined" ? window : this);
