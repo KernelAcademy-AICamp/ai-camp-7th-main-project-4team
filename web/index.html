@@ -524,6 +524,10 @@
   #my .reqrow.active{box-shadow:inset 3px 0 0 var(--green); padding-left:14px;}
   #my .reqrow.active .reqrow-title{color:var(--green);}
   #my .reqrow.past{opacity:.5;}
+  /* 프로필 편집 폼 */
+  #my .pedit{padding:12px 0; border-bottom:1px solid var(--line);} #my .pedit:last-child{border-bottom:none;}
+  #my .pedit label{display:block; font-size:13px; font-weight:700; color:var(--sub); margin-bottom:8px;}
+  #my .pedit.inrow3{display:flex; gap:10px;} #my .pedit.inrow3 > div{flex:1;}
 
   /* ===== 견적 요청 결과(받은 견적) 오버레이 (IA 1.3.8) ===== */
   .bids-overlay{position:fixed; inset:0; background:var(--bg); z-index:120; display:none; overflow-y:auto;}
@@ -534,6 +538,26 @@
   .bids-head h2{font-size:27px; font-weight:800; letter-spacing:-.045em; margin:10px 0 0;}
   .bids-head .reqtype{margin-bottom:2px;}
   .bids-head p{font-size:14.5px; color:var(--sub); margin-top:10px; line-height:1.6;}
+  /* 공용 확인 모달 */
+  .confirm-scrim{position:fixed; inset:0; background:rgba(22,20,15,.5); z-index:140; display:none; align-items:center; justify-content:center; padding:24px;}
+  .confirm-scrim.on{display:flex; animation:f .18s ease;}
+  .confirm-box{background:#fff; border-radius:20px; padding:26px 24px 20px; max-width:340px; width:100%; box-shadow:0 24px 60px rgba(10,11,14,.28); text-align:center;}
+  .confirm-msg{font-size:16px; font-weight:700; color:var(--ink); line-height:1.55;}
+  .confirm-msg b{font-weight:800; color:var(--green);}
+  .confirm-msg .cf-sub{font-size:12.5px; color:var(--sub); font-weight:600; margin-top:9px; line-height:1.5;}
+  .confirm-btns{display:flex; gap:9px; margin-top:20px;}
+  .confirm-btns button{flex:1; padding:13px; border-radius:12px; font-size:14.5px; font-weight:800; font-family:inherit; cursor:pointer; border:none;}
+  .confirm-btns .cf-no{background:var(--soft); color:var(--ink);}
+  .confirm-btns .cf-no:hover{background:var(--line2);}
+  .confirm-btns .cf-yes{background:var(--ink); color:#fff;}
+  .confirm-btns .cf-yes:hover{background:#000;}
+
+  .bids-cancel{text-align:center; margin-top:26px;}
+  .bids-cancel button{background:none; border:none; color:var(--sub2); font-size:13px; font-weight:700; text-decoration:underline; text-underline-offset:2px; cursor:pointer; font-family:inherit;}
+  .bids-cancel button:hover{color:var(--warn);}
+  /* 매칭 완료 — 쇼퍼 카드 강조 배지 */
+  .rq-shopper.matched{border-color:var(--green); box-shadow:0 0 0 1.5px var(--green-soft), 0 8px 22px rgba(46,74,59,.12);}
+  .rq-shopper .rq-matched{position:absolute; top:-11px; left:16px; background:var(--green); color:#fff; font-size:11px; font-weight:800; padding:4px 11px; border-radius:20px; box-shadow:0 4px 12px rgba(46,74,59,.3);}
   .bids-overlay .tinybtn{font-weight:800; padding:11px 15px; border-radius:10px; background:var(--ink); color:#fff; border:none; cursor:pointer; white-space:nowrap; font-family:inherit;}
   .bids-overlay .tinybtn:hover{background:#000;}
   .bids-overlay .tinybtn.ghost{background:#fff; color:var(--ink); border:1.5px solid var(--line2);}
@@ -568,7 +592,7 @@
   .rs-row span{color:var(--sub); flex:none;} .rs-row b{color:var(--ink); font-weight:700; text-align:right;}
   .rs-note{font-size:12px; color:var(--green); font-weight:700; padding:12px 0 4px;}
   /* 지명 요청 상세 — 쇼퍼 + 섹션 */
-  .rq-shopper{display:flex; align-items:center; gap:13px; background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px 18px; box-shadow:0 4px 14px rgba(20,18,16,.05);}
+  .rq-shopper{position:relative; display:flex; align-items:center; gap:13px; background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px 18px; box-shadow:0 4px 14px rgba(20,18,16,.05);}
   .rq-shopper .rq-ph{width:48px; height:48px; border-radius:50%; object-fit:cover; filter:saturate(.6); flex:none;}
   .rq-shopper .rq-info{flex:1; min-width:0;}
   .rq-shopper .rq-nm{font-size:16px; font-weight:800; letter-spacing:-.02em;}
@@ -811,21 +835,7 @@
           <div class="crumb">마이페이지 · 1.4·A</div>
           <h1>프로필 기본정보</h1>
           <p class="lead">진단 정확도의 바탕이 되는 정보예요 · <b style="color:var(--ink)">진단 입력값과 연동</b>돼요</p>
-          <div class="mcard">
-            <div class="msub"><div class="subhead">이름·닉네임 / 사진 <span class="pr half">◐ MVP</span></div>
-              <div class="field"><span>이름</span><span class="v">김도현</span></div>
-              <div class="field"><span>닉네임</span><span class="v ph">설정 안 함</span></div>
-            </div>
-            <div class="msub"><div class="subhead">신체 정보 <span class="pr half">◐ MVP</span></div>
-              <div class="field"><span>성별 · 나이</span><span class="v">남성 · <span class="num">33</span>세</span></div>
-              <div class="field"><span>키 · 몸무게</span><span class="v"><span class="num">172</span>cm · <span class="num">68</span>kg</span></div>
-              <div class="note">🔒 민감정보 · 편집 시 재진단을 추천해요</div>
-            </div>
-            <div class="msub"><div class="subhead">선호 핏 <span class="pr half">◐ MVP</span></div>
-              <div class="field"><span>핏 취향</span><span class="v">슬림</span></div>
-            </div>
-          </div>
-          <button class="btn" onclick="toast('프로필 편집 — 신체정보 변경 시 재진단 안내')">수정하기</button>
+          <div id="profCard"></div>
         </section>
 
         <!-- 1.4·B 내 진단 결과 -->
@@ -941,6 +951,14 @@
 <!-- ===== 견적 요청 결과(받은 견적) 오버레이 (IA 1.3.8) ===== -->
 <div class="bids-overlay" id="bidsOverlay">
   <div class="bids-inner" id="bidsBody"></div>
+</div>
+
+<!-- ===== 공용 확인 모달 ===== -->
+<div class="confirm-scrim" id="confirmModal" onclick="closeConfirm()">
+  <div class="confirm-box" onclick="event.stopPropagation()">
+    <div class="confirm-msg" id="confirmMsg"></div>
+    <div class="confirm-btns"><button class="cf-no" id="confirmNo" onclick="closeConfirm()">취소하기</button><button class="cf-yes" id="confirmYes">확인</button></div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
