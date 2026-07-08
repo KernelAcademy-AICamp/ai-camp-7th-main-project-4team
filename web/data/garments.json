@@ -8,7 +8,7 @@
    "BOTTOM",
    "TOP"
   ],
-  "note": "값은 사이즈표 '단면(flat) 원본' 그대로. 둘레=단면×2 환산·여유 계산은 규칙 모듈이 조회 시 수행. BOTTOM.waistband=밴딩 유형(full/side/back/null 등) — 허리 수용범위·역산 신뢰도에 영향. 수집단 `밴딩` 컬럼(없음/풀밴딩/사이드밴딩/뒷밴딩)에서 매핑, 없으면 product명 추측 폴백. 엔진은 truthy 여부만 사용(값 있으면 허리 역산 스킵).",
+  "note": "값은 사이즈표 '단면(flat) 원본' 그대로. 둘레=단면×2 환산·여유 계산은 규칙 모듈이 조회 시 수행. BOTTOM.waistband=밴딩 유형(hidden/side/full/partial/null) — 허리 수용범위·역산 신뢰도에 영향. BOTTOM.silhouette=형태축(skinny/slim/straight/tapered/wide/bootcut) — 상품명 파싱, 역산·매칭의 1차 키(fitLine 여유축과 직교). 둘 다 현재 product명 추출이라 부분 커버 — 정식은 수집단 `밴딩`·`실루엣` 컬럼 필요.",
   "parts": {
    "TOP": {
     "chest": "가슴단면(circ,flat→×2)",
@@ -6898,7 +6898,8 @@
     "hem": 20.0
    },
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -6917,7 +6918,8 @@
     "hem": 20.3
    },
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -6936,7 +6938,8 @@
     "hem": 20.5
    },
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -6955,7 +6958,8 @@
     "hem": 20.8
    },
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -6974,7 +6978,8 @@
     "hem": 21.0
    },
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -6993,7 +6998,8 @@
     "hem": 21.3
    },
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7012,7 +7018,8 @@
     "hem": 21.5
    },
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7031,7 +7038,8 @@
     "hem": 21.8
    },
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7050,7 +7058,8 @@
     "hem": 22.0
    },
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7069,7 +7078,8 @@
     "hem": 22.5
    },
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7088,7 +7098,8 @@
     "hem": 23.0
    },
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7107,7 +7118,8 @@
     "hem": 23.5
    },
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7126,7 +7138,8 @@
     "hem": 24.0
    },
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7145,7 +7158,8 @@
     "hem": 25.5
    },
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7164,7 +7178,8 @@
     "hem": 25.8
    },
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7183,7 +7198,8 @@
     "hem": 26.0
    },
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7202,7 +7218,8 @@
     "hem": 26.3
    },
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7221,7 +7238,8 @@
     "hem": 26.5
    },
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7240,7 +7258,8 @@
     "hem": 26.8
    },
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7259,7 +7278,8 @@
     "hem": 27.0
    },
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7278,7 +7298,8 @@
     "hem": 27.3
    },
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7297,7 +7318,8 @@
     "hem": 27.5
    },
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7316,7 +7338,8 @@
     "hem": 28.0
    },
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7335,7 +7358,8 @@
     "hem": 28.5
    },
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7354,7 +7378,8 @@
     "hem": 29.0
    },
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7373,7 +7398,8 @@
     "hem": 29.5
    },
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7392,7 +7418,8 @@
     "hem": 22.5
    },
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7411,7 +7438,8 @@
     "hem": 22.8
    },
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7430,7 +7458,8 @@
     "hem": 23.0
    },
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7449,7 +7478,8 @@
     "hem": 23.3
    },
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7468,7 +7498,8 @@
     "hem": 23.5
    },
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7487,7 +7518,8 @@
     "hem": 23.8
    },
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7506,7 +7538,8 @@
     "hem": 24.0
    },
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7525,7 +7558,8 @@
     "hem": 24.3
    },
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7544,7 +7578,8 @@
     "hem": 24.5
    },
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7563,7 +7598,8 @@
     "hem": 25.0
    },
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7582,7 +7618,8 @@
     "hem": 25.5
    },
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7601,7 +7638,8 @@
     "hem": 26.0
    },
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7620,7 +7658,8 @@
     "hem": 26.5
    },
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -7639,7 +7678,8 @@
     "hem": 19.5
    },
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -7658,7 +7698,8 @@
     "hem": 19.8
    },
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -7677,7 +7718,8 @@
     "hem": 20.0
    },
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -7696,7 +7738,8 @@
     "hem": 20.2
    },
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -7715,7 +7758,8 @@
     "hem": 20.5
    },
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -7734,7 +7778,8 @@
     "hem": 20.8
    },
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -7753,7 +7798,8 @@
     "hem": 21.0
    },
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -7772,7 +7818,8 @@
     "hem": 21.3
    },
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -7791,7 +7838,8 @@
     "hem": 21.5
    },
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -7810,7 +7858,8 @@
     "hem": 22.0
    },
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -7829,7 +7878,8 @@
     "hem": 22.5
    },
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -7848,7 +7898,8 @@
     "hem": 23.0
    },
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -7867,7 +7918,8 @@
     "hem": 23.5
    },
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -7886,7 +7938,8 @@
     "hem": 21.5
    },
    "product": "레플리카 퍼티그 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -7905,7 +7958,8 @@
     "hem": 21.8
    },
    "product": "레플리카 퍼티그 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -7924,7 +7978,8 @@
     "hem": 22.0
    },
    "product": "레플리카 퍼티그 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -7943,7 +7998,8 @@
     "hem": 22.3
    },
    "product": "레플리카 퍼티그 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -7962,7 +8018,8 @@
     "hem": 22.5
    },
    "product": "레플리카 퍼티그 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -7981,7 +8038,8 @@
     "hem": 22.8
    },
    "product": "레플리카 퍼티그 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8000,7 +8058,8 @@
     "hem": 23.0
    },
    "product": "레플리카 퍼티그 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8019,7 +8078,8 @@
     "hem": 23.3
    },
    "product": "레플리카 퍼티그 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8038,7 +8098,8 @@
     "hem": 23.5
    },
    "product": "레플리카 퍼티그 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8057,7 +8118,8 @@
     "hem": 24.0
    },
    "product": "레플리카 퍼티그 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8076,7 +8138,8 @@
     "hem": 24.5
    },
    "product": "레플리카 퍼티그 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8095,7 +8158,8 @@
     "hem": 25.0
    },
    "product": "레플리카 퍼티그 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8114,7 +8178,8 @@
     "hem": 25.5
    },
    "product": "레플리카 퍼티그 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8133,7 +8198,8 @@
     "hem": 24.75
    },
    "product": "커브드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -8152,7 +8218,8 @@
     "hem": 25.0
    },
    "product": "커브드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -8171,7 +8238,8 @@
     "hem": 25.25
    },
    "product": "커브드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -8190,7 +8258,8 @@
     "hem": 25.5
    },
    "product": "커브드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -8209,7 +8278,8 @@
     "hem": 25.75
    },
    "product": "커브드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -8228,7 +8298,8 @@
     "hem": 26.0
    },
    "product": "커브드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -8247,7 +8318,8 @@
     "hem": 26.25
    },
    "product": "커브드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -8266,7 +8338,8 @@
     "hem": 26.5
    },
    "product": "커브드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -8285,7 +8358,8 @@
     "hem": 27.0
    },
    "product": "커브드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -8304,7 +8378,8 @@
     "hem": 27.5
    },
    "product": "커브드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -8323,7 +8398,8 @@
     "hem": 28.0
    },
    "product": "커브드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -8342,7 +8418,8 @@
     "hem": 28.5
    },
    "product": "커브드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -8361,7 +8438,8 @@
     "hem": 24.5
    },
    "product": "와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8380,7 +8458,8 @@
     "hem": 24.75
    },
    "product": "와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8399,7 +8478,8 @@
     "hem": 25.0
    },
    "product": "와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8418,7 +8498,8 @@
     "hem": 25.25
    },
    "product": "와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8437,7 +8518,8 @@
     "hem": 25.5
    },
    "product": "와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8456,7 +8538,8 @@
     "hem": 25.75
    },
    "product": "와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8475,7 +8558,8 @@
     "hem": 26.0
    },
    "product": "와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8494,7 +8578,8 @@
     "hem": 26.25
    },
    "product": "와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8513,7 +8598,8 @@
     "hem": 26.5
    },
    "product": "와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8532,7 +8618,8 @@
     "hem": 27.0
    },
    "product": "와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8551,7 +8638,8 @@
     "hem": 27.5
    },
    "product": "와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8570,7 +8658,8 @@
     "hem": 28.0
    },
    "product": "와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8589,7 +8678,8 @@
     "hem": 28.5
    },
    "product": "와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8608,7 +8698,8 @@
     "hem": 19.9
    },
    "product": "스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8627,7 +8718,8 @@
     "hem": 20.25
    },
    "product": "스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8646,7 +8738,8 @@
     "hem": 20.6
    },
    "product": "스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8665,7 +8758,8 @@
     "hem": 20.95
    },
    "product": "스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8684,7 +8778,8 @@
     "hem": 21.3
    },
    "product": "스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8703,7 +8798,8 @@
     "hem": 21.65
    },
    "product": "스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8722,7 +8818,8 @@
     "hem": 22.0
    },
    "product": "스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8741,7 +8838,8 @@
     "hem": 22.35
    },
    "product": "스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8760,7 +8858,8 @@
     "hem": 22.7
    },
    "product": "스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8779,7 +8878,8 @@
     "hem": 23.4
    },
    "product": "스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8798,7 +8898,8 @@
     "hem": 24.1
    },
    "product": "스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8817,7 +8918,8 @@
     "hem": 24.8
    },
    "product": "스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8836,7 +8938,8 @@
     "hem": 25.5
    },
    "product": "스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -8855,7 +8958,8 @@
     "hem": 24.0
    },
    "product": "코튼 와이드 벌룬 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8874,7 +8978,8 @@
     "hem": 24.3
    },
    "product": "코튼 와이드 벌룬 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8893,7 +8998,8 @@
     "hem": 24.5
    },
    "product": "코튼 와이드 벌룬 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8912,7 +9018,8 @@
     "hem": 24.8
    },
    "product": "코튼 와이드 벌룬 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8931,7 +9038,8 @@
     "hem": 25.0
    },
    "product": "코튼 와이드 벌룬 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8950,7 +9058,8 @@
     "hem": 25.3
    },
    "product": "코튼 와이드 벌룬 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8969,7 +9078,8 @@
     "hem": 25.5
    },
    "product": "코튼 와이드 벌룬 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8988,7 +9098,8 @@
     "hem": 25.8
    },
    "product": "코튼 와이드 벌룬 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9007,7 +9118,8 @@
     "hem": 26.0
    },
    "product": "코튼 와이드 벌룬 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9026,7 +9138,8 @@
     "hem": 26.5
    },
    "product": "코튼 와이드 벌룬 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9045,7 +9158,8 @@
     "hem": 27.0
    },
    "product": "코튼 와이드 벌룬 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9064,7 +9178,8 @@
     "hem": 27.5
    },
    "product": "코튼 와이드 벌룬 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9083,7 +9198,8 @@
     "hem": 24.75
    },
    "product": "우먼즈 더블 니트 투 턱 와이드 라운지 스웨트 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9102,7 +9218,8 @@
     "hem": 25.75
    },
    "product": "우먼즈 더블 니트 투 턱 와이드 라운지 스웨트 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9121,7 +9238,8 @@
     "hem": 26.75
    },
    "product": "우먼즈 더블 니트 투 턱 와이드 라운지 스웨트 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9140,7 +9258,8 @@
     "hem": 27.75
    },
    "product": "우먼즈 더블 니트 투 턱 와이드 라운지 스웨트 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9159,7 +9278,8 @@
     "hem": 24.0
    },
    "product": "우먼즈 와이드 카고 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9178,7 +9298,8 @@
     "hem": 24.3
    },
    "product": "우먼즈 와이드 카고 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9197,7 +9318,8 @@
     "hem": 24.5
    },
    "product": "우먼즈 와이드 카고 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9216,7 +9338,8 @@
     "hem": 24.8
    },
    "product": "우먼즈 와이드 카고 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9235,7 +9358,8 @@
     "hem": 25.0
    },
    "product": "우먼즈 와이드 카고 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9254,7 +9378,8 @@
     "hem": 25.3
    },
    "product": "우먼즈 와이드 카고 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9273,7 +9398,8 @@
     "hem": 25.5
    },
    "product": "우먼즈 와이드 카고 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9292,7 +9418,8 @@
     "hem": 25.5
    },
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9311,7 +9438,8 @@
     "hem": 25.75
    },
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9330,7 +9458,8 @@
     "hem": 26.0
    },
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9349,7 +9478,8 @@
     "hem": 26.25
    },
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9368,7 +9498,8 @@
     "hem": 26.5
    },
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9387,7 +9518,8 @@
     "hem": 26.75
    },
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9406,7 +9538,8 @@
     "hem": 27.0
    },
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9425,7 +9558,8 @@
     "hem": 27.25
    },
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9444,7 +9578,8 @@
     "hem": 27.5
    },
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9463,7 +9598,8 @@
     "hem": 28.0
    },
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9482,7 +9618,8 @@
     "hem": 26.25
    },
    "product": "우먼즈 세미 부츠 컷 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "bootcut"
   },
   {
    "brandId": "musinsa-standard",
@@ -9501,7 +9638,8 @@
     "hem": 26.5
    },
    "product": "우먼즈 세미 부츠 컷 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "bootcut"
   },
   {
    "brandId": "musinsa-standard",
@@ -9520,7 +9658,8 @@
     "hem": 26.75
    },
    "product": "우먼즈 세미 부츠 컷 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "bootcut"
   },
   {
    "brandId": "musinsa-standard",
@@ -9539,7 +9678,8 @@
     "hem": 27.0
    },
    "product": "우먼즈 세미 부츠 컷 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "bootcut"
   },
   {
    "brandId": "musinsa-standard",
@@ -9558,7 +9698,8 @@
     "hem": 27.25
    },
    "product": "우먼즈 세미 부츠 컷 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "bootcut"
   },
   {
    "brandId": "musinsa-standard",
@@ -9577,7 +9718,8 @@
     "hem": 27.5
    },
    "product": "우먼즈 세미 부츠 컷 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "bootcut"
   },
   {
    "brandId": "musinsa-standard",
@@ -9596,7 +9738,8 @@
     "hem": 27.75
    },
    "product": "우먼즈 세미 부츠 컷 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "bootcut"
   },
   {
    "brandId": "musinsa-standard",
@@ -9615,7 +9758,8 @@
     "hem": 28.75
    },
    "product": "우먼즈 세미 부츠 컷 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "bootcut"
   },
   {
    "brandId": "musinsa-standard",
@@ -9634,7 +9778,8 @@
     "hem": 23.0
    },
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -9653,7 +9798,8 @@
     "hem": 23.25
    },
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -9672,7 +9818,8 @@
     "hem": 23.5
    },
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -9691,7 +9838,8 @@
     "hem": 23.75
    },
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -9710,7 +9858,8 @@
     "hem": 24.0
    },
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -9729,7 +9878,8 @@
     "hem": 24.25
    },
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -9748,7 +9898,8 @@
     "hem": 24.5
    },
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -9767,7 +9918,8 @@
     "hem": 24.75
    },
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -9786,7 +9938,8 @@
     "hem": 25.0
    },
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -9805,7 +9958,8 @@
     "hem": 25.5
    },
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -9824,7 +9978,8 @@
     "hem": 27.0
    },
    "product": "우먼즈 코튼 커브드 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -9843,7 +9998,8 @@
     "hem": 27.25
    },
    "product": "우먼즈 코튼 커브드 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -9862,7 +10018,8 @@
     "hem": 27.5
    },
    "product": "우먼즈 코튼 커브드 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -9881,7 +10038,8 @@
     "hem": 27.75
    },
    "product": "우먼즈 코튼 커브드 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -9900,7 +10058,8 @@
     "hem": 28.0
    },
    "product": "우먼즈 코튼 커브드 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -9919,7 +10078,8 @@
     "hem": 28.25
    },
    "product": "우먼즈 코튼 커브드 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -9938,7 +10098,8 @@
     "hem": 28.5
    },
    "product": "우먼즈 코튼 커브드 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -9957,7 +10118,8 @@
     "hem": 17.0
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -9976,7 +10138,8 @@
     "hem": 17.25
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -9995,7 +10158,8 @@
     "hem": 17.5
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -10014,7 +10178,8 @@
     "hem": 17.75
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -10033,7 +10198,8 @@
     "hem": 18.0
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -10052,7 +10218,8 @@
     "hem": 18.25
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -10071,7 +10238,8 @@
     "hem": 18.5
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -10090,7 +10258,8 @@
     "hem": 18.75
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -10109,7 +10278,8 @@
     "hem": 19.0
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -10128,7 +10298,8 @@
     "hem": 19.5
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -10147,7 +10318,8 @@
     "hem": 22.5
    },
    "product": "우먼즈 릴렉스드 라운지 스웨트 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10166,7 +10338,8 @@
     "hem": 23.0
    },
    "product": "우먼즈 릴렉스드 라운지 스웨트 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10185,7 +10358,8 @@
     "hem": 23.5
    },
    "product": "우먼즈 릴렉스드 라운지 스웨트 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10204,7 +10378,8 @@
     "hem": 24.0
    },
    "product": "우먼즈 릴렉스드 라운지 스웨트 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10223,7 +10398,8 @@
     "hem": 25.25
    },
    "product": "우먼즈 와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10242,7 +10418,8 @@
     "hem": 25.5
    },
    "product": "우먼즈 와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10261,7 +10438,8 @@
     "hem": 25.75
    },
    "product": "우먼즈 와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10280,7 +10458,8 @@
     "hem": 26.0
    },
    "product": "우먼즈 와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10299,7 +10478,8 @@
     "hem": 26.25
    },
    "product": "우먼즈 와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10318,7 +10498,8 @@
     "hem": 26.5
    },
    "product": "우먼즈 와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10337,7 +10518,8 @@
     "hem": 26.75
    },
    "product": "우먼즈 와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10356,7 +10538,8 @@
     "hem": 27.0
    },
    "product": "우먼즈 와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10375,7 +10558,8 @@
     "hem": 27.25
    },
    "product": "우먼즈 와이드 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10394,7 +10578,8 @@
     "hem": 21.25
    },
    "product": "우먼즈 스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -10413,7 +10598,8 @@
     "hem": 21.5
    },
    "product": "우먼즈 스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -10432,7 +10618,8 @@
     "hem": 21.75
    },
    "product": "우먼즈 스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -10451,7 +10638,8 @@
     "hem": 22.0
    },
    "product": "우먼즈 스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -10470,7 +10658,8 @@
     "hem": 22.25
    },
    "product": "우먼즈 스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -10489,7 +10678,8 @@
     "hem": 22.5
    },
    "product": "우먼즈 스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -10508,7 +10698,8 @@
     "hem": 22.75
    },
    "product": "우먼즈 스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -10527,7 +10718,8 @@
     "hem": 23.0
    },
    "product": "우먼즈 스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "musinsa-standard",
@@ -10546,7 +10738,8 @@
     "hem": 23.5
    },
    "product": "우먼즈 스트레이트 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "uniqlo",
@@ -10564,7 +10757,8 @@
     "hem": 18.5
    },
    "product": "감탄팬츠(라이트)",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10582,7 +10776,8 @@
     "hem": 18.5
    },
    "product": "감탄팬츠(라이트)",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10600,7 +10795,8 @@
     "hem": 19.0
    },
    "product": "감탄팬츠(라이트)",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10618,7 +10814,8 @@
     "hem": 19.5
    },
    "product": "감탄팬츠(라이트)",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10636,7 +10833,8 @@
     "hem": 20.0
    },
    "product": "감탄팬츠(라이트)",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10654,7 +10852,8 @@
     "hem": 20.5
    },
    "product": "감탄팬츠(라이트)",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10672,7 +10871,8 @@
     "hem": 20.5
    },
    "product": "감탄팬츠(라이트)",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10690,7 +10890,8 @@
     "hem": 21.0
    },
    "product": "감탄팬츠(라이트)",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10708,7 +10909,8 @@
     "hem": 21.5
    },
    "product": "감탄팬츠(라이트)",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10726,7 +10928,8 @@
     "hem": 21.5
    },
    "product": "감탄팬츠(라이트)",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10744,7 +10947,8 @@
     "hem": 18.5
    },
    "product": "감탄팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10762,7 +10966,8 @@
     "hem": 18.5
    },
    "product": "감탄팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10780,7 +10985,8 @@
     "hem": 19.0
    },
    "product": "감탄팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10798,7 +11004,8 @@
     "hem": 19.5
    },
    "product": "감탄팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10816,7 +11023,8 @@
     "hem": 20.0
    },
    "product": "감탄팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10834,7 +11042,8 @@
     "hem": 20.5
    },
    "product": "감탄팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10852,7 +11061,8 @@
     "hem": 20.5
    },
    "product": "감탄팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10870,7 +11080,8 @@
     "hem": 21.0
    },
    "product": "감탄팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10888,7 +11099,8 @@
     "hem": 21.5
    },
    "product": "감탄팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10906,7 +11118,8 @@
     "hem": 21.5
    },
    "product": "감탄팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "uniqlo",
@@ -10925,7 +11138,8 @@
     "hem": 22.0
    },
    "product": "와이드핏치노팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -10944,7 +11158,8 @@
     "hem": 22.5
    },
    "product": "와이드핏치노팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -10963,7 +11178,8 @@
     "hem": 23.0
    },
    "product": "와이드핏치노팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -10982,7 +11198,8 @@
     "hem": 23.5
    },
    "product": "와이드핏치노팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11001,7 +11218,8 @@
     "hem": 24.0
    },
    "product": "와이드핏치노팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11020,7 +11238,8 @@
     "hem": 24.5
    },
    "product": "와이드핏치노팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11039,7 +11258,8 @@
     "hem": 24.5
    },
    "product": "와이드핏치노팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11058,7 +11278,8 @@
     "hem": 25.0
    },
    "product": "와이드핏치노팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11077,7 +11298,8 @@
     "hem": 25.5
    },
    "product": "와이드핏치노팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11096,7 +11318,8 @@
     "hem": 25.5
    },
    "product": "와이드핏치노팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11115,7 +11338,8 @@
     "hem": 22.0
    },
    "product": "와이드스트레이트진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11134,7 +11358,8 @@
     "hem": 22.5
    },
    "product": "와이드스트레이트진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11153,7 +11378,8 @@
     "hem": 22.5
    },
    "product": "와이드스트레이트진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11172,7 +11398,8 @@
     "hem": 23.0
    },
    "product": "와이드스트레이트진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11191,7 +11418,8 @@
     "hem": 23.5
    },
    "product": "와이드스트레이트진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11210,7 +11438,8 @@
     "hem": 24.0
    },
    "product": "와이드스트레이트진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11229,7 +11458,8 @@
     "hem": 24.0
    },
    "product": "와이드스트레이트진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11248,7 +11478,8 @@
     "hem": 24.5
    },
    "product": "와이드스트레이트진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11267,7 +11498,8 @@
     "hem": 24.5
    },
    "product": "와이드스트레이트진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11286,7 +11518,8 @@
     "hem": 25.0
    },
    "product": "와이드스트레이트진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11305,7 +11538,8 @@
     "hem": 25.5
    },
    "product": "와이드스트레이트진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11324,7 +11558,8 @@
     "hem": 25.5
    },
    "product": "와이드스트레이트진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11343,7 +11578,8 @@
     "hem": 22.5
    },
    "product": "스웨트와이드팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11362,7 +11598,8 @@
     "hem": 23.5
    },
    "product": "스웨트와이드팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11381,7 +11618,8 @@
     "hem": 24.5
    },
    "product": "스웨트와이드팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11400,7 +11638,8 @@
     "hem": 25.0
    },
    "product": "스웨트와이드팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11419,7 +11658,8 @@
     "hem": 26.0
    },
    "product": "스웨트와이드팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11438,7 +11678,8 @@
     "hem": 26.5
    },
    "product": "스웨트와이드팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11457,7 +11698,8 @@
     "hem": 27.5
    },
    "product": "스웨트와이드팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11476,7 +11718,8 @@
     "hem": 28.5
    },
    "product": "스웨트와이드팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11495,7 +11738,8 @@
     "hem": 23.0
    },
    "product": "저지배럴레그팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11514,7 +11758,8 @@
     "hem": 24.0
    },
    "product": "저지배럴레그팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11533,7 +11778,8 @@
     "hem": 24.5
    },
    "product": "저지배럴레그팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11552,7 +11798,8 @@
     "hem": 25.0
    },
    "product": "저지배럴레그팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11571,7 +11818,8 @@
     "hem": 25.5
    },
    "product": "저지배럴레그팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11590,7 +11838,8 @@
     "hem": 26.0
    },
    "product": "저지배럴레그팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11609,7 +11858,8 @@
     "hem": 26.5
    },
    "product": "저지배럴레그팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11628,7 +11878,8 @@
     "hem": 23.0
    },
    "product": "저지배럴레그팬츠(다리길이70~72cm)",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11647,7 +11898,8 @@
     "hem": 24.0
    },
    "product": "저지배럴레그팬츠(다리길이70~72cm)",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11666,7 +11918,8 @@
     "hem": 24.5
    },
    "product": "저지배럴레그팬츠(다리길이70~72cm)",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11685,7 +11938,8 @@
     "hem": 25.0
    },
    "product": "저지배럴레그팬츠(다리길이70~72cm)",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11704,7 +11958,8 @@
     "hem": 25.5
    },
    "product": "저지배럴레그팬츠(다리길이70~72cm)",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11723,7 +11978,8 @@
     "hem": 26.0
    },
    "product": "저지배럴레그팬츠(다리길이70~72cm)",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11742,7 +11998,8 @@
     "hem": 26.5
    },
    "product": "저지배럴레그팬츠(다리길이70~72cm)",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11761,7 +12018,8 @@
     "hem": 26.5
    },
    "product": "리넨블렌드이지팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11780,7 +12038,8 @@
     "hem": 27.5
    },
    "product": "리넨블렌드이지팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11799,7 +12058,8 @@
     "hem": 28.0
    },
    "product": "리넨블렌드이지팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11818,7 +12078,8 @@
     "hem": 28.5
    },
    "product": "리넨블렌드이지팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11837,7 +12098,8 @@
     "hem": 29.5
    },
    "product": "리넨블렌드이지팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11856,7 +12118,8 @@
     "hem": 30.0
    },
    "product": "리넨블렌드이지팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11875,7 +12138,8 @@
     "hem": 31.0
    },
    "product": "리넨블렌드이지팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -11894,7 +12158,8 @@
     "hem": 25.0
    },
    "product": "스웨트스트레이트팬츠(다리길이74~77cm·긴기장)",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "uniqlo",
@@ -11913,7 +12178,8 @@
     "hem": 26.0
    },
    "product": "스웨트스트레이트팬츠(다리길이74~77cm·긴기장)",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "uniqlo",
@@ -11932,7 +12198,8 @@
     "hem": 27.0
    },
    "product": "스웨트스트레이트팬츠(다리길이74~77cm·긴기장)",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "uniqlo",
@@ -11951,7 +12218,8 @@
     "hem": 28.0
    },
    "product": "스웨트스트레이트팬츠(다리길이74~77cm·긴기장)",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "uniqlo",
@@ -11970,7 +12238,8 @@
     "hem": 29.0
    },
    "product": "스웨트스트레이트팬츠(다리길이74~77cm·긴기장)",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "uniqlo",
@@ -11989,7 +12258,8 @@
     "hem": 30.5
    },
    "product": "스웨트스트레이트팬츠(다리길이74~77cm·긴기장)",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "uniqlo",
@@ -12008,7 +12278,8 @@
     "hem": 32.0
    },
    "product": "스웨트스트레이트팬츠(다리길이74~77cm·긴기장)",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "uniqlo",
@@ -12027,7 +12298,8 @@
     "hem": 25.0
    },
    "product": "스웨트스트레이트팬츠(다리길이69~72cm)",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "uniqlo",
@@ -12046,7 +12318,8 @@
     "hem": 26.0
    },
    "product": "스웨트스트레이트팬츠(다리길이69~72cm)",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "uniqlo",
@@ -12065,7 +12338,8 @@
     "hem": 27.0
    },
    "product": "스웨트스트레이트팬츠(다리길이69~72cm)",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "uniqlo",
@@ -12084,7 +12358,8 @@
     "hem": 28.0
    },
    "product": "스웨트스트레이트팬츠(다리길이69~72cm)",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "uniqlo",
@@ -12103,7 +12378,8 @@
     "hem": 29.0
    },
    "product": "스웨트스트레이트팬츠(다리길이69~72cm)",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "uniqlo",
@@ -12122,7 +12398,8 @@
     "hem": 30.5
    },
    "product": "스웨트스트레이트팬츠(다리길이69~72cm)",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "uniqlo",
@@ -12141,7 +12418,8 @@
     "hem": 32.0
    },
    "product": "스웨트스트레이트팬츠(다리길이69~72cm)",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "uniqlo",
@@ -12160,7 +12438,8 @@
     "hem": 26.0
    },
    "product": "이지유틸리티팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -12179,7 +12458,8 @@
     "hem": 27.0
    },
    "product": "이지유틸리티팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -12198,7 +12478,8 @@
     "hem": 28.0
    },
    "product": "이지유틸리티팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -12217,7 +12498,8 @@
     "hem": 29.0
    },
    "product": "이지유틸리티팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -12236,7 +12518,8 @@
     "hem": 30.0
    },
    "product": "이지유틸리티팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -12255,7 +12538,8 @@
     "hem": 31.5
    },
    "product": "이지유틸리티팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -12274,7 +12558,8 @@
     "hem": 33.0
    },
    "product": "이지유틸리티팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12293,7 +12578,8 @@
     "hem": 26.0
    },
    "product": "[COOL] 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12312,7 +12598,8 @@
     "hem": 26.5
    },
    "product": "[COOL] 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12331,7 +12618,8 @@
     "hem": 26.7
    },
    "product": "[COOL] 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12350,7 +12638,8 @@
     "hem": 27.0
    },
    "product": "[COOL] 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12369,7 +12658,8 @@
     "hem": 27.3
    },
    "product": "[COOL] 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12388,7 +12678,8 @@
     "hem": 27.6
    },
    "product": "[COOL] 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12407,7 +12698,8 @@
     "hem": 28.2
    },
    "product": "[COOL] 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12426,7 +12718,8 @@
     "hem": 22.25
    },
    "product": "[COOL] 스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -12445,7 +12738,8 @@
     "hem": 22.5
    },
    "product": "[COOL] 스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -12464,7 +12758,8 @@
     "hem": 22.75
    },
    "product": "[COOL] 스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -12483,7 +12778,8 @@
     "hem": 23.0
    },
    "product": "[COOL] 스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -12502,7 +12798,8 @@
     "hem": 22.8
    },
    "product": "[COOL] 스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -12521,7 +12818,8 @@
     "hem": 23.6
    },
    "product": "[COOL] 스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -12540,7 +12838,8 @@
     "hem": 23.9
    },
    "product": "[COOL] 스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -12559,7 +12858,8 @@
     "hem": 18.0
    },
    "product": "[COOL] 테이퍼드 슬랙스",
-   "waistband": "side"
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "spao",
@@ -12578,7 +12878,8 @@
     "hem": 18.5
    },
    "product": "[COOL] 테이퍼드 슬랙스",
-   "waistband": "side"
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "spao",
@@ -12597,7 +12898,8 @@
     "hem": 19.0
    },
    "product": "[COOL] 테이퍼드 슬랙스",
-   "waistband": "side"
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "spao",
@@ -12616,7 +12918,8 @@
     "hem": 19.5
    },
    "product": "[COOL] 테이퍼드 슬랙스",
-   "waistband": "side"
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "spao",
@@ -12635,7 +12938,8 @@
     "hem": 20.0
    },
    "product": "[COOL] 테이퍼드 슬랙스",
-   "waistband": "side"
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "spao",
@@ -12654,7 +12958,8 @@
     "hem": 23.0
    },
    "product": "[COOL] 와이드 슬랙스",
-   "waistband": "side"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12673,7 +12978,8 @@
     "hem": 23.5
    },
    "product": "[COOL] 와이드 슬랙스",
-   "waistband": "side"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12692,7 +12998,8 @@
     "hem": 24.0
    },
    "product": "[COOL] 와이드 슬랙스",
-   "waistband": "side"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12711,7 +13018,8 @@
     "hem": 24.5
    },
    "product": "[COOL] 와이드 슬랙스",
-   "waistband": "side"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12730,7 +13038,8 @@
     "hem": 25.0
    },
    "product": "[COOL] 와이드 슬랙스",
-   "waistband": "side"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12749,7 +13058,8 @@
     "hem": 23.8
    },
    "product": "벌룬 와이드 코튼 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12768,7 +13078,8 @@
     "hem": 24.4
    },
    "product": "벌룬 와이드 코튼 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12787,7 +13098,8 @@
     "hem": 25.0
    },
    "product": "벌룬 와이드 코튼 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12806,7 +13118,8 @@
     "hem": 25.6
    },
    "product": "벌룬 와이드 코튼 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12825,7 +13138,8 @@
     "hem": 26.2
    },
    "product": "벌룬 와이드 코튼 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12844,7 +13158,8 @@
     "hem": 17.5
    },
    "product": "[COOL] 테이퍼드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "spao",
@@ -12863,7 +13178,8 @@
     "hem": 18.0
    },
    "product": "[COOL] 테이퍼드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "spao",
@@ -12882,7 +13198,8 @@
     "hem": 18.25
    },
    "product": "[COOL] 테이퍼드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "spao",
@@ -12901,7 +13218,8 @@
     "hem": 18.5
    },
    "product": "[COOL] 테이퍼드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "spao",
@@ -12920,7 +13238,8 @@
     "hem": 18.8
    },
    "product": "[COOL] 테이퍼드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "spao",
@@ -12939,7 +13258,8 @@
     "hem": 19.1
    },
    "product": "[COOL] 테이퍼드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "spao",
@@ -12958,7 +13278,8 @@
     "hem": 19.7
    },
    "product": "[COOL] 테이퍼드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "spao",
@@ -12977,7 +13298,8 @@
     "hem": 22.4
    },
    "product": "여성 벌룬 와이드 코튼 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -12996,7 +13318,8 @@
     "hem": 23.0
    },
    "product": "여성 벌룬 와이드 코튼 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13015,7 +13338,8 @@
     "hem": 23.6
    },
    "product": "여성 벌룬 와이드 코튼 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13034,7 +13358,8 @@
     "hem": 24.2
    },
    "product": "여성 벌룬 와이드 코튼 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13053,7 +13378,8 @@
     "hem": 24.8
    },
    "product": "여성 벌룬 와이드 코튼 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13072,7 +13398,8 @@
     "hem": 27.5
    },
    "product": "골지 롱 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13091,7 +13418,8 @@
     "hem": 28.5
    },
    "product": "골지 롱 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13110,7 +13438,8 @@
     "hem": 29.5
    },
    "product": "골지 롱 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13129,7 +13458,8 @@
     "hem": 26.3
    },
    "product": "[COOL] 롱 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13148,7 +13478,8 @@
     "hem": 26.9
    },
    "product": "[COOL] 롱 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13167,7 +13498,8 @@
     "hem": 27.5
    },
    "product": "[COOL] 롱 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13186,7 +13518,8 @@
     "hem": 28.1
    },
    "product": "[COOL] 롱 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13205,7 +13538,8 @@
     "hem": 28.7
    },
    "product": "[COOL] 롱 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13224,7 +13558,8 @@
     "hem": 29.3
    },
    "product": "[COOL] 롱 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13243,7 +13578,8 @@
     "hem": 29.9
    },
    "product": "[COOL] 롱 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13262,7 +13598,8 @@
     "hem": 29.0
    },
    "product": "와이드 사선 카고 밴딩 팬츠",
-   "waistband": "full"
+   "waistband": "partial",
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13281,7 +13618,8 @@
     "hem": 30.0
    },
    "product": "와이드 사선 카고 밴딩 팬츠",
-   "waistband": "full"
+   "waistband": "partial",
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13300,7 +13638,8 @@
     "hem": 31.0
    },
    "product": "와이드 사선 카고 밴딩 팬츠",
-   "waistband": "full"
+   "waistband": "partial",
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13319,7 +13658,8 @@
     "hem": 22.3
    },
    "product": "[COOL] 스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13338,7 +13678,8 @@
     "hem": 22.9
    },
    "product": "[COOL] 스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13357,7 +13698,8 @@
     "hem": 23.5
    },
    "product": "[COOL] 스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13376,7 +13718,8 @@
     "hem": 24.1
    },
    "product": "[COOL] 스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13395,7 +13738,8 @@
     "hem": 24.7
    },
    "product": "[COOL] 스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13414,7 +13758,8 @@
     "hem": 25.3
    },
    "product": "[COOL] 스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13433,7 +13778,8 @@
     "hem": 25.9
    },
    "product": "[COOL] 스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13452,7 +13798,8 @@
     "hem": 23.4
    },
    "product": "[COOL] 스트레이트 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13471,7 +13818,8 @@
     "hem": 24.0
    },
    "product": "[COOL] 스트레이트 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13490,7 +13838,8 @@
     "hem": 24.6
    },
    "product": "[COOL] 스트레이트 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13509,7 +13858,8 @@
     "hem": 25.2
    },
    "product": "[COOL] 스트레이트 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13528,7 +13878,8 @@
     "hem": 25.8
    },
    "product": "[COOL] 스트레이트 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13547,7 +13898,8 @@
     "hem": 26.4
    },
    "product": "[COOL] 스트레이트 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13566,7 +13918,8 @@
     "hem": 22.4
    },
    "product": "[COOL] 여성 벌룬 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13585,7 +13938,8 @@
     "hem": 23.0
    },
    "product": "[COOL] 여성 벌룬 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13604,7 +13958,8 @@
     "hem": 23.6
    },
    "product": "[COOL] 여성 벌룬 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13623,7 +13978,8 @@
     "hem": 24.2
    },
    "product": "[COOL] 여성 벌룬 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13642,7 +13998,8 @@
     "hem": 24.8
    },
    "product": "[COOL] 여성 벌룬 와이드 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "spao",
@@ -13660,7 +14017,8 @@
     "hem": 20.8
    },
    "product": "스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13678,7 +14036,8 @@
     "hem": 21.4
    },
    "product": "스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13696,7 +14055,8 @@
     "hem": 22.0
    },
    "product": "스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13714,7 +14074,8 @@
     "hem": 22.6
    },
    "product": "스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13732,7 +14093,8 @@
     "hem": 23.2
    },
    "product": "스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13750,7 +14112,8 @@
     "hem": 23.8
    },
    "product": "스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13768,7 +14131,8 @@
     "hem": 24.4
    },
    "product": "스트레이트 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "spao",
@@ -13787,7 +14151,8 @@
     "hem": 24.8
    },
    "product": "[COOL] 부츠컷 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "bootcut"
   },
   {
    "brandId": "spao",
@@ -13806,7 +14171,8 @@
     "hem": 25.4
    },
    "product": "[COOL] 부츠컷 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "bootcut"
   },
   {
    "brandId": "spao",
@@ -13825,7 +14191,8 @@
     "hem": 26.0
    },
    "product": "[COOL] 부츠컷 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "bootcut"
   },
   {
    "brandId": "spao",
@@ -13844,7 +14211,8 @@
     "hem": 26.6
    },
    "product": "[COOL] 부츠컷 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "bootcut"
   },
   {
    "brandId": "spao",
@@ -13863,7 +14231,8 @@
     "hem": 27.2
    },
    "product": "[COOL] 부츠컷 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "bootcut"
   },
   {
    "brandId": "spao",
@@ -13882,7 +14251,8 @@
     "hem": 27.8
    },
    "product": "[COOL] 부츠컷 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "bootcut"
   },
   {
    "brandId": "spao",
@@ -13901,7 +14271,8 @@
     "hem": 28.4
    },
    "product": "[COOL] 부츠컷 진",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "bootcut"
   },
   {
    "brandId": "8seconds",
@@ -13920,7 +14291,8 @@
     "hem": 25.0
    },
    "product": "[4WAY STRETCH] 와이드핏 밴딩 슬랙스",
-   "waistband": "full"
+   "waistband": "partial",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -13939,7 +14311,8 @@
     "hem": 25.5
    },
    "product": "[4WAY STRETCH] 와이드핏 밴딩 슬랙스",
-   "waistband": "full"
+   "waistband": "partial",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -13958,7 +14331,8 @@
     "hem": 26.0
    },
    "product": "[4WAY STRETCH] 와이드핏 밴딩 슬랙스",
-   "waistband": "full"
+   "waistband": "partial",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -13977,7 +14351,8 @@
     "hem": 26.8
    },
    "product": "[4WAY STRETCH] 와이드핏 밴딩 슬랙스",
-   "waistband": "full"
+   "waistband": "partial",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -13996,7 +14371,8 @@
     "hem": 22.9
    },
    "product": "[4WAY STRETCH] 세미와이드핏 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14015,7 +14391,8 @@
     "hem": 23.1
    },
    "product": "[4WAY STRETCH] 세미와이드핏 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14034,7 +14411,8 @@
     "hem": 23.3
    },
    "product": "[4WAY STRETCH] 세미와이드핏 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14053,7 +14431,8 @@
     "hem": 23.5
    },
    "product": "[4WAY STRETCH] 세미와이드핏 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14072,7 +14451,8 @@
     "hem": 23.9
    },
    "product": "[4WAY STRETCH] 세미와이드핏 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14091,7 +14471,8 @@
     "hem": 24.3
    },
    "product": "[4WAY STRETCH] 세미와이드핏 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14110,7 +14491,8 @@
     "hem": 24.0
    },
    "product": "와이드핏 셋업 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14129,7 +14511,8 @@
     "hem": 24.5
    },
    "product": "와이드핏 셋업 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14148,7 +14531,8 @@
     "hem": 25.0
    },
    "product": "와이드핏 셋업 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14167,7 +14551,8 @@
     "hem": 25.8
    },
    "product": "와이드핏 셋업 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14186,7 +14571,8 @@
     "hem": 22.2
    },
    "product": "경량 에센셜 세미와이드핏 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14205,7 +14591,8 @@
     "hem": 22.4
    },
    "product": "경량 에센셜 세미와이드핏 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14224,7 +14611,8 @@
     "hem": 22.6
    },
    "product": "경량 에센셜 세미와이드핏 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14243,7 +14631,8 @@
     "hem": 22.8
    },
    "product": "경량 에센셜 세미와이드핏 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14262,7 +14651,8 @@
     "hem": 23.0
    },
    "product": "경량 에센셜 세미와이드핏 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14281,7 +14671,8 @@
     "hem": 23.4
    },
    "product": "경량 에센셜 세미와이드핏 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14300,7 +14691,8 @@
     "hem": 23.8
    },
    "product": "경량 에센셜 세미와이드핏 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14319,7 +14711,8 @@
     "hem": 23.5
    },
    "product": "경량 코튼 이지 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14338,7 +14731,8 @@
     "hem": 24.0
    },
    "product": "경량 코튼 이지 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14357,7 +14751,8 @@
     "hem": 24.5
    },
    "product": "경량 코튼 이지 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14376,7 +14771,8 @@
     "hem": 25.3
    },
    "product": "경량 코튼 이지 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14395,7 +14791,8 @@
     "hem": 27.2
    },
    "product": "경량 벌룬핏 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14414,7 +14811,8 @@
     "hem": 27.4
    },
    "product": "경량 벌룬핏 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14433,7 +14831,8 @@
     "hem": 27.6
    },
    "product": "경량 벌룬핏 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14452,7 +14851,8 @@
     "hem": 27.8
    },
    "product": "경량 벌룬핏 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14471,7 +14871,8 @@
     "hem": 28.0
    },
    "product": "경량 벌룬핏 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14490,7 +14891,8 @@
     "hem": 28.4
    },
    "product": "경량 벌룬핏 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14509,7 +14911,8 @@
     "hem": 28.8
    },
    "product": "경량 벌룬핏 데님 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14528,7 +14931,8 @@
     "hem": 24.4
    },
    "product": "가먼트 다잉 와이드 테이퍼드핏 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14547,7 +14951,8 @@
     "hem": 24.6
    },
    "product": "가먼트 다잉 와이드 테이퍼드핏 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14566,7 +14971,8 @@
     "hem": 24.8
    },
    "product": "가먼트 다잉 와이드 테이퍼드핏 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14585,7 +14991,8 @@
     "hem": 25.0
    },
    "product": "가먼트 다잉 와이드 테이퍼드핏 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14604,7 +15011,8 @@
     "hem": 25.4
    },
    "product": "가먼트 다잉 와이드 테이퍼드핏 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14622,7 +15030,8 @@
     "hem": 18.9
    },
    "product": "슬림핏 베이직 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "8seconds",
@@ -14640,7 +15049,8 @@
     "hem": 19.1
    },
    "product": "슬림핏 베이직 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "8seconds",
@@ -14658,7 +15068,8 @@
     "hem": 19.3
    },
    "product": "슬림핏 베이직 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "8seconds",
@@ -14676,7 +15087,8 @@
     "hem": 19.5
    },
    "product": "슬림핏 베이직 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "8seconds",
@@ -14694,7 +15106,8 @@
     "hem": 19.9
    },
    "product": "슬림핏 베이직 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "8seconds",
@@ -14712,7 +15125,8 @@
     "hem": 20.2
    },
    "product": "슬림핏 베이직 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "8seconds",
@@ -14731,7 +15145,8 @@
     "hem": 18.3
    },
    "product": "슬림핏 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "slim"
   },
   {
    "brandId": "8seconds",
@@ -14750,7 +15165,8 @@
     "hem": 18.5
    },
    "product": "슬림핏 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "slim"
   },
   {
    "brandId": "8seconds",
@@ -14769,7 +15185,8 @@
     "hem": 18.8
    },
    "product": "슬림핏 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "slim"
   },
   {
    "brandId": "8seconds",
@@ -14788,7 +15205,8 @@
     "hem": 19.0
    },
    "product": "슬림핏 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "slim"
   },
   {
    "brandId": "8seconds",
@@ -14807,7 +15225,8 @@
     "hem": 19.4
    },
    "product": "슬림핏 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "slim"
   },
   {
    "brandId": "8seconds",
@@ -14826,7 +15245,8 @@
     "hem": 19.7
    },
    "product": "슬림핏 히든 밴딩 슬랙스",
-   "waistband": "side"
+   "waistband": "hidden",
+   "silhouette": "slim"
   },
   {
    "brandId": "8seconds",
@@ -14845,7 +15265,8 @@
     "hem": 27.5
    },
    "product": "[올데이 크리즈] 와이드 팬츠",
-   "waistband": "back"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14864,7 +15285,8 @@
     "hem": 28.5
    },
    "product": "[올데이 크리즈] 와이드 팬츠",
-   "waistband": "back"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14883,7 +15305,8 @@
     "hem": 29.5
    },
    "product": "[올데이 크리즈] 와이드 팬츠",
-   "waistband": "back"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14902,7 +15325,8 @@
     "hem": 30.5
    },
    "product": "[올데이 크리즈] 와이드 팬츠",
-   "waistband": "back"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14921,7 +15345,8 @@
     "hem": 31.8
    },
    "product": "[올데이 크리즈] 와이드 팬츠",
-   "waistband": "back"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14940,7 +15365,8 @@
     "hem": 28.2
    },
    "product": "폴리 크레이프 밴딩 팬츠",
-   "waistband": "full"
+   "waistband": "partial",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14959,7 +15385,8 @@
     "hem": 29.2
    },
    "product": "폴리 크레이프 밴딩 팬츠",
-   "waistband": "full"
+   "waistband": "partial",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14978,7 +15405,8 @@
     "hem": 30.2
    },
    "product": "폴리 크레이프 밴딩 팬츠",
-   "waistband": "full"
+   "waistband": "partial",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -14997,7 +15425,8 @@
     "hem": 31.2
    },
    "product": "폴리 크레이프 밴딩 팬츠",
-   "waistband": "full"
+   "waistband": "partial",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -15016,7 +15445,8 @@
     "hem": 32.5
    },
    "product": "폴리 크레이프 밴딩 팬츠",
-   "waistband": "full"
+   "waistband": "partial",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -15035,7 +15465,8 @@
     "hem": 26.0
    },
    "product": "세미와이드 경량데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -15054,7 +15485,8 @@
     "hem": 27.0
    },
    "product": "세미와이드 경량데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -15073,7 +15505,8 @@
     "hem": 28.0
    },
    "product": "세미와이드 경량데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -15092,7 +15525,8 @@
     "hem": 29.0
    },
    "product": "세미와이드 경량데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -15111,7 +15545,8 @@
     "hem": 30.3
    },
    "product": "세미와이드 경량데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -15130,7 +15565,8 @@
     "hem": 27.5
    },
    "product": "냉감 밴딩 슬랙스",
-   "waistband": "full"
+   "waistband": "partial",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -15149,7 +15585,8 @@
     "hem": 28.5
    },
    "product": "냉감 밴딩 슬랙스",
-   "waistband": "full"
+   "waistband": "partial",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -15168,7 +15605,8 @@
     "hem": 29.5
    },
    "product": "냉감 밴딩 슬랙스",
-   "waistband": "full"
+   "waistband": "partial",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -15187,7 +15625,8 @@
     "hem": 30.5
    },
    "product": "냉감 밴딩 슬랙스",
-   "waistband": "full"
+   "waistband": "partial",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -15206,7 +15645,8 @@
     "hem": 31.8
    },
    "product": "냉감 밴딩 슬랙스",
-   "waistband": "full"
+   "waistband": "partial",
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -15225,7 +15665,8 @@
     "hem": 25.5
    },
    "product": "부츠컷 경량데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "bootcut"
   },
   {
    "brandId": "8seconds",
@@ -15244,7 +15685,8 @@
     "hem": 26.5
    },
    "product": "부츠컷 경량데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "bootcut"
   },
   {
    "brandId": "8seconds",
@@ -15263,7 +15705,8 @@
     "hem": 27.5
    },
    "product": "부츠컷 경량데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "bootcut"
   },
   {
    "brandId": "8seconds",
@@ -15282,7 +15725,8 @@
     "hem": 28.5
    },
    "product": "부츠컷 경량데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "bootcut"
   },
   {
    "brandId": "8seconds",
@@ -15301,7 +15745,8 @@
     "hem": 29.8
    },
    "product": "부츠컷 경량데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "bootcut"
   },
   {
    "brandId": "8seconds",
@@ -15320,7 +15765,8 @@
     "hem": 26.0
    },
    "product": "세미와이드 텐셀데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -15339,7 +15785,8 @@
     "hem": 27.0
    },
    "product": "세미와이드 텐셀데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -15358,7 +15805,8 @@
     "hem": 28.0
    },
    "product": "세미와이드 텐셀데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -15377,7 +15825,8 @@
     "hem": 29.0
    },
    "product": "세미와이드 텐셀데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -15396,7 +15845,8 @@
     "hem": 30.3
    },
    "product": "세미와이드 텐셀데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "8seconds",
@@ -15415,7 +15865,8 @@
     "hem": 24.2
    },
    "product": "틴워싱 스트레이트핏 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "8seconds",
@@ -15434,7 +15885,8 @@
     "hem": 25.2
    },
    "product": "틴워싱 스트레이트핏 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "8seconds",
@@ -15453,7 +15905,8 @@
     "hem": 26.2
    },
    "product": "틴워싱 스트레이트핏 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "8seconds",
@@ -15472,7 +15925,8 @@
     "hem": 25.5
    },
    "product": "베이직 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "8seconds",
@@ -15491,7 +15945,8 @@
     "hem": 26.0
    },
    "product": "베이직 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "8seconds",
@@ -15510,7 +15965,8 @@
     "hem": 26.5
    },
    "product": "베이직 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "8seconds",
@@ -15529,7 +15985,8 @@
     "hem": 27.0
    },
    "product": "베이직 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "8seconds",
@@ -15548,7 +16005,8 @@
     "hem": 27.6
    },
    "product": "베이직 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -15567,7 +16025,8 @@
     "hem": 19.1
    },
    "product": "남성) COOL 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -15586,7 +16045,8 @@
     "hem": 19.4
    },
    "product": "남성) COOL 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -15605,7 +16065,8 @@
     "hem": 19.7
    },
    "product": "남성) COOL 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -15624,7 +16085,8 @@
     "hem": 20.0
    },
    "product": "남성) COOL 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -15643,7 +16105,8 @@
     "hem": 20.3
    },
    "product": "남성) COOL 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -15662,7 +16125,8 @@
     "hem": 20.6
    },
    "product": "남성) COOL 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -15681,7 +16145,8 @@
     "hem": 21.2
    },
    "product": "남성) COOL 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -15700,7 +16165,8 @@
     "hem": 21.8
    },
    "product": "남성) COOL 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -15719,7 +16185,8 @@
     "hem": 17.85
    },
    "product": "남성) COOL 테이퍼드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "topten",
@@ -15738,7 +16205,8 @@
     "hem": 18.15
    },
    "product": "남성) COOL 테이퍼드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "topten",
@@ -15757,7 +16225,8 @@
     "hem": 18.45
    },
    "product": "남성) COOL 테이퍼드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "topten",
@@ -15776,7 +16245,8 @@
     "hem": 18.75
    },
    "product": "남성) COOL 테이퍼드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "topten",
@@ -15795,7 +16265,8 @@
     "hem": 19.05
    },
    "product": "남성) COOL 테이퍼드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "topten",
@@ -15814,7 +16285,8 @@
     "hem": 19.35
    },
    "product": "남성) COOL 테이퍼드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "topten",
@@ -15833,7 +16305,8 @@
     "hem": 19.95
    },
    "product": "남성) COOL 테이퍼드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "topten",
@@ -15852,7 +16325,8 @@
     "hem": 22.8
    },
    "product": "남성) COOL 와이드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -15871,7 +16345,8 @@
     "hem": 23.1
    },
    "product": "남성) COOL 와이드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -15890,7 +16365,8 @@
     "hem": 23.4
    },
    "product": "남성) COOL 와이드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -15909,7 +16385,8 @@
     "hem": 23.7
    },
    "product": "남성) COOL 와이드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -15928,7 +16405,8 @@
     "hem": 24.0
    },
    "product": "남성) COOL 와이드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -15947,7 +16425,8 @@
     "hem": 24.3
    },
    "product": "남성) COOL 와이드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -15966,7 +16445,8 @@
     "hem": 24.6
    },
    "product": "남성) COOL 와이드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -15985,7 +16465,8 @@
     "hem": 25.2
    },
    "product": "남성) COOL 와이드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16004,7 +16485,8 @@
     "hem": 25.8
    },
    "product": "남성) COOL 와이드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16023,7 +16505,8 @@
     "hem": 18.1
    },
    "product": "남성) 컴포트 COOL 테이퍼드 이지 슬랙스",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "topten",
@@ -16042,7 +16525,8 @@
     "hem": 18.4
    },
    "product": "남성) 컴포트 COOL 테이퍼드 이지 슬랙스",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "topten",
@@ -16061,7 +16545,8 @@
     "hem": 18.7
    },
    "product": "남성) 컴포트 COOL 테이퍼드 이지 슬랙스",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "topten",
@@ -16080,7 +16565,8 @@
     "hem": 19.0
    },
    "product": "남성) 컴포트 COOL 테이퍼드 이지 슬랙스",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "topten",
@@ -16099,7 +16585,8 @@
     "hem": 19.3
    },
    "product": "남성) 컴포트 COOL 테이퍼드 이지 슬랙스",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "topten",
@@ -16118,7 +16605,8 @@
     "hem": 19.6
    },
    "product": "남성) 컴포트 COOL 테이퍼드 이지 슬랙스",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "topten",
@@ -16137,7 +16625,8 @@
     "hem": 20.2
    },
    "product": "남성) 컴포트 COOL 테이퍼드 이지 슬랙스",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "topten",
@@ -16156,7 +16645,8 @@
     "hem": 20.8
    },
    "product": "남성) 컴포트 COOL 테이퍼드 이지 슬랙스",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "topten",
@@ -16175,7 +16665,8 @@
     "hem": 21.4
    },
    "product": "남성) 컴포트 COOL 테이퍼드 이지 슬랙스",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "topten",
@@ -16194,7 +16685,8 @@
     "hem": 24.55
    },
    "product": "남성) 크링클 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16213,7 +16705,8 @@
     "hem": 25.15
    },
    "product": "남성) 크링클 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16232,7 +16725,8 @@
     "hem": 25.75
    },
    "product": "남성) 크링클 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16251,7 +16745,8 @@
     "hem": 26.35
    },
    "product": "남성) 크링클 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16270,7 +16765,8 @@
     "hem": 27.1
    },
    "product": "남성) 크링클 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16289,7 +16785,8 @@
     "hem": 27.85
    },
    "product": "남성) 크링클 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16308,7 +16805,8 @@
     "hem": 18.4
    },
    "product": "남성) 컴포트 슬림 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -16327,7 +16825,8 @@
     "hem": 18.7
    },
    "product": "남성) 컴포트 슬림 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -16346,7 +16845,8 @@
     "hem": 19.0
    },
    "product": "남성) 컴포트 슬림 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -16365,7 +16865,8 @@
     "hem": 19.3
    },
    "product": "남성) 컴포트 슬림 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -16384,7 +16885,8 @@
     "hem": 19.6
    },
    "product": "남성) 컴포트 슬림 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -16403,7 +16905,8 @@
     "hem": 20.2
    },
    "product": "남성) 컴포트 슬림 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -16422,7 +16925,8 @@
     "hem": 20.8
    },
    "product": "남성) 컴포트 슬림 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -16441,7 +16945,8 @@
     "hem": 21.1
    },
    "product": "남성) 컴포트 슬림 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -16460,7 +16965,8 @@
     "hem": 21.8
    },
    "product": "남성) 파라수트 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16479,7 +16985,8 @@
     "hem": 22.4
    },
    "product": "남성) 파라수트 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16498,7 +17005,8 @@
     "hem": 23.0
    },
    "product": "남성) 파라수트 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16517,7 +17025,8 @@
     "hem": 23.6
    },
    "product": "남성) 파라수트 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16536,7 +17045,8 @@
     "hem": 24.2
    },
    "product": "남성) 파라수트 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16555,7 +17065,8 @@
     "hem": 24.8
    },
    "product": "남성) 파라수트 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16574,7 +17085,8 @@
     "hem": 19.9
    },
    "product": "남성) 레귤러 치노 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -16593,7 +17105,8 @@
     "hem": 20.5
    },
    "product": "남성) 레귤러 치노 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -16612,7 +17125,8 @@
     "hem": 21.1
    },
    "product": "남성) 레귤러 치노 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -16631,7 +17145,8 @@
     "hem": 21.7
    },
    "product": "남성) 레귤러 치노 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -16650,7 +17165,8 @@
     "hem": 22.3
    },
    "product": "남성) 레귤러 치노 팬츠",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -16669,7 +17185,8 @@
     "hem": 28.0
    },
    "product": "여성) COOL 리넨블렌드 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16688,7 +17205,8 @@
     "hem": 28.5
    },
    "product": "여성) COOL 리넨블렌드 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16707,7 +17225,8 @@
     "hem": 29.0
    },
    "product": "여성) COOL 리넨블렌드 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16726,7 +17245,8 @@
     "hem": 30.0
    },
    "product": "여성) COOL 리넨블렌드 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16745,7 +17265,8 @@
     "hem": 31.0
    },
    "product": "여성) COOL 리넨블렌드 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16764,7 +17285,8 @@
     "hem": 32.3
    },
    "product": "여성) COOL 리넨블렌드 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16783,7 +17305,8 @@
     "hem": 33.6
    },
    "product": "여성) COOL 리넨블렌드 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16802,7 +17325,8 @@
     "hem": 28.0
    },
    "product": "여성) COOL 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16821,7 +17345,8 @@
     "hem": 28.5
    },
    "product": "여성) COOL 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16840,7 +17365,8 @@
     "hem": 29.0
    },
    "product": "여성) COOL 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16859,7 +17385,8 @@
     "hem": 30.0
    },
    "product": "여성) COOL 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16878,7 +17405,8 @@
     "hem": 31.0
    },
    "product": "여성) COOL 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16897,7 +17425,8 @@
     "hem": 32.3
    },
    "product": "여성) COOL 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16916,7 +17445,8 @@
     "hem": 33.6
    },
    "product": "여성) COOL 와이드 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -16935,7 +17465,8 @@
     "hem": 18.2
    },
    "product": "여성) 컴포트 슬림 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -16954,7 +17485,8 @@
     "hem": 18.5
    },
    "product": "여성) 컴포트 슬림 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -16973,7 +17505,8 @@
     "hem": 18.8
    },
    "product": "여성) 컴포트 슬림 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -16992,7 +17525,8 @@
     "hem": 19.1
    },
    "product": "여성) 컴포트 슬림 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -17011,7 +17545,8 @@
     "hem": 19.4
    },
    "product": "여성) 컴포트 슬림 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -17030,7 +17565,8 @@
     "hem": 19.7
    },
    "product": "여성) 컴포트 슬림 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -17049,7 +17585,8 @@
     "hem": 20.3
    },
    "product": "여성) 컴포트 슬림 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -17068,7 +17605,8 @@
     "hem": 20.9
    },
    "product": "여성) 컴포트 슬림 슬랙스",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -17087,7 +17625,8 @@
     "hem": 27.0
    },
    "product": "여성) 크링클 이지 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -17106,7 +17645,8 @@
     "hem": 27.5
    },
    "product": "여성) 크링클 이지 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -17125,7 +17665,8 @@
     "hem": 28.5
    },
    "product": "여성) 크링클 이지 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -17144,7 +17685,8 @@
     "hem": 29.5
    },
    "product": "여성) 크링클 이지 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -17163,7 +17705,8 @@
     "hem": 30.5
    },
    "product": "여성) 크링클 이지 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -17182,7 +17725,8 @@
     "hem": 31.5
    },
    "product": "여성) 크링클 이지 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -17201,7 +17745,8 @@
     "hem": 32.75
    },
    "product": "여성) 크링클 이지 팬츠",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -17220,7 +17765,8 @@
     "hem": 22.0
    },
    "product": "여성) 커브드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -17239,7 +17785,8 @@
     "hem": 22.5
    },
    "product": "여성) 커브드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -17258,7 +17805,8 @@
     "hem": 23.0
    },
    "product": "여성) 커브드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -17277,7 +17825,8 @@
     "hem": 23.5
    },
    "product": "여성) 커브드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -17296,7 +17845,8 @@
     "hem": 24.0
    },
    "product": "여성) 커브드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -17315,7 +17865,8 @@
     "hem": 24.5
    },
    "product": "여성) 커브드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -17334,7 +17885,8 @@
     "hem": 25.0
    },
    "product": "여성) 커브드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -17353,7 +17905,8 @@
     "hem": 25.5
    },
    "product": "여성) 커브드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -17372,7 +17925,8 @@
     "hem": 26.0
    },
    "product": "여성) 커브드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -17391,7 +17945,8 @@
     "hem": 26.5
    },
    "product": "여성) 커브드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -17410,7 +17965,8 @@
     "hem": 27.0
    },
    "product": "여성) 커브드 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -17429,7 +17985,8 @@
     "hem": 16.4
    },
    "product": "여성) COOL 슬림 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -17448,7 +18005,8 @@
     "hem": 16.7
    },
    "product": "여성) COOL 슬림 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -17467,7 +18025,8 @@
     "hem": 17.0
    },
    "product": "여성) COOL 슬림 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -17486,7 +18045,8 @@
     "hem": 17.3
    },
    "product": "여성) COOL 슬림 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -17505,7 +18065,8 @@
     "hem": 17.6
    },
    "product": "여성) COOL 슬림 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -17524,7 +18085,8 @@
     "hem": 17.9
    },
    "product": "여성) COOL 슬림 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -17543,7 +18105,8 @@
     "hem": 18.2
    },
    "product": "여성) COOL 슬림 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -17562,7 +18125,8 @@
     "hem": 18.5
    },
    "product": "여성) COOL 슬림 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -17581,7 +18145,8 @@
     "hem": 18.8
    },
    "product": "여성) COOL 슬림 스트레이트 데님",
-   "waistband": null
+   "waistband": null,
+   "silhouette": "straight"
   },
   {
    "brandId": "topten",
@@ -17600,7 +18165,8 @@
     "hem": 26.0
    },
    "product": "여성) 컴포트 와이드 이지 슬랙스",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -17619,7 +18185,8 @@
     "hem": 26.5
    },
    "product": "여성) 컴포트 와이드 이지 슬랙스",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -17638,7 +18205,8 @@
     "hem": 27.0
    },
    "product": "여성) 컴포트 와이드 이지 슬랙스",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -17657,7 +18225,8 @@
     "hem": 27.5
    },
    "product": "여성) 컴포트 와이드 이지 슬랙스",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -17676,7 +18245,8 @@
     "hem": 28.0
    },
    "product": "여성) 컴포트 와이드 이지 슬랙스",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -17695,7 +18265,8 @@
     "hem": 28.5
    },
    "product": "여성) 컴포트 와이드 이지 슬랙스",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -17714,7 +18285,8 @@
     "hem": 29.0
    },
    "product": "여성) 컴포트 와이드 이지 슬랙스",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -17733,7 +18305,8 @@
     "hem": 29.5
    },
    "product": "여성) 컴포트 와이드 이지 슬랙스",
-   "waistband": "full"
+   "waistband": null,
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",

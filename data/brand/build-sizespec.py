@@ -59,8 +59,8 @@ def num(s):
 
 
 def waistband_of(product):
-    """product명에서 허리 밴딩 유형 추출(폴백). 밴딩 컬럼이 비었을 때만 사용.
-    ⚠️ product명 의존 = 부분 커버(대부분 히든밴딩만 표기, 나머지는 불명)."""
+    """product명에서 허리 밴딩 유형 추출(수집 임시). 허리 수용범위·역산 신뢰도에 영향.
+    ⚠️ product명 의존 = 부분 커버(대부분 히든밴딩만 표기, 나머지는 불명). 정식은 수집단 `밴딩` 컬럼."""
     p = nfc(product or "")
     if "풀밴딩" in p or "전체밴딩" in p:
         return "full"
@@ -73,17 +73,30 @@ def waistband_of(product):
     return None            # 미표기(고정인지 불명)
 
 
-# 수집단 `밴딩` 컬럼(정식) → waistband 코드. '없음'=고정(None)→허리 역산 유효,
-# 그 외=신축→엔진이 허리 역산 스킵. 엔진은 truthy 여부만 보므로 유형 문자열은 참고용.
-BAND_MAP = {"없음": None, "풀밴딩": "full", "사이드밴딩": "side", "뒷밴딩": "back"}
+# 하의 실루엣(silhouette) — 상품명에서 파싱. fitLine(여유축)과 직교하는 '형태축'.
+#   6종: skinny·slim·straight·tapered·wide·bootcut. 바지는 같은 허리여도 실루엣별 허벅지·밑단이 크게 달라
+#   역산·매칭의 1차 키다(fitLine 여유축만으론 스트레이트·테이퍼드·와이드가 뭉개짐).
+#   특수 표기: 세미/리얼와이드·벌룬·배기→wide, 커브드→slim, 크링클=소재라 실루엣 무시(다른 토큰/폴백).
+SILHOUETTE = [   # (토큰, 실루엣) — 위에서부터 우선 매칭(더 구체적인 걸 먼저)
+    ("부츠컷", "bootcut"), ("부츠 컷", "bootcut"), ("bootcut", "bootcut"),
+    ("스키니", "skinny"), ("skinny", "skinny"),
+    ("세미와이드", "wide"), ("세미 와이드", "wide"), ("리얼와이드", "wide"),
+    ("와이드", "wide"), ("wide", "wide"), ("벌룬", "wide"), ("배기", "wide"),
+    ("테이퍼", "tapered"), ("taper", "tapered"),
+    ("스트레이트", "straight"), ("straight", "straight"),
+    ("커브드", "slim"), ("슬림", "slim"), ("slim", "slim"),
+]
+_SIL_FROM_FIT = {"skinny": "skinny", "slim": "slim", "regular": "straight",
+                 "loose": "wide", "oversize": "wide"}
 
 
-def waistband_of_row(row):
-    """정식 `밴딩` 컬럼 우선, 없으면 product명 추측으로 폴백."""
-    raw = nfc(row.get("밴딩") or "").strip()
-    if raw:
-        return BAND_MAP.get(raw, raw)   # 미지의 값은 원문 그대로(truthy 유지)
-    return waistband_of(row.get("product"))
+def silhouette_of(product, fitline):
+    """상품명에서 하의 실루엣 6종 추출. 없으면 fitLine(여유)에서 근사 폴백."""
+    p = nfc(product or "")
+    for tok, sil in SILHOUETTE:
+        if tok in p:
+            return sil
+    return _SIL_FROM_FIT.get(fitline, "straight")
 
 
 specs, skipped = [], 0
@@ -120,7 +133,8 @@ for f in sorted(raw.glob("*.csv")):
             "product": (row.get("product") or "").strip(),
         }
         if category == "BOTTOM":
-            spec["waistband"] = waistband_of_row(row)  # 허리 밴딩(수용범위·역산에 영향)
+            spec["waistband"] = waistband_of(row.get("product"))  # 허리 밴딩(수용범위·역산에 영향)
+            spec["silhouette"] = silhouette_of(spec["product"], fit)  # 형태축(1차 매칭키)
         specs.append(spec)
 
 cats = sorted(set(s["category"] for s in specs))
@@ -132,9 +146,9 @@ doc = {
         "collectedAt": "2026-07-07",
         "categories": cats,
         "note": "값은 사이즈표 '단면(flat) 원본' 그대로. 둘레=단면×2 환산·여유 계산은 규칙 모듈이 조회 시 수행. "
-                "BOTTOM.waistband=밴딩 유형(full/side/back/null 등) — 허리 수용범위·역산 신뢰도에 영향. "
-                "수집단 `밴딩` 컬럼(없음/풀밴딩/사이드밴딩/뒷밴딩)에서 매핑, 없으면 product명 추측 폴백. "
-                "엔진은 truthy 여부만 사용(값 있으면 허리 역산 스킵).",
+                "BOTTOM.waistband=밴딩 유형(hidden/side/full/partial/null) — 허리 수용범위·역산 신뢰도에 영향. "
+                "BOTTOM.silhouette=형태축(skinny/slim/straight/tapered/wide/bootcut) — 상품명 파싱, 역산·매칭의 1차 키"
+                "(fitLine 여유축과 직교). 둘 다 현재 product명 추출이라 부분 커버 — 정식은 수집단 `밴딩`·`실루엣` 컬럼 필요.",
         "parts": {
             "TOP": {"chest": "가슴단면(circ,flat→×2)", "shoulder": "어깨너비(width)",
                     "sleeve": "소매길이(len)", "length": "총장(len)"},

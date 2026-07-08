@@ -91,6 +91,28 @@ eq(FitEngine.bodyFromExperiences([Object.assign({}, bexp[0], { waistband: "bande
 eq(FitEngine.bodyFromExperiences([Object.assign({}, bandexp[0], { waistband: "none" })], bandspec),
    { waist: 78, hip: 97, thigh: 57.5 }, "사용자 '밴딩 없음' → 허리 사용(그룹 무관)");
 
+/* ── 하의 실루엣(형태축) 매칭 — 같은 brand·size·fitLine, 실루엣만 다름 → 실루엣이 1차 키 ───── */
+const silSpecs = [
+  { category: "BOTTOM", brandId: "m", fitLine: "regular", silhouette: "straight", sizeLabel: "30",
+    gender: "male", subtype: "long_pants", garmentCm: { waist: 40, hip: 50, thigh: 28 } },
+  { category: "BOTTOM", brandId: "m", fitLine: "regular", silhouette: "wide", sizeLabel: "30",
+    gender: "male", subtype: "long_pants", garmentCm: { waist: 40, hip: 52, thigh: 34 } },
+];
+const straightExp = [{ category: "BOTTOM", brandId: "m", fitLine: "regular", silhouette: "straight",
+  sizeLabel: "30", gender: "male", subtype: "long_pants", fits: { thigh: "SNUG" } }];
+// straight thigh 28×2 − 2.5 = 53.5 (wide 34 안 섞임)
+eq(FitEngine.bodyFromExperiences(straightExp, silSpecs), { thigh: 53.5 },
+   "실루엣 straight → straight 스펙만 매칭(wide 제외)");
+const wideExp = [{ category: "BOTTOM", brandId: "m", fitLine: "regular", silhouette: "wide",
+  sizeLabel: "30", gender: "male", subtype: "long_pants", fits: { thigh: "SNUG" } }];
+// wide thigh 34×2 − 2.5 = 65.5
+eq(FitEngine.bodyFromExperiences(wideExp, silSpecs), { thigh: 65.5 },
+   "실루엣 wide → wide 스펙만 매칭(straight 제외)");
+// 실루엣 없는 경험(구 데이터) → fitLine 폴백(둘 다 regular라 평균: (56+68)/2−2.5=59.5)
+eq(FitEngine.bodyFromExperiences([{ category: "BOTTOM", brandId: "m", fitLine: "regular", sizeLabel: "30",
+  gender: "male", subtype: "long_pants", fits: { thigh: "SNUG" } }], silSpecs), { thigh: 59.5 },
+   "실루엣 없으면 fitLine 폴백(두 스펙 평균)");
+
 /* ── 추천 사이즈 (recommend): 어깨 들어가는 것 우선 → 가슴 여유 5cm에 근접 ────── */
 const specs = [
   { category: "TOP", brandId: "a", brandName: "A", fitLine: "regular", sizeLabel: "M",
@@ -111,6 +133,28 @@ eq(recs.map((r) => [r.brandId, r.fitLine, r.size, r.fit]),
 assert.ok(recs[0].fitScore >= recs[1].fitScore, "핏 지수 내림차순 정렬"); pass++;
 ["brandName", "fitLine", "size", "fit", "warn", "bottleneck", "fitScore", "chestEase"].forEach((k) => {
   assert.ok(k in recs[0], `추천 항목에 ${k} 필드 존재`); pass++;
+});
+
+/* ── 하의 추천 (recommendBottom): 선호 실루엣 안에서 허리 게이트 + 엉덩이·허벅지 수용 ──── */
+const bpspecs = [
+  { category: "BOTTOM", brandId: "p", brandName: "P", silhouette: "straight", fitLine: "regular", sizeLabel: "30",
+    gender: "male", subtype: "long_pants", garmentCm: { waist: 41, hip: 50, thigh: 29 } },
+  { category: "BOTTOM", brandId: "p", brandName: "P", silhouette: "straight", fitLine: "regular", sizeLabel: "32",
+    gender: "male", subtype: "long_pants", garmentCm: { waist: 43, hip: 52, thigh: 31 } },
+  { category: "BOTTOM", brandId: "p", brandName: "P", silhouette: "wide", fitLine: "loose", sizeLabel: "30",
+    gender: "male", subtype: "long_pants", garmentCm: { waist: 41, hip: 54, thigh: 34 } },
+];
+// body waist80·hip98·thigh56. straight30: 허리 82−80=2(목표적중)·힙 2·허벅지 2 → 다 수용 / straight32: 허리 6(큼)
+const brec = FitEngine.recommendBottom({ waist: 80, hip: 98, thigh: 56 }, "straight", "male", "long_pants", bpspecs);
+eq(brec.length, 1, "하의 추천 — 브랜드 1개 → 1건");
+eq([brec[0].silhouette, brec[0].size, brec[0].fit], ["straight", "30", "딱맞음"],
+   "선호 실루엣 straight · 허리목표 근접 30 · 딱맞음");
+assert.ok(brec[0].fitScore >= 90, "다 수용 → 핏지수 높음"); pass++;
+// 선호 wide → 같은 브랜드의 wide 채택(실루엣 전환)
+eq(FitEngine.recommendBottom({ waist: 80, hip: 98, thigh: 56 }, "wide", "male", "long_pants", bpspecs)[0].silhouette,
+   "wide", "선호 wide → wide 실루엣 채택");
+["brandName", "silhouette", "size", "fit", "bottleneck", "fitScore", "waistEase"].forEach((k) => {
+  assert.ok(k in brec[0], `하의 추천 항목에 ${k} 필드 존재`); pass++;
 });
 
 /* ── 실데이터 스모크: garments.json 전량으로 깨지지 않고 계약 지키는지 ───────── */
