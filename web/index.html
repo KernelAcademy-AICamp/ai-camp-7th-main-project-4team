@@ -290,6 +290,7 @@
   .dgal div{height:150px; border-radius:12px; background-size:cover; background-position:center; background-color:var(--soft);}
   .tagrow span{display:inline-block; font-size:12.5px; background:var(--soft); color:#6a6258; padding:6px 12px; border-radius:20px; margin:0 6px 6px 0; font-weight:600;}
   .noreview{font-size:13.5px; color:var(--sub2); padding:10px 0;}
+  .dsec h3 .dsec-score{font-size:13px; font-weight:700; color:var(--green); margin-left:8px;}
 
   /* 견적 요청 페이지 */
   .reqpage{max-width:680px; margin:0 auto;}
@@ -408,7 +409,14 @@
   #my .mwrap{display:grid; grid-template-columns:268px 1fr; gap:30px; align-items:start; margin-top:14px;}
   #my .side{position:sticky; top:88px;}
   #my .pcard{background:#fff; border:1px solid var(--line); border-radius:20px; padding:24px; text-align:center; margin-bottom:14px; box-shadow:0 6px 18px rgba(20,18,16,.05);}
-  #my .pcard .av{width:66px; height:66px; border-radius:50%; margin:0 auto 12px; background:linear-gradient(135deg,var(--green),var(--green-mid)); color:#fff; display:flex; align-items:center; justify-content:center; font-size:25px; font-weight:800;}
+  #my .pcard .av{width:66px; height:66px; border-radius:50%; margin:0 auto 12px; background:var(--ink); color:#fff; display:flex; align-items:center; justify-content:center; font-size:25px; font-weight:800; overflow:hidden;}
+  /* 진단 후 아바타 = 결과 카드 캐릭터 얼굴(head) — card.html 재현, 유형 색 원 위에 얹음 */
+  #myAv .head{position:relative; width:34px; height:38px; margin-top:8px;}
+  #myAv .head .face{position:absolute; inset:0; border-radius:10px 10px 8px 8px; background:#ecd9c9; z-index:2; background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px),repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px);}
+  #myAv .head .cap{position:absolute; top:-3px; left:-3px; right:-3px; height:13px; border-radius:10px 10px 45% 45%; background:#2a2b30; z-index:3;}
+  #myAv .head.female .cap{background:#9a7350;}
+  #myAv .head .longhair{position:absolute; top:-5px; left:-7px; right:-7px; bottom:1px; background:#9a7350; border-radius:50% 50% 36% 36% / 46% 46% 30% 30%; z-index:1;}
+  #myAv .head .ey{position:absolute; top:18px; width:4px; height:5px; border-radius:50%; background:#2a2b30; z-index:4;} #myAv .head .ey.l{left:9px;} #myAv .head .ey.r{right:9px;}
   #my .pcard .nm{font-size:18px; font-weight:800; letter-spacing:-.03em;}
   #my .pcard .bt{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:var(--sub); margin-top:8px;}
   #my .pcard .bt i{width:9px; height:9px; border-radius:50%; background:var(--green-light);}
@@ -474,6 +482,114 @@
   .site-foot .flinks a:hover{ color:var(--ink); }
   .site-foot .copy{ font-size:11.5px; color:var(--sub2); margin-left:auto; line-height:1.6; max-width:420px; }
   @media(max-width:640px){ .site-foot .in{ padding:24px 20px 40px; } .site-foot .copy{ margin-left:0; flex-basis:100%; } }
+
+  /* ===== 오픈/지명 요청 배지 (요청내역 · 견적 결과 화면 공용) ===== */
+  .reqtype{display:inline-block; font-size:11px; font-weight:800; padding:3px 9px; border-radius:20px; vertical-align:middle; letter-spacing:-.01em;}
+  .reqtype.open{background:var(--green-soft); color:var(--green);}
+  .reqtype.named{background:var(--soft); color:var(--sub2);}
+
+  /* ===== 요청내역 — 오픈/지명 그룹 (두 요청 방식을 섹션으로 분리) ===== */
+  #my .reqgroup{background:#fff; border:1px solid var(--line); border-radius:18px; padding:2px 22px 8px; margin-bottom:16px; box-shadow:0 6px 18px rgba(20,18,16,.05);}
+  #my .rghead{display:flex; align-items:center; gap:13px; padding:18px 0 16px; border-bottom:1px solid var(--line);}
+  #my .rghead .rgicon{width:42px; height:42px; border-radius:13px; display:flex; align-items:center; justify-content:center; flex:none;}
+  #my .rghead .rgicon svg{width:21px; height:21px;}
+  #my .rghead.open .rgicon{background:var(--green-soft); color:var(--green);}
+  #my .rghead.named .rgicon{background:var(--soft); color:var(--ink-soft);}
+  #my .rghead.alert .rgicon{background:var(--soft); color:var(--sub);}
+  #my .rghead .rgtx{flex:1; min-width:0;}
+  #my .rghead .rgtx b{font-size:16.5px; font-weight:800; letter-spacing:-.03em;}
+  #my .rghead .rgtx p{font-size:12.5px; color:var(--sub); margin-top:4px; line-height:1.5;}
+  #my .rghead .rgcount{font-size:12.5px; font-weight:800; color:var(--sub2); background:var(--soft); padding:5px 11px; border-radius:20px; flex:none;}
+  #my .rghead.open .rgcount{color:var(--green); background:var(--green-soft);}
+  #my .rgempty{font-size:13px; color:var(--sub2); padding:18px 4px 12px;}
+  #my .rgempty a{color:var(--green); font-weight:800; cursor:pointer;}
+  /* 카드 좌측 그룹 악센트(box-shadow inset — 기존 border 규칙과 충돌 없음) */
+  #my .req.open{box-shadow:inset 3px 0 0 var(--green); padding-left:15px;}
+  #my .req.named{box-shadow:inset 3px 0 0 var(--line2); padding-left:15px;}
+  /* 받은 견적 — 컴팩트 클릭 행(숨고형): 날짜·상황·서비스 + 견적 건수 › */
+  #my .reqrow{display:flex; align-items:center; gap:14px; padding:17px 4px; border-bottom:1px solid var(--line); cursor:pointer; border-radius:10px; transition:background .15s;}
+  #my .reqrow:hover{background:var(--soft);}
+  #my .rglist .reqrow:last-child{border-bottom:none;}
+  #my .reqrow-l{flex:1; min-width:0;}
+  #my .reqrow-top{font-size:12.5px; color:var(--sub2); font-weight:700;}
+  #my .reqrow-title{font-size:16px; font-weight:800; letter-spacing:-.02em; margin-top:5px;}
+  #my .reqrow-r{display:flex; align-items:center; gap:5px; flex:none; font-size:14px; font-weight:700; color:var(--sub);}
+  #my .reqrow-r b{color:var(--ink); font-weight:800;}
+  #my .reqrow-r .chev{font-size:21px; color:var(--sub2); font-weight:400; line-height:1;}
+  /* 진행/지난 상태 구분 — 진행 중은 딥그린 강조, 지난 요청은 흐리게 */
+  #my .substat{font-size:11.5px; font-weight:800; letter-spacing:.04em; padding:16px 4px 6px; display:flex; align-items:center; gap:7px;}
+  #my .substat.active{color:var(--green);}
+  #my .substat.active::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--green);}
+  #my .substat.past{color:var(--sub2);}
+  #my .reqrow.active{box-shadow:inset 3px 0 0 var(--green); padding-left:14px;}
+  #my .reqrow.active .reqrow-title{color:var(--green);}
+  #my .reqrow.past{opacity:.5;}
+
+  /* ===== 견적 요청 결과(받은 견적) 오버레이 (IA 1.3.8) ===== */
+  .bids-overlay{position:fixed; inset:0; background:var(--bg); z-index:120; display:none; overflow-y:auto;}
+  .bids-overlay.on{display:block; animation:f .28s cubic-bezier(.2,.8,.2,1);}
+  .bids-inner{max-width:760px; margin:0 auto; padding:34px 30px 80px;}
+  .bids-head{position:relative; padding-right:52px; padding-bottom:20px; margin-bottom:22px; border-bottom:1px solid var(--line);}
+  .bids-head .xbtn{position:absolute; top:0; right:0;}
+  .bids-head h2{font-size:27px; font-weight:800; letter-spacing:-.045em; margin:10px 0 0;}
+  .bids-head .reqtype{margin-bottom:2px;}
+  .bids-head p{font-size:14.5px; color:var(--sub); margin-top:10px; line-height:1.6;}
+  .bids-overlay .tinybtn{font-weight:800; padding:11px 15px; border-radius:10px; background:var(--ink); color:#fff; border:none; cursor:pointer; white-space:nowrap; font-family:inherit;}
+  .bids-overlay .tinybtn:hover{background:#000;}
+  .bids-overlay .tinybtn.ghost{background:#fff; color:var(--ink); border:1.5px solid var(--line2);}
+  .bids-overlay .tinybtn.ghost:hover{background:var(--soft);}
+  /* 견적 카드 — 숨고형 세로 리스트 */
+  .bids-list{display:flex; flex-direction:column; gap:14px;}
+  .qcard{position:relative; display:flex; gap:16px; align-items:flex-start; background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px 22px; box-shadow:0 4px 14px rgba(20,18,16,.05);}
+  .qcard.best{border-color:var(--green); box-shadow:0 0 0 1.5px var(--green-soft), 0 10px 26px rgba(46,74,59,.12);}
+  .qcard.sel{border-color:var(--green);}
+  .qcard .q-sel{font-size:11px; font-weight:800; color:#fff; background:var(--green); padding:3px 9px; border-radius:20px;}
+  .qcard .q-l{flex:1; min-width:0;}
+  .qcard .q-top{display:flex; align-items:center; gap:11px;}
+  .qcard .q-ph{width:44px; height:44px; border-radius:50%; object-fit:cover; filter:saturate(.6); flex:none;}
+  .qcard .q-nm{font-size:16.5px; font-weight:800; letter-spacing:-.02em;}
+  .qcard .q-best{font-size:11px; font-weight:800; color:#fff; background:var(--green); padding:3px 9px; border-radius:20px;}
+  .qcard .q-price{font-size:22px; font-weight:800; letter-spacing:-.02em; margin-top:13px;} .qcard .q-price .num{font-family:var(--num); font-feature-settings:'tnum';}
+  .qcard .q-meta{font-size:13px; color:var(--sub); margin-top:7px;} .qcard .q-meta b{color:var(--green); font-weight:800;}
+  .qcard .q-tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:11px;}
+  .qcard .q-tags span{font-size:11.5px; background:var(--soft); color:#6a6258; padding:3px 9px; border-radius:20px; font-weight:600;}
+  .qcard .q-msg{font-size:13.5px; color:var(--ink-soft); line-height:1.55; margin-top:12px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+  .qcard .q-r{display:flex; flex-direction:column; gap:8px; flex:none; width:120px;}
+  .qcard .q-r .tinybtn{width:100%; text-align:center; padding:11px 10px; font-size:13.5px;}
+  /* 내가 보낸 요청 내용 — 토글 패널(받은 견적) + 요약 표 */
+  .req-toggle{display:inline-flex; align-items:center; gap:6px; margin-top:14px; padding:9px 15px; border-radius:10px; border:1.5px solid var(--line2); background:#fff; color:var(--sub); font-size:13px; font-weight:800; font-family:inherit; cursor:pointer;}
+  .req-toggle:hover{border-color:var(--green); color:var(--green);}
+  .req-toggle .tg{font-size:11px;}
+  .req-summary{display:none; margin-top:14px;}
+  .req-summary.on{display:block;}
+  .req-summary-in{background:var(--soft); border-radius:14px; padding:6px 16px;}
+  .rs-row{display:flex; justify-content:space-between; align-items:center; gap:16px; padding:11px 0; border-bottom:1px solid var(--line); font-size:13.5px;}
+  .rs-row:last-of-type{border-bottom:none;}
+  .rs-row span{color:var(--sub); flex:none;} .rs-row b{color:var(--ink); font-weight:700; text-align:right;}
+  .rs-note{font-size:12px; color:var(--green); font-weight:700; padding:12px 0 4px;}
+  /* 지명 요청 상세 — 쇼퍼 + 섹션 */
+  .rq-shopper{display:flex; align-items:center; gap:13px; background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px 18px; box-shadow:0 4px 14px rgba(20,18,16,.05);}
+  .rq-shopper .rq-ph{width:48px; height:48px; border-radius:50%; object-fit:cover; filter:saturate(.6); flex:none;}
+  .rq-shopper .rq-info{flex:1; min-width:0;}
+  .rq-shopper .rq-nm{font-size:16px; font-weight:800; letter-spacing:-.02em;}
+  .rq-shopper .rq-svc{font-size:12.5px; color:var(--sub); margin-top:3px;}
+  .rq-sec{margin-top:24px;}
+  .rq-sec .rq-h{font-size:14px; font-weight:800; letter-spacing:-.02em; margin-bottom:11px;}
+  /* #my 라이프사이클 스타일을 오버레이에서도 재사용 */
+  .bids-overlay .reqact{padding:14px 16px; background:var(--soft); border-radius:12px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:13.5px; color:var(--sub);}
+  .bids-overlay .reqact .muted{color:var(--sub2);}
+  .bids-overlay .offerbox{flex:1; min-width:200px; color:var(--ink-soft);} .bids-overlay .offerbox b{color:var(--green);} .bids-overlay .offerbox .num{font-family:var(--num); font-weight:800;}
+  .bids-overlay .offerbox .omsg{font-size:12.5px; color:var(--sub); margin-top:4px;}
+  .bids-overlay .obtns{display:flex; gap:8px; margin-left:auto;}
+  .bids-overlay .revshow{color:var(--ink-soft);} .bids-overlay .revshow .starsRO{letter-spacing:1px;} .bids-overlay .revshow .rtx{margin-left:6px;}
+  .bids-overlay .reviewform{width:100%;} .bids-overlay .reviewform .stars{display:flex; gap:5px; font-size:24px; cursor:pointer;}
+  .bids-overlay .reviewform .stars span{color:var(--line2); transition:.1s;} .bids-overlay .reviewform .stars span.on{color:var(--ink);}
+  .bids-overlay .reviewform .rtext{width:100%; margin-top:10px; padding:11px 13px; border:1.5px solid var(--line2); border-radius:10px; font-family:inherit; font-size:13.5px; resize:vertical; min-height:64px; background:#fff;}
+  .bids-overlay .reviewform .rtext:focus{outline:none; border-color:var(--green);}
+  .bids-overlay .reviewform .rbtns{display:flex; gap:8px; justify-content:flex-end; margin-top:10px;}
+  .bids-overlay .st{font-size:12px; font-weight:800; padding:5px 11px; border-radius:20px;}
+  .bids-overlay .st.wait{background:var(--soft); color:var(--sub);} .bids-overlay .st.prog{background:var(--green-soft); color:var(--green);} .bids-overlay .st.done{background:var(--green-soft); color:var(--green);} .bids-overlay .st.offer{background:var(--green); color:#fff;} .bids-overlay .st.cancel{background:var(--soft); color:var(--sub2);}
+  @media(max-width:560px){ .bids-inner{padding:24px 18px 70px;} .qcard{flex-direction:column; gap:14px;} .qcard .q-r{flex-direction:row; width:100%;} }
 </style>
 </head>
 <body>
@@ -579,7 +695,7 @@
         </div>
       </div>
       <div class="connect reveal">
-        <div class="node me"><div class="av">나</div><div><div class="nm">내 프로필</div><div class="sub2">시크 스트레이트 · <span class="num">158</span>cm</div></div></div>
+        <div class="node me"><div class="av">나</div><div><div class="nm">내 프로필</div><div class="sub2">시크 스트레이트 · <span class="num">172</span>cm</div></div></div>
         <div class="link"><div class="wire"><span class="wirefill"></span></div><div class="pulse"></div></div>
         <div class="node shopper" id="hShopNode"></div>
       </div>
@@ -614,10 +730,11 @@
         </div>
       </div>
 
-      <!-- 견적 요청 배너 -->
+
+      <!-- 오픈 요청(여러 쇼퍼 견적) 배너 -->
       <div class="reqbanner">
-        <div class="txt"><b>어떤 쇼퍼가 맞을지 모르겠다면?</b><p>견적을 요청해서 직접 쇼퍼에게 제안해보세요</p></div>
-        <button class="btn" onclick="openMatch()">견적 요청하기 →</button>
+        <div class="txt"><b>어떤 쇼퍼가 맞을지 모르겠다면?</b><p>오픈 요청을 보내면 여러 쇼퍼가 견적을 보내요 · 비교하고 선택하세요</p></div>
+        <button class="btn" onclick="openMatch()">오픈 요청하기 →</button>
       </div>
 
       <!-- 서비스 유형 (탭) -->
@@ -675,14 +792,14 @@
     <div class="mwrap">
       <aside class="side">
         <div class="pcard">
-          <div class="av">김</div>
+          <div class="av" id="myAv">김</div>
           <div class="nm">김도현</div>
           <div class="bt"><i></i> 시크 스트레이트 (STR)</div>
         </div>
         <nav class="smenu" id="smenu">
           <a class="on" data-p="mp-profile" onclick="myNav(this)"><span class="i">👤</span> 프로필 기본정보</a>
           <a data-p="mp-diag" onclick="myNav(this)"><span class="i">📏</span> 내 진단 결과</a>
-          <a data-p="mp-req" onclick="myNav(this)"><span class="i">🧾</span> 코디 요청 내역</a>
+          <a data-p="mp-req" onclick="myNav(this)"><span class="i">🧾</span> 요청 내역</a>
           <a data-p="mp-fav" onclick="myNav(this)"><span class="i">🤍</span> 즐겨찾기</a>
           <a data-p="mp-acct" onclick="myNav(this)"><span class="i">⚙️</span> 계정 관리</a>
         </nav>
@@ -717,7 +834,7 @@
           <h1>내 진단 결과</h1>
           <p class="lead">최근 진단으로 만든 내 카드예요 · <b style="color:var(--ink)">제품의 얼굴</b>.</p>
           <div style="display:grid; grid-template-columns:420px 1fr; gap:22px; align-items:start;">
-            <iframe class="cardframe" src="card.html?type=STR&g=female" scrolling="no"></iframe>
+            <iframe class="cardframe" src="card.html?type=STR&g=male" scrolling="no"></iframe>
             <div class="mcard">
               <div class="msub"><div class="subhead">브랜드별 추천 사이즈 <span class="pr core">★ MVP</span></div>
                 <p class="lead" style="font-size:12.5px; margin-bottom:8px">「무신사 <span class="num">M</span>·딱맞음」 기준 · 차별점 핵심 산출물</p>
@@ -740,13 +857,9 @@
         <!-- 1.4·C 코디 요청 내역 -->
         <section class="mpanel" id="mp-req">
           <div class="crumb">마이페이지 · 1.4·C</div>
-          <h1>코디 요청 내역</h1>
-          <p class="lead">쇼퍼에게 보낸 요청과 결과를 모아봐요</p>
-          <div class="mcard">
-            <div class="msub"><div class="subhead">요청 목록 + 상태 <span class="pr v2">○ v2</span></div>
-              <div id="reqList"></div>
-            </div>
-          </div>
+          <h1>요청 내역</h1>
+          <p class="lead">요청은 두 가지예요 — <b style="color:var(--ink)">받은 견적</b>은 여러 쇼퍼가 보낸 견적을 비교해 고르고, <b style="color:var(--ink)">보낸 요청</b>은 내가 지명한 쇼퍼에게 직접 보내요</p>
+          <div id="reqList"></div>
           <p class="note">※ 목업에선 브라우저(localStorage)에 저장돼요 · 실제 요청·결과·후기 연동은 v2에서 채워져요</p>
         </section>
 
@@ -823,6 +936,11 @@
     <button class="google" onclick="loginDone()">Google로 계속하기</button>
     <button class="email" onclick="loginDone()">이메일로 계속하기</button>
   </div>
+</div>
+
+<!-- ===== 견적 요청 결과(받은 견적) 오버레이 (IA 1.3.8) ===== -->
+<div class="bids-overlay" id="bidsOverlay">
+  <div class="bids-inner" id="bidsBody"></div>
 </div>
 
 <div class="toast" id="toast"></div>
