@@ -29,12 +29,16 @@
   var REGION_PRESETS = ['서울','경기','인천','부산','대구','대전','광주'];
 
   var reqs = loadLS('pro.reqs', [
-    {cust:'김도현', type:'STR', bodytype:'시크 스트레이트', gender:'male',   cm:172, kg:65, occ:'소개팅',     budget:'5~10만',  date:'2026.07.02', note:'과하지 않게 깔끔한 첫인상 원해요', status:'신규'},
-    {cust:'정예린', type:'INV', bodytype:'모던 V라인',     gender:'female', cm:167, kg:58, occ:'일상 코디',   budget:'~5만',    date:'2026.07.01', note:'출근룩 위주로 데일리하게 입고 싶어요', status:'신규'},
-    {cust:'이서연', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:163, kg:52, occ:'면접·발표',   budget:'10~15만', date:'2026.06.30', note:'신뢰감 있는 오피스룩', status:'제안발송', offer:{price:95000, msg:'면접관 시선까지 고려해 첫인상 깔끔하게 잡아드릴게요'}},
-    {cust:'박지우', type:'TRI', bodytype:'소프트 A라인',   gender:'female', cm:160, kg:54, occ:'결혼식 하객', budget:'10~15만', date:'2026.06.27', note:'', status:'수락됨', offer:{price:120000, msg:'하객룩 단정하게 코디해드릴게요'}},
-    {cust:'최민준', type:'BAL', bodytype:'이지 밸런스',    gender:'male',   cm:175, kg:70, occ:'데일리',     budget:'~5만',    date:'2026.06.18', status:'완료', offer:{price:60000, msg:''}, review:{rating:5, text:'취향 저격이었어요! 반품 없이 한 번에 성공'}}
+    {cust:'김도현', type:'STR', bodytype:'시크 스트레이트', gender:'male',   cm:172, kg:65, occ:'소개팅',     budget:'5~10만',  date:'2026.07.02', service:'online', note:'과하지 않게 깔끔한 첫인상 원해요', status:'신규'},
+    {cust:'정예린', type:'INV', bodytype:'모던 V라인',     gender:'female', cm:167, kg:58, occ:'일상 코디',   budget:'~5만',    date:'2026.07.01', service:'online', note:'출근룩 위주로 데일리하게 입고 싶어요', status:'신규'},
+    {cust:'이서연', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:163, kg:52, occ:'면접·발표',   budget:'10~15만', date:'2026.06.30', service:'visit', note:'신뢰감 있는 오피스룩', status:'제안발송', offer:{price:95000, msg:'면접관 시선까지 고려해 첫인상 깔끔하게 잡아드릴게요'}},
+    {cust:'박지우', type:'TRI', bodytype:'소프트 A라인',   gender:'female', cm:160, kg:54, occ:'결혼식 하객', budget:'10~15만', date:'2026.06.27', service:'visit', note:'', status:'수락됨', offer:{price:120000, msg:'하객룩 단정하게 코디해드릴게요'}},
+    {cust:'최민준', type:'BAL', bodytype:'이지 밸런스',    gender:'male',   cm:175, kg:70, occ:'데일리',     budget:'~5만',    date:'2026.06.18', service:'online', status:'완료', offer:{price:60000, msg:''}, review:{rating:5, text:'취향 저격이었어요! 반품 없이 한 번에 성공'}}
   ]);
+  /* 옛 캐시(service 없던 시절)에도 서비스 유형 보정 — 제안·상태는 유지 */
+  var SVC_BY_CUST = {'김도현':'online','정예린':'online','이서연':'visit','박지우':'visit','최민준':'online'};
+  reqs.forEach(function(r){ if(!r.service) r.service = SVC_BY_CUST[r.cust] || 'online'; });
+  saveLS('pro.reqs', reqs);   // 견적서 페이지(pro-quote)가 같은 데이터를 읽도록 항상 저장
 
   /* ===== 네비 ===== */
   function nav(el){
@@ -45,13 +49,15 @@
   }
   function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2000); }
   function stClass(s){ return s==='신규'?'nw':(s==='제안발송'?'sent':(s==='수락됨'?'prog':'done')); }
+  function svcLabel(s){ return s==='visit' ? '방문 서비스' : '온라인 컨설팅'; }
+  function svcBadge(s){ var v=s==='visit'; return '<span class="svcbadge '+(v?'visit':'online')+'">'+(v?'🏠 방문 서비스':'💻 온라인 컨설팅')+'</span>'; }
   function starsRO(n){ var s=''; for(var k=1;k<=5;k++) s+='<span style="color:'+(k<=n?'var(--ink)':'var(--line2)')+'">★</span>'; return s; }
 
   /* ===== 요청 행(요약, 클릭 시 상세) ===== */
   function reqTop(r, clickable){ var i=reqs.indexOf(r);
-    return '<div class="req'+(clickable?' rowbtn" onclick="openReqDetail('+i+')':'')+'">'+
+    return '<div class="req'+(clickable?' rowbtn" onclick="goQuote('+i+')':'')+'">'+
       '<div class="reqtop"><div class="av">'+(r.cust?r.cust.charAt(0):'?')+'</div>'+
-      '<div class="info"><b>'+r.cust+' 님 · '+r.occ+'</b><small>'+r.bodytype+' · 예산 '+r.budget+' · '+r.date+'</small></div>'+
+      '<div class="info"><b>'+r.cust+' 님 · '+r.occ+'</b>'+svcBadge(r.service)+'<small>'+r.bodytype+' · 예산 '+r.budget+' · '+r.date+'</small></div>'+
       '<span class="st '+stClass(r.status)+'">'+r.status+'</span>'+(clickable?'<span class="chev">›</span>':'')+'</div></div>';
   }
 
@@ -78,7 +84,7 @@
         '<div class="bodycard"><iframe src="card.html?type='+tp+'&g='+g+'&compact=1" scrolling="no" tabindex="-1" title="고객 체형 카드"></iframe></div>'+
         '<div class="bodymeta">'+r.bodytype+' ('+tp+') · <span class="num">'+(r.cm||'—')+'</span>cm · <span class="num">'+(r.kg||'—')+'</span>kg</div>'+
         '<div class="dsec-label">요청 내용</div>'+
-        '<div class="kv"><span>서비스 유형</span><b>온라인 스타일링</b></div>'+
+        '<div class="kv"><span>서비스 유형</span><b>'+svcLabel(r.service)+'</b></div>'+
         '<div class="kv"><span>상황</span><b>'+r.occ+'</b></div>'+
         '<div class="kv"><span>예산</span><b>'+r.budget+'</b></div>'+
         '<div class="kv"><span>희망 일정</span><b>'+(r.date||'—')+'</b></div>'+
@@ -104,10 +110,12 @@
 
   /* ===== 렌더 ===== */
   function renderInbox(){
-    var el=document.getElementById('inboxList');
-    var open=reqs.filter(function(r){return r.status!=='완료';}), done=reqs.filter(function(r){return r.status==='완료';});
-    var list=open.concat(done);
-    el.innerHTML = list.length ? list.map(function(r){ return reqTop(r,true); }).join('') : '<p class="note" style="padding:14px 0">아직 받은 요청이 없어요</p>';
+    var open=reqs.filter(function(r){return r.status!=='완료';});
+    var done=reqs.filter(function(r){return r.status==='완료';});
+    document.getElementById('inboxList').innerHTML = open.length ? open.map(function(r){ return reqTop(r,true); }).join('') : '<p class="note" style="padding:14px 0">진행 중인 요청이 없어요</p>';
+    var dc=document.getElementById('inboxDoneCard');
+    if(done.length){ dc.style.display=''; document.getElementById('inboxDoneList').innerHTML=done.map(function(r){ return reqTop(r,true); }).join(''); }
+    else { dc.style.display='none'; }
   }
   function renderRecent(){ document.getElementById('dashRecent').innerHTML=reqs.slice(0,3).map(function(r){ return reqTop(r,true); }).join(''); }
   function renderReviews(){
@@ -117,19 +125,37 @@
       return '<div class="req"><div class="reqtop"><div class="av">'+r.cust.charAt(0)+'</div><div class="info"><b>'+r.cust+' 님 · '+r.occ+'</b><small style="letter-spacing:1px">'+starsRO(r.review.rating)+'</small></div></div><div class="reqact"><span class="reqnote">"'+r.review.text+'"</span></div></div>';
     }).join('') : '<p class="note" style="padding:14px 0">아직 받은 후기가 없어요</p>';
   }
+  /* 예시용(하드코딩) 지표 — 나중에 실제 정산·응답 로그로 대체 */
+  var DEMO_STATS = { revenue:'32만원', revenueDelta:'▲18%', rating:'4.9' };
+  var DEMO_AGO = ['방금 전','2시간 전','5시간 전','어제'];  // 응답 필요 목록의 예시용 경과시간
+
   function renderStats(){
     var nw=reqs.filter(function(r){return r.status==='신규';}).length;
     var prog=reqs.filter(function(r){return r.status==='수락됨';}).length;
-    var done=reqs.filter(function(r){return r.status==='완료';}).length;
     document.getElementById('dashStats').innerHTML=
+      '<div class="stat"><b>'+DEMO_STATS.revenue+'</b><small>이번 달 수익 · <span style="color:var(--green)">'+DEMO_STATS.revenueDelta+'</span></small></div>'+
       '<div class="stat"><b>'+nw+'</b><small>신규 요청</small></div>'+
       '<div class="stat"><b>'+prog+'</b><small>진행 중</small></div>'+
-      '<div class="stat"><b>'+done+'</b><small>완료</small></div>'+
-      '<div class="stat"><b>4.9</b><small>평점</small></div>';
+      '<div class="stat"><b>★ '+DEMO_STATS.rating+'</b><small>평점</small></div>';
     document.getElementById('newCnt').textContent=nw;
     document.getElementById('pRev').textContent=reqs.filter(function(r){return r.review;}).length;
   }
-  function renderAll(){ renderStats(); renderRecent(); renderInbox(); renderReviews(); }
+  /* ① 지금 응답이 필요한 요청(신규) — 대시보드 상단 액션 카드 */
+  function renderUrgent(){
+    var el=document.getElementById('dashUrgent');
+    var news=reqs.filter(function(r){return r.status==='신규';});
+    if(!news.length){ el.style.display='none'; return; }
+    el.style.display='block';
+    el.innerHTML='<div class="subhead">⏰ 지금 응답이 필요해요 <span class="ucount">'+news.length+'건</span></div>'+
+      news.map(function(r,k){ var i=reqs.indexOf(r);
+        return '<div class="urow"><div class="uinfo"><b>'+r.cust+' 님 · '+r.occ+'</b>'+
+          '<small>'+r.bodytype+' · 예산 '+r.budget+' · '+DEMO_AGO[k%DEMO_AGO.length]+'</small></div>'+
+          '<button class="tinybtn" onclick="goQuote('+i+')">제안 보내기</button></div>';
+      }).join('');
+  }
+  function renderAll(){ renderStats(); renderUrgent(); renderRecent(); renderInbox(); renderReviews(); }
+  /* 요청 클릭 → 견적서 페이지로 이동(사이드 드로어 대신) */
+  function goQuote(i){ location.href='pro-quote.html?req='+i; }
 
   /* ===== 가입 프로필을 포털 화면에 반영 ===== */
   function setText(id, v){ var el=document.getElementById(id); if(el&&v!=null) el.textContent=v; }
@@ -137,6 +163,8 @@
     if(!PROFILE) return;   // 가입 전(데모 기본값 유지)
     setText('hdrName', PROFILE.name);
     setText('sideName', PROFILE.name);
+    setText('pfName', PROFILE.name);
+    setText('dashHello', '안녕하세요, '+PROFILE.name+'님 👋');
     if(PROFILE.avatar){
       var h=document.getElementById('hdrAvatar'), sd=document.getElementById('sideAvatar');
       if(h){ h.src=PROFILE.avatar; h.style.visibility='visible'; }

@@ -44,6 +44,13 @@
   h1{font-size:25px;font-weight:800;letter-spacing:-.04em}
   .lead{font-size:14.5px;color:var(--sub);margin:6px 0 18px}
 
+  /* 응답 필요 카드(대시보드) */
+  .card.urgent{border-color:var(--green);background:var(--green-soft);margin-bottom:22px}
+  .ucount{font-size:12px;font-weight:800;color:#fff;background:var(--green);border-radius:20px;padding:1px 9px;margin-left:5px}
+  .urow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(31,122,63,.15)}
+  .urow:last-child{border-bottom:none}
+  .urow .uinfo{flex:1;min-width:0} .urow .uinfo b{font-size:14px} .urow .uinfo small{display:block;font-size:12.5px;color:var(--sub);margin-top:2px}
+
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
   .stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 6px 18px rgba(20,18,16,.05)}
   .stat b{display:block;font-family:var(--num);font-feature-settings:'tnum';font-size:30px;font-weight:800;letter-spacing:-.02em;color:var(--green)}
@@ -59,6 +66,10 @@
   .req .info{flex:1;min-width:0} .req .info b{font-size:14.5px} .req .info small{display:block;font-size:12.5px;color:var(--sub);margin-top:2px}
   .st{font-size:12px;font-weight:800;padding:5px 11px;border-radius:20px;white-space:nowrap}
   .st.nw{background:var(--green);color:#fff} .st.sent{background:var(--soft);color:var(--sub)} .st.prog{background:var(--green-soft);color:var(--green)} .st.done{background:var(--green-soft);color:var(--green)}
+  /* 서비스 유형 배지(온라인/방문) */
+  .svcbadge{display:inline-block;font-size:11px;font-weight:800;border-radius:20px;padding:2px 9px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+  .svcbadge.online{background:var(--green-soft);color:var(--green)}
+  .svcbadge.visit{background:#fbeede;color:#b9741a}
   .reqact{margin-top:12px;padding:12px 14px;background:var(--soft);border-radius:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--sub)}
   .reqnote{font-style:normal;color:var(--ink-soft)}
   .tinybtn{font-size:12.5px;font-weight:800;padding:9px 15px;border-radius:10px;background:var(--ink);color:#fff;border:none;cursor:pointer;white-space:nowrap}
@@ -187,8 +198,9 @@
     <!-- 대시보드 -->
     <section class="panel on" id="dash">
       <div class="crumb">쇼퍼 지원 · 대시보드</div>
-      <h1>안녕하세요, 소희 쇼퍼님 👋</h1>
+      <h1 id="dashHello">안녕하세요, 소희 쇼퍼님 👋</h1>
       <p class="lead">오늘의 요청과 진행 현황이에요</p>
+      <div class="card urgent" id="dashUrgent"></div>
       <div class="stats" id="dashStats"></div>
       <div class="card"><div class="subhead">최근 요청</div><div id="dashRecent"></div></div>
     </section>
@@ -198,7 +210,8 @@
       <div class="crumb">쇼퍼 지원 · 요청함</div>
       <h1>요청함</h1>
       <p class="lead">고객이 보낸 견적 요청을 검토하고 제안을 보내세요</p>
-      <div class="card"><div class="subhead">받은 요청</div><div id="inboxList"></div></div>
+      <div class="card"><div class="subhead">진행 중인 요청</div><div id="inboxList"></div></div>
+      <div class="card" id="inboxDoneCard" style="margin-top:16px"><div class="subhead">✓ 완료된 요청</div><div id="inboxDoneList"></div></div>
     </section>
 
     <!-- 내 프로필 -->
@@ -291,6 +304,7 @@
       <p class="lead">완료 건 기준 정산 내역 · <b style="color:var(--green)">준비 중</b>이에요 (v2)</p>
       <div class="card"><p class="note" style="padding:20px 0">완료된 서비스의 정산·수익 관리가 여기에 들어와요.</p></div>
     </section>
+
   </main>
 </div></div>
 
