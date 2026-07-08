@@ -12,7 +12,8 @@
             items:['레귤러핏 셔츠','슬림핏 셔츠','오버핏 맨투맨','니트'],
             fit:['어깨','가슴','배'], flag:['팔(소매통)','목'], pref:['소매 기장','총장']},
     bottom:{label:'하의',  ready:true,  kind:'base', provides:'lower',
-            items:['레귤러 슬랙스','와이드 팬츠','스키니 진','트레이닝 팬츠'],
+            // 품목=실루엣(형태축). 바지는 같은 허리여도 실루엣별 허벅지·밑단이 달라 매칭 1차 키(engine silhouette).
+            items:['스키니 진','슬림 팬츠','스트레이트 팬츠','테이퍼드 팬츠','와이드 팬츠','부츠컷'],
             fit:['허리','엉덩이','허벅지'], flag:['종아리'], pref:['밑위','기장']},
     outer: {label:'아우터', ready:false, kind:'derived', needs:['upper'],
             items:['싱글 코트','블레이저','패딩','바람막이'],
@@ -90,7 +91,8 @@
 
   function applyTarget(){
     const c=CATS[target];
-    ['item1','item2'].forEach(id=>document.getElementById(id).innerHTML=c.items.map(i=>'<option>'+i+'</option>').join(''));
+    renderItems(1); renderItems(2);   // 품목 = 브랜드별 실 수집 제품(데이터 없으면 CATS 기본)
+    renderPrefOpts();   // 선호핏 옵션(하의=실루엣 / 그 외=여유)
     document.querySelectorAll('.catword').forEach(e=>e.textContent=c.label);
     document.querySelectorAll('.longword').forEach(e=>e.textContent=LONGWORD[target]||'긴 옷');
     renderFacet(1); renderFacet(2); renderFeel(1); renderFeel(2); renderSizes(1); renderSizes(2);
@@ -192,6 +194,35 @@
             : (labels.indexOf('M')>=0 ? 'M' : labels[Math.floor(labels.length/2)]);
     el.innerHTML=labels.map(function(l){ return '<div class="opt'+(l===def?' on':'')+'" onclick="pick(this)">'+l+'</div>'; }).join('');
   }
+  // 품목 = 우리가 수집한 실제 제품(브랜드·성별·subtype별). 데이터 없으면 CATS 기본 목록.
+  function garmentProducts(brandId, gender, subtype){
+    if(!GARMENTS || !brandId) return null;
+    var seen={}, list=[];
+    GARMENTS.forEach(function(s){
+      if(s.brandId!==brandId) return;
+      if(!(s.gender===gender || s.gender==='unisex')) return;
+      if(subtype && s.subtype!==subtype) return;
+      if(s.product && !seen[s.product]){ seen[s.product]=1; list.push(s.product); }
+    });
+    return list.length?list:null;
+  }
+  function renderItems(g){
+    var el=document.getElementById('item'+g); if(!el) return;
+    var bsel=document.getElementById('brand'+g);
+    var brandId=bsel?BRANDID[bsel.value]:null;
+    var prods=hasData(target) ? garmentProducts(brandId, BASIC.gender||'female', subtypeOf(g)) : null;
+    var items=prods || (CATS[target]?CATS[target].items:[]);
+    var prev=el.value;
+    el.innerHTML=items.map(function(i){ return '<option'+(i===prev?' selected':'')+'>'+i+'</option>'; }).join('');
+  }
+  // 선택한 실제 제품의 시드 스펙 조회 — fitLine·silhouette·waistband를 제품명 재파싱 대신 정본값으로.
+  function specOfItem(brandId, product, gender, subtype){
+    if(!GARMENTS || !brandId || !product) return null;
+    for(var i=0;i<GARMENTS.length;i++){ var s=GARMENTS[i];
+      if(s.brandId===brandId && s.product===product &&
+         (s.gender===gender || s.gender==='unisex') && (!subtype || s.subtype===subtype)) return s; }
+    return null;
+  }
   var LABELKEY={'어깨':'shoulder','가슴':'chest','가슴·품':'chest','배':'belly','소매':'sleeve','총장':'length',
     '허리':'waist','엉덩이':'hip','허벅지':'thigh','밑위':'rise','기장':'length',
     '팔(소매통)':'arm','팔':'arm','목':'neck','목/칼라':'neck','암홀':'armhole','종아리':'calf','밑단':'hem','상하 비율':'ratio'};
@@ -199,11 +230,33 @@
   var FLAGV={'꼈어요':'TIGHT','괜찮았어요':'OK'};
   var PREFV={'짧음':'SHORT','딱 좋음':'GOOD','긺':'LONG'};
   var FITLINE={'스키니':'skinny','슬림':'slim','레귤러':'regular','루즈':'loose','오버':'oversize','타이트':'skinny'};
+  // 선호핏(idx1) 옵션 — 카테고리 축이 다름: 상의/파생=여유(ease), 하의=실루엣(형태).
+  var PREFOPTS={
+    ease:[['스키니','몸에 딱 붙는'],['슬림','군더더기 없이'],['레귤러','적당한 여유'],['루즈','넉넉하게'],['오버','크게 떨어지는']],
+    silhouette:[['스키니','몸에 딱'],['슬림','다리 라인 슬림'],['스트레이트','일자'],['테이퍼드','아래로 좁아지는'],['와이드','넓게'],['부츠컷','아래로 벌어지는']]
+  };
+  var PREF_DEFAULT={ease:'레귤러', silhouette:'스트레이트'};
+  var PREF_SIL={'스키니':'skinny','슬림':'slim','스트레이트':'straight','테이퍼드':'tapered','와이드':'wide','부츠컷':'bootcut'};
+  function prefAxis(cat){ return (cat||target)==='bottom'?'silhouette':'ease'; }
+  var PREFHELP={
+    ease:'선호하는 여유감은 <strong>옷 종류마다 달라서</strong> 종류를 고른 뒤 물어봐요. 이 취향은 추천에 반영돼요.',
+    silhouette:'바지는 <strong>실루엣마다 핏이 크게 달라서</strong>, 평소 즐겨 입는 실루엣을 골라주세요. 결과의 선호 실루엣에 반영돼요.'
+  };
+  function renderPrefOpts(){
+    var pseg=document.getElementById('prefseg'); if(!pseg) return;
+    var ax=prefAxis(), def=PREF_DEFAULT[ax];
+    pseg.innerHTML=PREFOPTS[ax].map(function(o){
+      return '<div class="opt'+(o[0]===def?' on':'')+'" onclick="pick(this)">'+o[0]+' — '+o[1]+'</div>'; }).join('');
+    var ph=document.getElementById('prefhelp'); if(ph) ph.innerHTML=PREFHELP[ax];
+  }
+  // 선호핏 선택 → enum. 하의=실루엣(형태축), 그 외=fitLine(여유축). prefs[cat]에 저장.
   function fitLineFromPref(){
-    var sel=document.querySelector('.wstep .seg.stack .opt.on') || document.querySelector('#derived-flow .seg.stack .opt.on');
-    if(!sel) return 'regular';
+    var inDerived = CATS[target] && CATS[target].kind==='derived';
+    var sel = inDerived ? document.querySelector('#derived-flow .seg.stack .opt.on')
+                        : document.querySelector('#prefseg .opt.on');
+    if(!sel) return target==='bottom'?'straight':'regular';
     var word=sel.textContent.trim().split(' ')[0];
-    return FITLINE[word]||'regular';
+    return target==='bottom' ? (PREF_SIL[word]||'straight') : (FITLINE[word]||'regular');
   }
   function collectFeel(boxId){
     var fits={}, flags={}, prefs={};
@@ -227,6 +280,15 @@
     for(var i=0;i<keys.length;i++){ if(itemTxt.indexOf(keys[i])>=0) return FITLINE[keys[i]]; }
     return 'regular';
   }
+  // 하의 실루엣(형태축) — 품목 라벨에서 파싱. build-sizespec.py silhouette_of와 동일 규칙(1차 매칭키).
+  var SILH=[['부츠컷','bootcut'],['스키니','skinny'],['세미와이드','wide'],['리얼와이드','wide'],
+    ['와이드','wide'],['벌룬','wide'],['배기','wide'],['테이퍼','tapered'],['스트레이트','straight'],
+    ['커브드','slim'],['슬림','slim']];
+  function garmentSilhouette(itemTxt){
+    itemTxt=itemTxt||'';
+    for(var i=0;i<SILH.length;i++){ if(itemTxt.indexOf(SILH[i][0])>=0) return SILH[i][1]; }
+    return null;
+  }
   function collectExp(){
     var basic={}; try{ basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'{}'); }catch(e){}
     var cat=CATMAP[target]||'TOP', prefLine=fitLineFromPref();
@@ -236,13 +298,17 @@
       var bsel=document.getElementById('brand'+g), brandTxt=bsel?bsel.value:'';
       var isel=document.getElementById('item'+g), itemTxt=isel?isel.value:'';
       var szEl=document.querySelector('#size'+g+' .opt.on');
-      // 하의 허리 밴드 응답 → waistband(엔진이 허리 역산 스킵 판정에 사용). 없으면 undefined('모름').
+      var brandId=BRANDID[brandTxt]||'unknown', gen=BASIC.gender||'female';
+      // 선택한 실제 제품의 시드 스펙 — fitLine·silhouette·waistband를 정본값으로(없으면 제품명 파싱 폴백).
+      var sp=specOfItem(brandId, itemTxt, gen, subtypeOf(g));
+      // 허리 밴드: 사용자 토글 우선 → '모름'이면 선택 제품의 밴딩값(hidden/side/full/partial→있음).
       var wbEl=document.querySelector('#feel'+g+' .wband-seg .opt.on'), wbLab=wbEl?wbEl.textContent.trim():'';
-      var waistband=wbLab==='없음'?'none':(wbLab==='있음'?'banded':undefined);
-      // fitLine = 입은 옷의 핏(역산 조회용). 선호핏(prefLine)은 prefs로 따로 저장.
-      exps.push({ category:cat, brandId:BRANDID[brandTxt]||'unknown', brandName:brandTxt,
-        fitLine:garmentFitLine(itemTxt), item:itemTxt, sizeLabel:szEl?szEl.textContent.trim():'M',
-        subtype:subtypeOf(g), gender:BASIC.gender||'female', waistband:waistband,
+      var waistband=wbLab==='없음'?'none':(wbLab==='있음'?'banded':((sp&&sp.waistband)?'banded':undefined));
+      exps.push({ category:cat, brandId:brandId, brandName:brandTxt,
+        fitLine: sp?sp.fitLine:garmentFitLine(itemTxt), item:itemTxt, sizeLabel:szEl?szEl.textContent.trim():'M',
+        subtype:subtypeOf(g), gender:gen, waistband:waistband,
+        // 하의는 실루엣(형태축)이 엔진 1차 매칭키. 상의는 undefined(fitLine 사용).
+        silhouette: cat==='BOTTOM' ? (sp?sp.silhouette:garmentSilhouette(itemTxt)) : undefined,
         fits:f.fits, painFlags:f.painFlags, lengthPrefs:f.lengthPrefs, openNote:f.openNote });
     });
     // 기존 진단 결과에 병합 — 다른 카테고리(상↔하)는 보존하고, 같은 카테고리는 교체
