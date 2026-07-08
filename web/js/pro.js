@@ -5,6 +5,28 @@
   /* 가입(온보딩)에서 저장한 프로필. 데이터 계약: docs/쇼퍼가입-화면정의서.md §5 */
   var PROFILE = loadLS('pro.profile', null);
   var MY_PRICE = (PROFILE && PROFILE.services && PROFILE.services[0]) ? PROFILE.services[0].price : 120000;
+  /* 가입 전(직접 pro.html 진입) 편집 시 시드로 쓸 기본 프로필 = 화면의 데모값과 동일 */
+  /* 예시용 포트폴리오(사진 + 착용 모델 키·몸무게) */
+  var DEMO_PORTFOLIO = [
+    {src:'photos/folio1.jpg', height:168, weight:55},
+    {src:'photos/folio2.jpg', height:172, weight:63},
+    {src:'photos/folio3.jpg', height:160, weight:50},
+    {src:'photos/folio4.jpg', height:177, weight:70},
+    {src:'photos/folio5.jpg', height:165, weight:58},
+    {src:'photos/folio6.jpg', height:170, weight:60},
+    {src:'photos/folio1.jpg', height:158, weight:48},
+    {src:'photos/folio2.jpg', height:174, weight:66}
+  ];
+  var DEFAULT_PROFILE = {
+    registered:false, name:'소희 쇼퍼',
+    services:[{type:'online',label:'온라인 스타일링',price:35000},{type:'visit',label:'방문',price:120000}],
+    tagline:'데일리·소개팅룩 전문 스타일리스트',
+    bio:'온라인 쇼핑몰 MD 출신으로 비대면 큐레이션이 강점이에요',
+    specialties:['데일리룩','소개팅룩','미니멀'], portfolio:DEMO_PORTFOLIO, regions:['서울 강남','서울 마포'],
+    height:167, weight:52
+  };
+  var TAG_PRESETS = ['데일리룩','소개팅룩','미니멀','오피스','하객룩','캐주얼','스트릿'];
+  var REGION_PRESETS = ['서울','경기','인천','부산','대구','대전','광주'];
 
   var reqs = loadLS('pro.reqs', [
     {cust:'김도현', type:'STR', bodytype:'시크 스트레이트', gender:'male',   cm:172, kg:65, occ:'소개팅',     budget:'5~10만',  date:'2026.07.02', note:'과하지 않게 깔끔한 첫인상 원해요', status:'신규'},
@@ -67,7 +89,7 @@
     document.getElementById('drawer').classList.add('on'); document.getElementById('scrim').classList.add('on');
   }
   function closeDrawer(){ document.getElementById('drawer').classList.remove('on'); document.getElementById('scrim').classList.remove('on'); }
-  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeDrawer(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeDrawer(); closeAvatar(); } });
 
   /* ===== 요청함 액션 (상세 드로어 안에서) ===== */
   function refresh(i){ renderAll(); if(document.getElementById('drawer').classList.contains('on')) openReqDetail(i); }
@@ -115,12 +137,10 @@
     if(!PROFILE) return;   // 가입 전(데모 기본값 유지)
     setText('hdrName', PROFILE.name);
     setText('sideName', PROFILE.name);
-    var svc=PROFILE.services||[];
-    if(svc.length){
-      setText('sideRole', svc[0].label);
-      document.getElementById('pfServices').innerHTML = svc.map(function(s){
-        return s.label+' · <span class="num">'+(s.price||0).toLocaleString()+'</span>원';
-      }).join('<br>');
+    if(PROFILE.avatar){
+      var h=document.getElementById('hdrAvatar'), sd=document.getElementById('sideAvatar');
+      if(h){ h.src=PROFILE.avatar; h.style.visibility='visible'; }
+      if(sd){ sd.src=PROFILE.avatar; sd.style.visibility='visible'; }
     }
     if(PROFILE.tagline || PROFILE.bio){
       var bio=document.getElementById('pfBio');
@@ -130,15 +150,190 @@
       document.getElementById('pfTags').innerHTML = PROFILE.specialties.map(function(t){ return '<span class="tag">'+t+'</span>'; }).join('');
     }
   }
+  /* 서비스·가격을 카테고리별 카드 행으로 (가입 전이면 데모 기본값 사용) */
+  function svcIcon(t){ return t==='online'?'💻':(t==='visit'?'🏠':(t==='video'?'🎥':'🛍️')); }
+  function svcDesc(t){ return t==='online'?'비대면 온라인 스타일링':(t==='visit'?'직접 만나서 코디':(t==='video'?'화상 상담':'맞춤 서비스')); }
+  function renderServices(){
+    var base = PROFILE || DEFAULT_PROFILE;
+    var svc = base.services || [];
+    var el = document.getElementById('pfServices'); if(!el) return;
+    el.innerHTML = svc.map(function(s){
+      return '<div class="svcrow"><span class="ic">'+svcIcon(s.type)+'</span>'+
+        '<span class="nm"><b>'+s.label+'</b><small>'+svcDesc(s.type)+'</small></span>'+
+        '<span class="pr">'+(s.price||0).toLocaleString()+'<small>원</small></span></div>';
+    }).join('');
+    if(svc[0]) setText('sideRole', svc[0].label);
+  }
+  /* 키·몸무게를 보기 화면에 (없으면 행 숨김) */
+  function renderBody(){
+    var base = PROFILE || DEFAULT_PROFILE;
+    var f=document.getElementById('pfBodyField'), v=document.getElementById('pfBody');
+    if(!f||!v) return;
+    var parts=[]; if(base.height) parts.push(base.height+'cm'); if(base.weight) parts.push(base.weight+'kg');
+    if(parts.length){ f.style.display=''; v.textContent=parts.join(' · '); }
+    else { f.style.display='none'; }
+  }
+  /* 활동 지역을 보기 화면에 태그로 (없으면 섹션 숨김) */
+  function renderRegions(){
+    var base = PROFILE || DEFAULT_PROFILE;
+    var rg = base.regions || [];
+    var el=document.getElementById('pfRegions'), head=document.getElementById('pfRegionHead');
+    if(!el||!head) return;
+    if(rg.length){
+      head.style.display=''; el.style.display='';
+      el.innerHTML = rg.map(function(t){ return '<span class="tag">📍 '+t+'</span>'; }).join('');
+    } else { head.style.display='none'; el.style.display='none'; }
+  }
+  /* 프로필 사진 확대 */
+  function openAvatar(){
+    var src=(PROFILE&&PROFILE.avatar)||DEFAULT_AVATAR;
+    document.getElementById('avLightboxImg').src=src;
+    document.getElementById('avLightbox').classList.add('on');
+  }
+  function closeAvatar(){ document.getElementById('avLightbox').classList.remove('on'); }
+  function specText(p){ var a=[]; if(p.height) a.push(p.height+'cm'); if(p.weight) a.push(p.weight+'kg'); return a.join(' '); }
   function renderPortfolio(){
-    var pgal=document.getElementById('pgal');
-    if(PROFILE && PROFILE.portfolio && PROFILE.portfolio.length){
-      pgal.innerHTML=PROFILE.portfolio.map(function(src){ return '<div style="background-image:url(\''+src+'\')"></div>'; }).join('');
-    } else {
-      pgal.innerHTML=[1,2,3,4,5,6,7,8].map(function(i){return '<div style="background-image:url(\'photos/folio'+((i%6)+1)+'.jpg\')"></div>';}).join('');
-    }
+    var base = PROFILE || DEFAULT_PROFILE;
+    var list = (base.portfolio && base.portfolio.length) ? base.portfolio : DEMO_PORTFOLIO;
+    document.getElementById('pgal').innerHTML = list.map(function(p){ p=normPhoto(p);
+      var s=specText(p);
+      return '<div style="background-image:url(\''+p.src+'\')">'+(s?'<span class="pspec">'+s+'</span>':'')+'</div>'; }).join('');
   }
 
+  /* ===== 프로필 편집 ===== */
+  var DEFAULT_AVATAR='photos/p1.jpg';
+  var edTags=[], edAllTags=[], edPhotos=[], edAvatar=DEFAULT_AVATAR, edRegions=[], edAllRegions=[];
+  function normPhoto(p){ return typeof p==='string' ? {src:p, height:null, weight:null} : {src:p.src, height:p.height||null, weight:p.weight||null}; }
+  function findSvc(profile,type){ return (profile.services||[]).filter(function(s){return s.type===type;})[0]; }
+
+  function editProfile(){
+    var base = PROFILE || DEFAULT_PROFILE;
+    edAvatar = base.avatar || DEFAULT_AVATAR;
+    var ap=document.getElementById('edAvatarPreview'); if(ap){ ap.src=edAvatar; ap.style.visibility='visible'; }
+    document.getElementById('edName').value = base.name||'';
+    document.getElementById('edHeight').value = base.height||'';
+    document.getElementById('edWeight').value = base.weight||'';
+    var on=findSvc(base,'online'), vi=findSvc(base,'visit');
+    document.getElementById('edOnlineOn').checked = !!on;
+    document.getElementById('edOnlinePrice').value = on?on.price:35000;
+    document.getElementById('edVisitOn').checked = !!vi;
+    document.getElementById('edVisitPrice').value = vi?vi.price:120000;
+    document.getElementById('edTagline').value = base.tagline||'';
+    document.getElementById('edBio').value = base.bio||'';
+    edTags = (base.specialties||[]).slice();
+    edAllTags = TAG_PRESETS.slice();
+    edTags.forEach(function(t){ if(edAllTags.indexOf(t)<0) edAllTags.push(t); });
+    edRegions = (base.regions||[]).slice();
+    edAllRegions = REGION_PRESETS.slice();
+    edRegions.forEach(function(t){ if(edAllRegions.indexOf(t)<0) edAllRegions.push(t); });
+    edPhotos = (base.portfolio||[]).map(normPhoto);
+    edRenderTags(); edRenderRegions(); edRenderPhotos(); edToggleSvc();
+    document.getElementById('profileView').style.display='none';
+    document.getElementById('profileEdit').style.display='block';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function cancelEdit(){
+    document.getElementById('profileEdit').style.display='none';
+    document.getElementById('profileView').style.display='block';
+  }
+  function edToggleSvc(){
+    var oOn=document.getElementById('edOnlineOn').checked, vOn=document.getElementById('edVisitOn').checked;
+    document.getElementById('edSvcOnline').classList.toggle('off', !oOn);
+    document.getElementById('edSvcVisit').classList.toggle('off', !vOn);
+    document.getElementById('edOnlinePrice').disabled=!oOn;
+    document.getElementById('edVisitPrice').disabled=!vOn;
+  }
+  function edCollectServices(){
+    var s=[];
+    if(document.getElementById('edOnlineOn').checked) s.push({type:'online',label:'온라인 스타일링',price:parseInt(document.getElementById('edOnlinePrice').value,10)||0});
+    if(document.getElementById('edVisitOn').checked) s.push({type:'visit',label:'방문',price:parseInt(document.getElementById('edVisitPrice').value,10)||0});
+    return s;
+  }
+  function saveProfile(){
+    var name=document.getElementById('edName').value.trim();
+    var svc=edCollectServices();
+    if(!name){ toast('활동명을 입력해주세요'); return; }
+    if(!svc.length){ toast('서비스 유형을 최소 1개 켜주세요'); return; }
+    if(!svc.every(function(s){return s.price>0;})){ toast('켠 유형의 가격을 확인해주세요'); return; }
+    var next = PROFILE || {};
+    next.registered = true;
+    next.avatar = edAvatar;
+    next.name = name;
+    next.height = parseInt(document.getElementById('edHeight').value,10) || null;
+    next.weight = parseInt(document.getElementById('edWeight').value,10) || null;
+    next.services = svc;
+    next.tagline = document.getElementById('edTagline').value.trim();
+    next.bio = document.getElementById('edBio').value.trim();
+    next.specialties = edTags.slice();
+    next.regions = edRegions.slice();
+    next.portfolio = edPhotos.slice();
+    PROFILE = next; MY_PRICE = svc[0].price;
+    saveLS('pro.profile', next);
+    applyProfile(); renderServices(); renderBody(); renderRegions(); renderPortfolio();
+    cancelEdit();
+    toast('프로필을 저장했어요');
+  }
+
+  /* 편집: 태그 */
+  function edRenderTags(){
+    document.getElementById('edTags').innerHTML = edAllTags.map(function(t){
+      var on=edTags.indexOf(t)>=0;
+      return '<span class="tag'+(on?' on':'')+'" onclick="edToggleTag(\''+t.replace(/'/g,'')+'\')">'+t+'</span>';
+    }).join('');
+  }
+  function edToggleTag(t){ var i=edTags.indexOf(t); if(i>=0) edTags.splice(i,1); else edTags.push(t); edRenderTags(); }
+  function edAddTag(){ var el=document.getElementById('edTagInput'), v=el.value.trim(); if(!v) return;
+    if(edAllTags.indexOf(v)<0) edAllTags.push(v); if(edTags.indexOf(v)<0) edTags.push(v); el.value=''; edRenderTags(); }
+
+  /* 편집: 활동 지역(대면) — 전문분야와 같은 방식 */
+  function edRenderRegions(){
+    document.getElementById('edRegions').innerHTML = edAllRegions.map(function(t){
+      var on=edRegions.indexOf(t)>=0;
+      return '<span class="tag'+(on?' on':'')+'" onclick="edToggleRegion(\''+t.replace(/'/g,'')+'\')">'+t+'</span>';
+    }).join('');
+  }
+  function edToggleRegion(t){ var i=edRegions.indexOf(t); if(i>=0) edRegions.splice(i,1); else edRegions.push(t); edRenderRegions(); }
+  function edAddRegion(){ var el=document.getElementById('edRegionInput'), v=el.value.trim(); if(!v) return;
+    if(edAllRegions.indexOf(v)<0) edAllRegions.push(v); if(edRegions.indexOf(v)<0) edRegions.push(v); el.value=''; edRenderRegions(); }
+
+  /* 편집: 포트폴리오 */
+  function edRenderPhotos(){
+    var rows=edPhotos.map(function(p,i){
+      return '<div class="eprow">'+
+        '<div class="epthumb" style="background-image:url(\''+p.src+'\')"></div>'+
+        '<div class="epfields">'+
+          '<div class="eprowf"><input type="number" class="epin" placeholder="키" value="'+(p.height||'')+'" oninput="edSetSpec('+i+',\'height\',this.value)"><span class="won">cm</span></div>'+
+          '<div class="eprowf"><input type="number" class="epin" placeholder="몸무게" value="'+(p.weight||'')+'" oninput="edSetSpec('+i+',\'weight\',this.value)"><span class="won">kg</span></div>'+
+        '</div>'+
+        '<button class="epdel" onclick="edDelPhoto('+i+')">✕</button>'+
+      '</div>';
+    });
+    if(edPhotos.length<8) rows.push('<button class="epadd" onclick="document.getElementById(\'edFile\').click()">＋ 사진 추가</button>');
+    document.getElementById('edPgal').innerHTML=rows.join('');
+  }
+  function edOnFiles(ev){
+    var files=ev.target.files||[]; var room=8-edPhotos.length;
+    var list=Array.prototype.slice.call(files,0,room);
+    list.forEach(function(f){ if(!/^image\//.test(f.type)){ toast('이미지만 올릴 수 있어요'); return; }
+      var r=new FileReader(); r.onload=function(){ edPhotos.push({src:r.result, height:null, weight:null}); edRenderPhotos(); }; r.readAsDataURL(f); });
+    ev.target.value='';
+  }
+  function edDelPhoto(i){ edPhotos.splice(i,1); edRenderPhotos(); }
+  /* 사진별 착용 모델 키·몸무게 입력(값만 갱신, 재렌더 없이 포커스 유지) */
+  function edSetSpec(i,key,val){ edPhotos[i][key] = parseInt(val,10) || null; }
+
+  /* 편집: 프로필 사진(아바타) */
+  function edOnAvatar(ev){
+    var f=(ev.target.files||[])[0]; if(!f) return;
+    if(!/^image\//.test(f.type)){ toast('이미지만 올릴 수 있어요'); return; }
+    var r=new FileReader(); r.onload=function(){ edAvatar=r.result; var ap=document.getElementById('edAvatarPreview'); ap.src=edAvatar; ap.style.visibility='visible'; };
+    r.readAsDataURL(f); ev.target.value='';
+  }
+  function edRemoveAvatar(){ edAvatar=DEFAULT_AVATAR; var ap=document.getElementById('edAvatarPreview'); ap.src=edAvatar; ap.style.visibility='visible'; }
+
   applyProfile();
+  renderServices();
+  renderBody();
+  renderRegions();
   renderPortfolio();
   renderAll();
