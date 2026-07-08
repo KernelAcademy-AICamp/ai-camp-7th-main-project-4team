@@ -209,7 +209,7 @@
   function reqCard(r,i){
     if(r.kind==='notify') return '<div class="req"><div class="reqtop"><div class="ic"></div><div class="info"><b>1기 오픈 알림 신청</b><small>'+svcLabel(r.svc)+' · 오픈 대기</small></div><span class="st wait">대기</span></div></div>';
     var cls = r.open ? 'open' : 'named';
-    var title = (r.open && r.nm ? '선택 · '+r.nm+' 쇼퍼' : (r.nm ? r.nm+' 쇼퍼' : '오픈 요청')) + ' · ' + svcLabel(r.svc);
+    var title = (r.open && r.nm ? '선택 · '+r.nm+' 쇼퍼' : (r.nm ? r.nm+' 쇼퍼' : '견적 요청')) + ' · ' + svcLabel(r.svc);
     var sub = [(r.occ&&r.occ.length?r.occ.join('·'):''), (r.date||'')].filter(Boolean).join(' · ');
     return '<div class="req '+cls+'"><div class="reqtop"><div class="ic"></div><div class="info"><b>'+title+'</b><small>'+sub+'</small></div><span class="st '+stClass(r.status)+'">'+statusLabel(r.status)+'</span></div>'+reqAction(r,i)+'</div>';
   }
@@ -449,7 +449,7 @@
   function detailBodyHTML(idx, opts){ var e=EX[idx];
     var rt=e.rating>0?('★ '+e.rating+' · 후기 '+e.review+'건'):'신규 쇼퍼';
     var revs=e.reviews.length ? e.reviews.map(function(r){return '<div class="rev">"'+r[0]+'"<div class="who">— '+r[1]+'</div></div>';}).join('') : '<div class="noreview">아직 등록된 후기가 없어요</div>';
-    return '<a class="back" onclick="'+opts.back+'">← 뒤로</a>'+
+    return '<div class="detailbody"><a class="back" onclick="'+opts.back+'">← 뒤로</a>'+
       '<div class="dhero"><div class="dhero-img"><img src="'+img(e)+'" onerror="'+FB+'"></div>'+
       '<div class="dhero-info"><span class="dsvc">'+SVC[e.svc]+'</span>'+
       '<div class="dnamerow"><h1>'+e.nm+' 쇼퍼</h1><div class="dmeta"><b>매칭도 '+e.match+'%</b> · '+rt+'</div></div>'+
@@ -463,7 +463,7 @@
         '<div class="dsec"><h3>서비스 정보</h3><div class="svcinfo"><div class="r"><span>서비스</span><b>'+SVC[e.svc]+'</b></div><div class="r"><span>예상 가격</span><b>'+e.price.toLocaleString()+'원</b></div><div class="r"><span>제공 방식</span><b>'+e.mode+'</b></div><div class="r"><span>예상 기간</span><b>'+e.dur+'</b></div></div></div>'+
         '<div class="dsec"><h3>후기'+(e.rating>0?' <span class="dsec-score">★ '+e.rating+' · '+e.review+'건</span>':'')+'</h3>'+revs+'</div>'+
         '<div class="dsec"><h3>포트폴리오</h3><div class="dgal">'+[1,2,3,4,5,6].map(function(i){return '<div style="background-image:url(\'photos/folio'+i+'.jpg\')"></div>';}).join('')+'</div></div>'+
-      '</div>';
+      '</div></div>';
   }
   /* 쇼퍼찾기 탭 내 상세 페이지 (목록에서 진입) */
   function openDetail(idx, hideReq){ hideReq=!!hideReq; if(!hideReq) _detailBack=null; closeAll();
@@ -519,7 +519,7 @@
     document.getElementById('requestView').innerHTML=
       '<a class="back" onclick="showOnly(\'listView\')">← 목록으로</a>'+
       '<div class="reqpage">'+
-      '<h1>오픈 요청 <span class="reqtype open">여러 견적</span></h1><p class="lead">조건을 남기면 <b style="color:var(--ink)">여러 쇼퍼가 견적</b>을 보내요 · 가격·제안을 비교해 마음에 드는 쇼퍼를 선택하세요 · 체형·사이즈 프로필도 함께 전달돼요</p>'+
+      '<h1>견적 요청 <span class="reqtype open">여러 쇼퍼</span></h1><p class="lead">조건을 남기면 <b style="color:var(--ink)">여러 쇼퍼가 견적</b>을 보내요 · 가격·제안을 비교해 마음에 드는 쇼퍼를 선택해보세요 · 체형·사이즈 프로필도 함께 전달돼요</p>'+
       '<div class="feat" style="margin-top:26px">서비스 유형 · 필수</div><div class="svc3" id="mSvc">'+svc3+'</div>'+
       reqFields()+
       '<button class="btn full" id="reqBtn" disabled style="margin-top:26px" onclick="submitMatch()">견적 요청 보내기</button>'+
@@ -544,7 +544,7 @@
     else       addReq({nm:curReq.nm, svc:curReq.svc, occ:occ, budget:budget, date:date, note:note, status:'대기'});
     document.getElementById('requestView').innerHTML=
       '<div class="reqdone"><div class="cc">✓</div>'+
-      '<h1>'+(isOpen?'오픈 요청을 보냈어요':'견적 요청을 보냈어요')+'</h1>'+
+      '<h1>견적 요청을 보냈어요</h1>'+
       '<p>'+(isOpen?'조건에 맞는 여러 쇼퍼가 견적을 보내드려요<br>마이페이지에서 <b>비교하고 선택</b>할 수 있어요':(curReq.nm+' 쇼퍼가 검토하고 제안(견적)을 보내드려요<br>진행 상황은 마이페이지에서 볼 수 있어요'))+'</p>'+
       '<div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:26px">'+
         '<button class="btn ghost" onclick="showOnly(\'listView\')">목록으로 돌아가기</button>'+
