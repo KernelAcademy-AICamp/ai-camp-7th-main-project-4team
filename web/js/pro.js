@@ -2,7 +2,9 @@
      고객 측 요청 라이프사이클의 대칭 뷰. 요청 클릭 → 상세 드로어(체형·사이즈 첨부 + 요청 내용)에서 제안. */
   function loadLS(k, def){ try{ var v=localStorage.getItem('fitting.'+k); return v?JSON.parse(v):def; }catch(e){ return def; } }
   function saveLS(k, v){ try{ localStorage.setItem('fitting.'+k, JSON.stringify(v)); }catch(e){} }
-  var MY_PRICE=120000;
+  /* 가입(온보딩)에서 저장한 프로필. 데이터 계약: docs/쇼퍼가입-화면정의서.md §5 */
+  var PROFILE = loadLS('pro.profile', null);
+  var MY_PRICE = (PROFILE && PROFILE.services && PROFILE.services[0]) ? PROFILE.services[0].price : 120000;
 
   var reqs = loadLS('pro.reqs', [
     {cust:'김도현', type:'STR', bodytype:'시크 스트레이트', gender:'male',   cm:172, kg:65, occ:'소개팅',     budget:'5~10만',  date:'2026.07.02', note:'과하지 않게 깔끔한 첫인상 원해요', status:'신규'},
@@ -107,5 +109,36 @@
   }
   function renderAll(){ renderStats(); renderRecent(); renderInbox(); renderReviews(); }
 
-  (function(){ document.getElementById('pgal').innerHTML=[1,2,3,4,5,6,7,8].map(function(i){return '<div style="background-image:url(\'photos/folio'+((i%6)+1)+'.jpg\')"></div>';}).join(''); })();
+  /* ===== 가입 프로필을 포털 화면에 반영 ===== */
+  function setText(id, v){ var el=document.getElementById(id); if(el&&v!=null) el.textContent=v; }
+  function applyProfile(){
+    if(!PROFILE) return;   // 가입 전(데모 기본값 유지)
+    setText('hdrName', PROFILE.name);
+    setText('sideName', PROFILE.name);
+    var svc=PROFILE.services||[];
+    if(svc.length){
+      setText('sideRole', svc[0].label);
+      document.getElementById('pfServices').innerHTML = svc.map(function(s){
+        return s.label+' · <span class="num">'+(s.price||0).toLocaleString()+'</span>원';
+      }).join('<br>');
+    }
+    if(PROFILE.tagline || PROFILE.bio){
+      var bio=document.getElementById('pfBio');
+      if(bio) bio.textContent=[PROFILE.tagline, PROFILE.bio].filter(Boolean).join(' · ');
+    }
+    if(PROFILE.specialties && PROFILE.specialties.length){
+      document.getElementById('pfTags').innerHTML = PROFILE.specialties.map(function(t){ return '<span class="tag">'+t+'</span>'; }).join('');
+    }
+  }
+  function renderPortfolio(){
+    var pgal=document.getElementById('pgal');
+    if(PROFILE && PROFILE.portfolio && PROFILE.portfolio.length){
+      pgal.innerHTML=PROFILE.portfolio.map(function(src){ return '<div style="background-image:url(\''+src+'\')"></div>'; }).join('');
+    } else {
+      pgal.innerHTML=[1,2,3,4,5,6,7,8].map(function(i){return '<div style="background-image:url(\'photos/folio'+((i%6)+1)+'.jpg\')"></div>';}).join('');
+    }
+  }
+
+  applyProfile();
+  renderPortfolio();
   renderAll();

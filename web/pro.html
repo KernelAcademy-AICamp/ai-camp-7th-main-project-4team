@@ -111,7 +111,7 @@
   <span class="pill-role">쇼퍼 지원</span>
   <div class="navr">
     <span class="cust" onclick="location.href='index.html'">← 고객 화면</span>
-    <span class="me"><img src="photos/p1.jpg" alt="" onerror="this.style.visibility='hidden'">소희 쇼퍼</span>
+    <span class="me"><img src="photos/p1.jpg" alt="" onerror="this.style.visibility='hidden'"><span id="hdrName">소희 쇼퍼</span></span>
   </div>
 </div></header>
 
@@ -119,8 +119,8 @@
   <aside class="side">
     <div class="pcard">
       <img src="photos/p1.jpg" alt="" onerror="this.style.visibility='hidden'">
-      <div class="nm">소희 쇼퍼</div>
-      <div class="role">온라인 스타일링</div>
+      <div class="nm" id="sideName">소희 쇼퍼</div>
+      <div class="role" id="sideRole">온라인 스타일링</div>
       <div class="rate">★ <span class="num">4.9</span> · 후기 <span class="num" id="pRev">0</span></div>
     </div>
     <nav class="smenu" id="smenu">
@@ -157,12 +157,11 @@
       <p class="lead">고객에게 보이는 프로필이에요 · <b style="color:var(--ink)">프로필이 곧 첫인상</b>이에요</p>
       <div class="card">
         <div class="subhead">기본 정보</div>
-        <div class="field"><span>이름</span><span class="v">소희 쇼퍼</span></div>
-        <div class="field"><span>서비스 유형</span><span class="v">온라인 스타일링</span></div>
-        <div class="field"><span>기본 가격</span><span class="v"><span class="num">120,000</span>원</span></div>
-        <div class="field"><span>전문 분야</span><span class="v"><span class="tag">데일리룩</span><span class="tag">소개팅룩</span><span class="tag">미니멀</span></span></div>
+        <div class="field"><span>이름</span><span class="v" id="pfName">소희 쇼퍼</span></div>
+        <div class="field" style="align-items:flex-start"><span>서비스·가격</span><span class="v" id="pfServices">온라인 스타일링 · <span class="num">120,000</span>원</span></div>
+        <div class="field" style="align-items:flex-start"><span>전문 분야</span><span class="v" id="pfTags"><span class="tag">데일리룩</span><span class="tag">소개팅룩</span><span class="tag">미니멀</span></span></div>
         <div class="subhead">소개</div>
-        <p style="font-size:14px;color:var(--ink-soft);line-height:1.6;padding-bottom:16px">데일리·소개팅룩 전문 스타일리스트 · 온라인 쇼핑몰 MD 출신으로 비대면 큐레이션이 강점이에요</p>
+        <p id="pfBio" style="font-size:14px;color:var(--ink-soft);line-height:1.6;padding-bottom:16px">데일리·소개팅룩 전문 스타일리스트 · 온라인 쇼핑몰 MD 출신으로 비대면 큐레이션이 강점이에요</p>
         <div class="subhead">포트폴리오</div>
         <div class="pgal" id="pgal"></div>
         <div style="padding:18px 0 6px"><button class="tinybtn" onclick="toast('프로필 편집 — v2에서 사진·소개·서비스 등록')">프로필 편집</button></div>
