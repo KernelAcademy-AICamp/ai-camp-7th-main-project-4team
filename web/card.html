@@ -21,6 +21,8 @@
   .cacts{display:flex; gap:8px;}
   .cacts button{width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.14); border:none; color:#fff; font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; line-height:1; transition:.14s;}
   .cacts button:hover{background:rgba(255,255,255,.26);}
+  .cacts button:disabled{opacity:.5; cursor:default;}
+  .cacts button svg{width:16px; height:16px; display:block;}
   .clogo{font-size:17px; font-weight:800; letter-spacing:-.05em;}
   .fig{position:relative; width:120px; height:184px; margin:8px 0 4px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; animation:bob 3.4s ease-in-out infinite;}
   @keyframes bob{0%,100%{transform:translateY(0) scale(.85)} 50%{transform:translateY(-6px) scale(.85)}}
@@ -57,6 +59,7 @@
 </head>
 <body>
 <div class="card" id="card"></div>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.13/dist/html-to-image.js"></script>
 <script src="js/card.js"></script>
 </body>
 </html>
