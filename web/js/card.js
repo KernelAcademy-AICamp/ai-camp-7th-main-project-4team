@@ -16,11 +16,15 @@
     var p1=d.profile[0]||'', p2=d.profile[1]||'';
     card.style.background='radial-gradient(ellipse 70% 34% at 50% 11%, '+d.point+'2b, transparent 60%), linear-gradient(160deg,#191a1f,#0f1014)';
     wmStyle.textContent='.card::after{content:"'+d.code+'";}';
-    var top='<div class="ctop"><span class="clogo">fitting</span><span class="cacts"><button title="결과 저장">🔖</button><button title="카드 공유">🔗</button></span></div>';
+    var top='<div class="ctop"><span class="clogo">fitting</span><span class="cacts">'+
+      '<button id="cSave" title="결과 저장" aria-label="결과 저장">🔖</button>'+
+      '<button id="cShare" title="카드 공유" aria-label="카드 공유">🔗</button>'+
+      '</span></div>';
     var head=figHTML(d)+'<div class="code" style="color:'+d.point+'">'+d.code+'</div><div class="word">'+d.name+'</div>';
     var myfit='<div class="sl" style="color:'+d.point+'">MY FIT</div><div class="desc two">'+p1+(p2?'<br>'+p2:'')+'</div>';
     if(compact){
       card.innerHTML=top+head+'<div class="info">'+myfit+'</div><div class="grow"></div>';
+      wireActions(d);
       return;
     }
     card.innerHTML=top+head+
@@ -31,6 +35,26 @@
       '</div>'+
       '<div class="grow"></div>'+
       '<div class="match">🩷 환상의 궁합 · <b style="color:'+d.point+'">'+d.match+'</b></div>';
+    wireActions(d);
+  }
+
+  // 결과 카드 이미지 저장 (PNG 다운로드) — 액션 버튼은 캡처에서 제외
+  function saveCard(d){
+    var card=document.getElementById('card');
+    if(!window.htmlToImage||!card){ return; }
+    var btn=document.getElementById('cSave'); if(btn) btn.disabled=true;
+    htmlToImage.toPng(card, {
+      pixelRatio:2,
+      filter:function(node){ return !(node.classList && node.classList.contains('cacts')); }
+    }).then(function(url){
+      var a=document.createElement('a');
+      a.download='fitting-'+((d&&d.code)||'card')+'.png';
+      a.href=url; document.body.appendChild(a); a.click(); a.remove();
+    }).catch(function(e){ console.error('카드 저장 실패', e); })
+      .then(function(){ if(btn) btn.disabled=false; });
+  }
+  function wireActions(d){
+    var s=document.getElementById('cSave'); if(s) s.onclick=function(){ saveCard(d); };
   }
 
   // 8유형 데이터 = data/bodytypes.json 단일 출처 (하드코딩 제거)
