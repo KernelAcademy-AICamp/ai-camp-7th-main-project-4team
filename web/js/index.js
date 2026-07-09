@@ -98,18 +98,18 @@
   }
 
   /* 데모 시드 버전 — 상태 모델이 바뀌었으니 옛 요청 데이터를 1회 자동 초기화(콘솔 리셋 불필요) */
-  if(loadLS('reqsVer',0) < 7){ try{ localStorage.removeItem('fitting.reqs'); }catch(e){} saveLS('reqsVer',7); }
+  if(loadLS('reqsVer',0) < 9){ try{ localStorage.removeItem('fitting.reqs'); }catch(e){} saveLS('reqsVer',9); }
   var reqs = loadLS('reqs', [
     {nm:'상민', svc:'shopping', occ:['결혼식 하객'], budget:'10~15만', date:'2026.06.30', status:'대기'},
     {open:true, svc:'online', occ:['소개팅'], budget:'5~10만', date:'2026.07.02', status:'견적중', bids:makeBids('online',['소개팅'])},
-    {nm:'건형', svc:'image',    occ:['면접·발표'],   budget:'15만+',   date:'2026.06.25', status:'수락'},
+    {nm:'건형', svc:'image',    occ:['면접·발표'],   budget:'15만+',   date:'2026.06.25', status:'진행중'},
     {nm:'소희', svc:'online',   occ:['소개팅'],     budget:'5~10만',  date:'2026.06.20', status:'거절'}
   ]);
   /* 옛 상태 정리 — 지명 요청은 대기 → 수락/거절 뿐. 이전 데이터의 취소·제안도착·라이프사이클을 보정. */
   reqs.forEach(function(r){
     if(r.status==='취소') r.status='거절';
     if(r.status==='제안도착') r.status='대기';
-    if(!r.open && (r.status==='진행중'||r.status==='완료'||r.status==='후기완료')) r.status='수락';
+    if(r.status==='수락') r.status='진행중';   // 흐름 통일: 지명도 수락 시 진행중부터 완료·후기까지
   });
   function svcLabel(v){ return SVC[v]||v; }
   function isFav(nm){ return favs.some(function(f){ return f.nm===nm; }); }
@@ -134,6 +134,13 @@
     if(_btCache){ paint(_btCache[USER.type]); return; }
     fetch('data/bodytypes.json').then(function(r){return r.json();}).then(function(j){ _btCache={}; j.types.forEach(function(x){_btCache[x.code]=x;}); paint(_btCache[USER.type]); }).catch(function(){});
   }
+  /* 내 진단 결과 카드(iframe) — USER의 유형·성별과 연동 (프로필 수정 시에도 반영) */
+  function renderMyDiagCard(){
+    var f=document.getElementById('myDiagCard'); if(!f) return;
+    var g=(USER.gender==='female'?'female':'male');
+    var src='card.html?type='+(USER.type||'STR')+'&g='+g;
+    if((f.getAttribute('src')||'')!==src) f.src=src;   // 값이 바뀐 경우에만 리로드
+  }
 
   /* 마이페이지 · 프로필 기본정보 (읽기/편집) */
   var FIT_OPTS=['스키니','슬림','레귤러','루즈','오버'], _profEdit=false;
@@ -149,7 +156,7 @@
           '<div class="note">🔒 민감정보 · 편집 시 재진단을 추천해요</div></div>'+
         '<div class="msub"><div class="subhead">선호 핏 <span class="pr half">◐ MVP</span></div>'+
           '<div class="field"><span>핏 취향</span><span class="v">'+U.fit+'</span></div></div>'+
-        '</div><button class="btn" onclick="editProfile()">수정하기</button>';
+        '</div><div class="prof-actions"><button class="btn" onclick="editProfile()">수정하기</button></div>';
     } else {
       el.innerHTML='<div class="mcard">'+
         '<div class="msub"><div class="subhead">이름</div>'+
@@ -160,7 +167,7 @@
           '<div class="note" style="color:var(--warn)">⚠️ 신체정보를 바꾸면 재진단을 추천해요</div></div>'+
         '<div class="msub"><div class="subhead">선호 핏</div>'+
           '<div class="pedit"><label>핏 취향</label><div class="seg" id="pFit">'+FIT_OPTS.map(function(f){return '<span class="o'+(U.fit===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div></div>'+
-        '</div><div style="display:flex; gap:9px"><button class="btn" onclick="saveProfile()">저장하기</button><button class="btn ghost" onclick="cancelProfile()">취소</button></div>';
+        '</div><div class="prof-actions"><button class="btn ghost" onclick="cancelProfile()">취소</button><button class="btn" onclick="saveProfile()">저장하기</button></div>';
     }
   }
   function editProfile(){ _profEdit=true; renderProfile(); }
@@ -171,7 +178,7 @@
     var a=document.getElementById('pAge'), h=document.getElementById('pHeight'), w=document.getElementById('pWeight');
     if(a&&a.value) USER.age=+a.value; if(h&&h.value) USER.height=+h.value; if(w&&w.value) USER.weight=+w.value;
     var f=document.querySelector('#pFit .o.on'); if(f) USER.fit=f.dataset.fit;
-    _profEdit=false; renderProfile(); renderMyAvatar(); toast('프로필을 저장했어요');
+    _profEdit=false; renderProfile(); renderMyAvatar(); renderMyDiagCard(); toast('프로필을 저장했어요');
   }
 
   /* 마이페이지 · 즐겨찾기 렌더 */
@@ -179,35 +186,60 @@
     var el=document.getElementById('favList'); if(!el) return;
     if(!favs.length){ el.innerHTML='<p class="note" style="grid-column:1/-1">아직 찜한 쇼퍼가 없어요 · 쇼퍼찾기에서 🤍 를 눌러 담아보세요</p>'; return; }
     el.innerHTML=favs.map(function(f){
-      return '<div class="fcard"><div class="cov" style="background-image:url(\''+(f.photo||'')+'\'); background-size:cover; background-position:center"><span class="heart" title="즐겨찾기 해제" onclick="toggleFav(\''+f.nm+'\')">'+favIcon(true,true)+'</span></div>'+
-        '<div class="fb"><b>'+f.nm+' 쇼퍼</b><small>'+svcLabel(f.svc)+' · ★ <span class="num">'+f.rating+'</span></small></div></div>';
+      var e=EX.filter(function(x){return x.nm===f.nm;})[0];   // 지정 쇼퍼 원본(얼굴·전문분야) 단일 출처
+      var face=e?img(e):(f.photo||'');                        // 실제 지정 쇼퍼 얼굴(SVG)
+      var svc=f.svc||(e&&e.svc);
+      var rating=(f.rating!=null?f.rating:(e&&e.rating));
+      var tags=(e&&e.tags)?e.tags.slice(0,3):[];              // 전문분야(태그) 최대 3개
+      return '<div class="fcard"'+(e?' onclick="favOpen(\''+f.nm+'\')"':'')+'><div class="cov"><img class="favimg" src="'+face+'" alt="" onerror="'+FB+'"><span class="heart" title="즐겨찾기 해제" onclick="event.stopPropagation();toggleFav(\''+f.nm+'\')">'+favIcon(true,true)+'</span></div>'+
+        '<div class="fb"><b>'+f.nm+' 쇼퍼</b><small>'+svcLabel(svc)+' · ★ <span class="num">'+rating+'</span></small>'+
+        (tags.length?'<div class="ftags">'+tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>':'')+
+        '</div></div>';
     }).join('');
+  }
+  /* 즐겨찾기 카드 클릭 → 쇼퍼찾기 탭의 상세 화면으로 전환(뒤로가기=즐겨찾기 복귀) */
+  function favOpen(nm){
+    var idx=EX.map(function(e){return e.nm;}).indexOf(nm); if(idx<0) return;
+    go('shop'); openDetail(idx); _detailBack=function(){ goMy('mp-fav'); };
   }
   /* 마이페이지 · 코디 요청 내역 렌더 (라이프사이클) */
   function stClass(s){ return (s==='완료'||s==='후기완료')?'done':(s==='진행중'||s==='수락'?'prog':(s==='견적중'?'offer':(s==='거절'||s==='취소함'?'cancel':'wait'))); }
   function statusLabel(s){ return s==='견적중'?'견적 받는 중':(s==='후기완료'?'후기 완료':(s==='수락'?'수락됨':(s==='거절'?'거절됨':(s==='대기'?'응답 대기':s)))); }
-  function starsRO(n){ var s=''; for(var k=1;k<=5;k++) s+='<span style="color:'+(k<=n?'var(--ink)':'var(--line2)')+'">★</span>'; return s; }
+  function starsRO(n){ var s=''; for(var k=1;k<=5;k++) s+='<span style="color:'+(k<=n?'var(--green)':'var(--line2)')+'">'+starSVG()+'</span>'; return s; }
+  /* 통통하고 둥근 별 (귀여운 모양) — round join으로 뾰족함 없이 */
+  function starSVG(){ return '<svg class="cutestar" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M12 4 L14.1 9.6 20.1 9.9 15.4 13.6 17 19.4 12 16.1 7 19.4 8.6 13.6 3.9 9.9 9.9 9.6Z"/></svg>'; }
   function reviewForm(r,i){ var rt=r._rating||5, st='';
-    for(var k=1;k<=5;k++) st+='<span class="'+(k<=rt?'on':'')+'" onclick="setStar('+i+','+k+')">★</span>';
+    for(var k=1;k<=5;k++) st+='<span class="'+(k<=rt?'on':'')+'" onclick="setStar('+i+','+k+')">'+starSVG()+'</span>';
     return '<div class="reqact"><div class="reviewform"><div class="stars">'+st+'</div><textarea class="rtext" id="rtext'+i+'" placeholder="쇼퍼와의 경험을 남겨주세요">'+(r._text||'')+'</textarea><div class="rbtns"><button class="tinybtn ghost" onclick="cancelReview('+i+')">취소</button><button class="tinybtn" onclick="submitReview('+i+')">후기 등록</button></div></div></div>';
+  }
+  /* 매칭 완료 히어로 배너 — 지난 견적/진행 상태에서 '○○ 쇼퍼로 매칭' 을 딥그린+얼굴로 예쁘게 */
+  function matchedBannerHTML(r){
+    var sub = r.status==='완료' ? '코디가 완료됐어요 · 후기를 남겨보세요'
+            : r.status==='후기완료' ? '코디와 후기까지 완료됐어요 · 고마워요'
+            : '곧 코디를 시작해요 · 완료되면 후기를 남겨주세요';
+    var ck='<span class="mb-ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>';
+    return '<div class="matchban">'+ck+
+      '<div class="mb-tx"><b>'+(r.nm||'')+' 쇼퍼로 매칭되었어요!</b><span>'+sub+'</span></div></div>';
   }
   function reqAction(r,i){ var s=r.status;
     if(s==='견적중'){ var n=(r.bids||[]).length;
       if(!n) return '<div class="reqact"><span>견적을 받는 중이에요 · 쇼퍼들이 견적을 준비하고 있어요</span></div>';
       return '<div class="reqact"><div class="offerbox"><b>견적 <span class="num">'+n+'</span>개 도착</b><div class="omsg">여러 쇼퍼가 견적을 보냈어요 · 비교하고 선택하세요</div></div><button class="tinybtn" style="margin-left:auto" onclick="openBids('+i+')">받은 견적 보기 →</button></div>'; }
     if(s==='대기') return '<div class="reqact"><span>쇼퍼가 요청을 검토하고 있어요 · 응답을 기다리는 중</span><button class="tinybtn ghost" style="margin-left:auto" onclick="confirmCancel('+i+')">요청 취소</button></div>'+
-      '<div class="reqact" style="background:none; padding:10px 2px 0"><span class="muted" style="font-size:11.5px">데모 · 쇼퍼 응답 시뮬레이션</span><div class="obtns" style="margin-left:auto"><button class="tinybtn ghost" onclick="reqReject('+i+')">거절</button><button class="tinybtn" onclick="reqAccept('+i+')">수락</button></div></div>';
+      '<div class="reqact" style="background:none; padding:10px 2px 0"><span class="muted" style="font-size:12px">데모 · 쇼퍼 응답 시뮬레이션</span><div class="obtns" style="margin-left:auto"><button class="tinybtn ghost" onclick="reqReject('+i+')">거절</button><button class="tinybtn" onclick="reqAccept('+i+')">수락</button></div></div>';
     if(s==='취소함') return '<div class="reqact"><span class="muted">요청을 취소했어요</span></div>';
     if(s==='수락') return '<div class="reqact"><span><b style="color:var(--green)">요청 수락되었어요!</b> 이제 쇼퍼와 코디를 진행해요</span></div>';
-    if(s==='진행중') return '<div class="reqact"><span><b style="color:var(--green)">요청 수락되었어요!</b> 완료되면 후기를 남겨주세요</span><button class="tinybtn ghost" style="margin-left:auto" onclick="reqComplete('+i+')">완료 처리 · 데모</button></div>';
-    if(s==='완료'){ if(r._reviewing) return reviewForm(r,i); return '<div class="reqact"><span>서비스가 완료됐어요 · 어떠셨나요?</span><button class="tinybtn" style="margin-left:auto" onclick="openReviewForm('+i+')">후기 작성하기</button></div>'; }
-    if(s==='후기완료'){ var rv=r.review||{}; return '<div class="reqact"><div class="revshow"><span class="starsRO">'+starsRO(rv.rating||5)+'</span> <span class="rtx">"'+(rv.text||'')+'"</span></div></div>'; }
+    if(s==='진행중') return matchedBannerHTML(r)+
+      '<div class="reqact" style="background:none; padding:10px 2px 0"><span class="muted" style="font-size:12px">데모 · 서비스 완료 시뮬레이션</span><button class="tinybtn ghost" style="margin-left:auto" onclick="reqComplete('+i+')">완료 처리</button></div>';
+    if(s==='완료'){ if(r._reviewing) return matchedBannerHTML(r)+reviewForm(r,i);
+      return matchedBannerHTML(r)+'<div class="reqact" style="background:none; padding:12px 2px 0"><span class="muted" style="font-size:12px">서비스가 완료됐어요</span><button class="tinybtn" style="margin-left:auto" onclick="openReviewForm('+i+')">후기 작성하기</button></div>'; }
+    if(s==='후기완료'){ var rv=r.review||{}; return matchedBannerHTML(r)+'<div class="reqact"><div class="revshow"><span class="starsRO">'+starsRO(rv.rating||5)+'</span> <span class="rtx">"'+(rv.text||'')+'"</span></div></div>'; }
     if(s==='거절') return '<div class="reqact"><span class="muted">아쉽게도 요청이 거절되었어요!</span><button class="tinybtn ghost" style="margin-left:auto" onclick="closeBids();go(\'shop\')">다른 쇼퍼 찾기</button></div>';
     return '';
   }
   /* 요청 카드 1개 (원본 reqs 인덱스 i 유지 — 액션 핸들러가 참조) */
   function reqCard(r,i){
-    if(r.kind==='notify') return '<div class="req"><div class="reqtop"><div class="ic"></div><div class="info"><b>1기 오픈 알림 신청</b><small>'+svcLabel(r.svc)+' · 오픈 대기</small></div><span class="st wait">대기</span></div></div>';
+    if(r.kind==='notify') return '<div class="req notify"><div class="reqtop"><div class="info"><b>오픈 알림 신청 완료</b></div><span class="st wait">오픈 대기</span></div></div>';
     var cls = r.open ? 'open' : 'named';
     var title = (r.open && r.nm ? '선택 · '+r.nm+' 쇼퍼' : (r.nm ? r.nm+' 쇼퍼' : '견적 요청')) + ' · ' + svcLabel(r.svc);
     var sub = [(r.occ&&r.occ.length?r.occ.join('·'):''), (r.date||'')].filter(Boolean).join(' · ');
@@ -221,6 +253,7 @@
   /* '받은 견적' 컴팩트 카드 (숨고형) — 요약(날짜·상황·서비스) + 견적 건수 클릭 → 받은 견적 오버레이.
      진행 상태·후기는 카드에 붙이지 않고 오버레이 안에서 처리(카드는 깔끔하게 유지). */
   function reqCardOpen(r,i,xc){
+    if(r.awarded) return reqCardNamed(r,i,xc);   // 매칭 완료 → 지명 요청과 동일하게(진행중 쇼퍼 · 진행 상세로)
     var n=(r.bids||[]).length;
     var top = statusLabel(r.status) + (r.date?' · '+r.date+' 요청':'');
     var title = [(r.occ&&r.occ.length?r.occ.join('·'):''), svcLabel(r.svc)].filter(Boolean).join(' · ') || '코디 요청';
@@ -265,13 +298,13 @@
       group(named,'named',ICON_SENT,'보낸 요청', reqCardNamed, '내가 지명한 쇼퍼에게 직접 · 진행 확인',
         '아직 없어요 · <a onclick="go(\'shop\')">쇼퍼 찾아 요청하기</a>');
     if(notify.length) html += '<div class="reqgroup"><div class="rghead alert"><span class="rgicon">'+ICON_BELL+'</span>'+
-      '<div class="rgtx"><b>오픈 알림 신청</b><p>서비스가 열리면 알려드려요</p></div>'+
+      '<div class="rgtx"><b>오픈 알림 신청</b><p>쇼퍼가 모이면 · 가장 먼저 알림</p></div>'+
       '<span class="rgcount"><span class="num">'+notify.length+'</span>건</span></div>'+
       '<div class="rglist">'+notify.map(function(i){ return reqCard(reqs[i],i); }).join('')+'</div></div>';
     el.innerHTML = html;
   }
   /* 요청 라이프사이클 액션 (목업) — 지명 요청: 대기 → 수락(진행중→완료→후기) / 거절 */
-  function reqAccept(i){ reqs[i].status='수락'; saveLS('reqs',reqs); syncReqViews(); toast('요청 수락되었어요!'); }
+  function reqAccept(i){ reqs[i].status='진행중'; saveLS('reqs',reqs); syncReqViews(); toast((reqs[i].nm||'')+' 쇼퍼와 코디를 시작해요'); }
   function reqReject(i){ reqs[i].status='거절'; saveLS('reqs',reqs); syncReqViews(); toast('아쉽게도 요청이 거절되었어요!'); }
   function reqCancel(i){ reqs[i].status='취소함'; saveLS('reqs',reqs); syncReqViews(); toast('요청을 취소했어요'); }
   function reqComplete(i){ reqs[i].status='완료'; saveLS('reqs',reqs); syncReqViews(); toast('서비스가 완료됐어요 · 후기를 남겨보세요'); }
@@ -293,40 +326,86 @@
   function syncReqViews(){ renderReqs(); if(_ovMode && document.getElementById('bidsOverlay').classList.contains('on')){ _ovMode==='req'?renderReqDetail():renderBids(); } }
   /* 내가 보낸 요청 내용 요약(오픈: 토글 · 지명: 상세에 상시 노출) */
   function reqSummaryHTML(r){
-    var rows=[['서비스 유형', svcLabel(r.svc)], ['상황', (r.occ&&r.occ.length?r.occ.join(' · '):'—')], ['예산', r.budget||'—'], ['희망 일정', r.date||'—'], ['요청 메모', (r.note&&(''+r.note).trim())?r.note:'—']];
-    return '<div class="req-summary-in">'+rows.map(function(x){ return '<div class="rs-row"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>'; }).join('')+
+    // 헤더 강조형 — '무엇을 보냈나'(서비스 유형)를 제목처럼 크게, 상황·예산은 요약 한 줄, 나머지는 라인
+    var sum=[(r.occ&&r.occ.length?r.occ.join(' · '):''), (r.budget?'예산 '+r.budget:'')].filter(Boolean).join('  ·  ');
+    var note=(r.note&&(''+r.note).trim())?r.note:'—';
+    var rows=[['희망 일정', r.date||'—'], ['요청 메모', note]];
+    return '<div class="req-summary-in">'+
+      '<div class="rs-head"><b class="rs-title">'+svcLabel(r.svc)+'</b>'+(sum?'<span class="rs-sum">'+sum+'</span>':'')+'</div>'+
+      '<div class="rs-lines">'+rows.map(function(x){ return '<div class="rs-row"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>'; }).join('')+'</div>'+
       '<div class="rs-note">📎 내 체형·사이즈 프로필이 함께 전달됐어요</div></div>';
   }
   function toggleReqSummary(btn){ var p=document.getElementById('reqSummaryPanel'); if(!p) return; var on=p.classList.toggle('on'); var tg=btn.querySelector('.tg'); if(tg) tg.textContent=on?'▴':'▾'; }
-  /* 지명 요청 상세 — 쇼퍼 + 요청 내용 + 진행 상태(라이프사이클 액션) */
+  /* 진행 상태 UI — 단계 스테퍼 + 컬러 배너 (지명 요청 라이프사이클) */
+  function stIcon(k){
+    var P={ check:'<path d="M20 6L9 17l-5-5"/>',
+      clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+      flag:'<path d="M5 21V4h13l-2.6 4L18 12H5"/>',
+      star:'<path d="M12 3l2.7 5.5 6 .9-4.35 4.2 1.03 6L12 17l-5.38 2.6 1.03-6L3.3 9.4l6-.9z"/>',
+      x:'<path d="M18 6L6 18M6 6l12 12"/>' };
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'+(P[k]||'')+'</svg>';
+  }
+  /* 상태 → [배너색, 아이콘, 제목, 설명] */
+  var ST_BAN={
+    '대기':    ['wait','clock','응답 대기 중','쇼퍼가 요청을 검토하고 있어요'],
+    '수락':    ['go','check','요청 수락됨','쇼퍼가 요청을 수락했어요 · 곧 코디를 시작해요'],
+    '진행중':  ['go','check','진행 중','쇼퍼와 코디를 진행하고 있어요 · 완료되면 후기를 남겨주세요'],
+    '완료':    ['go','flag','서비스 완료','코디가 완료됐어요 · 후기를 남겨보세요'],
+    '후기완료':['go','star','후기 작성 완료','소중한 후기 고마워요'],
+    '거절':    ['no','x','요청 거절됨','아쉽게도 요청이 거절되었어요 · 다른 쇼퍼를 찾아보세요'],
+    '취소함':  ['wait','x','요청 취소됨','요청을 취소했어요']
+  };
+  function reqStatusBlock(status){
+    var b=ST_BAN[status]||['wait','clock',statusLabel(status),''];
+    return '<div class="statban '+b[0]+'"><span class="sb-ic">'+stIcon(b[1])+'</span>'+
+      '<div class="sb-tx"><b>'+b[2]+'</b>'+(b[3]?'<p>'+b[3]+'</p>':'')+'</div></div>';
+  }
+  /* 상세용 액션 버튼만 (설명 줄글은 배너가 대신하므로 버튼/후기 콘텐츠만) */
+  function reqActions(r,i){ var s=r.status;
+    if(s==='대기') return '<div class="rq-btns"><button class="tinybtn ghost" onclick="confirmCancel('+i+')">요청 취소</button>'+
+      '<button class="tinybtn ghost" onclick="reqReject('+i+')">거절 · 데모</button><button class="tinybtn" onclick="reqAccept('+i+')">수락 · 데모</button></div>';
+    if(s==='진행중') return '<div class="rq-btns"><button class="tinybtn ghost" onclick="reqComplete('+i+')">완료 처리 · 데모</button></div>';
+    if(s==='완료'){ if(r._reviewing) return reviewForm(r,i); return '<div class="rq-btns"><button class="tinybtn" onclick="openReviewForm('+i+')">후기 작성하기</button></div>'; }
+    if(s==='후기완료'){ var rv=r.review||{}; return '<div class="reqact"><div class="revshow"><span class="starsRO">'+starsRO(rv.rating||5)+'</span> <span class="rtx">"'+(rv.text||'')+'"</span></div></div>'; }
+    if(s==='거절') return '<div class="rq-btns"><button class="tinybtn ghost" onclick="closeBids();go(\'shop\')">다른 쇼퍼 찾기</button></div>';
+    return '';
+  }
+  /* 지명 요청 상세 — 진행 상태(스테퍼+배너) + 액션 + 쇼퍼 + 요청 내용 */
   function renderReqDetail(){
     var r=reqs[_bidReq]; if(!r){ closeBids(); return; }
     var e=EX.filter(function(x){return x.nm===r.nm;})[0];
-    var sub=[(r.date?r.date+' 요청':''), statusLabel(r.status)].filter(Boolean).join(' · ');
-    var matched = (r.status==='수락'||r.status==='진행중');
-    var shopper = e ? '<div class="rq-shopper'+(matched?' matched':'')+'">'+(matched?'<span class="rq-matched">✓ 매칭 완료</span>':'')+'<img class="rq-ph" src="'+img(e)+'" alt="" onerror="'+FB+'"><div class="rq-info"><div class="rq-nm">'+e.nm+' 쇼퍼</div><div class="rq-svc">'+svcLabel(r.svc)+' · ★ <span class="num">'+e.rating+'</span> · 매칭도 '+e.match+'%</div></div><button class="tinybtn ghost" onclick="detailFromReq('+EX.indexOf(e)+','+_bidReq+',\'req\')">프로필</button></div>' : '';
+    var shopper = e ? '<div class="rq-sec"><div class="rq-h">쇼퍼</div><div class="req-summary-in"><div class="rs-shopper">'+
+        '<img class="av" src="'+img(e)+'" alt="" onerror="'+FB+'">'+
+        '<div class="who"><div class="nm">'+e.nm+' 쇼퍼</div><div class="mt">★ <span class="num">'+e.rating+'</span> · 매칭도 '+e.match+'%</div></div>'+
+        '<button class="prof" onclick="detailFromReq('+EX.indexOf(e)+','+_bidReq+',\'req\')">프로필</button>'+
+      '</div></div></div>' : '';
     var head='<div class="bids-head"><button class="xbtn" onclick="closeBids()">✕</button>'+
-      '<span class="reqtype open">요청 결과</span><h2>보낸 요청</h2><p>'+sub+'</p></div>';
-    document.getElementById('bidsBody').innerHTML = head + shopper +
-      '<div class="rq-sec"><div class="rq-h">진행 상태</div>'+reqAction(r,_bidReq)+'</div>'+
-      '<div class="rq-sec"><div class="rq-h">요청 내용</div>'+reqSummaryHTML(r)+'</div>';
+      '<span class="reqtype open">'+(r.open?'받은 견적':'요청 결과')+'</span><h2>'+(r.open?'진행 상황':'보낸 요청')+'</h2><p>'+(r.date?r.date+' 요청':'')+'</p></div>';
+    var actions=reqActions(r,_bidReq);
+    // 받은 견적 출신(매칭됨)이면 '지난 견적'으로 비교 화면 다시 볼 수 있게
+    var pastBids = (r.open && r.awarded && (r.bids||[]).length) ?
+      '<div class="rq-sec"><div class="rq-h">지난 견적</div><button class="req-toggle" onclick="openBids('+_bidReq+')">받은 견적 '+r.bids.length+'개 다시 보기 <span class="tg">›</span></button></div>' : '';
+    document.getElementById('bidsBody').innerHTML = head + reqStatusBlock(r.status) +
+      (actions?'<div class="rq-actions">'+actions+'</div>':'') + shopper +
+      '<div class="rq-sec"><div class="rq-h">요청 내용</div>'+reqSummaryHTML(r)+'</div>' + pastBids;
   }
   function renderBids(){
     var r=reqs[_bidReq]; if(!r){ closeBids(); return; }
     var bids=(r.bids||[]).slice();
     bids.sort(function(a,b){ return EX[b.idx].match-EX[a.idx].match; });   // 매칭도 높은 순 고정
-    var sub=[svcLabel(r.svc), (r.occ&&r.occ.length?r.occ.join('·'):''), (r.budget?'예산 '+r.budget:''), (r.date||'')].filter(Boolean).join(' · ');
-    var head='<div class="bids-head"><button class="xbtn" onclick="closeBids()">✕</button>'+
-      '<span class="reqtype open">견적 요청 결과</span><h2>받은 견적</h2>'+
-      '<p><b class="num">'+bids.length+'</b>명의 쇼퍼가 견적을 보냈어요 · '+sub+'</p>'+
+    var back = r.awarded ? '<button class="bids-back" onclick="openReqDetail('+_bidReq+')">‹ 진행 상황</button>' : '';
+    var badge = r.awarded ? '' : '<span class="reqtype open">견적 요청 결과</span>';   // 지난 견적: 뒤로가기만 (배지 중복 제거)
+    var head='<div class="bids-head"><button class="xbtn" onclick="closeBids()">✕</button>'+ back + badge +
+      '<h2>'+(r.awarded?'지난 견적':'받은 견적')+'</h2>'+
+      '<p><b class="num">'+bids.length+'</b>명의 쇼퍼가 견적을 보냈어요</p>'+
       '<button class="req-toggle" onclick="toggleReqSummary(this)">내가 보낸 요청 내용 <span class="tg">▾</span></button>'+
       '<div class="req-summary" id="reqSummaryPanel">'+reqSummaryHTML(r)+'</div></div>';
     var awardedIdx = (r.awarded && typeof r.awarded.idx!=='undefined') ? r.awarded.idx : null;
     var canPick = (r.status==='견적중');   // 취소·진행중이면 더 이상 쇼퍼 선택 불가
     var cards=bids.map(function(b){ var e=EX[b.idx];
       var isSel=(awardedIdx===b.idx);
-      var badges=(isSel?'<span class="q-sel">✓ 매칭 완료</span>':'');
-      var action = isSel ? '<button class="tinybtn" disabled style="opacity:.55;cursor:default">진행 중 ✓</button>'
+      var badges='';   // 선택 표시는 카드 강조 + 하단 '진행중' 버튼으로 (상단 배지 제거)
+      var action = isSel ? '<span class="q-status">'+statusLabel(r.status)+'</span>'
                  : (canPick ? '<button class="tinybtn" onclick="confirmAward('+b.idx+')">진행하기</button>' : '');
       return '<div class="qcard'+(isSel?' sel':'')+'">'+
         '<div class="q-l">'+
@@ -338,7 +417,9 @@
         '</div>'+
         '<div class="q-r"><button class="tinybtn ghost" onclick="detailFromReq('+b.idx+','+_bidReq+',\'bids\')">프로필 보기</button>'+action+'</div>'+
       '</div>'; }).join('');
-    var lifecycle = (r.status!=='견적중') ? '<div class="rq-sec"><div class="rq-h">진행 상태</div>'+reqAction(r,_bidReq)+'</div>' : '';
+    // 지난 견적은 '다시 보기'용 참조 화면 — 매칭됐으면 배너만(읽기용), 완료·후기 액션은 진행 상황 페이지에서
+    var lifecycle = (r.status!=='견적중')
+      ? '<div class="rq-sec"><div class="rq-h">진행 상태</div>'+(r.awarded?matchedBannerHTML(r):reqAction(r,_bidReq))+'</div>' : '';
     var cancel = (r.status==='견적중') ? '<div class="bids-cancel"><button onclick="confirmCancel('+_bidReq+')">이 견적 요청 취소하기</button></div>' : '';
     document.getElementById('bidsBody').innerHTML=head+lifecycle+'<div class="bids-list">'+cards+'</div>'+cancel;
   }
@@ -405,7 +486,7 @@
     var g=document.getElementById('grid');
     if(!list.length){ g.innerHTML='<div class="empty"><b>조건에 맞는 쇼퍼가 아직 없어요</b><p>초기라 쇼퍼를 모으는 중이에요 · <a onclick="notifySignup()">오픈 알림 신청하기</a> 또는 <a onclick="browseAll()">전체 보기</a></p></div>'; return; }
     g.innerHTML=list.map(function(e){ var idx=EX.indexOf(e); var rt=e.rating>0?'<span class="star">★ '+e.rating+'</span>':'<span class="star new">신규</span>';
-      return '<div class="ecard" onclick="openProfile('+idx+')"><div class="cover"><img src="'+img(e)+'" alt="" onerror="'+FB+'"><span class="match">매칭도 '+e.match+'%</span>'+
+      return '<div class="ecard" onclick="openDetail('+idx+')"><div class="cover"><img src="'+img(e)+'" alt="" onerror="'+FB+'"><span class="match">매칭도 '+e.match+'%</span>'+
         '<button class="favbtn" title="즐겨찾기" onclick="event.stopPropagation();toggleFav(\''+e.nm+'\')">'+favIcon(isFav(e.nm),true)+'</button></div>'+
         '<div class="eb"><div class="top"><span class="nm">'+e.nm+' 쇼퍼</span>'+rt+'</div>'+
         '<div class="tags">'+e.tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>'+
@@ -427,18 +508,7 @@
     var hint=document.getElementById('reqHint'); if(hint) hint.style.display=ok?'none':'block';
   }
 
-  /* 카드 클릭 → 빠른 보기 드로어 */
-  function openProfile(idx){ var e=EX[idx]; var rt=e.rating>0?('★ '+e.rating+' · 후기 '+e.review+'건'):'신규 쇼퍼';
-    document.getElementById('drawerBody').innerHTML=
-      '<div class="dhead"><img src="'+img(e)+'" onerror="'+FB+'"><div class="dov"><span class="dm">매칭도 '+e.match+'%</span><div class="dn">'+e.nm+' 쇼퍼</div><div style="font-size:13px;opacity:.9;margin-top:2px">'+rt+'</div></div></div>'+
-      '<div class="dbody"><p class="bio">'+e.bio+'</p>'+
-      '<div class="feat">전문 분야</div><div class="tagrow">'+e.tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>'+
-      '<div class="feat">서비스 정보</div><div class="svcinfo"><div class="r"><span>서비스</span><b>'+SVC[e.svc]+'</b></div><div class="r"><span>예상 가격</span><b>'+e.price.toLocaleString()+'원</b></div><div class="r"><span>제공 방식</span><b>'+e.mode+'</b></div></div>'+
-      '<button class="btn full" style="margin-top:20px" onclick="openDetail('+idx+')">자세히 보기 →</button>'+
-      '<button class="btn ghost full" style="margin-top:9px" onclick="requestFor('+idx+')">견적 요청하기</button>'+
-      '<button class="btn ghost full" style="margin-top:9px" onclick="toggleFav(\''+e.nm+'\');openProfile('+idx+')">'+favIcon(isFav(e.nm),false)+' '+(isFav(e.nm)?'즐겨찾기 해제':'즐겨찾기 추가')+'</button></div>';
-    document.getElementById('drawer').classList.add('on'); scrim(true);
-  }
+  /* (구) 카드 클릭 → 오른쪽 퀵뷰 드로어 openProfile 제거 — 이제 카드 클릭 시 바로 상세(openDetail)로 이동 */
 
   /* 자세히 보기 → 쇼퍼 상세 (탭 내 화면 전환)
      hideReq=요청내역에서 진입(견적 요청 버튼 숨김) · _detailBack=뒤로가기 시 돌아갈 이전 화면 */
@@ -446,9 +516,20 @@
   function backFromDetail(){ if(_detailBack){ var f=_detailBack; _detailBack=null; f(); } else showOnly('listView'); }
   /* 쇼퍼 상세 본문 — 페이지(detailView)와 요청 오버레이(bidsBody) 공용.
      opts.hideReq=견적 요청 버튼 숨김 · opts.back=뒤로 onclick · opts.fav=즐겨찾기 onclick */
+  /* 쇼퍼 후기 = 원본(EX.reviews) + 내가 남긴 후기(reqs 후기완료) 합산 — 후기가 쇼퍼 쪽에 반영 */
+  function reviewData(e){
+    var mine=reqs.filter(function(r){ return r.nm===e.nm && r.status==='후기완료' && r.review; });
+    var count=e.review+mine.length;
+    var sum=(e.rating*e.review)+mine.reduce(function(a,r){ return a+(r.review.rating||5); },0);
+    var rating=count>0 ? Math.round(sum/count*10)/10 : 0;
+    var mineHTML=mine.map(function(r){ var occ=(r.occ&&r.occ.length?r.occ.join('·'):svcLabel(r.svc));
+      return '<div class="rev mine"><span class="revme">내 후기</span>"'+r.review.text+'"<div class="who">— 나 · '+occ+'</div></div>'; }).join('');
+    var baseHTML=e.reviews.map(function(r){ return '<div class="rev">"'+r[0]+'"<div class="who">— '+r[1]+'</div></div>'; }).join('');
+    return { rating:rating, count:count, html:(mineHTML+baseHTML) || '<div class="noreview">아직 등록된 후기가 없어요</div>' };
+  }
   function detailBodyHTML(idx, opts){ var e=EX[idx];
-    var rt=e.rating>0?('★ '+e.rating+' · 후기 '+e.review+'건'):'신규 쇼퍼';
-    var revs=e.reviews.length ? e.reviews.map(function(r){return '<div class="rev">"'+r[0]+'"<div class="who">— '+r[1]+'</div></div>';}).join('') : '<div class="noreview">아직 등록된 후기가 없어요</div>';
+    var rd=reviewData(e);
+    var rt=rd.count>0?('★ '+rd.rating+' · 후기 '+rd.count+'건'):'신규 쇼퍼';
     return '<div class="detailbody"><a class="back" onclick="'+opts.back+'">← 뒤로</a>'+
       '<div class="dhero"><div class="dhero-img"><img src="'+img(e)+'" onerror="'+FB+'"></div>'+
       '<div class="dhero-info"><span class="dsvc">'+SVC[e.svc]+'</span>'+
@@ -461,7 +542,7 @@
       '</div></div></div>'+
       '<div class="dsecs">'+
         '<div class="dsec"><h3>서비스 정보</h3><div class="svcinfo"><div class="r"><span>서비스</span><b>'+SVC[e.svc]+'</b></div><div class="r"><span>예상 가격</span><b>'+e.price.toLocaleString()+'원</b></div><div class="r"><span>제공 방식</span><b>'+e.mode+'</b></div><div class="r"><span>예상 기간</span><b>'+e.dur+'</b></div></div></div>'+
-        '<div class="dsec"><h3>후기'+(e.rating>0?' <span class="dsec-score">★ '+e.rating+' · '+e.review+'건</span>':'')+'</h3>'+revs+'</div>'+
+        '<div class="dsec"><h3>후기'+(rd.count>0?' <span class="dsec-score">★ '+rd.rating+' · '+rd.count+'건</span>':'')+'</h3>'+rd.html+'</div>'+
         '<div class="dsec"><h3>포트폴리오</h3><div class="dgal">'+[1,2,3,4,5,6].map(function(i){return '<div style="background-image:url(\'photos/folio'+i+'.jpg\')"></div>';}).join('')+'</div></div>'+
       '</div></div>';
   }
@@ -559,7 +640,12 @@
   /* 외부 화면에서 #home·#shop·#my 로 돌아오면 해당 탭 열기 */
   (function(){ var h=(location.hash||'').replace('#',''); if(['home','shop','my'].indexOf(h)>=0) go(h); })();
 
-  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile();
+  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagCard();
+
+  /* 친구 초대 링크로 유입(card 공유 → index.html?from=CODE) — 홈 상단 배너로 맞이 */
+  (function(){ try{ var from=new URLSearchParams(location.search).get('from'); if(!from) return;
+    go('home'); var b=document.getElementById('inviteBanner'); if(b) b.classList.add('on');
+  }catch(e){} })();
 
   /* ================= 홈 (줄자 리디자인) 인터랙션 — _home2 이식 ================= */
   (function(){
