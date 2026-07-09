@@ -39,6 +39,7 @@
      찜·요청 상태는 localStorage에 저장 → 마이페이지와 연동
      ========================================================= */
   var SVC={online:'온라인 스타일링', shopping:'동행 쇼핑', image:'이미지 컨설팅'};
+  var SVCSHORT={online:'온라인', shopping:'동행', image:'이미지'};   // 카드 배지용 짧은 라벨
   var SVCI={online:'💻', shopping:'🛍️', image:'✨'};
   /* 서비스 유형 아이콘 — 섹션 아이콘과 동일 톤(딥그린 모노라인, currentColor 상속) */
   var SVCI_SVG={
@@ -47,7 +48,8 @@
     image:'<path d="M12 3.6l1.6 4.5 4.5 1.6-4.5 1.6L12 15.8l-1.6-4.5L5.9 9.7l4.5-1.6L12 3.6z"/><path d="M18.6 13.8v2.2M19.7 14.9h-2.2"/>'
   };
   function svcIcon(v){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+(SVCI_SVG[v]||'')+'</svg>'; }
-  var OCC={date:'소개팅', interview:'면접·발표', wedding:'결혼식 하객', travel:'여행', daily:'일상 코디'};
+  /* 상황(=쇼퍼 전문분야, 고객 화면 라벨) — 7가지 확정 (docs/쇼퍼-데이터-계약.md) */
+  var OCC={date:'소개팅·데이트', interview:'면접·발표', wedding:'결혼식 하객', travel:'여행', daily:'데일리 스타일링', personal:'퍼스널 스타일링', bodycover:'체형 커버 스타일링'};
   var BUD={b1:'~5만', b2:'5~10만', b3:'10~15만', b4:'15만+'};
   function budOf(p){ return p<50000?'b1':(p<=100000?'b2':(p<=150000?'b3':'b4')); }
   var FB="this.onerror=null;";
@@ -75,15 +77,44 @@
   var BOOK_PATH='M6 3h12a1 1 0 0 1 1 1v17l-7-4.7L5 21V4a1 1 0 0 1 1-1z';
   function favIcon(on, onPhoto){ return '<svg class="bk'+(onPhoto?'':' lt')+(on?' on':'')+'" viewBox="0 0 24 24"><path d="'+BOOK_PATH+'"/></svg>'; }
 
+  /* 서비스 제공 방식(타입 고정) — 데이터 계약(docs/쇼퍼-데이터-계약.md §2) */
+  var SMODE={online:'비대면', shopping:'대면', image:'대면'};   // 제공 방식(타입 고정) · 대면이면 활동지역
+  /* 쇼퍼 = 다중 서비스(services[{type,price,dur,regions?}]). 코드 image로 통일 */
   var EX=[
-    {lock:32, nm:'소희', photo:'photos/p1.jpg', svc:'online', occ:['date','daily'], rating:4.9, price:120000, review:96, match:97, tags:['데일리룩','소개팅룩','미니멀'], mode:'온라인(비대면)', dur:'약 3일', bio:'데일리·소개팅룩 전문 스타일리스트<br>온라인 쇼핑몰 MD 출신으로<br>비대면 큐레이션이 강점이에요', reviews:[['비대면인데도 사이즈까지 딱 맞게 골라주셨어요','30세 · 소개팅룩'],['길게 설명 안 해도 취향을 바로 잡아주셔서 편했어요','27세 · 데일리']]},
-    {lock:47, nm:'건형', photo:'photos/p2.jpg', svc:'image', occ:['interview'], rating:4.8, price:190000, review:74, match:90, tags:['면접룩','오피스','남성 그루밍'], mode:'오프라인 세션', dur:'세션 1회 · 약 2시간', bio:'남성 이미지 컨설턴트<br>면접·오피스 첫인상을<br>헤어부터 셔츠 핏까지 정돈해드려요', reviews:[['면접관 시선까지 짚어주셔서 자신감이 생겼어요','29세 · 면접']]},
-    {lock:15, nm:'상민', photo:'photos/p3.jpg', svc:'shopping', occ:['wedding','interview'], rating:4.7, price:150000, review:58, match:86, tags:['포멀','하객룩','세미정장'], mode:'오프라인 동행', dur:'방문 1회 · 약 3시간', bio:'포멀·하객룩 동행 쇼핑 전문<br>매장을 함께 돌며 체형에 맞는<br>옷을 현장에서 골라드려요', reviews:[['혼자였으면 못 골랐을 옷을 잘 맞게 찾아주셨어요','34세 · 결혼식']]},
-    {lock:52, nm:'지현', svc:'online', occ:['date','daily'], rating:4.8, price:98000, review:61, match:93, tags:['데일리','캐주얼','가성비'], mode:'온라인(비대면)', dur:'약 2일', bio:'가성비 데일리룩 큐레이터<br>합리적인 예산 안에서<br>실용적인 코디를 짜드려요', reviews:[['예산을 딱 지켜서 골라주셔서 좋았어요','26세 · 데일리']]},
-    {lock:63, nm:'유나', svc:'online', occ:['date','wedding','daily'], rating:5.0, price:145000, review:38, match:95, tags:['여성복','하객룩','트렌디'], mode:'온라인(비대면)', dur:'약 3일', bio:'트렌디 여성 스타일링 전문<br>시즌 무드를 반영한<br>감각적인 큐레이션이 강점이에요', reviews:[['유행을 잘 녹여주면서 과하지 않았어요','28세 · 하객룩']]},
-    {lock:71, nm:'세라', svc:'image', occ:['interview','wedding'], rating:4.9, price:175000, review:52, match:92, tags:['이미지','퍼스널컬러','포멀'], mode:'오프라인 세션', dur:'세션 1회 · 약 2시간', bio:'퍼스널컬러·이미지 컨설턴트<br>색과 실루엣으로 첫인상을<br>목적에 맞게 설계해드려요', reviews:[['퍼스널컬러까지 잡아주셔서 만족했어요','31세 · 면접']]},
-    {lock:84, nm:'태오', svc:'shopping', occ:['daily','travel'], rating:4.6, price:130000, review:44, match:88, tags:['남성복','캐주얼','동행쇼핑'], mode:'오프라인 동행', dur:'방문 1회 · 약 2시간', bio:'남성 캐주얼 동행 쇼핑 전문<br>매장을 함께 돌며 핏에 맞는<br>데일리 아이템을 골라드려요', reviews:[['혼자 사면 실패했을 옷을 잘 잡아주셨어요','33세 · 데일리']]}
+    {lock:32, nm:'소희', photo:'photos/p1.jpg', occ:['date','daily','personal'], rating:4.9, review:96, match:97, tags:['미니멀','캐주얼','시크'],
+      services:[{type:'online',price:90000},{type:'shopping',price:130000,regions:['서울 강남','서울 마포']},{type:'image',price:110000,regions:['서울 강남','서울 마포']}],
+      bio:'데일리·소개팅룩 전문 스타일리스트<br>온라인 쇼핑몰 MD 출신으로<br>비대면 큐레이션이 강점이에요', reviews:[['비대면인데도 사이즈까지 딱 맞게 골라주셨어요','30세 · 소개팅룩'],['길게 설명 안 해도 취향을 바로 잡아주셔서 편했어요','27세 · 데일리']]},
+    {lock:47, nm:'건형', photo:'photos/p2.jpg', occ:['interview','bodycover'], rating:4.8, review:74, match:90, tags:['클래식','시크','미니멀'],
+      services:[{type:'image',price:190000,regions:['서울 강남','서울 종로']}],
+      bio:'남성 이미지 컨설턴트<br>면접·오피스 첫인상을<br>헤어부터 셔츠 핏까지 정돈해드려요', reviews:[['면접관 시선까지 짚어주셔서 자신감이 생겼어요','29세 · 면접']]},
+    {lock:15, nm:'상민', photo:'photos/p3.jpg', occ:['wedding','interview'], rating:4.7, review:58, match:86, tags:['클래식','시크','빈티지'],
+      services:[{type:'shopping',price:150000,regions:['서울 종로','경기 성남']}],
+      bio:'포멀·하객룩 동행 쇼핑 전문<br>매장을 함께 돌며 체형에 맞는<br>옷을 현장에서 골라드려요', reviews:[['혼자였으면 못 골랐을 옷을 잘 맞게 찾아주셨어요','34세 · 결혼식']]},
+    {lock:52, nm:'지현', occ:['date','daily'], rating:4.8, review:61, match:93, tags:['캐주얼','스포티','미니멀'],
+      services:[{type:'online',price:98000},{type:'shopping',price:115000,regions:['서울 강남']}],
+      bio:'가성비 데일리룩 큐레이터<br>합리적인 예산 안에서<br>실용적인 코디를 짜드려요', reviews:[['예산을 딱 지켜서 골라주셔서 좋았어요','26세 · 데일리']]},
+    {lock:63, nm:'유나', occ:['date','wedding','personal'], rating:5.0, review:38, match:95, tags:['걸리시','시크','빈티지'],
+      services:[{type:'online',price:145000}],
+      bio:'트렌디 여성 스타일링 전문<br>시즌 무드를 반영한<br>감각적인 큐레이션이 강점이에요', reviews:[['유행을 잘 녹여주면서 과하지 않았어요','28세 · 하객룩']]},
+    {lock:71, nm:'세라', occ:['interview','wedding','bodycover'], rating:4.9, review:52, match:92, tags:['클래식','시크','미니멀'],
+      services:[{type:'image',price:175000,regions:['서울 강남','서울 용산']}],
+      bio:'퍼스널컬러·이미지 컨설턴트<br>색과 실루엣으로 첫인상을<br>목적에 맞게 설계해드려요', reviews:[['퍼스널컬러까지 잡아주셔서 만족했어요','31세 · 면접']]},
+    {lock:84, nm:'태오', occ:['daily','travel'], rating:4.6, review:44, match:88, tags:['캐주얼','스포티','스트리트'],
+      services:[{type:'shopping',price:130000,regions:['서울 마포','서울 용산']}],
+      bio:'남성 캐주얼 동행 쇼핑 전문<br>매장을 함께 돌며 핏에 맞는<br>데일리 아이템을 골라드려요', reviews:[['혼자 사면 실패했을 옷을 잘 잡아주셨어요','33세 · 데일리']]}
   ];
+  /* 서비스 헬퍼 — 다중 서비스 접근(단일 svc/price/mode/dur 대체) */
+  function svcTypes(e){ return (e.services||[]).map(function(s){return s.type;}); }
+  function svcOf(e,t){ return (e.services||[]).filter(function(s){return s.type===t;})[0]; }
+  function svcHas(e,t){ return svcTypes(e).indexOf(t)>=0; }
+  function svcMinPrice(e){ var ps=(e.services||[]).map(function(s){return s.price;}); return ps.length?Math.min.apply(null,ps):0; }
+  function svcPrimary(e){ return (e.services||[])[0]||{}; }
+  /* 포트폴리오 데모 = 사진 + 착용 모델 키·몸무게(cm·kg) — 포털(pro.js)과 동일 계약 */
+  var DEMO_FOLIO=[
+    {src:'photos/folio1.jpg', height:168, weight:55},{src:'photos/folio2.jpg', height:172, weight:63},{src:'photos/folio3.jpg', height:160, weight:50},
+    {src:'photos/folio4.jpg', height:177, weight:70},{src:'photos/folio5.jpg', height:165, weight:58},{src:'photos/folio6.jpg', height:170, weight:60}
+  ];
+  function folioSpec(p){ var a=[]; if(p.height) a.push(p.height+'cm'); if(p.weight) a.push(p.weight+'kg'); return a.join(' '); }
 
   /* ===== 로컬 저장소 (찜 · 요청 내역) ===== */
   function loadLS(k, def){ try{ var v=localStorage.getItem('fitting.'+k); return v?JSON.parse(v):def; }catch(e){ return def; } }
@@ -98,9 +129,9 @@
     var lines=[oc+' 코디, 체형·사이즈에 맞게 딱 잡아드릴게요', oc+' 자리에 맞춰 과하지 않게 정리해드릴게요', oc+' 첫인상 살리는 방향으로 제안드릴게요'];
     var deltas=[0, -0.12, 0.08];   // 기준가 대비 입찰가 변주
     var bids=[];
-    for(var i=0;i<EX.length;i++){ if(EX[i].svc!==svc) continue; var k=bids.length;
-      var price=Math.round(EX[i].price*(1+deltas[k%deltas.length])/1000)*1000;
-      bids.push({idx:i, price:price, eta:EX[i].dur, msg:lines[k%lines.length]}); }
+    for(var i=0;i<EX.length;i++){ var so=svcOf(EX[i],svc); if(!so) continue; var k=bids.length;
+      var price=Math.round(so.price*(1+deltas[k%deltas.length])/1000)*1000;
+      bids.push({idx:i, price:price, eta:SMODE[svc]+(so.regions&&so.regions.length?' · '+so.regions.join('·'):''), msg:lines[k%lines.length]}); }
     return bids;
   }
 
@@ -124,7 +155,7 @@
     if(!loggedIn()){ openLogin('즐겨찾기', function(){ toggleFav(nm); }); return; }   // 로그인 후에만 데이터 저장
     var e=EX.filter(function(x){return x.nm===nm;})[0];
     if(isFav(nm)) favs=favs.filter(function(f){return f.nm!==nm;});
-    else if(e) favs.unshift({nm:e.nm, svc:e.svc, rating:e.rating, photo:e.photo||img(e)});
+    else if(e) favs.unshift({nm:e.nm, svc:svcTypes(e)[0], rating:e.rating, photo:e.photo||img(e)});
     saveLS('favs', favs); render(); renderFavs();
     toast(isFav(nm)?(nm+' 쇼퍼를 즐겨찾기에 담았어요'):(nm+' 쇼퍼를 즐겨찾기에서 뺐어요'));
   }
@@ -195,7 +226,7 @@
     el.innerHTML=favs.map(function(f){
       var e=EX.filter(function(x){return x.nm===f.nm;})[0];   // 지정 쇼퍼 원본(얼굴·전문분야) 단일 출처
       var face=e?img(e):(f.photo||'');                        // 실제 지정 쇼퍼 얼굴(SVG)
-      var svc=f.svc||(e&&e.svc);
+      var svc=f.svc||(e&&svcTypes(e)[0]);
       var rating=(f.rating!=null?f.rating:(e&&e.rating));
       var tags=(e&&e.tags)?e.tags.slice(0,3):[];              // 전문분야(태그) 최대 3개
       return '<div class="fcard"'+(e?' onclick="favOpen(\''+f.nm+'\')"':'')+'><div class="cov"><img class="favimg" src="'+face+'" alt="" onerror="'+FB+'"><span class="heart" title="즐겨찾기 해제" onclick="event.stopPropagation();toggleFav(\''+f.nm+'\')">'+favIcon(true,true)+'</span></div>'+
@@ -445,7 +476,7 @@
     askConfirm('<b>'+e.nm+' 쇼퍼</b>로 선택할까요?<div class="cf-sub">선택하면 바로 쇼퍼와 매칭돼 코디를 시작해요</div>', '이 쇼퍼로 선택', function(){ awardBid(idx); }); }
   function awardBid(idx){ var r=reqs[_bidReq]; if(!r) return; var e=EX[idx];
     var win=(r.bids||[]).filter(function(b){return b.idx===idx;})[0];
-    r.nm=e.nm; r.status='진행중'; r.awarded={idx:idx, price:win?win.price:e.price};
+    var so=svcOf(e, r.svc); r.nm=e.nm; r.status='진행중'; r.awarded={idx:idx, price:win?win.price:(so?so.price:svcMinPrice(e))};
     saveLS('reqs',reqs); renderReqs(); openReqDetail(_bidReq); toast(e.nm+' 쇼퍼로 진행해요 · 코디를 시작할게요');
   }
   /* 공용 확인 모달 */
@@ -491,23 +522,28 @@
     var q=query;
     var s=document.getElementById('sort').value;
     var list=EX.filter(function(e){
-      return (curSvc==='all'||e.svc===curSvc)
+      return (curSvc==='all'||svcHas(e,curSvc))
         && (curOcc==='all'||e.occ.indexOf(curOcc)>=0)
-        && (curBudget==='all'||budOf(e.price)===curBudget)
+        && (curBudget==='all'||budOf(svcMinPrice(e))===curBudget)
         && (!q || e.nm.indexOf(q)>=0 || e.tags.join(' ').indexOf(q)>=0);
     });
-    list.sort(function(a,b){ return s==='rating'?b.rating-a.rating : s==='priceA'?a.price-b.price : s==='priceD'?b.price-a.price : b.match-a.match; });
+    list.sort(function(a,b){ return s==='rating'?b.rating-a.rating : s==='priceA'?svcMinPrice(a)-svcMinPrice(b) : s==='priceD'?svcMinPrice(b)-svcMinPrice(a) : b.match-a.match; });
     var cond = list.length+'명 · '+(curSvc==='all'?'전체 유형':SVC[curSvc])+(curOcc==='all'?'':' · '+OCC[curOcc])+(curBudget==='all'?'':' · 예산 '+BUD[curBudget])+(q?' · "'+q+'"':'');
     var active = curSvc!=='all'||curOcc!=='all'||curBudget!=='all'||q;
     document.getElementById('count').innerHTML = cond + (active?'  ·  <a onclick="browseAll()">초기화하기</a>':'');
     var g=document.getElementById('grid');
     if(!list.length){ g.innerHTML='<div class="empty"><b>조건에 맞는 쇼퍼가 아직 없어요</b><p>초기라 쇼퍼를 모으는 중이에요 · <a onclick="notifySignup()">오픈 알림 신청하기</a> 또는 <a onclick="browseAll()">전체 보기</a></p></div>'; return; }
-    g.innerHTML=list.map(function(e){ var idx=EX.indexOf(e); var rt=e.rating>0?'<span class="star">★ '+e.rating+'</span>':'<span class="star new">신규</span>';
+    g.innerHTML=list.map(function(e){ var idx=EX.indexOf(e);
+      var rt=e.rating>0?'<span class="star">★ '+e.rating+' <small class="rv">('+e.review+')</small></span>':'<span class="star new">신규</span>';
+      var multi=e.services.length>1;
+      var priceHTML=multi ? '<span class="from"><span class="num">'+svcMinPrice(e).toLocaleString()+'</span>원부터</span>' : '<span class="num">'+svcPrimary(e).price.toLocaleString()+'</span>원';
+      var svcico='<span class="svcico">'+e.services.map(function(sv){return '<span class="b" title="'+SVC[sv.type]+'">'+svcIcon(sv.type)+'</span>';}).join('')+'</span>';
       return '<div class="ecard" onclick="openDetail('+idx+')"><div class="cover"><img src="'+img(e)+'" alt="" onerror="'+FB+'"><span class="match">매칭도 '+e.match+'%</span>'+
         '<button class="favbtn" title="즐겨찾기" onclick="event.stopPropagation();toggleFav(\''+e.nm+'\')">'+favIcon(isFav(e.nm),true)+'</button></div>'+
         '<div class="eb"><div class="top"><span class="nm">'+e.nm+' 쇼퍼</span>'+rt+'</div>'+
-        '<div class="tags">'+e.tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>'+
-        '<div class="price">'+e.price.toLocaleString()+'원 <small>· 후기 '+e.review+'건</small></div></div></div>';
+        '<div class="subtags">'+e.tags.slice(0,2).join(' · ')+'</div>'+
+        '<div class="cardmid">'+svcico+'<span class="price">'+priceHTML+'</span></div>'+
+        '</div></div>';
     }).join('');
   }
 
@@ -547,9 +583,12 @@
   function detailBodyHTML(idx, opts){ var e=EX[idx];
     var rd=reviewData(e);
     var rt=rd.count>0?('★ '+rd.rating+' · 후기 '+rd.count+'건'):'신규 쇼퍼';
+    var heroSvc=e.services.length>1?'서비스 '+e.services.length+'가지':SVC[svcPrimary(e).type];
+    var svcCards=e.services.map(function(sv){ var meta=SMODE[sv.type]+(sv.regions&&sv.regions.length?' · '+sv.regions.join('·'):'');
+      return '<div class="svccard"><span class="svcc-ic">'+svcIcon(sv.type)+'</span><div class="svcc-m"><b>'+SVC[sv.type]+'</b><span>'+meta+'</span></div><span class="svcc-pr"><span class="num">'+sv.price.toLocaleString()+'</span>원</span></div>'; }).join('');
     return '<div class="detailbody"><a class="back" onclick="'+opts.back+'">← 뒤로</a>'+
       '<div class="dhero"><div class="dhero-img"><img src="'+img(e)+'" onerror="'+FB+'"></div>'+
-      '<div class="dhero-info"><span class="dsvc">'+SVC[e.svc]+'</span>'+
+      '<div class="dhero-info"><span class="dsvc">'+heroSvc+'</span>'+
       '<div class="dnamerow"><h1>'+e.nm+' 쇼퍼</h1><div class="dmeta"><b>매칭도 '+e.match+'%</b> · '+rt+'</div></div>'+
       '<div class="tagrow" style="margin-top:16px">'+e.tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>'+
       '<p class="dbio">'+e.bio+'</p>'+
@@ -558,9 +597,9 @@
       '<button class="btn ghost" onclick="'+opts.fav+'">'+favIcon(isFav(e.nm),false)+' '+(isFav(e.nm)?'즐겨찾기 해제':'즐겨찾기 추가')+'</button>'+
       '</div></div></div>'+
       '<div class="dsecs">'+
-        '<div class="dsec"><h3>서비스 정보</h3><div class="svcinfo"><div class="r"><span>서비스</span><b>'+SVC[e.svc]+'</b></div><div class="r"><span>예상 가격</span><b>'+e.price.toLocaleString()+'원</b></div><div class="r"><span>제공 방식</span><b>'+e.mode+'</b></div><div class="r"><span>예상 기간</span><b>'+e.dur+'</b></div></div></div>'+
+        '<div class="dsec"><h3>제공 서비스'+(e.services.length>1?' <span class="dsec-score">· '+e.services.length+'가지</span>':'')+'</h3><div class="svccards">'+svcCards+'</div></div>'+
         '<div class="dsec"><h3>후기'+(rd.count>0?' <span class="dsec-score">★ '+rd.rating+' · '+rd.count+'건</span>':'')+'</h3>'+rd.html+'</div>'+
-        '<div class="dsec"><h3>포트폴리오</h3><div class="dgal">'+[1,2,3,4,5,6].map(function(i){return '<div style="background-image:url(\'photos/folio'+i+'.jpg\')"></div>';}).join('')+'</div></div>'+
+        '<div class="dsec"><h3>포트폴리오 <span class="dsec-score" style="font-weight:600">· 착용 모델 키·몸무게</span></h3><div class="dgal">'+(e.portfolio&&e.portfolio.length?e.portfolio:DEMO_FOLIO).map(function(p){ var s=folioSpec(p); return '<div style="background-image:url(\''+p.src+'\')">'+(s?'<span class="pspec">'+s+'</span>':'')+'</div>'; }).join('')+'</div></div>'+
       '</div></div>';
   }
   /* 쇼퍼찾기 탭 내 상세 페이지 (목록에서 진입) */
@@ -582,10 +621,10 @@
   function todayStr(){ var d=new Date(), p=function(n){return (n<10?'0':'')+n;}; return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
 
   /* 견적 요청 폼 (A안 — 섹션 카드 3그룹: 무엇을 / 언제·얼마 / 요청 메모) */
-  function reqFormHTML(svc3, lockedSvc){
-    return '<div class="grp"><div class="grp-h"><span class="n">1</span>'+(lockedSvc?'서비스 유형 · 이 쇼퍼로 고정':'무엇을 받을까요')+'</div><div class="svc3" id="mSvc">'+svc3+'</div></div>'+
+  function reqFormHTML(svc3, g1label){
+    return '<div class="grp"><div class="grp-h"><span class="n">1</span>'+(g1label||'무엇을 받을까요')+'</div><div class="svc3" id="mSvc">'+svc3+'</div></div>'+
       '<div class="grp"><div class="grp-h"><span class="n">2</span>언제 어디서 진행할까요?</div>'+
-        '<div class="feat">상황 · 최대 2개 · <em>필수</em></div><div class="seg" id="mOcc"><span class="o" onclick="toggleOcc(this)">소개팅</span><span class="o" onclick="toggleOcc(this)">면접·발표</span><span class="o" onclick="toggleOcc(this)">결혼식 하객</span><span class="o" onclick="toggleOcc(this)">여행</span><span class="o" onclick="toggleOcc(this)">일상 코디</span></div>'+
+        '<div class="feat">상황 · 최대 2개 · <em>필수</em></div><div class="seg" id="mOcc"><span class="o" onclick="toggleOcc(this)">소개팅·데이트</span><span class="o" onclick="toggleOcc(this)">면접·발표</span><span class="o" onclick="toggleOcc(this)">결혼식 하객</span><span class="o" onclick="toggleOcc(this)">여행</span><span class="o" onclick="toggleOcc(this)">데일리 스타일링</span><span class="o" onclick="toggleOcc(this)">퍼스널 스타일링</span><span class="o" onclick="toggleOcc(this)">체형 커버 스타일링</span></div>'+
         '<div class="feat">예산 · <em>필수</em></div><div class="seg" id="mBud"><span class="o" onclick="pickBud(this)">~5만</span><span class="o" onclick="pickBud(this)">5~10만</span><span class="o" onclick="pickBud(this)">10~15만</span><span class="o" onclick="pickBud(this)">15만+</span></div>'+
         '<div class="feat">일정 · <em>필수</em> · 오늘 이후만 선택 가능</div><input class="inp" type="date" id="reqDate" min="'+todayStr()+'" onchange="validate()">'+
       '</div>'+
@@ -600,15 +639,16 @@
   /* 특정 쇼퍼에게 견적 요청 (로그인 게이트) */
   function requestFor(idx){
     if(!loggedIn()){ closeAll(); openLogin(EX[idx].nm+' 쇼퍼 견적 요청', function(){ requestFor(idx); }); return; }
-    var e=EX[idx]; curReq={nm:e.nm, svc:e.svc};
+    var e=EX[idx]; curReq={nm:e.nm, svc:svcPrimary(e).type};
     var SNM={online:'온라인 스타일링', shopping:'동행 쇼핑', image:'이미지 컨설팅'};
-    var svc3=['online','shopping','image'].map(function(v){ return '<div class="s '+(v===e.svc?'on':'locked')+'"><div class="i">'+svcIcon(v)+'</div><b>'+SNM[v]+'</b></div>'; }).join('');
+    var g1=e.services.length>1?'어떤 서비스로 받을까요? · 택 1':'서비스 유형';
+    var svc3=e.services.map(function(sv,i){ return '<div class="s '+(i===0?'on':'')+'" data-v="'+sv.type+'" onclick="pickSvc(this)"><div class="i">'+svcIcon(sv.type)+'</div><b>'+SNM[sv.type]+'</b><span class="p num">'+sv.price.toLocaleString()+'</span></div>'; }).join('');
     document.getElementById('requestView').innerHTML=
       '<a class="back" onclick="openDetail('+idx+')">← 뒤로</a>'+
       '<div class="reqpage">'+
       '<h1>견적 요청</h1><p class="lead">조건을 남기면 이 쇼퍼가 검토하고 제안(견적)을 보내드려요</p>'+
       '<div class="reqto sel" style="margin-top:18px"><img src="'+img(e)+'" onerror="'+FB+'"><div><div class="rl">견적 요청 대상</div><div class="rn">'+e.nm+' 쇼퍼</div></div></div>'+
-      reqFormHTML(svc3, true)+
+      reqFormHTML(svc3, g1)+
       '<button class="btn full" id="reqBtn" disabled style="margin-top:22px" onclick="confirmMatch()">견적 요청 보내기</button>'+
       '<p class="reqhint" id="reqHint">상황·예산·일정을 모두 입력하면 보낼 수 있어요</p></div>';
     closeAll(); showOnly('requestView'); validate();
@@ -624,7 +664,7 @@
       '<a class="back" onclick="showOnly(\'listView\')">← 목록으로</a>'+
       '<div class="reqpage">'+
       '<h1>견적 요청</h1><p class="lead">조건을 남기면 <b style="color:var(--ink)">여러 쇼퍼가 견적</b>을 보내요</p>'+
-      reqFormHTML(svc3, false)+
+      reqFormHTML(svc3)+
       '<button class="btn full" id="reqBtn" disabled style="margin-top:22px" onclick="confirmMatch()">견적 요청 보내기</button>'+
       '<p class="reqhint" id="reqHint">상황·예산·일정을 모두 입력하면 보낼 수 있어요</p></div>';
     closeAll(); showOnly('requestView'); validate();

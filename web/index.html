@@ -248,7 +248,7 @@
   .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
   .ecard{background:#fff; border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 6px 18px rgba(20,18,16,.08); cursor:pointer; transition:.18s;}
   .ecard:hover{transform:translateY(-3px); box-shadow:0 16px 36px rgba(20,18,16,.12);}
-  .ecard .cover{height:170px; position:relative; overflow:hidden; background:#EDE8E0;}
+  .ecard .cover{height:188px; position:relative; overflow:hidden; background:#EDE8E0;}
   .ecard .cover img{width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.55) brightness(1.03) contrast(.98);}
   .ecard .match{position:absolute; top:12px; left:12px; font-size:12px; font-weight:800; padding:5px 12px; border-radius:30px; background:var(--green); color:#fff; box-shadow:0 2px 9px rgba(46,74,59,.28);}
   .ecard .eb{padding:17px 18px;}
@@ -256,8 +256,15 @@
   .ecard .nm{font-size:16.5px; font-weight:800;} .ecard .star{font-size:14px; font-weight:700;}
   .ecard .spec{font-size:13px; color:var(--sub); margin:5px 0 11px;}
   .ecard .tags span{display:inline-block; font-size:12px; background:var(--soft); color:#6a6258; padding:4px 9px; border-radius:20px; margin:0 5px 5px 0; font-weight:600;}
-  .ecard .price{font-size:15px; font-weight:800;} .ecard .price small{color:var(--sub2); font-weight:600;}
+  .ecard .price{font-size:15px; font-weight:800;} .ecard .price small{color:var(--sub2); font-weight:600;} .ecard .price .from{color:var(--green);}
   .ecard .tags{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;}
+  /* A안 — 3열 다이어트: 태그 2개 텍스트 + 서비스 아이콘만 + 가격 (한 줄) */
+  .ecard .star .rv{color:var(--sub2); font-weight:600; font-size:12.5px;}
+  .ecard .subtags{font-size:13px; color:var(--sub); font-weight:600; margin:9px 0 14px; min-height:16px;}
+  .ecard .cardmid{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .ecard .svcico{display:inline-flex; gap:6px;}
+  .ecard .svcico .b{width:29px; height:29px; border-radius:9px; background:var(--green-soft); color:var(--green); display:flex; align-items:center; justify-content:center;}
+  .ecard .svcico .b svg{width:16px; height:16px;}
   .ecard .star.new{color:var(--green-mid); font-size:12.5px;}
   /* 찜(북마크) 아이콘 — 무배경, 흰 반투명 → 딥그린 채움 + 그림자 */
   .bk{width:22px; height:22px; display:inline-block; vertical-align:middle;}
@@ -325,8 +332,10 @@
   .dsecs{margin-top:46px; display:flex; flex-direction:column; gap:38px; max-width:840px;}
   #detailView .dsecs{max-width:1040px;}
   .dsec h3{font-size:18px; font-weight:800; letter-spacing:-.03em; margin-bottom:14px;}
-  .dgal{display:grid; grid-template-columns:repeat(3,1fr); gap:12px;}
-  .dgal div{height:150px; border-radius:12px; background-size:cover; background-position:center; background-color:var(--soft);}
+  .dgal{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+  .dgal div{position:relative; aspect-ratio:4/5; border-radius:10px; background-size:cover; background-position:center; background-color:var(--soft); filter:saturate(.6); overflow:hidden;}
+  .dgal .pspec{position:absolute; right:8px; bottom:7px; color:#fff; font-size:13.5px; font-weight:800; line-height:1.15; text-align:right;
+    text-shadow:-1.2px -1.2px 0 #000,1.2px -1.2px 0 #000,-1.2px 1.2px 0 #000,1.2px 1.2px 0 #000,0 0 3px rgba(0,0,0,.55);}
   .tagrow span{display:inline-block; font-size:12.5px; background:var(--soft); color:#6a6258; padding:6px 12px; border-radius:20px; margin:0 6px 6px 0; font-weight:600;}
   .noreview{font-size:13.5px; color:var(--sub2); padding:10px 0;}
   .dsec h3 .dsec-score{font-size:13px; font-weight:700; color:var(--green); margin-left:8px;}
@@ -358,7 +367,7 @@
   .seg .o.dis{opacity:.35; pointer-events:none;}
   .attach{display:flex; align-items:center; gap:12px; background:var(--soft); border-radius:14px; padding:14px 16px; margin-top:16px;} .attach .at{flex:1;} .attach b{font-size:14px;} .attach .at div{font-size:12px; color:var(--sub); margin-top:2px;}
   .btn:disabled{opacity:.4; cursor:not-allowed;}
-  @media(max-width:820px){ .dhero{grid-template-columns:1fr;} .dhero-img{height:340px;} .dgal div{height:120px;} }
+  @media(max-width:820px){ .dhero{grid-template-columns:1fr;} .dhero-img{height:340px;} }
 
   /* ===== 마이 ===== */
   .myrap{display:grid; grid-template-columns:.85fr 1.15fr; gap:26px; align-items:start;}
@@ -435,11 +444,20 @@
   .rev.mine .who{color:var(--green-mid);}
   .svcinfo{background:var(--soft); border-radius:14px; padding:14px 16px;}
   .svcinfo .r{display:flex; justify-content:space-between; padding:6px 0; font-size:14px;} .svcinfo .r span{color:var(--sub);} .svcinfo .r b{font-weight:800;}
+  /* 상세 · 제공 서비스 카드 리스트 (다중 서비스) */
+  .svccards{display:flex; flex-direction:column; gap:10px;}
+  .svccard{display:flex; align-items:center; gap:13px; padding:14px 16px; border:1.5px solid var(--line2); border-radius:14px;}
+  .svccard .svcc-ic{flex:none; width:40px; height:40px; border-radius:11px; background:var(--green-soft); color:var(--green); display:flex; align-items:center; justify-content:center;}
+  .svccard .svcc-ic svg{width:22px; height:22px;}
+  .svccard .svcc-m{flex:1; min-width:0;} .svccard .svcc-m b{font-size:15px; font-weight:800; display:block;} .svccard .svcc-m span{font-size:12.5px; color:var(--sub);}
+  .svccard .svcc-pr{font-size:15.5px; font-weight:800; white-space:nowrap;}
   .svc3{display:grid; grid-template-columns:repeat(3,1fr); gap:9px;}
   .svc3 .s{border:1.5px solid var(--line2); border-radius:14px; padding:15px 8px; text-align:center; cursor:pointer;}
   .svc3 .s.on{border-color:var(--green); background:var(--green-soft);}
   .svc3 .s .i{display:flex; justify-content:center; color:var(--sub);} .svc3 .s .i svg{width:24px; height:24px;} .svc3 .s.on .i{color:var(--green);}
   .svc3 .s b{display:block; font-size:12.5px; margin-top:6px;}
+  .svc3 .s .p{display:block; font-size:12px; color:var(--green); font-weight:800; margin-top:4px;}
+  .svc3 .s .p::after{content:'원';}
   .toggle{width:46px; height:27px; border-radius:20px; background:var(--line2); position:relative; cursor:pointer; flex:none; transition:.15s;}
   .toggle::after{content:""; position:absolute; top:3px; left:3px; width:21px; height:21px; border-radius:50%; background:#fff; transition:.15s;}
   .toggle.on{background:var(--green);} .toggle.on::after{left:22px;}
@@ -988,11 +1006,13 @@
           <button class="ddbtn" onclick="toggleDD(event,'ddOcc')">상황<span class="lab"></span> <span class="ar">▾</span></button>
           <div class="ddmenu">
             <div class="ddopt on" data-occ="all" onclick="setOcc(this)">전체</div>
-            <div class="ddopt" data-occ="date" onclick="setOcc(this)">소개팅</div>
+            <div class="ddopt" data-occ="date" onclick="setOcc(this)">소개팅·데이트</div>
             <div class="ddopt" data-occ="interview" onclick="setOcc(this)">면접·발표</div>
             <div class="ddopt" data-occ="wedding" onclick="setOcc(this)">결혼식 하객</div>
             <div class="ddopt" data-occ="travel" onclick="setOcc(this)">여행</div>
-            <div class="ddopt" data-occ="daily" onclick="setOcc(this)">일상 코디</div>
+            <div class="ddopt" data-occ="daily" onclick="setOcc(this)">데일리 스타일링</div>
+            <div class="ddopt" data-occ="personal" onclick="setOcc(this)">퍼스널 스타일링</div>
+            <div class="ddopt" data-occ="bodycover" onclick="setOcc(this)">체형 커버 스타일링</div>
           </div>
         </div>
         <div class="dd" id="ddBud">
@@ -1005,7 +1025,7 @@
             <div class="ddopt" data-bud="b4" onclick="setBud(this)">15만원 이상</div>
           </div>
         </div>
-        <div class="search"><span class="mag">⌕</span><input id="q" placeholder="이름·전문분야로 찾기" oninput="toggleClr()" onkeydown="if(event.key==='Enter')doSearch()"><span class="clr" id="clrBtn" onclick="clearSearch()" style="display:none">✕</span></div>
+        <div class="search"><span class="mag">⌕</span><input id="q" placeholder="이름·스타일로 찾기" oninput="toggleClr()" onkeydown="if(event.key==='Enter')doSearch()"><span class="clr" id="clrBtn" onclick="clearSearch()" style="display:none">✕</span></div>
         <button class="btn sm" onclick="doSearch()">찾기</button>
         <div class="sort"><select id="sort" onchange="render()">
           <option value="match">매칭도순</option>
