@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fitting · 견적 요청</title>
+<!-- 쇼퍼가 요청을 클릭하면 오는 견적서 페이지. 고객의 체형진단 결과 상세(브랜드 추천 제외) + 요청 내용 + 제안. -->
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:var(--soft,#f6f5f2);font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;color:var(--ink,#1c1a17)}
+  a{color:inherit;text-decoration:none;cursor:pointer}
+  header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line,#e7e4de)}
+  .nav{max-width:1120px;margin:0 auto;height:64px;display:flex;align-items:center;gap:14px;padding:0 28px}
+  .logo{font-size:20px;font-weight:800;letter-spacing:-.05em;color:var(--green,#1f7a3f)}
+  .logo i{display:inline-block;width:6px;height:6px;background:var(--green,#1f7a3f);margin-left:2px}
+  .back{margin-left:auto;font-size:14px;color:var(--sub,#6b675f);cursor:pointer}
+
+  .qwrap{max-width:1120px;margin:0 auto;padding:30px 28px 80px}
+  .crumb{font-size:12.5px;color:var(--sub2,#8a857b);font-weight:700}
+  h1{font-size:25px;font-weight:800;letter-spacing:-.04em;margin:6px 0 4px}
+  .htags{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .svcbadge{display:inline-block;font-size:12px;font-weight:800;border-radius:20px;padding:3px 11px}
+  .svcbadge.online{background:var(--green-soft,#e8f3ec);color:var(--green,#1f7a3f)}
+  .svcbadge.shopping{background:#fbeede;color:#b9741a}
+  .svcbadge.imaging{background:#efeafb;color:#7a5bb0}
+  .st{font-size:12px;font-weight:800;padding:4px 11px;border-radius:20px}
+  .st.nw{background:var(--green,#1f7a3f);color:#fff} .st.sent{background:var(--soft,#eee);color:var(--sub,#777)}
+  .st.prog{background:var(--green-soft,#e8f3ec);color:var(--green,#1f7a3f)} .st.done{background:var(--green-soft,#e8f3ec);color:var(--green,#1f7a3f)}
+
+  .qgrid{display:grid;grid-template-columns:360px 1fr;gap:28px;align-items:start;margin-top:24px}
+  @media(max-width:820px){.qgrid{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line,#e7e4de);border-radius:18px;box-shadow:0 6px 18px rgba(20,18,16,.05);padding:22px 24px;margin-bottom:18px}
+  .bodycard{background:#16171b;border-radius:20px;overflow:hidden;box-shadow:0 16px 40px rgba(10,11,14,.18);position:sticky;top:84px}
+  .bodycard iframe{width:100%;height:628px;border:0;display:block}
+  .bodymeta{text-align:center;font-size:13px;color:var(--sub,#6b675f);font-weight:700;margin-top:12px}
+
+  .seclabel{font-size:12px;font-weight:800;color:var(--green,#1f7a3f);letter-spacing:.02em;margin:2px 0 10px}
+  .subhead{font-size:15px;font-weight:800;margin:0 0 10px}
+  .btname{font-size:19px;font-weight:800;letter-spacing:-.03em;display:flex;align-items:center;gap:8px}
+  .btname i{width:12px;height:12px;border-radius:50%;flex:none}
+  .btsub{font-size:12.5px;color:var(--sub2,#8a857b);font-weight:700;margin:4px 0 12px}
+  .bdesc{font-size:13.5px;color:var(--ink-soft,#3a382f);line-height:1.7;margin:0 0 9px}
+  .kv{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line,#eee);font-size:14px}
+  .kv:last-of-type{border-bottom:none} .kv span{color:var(--sub,#6b675f)} .kv b{font-weight:800}
+  .fitline{font-size:13.5px;color:var(--ink-soft,#3a382f);margin:6px 0;line-height:1.5}
+  .fitline b{color:var(--ink,#1c1a17)}
+  .note-quote{background:var(--soft,#f6f5f2);border-radius:12px;padding:14px 16px;font-size:14px;color:var(--ink-soft,#3a382f);line-height:1.55}
+  .note-quote.muted{color:var(--sub2,#8a857b)}
+
+  .btn{display:block;width:100%;text-align:center;padding:14px;border:none;border-radius:12px;background:var(--green,#1f7a3f);color:#fff;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer}
+  .btn.ghost{background:#fff;color:var(--ink,#1c1a17);border:1.5px solid var(--line2,#d8d4cc)}
+  .tinybtn{font-size:13px;font-weight:800;padding:10px 16px;border-radius:10px;background:var(--ink,#1c1a17);color:#fff;border:none;cursor:pointer}
+  .tinybtn.ghost{background:#fff;color:var(--ink,#1c1a17);border:1.5px solid var(--line2,#d8d4cc)}
+  .offerform label{font-size:12.5px;font-weight:800;color:var(--sub2,#8a857b);display:block;margin:12px 0 6px}
+  .offerform input,.offerform textarea{width:100%;border:1.5px solid var(--line2,#d8d4cc);border-radius:10px;padding:11px 13px;font-family:inherit;font-size:14px}
+  .offerform textarea{resize:vertical;min-height:60px}
+  .offerform input:focus,.offerform textarea:focus{outline:none;border-color:var(--green,#1f7a3f)}
+  .obtns{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+  .num{font-family:var(--num,inherit);font-weight:800}
+
+  /* 2단: 좌 측정 · 우 결과·요청·제안 */
+  .qgrid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;margin-top:22px}
+  @media(max-width:860px){.qgrid2{grid-template-columns:1fr}}
+  /* 내 체형 측정 — 마이페이지(index #my) 세그먼트 디자인 재현 */
+  .dtl-meas{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px 24px;margin-bottom:18px;box-shadow:0 6px 18px rgba(20,18,16,.05)}
+  .dtl-meas-h{display:flex;justify-content:space-between;align-items:center}
+  .dtl-meas-h .k{font-size:15px;font-weight:800}
+  .dtl-meas-h .chip{font-size:12.5px;font-weight:700;color:var(--green);background:var(--green-soft);padding:6px 12px;border-radius:20px}
+  .dtl-grp{font-size:14px;font-weight:800;color:var(--sub);margin:22px 0 15px;padding-bottom:9px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:7px}
+  .dtl-grp::before{content:"";width:4px;height:14px;border-radius:2px;flex:none;background:var(--green)}
+  .dtl-grp.up{color:var(--green)} .dtl-grp.up::before{background:var(--green)}
+  .dtl-grp.lo{color:var(--green-mid)} .dtl-grp.lo::before{background:var(--green-mid)}
+  .dtl-grp.pref::before{background:var(--green-light)}
+  .n2row{padding:12px 0;border-bottom:1px solid var(--line)} .n2row:last-of-type{border-bottom:none}
+  .n2row:has(+ .dtl-grp){border-bottom:none}
+  .n2top{display:flex;justify-content:space-between;align-items:baseline;font-size:14px}
+  .n2top .part{font-weight:800;font-size:15px} .n2top .zone{font-weight:800;font-size:13.5px;color:var(--green)}
+  .n2row.lo .n2top .zone{color:var(--green-mid)}
+  .n2segs{display:flex;gap:5px;margin:10px 0 6px}
+  .n2seg{flex:1;height:13px;border-radius:4px;background:var(--green-soft)}
+  .n2seg.on{background:var(--green)} .n2seg.near{background:var(--green-light)}
+  .n2row.lo .n2seg.on{background:var(--green-mid)} .n2row.lo .n2seg.near{background:#B9CFC2}
+  .n2scale{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);font-weight:600}
+  .dtl-note{font-size:12.5px;color:var(--sub);margin-top:16px;line-height:1.55}
+  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(16px);background:var(--ink,#1c1a17);color:#fff;padding:12px 20px;border-radius:30px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:60}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<header><div class="nav">
+  <span class="logo" onclick="location.href='index.html'">Fitting<i></i></span>
+  <span class="back" onclick="location.href='pro.html'">← 요청함으로</span>
+</div></header>
+
+<div class="qwrap" id="quoteRoot">
+  <p class="crumb">불러오는 중…</p>
+</div>
+<div class="toast" id="toast"></div>
+<script src="js/pro-quote.js"></script>
+</body>
+</html>
