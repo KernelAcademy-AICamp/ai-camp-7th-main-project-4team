@@ -103,7 +103,7 @@
   /* ── 전체 렌더 ── */
   function render(){
     var r = reqs[idx];
-    if(!r){ $('quoteRoot').innerHTML='<p class="crumb">요청을 찾을 수 없어요.</p><p style="margin-top:10px"><a class="tinybtn" onclick="location.href=\'pro.html\'">요청함으로</a></p>'; return; }
+    if(!r){ $('quoteRoot').innerHTML='<p class="crumb">요청을 찾을 수 없어요.</p><p style="margin-top:10px"><a class="tinybtn" onclick="location.href=\'pro.html\'">요청 내역으로</a></p>'; return; }
     var out = r.dir==='out';
     var bt = BTMAP[r.type] || {};
     var m = MEASURE_BY_CUST[r.cust] || MEASURE_DEFAULT;
