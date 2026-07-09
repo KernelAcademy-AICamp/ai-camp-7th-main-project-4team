@@ -486,7 +486,7 @@
     var g=document.getElementById('grid');
     if(!list.length){ g.innerHTML='<div class="empty"><b>조건에 맞는 쇼퍼가 아직 없어요</b><p>초기라 쇼퍼를 모으는 중이에요 · <a onclick="notifySignup()">오픈 알림 신청하기</a> 또는 <a onclick="browseAll()">전체 보기</a></p></div>'; return; }
     g.innerHTML=list.map(function(e){ var idx=EX.indexOf(e); var rt=e.rating>0?'<span class="star">★ '+e.rating+'</span>':'<span class="star new">신규</span>';
-      return '<div class="ecard" onclick="openProfile('+idx+')"><div class="cover"><img src="'+img(e)+'" alt="" onerror="'+FB+'"><span class="match">매칭도 '+e.match+'%</span>'+
+      return '<div class="ecard" onclick="openDetail('+idx+')"><div class="cover"><img src="'+img(e)+'" alt="" onerror="'+FB+'"><span class="match">매칭도 '+e.match+'%</span>'+
         '<button class="favbtn" title="즐겨찾기" onclick="event.stopPropagation();toggleFav(\''+e.nm+'\')">'+favIcon(isFav(e.nm),true)+'</button></div>'+
         '<div class="eb"><div class="top"><span class="nm">'+e.nm+' 쇼퍼</span>'+rt+'</div>'+
         '<div class="tags">'+e.tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>'+
@@ -508,18 +508,7 @@
     var hint=document.getElementById('reqHint'); if(hint) hint.style.display=ok?'none':'block';
   }
 
-  /* 카드 클릭 → 빠른 보기 드로어 */
-  function openProfile(idx){ var e=EX[idx]; var rt=e.rating>0?('★ '+e.rating+' · 후기 '+e.review+'건'):'신규 쇼퍼';
-    document.getElementById('drawerBody').innerHTML=
-      '<div class="dhead"><img src="'+img(e)+'" onerror="'+FB+'"><div class="dov"><span class="dm">매칭도 '+e.match+'%</span><div class="dn">'+e.nm+' 쇼퍼</div><div style="font-size:13px;opacity:.9;margin-top:2px">'+rt+'</div></div></div>'+
-      '<div class="dbody"><p class="bio">'+e.bio+'</p>'+
-      '<div class="feat">전문 분야</div><div class="tagrow">'+e.tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>'+
-      '<div class="feat">서비스 정보</div><div class="svcinfo"><div class="r"><span>서비스</span><b>'+SVC[e.svc]+'</b></div><div class="r"><span>예상 가격</span><b>'+e.price.toLocaleString()+'원</b></div><div class="r"><span>제공 방식</span><b>'+e.mode+'</b></div></div>'+
-      '<button class="btn full" style="margin-top:20px" onclick="openDetail('+idx+')">자세히 보기 →</button>'+
-      '<button class="btn ghost full" style="margin-top:9px" onclick="requestFor('+idx+')">견적 요청하기</button>'+
-      '<button class="btn ghost full" style="margin-top:9px" onclick="toggleFav(\''+e.nm+'\');openProfile('+idx+')">'+favIcon(isFav(e.nm),false)+' '+(isFav(e.nm)?'즐겨찾기 해제':'즐겨찾기 추가')+'</button></div>';
-    document.getElementById('drawer').classList.add('on'); scrim(true);
-  }
+  /* (구) 카드 클릭 → 오른쪽 퀵뷰 드로어 openProfile 제거 — 이제 카드 클릭 시 바로 상세(openDetail)로 이동 */
 
   /* 자세히 보기 → 쇼퍼 상세 (탭 내 화면 전환)
      hideReq=요청내역에서 진입(견적 요청 버튼 숨김) · _detailBack=뒤로가기 시 돌아갈 이전 화면 */
