@@ -53,8 +53,29 @@
     }).catch(function(e){ console.error('카드 저장 실패', e); })
       .then(function(){ if(btn) btn.disabled=false; });
   }
+  // 결과 공유 = 친구 초대 링크 (인스타·카카오 등 아무 앱에나) — navigator.share, 실패 시 링크 복사
+  function inviteURL(d){
+    var dir=location.pathname.replace(/[^/]*$/, '');   // card.html이 위치한 경로 → 같은 폴더의 랜딩
+    return location.origin+dir+'index.html?from='+((d&&d.code)||'');
+  }
+  function cardToast(msg){
+    var t=document.getElementById('cToast');
+    if(!t){ t=document.createElement('div'); t.id='cToast';
+      t.style.cssText='position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(20,18,16,.92);color:#fff;font:600 12.5px/1.4 Pretendard,system-ui,sans-serif;padding:10px 16px;border-radius:20px;max-width:82%;text-align:center;opacity:0;transition:opacity .2s;z-index:99;pointer-events:none;';
+      document.body.appendChild(t); }
+    t.textContent=msg; t.style.opacity='1'; clearTimeout(window._ct); window._ct=setTimeout(function(){ t.style.opacity='0'; }, 2200);
+  }
+  function shareInvite(d){
+    var url=inviteURL(d);
+    var text='나는 '+d.name+'('+d.code+')! 너의 체형에 맞는 핏도 3분이면 나와 — fitting에서 확인해봐';
+    if(navigator.share){ navigator.share({title:'fitting — 내 핏 결과', text:text, url:url}).catch(function(){}); return; }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text+'\n'+url).then(function(){ cardToast('초대 링크를 복사했어요 · 친구에게 붙여넣기 해보세요'); }).catch(function(){ cardToast('링크: '+url); });
+    } else { cardToast('링크: '+url); }
+  }
   function wireActions(d){
     var s=document.getElementById('cSave'); if(s) s.onclick=function(){ saveCard(d); };
+    var sh=document.getElementById('cShare'); if(sh) sh.onclick=function(){ shareInvite(d); };
   }
 
   // 8유형 데이터 = data/bodytypes.json 단일 출처 (하드코딩 제거)

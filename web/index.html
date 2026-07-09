@@ -4,6 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>fitting · 전체 화면 (웹)</title>
+<!-- 링크 공유 미리보기(Open Graph) — 카톡·인스타·문자에 링크 붙이면 뜨는 카드 -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="fitting">
+<meta property="og:title" content="안 입어본 브랜드도 내 사이즈로 딱 FIT — fitting">
+<meta property="og:description" content="친구가 핏 진단 초대를 보냈어요 · 착용 경험만으로 브랜드를 가로질러 내 사이즈를 번역 · 3분이면 끝">
+<meta property="og:image" content="og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="안 입어본 브랜드도 내 사이즈로 딱 FIT — fitting">
+<meta name="twitter:description" content="친구가 핏 진단 초대를 보냈어요 · 3분 체형·사이즈 진단">
+<meta name="twitter:image" content="og-image.png">
+<meta name="theme-color" content="#2E4A3B">
 <!--
   source     = sohee/데모/핏팅_전체화면.html
   재스킨      = _통합/tokens.css 딥그린
@@ -53,6 +68,16 @@
 
   /* ===== 홈 (줄자 리디자인 · _home2 이식) ===== */
   #home .hrow{max-width:1160px;margin:0 auto;padding:0 6px}
+  #home .invite-banner{display:none; align-items:center; gap:14px; margin:20px 0 -10px; padding:15px 18px; background:var(--green); color:#fff; border-radius:16px; box-shadow:0 8px 22px rgba(46,74,59,.22); animation:f .3s;}
+  #home .invite-banner.on{display:flex;}
+  #home .invite-banner .ib-ic{font-size:24px; flex:none;}
+  #home .invite-banner .ib-tx{flex:1; min-width:0; line-height:1.4;}
+  #home .invite-banner .ib-tx b{display:block; font-size:15px; font-weight:800;}
+  #home .invite-banner .ib-tx span{font-size:12.5px; opacity:.9;}
+  #home .invite-banner .ib-cta{flex:none; background:#fff; color:var(--green); font-weight:800; font-size:13px; padding:10px 16px; border-radius:10px; border:none; cursor:pointer; white-space:nowrap; font-family:inherit;}
+  #home .invite-banner .ib-x{flex:none; background:transparent; border:none; color:#fff; opacity:.7; font-size:15px; cursor:pointer; padding:4px;}
+  #home .invite-banner .ib-x:hover{opacity:1;}
+  @media(max-width:560px){ #home .invite-banner{flex-wrap:wrap;} #home .invite-banner .ib-cta{order:3;} }
   #home .hhero{position:relative;overflow:hidden;padding:60px 0 74px;text-align:center}
   #home .kick{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:800;color:var(--green);background:var(--green-soft);padding:8px 16px;border-radius:20px}
   #home .kick .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:hpulse 1.8s ease-in-out infinite}
@@ -140,15 +165,15 @@
   #home .link .pulse{position:absolute;top:50%;left:2%;width:12px;height:12px;border-radius:50%;background:var(--green);transform:translate(-50%,-50%);box-shadow:0 0 10px 2px rgba(46,74,59,.4);z-index:2}
   #home .shopper{position:relative;transition:opacity .35s ease, transform .35s ease, box-shadow .35s ease, border-color .35s ease}
   #home .shopper.matched{border-color:var(--green);box-shadow:0 0 0 2px var(--green-soft),0 18px 40px rgba(46,74,59,.20)}
-  #home .shopper .matchbadge{position:absolute;top:-12px;left:20px;background:var(--green);color:#fff;font-size:11px;font-weight:800;padding:4px 11px;border-radius:20px;box-shadow:0 5px 14px rgba(46,74,59,.4);opacity:0;transform:scale(.5);transition:.28s cubic-bezier(.2,1.5,.4,1)}
+  #home .shopper .matchbadge{position:absolute;top:-12px;left:20px;background:var(--green);color:#fff;font-size:12px;font-weight:800;padding:4px 11px;border-radius:20px;box-shadow:0 5px 14px rgba(46,74,59,.4);opacity:0;transform:scale(.5);transition:.28s cubic-bezier(.2,1.5,.4,1)}
   #home .shopper.matched .matchbadge{opacity:1;transform:scale(1)}
   #home .shopper .ph{width:54px;height:54px;border-radius:50%;object-fit:cover;flex:none;filter:saturate(.6)}
   #home .shopper .snm{font-size:16px;font-weight:800;letter-spacing:-.02em}
   #home .shopper .spec{font-size:12.5px;color:var(--sub);margin-top:3px}
-  #home .shopper .svcpill{display:inline-block;margin-top:6px;font-size:10.5px;font-weight:800;color:var(--green);background:var(--green-soft);padding:3px 9px;border-radius:11px}
+  #home .shopper .svcpill{display:inline-block;margin-top:6px;font-size:12px;font-weight:800;color:var(--green);background:var(--green-soft);padding:3px 9px;border-radius:11px}
   #home .shopper .mt{margin-left:auto;text-align:right;flex:none;padding-left:10px}
   #home .shopper .mt .pct{font-family:var(--num);font-feature-settings:'tnum';font-weight:800;font-size:22px;color:var(--green);letter-spacing:-.02em}
-  #home .shopper .mt .ml{font-size:10.5px;color:var(--sub2);font-weight:700}
+  #home .shopper .mt .ml{font-size:12px;color:var(--sub2);font-weight:700}
   /* 프로모 */
   #home .promo{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--green),#22382C);color:#fff;border-radius:26px;padding:48px 52px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
   #home .promo b{font-size:25px;font-weight:800;letter-spacing:-.03em}#home .promo p{font-size:15px;color:rgba(255,255,255,.75);margin-top:8px}
@@ -209,7 +234,7 @@
   .szbox .szrow:last-of-type{border:none;}
   .szbox .szrow .bd{font-size:14.5px; font-weight:700;} .szbox .szrow .bd small{display:block; font-size:12px; color:var(--sub2); font-weight:600; margin-top:2px;}
   .szbox .szrow .val{font-size:18px; font-weight:800;}
-  .szbox .szrow .tag{font-size:11.5px; font-weight:800; color:var(--green); background:var(--green-soft); padding:4px 10px; border-radius:16px; margin-left:8px;}
+  .szbox .szrow .tag{font-size:12px; font-weight:800; color:var(--green); background:var(--green-soft); padding:4px 10px; border-radius:16px; margin-left:8px;}
 
   /* ===== 쇼퍼찾기 ===== */
   .listhead{display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap;}
@@ -256,7 +281,7 @@
   .dd{position:relative;}
   .ddbtn{display:inline-flex; align-items:center; gap:6px; font-size:14px; font-weight:700; padding:11px 15px; border-radius:11px; border:1.5px solid var(--line2); background:#fff; color:var(--sub); cursor:pointer; font-family:inherit;}
   .ddbtn:hover{border-color:var(--green);}
-  .ddbtn .ar{font-size:9px; color:var(--sub2);}
+  .ddbtn .ar{font-size:12px; color:var(--sub2);}
   .dd.active .ddbtn{background:var(--green-soft); color:var(--green); border-color:var(--green);}
   .ddmenu{position:absolute; top:calc(100% + 6px); left:0; min-width:174px; background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:0 14px 34px rgba(20,18,16,.14); padding:6px; z-index:40; display:none;}
   .dd.open .ddmenu{display:block;}
@@ -282,8 +307,11 @@
   /* 쇼퍼 상세 페이지 (탭 내 화면 전환) */
   .back{display:inline-flex; align-items:center; gap:6px; font-size:14px; font-weight:700; color:var(--sub); cursor:pointer; margin-bottom:22px;}
   .back:hover{color:var(--ink);}
-  /* 쇼퍼 상세 본문 — 쇼퍼찾기 페이지·요청 오버레이 어디서 열려도 같은 폭(오버레이 안쪽 900px에 맞춤) */
+  /* 쇼퍼찾기 내부 전환(목록↔상세↔요청)에도 탭 전환과 동일한 페이드 — 딱 끊기는 느낌 제거 */
+  #shop #listView, #shop #detailView, #shop #requestView{animation:f .3s cubic-bezier(.2,.8,.2,1);}
+  /* 쇼퍼 상세 본문 — 오버레이 안쪽은 900px 고정 / 쇼퍼찾기 페이지만 목록 폭에 가깝게 넓혀 점프 완화 */
   .detailbody{max-width:900px; margin:0 auto;}
+  #detailView .detailbody{max-width:1040px;}
   .dhero{display:grid; grid-template-columns:380px 1fr; gap:38px; align-items:start;}
   .dhero-img{border-radius:20px; overflow:hidden; height:440px; box-shadow:0 12px 32px rgba(20,18,16,.12);}
   .dhero-img img{width:100%; height:100%; object-fit:cover; filter:saturate(.55) brightness(1.03) contrast(.98);}
@@ -293,6 +321,7 @@
   .dnamerow{display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-top:14px;} .dnamerow h1{margin-top:0;} .dnamerow .dmeta{margin-top:0;}
   .dbio{font-size:15.5px; color:var(--ink-soft); line-height:1.7; margin-top:20px; max-width:520px;}
   .dsecs{margin-top:46px; display:flex; flex-direction:column; gap:38px; max-width:840px;}
+  #detailView .dsecs{max-width:1040px;}
   .dsec h3{font-size:18px; font-weight:800; letter-spacing:-.03em; margin-bottom:14px;}
   .dgal{display:grid; grid-template-columns:repeat(3,1fr); gap:12px;}
   .dgal div{height:150px; border-radius:12px; background-size:cover; background-position:center; background-color:var(--soft);}
@@ -306,7 +335,7 @@
   .reqpage .lead{font-size:16px; color:var(--sub); margin-top:12px; line-height:1.6;}
   .reqto{display:flex; align-items:center; gap:12px; background:var(--soft); border-radius:14px; padding:12px 14px;}
   .reqto img{width:44px; height:44px; border-radius:50%; object-fit:cover; flex:none;}
-  .reqto .rl{font-size:11.5px; font-weight:700; color:var(--sub2);}
+  .reqto .rl{font-size:12px; font-weight:700; color:var(--sub2);}
   .reqto .rn{font-size:15px; font-weight:800; margin-top:2px; letter-spacing:-.02em;}
   .reqhint{font-size:12.5px; color:var(--sub2); text-align:center; margin-top:10px;}
   .reqdone{max-width:560px; margin:60px auto 0; text-align:center;}
@@ -390,6 +419,9 @@
   .pgal div{height:82px; border-radius:10px; background-size:cover; background-position:center; background-color:var(--soft); filter:saturate(.6);}
   .rev{border-bottom:1px solid var(--line); padding:11px 0; font-size:13.5px; color:var(--ink-soft); line-height:1.5;}
   .rev .who{font-size:12px; color:var(--sub2); margin-top:3px; font-weight:600;}
+  .rev.mine{background:var(--green-soft); border-bottom:none; border-radius:12px; padding:12px 14px; margin-bottom:8px;}
+  .rev.mine .revme{display:inline-block; font-size:12px; font-weight:800; color:#fff; background:var(--green); padding:2px 8px; border-radius:20px; margin-right:7px; vertical-align:1px;}
+  .rev.mine .who{color:var(--green-mid);}
   .svcinfo{background:var(--soft); border-radius:14px; padding:14px 16px;}
   .svcinfo .r{display:flex; justify-content:space-between; padding:6px 0; font-size:14px;} .svcinfo .r span{color:var(--sub);} .svcinfo .r b{font-weight:800;}
   .svc3{display:grid; grid-template-columns:repeat(3,1fr); gap:9px;}
@@ -440,8 +472,14 @@
   #my .lead{font-size:14.5px; color:var(--sub); margin-bottom:26px;}
   #my .mcard{background:#fff; border:1px solid var(--line); border-radius:18px; padding:4px 24px; margin-bottom:16px; box-shadow:0 6px 18px rgba(20,18,16,.05);}
   #my .msub{padding:20px 0; border-bottom:1px solid var(--line);} #my .msub:last-child{border:none;}
+  /* 프로필 기본정보 — 이름/신체정보/선호핏을 각각 카드로 확실히 구분 + 액션 우측 정렬 */
+  #my .prof-actions{display:flex; justify-content:flex-end; gap:9px; margin-top:16px;}
+  #my #profCard .mcard{background:transparent; border:none; box-shadow:none; padding:0; margin:0;}
+  #my #profCard .msub{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin-bottom:12px;}
+  #my #profCard .msub:last-child{margin-bottom:0;}
+  #my #profCard .subhead{color:var(--green);}
   #my .subhead{font-size:15px; font-weight:800; margin-bottom:12px;}
-  #my .pr{display:inline-block; font-size:11px; font-weight:800; padding:2px 9px; border-radius:20px; margin-left:7px; vertical-align:middle;}
+  #my .pr{display:inline-block; font-size:12px; font-weight:800; padding:2px 9px; border-radius:20px; margin-left:7px; vertical-align:middle;}
   #my .pr.core{background:var(--green-soft); color:var(--green);}
   #my .pr.half{background:var(--soft); color:var(--sub);}
   #my .pr.v2{background:#fff; border:1px solid var(--line2); color:var(--sub2);}
@@ -450,7 +488,7 @@
   #my .note{font-size:13.5px; color:var(--sub); margin-top:10px; line-height:1.55;}
   #my .sztbl{width:100%; border-collapse:collapse;}
   #my .sztbl th,#my .sztbl td{text-align:left; padding:11px 8px; border-bottom:1px solid var(--line); font-size:14px;}
-  #my .sztbl th{font-size:11px; color:var(--sub2); font-weight:800;}
+  #my .sztbl th{font-size:12px; color:var(--sub2); font-weight:800;}
   #my .sztbl .sz{font-weight:800; color:var(--green); font-size:16px;} #my .sztbl .why{font-size:12px; color:var(--sub);}
   #my .req{padding:16px 0; border-bottom:1px solid var(--line);} #my .req:last-child{border:none;}
   #my .reqtop{display:flex; align-items:center; gap:14px;}
@@ -462,33 +500,39 @@
   #my .offerbox{flex:1; min-width:200px; color:var(--ink-soft);} #my .offerbox b{color:var(--green);} #my .offerbox .num{font-family:var(--num); font-weight:800;}
   #my .offerbox .omsg{font-size:12.5px; color:var(--sub); margin-top:4px;}
   #my .obtns{display:flex; gap:8px; margin-left:auto;}
-  #my .st.offer{background:var(--green); color:#fff;} #my .st.cancel{background:var(--soft); color:var(--sub2);}
+  #my .st.offer{background:var(--green); color:#fff;} #my .st.cancel{background:var(--warn-soft); color:var(--warn);}
   #my .revshow{color:var(--ink-soft);} #my .revshow .starsRO{letter-spacing:1px;} #my .revshow .rtx{margin-left:6px;}
-  #my .reviewform{width:100%;} #my .reviewform .stars{display:flex; gap:5px; font-size:24px; cursor:pointer;}
-  #my .reviewform .stars span{color:var(--line2); transition:.1s;} #my .reviewform .stars span.on{color:var(--ink);}
+  #my .reviewform{width:100%;} #my .reviewform .stars{display:flex; gap:8px; cursor:pointer;}
+  #my .reviewform .stars span{line-height:0; color:var(--line2); transition:color .12s;}
+  #my .reviewform .stars span.on{color:var(--green);}
+  #my .reviewform .stars .cutestar{width:30px; height:30px;}
+  .cutestar{width:16px; height:16px; display:inline-block; vertical-align:-2px;}
   #my .reviewform .rtext{width:100%; margin-top:10px; padding:11px 13px; border:1.5px solid var(--line2); border-radius:10px; font-family:inherit; font-size:13.5px; resize:vertical; min-height:64px; background:#fff;}
   #my .reviewform .rtext:focus{outline:none; border-color:var(--green);}
   #my .reviewform .rbtns{display:flex; gap:8px; justify-content:flex-end; margin-top:10px;}
   #my .req .ic{width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,var(--green),var(--green-mid)); flex:none;}
   #my .req .info{flex:1;} #my .req .info b{font-size:14.5px;} #my .req .info small{display:block; font-size:12.5px; color:var(--sub); margin-top:2px;}
   #my .st{font-size:12px; font-weight:800; padding:5px 11px; border-radius:20px;}
-  #my .st.wait{background:var(--soft); color:var(--sub);} #my .st.prog{background:var(--green-soft); color:var(--green);} #my .st.done{background:var(--green-soft); color:var(--green);}
-  #my .fav{display:grid; grid-template-columns:repeat(2,1fr); gap:14px;}
-  #my .fcard{border:1px solid var(--line); border-radius:14px; overflow:hidden;}
-  #my .fcard .cov{height:90px; position:relative; background:linear-gradient(135deg,var(--ink-soft),var(--green-mid));}
-  #my .fcard .heart{position:absolute; top:9px; right:9px; font-size:16px;}
-  #my .fcard .fb{padding:12px;} #my .fcard .fb b{font-size:14px;} #my .fcard .fb small{display:block; font-size:12px; color:var(--sub); margin-top:2px;}
+  #my .st.wait{background:var(--soft); color:var(--sub);} #my .st.prog{background:var(--green-soft); color:var(--green);} #my .st.done{background:var(--soft); color:var(--ink);}
+  #my .fav{display:grid; grid-template-columns:repeat(2,1fr); gap:22px;}   /* 쇼퍼찾기 카드와 동일 크기 */
+  #my .fcard{background:#fff; border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 6px 18px rgba(20,18,16,.08); cursor:pointer; transition:.18s;}
+  #my .fcard:hover{transform:translateY(-3px); box-shadow:0 16px 36px rgba(20,18,16,.12);}
+  #my .fcard .cov{height:170px; position:relative; background:#EDE8E0; overflow:hidden;}
+  #my .fcard .cov .favimg{width:100%; height:100%; object-fit:cover; object-position:center 18%; display:block; filter:saturate(.55) brightness(1.03) contrast(.98);}
+  #my .fcard .heart{position:absolute; top:12px; right:12px; font-size:16px;}
+  #my .fcard .fb{padding:17px 18px;} #my .fcard .fb b{font-size:16.5px;} #my .fcard .fb small{display:block; font-size:13px; color:var(--sub); margin-top:4px;}
+  #my .fcard .ftags{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px;}
+  #my .fcard .ftags span{font-size:12px; background:var(--soft); color:#6a6258; padding:4px 9px; border-radius:20px; font-weight:600;}
   #my .links a{display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--line); font-size:14.5px; font-weight:600; cursor:pointer;} #my .links a:last-child{border:none;} #my .links a .arr{color:var(--sub2);} #my .danger{color:var(--warn);}
   #my .cardframe{height:672px;}
 
   /* ===== 마이 · 내 진단 결과 상세 (MBTI형 유형 풀이) ===== */
   /* 레이아웃 A — 좌 카드 스티키 + 우 콘텐츠(결과 화면 result.html과 동일 언어) */
   #my .dtl-A{display:grid; grid-template-columns:380px 1fr; gap:28px; align-items:start;}
+  #my .dtl-A-left{display:flex; flex-direction:column; gap:16px;}
   #my .dtl-A-left .cardframe{height:684px; width:380px; max-width:100%; border:0; border-radius:20px; box-shadow:0 14px 36px rgba(20,22,28,.12); display:block;}
-  #my .dtl-A-left .dtl-id{margin-top:14px;}
   #my .dtl-A-left .dtl-id .dtl-name{font-size:22px;}
-  #my .dtl-A-right{min-width:0;}
-  #my .dtl-A-right > *:last-child{margin-bottom:0;}
+  #my .dtl-A-right{min-width:0; display:flex; flex-direction:column; gap:16px;}
   #my .dtl-id{background:#fff; border:1px solid var(--line); border-radius:18px; padding:26px 26px 24px; box-shadow:0 6px 18px rgba(20,18,16,.05);}
   /* --tp = 유형 포인트색(결과 카드와 동일). dtl-id에 인라인으로 지정 → 유형별로 이 값만 바꾸면 됨 */
   #my .dtl-code{font-family:var(--num); font-feature-settings:'tnum'; font-weight:800; font-size:13px; letter-spacing:.14em; color:color-mix(in srgb, var(--tp,var(--green)) 72%, #16140F); background:color-mix(in srgb, var(--tp,var(--green)) 22%, #fff); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--tp,var(--green)) 40%, #fff); display:inline-block; padding:5px 12px; border-radius:8px;}
@@ -498,14 +542,16 @@
   #my .dtl-hash{display:flex; flex-wrap:wrap; gap:7px;}
   #my .dtl-hash span{font-size:13px; font-weight:800; color:color-mix(in srgb, var(--tp,var(--green)) 62%, #16140F); background:color-mix(in srgb, var(--tp,var(--green)) 20%, #fff); padding:6px 13px; border-radius:20px;}
 
-  #my .dtl-two{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;}
-  #my .dtl-fit{background:#fff; border:1px solid var(--line); border-radius:18px; padding:20px 22px; box-shadow:0 6px 18px rgba(20,18,16,.05);}
-  #my .dtl-fit-h{font-size:14px; font-weight:800; margin-bottom:14px; letter-spacing:-.01em;}
-  #my .dtl-fit-h svg{width:15px; height:15px; vertical-align:-2px; margin-right:2px;}
+  /* 잘맞/피할 FIT — 한 박스에 위아래 두 줄(라벨+칩 가로 정렬) */
+  #my .dtl-fitbox{background:#fff; border:1px solid var(--line); border-radius:18px; padding:4px 20px; margin-bottom:16px; box-shadow:0 6px 18px rgba(20,18,16,.05);}
+  #my .dtl-fit{display:flex; align-items:center; gap:12px; padding:16px 0; border-bottom:1px solid var(--line);}
+  #my .dtl-fitbox .dtl-fit:last-child{border-bottom:none;}
+  #my .dtl-fit-h{font-size:13.5px; font-weight:800; letter-spacing:-.01em; flex:none; width:90px; display:flex; align-items:center; gap:5px;}
+  #my .dtl-fit-h svg{width:15px; height:15px; flex:none;}
   #my .dtl-fit.ok .dtl-fit-h{color:var(--green);}
   #my .dtl-fit.no .dtl-fit-h{color:var(--warn);}
-  #my .dtl-chips{display:flex; flex-wrap:wrap; gap:8px;}
-  #my .dtl-chips span{font-size:13.5px; font-weight:700; padding:9px 14px; border-radius:11px;}
+  #my .dtl-chips{display:flex; flex-wrap:wrap; gap:7px;}
+  #my .dtl-chips span{font-size:12.5px; font-weight:700; padding:7px 12px; border-radius:11px;}
   #my .dtl-fit.ok .dtl-chips span{background:var(--green-soft); color:var(--green);}
   #my .dtl-fit.no .dtl-chips span{background:var(--warn-soft); color:var(--warn);}
 
@@ -522,6 +568,18 @@
   #my .dtl-meas-h{display:flex; justify-content:space-between; align-items:center;}
   #my .dtl-meas-h .k{font-size:15px; font-weight:800;}
   #my .dtl-meas-h .chip{font-size:12.5px; font-weight:700; color:var(--green); background:var(--green-soft); padding:6px 12px; border-radius:20px;}
+  /* 결과 풀이 — ＋강점 / ＝핏공식 / ！주의 (결과 화면 result.html과 동일 언어) */
+  #my .dtl-mean{background:#fff; border:1px solid var(--line); border-radius:18px; padding:22px 24px; margin-bottom:16px; box-shadow:0 6px 18px rgba(20,18,16,.05);}
+  #my .dtl-mean .k{font-size:15px; font-weight:800; letter-spacing:-.03em;}
+  #my .dtl-mean .rex{margin-top:16px;}
+  #my .dtl-mean .lbl{display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:800; color:var(--ink);}
+  #my .dtl-mean .mk{width:22px; height:22px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; flex:none;}
+  #my .dtl-mean .plus .mk{background:var(--green-soft); color:var(--green);}
+  #my .dtl-mean .eq .mk{background:var(--soft); color:var(--ink-soft);}
+  #my .dtl-mean .warn .mk{background:var(--warn-soft); color:var(--warn);}
+  #my .dtl-mean p{font-size:13.5px; color:var(--sub); line-height:1.6; margin-top:7px;}
+  #my .dtl-mean p strong{color:var(--ink); font-weight:700;}
+  #my .dtl-mean .foot{font-size:12px; color:var(--sub2); margin-top:16px; line-height:1.5;}
   #my .dtl-grp{font-size:14px; font-weight:800; color:var(--sub); margin:22px 0 15px; padding-bottom:9px; border-bottom:1px solid var(--line);}
   /* 상·하 컬러 라벨 (상=진초록 / 하=중간초록, 측정 게이지 색과 통일) */
   #my .dtl-grp.up, #my .dtl-grp.lo, #my .dtl-grp.pref{display:flex; align-items:center; gap:7px;}
@@ -557,7 +615,9 @@
   #my .n2row.lo .n2seg.on{background:var(--green-mid);} #my .n2row.lo .n2seg.near{background:#B9CFC2;}
   #my .n2scale{display:flex; justify-content:space-between; font-size:12px; color:var(--sub); font-weight:600;}
 
-  @media(max-width:820px){ #my .mwrap{grid-template-columns:1fr;} #my .side{position:static;} #my .fav{grid-template-columns:1fr;} #my .dtl-A{grid-template-columns:1fr;} #my .dtl-A-left{position:static;} #my .dtl-two{grid-template-columns:1fr;} }
+  /* 박스 간격 통일 — 컨테이너 gap으로만 (개별 마진 리셋, 소스 순서상 뒤라 블록 마진을 덮음) */
+  #my .dtl-A-left > *, #my .dtl-A-right > *{margin:0;}
+  @media(max-width:820px){ #my .mwrap{grid-template-columns:1fr;} #my .side{position:static;} #my .fav{grid-template-columns:1fr;} #my .dtl-A{grid-template-columns:1fr;} #my .dtl-A-left{position:static;} }
   /* 전역 푸터 — 법적 고지 접근. 배경색 억제, 얇은 라인 + muted */
   /* 위 .page 하단 여백(90px)을 일부 상쇄해 라인 위 간격을 ~54px로. 아래는 페이지 끝 여백 40px */
   .site-foot{ border-top:1px solid var(--line); flex:none; }
@@ -566,11 +626,11 @@
   .site-foot .flinks{ display:flex; gap:20px; }
   .site-foot .flinks a{ font-size:13px; font-weight:600; color:var(--sub); text-decoration:none; cursor:pointer; }
   .site-foot .flinks a:hover{ color:var(--ink); }
-  .site-foot .copy{ font-size:11.5px; color:var(--sub2); margin-left:auto; line-height:1.6; max-width:420px; }
+  .site-foot .copy{ font-size:12px; color:var(--sub2); margin-left:auto; line-height:1.6; max-width:420px; }
   @media(max-width:640px){ .site-foot .in{ padding:24px 20px 40px; } .site-foot .copy{ margin-left:0; flex-basis:100%; } }
 
   /* ===== 오픈/지명 요청 배지 (요청내역 · 견적 결과 화면 공용) ===== */
-  .reqtype{display:inline-block; font-size:11px; font-weight:800; padding:3px 9px; border-radius:20px; vertical-align:middle; letter-spacing:-.01em;}
+  .reqtype{display:inline-block; font-size:12px; font-weight:800; padding:3px 9px; border-radius:20px; vertical-align:middle; letter-spacing:-.01em;}
   .reqtype.open{background:var(--green-soft); color:var(--green);}
   .reqtype.named{background:var(--soft); color:var(--sub2);}
 
@@ -579,13 +639,13 @@
   #my .rghead{display:flex; align-items:center; gap:13px; padding:18px 0 16px; border-bottom:1px solid var(--line);}
   #my .rghead .rgicon{width:42px; height:42px; border-radius:13px; display:flex; align-items:center; justify-content:center; flex:none;}
   #my .rghead .rgicon svg{width:21px; height:21px;}
-  #my .rghead.open .rgicon{background:var(--green-soft); color:var(--green);}
-  #my .rghead.named .rgicon{background:var(--soft); color:var(--ink-soft);}
-  #my .rghead.alert .rgicon{background:var(--soft); color:var(--sub);}
+  #my .rghead.open .rgicon,
+  #my .rghead.named .rgicon,
+  #my .rghead.alert .rgicon{background:var(--green-soft); color:var(--green);}
   #my .rghead .rgtx{flex:1; min-width:0;}
   #my .rghead .rgtx b{font-size:16.5px; font-weight:800; letter-spacing:-.03em;}
   #my .rghead .rgtx p{font-size:12.5px; color:var(--sub); margin-top:4px; line-height:1.5;}
-  #my .rghead .rgcount{font-size:12.5px; font-weight:800; color:var(--sub2); background:var(--soft); padding:5px 11px; border-radius:20px; flex:none;}
+  #my .rghead .rgcount{font-size:12.5px; font-weight:800; color:var(--sub); background:var(--soft); padding:5px 11px; border-radius:20px; flex:none;}
   #my .rghead.open .rgcount{color:var(--green); background:var(--green-soft);}
   #my .rgempty{font-size:13px; color:var(--sub2); padding:18px 4px 12px;}
   #my .rgempty a{color:var(--green); font-weight:800; cursor:pointer;}
@@ -593,7 +653,7 @@
   #my .req.open{box-shadow:inset 3px 0 0 var(--green); padding-left:15px;}
   #my .req.named{box-shadow:inset 3px 0 0 var(--line2); padding-left:15px;}
   /* 받은 견적 — 컴팩트 클릭 행(숨고형): 날짜·상황·서비스 + 견적 건수 › */
-  #my .reqrow{display:flex; align-items:center; gap:14px; padding:17px 4px; border-bottom:1px solid var(--line); cursor:pointer; border-radius:10px; transition:background .15s;}
+  #my .reqrow{display:flex; align-items:center; gap:14px; padding:21px 4px; border-bottom:1px solid var(--line); cursor:pointer; border-radius:10px; transition:background .15s;}
   #my .reqrow:hover{background:var(--soft);}
   #my .rglist .reqrow:last-child{border-bottom:none;}
   #my .reqrow-l{flex:1; min-width:0;}
@@ -603,12 +663,13 @@
   #my .reqrow-r b{color:var(--ink); font-weight:800;}
   #my .reqrow-r .chev{font-size:21px; color:var(--sub2); font-weight:400; line-height:1;}
   /* 진행/지난 상태 구분 — 진행 중은 딥그린 강조, 지난 요청은 흐리게 */
-  #my .substat{font-size:11.5px; font-weight:800; letter-spacing:.04em; padding:16px 4px 6px; display:flex; align-items:center; gap:7px;}
+  #my .substat{font-size:12px; font-weight:800; letter-spacing:.04em; padding:16px 4px 6px; display:flex; align-items:center; gap:7px;}
   #my .substat.active{color:var(--green);}
   #my .substat.active::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--green);}
   #my .substat.past{color:var(--sub2);}
-  #my .reqrow.active{box-shadow:inset 3px 0 0 var(--green); padding-left:14px;}
+  #my .reqrow.active{position:relative; padding-left:14px;}
   #my .reqrow.active .reqrow-title{color:var(--green);}
+  #my .reqrow.active::before{content:""; position:absolute; left:0; top:8px; bottom:8px; width:3px; border-radius:99px; background:var(--green);}
   #my .reqrow.past{opacity:.5;}
   /* 프로필 편집 폼 */
   #my .pedit{padding:12px 0; border-bottom:1px solid var(--line);} #my .pedit:last-child{border-bottom:none;}
@@ -616,11 +677,16 @@
   #my .pedit.inrow3{display:flex; gap:10px;} #my .pedit.inrow3 > div{flex:1;}
 
   /* ===== 견적 요청 결과(받은 견적) 오버레이 (IA 1.3.8) ===== */
-  .bids-overlay{position:fixed; inset:0; background:var(--bg); z-index:120; display:none; overflow-y:auto;}
-  .bids-overlay.on{display:block; animation:f .28s cubic-bezier(.2,.8,.2,1);}
-  .bids-inner{max-width:960px; margin:0 auto; padding:34px 30px 80px;}
+  .bids-overlay{position:fixed; inset:0; background:rgba(22,20,15,.5); z-index:120; display:none;}
+  .bids-overlay.on{display:flex; align-items:flex-end; justify-content:center; animation:sheetfade .25s ease;}
+  .bids-inner{position:relative; width:100%; max-width:960px; max-height:94vh; overflow-y:auto; background:var(--bg); border-radius:22px 22px 0 0; box-shadow:0 -12px 44px rgba(10,11,14,.22); padding:16px 30px 80px; animation:sheetup .34s cubic-bezier(.2,.8,.2,1);}
+  .bids-inner::before{content:""; display:block; width:40px; height:4px; border-radius:99px; background:var(--line2); margin:0 auto 20px;}
+  @keyframes sheetfade{from{opacity:0;} to{opacity:1;}}
+  @keyframes sheetup{from{transform:translateY(100%);} to{transform:translateY(0);}}
   .bids-head{position:relative; padding-right:52px; padding-bottom:20px; margin-bottom:22px; border-bottom:1px solid var(--line);}
   .bids-head .xbtn{position:absolute; top:0; right:0;}
+  .bids-back{display:inline-block; background:none; border:none; color:var(--sub); font-size:13px; font-weight:800; cursor:pointer; font-family:inherit; padding:0; margin-bottom:8px;}
+  .bids-back:hover{color:var(--green);}
   .bids-head h2{font-size:27px; font-weight:800; letter-spacing:-.045em; margin:10px 0 0;}
   .bids-head .reqtype{margin-bottom:2px;}
   .bids-head p{font-size:14.5px; color:var(--sub); margin-top:10px; line-height:1.6;}
@@ -641,50 +707,71 @@
   .bids-cancel{text-align:center; margin-top:26px;}
   .bids-cancel button{background:none; border:none; color:var(--sub2); font-size:13px; font-weight:700; text-decoration:underline; text-underline-offset:2px; cursor:pointer; font-family:inherit;}
   .bids-cancel button:hover{color:var(--warn);}
-  /* 매칭 완료 — 쇼퍼 카드 강조 배지 */
-  .rq-shopper.matched{border-color:var(--green); box-shadow:0 0 0 1.5px var(--green-soft), 0 8px 22px rgba(46,74,59,.12);}
-  .rq-shopper .rq-matched{position:absolute; top:-11px; left:16px; background:var(--green); color:#fff; font-size:11px; font-weight:800; padding:4px 11px; border-radius:20px; box-shadow:0 4px 12px rgba(46,74,59,.3);}
   .bids-overlay .tinybtn{font-weight:800; padding:11px 15px; border-radius:10px; background:var(--ink); color:#fff; border:none; cursor:pointer; white-space:nowrap; font-family:inherit;}
   .bids-overlay .tinybtn:hover{background:#000;}
   .bids-overlay .tinybtn.ghost{background:#fff; color:var(--ink); border:1.5px solid var(--line2);}
   .bids-overlay .tinybtn.ghost:hover{background:var(--soft);}
   /* 견적 카드 — 숨고형 세로 리스트 */
-  .bids-list{display:flex; flex-direction:column; gap:14px;}
+  .bids-list{display:flex; flex-direction:column; gap:14px; margin-top:18px;}
   .qcard{position:relative; display:flex; gap:16px; align-items:flex-start; background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px 22px; box-shadow:0 4px 14px rgba(20,18,16,.05);}
   .qcard.best{border-color:var(--green); box-shadow:0 0 0 1.5px var(--green-soft), 0 10px 26px rgba(46,74,59,.12);}
-  .qcard.sel{border-color:var(--green);}
-  .qcard .q-sel{font-size:11px; font-weight:800; color:#fff; background:var(--green); padding:3px 9px; border-radius:20px;}
+  .qcard.sel{border-color:var(--green); background:var(--green-soft); box-shadow:0 0 0 1px var(--green);}
+  .qcard .q-status{display:block; width:100%; text-align:center; padding:11px 10px; font-size:13.5px; font-weight:800; border-radius:10px; background:var(--ink); color:#fff; opacity:.4; cursor:default; white-space:nowrap;}
   .qcard .q-l{flex:1; min-width:0;}
   .qcard .q-top{display:flex; align-items:center; gap:11px;}
   .qcard .q-ph{width:44px; height:44px; border-radius:50%; object-fit:cover; filter:saturate(.6); flex:none;}
   .qcard .q-nm{font-size:16.5px; font-weight:800; letter-spacing:-.02em;}
-  .qcard .q-best{font-size:11px; font-weight:800; color:#fff; background:var(--green); padding:3px 9px; border-radius:20px;}
+  .qcard .q-best{font-size:12px; font-weight:800; color:#fff; background:var(--green); padding:3px 9px; border-radius:20px;}
   .qcard .q-price{font-size:22px; font-weight:800; letter-spacing:-.02em; margin-top:13px;} .qcard .q-price .num{font-family:var(--num); font-feature-settings:'tnum';}
   .qcard .q-meta{font-size:13px; color:var(--sub); margin-top:7px;} .qcard .q-meta b{color:var(--green); font-weight:800;}
   .qcard .q-tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:11px;}
-  .qcard .q-tags span{font-size:11.5px; background:var(--soft); color:#6a6258; padding:3px 9px; border-radius:20px; font-weight:600;}
+  .qcard .q-tags span{font-size:12px; background:var(--soft); color:#6a6258; padding:3px 9px; border-radius:20px; font-weight:600;}
   .qcard .q-msg{font-size:13.5px; color:var(--ink-soft); line-height:1.55; margin-top:12px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
   .qcard .q-r{display:flex; flex-direction:column; gap:8px; flex:none; width:120px;}
   .qcard .q-r .tinybtn{width:100%; text-align:center; padding:11px 10px; font-size:13.5px;}
   /* 내가 보낸 요청 내용 — 토글 패널(받은 견적) + 요약 표 */
   .req-toggle{display:inline-flex; align-items:center; gap:6px; margin-top:14px; padding:9px 15px; border-radius:10px; border:1.5px solid var(--line2); background:#fff; color:var(--sub); font-size:13px; font-weight:800; font-family:inherit; cursor:pointer;}
   .req-toggle:hover{border-color:var(--green); color:var(--green);}
-  .req-toggle .tg{font-size:11px;}
+  .req-toggle .tg{font-size:12px;}
   .req-summary{display:none; margin-top:14px;}
   .req-summary.on{display:block;}
   .req-summary-in{background:var(--soft); border-radius:14px; padding:6px 16px;}
+  .rs-head{padding:14px 2px 13px; border-bottom:1px solid var(--line);}
+  .rs-title{display:block; font-size:17px; font-weight:800; color:var(--ink); letter-spacing:-.01em;}
+  .rs-sum{display:block; margin-top:5px; font-size:13px; color:var(--sub); font-weight:600;}
   .rs-row{display:flex; justify-content:space-between; align-items:center; gap:16px; padding:11px 0; border-bottom:1px solid var(--line); font-size:13.5px;}
   .rs-row:last-of-type{border-bottom:none;}
   .rs-row span{color:var(--sub); flex:none;} .rs-row b{color:var(--ink); font-weight:700; text-align:right;}
   .rs-note{font-size:12px; color:var(--green); font-weight:700; padding:12px 0 4px;}
-  /* 지명 요청 상세 — 쇼퍼 + 섹션 */
-  .rq-shopper{position:relative; display:flex; align-items:center; gap:13px; background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px 18px; box-shadow:0 4px 14px rgba(20,18,16,.05);}
-  .rq-shopper .rq-ph{width:48px; height:48px; border-radius:50%; object-fit:cover; filter:saturate(.6); flex:none;}
-  .rq-shopper .rq-info{flex:1; min-width:0;}
-  .rq-shopper .rq-nm{font-size:16px; font-weight:800; letter-spacing:-.02em;}
-  .rq-shopper .rq-svc{font-size:12.5px; color:var(--sub); margin-top:3px;}
+  /* 지명 요청 상세 — 섹션 */
   .rq-sec{margin-top:24px;}
   .rq-sec .rq-h{font-size:14px; font-weight:800; letter-spacing:-.02em; margin-bottom:11px;}
+  /* 진행 상태 — 컬러 배너 (보낸 요청 상세) */
+  .statban{display:flex; align-items:center; gap:14px; padding:15px 17px; border-radius:14px; margin-bottom:4px;}
+  .statban .sb-ic{width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex:none;}
+  .statban .sb-ic svg{width:22px; height:22px;}
+  .statban .sb-tx b{display:block; font-size:16px; font-weight:800; letter-spacing:-.02em;}
+  .statban .sb-tx p{font-size:12.5px; margin-top:3px; line-height:1.5;}
+  .statban.go{background:var(--green-soft);} .statban.go .sb-ic{background:var(--green); color:#fff;} .statban.go .sb-tx b{color:var(--green);} .statban.go .sb-tx p{color:var(--green-mid);}
+  .statban.wait{background:var(--soft);} .statban.wait .sb-ic{background:var(--sub); color:#fff;} .statban.wait .sb-tx b{color:var(--ink);} .statban.wait .sb-tx p{color:var(--sub);}
+  .statban.no{background:var(--warn-soft);} .statban.no .sb-ic{background:var(--warn); color:#fff;} .statban.no .sb-tx b{color:var(--warn);} .statban.no .sb-tx p{color:var(--warn);}
+  /* 매칭 완료 배너 (지난 견적·진행 상태) — 연한 톤 + 체크 아이콘 + 글자만 (안 튀게) */
+  .matchban{display:flex; align-items:center; gap:13px; padding:15px 17px; border-radius:14px; background:var(--green-soft);}
+  .matchban .mb-ck{flex:none; width:34px; height:34px; border-radius:10px; background:var(--green); color:#fff; display:flex; align-items:center; justify-content:center;}
+  .matchban .mb-ck svg{width:19px; height:19px;}
+  .matchban .mb-tx{flex:1; min-width:0;}
+  .matchban .mb-tx b{display:block; font-size:15.5px; font-weight:800; color:var(--green); letter-spacing:-.02em;}
+  .matchban .mb-tx span{display:block; font-size:12.5px; color:var(--green-mid); margin-top:3px; line-height:1.5;}
+  /* 상세 액션 버튼 행 (배너 아래) */
+  .rq-actions{margin-top:16px;}
+  .rq-btns{display:flex; gap:9px; flex-wrap:wrap;}
+  /* 쇼퍼 — 요청 내용과 같은 soft 패널 안 아바타 헤더행 */
+  .rs-shopper{display:flex; align-items:center; gap:12px; padding:13px 0;}
+  .rs-shopper .av{width:44px; height:44px; border-radius:50%; object-fit:cover; flex:none; background:#fff;}
+  .rs-shopper .who{flex:1; min-width:0;}
+  .rs-shopper .nm{font-size:15.5px; font-weight:800;}
+  .rs-shopper .mt{font-size:12.5px; color:var(--sub); margin-top:3px;}
+  .rs-shopper .prof{background:#fff; color:var(--ink); border:1.5px solid var(--line2); font-weight:800; padding:8px 12px; border-radius:10px; font-size:12.5px; cursor:pointer; font-family:inherit; white-space:nowrap;}
   /* #my 라이프사이클 스타일을 오버레이에서도 재사용 */
   .bids-overlay .reqact{padding:14px 16px; background:var(--soft); border-radius:12px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:13.5px; color:var(--sub);}
   .bids-overlay .reqact .muted{color:var(--sub2);}
@@ -692,13 +779,15 @@
   .bids-overlay .offerbox .omsg{font-size:12.5px; color:var(--sub); margin-top:4px;}
   .bids-overlay .obtns{display:flex; gap:8px; margin-left:auto;}
   .bids-overlay .revshow{color:var(--ink-soft);} .bids-overlay .revshow .starsRO{letter-spacing:1px;} .bids-overlay .revshow .rtx{margin-left:6px;}
-  .bids-overlay .reviewform{width:100%;} .bids-overlay .reviewform .stars{display:flex; gap:5px; font-size:24px; cursor:pointer;}
-  .bids-overlay .reviewform .stars span{color:var(--line2); transition:.1s;} .bids-overlay .reviewform .stars span.on{color:var(--ink);}
+  .bids-overlay .reviewform{width:100%;} .bids-overlay .reviewform .stars{display:flex; gap:8px; cursor:pointer;}
+  .bids-overlay .reviewform .stars span{line-height:0; color:var(--line2); transition:color .12s;}
+  .bids-overlay .reviewform .stars span.on{color:var(--green);}
+  .bids-overlay .reviewform .stars .cutestar{width:30px; height:30px;}
   .bids-overlay .reviewform .rtext{width:100%; margin-top:10px; padding:11px 13px; border:1.5px solid var(--line2); border-radius:10px; font-family:inherit; font-size:13.5px; resize:vertical; min-height:64px; background:#fff;}
   .bids-overlay .reviewform .rtext:focus{outline:none; border-color:var(--green);}
   .bids-overlay .reviewform .rbtns{display:flex; gap:8px; justify-content:flex-end; margin-top:10px;}
   .bids-overlay .st{font-size:12px; font-weight:800; padding:5px 11px; border-radius:20px;}
-  .bids-overlay .st.wait{background:var(--soft); color:var(--sub);} .bids-overlay .st.prog{background:var(--green-soft); color:var(--green);} .bids-overlay .st.done{background:var(--green-soft); color:var(--green);} .bids-overlay .st.offer{background:var(--green); color:#fff;} .bids-overlay .st.cancel{background:var(--soft); color:var(--sub2);}
+  .bids-overlay .st.wait{background:var(--soft); color:var(--sub);} .bids-overlay .st.prog{background:var(--green-soft); color:var(--green);} .bids-overlay .st.done{background:var(--soft); color:var(--ink);} .bids-overlay .st.offer{background:var(--green); color:#fff;} .bids-overlay .st.cancel{background:var(--warn-soft); color:var(--warn);}
   @media(max-width:560px){ .bids-inner{padding:24px 18px 70px;} .qcard{flex-direction:column; gap:14px;} .qcard .q-r{flex-direction:row; width:100%;} }
 </style>
 </head>
@@ -712,7 +801,7 @@
       <a data-t="shop" onclick="go('shop',this)">쇼퍼찾기</a>
       <a data-t="my" onclick="go('my',this)">마이</a>
     </nav>
-    <div class="navr"><span class="sup" style="cursor:pointer" onclick="location.href='pro.html'">쇼퍼 지원</span><span class="navdiv"></span><span class="navuser" onclick="go('my')"><span class="navav" id="myAv">김</span><span class="navname">김도현 님</span></span></div>
+    <div class="navr"><span class="sup" style="cursor:pointer" onclick="location.href='pro-signup.html'">쇼퍼 지원</span><span class="navdiv"></span><span class="navuser" onclick="go('my')"><span class="navav" id="myAv">김</span><span class="navname">김도현 님</span></span></div>
   </div>
 </header>
 
@@ -720,6 +809,14 @@
 
   <!-- ===== 홈 ===== -->
   <section class="page on" id="home">
+
+    <!-- 친구 초대 유입 배너 (card 공유 링크 index.html?from=CODE 로 진입 시 노출) -->
+    <div class="invite-banner" id="inviteBanner" role="status">
+      <span class="ib-ic">🎁</span>
+      <div class="ib-tx"><b>친구 초대로 오셨네요!</b><span>내 체형에 맞는 핏도 3분이면 나와요 · 지금 무료로 진단해보세요</span></div>
+      <button class="ib-cta" onclick="startDiag()">진단 시작하기</button>
+      <button class="ib-x" aria-label="배너 닫기" onclick="document.getElementById('inviteBanner').classList.remove('on')">✕</button>
+    </div>
 
     <!-- 히어로: 줄자로 측정 -->
     <section class="hhero"><div class="hrow">
@@ -928,13 +1025,24 @@
           <!-- 레이아웃 A: 좌 카드 스티키 + 우 콘텐츠 스택 -->
           <div class="dtl-A">
            <div class="dtl-A-left">
-            <iframe class="cardframe" src="card.html?type=STR&g=male" scrolling="no"></iframe>
+            <iframe class="cardframe" id="myDiagCard" src="card.html?type=STR&g=male" scrolling="no"></iframe>
             <div class="dtl-id">
               <span class="dtl-code">STR</span>
               <h2 class="dtl-name">시크 스트레이트</h2>
               <span class="dtl-korea">사이즈코리아 · 사각체형</span>
               <p class="dtl-desc">어깨–허리–힙이 일직선인 <b>직선 라인</b>.<br>군더더기 없는 깔끔함이 가장 멋있어요</p>
               <div class="dtl-hash"><span>#미니멀</span><span>#클린</span><span>#직선</span></div>
+            </div>
+            <!-- 어울리는 핏 / 피해야 할 핏 — 카드 라인(좌측) -->
+            <div class="dtl-fitbox">
+              <div class="dtl-fit ok">
+                <div class="dtl-fit-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>잘맞 FIT</div>
+                <div class="dtl-chips"><span>셔츠</span><span>일자 바지</span></div>
+              </div>
+              <div class="dtl-fit no">
+                <div class="dtl-fit-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>피할 FIT</div>
+                <div class="dtl-chips"><span>펑퍼짐한 옷</span><span>프릴 장식</span></div>
+              </div>
             </div>
            </div>
            <div class="dtl-A-right">
@@ -984,16 +1092,13 @@
             <div class="note" style="margin-top:16px">어깨·허리·힙이 <b style="color:var(--ink)">고르게 중간대에 정렬</b>돼 있어 <b style="color:var(--ink)">직선(STR)</b> 유형으로 확정됐어요</div>
           </div>
 
-          <!-- 어울리는 핏 / 피해야 할 핏 -->
-          <div class="dtl-two">
-            <div class="dtl-fit ok">
-              <div class="dtl-fit-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>잘맞 FIT</div>
-              <div class="dtl-chips"><span>셔츠</span><span>일자 바지</span></div>
-            </div>
-            <div class="dtl-fit no">
-              <div class="dtl-fit-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>피할 FIT</div>
-              <div class="dtl-chips"><span>펑퍼짐한 옷</span><span>프릴 장식</span></div>
-            </div>
+          <!-- 결과 풀이 — ＋강점 / ＝핏공식 / ！주의 (결과 화면과 동일 언어 · AI 생성 자리) -->
+          <div class="dtl-mean">
+            <div class="k">결과 풀이</div>
+            <div class="rex plus"><div class="lbl"><span class="mk">＋</span> 강점</div><p>가장 또렷한 부위를 기준으로 맞추면 <strong>실루엣이 안정적으로</strong> 떨어져요</p></div>
+            <div class="rex eq"><div class="lbl"><span class="mk">＝</span> 핏 공식</div><p><strong>어깨·가슴 중 큰 쪽을 기준으로</strong> 사이즈를 고르고, 나머지는 여유로 조절하세요</p></div>
+            <div class="rex warn"><div class="lbl"><span class="mk">！</span> 주의</div><p>슬림핏은 가슴이 끼일 수 있어 <strong>같은 치수에서 한 단계 위</strong>를 고려하세요</p></div>
+            <div class="foot">※ 캐릭터·해설 서술은 AI가 생성하는 자리예요(현재는 규칙 기반 예시)</div>
           </div>
 
           <!-- 진단 이력 -->
@@ -1005,7 +1110,6 @@
           <!-- 재진단 · 공유 (박스 밖 단독 액션) -->
           <div class="dtl-actions">
             <button class="btn" onclick="startDiag()">다시 진단하기</button>
-            <button class="btn ghost" onclick="toast('결과 카드를 저장했어요')">공유·저장하기</button>
           </div>
            </div><!-- /dtl-A-right -->
           </div><!-- /dtl-A -->
@@ -1025,7 +1129,7 @@
           <div class="crumb">마이페이지 · 1.4·D</div>
           <h1>즐겨찾기</h1>
           <p class="lead">찜한 쇼퍼를 모아봐요</p>
-          <div class="mcard"><div class="msub"><div class="subhead">찜한 쇼퍼 <span class="pr v2">○ v2</span></div>
+          <div class="mcard"><div class="msub"><div class="subhead">찜한 쇼퍼 <span class="pr half">◐ MVP</span></div>
             <div class="fav" id="favList"></div>
           </div></div>
         </section>
@@ -1096,7 +1200,7 @@
 </div>
 
 <!-- ===== 견적 요청 결과(받은 견적) 오버레이 (IA 1.3.8) ===== -->
-<div class="bids-overlay" id="bidsOverlay">
+<div class="bids-overlay" id="bidsOverlay" onclick="if(event.target===this)closeBids()">
   <div class="bids-inner" id="bidsBody"></div>
 </div>
 
