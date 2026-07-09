@@ -31,6 +31,8 @@
 <style>
   /* 토큰·리셋·바디는 tokens.css가 담당(:root, *, body). 여기는 화면별 레이아웃 CSS만. */
   a{color:inherit; text-decoration:none; cursor:pointer;}
+  /* 스크롤바 자리 항상 예약 — 콘텐츠 높이가 바뀌어(완료 화면 등) 스크롤바가 사라져도 폭이 안 변하게(내비·본문 고정) */
+  html{overflow-y:auto; scrollbar-gutter:stable;}
   /* 푸터 하단 고정(sticky footer): body 세로 플렉스 + 본문이 남는 공간 채움 */
   body{min-height:100vh; display:flex; flex-direction:column;}
 
@@ -331,12 +333,21 @@
 
   /* 견적 요청 페이지 */
   .reqpage{max-width:680px; margin:0 auto;}
+  /* A안 — 요청 폼을 섹션 카드 3그룹으로 (무엇을/언제·얼마/요청 메모) */
+  .reqpage .grp{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px 20px; margin-top:16px; box-shadow:0 4px 14px rgba(20,18,16,.04);}
+  .reqpage .grp-h{display:flex; align-items:center; gap:9px; font-size:14px; font-weight:800; color:var(--green); margin-bottom:8px;}
+  .reqpage .grp-h .n{flex:none; width:22px; height:22px; border-radius:7px; background:var(--green-soft); color:var(--green); font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center;}
+  .reqpage .grp .feat:first-of-type{margin-top:12px;}
   .reqpage h1{font-size:30px; font-weight:800; letter-spacing:-.045em;}
   .reqpage .lead{font-size:16px; color:var(--sub); margin-top:12px; line-height:1.6;}
-  .reqto{display:flex; align-items:center; gap:12px; background:var(--soft); border-radius:14px; padding:12px 14px;}
+  .reqto{display:flex; align-items:center; gap:12px; background:var(--soft); border-radius:14px; padding:13px 15px;}
   .reqto img{width:44px; height:44px; border-radius:50%; object-fit:cover; flex:none;}
   .reqto .rl{font-size:12px; font-weight:700; color:var(--sub2);}
   .reqto .rn{font-size:15px; font-weight:800; margin-top:2px; letter-spacing:-.02em;}
+  /* 지명 요청 대상 바 — 지난 견적의 선택 쇼퍼(qcard.sel)와 동일한 초록 톤 */
+  .reqto.sel{background:var(--green-soft); box-shadow:0 0 0 1px var(--green);}
+  .reqto.sel .rl{color:var(--green-mid);}
+  .reqto.sel .rn{color:var(--green);}
   .reqhint{font-size:12.5px; color:var(--sub2); text-align:center; margin-top:10px;}
   .reqdone{max-width:560px; margin:60px auto 0; text-align:center;}
   .reqdone .cc{width:64px; height:64px; border-radius:50%; background:var(--green-soft); color:var(--green); font-size:30px; font-weight:800; display:flex; align-items:center; justify-content:center; margin:0 auto;}
@@ -414,7 +425,7 @@
   .dhead .dn{font-size:23px; font-weight:800; margin-top:8px; letter-spacing:-.03em;}
   .dbody{padding:22px;}
   .dbody .bio{font-size:14.5px; color:var(--ink-soft); line-height:1.6;}
-  .feat{font-size:12px; font-weight:800; color:var(--sub2); margin:20px 0 9px; letter-spacing:.02em;}
+  .feat{font-size:14px; font-weight:800; color:var(--sub); margin:20px 0 9px; letter-spacing:.01em;}
   .pgal{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
   .pgal div{height:82px; border-radius:10px; background-size:cover; background-position:center; background-color:var(--soft); filter:saturate(.6);}
   .rev{border-bottom:1px solid var(--line); padding:11px 0; font-size:13.5px; color:var(--ink-soft); line-height:1.5;}
@@ -427,7 +438,8 @@
   .svc3{display:grid; grid-template-columns:repeat(3,1fr); gap:9px;}
   .svc3 .s{border:1.5px solid var(--line2); border-radius:14px; padding:15px 8px; text-align:center; cursor:pointer;}
   .svc3 .s.on{border-color:var(--green); background:var(--green-soft);}
-  .svc3 .s .i{font-size:21px;} .svc3 .s b{display:block; font-size:12.5px; margin-top:6px;}
+  .svc3 .s .i{display:flex; justify-content:center; color:var(--sub);} .svc3 .s .i svg{width:24px; height:24px;} .svc3 .s.on .i{color:var(--green);}
+  .svc3 .s b{display:block; font-size:12.5px; margin-top:6px;}
   .toggle{width:46px; height:27px; border-radius:20px; background:var(--line2); position:relative; cursor:pointer; flex:none; transition:.15s;}
   .toggle::after{content:""; position:absolute; top:3px; left:3px; width:21px; height:21px; border-radius:50%; background:#fff; transition:.15s;}
   .toggle.on{background:var(--green);} .toggle.on::after{left:22px;}
@@ -697,6 +709,21 @@
   .confirm-msg{font-size:16px; font-weight:700; color:var(--ink); line-height:1.55;}
   .confirm-msg b{font-weight:800; color:var(--green);}
   .confirm-msg .cf-sub{font-size:12.5px; color:var(--sub); font-weight:600; margin-top:9px; line-height:1.5;}
+  /* 견적 보내기 전 '내 요청서' 확인 프리뷰 (B안) — 이 경우만 모달 넓고 크게 */
+  .confirm-box:has(.cf-receipt){max-width:500px;}
+  .cf-lead{font-size:21px; font-weight:800; color:var(--ink); margin-bottom:16px;}
+  .cf-receipt{text-align:left; background:var(--surface); border:1px solid var(--line); border-radius:16px; margin-top:2px; overflow:hidden; box-shadow:0 6px 18px rgba(20,18,16,.06);}
+  .cf-receipt .cfr-h{display:flex; align-items:center; gap:10px; font-size:17.5px; font-weight:800; color:#fff; background:var(--green); padding:17px 22px;}
+  .cf-receipt .cfr-hi{width:20px; height:20px; flex:none;}
+  .cf-receipt .cfr-body{padding:8px 22px 10px;}
+  .cf-receipt .cfr-row{display:flex; justify-content:space-between; gap:18px; padding:15px 0; border-bottom:1px dashed var(--line2); font-size:16px;}
+  .cf-receipt .cfr-row:last-of-type{border-bottom:none;}
+  .cf-receipt .cfr-row span{color:var(--sub); flex:none; font-weight:600;} .cf-receipt .cfr-row b{color:var(--ink); font-weight:800; text-align:right;}
+  .cf-receipt .cfr-note{display:flex; align-items:center; gap:8px; font-size:14px; color:var(--green); font-weight:700; background:var(--green-soft); padding:14px 22px;}
+  .cf-receipt .cfr-ni{width:17px; height:17px; flex:none;}
+  .cf-receipt .cfr-note.off{color:var(--sub); background:var(--soft);}
+  .rs-note.off{color:var(--sub2);}
+  .confirm-box:has(.cf-receipt) .confirm-btns button{padding:15px; font-size:15.5px;}
   .confirm-btns{display:flex; gap:9px; margin-top:20px;}
   .confirm-btns button{flex:1; padding:13px; border-radius:12px; font-size:14.5px; font-weight:800; font-family:inherit; cursor:pointer; border:none;}
   .confirm-btns .cf-no{background:var(--soft); color:var(--ink);}
@@ -736,7 +763,10 @@
   .req-summary{display:none; margin-top:14px;}
   .req-summary.on{display:block;}
   .req-summary-in{background:var(--soft); border-radius:14px; padding:6px 16px;}
-  .rs-head{padding:14px 2px 13px; border-bottom:1px solid var(--line);}
+  .rs-head{display:flex; align-items:center; gap:12px; padding:14px 2px 13px; border-bottom:1px solid var(--line);}
+  .rs-ic{flex:none; width:38px; height:38px; border-radius:11px; background:var(--green-soft); color:var(--green); display:flex; align-items:center; justify-content:center;}
+  .rs-ic svg{width:21px; height:21px;}
+  .rs-htx{min-width:0;}
   .rs-title{display:block; font-size:17px; font-weight:800; color:var(--ink); letter-spacing:-.01em;}
   .rs-sum{display:block; margin-top:5px; font-size:13px; color:var(--sub); font-weight:600;}
   .rs-row{display:flex; justify-content:space-between; align-items:center; gap:16px; padding:11px 0; border-bottom:1px solid var(--line); font-size:13.5px;}
