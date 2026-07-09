@@ -221,6 +221,7 @@
   /* '받은 견적' 컴팩트 카드 (숨고형) — 요약(날짜·상황·서비스) + 견적 건수 클릭 → 받은 견적 오버레이.
      진행 상태·후기는 카드에 붙이지 않고 오버레이 안에서 처리(카드는 깔끔하게 유지). */
   function reqCardOpen(r,i,xc){
+    if(r.awarded) return reqCardNamed(r,i,xc);   // 매칭 완료 → 지명 요청과 동일하게(진행중 쇼퍼 · 진행 상세로)
     var n=(r.bids||[]).length;
     var top = statusLabel(r.status) + (r.date?' · '+r.date+' 요청':'');
     var title = [(r.occ&&r.occ.length?r.occ.join('·'):''), svcLabel(r.svc)].filter(Boolean).join(' · ') || '코디 요청';
@@ -298,26 +299,67 @@
       '<div class="rs-note">📎 내 체형·사이즈 프로필이 함께 전달됐어요</div></div>';
   }
   function toggleReqSummary(btn){ var p=document.getElementById('reqSummaryPanel'); if(!p) return; var on=p.classList.toggle('on'); var tg=btn.querySelector('.tg'); if(tg) tg.textContent=on?'▴':'▾'; }
-  /* 지명 요청 상세 — 쇼퍼 + 요청 내용 + 진행 상태(라이프사이클 액션) */
+  /* 진행 상태 UI — 단계 스테퍼 + 컬러 배너 (지명 요청 라이프사이클) */
+  function stIcon(k){
+    var P={ check:'<path d="M20 6L9 17l-5-5"/>',
+      clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+      flag:'<path d="M5 21V4h13l-2.6 4L18 12H5"/>',
+      star:'<path d="M12 3l2.7 5.5 6 .9-4.35 4.2 1.03 6L12 17l-5.38 2.6 1.03-6L3.3 9.4l6-.9z"/>',
+      x:'<path d="M18 6L6 18M6 6l12 12"/>' };
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'+(P[k]||'')+'</svg>';
+  }
+  /* 상태 → [배너색, 아이콘, 제목, 설명] */
+  var ST_BAN={
+    '대기':    ['wait','clock','응답 대기 중','쇼퍼가 요청을 검토하고 있어요'],
+    '수락':    ['go','check','요청 수락됨','쇼퍼가 요청을 수락했어요 · 곧 코디를 시작해요'],
+    '진행중':  ['go','check','진행 중','쇼퍼와 코디를 진행하고 있어요 · 완료되면 후기를 남겨주세요'],
+    '완료':    ['go','flag','서비스 완료','코디가 완료됐어요 · 후기를 남겨보세요'],
+    '후기완료':['go','star','후기 작성 완료','소중한 후기 고마워요'],
+    '거절':    ['no','x','요청 거절됨','아쉽게도 요청이 거절되었어요 · 다른 쇼퍼를 찾아보세요'],
+    '취소함':  ['wait','x','요청 취소됨','요청을 취소했어요']
+  };
+  function reqStatusBlock(status){
+    var b=ST_BAN[status]||['wait','clock',statusLabel(status),''];
+    return '<div class="statban '+b[0]+'"><span class="sb-ic">'+stIcon(b[1])+'</span>'+
+      '<div class="sb-tx"><b>'+b[2]+'</b>'+(b[3]?'<p>'+b[3]+'</p>':'')+'</div></div>';
+  }
+  /* 상세용 액션 버튼만 (설명 줄글은 배너가 대신하므로 버튼/후기 콘텐츠만) */
+  function reqActions(r,i){ var s=r.status;
+    if(s==='대기') return '<div class="rq-btns"><button class="tinybtn ghost" onclick="confirmCancel('+i+')">요청 취소</button>'+
+      '<button class="tinybtn ghost" onclick="reqReject('+i+')">거절 · 데모</button><button class="tinybtn" onclick="reqAccept('+i+')">수락 · 데모</button></div>';
+    if(s==='진행중') return '<div class="rq-btns"><button class="tinybtn ghost" onclick="reqComplete('+i+')">완료 처리 · 데모</button></div>';
+    if(s==='완료'){ if(r._reviewing) return reviewForm(r,i); return '<div class="rq-btns"><button class="tinybtn" onclick="openReviewForm('+i+')">후기 작성하기</button></div>'; }
+    if(s==='후기완료'){ var rv=r.review||{}; return '<div class="reqact"><div class="revshow"><span class="starsRO">'+starsRO(rv.rating||5)+'</span> <span class="rtx">"'+(rv.text||'')+'"</span></div></div>'; }
+    if(s==='거절') return '<div class="rq-btns"><button class="tinybtn ghost" onclick="closeBids();go(\'shop\')">다른 쇼퍼 찾기</button></div>';
+    return '';
+  }
+  /* 지명 요청 상세 — 진행 상태(스테퍼+배너) + 액션 + 쇼퍼 + 요청 내용 */
   function renderReqDetail(){
     var r=reqs[_bidReq]; if(!r){ closeBids(); return; }
     var e=EX.filter(function(x){return x.nm===r.nm;})[0];
-    var sub=[(r.date?r.date+' 요청':''), statusLabel(r.status)].filter(Boolean).join(' · ');
-    var matched = (r.status==='수락'||r.status==='진행중');
-    var shopper = e ? '<div class="rq-shopper'+(matched?' matched':'')+'">'+(matched?'<span class="rq-matched">✓ 매칭 완료</span>':'')+'<img class="rq-ph" src="'+img(e)+'" alt="" onerror="'+FB+'"><div class="rq-info"><div class="rq-nm">'+e.nm+' 쇼퍼</div><div class="rq-svc">'+svcLabel(r.svc)+' · ★ <span class="num">'+e.rating+'</span> · 매칭도 '+e.match+'%</div></div><button class="tinybtn ghost" onclick="detailFromReq('+EX.indexOf(e)+','+_bidReq+',\'req\')">프로필</button></div>' : '';
+    var shopper = e ? '<div class="rq-sec"><div class="rq-h">쇼퍼</div><div class="req-summary-in"><div class="rs-shopper">'+
+        '<img class="av" src="'+img(e)+'" alt="" onerror="'+FB+'">'+
+        '<div class="who"><div class="nm">'+e.nm+' 쇼퍼</div><div class="mt">★ <span class="num">'+e.rating+'</span> · 매칭도 '+e.match+'%</div></div>'+
+        '<button class="prof" onclick="detailFromReq('+EX.indexOf(e)+','+_bidReq+',\'req\')">프로필</button>'+
+      '</div></div></div>' : '';
     var head='<div class="bids-head"><button class="xbtn" onclick="closeBids()">✕</button>'+
-      '<span class="reqtype open">요청 결과</span><h2>보낸 요청</h2><p>'+sub+'</p></div>';
-    document.getElementById('bidsBody').innerHTML = head + shopper +
-      '<div class="rq-sec"><div class="rq-h">진행 상태</div>'+reqAction(r,_bidReq)+'</div>'+
-      '<div class="rq-sec"><div class="rq-h">요청 내용</div>'+reqSummaryHTML(r)+'</div>';
+      '<span class="reqtype open">'+(r.open?'받은 견적':'요청 결과')+'</span><h2>'+(r.open?'진행 상황':'보낸 요청')+'</h2><p>'+(r.date?r.date+' 요청':'')+'</p></div>';
+    var actions=reqActions(r,_bidReq);
+    // 받은 견적 출신(매칭됨)이면 '지난 견적'으로 비교 화면 다시 볼 수 있게
+    var pastBids = (r.open && r.awarded && (r.bids||[]).length) ?
+      '<div class="rq-sec"><div class="rq-h">지난 견적</div><button class="req-toggle" onclick="openBids('+_bidReq+')">받은 견적 '+r.bids.length+'개 다시 보기 <span class="tg">›</span></button></div>' : '';
+    document.getElementById('bidsBody').innerHTML = head + reqStatusBlock(r.status) +
+      (actions?'<div class="rq-actions">'+actions+'</div>':'') + shopper +
+      '<div class="rq-sec"><div class="rq-h">요청 내용</div>'+reqSummaryHTML(r)+'</div>' + pastBids;
   }
   function renderBids(){
     var r=reqs[_bidReq]; if(!r){ closeBids(); return; }
     var bids=(r.bids||[]).slice();
     bids.sort(function(a,b){ return EX[b.idx].match-EX[a.idx].match; });   // 매칭도 높은 순 고정
     var sub=[svcLabel(r.svc), (r.occ&&r.occ.length?r.occ.join('·'):''), (r.budget?'예산 '+r.budget:''), (r.date||'')].filter(Boolean).join(' · ');
-    var head='<div class="bids-head"><button class="xbtn" onclick="closeBids()">✕</button>'+
-      '<span class="reqtype open">견적 요청 결과</span><h2>받은 견적</h2>'+
+    var back = r.awarded ? '<button class="bids-back" onclick="openReqDetail('+_bidReq+')">‹ 진행 상황</button>' : '';
+    var head='<div class="bids-head"><button class="xbtn" onclick="closeBids()">✕</button>'+ back +
+      '<span class="reqtype open">견적 요청 결과</span><h2>'+(r.awarded?'지난 견적':'받은 견적')+'</h2>'+
       '<p><b class="num">'+bids.length+'</b>명의 쇼퍼가 견적을 보냈어요 · '+sub+'</p>'+
       '<button class="req-toggle" onclick="toggleReqSummary(this)">내가 보낸 요청 내용 <span class="tg">▾</span></button>'+
       '<div class="req-summary" id="reqSummaryPanel">'+reqSummaryHTML(r)+'</div></div>';

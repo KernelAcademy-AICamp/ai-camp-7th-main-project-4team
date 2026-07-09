@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>데모 초기화</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+  body{display:flex; min-height:100vh; align-items:center; justify-content:center; font-family:var(--sans); background:var(--bg); color:var(--ink);}
+  .box{text-align:center;}
+  .box b{font-size:18px; font-weight:800;}
+  .box p{font-size:13px; color:var(--sub); margin-top:8px;}
+</style>
+</head>
+<body>
+  <div class="box">
+    <b>데모를 초기화했어요</b>
+    <p>잠시 후 처음 상태로 앱이 열려요…</p>
+  </div>
+  <script>
+    try{
+      Object.keys(localStorage).filter(function(k){ return k.indexOf('fitting.')===0; })
+        .forEach(function(k){ localStorage.removeItem(k); });
+    }catch(e){}
+    setTimeout(function(){ location.replace('/'); }, 600);
+  </script>
+</body>
+</html>
