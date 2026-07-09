@@ -136,12 +136,12 @@
   }
 
   /* 데모 시드 버전 — 상태 모델이 바뀌었으니 옛 요청 데이터를 1회 자동 초기화(콘솔 리셋 불필요) */
-  if(loadLS('reqsVer',0) < 9){ try{ localStorage.removeItem('fitting.reqs'); }catch(e){} saveLS('reqsVer',9); }
+  if(loadLS('reqsVer',0) < 10){ try{ localStorage.removeItem('fitting.reqs'); }catch(e){} saveLS('reqsVer',10); }
   var reqs = loadLS('reqs', [
-    {nm:'상민', svc:'shopping', occ:['결혼식 하객'], budget:'10~15만', date:'2026.06.30', status:'대기'},
-    {open:true, svc:'online', occ:['소개팅'], budget:'5~10만', date:'2026.07.02', status:'견적중', bids:makeBids('online',['소개팅'])},
-    {nm:'건형', svc:'image',    occ:['면접·발표'],   budget:'15만+',   date:'2026.06.25', status:'진행중'},
-    {nm:'소희', svc:'online',   occ:['소개팅'],     budget:'5~10만',  date:'2026.06.20', status:'거절'}
+    {nm:'상민', svc:'shopping', occ:['결혼식 하객'], price:150000, date:'2026.06.30', status:'대기'},
+    {open:true, svc:'online', occ:['소개팅·데이트'], budget:'5~10만', date:'2026.07.02', status:'견적중', bids:makeBids('online',['소개팅·데이트'])},
+    {nm:'건형', svc:'image',    occ:['면접·발표'],   price:190000,   date:'2026.06.25', status:'진행중'},
+    {nm:'소희', svc:'online',   occ:['소개팅·데이트'], price:90000,  date:'2026.06.20', status:'거절'}
   ]);
   /* 옛 상태 정리 — 지명 요청은 대기 → 수락/거절 뿐. 이전 데이터의 취소·제안도착·라이프사이클을 보정. */
   reqs.forEach(function(r){
@@ -226,12 +226,14 @@
     el.innerHTML=favs.map(function(f){
       var e=EX.filter(function(x){return x.nm===f.nm;})[0];   // 지정 쇼퍼 원본(얼굴·전문분야) 단일 출처
       var face=e?img(e):(f.photo||'');                        // 실제 지정 쇼퍼 얼굴(SVG)
-      var svc=f.svc||(e&&svcTypes(e)[0]);
       var rating=(f.rating!=null?f.rating:(e&&e.rating));
-      var tags=(e&&e.tags)?e.tags.slice(0,3):[];              // 전문분야(태그) 최대 3개
+      var review=e?e.review:null;
+      var tags=(e&&e.tags)?e.tags.slice(0,2):[];              // 스타일 태그 2개 (쇼퍼찾기 카드와 동일)
+      var rt=rating?'<span class="star">★ '+rating+(review!=null?' <small class="rv">('+review+')</small>':'')+'</span>':'';
+      var svcico=e?'<div class="cardmid"><span class="svcico">'+e.services.map(function(sv){return '<span class="b" title="'+SVC[sv.type]+'">'+svcIcon(sv.type)+'</span>';}).join('')+'</span></div>':'';
       return '<div class="fcard"'+(e?' onclick="favOpen(\''+f.nm+'\')"':'')+'><div class="cov"><img class="favimg" src="'+face+'" alt="" onerror="'+FB+'"><span class="heart" title="즐겨찾기 해제" onclick="event.stopPropagation();toggleFav(\''+f.nm+'\')">'+favIcon(true,true)+'</span></div>'+
-        '<div class="fb"><b>'+f.nm+' 쇼퍼</b><small>'+svcLabel(svc)+' · ★ <span class="num">'+rating+'</span></small>'+
-        (tags.length?'<div class="ftags">'+tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>':'')+
+        '<div class="fb"><div class="top"><b>'+f.nm+' 쇼퍼</b>'+rt+'</div>'+
+        (tags.length?'<div class="subtags">'+tags.join(' · ')+'</div>':'')+svcico+
         '</div></div>';
     }).join('');
   }
@@ -373,7 +375,8 @@
   /* 내가 보낸 요청 내용 요약(오픈: 토글 · 지명: 상세에 상시 노출) */
   function reqSummaryHTML(r){
     // 헤더 강조형 — '무엇을 보냈나'(서비스 유형)를 제목처럼 크게, 상황·예산은 요약 한 줄, 나머지는 라인
-    var sum=[(r.occ&&r.occ.length?r.occ.join(' · '):''), (r.budget?'예산 '+r.budget:'')].filter(Boolean).join('  ·  ');
+    var money=r.budget?'예산 '+r.budget:(r.price?'예상 '+r.price.toLocaleString()+'원':'');   // 오픈=예산 / 지명=예상 가격
+    var sum=[(r.occ&&r.occ.length?r.occ.join(' · '):''), money].filter(Boolean).join('  ·  ');
     var note=(r.note&&(''+r.note).trim())?r.note:'—';
     var rows=[['희망 일정', r.date||'—'], ['요청 메모', note]];
     return '<div class="req-summary-in">'+
@@ -535,14 +538,12 @@
     if(!list.length){ g.innerHTML='<div class="empty"><b>조건에 맞는 쇼퍼가 아직 없어요</b><p>초기라 쇼퍼를 모으는 중이에요 · <a onclick="notifySignup()">오픈 알림 신청하기</a> 또는 <a onclick="browseAll()">전체 보기</a></p></div>'; return; }
     g.innerHTML=list.map(function(e){ var idx=EX.indexOf(e);
       var rt=e.rating>0?'<span class="star">★ '+e.rating+' <small class="rv">('+e.review+')</small></span>':'<span class="star new">신규</span>';
-      var multi=e.services.length>1;
-      var priceHTML=multi ? '<span class="from"><span class="num">'+svcMinPrice(e).toLocaleString()+'</span>원부터</span>' : '<span class="num">'+svcPrimary(e).price.toLocaleString()+'</span>원';
       var svcico='<span class="svcico">'+e.services.map(function(sv){return '<span class="b" title="'+SVC[sv.type]+'">'+svcIcon(sv.type)+'</span>';}).join('')+'</span>';
       return '<div class="ecard" onclick="openDetail('+idx+')"><div class="cover"><img src="'+img(e)+'" alt="" onerror="'+FB+'"><span class="match">매칭도 '+e.match+'%</span>'+
         '<button class="favbtn" title="즐겨찾기" onclick="event.stopPropagation();toggleFav(\''+e.nm+'\')">'+favIcon(isFav(e.nm),true)+'</button></div>'+
         '<div class="eb"><div class="top"><span class="nm">'+e.nm+' 쇼퍼</span>'+rt+'</div>'+
         '<div class="subtags">'+e.tags.slice(0,2).join(' · ')+'</div>'+
-        '<div class="cardmid">'+svcico+'<span class="price">'+priceHTML+'</span></div>'+
+        '<div class="cardmid">'+svcico+'</div>'+
         '</div></div>';
     }).join('');
   }
@@ -554,7 +555,7 @@
   function validate(){
     var btn=document.getElementById('reqBtn'); if(!btn) return;
     var occ=document.querySelectorAll('#mOcc .o.on').length>0;
-    var bud=document.querySelectorAll('#mBud .o.on').length>0;
+    var bud=!document.getElementById('mBud') || document.querySelectorAll('#mBud .o.on').length>0;   // 지명 요청엔 예산 없음
     var d=document.getElementById('reqDate'); var date=d && d.value && d.value>=todayStr();  // 오늘 이후만 유효
     var ok=occ && bud && !!date;
     btn.disabled=!ok;
@@ -576,7 +577,7 @@
     var sum=(e.rating*e.review)+mine.reduce(function(a,r){ return a+(r.review.rating||5); },0);
     var rating=count>0 ? Math.round(sum/count*10)/10 : 0;
     var mineHTML=mine.map(function(r){ var occ=(r.occ&&r.occ.length?r.occ.join('·'):svcLabel(r.svc));
-      return '<div class="rev mine"><span class="revme">내 후기</span>"'+r.review.text+'"<div class="who">— 나 · '+occ+'</div></div>'; }).join('');
+      return '<div class="rev">"'+r.review.text+'"<div class="who">— 나 · '+occ+'</div></div>'; }).join('');
     var baseHTML=e.reviews.map(function(r){ return '<div class="rev">"'+r[0]+'"<div class="who">— '+r[1]+'</div></div>'; }).join('');
     return { rating:rating, count:count, html:(mineHTML+baseHTML) || '<div class="noreview">아직 등록된 후기가 없어요</div>' };
   }
@@ -586,20 +587,29 @@
     var heroSvc=e.services.length>1?'서비스 '+e.services.length+'가지':SVC[svcPrimary(e).type];
     var svcCards=e.services.map(function(sv){ var meta=SMODE[sv.type]+(sv.regions&&sv.regions.length?' · '+sv.regions.join('·'):'');
       return '<div class="svccard"><span class="svcc-ic">'+svcIcon(sv.type)+'</span><div class="svcc-m"><b>'+SVC[sv.type]+'</b><span>'+meta+'</span></div><span class="svcc-pr"><span class="num">'+sv.price.toLocaleString()+'</span>원</span></div>'; }).join('');
+    var folioHTML=(e.portfolio&&e.portfolio.length?e.portfolio:DEMO_FOLIO).map(function(p){ var s=folioSpec(p); return '<div style="background-image:url(\''+p.src+'\')">'+(s?'<span class="pspec">'+s+'</span>':'')+'</div>'; }).join('');
+    function sic(p){ return '<span class="rmini"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg></span>'; }
+    var IC_SVC=sic('<path d="M4 7h16M4 12h16M4 17h10"/>'), IC_INTRO=sic('<circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/>'),
+        IC_REV=sic('<path d="M21 11.5a8.4 8.4 0 0 1-11.9 7.6L3 21l1.9-6.1A8.4 8.4 0 1 1 21 11.5z"/>'), IC_PORT=sic('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 15l5-4 4 3 3-2 6 5"/><circle cx="8.5" cy="9" r="1.5"/>');
     return '<div class="detailbody"><a class="back" onclick="'+opts.back+'">← 뒤로</a>'+
-      '<div class="dhero"><div class="dhero-img"><img src="'+img(e)+'" onerror="'+FB+'"></div>'+
-      '<div class="dhero-info"><span class="dsvc">'+heroSvc+'</span>'+
-      '<div class="dnamerow"><h1>'+e.nm+' 쇼퍼</h1><div class="dmeta"><b>매칭도 '+e.match+'%</b> · '+rt+'</div></div>'+
-      '<div class="tagrow" style="margin-top:16px">'+e.tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>'+
-      '<p class="dbio">'+e.bio+'</p>'+
-      '<div style="display:flex; gap:9px; flex-wrap:wrap; margin-top:22px">'+
-      (opts.hideReq?'':'<button class="btn" onclick="requestFor('+idx+')">이 쇼퍼에게 견적 요청하기 →</button>')+
-      '<button class="btn ghost" onclick="'+opts.fav+'">'+favIcon(isFav(e.nm),false)+' '+(isFav(e.nm)?'즐겨찾기 해제':'즐겨찾기 추가')+'</button>'+
-      '</div></div></div>'+
-      '<div class="dsecs">'+
-        '<div class="dsec"><h3>제공 서비스'+(e.services.length>1?' <span class="dsec-score">· '+e.services.length+'가지</span>':'')+'</h3><div class="svccards">'+svcCards+'</div></div>'+
-        '<div class="dsec"><h3>후기'+(rd.count>0?' <span class="dsec-score">★ '+rd.rating+' · '+rd.count+'건</span>':'')+'</h3>'+rd.html+'</div>'+
-        '<div class="dsec"><h3>포트폴리오 <span class="dsec-score" style="font-weight:600">· 착용 모델 키·몸무게</span></h3><div class="dgal">'+(e.portfolio&&e.portfolio.length?e.portfolio:DEMO_FOLIO).map(function(p){ var s=folioSpec(p); return '<div style="background-image:url(\''+p.src+'\')">'+(s?'<span class="pspec">'+s+'</span>':'')+'</div>'; }).join('')+'</div></div>'+
+      '<div class="dsplit">'+
+        '<div class="dside">'+
+          '<div class="dside-img"><img src="'+img(e)+'" onerror="'+FB+'"><span class="dside-match">매칭도 '+e.match+'%</span></div>'+
+          '<div class="dside-b"><span class="dsvc">'+heroSvc+'</span>'+
+            '<h1>'+e.nm+' 쇼퍼</h1><div class="dmeta">'+rt+'</div>'+
+            '<div class="dstyles">'+e.tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>'+
+            '<div class="dside-acts">'+
+              (opts.hideReq?'':'<button class="btn" onclick="requestFor('+idx+')">견적 요청하기 →</button>')+
+              '<button class="btn ghost" onclick="'+opts.fav+'">'+favIcon(isFav(e.nm),false)+' '+(isFav(e.nm)?'즐겨찾기 해제':'즐겨찾기 추가')+'</button>'+
+            '</div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="dblocks">'+
+          '<div class="rcard"><div class="rlabel">'+IC_SVC+'<span class="rlt">제공 서비스</span><span class="rcnt">'+e.services.length+'가지</span></div><div class="svccards">'+svcCards+'</div></div>'+
+          '<div class="rcard"><div class="rlabel">'+IC_INTRO+'<span class="rlt">소개</span></div><p class="dbio">'+e.bio+'</p></div>'+
+          '<div class="rcard"><div class="rlabel">'+IC_REV+'<span class="rlt">후기</span>'+(rd.count>0?'<span class="rcnt">★ '+rd.rating+' · '+rd.count+'건</span>':'')+'</div><div class="rrevs">'+rd.html+'</div></div>'+
+          '<div class="rcard"><div class="rlabel">'+IC_PORT+'<span class="rlt">포트폴리오</span><span class="rcnt">착용 cm·kg</span></div><div class="dgal">'+folioHTML+'</div></div>'+
+        '</div>'+
       '</div></div>';
   }
   /* 쇼퍼찾기 탭 내 상세 페이지 (목록에서 진입) */
@@ -621,11 +631,11 @@
   function todayStr(){ var d=new Date(), p=function(n){return (n<10?'0':'')+n;}; return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
 
   /* 견적 요청 폼 (A안 — 섹션 카드 3그룹: 무엇을 / 언제·얼마 / 요청 메모) */
-  function reqFormHTML(svc3, g1label){
+  function reqFormHTML(svc3, g1label, noBudget){
     return '<div class="grp"><div class="grp-h"><span class="n">1</span>'+(g1label||'무엇을 받을까요')+'</div><div class="svc3" id="mSvc">'+svc3+'</div></div>'+
       '<div class="grp"><div class="grp-h"><span class="n">2</span>언제 어디서 진행할까요?</div>'+
         '<div class="feat">상황 · 최대 2개 · <em>필수</em></div><div class="seg" id="mOcc"><span class="o" onclick="toggleOcc(this)">소개팅·데이트</span><span class="o" onclick="toggleOcc(this)">면접·발표</span><span class="o" onclick="toggleOcc(this)">결혼식 하객</span><span class="o" onclick="toggleOcc(this)">여행</span><span class="o" onclick="toggleOcc(this)">데일리 스타일링</span><span class="o" onclick="toggleOcc(this)">퍼스널 스타일링</span><span class="o" onclick="toggleOcc(this)">체형 커버 스타일링</span></div>'+
-        '<div class="feat">예산 · <em>필수</em></div><div class="seg" id="mBud"><span class="o" onclick="pickBud(this)">~5만</span><span class="o" onclick="pickBud(this)">5~10만</span><span class="o" onclick="pickBud(this)">10~15만</span><span class="o" onclick="pickBud(this)">15만+</span></div>'+
+        (noBudget?'':'<div class="feat">예산 · <em>필수</em></div><div class="seg" id="mBud"><span class="o" onclick="pickBud(this)">~5만</span><span class="o" onclick="pickBud(this)">5~10만</span><span class="o" onclick="pickBud(this)">10~15만</span><span class="o" onclick="pickBud(this)">15만+</span></div>')+
         '<div class="feat">일정 · <em>필수</em> · 오늘 이후만 선택 가능</div><input class="inp" type="date" id="reqDate" min="'+todayStr()+'" onchange="validate()">'+
       '</div>'+
       '<div class="grp"><div class="grp-h"><span class="n">3</span>요청사항을 적어주세요</div>'+
@@ -645,12 +655,18 @@
     var svc3=e.services.map(function(sv,i){ return '<div class="s '+(i===0?'on':'')+'" data-v="'+sv.type+'" onclick="pickSvc(this)"><div class="i">'+svcIcon(sv.type)+'</div><b>'+SNM[sv.type]+'</b><span class="p num">'+sv.price.toLocaleString()+'</span></div>'; }).join('');
     document.getElementById('requestView').innerHTML=
       '<a class="back" onclick="openDetail('+idx+')">← 뒤로</a>'+
-      '<div class="reqpage">'+
-      '<h1>견적 요청</h1><p class="lead">조건을 남기면 이 쇼퍼가 검토하고 제안(견적)을 보내드려요</p>'+
-      '<div class="reqto sel" style="margin-top:18px"><img src="'+img(e)+'" onerror="'+FB+'"><div><div class="rl">견적 요청 대상</div><div class="rn">'+e.nm+' 쇼퍼</div></div></div>'+
-      reqFormHTML(svc3, g1)+
-      '<button class="btn full" id="reqBtn" disabled style="margin-top:22px" onclick="confirmMatch()">견적 요청 보내기</button>'+
-      '<p class="reqhint" id="reqHint">상황·예산·일정을 모두 입력하면 보낼 수 있어요</p></div>';
+      '<div class="reqsplit">'+
+        '<div class="reqside">'+
+          '<div class="reqside-img"><img src="'+img(e)+'" onerror="'+FB+'"><span class="dside-match">매칭도 '+e.match+'%</span></div>'+
+          '<div class="reqside-b"><div class="rl">견적 요청 대상</div><div class="rn">'+e.nm+' 쇼퍼</div></div>'+
+        '</div>'+
+        '<div class="reqmain">'+
+          '<h1>견적 요청</h1><p class="lead">조건을 남기면 이 쇼퍼가 검토하고 제안(견적)을 보내드려요</p>'+
+          reqFormHTML(svc3, g1, true)+
+          '<button class="btn full" id="reqBtn" disabled style="margin-top:22px" onclick="confirmMatch()">견적 요청 보내기</button>'+
+          '<p class="reqhint" id="reqHint">상황·일정을 입력하면 보낼 수 있어요</p>'+
+        '</div>'+
+      '</div>';
     closeAll(); showOnly('requestView'); validate();
   }
 
@@ -683,7 +699,11 @@
     var budEl=document.querySelector('#mBud .o.on'); var budget=budEl?budEl.textContent:'';
     var dEl=document.getElementById('reqDate'); var date=(dEl && dEl.value)?dEl.value.replace(/-/g,'.'):'';
     var nEl=document.getElementById('reqNote'); var note=(nEl && nEl.value.trim())?nEl.value.trim():'';
-    var rows=[['서비스', SVC[curReq.svc]||curReq.svc], ['상황', occ.join(' · ')||'—'], ['예산', budget||'—'], ['희망 일정', date||'—']];
+    var she=curReq.nm?EX.filter(function(x){return x.nm===curReq.nm;})[0]:null;
+    var sPrice=she?((svcOf(she,curReq.svc)||{}).price||null):null;
+    var rows=[['서비스', SVC[curReq.svc]||curReq.svc], ['상황', occ.join(' · ')||'—'],
+      (curReq.nm?['예상 가격', sPrice?sPrice.toLocaleString()+'원':'—']:['예산', budget||'—']),
+      ['희망 일정', date||'—']];
     if(note) rows.push(['메모', note]);
     var attEl=document.getElementById('reqAttach'); var attach=attEl?attEl.classList.contains('on'):true;
     var icClip='<svg class="cfr-hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.4h6V6a1.2 1.2 0 0 1-1.2 1.2h-3.6A1.2 1.2 0 0 1 9 6V4.4z"/><path d="M9 12h6M9 16h4"/></svg>';
@@ -704,7 +724,8 @@
     var attEl=document.getElementById('reqAttach'); var attach=attEl?attEl.classList.contains('on'):true;
     var isOpen = !curReq.nm;   // 지명(쇼퍼 선택) 아니면 오픈 요청(여러 쇼퍼 견적)
     if(isOpen) addReq({open:true, svc:curReq.svc, occ:occ, budget:budget, date:date, note:note, attach:attach, status:'견적중', bids:makeBids(curReq.svc, occ)});
-    else       addReq({nm:curReq.nm, svc:curReq.svc, occ:occ, budget:budget, date:date, note:note, attach:attach, status:'대기'});
+    else { var she=EX.filter(function(x){return x.nm===curReq.nm;})[0]; var sp=she?((svcOf(she,curReq.svc)||{}).price||null):null;
+      addReq({nm:curReq.nm, svc:curReq.svc, occ:occ, price:sp, date:date, note:note, attach:attach, status:'대기'}); }
     document.getElementById('requestView').innerHTML=
       '<div class="reqdone"><div class="cc">✓</div>'+
       '<h1>견적 요청을 보냈어요</h1>'+
