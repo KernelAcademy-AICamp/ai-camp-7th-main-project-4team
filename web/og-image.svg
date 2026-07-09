@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">
+  <defs>
+    <radialGradient id="glow" cx="26%" cy="20%" r="80%">
+      <stop offset="0%" stop-color="#3E6350"/>
+      <stop offset="60%" stop-color="#2E4A3B"/>
+      <stop offset="100%" stop-color="#223A2E"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- 로고 -->
+  <text x="80" y="118" fill="#F6F6F5" font-size="40" font-weight="800" letter-spacing="-1">fitting</text>
+  <rect x="80" y="140" width="46" height="4" rx="2" fill="#9CC1AE"/>
+
+  <!-- 초대 태그 -->
+  <g>
+    <rect x="80" y="196" width="360" height="52" rx="26" fill="#9CC1AE" fill-opacity="0.16"/>
+    <text x="112" y="230" fill="#9CC1AE" font-size="24" font-weight="800">🎁  친구가 보낸 핏 진단 초대</text>
+  </g>
+
+  <!-- 헤드라인 -->
+  <text x="78" y="330" fill="#F6F6F5" font-size="76" font-weight="800" letter-spacing="-2">안 입어본 브랜드도</text>
+  <text x="78" y="418" fill="#F6F6F5" font-size="76" font-weight="800" letter-spacing="-2">내 사이즈로 딱 <tspan fill="#9CC1AE">FIT</tspan></text>
+
+  <!-- 서브 -->
+  <text x="80" y="500" fill="#CBD8CF" font-size="30" font-weight="600">착용 경험만으로 브랜드를 가로질러 사이즈를 번역 · 3분 체형 진단</text>
+
+  <!-- 우측 캐릭터 카드 모티프 -->
+  <g transform="translate(946,150)">
+    <rect x="0" y="0" width="170" height="330" rx="24" fill="#16171b" stroke="#3E6350" stroke-width="2"/>
+    <circle cx="85" cy="96" r="46" fill="#f2d6b8"/>
+    <path d="M45 90 C42 40 85 30 85 30 C85 30 128 40 125 90 C125 66 108 50 85 50 C62 50 45 66 45 90 Z" fill="#3a2c22"/>
+    <path d="M30 300 C34 210 60 188 85 188 C110 188 136 210 140 300 Z" fill="#2E4A3B"/>
+    <text x="85" y="250" fill="#9CC1AE" font-size="22" font-weight="800" text-anchor="middle">MY FIT</text>
+  </g>
+</svg>
