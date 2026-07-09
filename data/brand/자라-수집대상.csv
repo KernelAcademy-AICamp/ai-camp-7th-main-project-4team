@@ -1,0 +1,14 @@
+카테고리,성별,소재,진입카테고리KR,정규화핏,브랜드핏라벨,p코드,p상품url,live상태,durable카테고리URL,비고
+상의,남성,shirt,셔츠,slim,슬림핏 셔츠,p06762287,https://www.zara.com/kr/ko/-p06762287.html,KR live,https://www.zara.com/kr/ko/man-shirts-slim-l763.html,긴팔·garment실측(소매·팔너비 제공)
+상의,남성,shirt,셔츠,regular,레귤러핏 셔츠,p06990270,https://www.zara.com/kr/ko/-p06990270.html,KR live,https://www.zara.com/kr/ko/man-shirts-basics-l741.html,전용 regular카테고리 없음→basics
+상의,남성,shirt,셔츠,loose,릴렉스핏 체크 셔츠,p09621806,https://www.zara.com/kr/ko/-p09621806.html,KR live,https://www.zara.com/kr/ko/man-shirts-basics-l741.html,전용 relaxed카테고리 없음
+상의,남성,shirt,셔츠,oversize,오버사이즈 체크 셔츠,p04764181,https://www.zara.com/kr/ko/-p04764181.html,KR live,https://www.zara.com/kr/ko/man-shirts-oversize-l5523.html,
+하의,남성,denim,데님팬츠,slim,슬림핏 진,p00774330,https://www.zara.com/kr/ko/-p00774330.html,KR live,https://www.zara.com/kr/ko/man-jeans-slim-l675.html,
+하의,남성,denim,데님팬츠,straight,스트레이트핏 진,p08062418,https://www.zara.com/kr/ko/-p08062418.html,KR미확인(글로벌live),https://www.zara.com/kr/ko/man-jeans-straight-l677.html,군대표 최강·KR재고 재확인
+하의,남성,denim,데님팬츠,tapered,슬림 테이퍼드핏 진,p04060475,https://www.zara.com/kr/ko/-p04060475.html,KR미확인(글로벌live),https://www.zara.com/kr/ko/man-jeans-l659.html,전용 tapered카테고리 없음→상품명필터
+하의,남성,denim,데님팬츠,wide,배기핏 진,p04048400,https://www.zara.com/kr/ko/-p04048400.html,KR live,https://www.zara.com/kr/ko/man-jeans-balloon-l17004.html,KR라벨=배기/벌룬
+하의,남성,slacks,팬츠,slim,슬림핏 팬츠,p00706386,https://www.zara.com/kr/ko/-p00706386.html,KR live,https://www.zara.com/kr/ko/man-trousers-l838.html,팬츠 안 슬랙스/수트류·전용핏카테고리 없음→필터
+하의,남성,slacks,팬츠,straight,스트레이트핏 팬츠,p02342308,https://www.zara.com/kr/ko/-p02342308.html,KR live,https://www.zara.com/kr/ko/man-trousers-l838.html,전용 핏카테고리 없음→필터
+하의,남성,slacks,팬츠,wide,플리츠 와이드 팬츠,p09109591,https://www.zara.com/kr/ko/-p09109591.html,KR live,https://www.zara.com/kr/ko/man-trousers-wide-l4143.html,
+하의,남성,chino,팬츠,straight,스트레이트핏 치노,p04795402,https://www.zara.com/kr/ko/-p04795402.html,KR live,https://www.zara.com/kr/ko/man-trousers-chinos-l845.html,팬츠 안 치노류(상품명 구분)
+하의,남성,chino,팬츠,wide,릴렉스핏 치노,p04302405,https://www.zara.com/kr/ko/-p04302405.html,KR미확인(글로벌live),https://www.zara.com/kr/ko/man-trousers-chinos-l845.html,라벨=relaxed(wide 근사)
