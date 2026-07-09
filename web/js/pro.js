@@ -49,10 +49,17 @@
   }
   function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2000); }
   function stClass(s){ return s==='신규'?'nw':(s==='제안발송'?'sent':(s==='수락됨'?'prog':(s==='완료'?'done':'sent'))); }
+  /* 서비스 유형 선(line) 아이콘 — 마이페이지 SVG 스타일 */
+  var SVC_SVG = {
+    online:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M8 20h8M12 16.5v3.5"/></svg>',
+    shopping:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7V6a3 3 0 0 1 6 0v1"/></svg>',
+    imaging:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.3"/><path d="M8.5 7l1.3-2h4.4l1.3 2"/></svg>'
+  };
+  function svcSvg(t){ return SVC_SVG[t]||SVC_SVG.online; }
   function svcMeta(s){
-    if(s==='shopping') return {cls:'shopping', label:'동행 쇼핑', icon:'🛍️'};
-    if(s==='imaging')  return {cls:'imaging',  label:'이미지 컨설팅', icon:'✨'};
-    return {cls:'online', label:'온라인 스타일링', icon:'💻'};
+    if(s==='shopping') return {cls:'shopping', label:'동행 쇼핑', icon:svcSvg('shopping')};
+    if(s==='imaging')  return {cls:'imaging',  label:'이미지 컨설팅', icon:svcSvg('imaging')};
+    return {cls:'online', label:'온라인 스타일링', icon:svcSvg('online')};
   }
   function svcLabel(s){ return svcMeta(s).label; }
   function svcBadge(s){ var m=svcMeta(s); return '<span class="svcbadge '+m.cls+'">'+m.icon+' '+m.label+'</span>'; }
@@ -234,7 +241,7 @@
     var news=reqs.filter(function(r){return r.status==='신규'&&r.dir!=='out';}).sort(byDateDesc);
     if(!news.length){ el.style.display='none'; return; }
     el.style.display='block';
-    el.innerHTML='<div class="subhead">⏰ 지금 응답이 필요해요 <span class="ucount">'+news.length+'건</span></div>'+
+    el.innerHTML='<div class="subhead">지금 응답이 필요해요 <span class="ucount">'+news.length+'건</span></div>'+
       news.map(function(r,k){ var i=reqs.indexOf(r);
         return '<div class="urow"><div class="uinfo"><b>'+r.cust+' 님 · '+r.occ+'</b>'+
           '<small>'+r.bodytype+' · 예산 '+r.budget+' · '+DEMO_AGO[k%DEMO_AGO.length]+'</small></div>'+
@@ -252,7 +259,7 @@
     setText('hdrName', PROFILE.name);
     setText('sideName', PROFILE.name);
     setText('pfName', PROFILE.name);
-    setText('dashHello', '안녕하세요, '+PROFILE.name+'님 👋');
+    setText('dashHello', '안녕하세요, '+PROFILE.name+'님');
     if(PROFILE.tagline || PROFILE.bio){
       var bio=document.getElementById('pfBio');
       if(bio) bio.textContent=[PROFILE.tagline, PROFILE.bio].filter(Boolean).join(' · ');
@@ -269,7 +276,7 @@
     if(sd){ sd.src=src; sd.style.visibility='visible'; }
   }
   /* 서비스·가격을 카테고리별 카드 행으로 (가입 전이면 데모 기본값 사용) */
-  function svcIcon(t){ return t==='online'?'💻':(t==='shopping'?'🛍️':(t==='imaging'?'✨':(t==='visit'?'🏠':'🧑‍💼'))); }
+  function svcIcon(t){ return svcSvg(t); }
   function svcDesc(t){ return t==='online'?'비대면 온라인 스타일링':(t==='shopping'?'매장 동행 쇼핑':(t==='imaging'?'이미지 컨설팅':(t==='visit'?'직접 만나서 코디':'맞춤 서비스'))); }
   function renderServices(){
     var base = PROFILE || DEFAULT_PROFILE;
@@ -299,7 +306,7 @@
     if(!el||!head) return;
     if(rg.length){
       head.style.display=''; el.style.display='';
-      el.innerHTML = rg.map(function(t){ return '<span class="tag">📍 '+t+'</span>'; }).join('');
+      el.innerHTML = rg.map(function(t){ return '<span class="tag">'+t+'</span>'; }).join('');
     } else { head.style.display='none'; el.style.display='none'; }
   }
   /* 프로필 사진 확대 */
