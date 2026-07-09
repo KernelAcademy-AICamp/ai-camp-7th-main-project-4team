@@ -8,6 +8,7 @@
      수집 데이터는 localStorage 'fitting.pro.profile'에 저장(데이터 계약: docs/쇼퍼가입-화면정의서.md §5). -->
 <link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <style>
   *{box-sizing:border-box}
   body{margin:0;min-height:100vh;background:var(--soft,#f6f5f2);font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;color:var(--ink,#1c1a17);display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
@@ -83,7 +84,7 @@
 <body>
 <div class="shell">
   <div class="brandbar">
-    <span class="logo">Fitting<i></i></span>
+    <span class="logo" style="cursor:pointer" onclick="location.href='index.html'">Fitting<i></i></span>
     <span class="closex" onclick="location.href='index.html'">✕ 닫기</span>
   </div>
 
@@ -129,11 +130,15 @@
           <label class="tog"><input type="checkbox" id="svcOnlineOn" checked onchange="toggleSvc()"> 온라인 스타일링</label>
           <span class="price"><input type="number" id="priceOnline" value="35000" oninput="validate()"></span><span class="won">원</span>
         </div>
-        <div class="svc" id="svcVisit">
-          <label class="tog"><input type="checkbox" id="svcVisitOn" checked onchange="toggleSvc()"> 방문</label>
-          <span class="price"><input type="number" id="priceVisit" value="120000" oninput="validate()"></span><span class="won">원</span>
+        <div class="svc" id="svcShopping">
+          <label class="tog"><input type="checkbox" id="svcShoppingOn" checked onchange="toggleSvc()"> 동행 쇼핑</label>
+          <span class="price"><input type="number" id="priceShopping" value="120000" oninput="validate()"></span><span class="won">원</span>
         </div>
-        <div class="hint">최소 1개 유형을 켜야 진행돼요. (화상 서비스는 추후 추가 예정)</div>
+        <div class="svc" id="svcImaging">
+          <label class="tog"><input type="checkbox" id="svcImagingOn" checked onchange="toggleSvc()"> 이미지 컨설팅</label>
+          <span class="price"><input type="number" id="priceImaging" value="90000" oninput="validate()"></span><span class="won">원</span>
+        </div>
+        <div class="hint">최소 1개 유형을 켜야 진행돼요.</div>
         <div class="err" id="err2">활동명과 켠 유형의 가격을 확인해주세요</div>
         <button class="btn" id="next2" onclick="go(3)">다음</button>
       </section>

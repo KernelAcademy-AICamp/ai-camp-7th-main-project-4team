@@ -20,8 +20,26 @@
   .logo i{display:inline-block;width:6px;height:6px;background:var(--green);margin-left:2px}
   .pill-role{font-size:11.5px;font-weight:800;color:var(--green);background:var(--green-soft);padding:5px 11px;border-radius:20px;letter-spacing:.02em}
   .navr{margin-left:auto;display:flex;align-items:center;gap:16px;font-size:14px;color:var(--sub)}
-  .navr .cust{cursor:pointer} .navr .me{font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px}
+  .navr .cust{cursor:pointer} .navr .me{font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px;cursor:pointer}
   .navr .me img{width:28px;height:28px;border-radius:50%;object-fit:cover;filter:saturate(.6)}
+  .navr .caret{font-size:11px;color:var(--sub2)}
+  .navr .bell{position:relative;cursor:pointer;font-size:17px}
+  .bell-badge{position:absolute;top:-6px;right:-8px;min-width:16px;height:16px;padding:0 4px;background:#e5484d;color:#fff;font-size:10px;font-weight:800;border-radius:20px;display:flex;align-items:center;justify-content:center}
+  .accmenu{position:absolute;top:58px;right:30px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.13);padding:6px;display:none;z-index:60;min-width:150px}
+  .accmenu.on{display:block}
+  .accmenu a{display:block;padding:10px 12px;font-size:13.5px;font-weight:700;color:var(--ink);border-radius:8px;cursor:pointer}
+  .accmenu a:hover{background:var(--soft)}
+  /* 정산 내역 */
+  .setrow{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)} .setrow:last-child{border-bottom:none}
+  .setrow .si{flex:1;min-width:0} .setrow .si b{font-size:14px} .setrow .si small{display:block;font-size:12.5px;color:var(--sub);margin-top:2px}
+  .setrow .amt{font-family:var(--num);font-weight:800;font-size:15px;white-space:nowrap}
+  .setrow .stag{font-size:11px;font-weight:800;padding:4px 9px;border-radius:20px;background:var(--green-soft);color:var(--green);white-space:nowrap}
+  .setrow .stag.wait{background:var(--soft);color:var(--sub)}
+  /* 후기 답글 */
+  .rvreply{margin-top:10px;padding:11px 13px;background:var(--green-soft);border-radius:10px;font-size:13px;color:var(--ink-soft)}
+  .rvreply b{color:var(--green)}
+  .rvreplyform{margin-top:10px} .rvreplyform textarea{width:100%;border:1.5px solid var(--line2);border-radius:10px;padding:10px 12px;font-family:inherit;font-size:13.5px;resize:vertical;min-height:52px}
+  .rvreplyform .rb{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
 
   .prowrap{display:grid;grid-template-columns:250px 1fr;gap:30px;align-items:start;padding:32px 0 60px}
   .side{position:sticky;top:88px}
@@ -66,9 +84,11 @@
   .req .info{flex:1;min-width:0} .req .info b{font-size:14.5px} .req .info small{display:block;font-size:12.5px;color:var(--sub);margin-top:2px}
   .st{font-size:12px;font-weight:800;padding:5px 11px;border-radius:20px;white-space:nowrap}
   .st.nw{background:var(--green);color:#fff} .st.sent{background:var(--soft);color:var(--sub)} .st.prog{background:var(--green-soft);color:var(--green)} .st.done{background:var(--green-soft);color:var(--green)}
-  /* 서비스 유형 배지(온라인/방문) */
+  /* 서비스 유형 배지(온라인 스타일링·동행 쇼핑·이미지 컨설팅) */
   .svcbadge{display:inline-block;font-size:11px;font-weight:800;border-radius:20px;padding:2px 9px;margin-left:8px;vertical-align:middle;white-space:nowrap}
   .svcbadge.online{background:var(--green-soft);color:var(--green)}
+  .svcbadge.shopping{background:#fbeede;color:#b9741a}
+  .svcbadge.imaging{background:#efeafb;color:#7a5bb0}
   .svcbadge.visit{background:#fbeede;color:#b9741a}
   .reqact{margin-top:12px;padding:12px 14px;background:var(--soft);border-radius:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--sub)}
   .reqnote{font-style:normal;color:var(--ink-soft)}
@@ -169,11 +189,16 @@
 <body>
 
 <header><div class="nav">
-  <span class="logo">Fitting<i></i></span>
+  <span class="logo" style="cursor:pointer" onclick="location.href='index.html'">Fitting<i></i></span>
   <span class="pill-role">쇼퍼 지원</span>
   <div class="navr">
     <span class="cust" onclick="location.href='index.html'">← 고객 화면</span>
-    <span class="me"><img id="hdrAvatar" src="photos/p1.jpg" alt="프로필 사진" style="cursor:zoom-in" onclick="openAvatar()" onerror="this.style.visibility='hidden'"><span id="hdrName">소희 쇼퍼</span></span>
+    <span class="bell" onclick="goPanel('inbox')" title="새 요청 알림">🔔<span class="bell-badge" id="bellBadge" style="display:none">0</span></span>
+    <span class="me" onclick="toggleAccMenu(event)"><img id="hdrAvatar" src="photos/p1.jpg" alt="프로필 사진" onerror="this.style.visibility='hidden'"><span id="hdrName">소희 쇼퍼</span> <span class="caret">▾</span></span>
+  </div>
+  <div class="accmenu" id="accMenu">
+    <a onclick="goPanel('profile')">👤 내 프로필</a>
+    <a onclick="logout()">↩ 로그아웃</a>
   </div>
 </div></header>
 
@@ -183,11 +208,12 @@
       <img id="sideAvatar" src="photos/p1.jpg" alt="프로필 사진" onclick="openAvatar()" onerror="this.style.visibility='hidden'">
       <div class="nm" id="sideName">소희 쇼퍼</div>
       <div class="role" id="sideRole">온라인 스타일링</div>
-      <div class="rate">★ <span class="num">4.9</span> · 후기 <span class="num" id="pRev">0</span></div>
+      <div class="rate">★ <span class="num" id="pRate">—</span> · 후기 <span class="num" id="pRev">0</span></div>
     </div>
     <nav class="smenu" id="smenu">
       <a class="on" data-p="dash" onclick="nav(this)"><span class="i">📊</span> 대시보드</a>
       <a data-p="inbox" onclick="nav(this)"><span class="i">🧾</span> 요청함 <span class="cnt" id="newCnt">0</span></a>
+      <a data-p="propose" onclick="nav(this)"><span class="i">🙋</span> 먼저 제안</a>
       <a data-p="profile" onclick="nav(this)"><span class="i">👤</span> 내 프로필</a>
       <a data-p="reviews" onclick="nav(this)"><span class="i">⭐</span> 받은 후기</a>
       <a data-p="settle" onclick="nav(this)"><span class="i">💰</span> 정산</a>
@@ -200,8 +226,8 @@
       <div class="crumb">쇼퍼 지원 · 대시보드</div>
       <h1 id="dashHello">안녕하세요, 소희 쇼퍼님 👋</h1>
       <p class="lead">오늘의 요청과 진행 현황이에요</p>
-      <div class="card urgent" id="dashUrgent"></div>
       <div class="stats" id="dashStats"></div>
+      <div class="card urgent" id="dashUrgent"></div>
       <div class="card"><div class="subhead">최근 요청</div><div id="dashRecent"></div></div>
     </section>
 
@@ -210,8 +236,18 @@
       <div class="crumb">쇼퍼 지원 · 요청함</div>
       <h1>요청함</h1>
       <p class="lead">고객이 보낸 견적 요청을 검토하고 제안을 보내세요</p>
-      <div class="card"><div class="subhead">진행 중인 요청</div><div id="inboxList"></div></div>
-      <div class="card" id="inboxDoneCard" style="margin-top:16px"><div class="subhead">✓ 완료된 요청</div><div id="inboxDoneList"></div></div>
+      <div class="card"><div class="subhead">새 요청</div><div id="inboxNewList"></div></div>
+      <div class="card" style="margin-top:16px"><div class="subhead">진행 중</div><div id="inboxProgList"></div></div>
+      <div class="card" id="inboxDoneCard" style="margin-top:16px"><div class="subhead">✓ 완료·취소된 요청</div><div id="inboxDoneList"></div></div>
+    </section>
+
+    <!-- 먼저 제안 -->
+    <section class="panel" id="propose">
+      <div class="crumb">쇼퍼 지원 · 먼저 제안</div>
+      <h1>먼저 제안</h1>
+      <p class="lead">제안받기를 원하는 고객에게 <b style="color:var(--ink)">내가 먼저 제안</b>하고, 보낸 제안을 관리해요</p>
+      <div class="card" id="dashCandCard"><div class="subhead">🙋 제안받기를 원하는 고객 <small style="font-weight:600;color:var(--sub2)">· 먼저 제안해보세요</small></div><div id="dashCand"></div></div>
+      <div class="card" id="inboxOutCard" style="margin-top:16px"><div class="subhead">📤 내가 보낸 제안</div><div id="inboxOutList"></div></div>
     </section>
 
     <!-- 내 프로필 -->
@@ -262,11 +298,15 @@
           <label class="etog"><input type="checkbox" id="edOnlineOn" onchange="edToggleSvc()"> 온라인 스타일링</label>
           <input class="epr" id="edOnlinePrice" type="number"><span class="won">원</span>
         </div>
-        <div class="esvc" id="edSvcVisit">
-          <label class="etog"><input type="checkbox" id="edVisitOn" onchange="edToggleSvc()"> 방문</label>
-          <input class="epr" id="edVisitPrice" type="number"><span class="won">원</span>
+        <div class="esvc" id="edSvcShopping">
+          <label class="etog"><input type="checkbox" id="edShoppingOn" onchange="edToggleSvc()"> 동행 쇼핑</label>
+          <input class="epr" id="edShoppingPrice" type="number"><span class="won">원</span>
         </div>
-        <div class="efhint">최소 1개 유형을 켜야 저장돼요. (화상 서비스는 추후 추가 예정)</div>
+        <div class="esvc" id="edSvcImaging">
+          <label class="etog"><input type="checkbox" id="edImagingOn" onchange="edToggleSvc()"> 이미지 컨설팅</label>
+          <input class="epr" id="edImagingPrice" type="number"><span class="won">원</span>
+        </div>
+        <div class="efhint">최소 1개 유형을 켜야 저장돼요.</div>
 
         <label class="efl">한 줄 소개</label>
         <input class="efin" id="edTagline" type="text" placeholder="예: 데일리·소개팅룩 전문 스타일리스트">
@@ -301,8 +341,9 @@
     <section class="panel" id="settle">
       <div class="crumb">쇼퍼 지원 · 정산</div>
       <h1>정산</h1>
-      <p class="lead">완료 건 기준 정산 내역 · <b style="color:var(--green)">준비 중</b>이에요 (v2)</p>
-      <div class="card"><p class="note" style="padding:20px 0">완료된 서비스의 정산·수익 관리가 여기에 들어와요.</p></div>
+      <p class="lead">완료된 서비스의 수익과 정산 내역이에요</p>
+      <div class="stats" id="settleStats" style="grid-template-columns:repeat(3,1fr)"></div>
+      <div class="card"><div class="subhead">정산 내역</div><div id="settleList"></div></div>
     </section>
 
   </main>

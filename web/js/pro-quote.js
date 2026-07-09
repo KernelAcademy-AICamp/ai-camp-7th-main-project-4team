@@ -13,35 +13,34 @@
   var BTMAP = {};
   var offering = false;
 
-  /* 체형 측정 부위 정의 (result.js와 동일) */
-  var MEAS = {
-    TOP:[['shoulder','좁은 어깨','넓은 어깨','어깨 — 어깨 기준으로 사이즈가 갈려요'],
-         ['chestFull','슬림한 가슴','볼륨 있는 가슴','가슴 — 슬림핏은 여유를 확인해요'],
-         ['waist','슬림한 배','볼륨 있는 배','배 — 표준 대비 위치'],
-         ['arm','짧은 상체·팔','긴 상체·팔','총장·소매 — 기장이 맞는지']],
-    BOTTOM:[['waist','슬림한 허리','볼륨 있는 허리','허리 — 밴드·버튼 기준'],
-            ['hip','슬림한 엉덩이','볼륨 있는 엉덩이','엉덩이 — 힙 기준으로 사이즈가 갈려요']]
-  };
   /* 요청자별 임의(데모) 측정치 + 선호핏 */
   var MEASURE_BY_CUST = {
     '김도현':{ top:{shoulder:55,chestFull:46,waist:40,arm:52}, bottom:{waist:44,hip:41}, prefTop:55, prefBottom:46 },
     '정예린':{ top:{shoulder:72,chestFull:48,waist:30,arm:55}, bottom:{waist:34,hip:30}, prefTop:34, prefBottom:40 },
     '이서연':{ top:{shoulder:62,chestFull:38,waist:28,arm:54}, bottom:{waist:24,hip:58}, prefTop:55, prefBottom:35 },
     '박지우':{ top:{shoulder:40,chestFull:44,waist:36,arm:46}, bottom:{waist:30,hip:68}, prefTop:52, prefBottom:74 },
-    '최민준':{ top:{shoulder:58,chestFull:56,waist:50,arm:57}, bottom:{waist:50,hip:47}, prefTop:70, prefBottom:55 }
+    '최민준':{ top:{shoulder:58,chestFull:56,waist:50,arm:57}, bottom:{waist:50,hip:47}, prefTop:70, prefBottom:55 },
+    '이수민':{ top:{shoulder:48,chestFull:52,waist:26,arm:50}, bottom:{waist:22,hip:60}, prefTop:50, prefBottom:36 },
+    '박준영':{ top:{shoulder:74,chestFull:52,waist:34,arm:58}, bottom:{waist:38,hip:32}, prefTop:38, prefBottom:44 },
+    '최지아':{ top:{shoulder:38,chestFull:42,waist:34,arm:44}, bottom:{waist:30,hip:66}, prefTop:58, prefBottom:70 }
   };
   var MEASURE_DEFAULT = { top:{shoulder:50,chestFull:50,waist:45,arm:50}, bottom:{waist:45,hip:48}, prefTop:55, prefBottom:50 };
 
-  function svcLabel(s){ return s==='visit' ? '방문 서비스' : '온라인 컨설팅'; }
-  function svcBadge(s){ var v=s==='visit'; return '<span class="svcbadge '+(v?'visit':'online')+'">'+(v?'🏠 방문 서비스':'💻 온라인 컨설팅')+'</span>'; }
-  function stClass(s){ return s==='신규'?'nw':(s==='제안발송'?'sent':(s==='수락됨'?'prog':'done')); }
+  function svcMeta(s){
+    if(s==='shopping') return {cls:'shopping', label:'동행 쇼핑', icon:'🛍️'};
+    if(s==='imaging')  return {cls:'imaging',  label:'이미지 컨설팅', icon:'✨'};
+    return {cls:'online', label:'온라인 스타일링', icon:'💻'};
+  }
+  function svcLabel(s){ return svcMeta(s).label; }
+  function svcBadge(s){ var m=svcMeta(s); return '<span class="svcbadge '+m.cls+'">'+m.icon+' '+m.label+'</span>'; }
+  function stClass(s){ return s==='신규'?'nw':(s==='제안발송'?'sent':(s==='수락됨'?'prog':(s==='완료'?'done':'sent'))); }
   function starsRO(n){ var s=''; for(var k=1;k<=5;k++) s+='<span style="color:'+(k<=n?'#e8a13a':'#ddd')+'">★</span>'; return s; }
 
-  /* ── 제안 액션(상태별) ── */
+  /* ── 액션(상태별) ── 받은 요청: 수락/거절 · 진행 중: 완료/취소 · 보낸 제안: 응답 대기 ── */
   function actionHTML(r){
     if(r.status==='신규'){
-      if(offering) return offerForm(r);
-      return '<button class="btn" onclick="openOffer()">제안 보내기</button>';
+      return '<button class="btn" onclick="accept()">수락</button>'+
+             '<button class="btn ghost" style="margin-top:10px" onclick="reject()">거절</button>';
     }
     if(r.status==='제안발송'){ var o=r.offer||{};
       return '<div class="note-quote"><b style="color:var(--green)">제안 발송됨</b> · <span class="num">'+((o.price||0).toLocaleString())+'</span>원<br>'+
@@ -49,50 +48,50 @@
         '<span style="font-size:12.5px;color:var(--sub2)">고객 응답을 기다리는 중이에요</span></div>'+
         '<button class="btn ghost" style="margin-top:10px" onclick="simAccept()">고객 수락 · 데모</button>';
     }
-    if(r.status==='수락됨'){ var o2=r.offer||{};
-      return '<div class="note-quote"><b style="color:var(--green)">수락됨 · 진행 중</b> · <span class="num">'+((o2.price||0).toLocaleString())+'</span>원</div>'+
-        '<button class="btn" style="margin-top:10px" onclick="completeReq()">완료 처리</button>';
+    if(r.status==='수락됨'){
+      return '<div class="note-quote"><b style="color:var(--green)">수락됨 · 진행 중</b>'+((r.offer&&r.offer.price)?' · <span class="num">'+r.offer.price.toLocaleString()+'</span>원':'')+'</div>'+
+        '<button class="btn" style="margin-top:10px" onclick="completeReq()">완료 처리</button>'+
+        '<button class="btn ghost" style="margin-top:8px" onclick="cancelReq()">취소 처리</button>';
     }
     if(r.status==='완료'){
       if(r.review) return '<div class="seclabel">고객 후기</div><div class="note-quote"><span style="letter-spacing:1px">'+starsRO(r.review.rating)+'</span><br>"'+esc(r.review.text)+'"</div>';
       return '<div class="note-quote muted">완료 · 고객 후기를 기다리는 중이에요</div>';
     }
+    if(r.status==='거절'){ return '<div class="note-quote muted">거절한 요청이에요'+(r.reason?' · "'+esc(r.reason)+'"':'')+'</div><button class="btn ghost" style="margin-top:10px" onclick="undoReject()">되돌리기</button>'; }
+    if(r.status==='취소'){ return '<div class="note-quote muted">취소된 요청이에요'+(r.reason?' · "'+esc(r.reason)+'"':'')+'</div><button class="btn ghost" style="margin-top:10px" onclick="undoCancel()">되돌리기</button>'; }
     return '';
   }
-  function offerForm(r){
-    return '<div class="offerform">'+
-      '<label>견적 금액</label><input id="offAmt" type="number" value="'+((r.offer&&r.offer.price)||MY_PRICE)+'"> '+
-      '<label>고객에게 전할 한 줄 제안</label><textarea id="offMsg" placeholder="예: 면접관 시선까지 고려해 첫인상 깔끔하게 잡아드릴게요">'+esc((r.offer&&r.offer.msg)||'')+'</textarea>'+
-      '<div class="obtns"><button class="tinybtn ghost" onclick="cancelOffer()">취소</button><button class="tinybtn" onclick="sendOffer()">제안 발송</button></div>'+
-    '</div>';
-  }
-  function openOffer(){ offering=true; render(); }
-  function cancelOffer(){ offering=false; render(); }
-  function sendOffer(){
-    var a=$('offAmt'), m=$('offMsg');
-    var price=a?parseInt(a.value,10)||MY_PRICE:MY_PRICE, msg=m?m.value.trim():'';
-    reqs[idx].offer={price:price, msg:msg||'요청에 맞춰 코디해드릴게요'}; reqs[idx].status='제안발송'; offering=false;
-    saveLS('pro.reqs',reqs); render(); toast(reqs[idx].cust+' 님에게 제안을 보냈어요');
-  }
+  function svcPrice(service){ if(profile&&profile.services){ var f=profile.services.filter(function(s){return s.type===service;})[0]; if(f) return f.price; } return MY_PRICE; }
+  function accept(){ if(!reqs[idx].offer) reqs[idx].offer={price:svcPrice(reqs[idx].service)}; reqs[idx].status='수락됨'; saveLS('pro.reqs',reqs); render(); toast('요청을 수락했어요'); }
+  function reject(){ var rs=prompt('거절 사유 (선택 입력)',''); if(rs===null) return; reqs[idx].reason=rs.trim(); reqs[idx].status='거절'; saveLS('pro.reqs',reqs); render(); toast('요청을 거절했어요'); }
+  function undoReject(){ reqs[idx].status='신규'; reqs[idx].reason=''; saveLS('pro.reqs',reqs); render(); toast('거절을 되돌렸어요'); }
   function simAccept(){ reqs[idx].status='수락됨'; saveLS('pro.reqs',reqs); render(); toast(reqs[idx].cust+' 님이 제안을 수락했어요'); }
-  function completeReq(){ reqs[idx].status='완료'; saveLS('pro.reqs',reqs); render(); toast('완료 처리했어요 · 고객 후기를 기다려요'); }
+  function completeReq(){ reqs[idx].status='완료'; saveLS('pro.reqs',reqs); render(); toast('완료 처리했어요'); }
+  function cancelReq(){ var rs=prompt('취소 사유 (선택 입력)',''); if(rs===null) return; reqs[idx].reason=rs.trim(); reqs[idx].status='취소'; saveLS('pro.reqs',reqs); render(); toast('진행을 취소했어요'); }
+  function undoCancel(){ reqs[idx].status='수락됨'; reqs[idx].reason=''; saveLS('pro.reqs',reqs); render(); toast('취소를 되돌렸어요'); }
 
-  /* ── 체형 측정 바 (result.html 재현) ── */
-  function specRow(poleL,pct,poleR,axis){
-    pct=Math.max(3,Math.min(97,Math.round(pct||50)));
-    var lc=pct<50?' dom':'', rc=pct>=50?' dom':'';
-    return '<div class="mspec"><div class="top"><span class="pole'+lc+'">'+esc(poleL)+'</span><span class="pct"><span class="n">'+pct+'</span>%</span><span class="pole'+rc+'">'+esc(poleR)+'</span></div>'+
-      '<div class="mtrack"><i style="width:'+pct+'%"></i></div><div class="maxis">'+esc(axis)+'</div></div>';
+  /* ── 내 체형 측정 — 마이페이지 세그먼트(5칸) 디자인 재현 ── */
+  function segIdx(pct){ return Math.max(0, Math.min(4, Math.floor((pct==null?50:pct)/20))); }
+  function zoneLabel(i, L, R){ return i===0?L:(i===1?L+' 편':(i===2?'표준':(i===3?R+' 편':R))); }
+  function n2row(part, pct, L, R, lo){
+    var idx=segIdx(pct), segs='';
+    for(var i=0;i<5;i++){ var c=(i===idx)?' on':(Math.abs(i-idx)===1?' near':''); segs+='<div class="n2seg'+c+'"></div>'; }
+    return '<div class="n2row'+(lo?' lo':'')+'"><div class="n2top"><span class="part">'+esc(part)+'</span><span class="zone">'+esc(zoneLabel(idx,L,R))+'</span></div>'+
+      '<div class="n2segs">'+segs+'</div>'+
+      '<div class="n2scale"><span>'+esc(L)+'</span><span>'+esc(R)+'</span></div></div>';
   }
-  function measureBlock(chip, subtitleHTML, cat, vals, prefRowHTML){
-    var rows = MEAS[cat].map(function(p){ return specRow(p[1], vals[p[0]], p[2], p[3]); }).join('');
-    return '<div class="card">'+
-      '<div class="mrow"><span class="mkicker">내 체형 측정</span><span class="mchip">'+chip+'</span></div>'+
-      '<div class="mgrp">'+subtitleHTML+'</div>'+
-      rows+
-      '<div class="mgrp">선호</div>'+
-      prefRowHTML+
-      '<div class="mnote">부위는 <b style="color:var(--ink)">카테고리별로 달라져요</b>. 다른 카테고리까지 진단하면 상하 균형·전신 비율이 나와요.</div>'+
+  function measureCard(m, bt, r){
+    return '<div class="dtl-meas">'+
+      '<div class="dtl-meas-h"><span class="k">내 체형 측정</span><span class="chip">전신 · 상·하의 완료</span></div>'+
+      '<div class="dtl-grp up" style="margin-top:8px">상체 — 상의 진단</div>'+
+      n2row('어깨', m.top.shoulder, '좁은', '넓은', false)+
+      n2row('가슴', m.top.chestFull, '슬림한', '볼륨 있는', false)+
+      '<div class="dtl-grp lo">하체 — 하의 진단</div>'+
+      n2row('허리', m.bottom.waist, '슬림한', '볼륨 있는', true)+
+      n2row('엉덩이', m.bottom.hip, '슬림한', '볼륨 있는', true)+
+      '<div class="dtl-grp pref">취향</div>'+
+      n2row('핏 취향', m.prefTop, '타이트', '여유', false)+
+      '<div class="dtl-note">어깨·가슴·허리·엉덩이 측정을 종합해 <b style="color:var(--ink)">'+esc(bt.name||r.bodytype||'')+'('+esc(r.type||'')+')</b> 유형으로 확정됐어요</div>'+
     '</div>';
   }
 
@@ -100,43 +99,48 @@
   function render(){
     var r = reqs[idx];
     if(!r){ $('quoteRoot').innerHTML='<p class="crumb">요청을 찾을 수 없어요.</p><p style="margin-top:10px"><a class="tinybtn" onclick="location.href=\'pro.html\'">요청함으로</a></p>'; return; }
+    var out = r.dir==='out';
     var bt = BTMAP[r.type] || {};
     var m = MEASURE_BY_CUST[r.cust] || MEASURE_DEFAULT;
     var profileLines = (bt.profile||[]).map(function(p){ return '<p class="bdesc">'+esc(p)+'</p>'; }).join('');
 
-    var topBlock = measureBlock('상의 기준', '필수 부위 — 키·몸무게로 추정한 몸', 'TOP', m.top,
-      specRow('타이트 선호', m.prefTop, '여유 핏 선호', '여유 선호핏 — 고른 핏 취향'));
-    var botBlock = measureBlock('하의 기준', '필수 부위 — 착용경험으로 <b style="color:var(--ink)">역산</b>한 몸', 'BOTTOM', m.bottom,
-      specRow('슬림 실루엣', m.prefBottom, '와이드 실루엣', '선호 실루엣 — 고른 바지 형태'));
+    // 왼쪽: 체형 데이터가 있으면 측정 표시, 없으면(구 데이터) 안내 플레이스홀더
+    var leftCol = (out && !r.cm)
+      ? '<div class="card"><div class="seclabel">고객 체형 정보</div><p class="bdesc" style="color:var(--sub)">고객이 진단 결과를 공유하면 체형 측정 정보가 여기에 표시돼요.</p></div>'
+      : measureCard(m, bt, r);
+
+    // 오른쪽 상단: 받은 요청=체형결과상세, 보낸 제안=제안 대상
+    var detailCard = out
+      ? '<div class="card"><div class="seclabel">제안 대상</div>'+
+          '<div class="kv"><span>고객</span><b>'+esc(r.cust)+' 님</b></div>'+
+          '<div class="kv"><span>상황</span><b>'+esc(r.occ||'—')+'</b></div>'+
+          '<div class="kv"><span>서비스 유형</span><b>'+svcLabel(r.service)+'</b></div>'+
+        '</div>'
+      : '<div class="card">'+
+          '<div class="seclabel">체형진단 결과 상세</div>'+
+          '<div class="btname"><i style="background:'+esc(bt.point||'#ccc')+'"></i>'+esc(bt.name||r.bodytype||'')+'</div>'+
+          '<div class="btsub">'+esc(bt.sizeKorea||'')+(bt.silhouette?' · '+esc(bt.silhouette)+' 실루엣':'')+' · <span class="num">'+(r.cm||'—')+'</span>cm · <span class="num">'+(r.kg||'—')+'</span>kg</div>'+
+          profileLines+
+        '</div>'+
+        '<div class="card">'+
+          '<div class="subhead">요청 내용</div>'+
+          '<div class="kv"><span>서비스 유형</span><b>'+svcLabel(r.service)+'</b></div>'+
+          '<div class="kv"><span>상황</span><b>'+esc(r.occ)+'</b></div>'+
+          '<div class="kv"><span>예산</span><b>'+esc(r.budget)+'</b></div>'+
+          '<div class="kv"><span>희망 일정</span><b>'+esc(r.date||'—')+'</b></div>'+
+          '<div class="seclabel" style="margin-top:16px">한 줄 요청</div>'+
+          '<div class="note-quote'+(r.note?'':' muted')+'">'+(r.note?('"'+esc(r.note)+'"'):'요청 메모 없음')+'</div>'+
+        '</div>';
 
     $('quoteRoot').innerHTML =
-      '<p class="crumb">쇼퍼 지원 · 견적 요청</p>'+
-      '<h1>'+esc(r.cust)+' 님 · '+esc(r.occ)+'</h1>'+
+      '<p class="crumb">쇼퍼 지원 · '+(out?'보낸 제안':'견적 요청')+'</p>'+
+      '<h1>'+esc(r.cust)+' 님'+(r.occ?' · '+esc(r.occ):'')+'</h1>'+
       '<div class="htags">'+svcBadge(r.service)+'<span class="st '+stClass(r.status)+'">'+esc(r.status)+'</span></div>'+
       '<div class="qgrid2">'+
-        // ── 왼쪽: 내 체형 측정 (상의 / 하의) ──
-        '<div class="qleft">'+ topBlock + botBlock +'</div>'+
-        // ── 오른쪽: 결과 상세 · 요청 내용 · 제안 ──
+        '<div class="qleft">'+ leftCol +'</div>'+
         '<div class="qright">'+
-          '<div class="card">'+
-            '<div class="seclabel">체형진단 결과 상세</div>'+
-            '<div class="btname"><i style="background:'+esc(bt.point||'#ccc')+'"></i>'+esc(bt.name||r.bodytype||'')+'</div>'+
-            '<div class="btsub">'+esc(bt.sizeKorea||'')+(bt.silhouette?' · '+esc(bt.silhouette)+' 실루엣':'')+' · <span class="num">'+(r.cm||'—')+'</span>cm · <span class="num">'+(r.kg||'—')+'</span>kg</div>'+
-            profileLines+
-          '</div>'+
-          '<div class="card">'+
-            '<div class="subhead">요청 내용</div>'+
-            '<div class="kv"><span>서비스 유형</span><b>'+svcLabel(r.service)+'</b></div>'+
-            '<div class="kv"><span>상황</span><b>'+esc(r.occ)+'</b></div>'+
-            '<div class="kv"><span>예산</span><b>'+esc(r.budget)+'</b></div>'+
-            '<div class="kv"><span>희망 일정</span><b>'+esc(r.date||'—')+'</b></div>'+
-            '<div class="seclabel" style="margin-top:16px">한 줄 요청</div>'+
-            '<div class="note-quote'+(r.note?'':' muted')+'">'+(r.note?('"'+esc(r.note)+'"'):'요청 메모 없음')+'</div>'+
-          '</div>'+
-          '<div class="card">'+
-            '<div class="subhead">제안</div>'+
-            actionHTML(r)+
-          '</div>'+
+          detailCard +
+          '<div class="card"><div class="subhead">'+(out?'제안 현황':'제안')+'</div>'+ actionHTML(r) +'</div>'+
         '</div>'+
       '</div>';
   }

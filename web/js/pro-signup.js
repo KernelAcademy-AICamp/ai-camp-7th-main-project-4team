@@ -39,10 +39,14 @@
 
   /* ===== 검증 ===== */
   function isEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+  var SIGNUP_SERVICES=[
+    {type:'online',   label:'온라인 스타일링', row:'svcOnline',   on:'svcOnlineOn',   price:'priceOnline'},
+    {type:'shopping', label:'동행 쇼핑',       row:'svcShopping', on:'svcShoppingOn', price:'priceShopping'},
+    {type:'imaging',  label:'이미지 컨설팅',   row:'svcImaging',  on:'svcImagingOn',  price:'priceImaging'}
+  ];
   function enabledServices(){
     var s=[];
-    if($('svcOnlineOn').checked){ s.push({type:'online', label:'온라인 스타일링', price:parseInt($('priceOnline').value,10)||0}); }
-    if($('svcVisitOn').checked){ s.push({type:'visit', label:'방문', price:parseInt($('priceVisit').value,10)||0}); }
+    SIGNUP_SERVICES.forEach(function(sv){ if($(sv.on).checked) s.push({type:sv.type, label:sv.label, price:parseInt($(sv.price).value,10)||0}); });
     return s;
   }
   function stepValid(step){
@@ -63,10 +67,11 @@
 
   /* ===== SP-2 서비스 토글 ===== */
   function toggleSvc(){
-    $('svcOnline').classList.toggle('off', !$('svcOnlineOn').checked);
-    $('svcVisit').classList.toggle('off', !$('svcVisitOn').checked);
-    $('priceOnline').disabled=!$('svcOnlineOn').checked;
-    $('priceVisit').disabled=!$('svcVisitOn').checked;
+    SIGNUP_SERVICES.forEach(function(sv){
+      var on=$(sv.on).checked;
+      $(sv.row).classList.toggle('off', !on);
+      $(sv.price).disabled=!on;
+    });
     validate();
   }
 
