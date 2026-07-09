@@ -98,7 +98,7 @@
   }
 
   /* 데모 시드 버전 — 상태 모델이 바뀌었으니 옛 요청 데이터를 1회 자동 초기화(콘솔 리셋 불필요) */
-  if(loadLS('reqsVer',0) < 7){ try{ localStorage.removeItem('fitting.reqs'); }catch(e){} saveLS('reqsVer',7); }
+  if(loadLS('reqsVer',0) < 8){ try{ localStorage.removeItem('fitting.reqs'); }catch(e){} saveLS('reqsVer',8); }
   var reqs = loadLS('reqs', [
     {nm:'상민', svc:'shopping', occ:['결혼식 하객'], budget:'10~15만', date:'2026.06.30', status:'대기'},
     {open:true, svc:'online', occ:['소개팅'], budget:'5~10만', date:'2026.07.02', status:'견적중', bids:makeBids('online',['소개팅'])},
@@ -199,7 +199,7 @@
       '<div class="reqact" style="background:none; padding:10px 2px 0"><span class="muted" style="font-size:11.5px">데모 · 쇼퍼 응답 시뮬레이션</span><div class="obtns" style="margin-left:auto"><button class="tinybtn ghost" onclick="reqReject('+i+')">거절</button><button class="tinybtn" onclick="reqAccept('+i+')">수락</button></div></div>';
     if(s==='취소함') return '<div class="reqact"><span class="muted">요청을 취소했어요</span></div>';
     if(s==='수락') return '<div class="reqact"><span><b style="color:var(--green)">요청 수락되었어요!</b> 이제 쇼퍼와 코디를 진행해요</span></div>';
-    if(s==='진행중') return '<div class="reqact"><span><b style="color:var(--green)">요청 수락되었어요!</b> 완료되면 후기를 남겨주세요</span><button class="tinybtn ghost" style="margin-left:auto" onclick="reqComplete('+i+')">완료 처리 · 데모</button></div>';
+    if(s==='진행중') return '<div class="reqact"><span><b style="color:var(--green)">'+(r.nm||'')+' 쇼퍼로 매칭되었어요!</b> 곧 코디를 시작해요</span><button class="tinybtn ghost" style="margin-left:auto" onclick="reqComplete('+i+')">완료 처리 · 데모</button></div>';
     if(s==='완료'){ if(r._reviewing) return reviewForm(r,i); return '<div class="reqact"><span>서비스가 완료됐어요 · 어떠셨나요?</span><button class="tinybtn" style="margin-left:auto" onclick="openReviewForm('+i+')">후기 작성하기</button></div>'; }
     if(s==='후기완료'){ var rv=r.review||{}; return '<div class="reqact"><div class="revshow"><span class="starsRO">'+starsRO(rv.rating||5)+'</span> <span class="rtx">"'+(rv.text||'')+'"</span></div></div>'; }
     if(s==='거절') return '<div class="reqact"><span class="muted">아쉽게도 요청이 거절되었어요!</span><button class="tinybtn ghost" style="margin-left:auto" onclick="closeBids();go(\'shop\')">다른 쇼퍼 찾기</button></div>';
@@ -294,8 +294,13 @@
   function syncReqViews(){ renderReqs(); if(_ovMode && document.getElementById('bidsOverlay').classList.contains('on')){ _ovMode==='req'?renderReqDetail():renderBids(); } }
   /* 내가 보낸 요청 내용 요약(오픈: 토글 · 지명: 상세에 상시 노출) */
   function reqSummaryHTML(r){
-    var rows=[['서비스 유형', svcLabel(r.svc)], ['상황', (r.occ&&r.occ.length?r.occ.join(' · '):'—')], ['예산', r.budget||'—'], ['희망 일정', r.date||'—'], ['요청 메모', (r.note&&(''+r.note).trim())?r.note:'—']];
-    return '<div class="req-summary-in">'+rows.map(function(x){ return '<div class="rs-row"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>'; }).join('')+
+    // 헤더 강조형 — '무엇을 보냈나'(서비스 유형)를 제목처럼 크게, 상황·예산은 요약 한 줄, 나머지는 라인
+    var sum=[(r.occ&&r.occ.length?r.occ.join(' · '):''), (r.budget?'예산 '+r.budget:'')].filter(Boolean).join('  ·  ');
+    var note=(r.note&&(''+r.note).trim())?r.note:'—';
+    var rows=[['희망 일정', r.date||'—'], ['요청 메모', note]];
+    return '<div class="req-summary-in">'+
+      '<div class="rs-head"><b class="rs-title">'+svcLabel(r.svc)+'</b>'+(sum?'<span class="rs-sum">'+sum+'</span>':'')+'</div>'+
+      '<div class="rs-lines">'+rows.map(function(x){ return '<div class="rs-row"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>'; }).join('')+'</div>'+
       '<div class="rs-note">📎 내 체형·사이즈 프로필이 함께 전달됐어요</div></div>';
   }
   function toggleReqSummary(btn){ var p=document.getElementById('reqSummaryPanel'); if(!p) return; var on=p.classList.toggle('on'); var tg=btn.querySelector('.tg'); if(tg) tg.textContent=on?'▴':'▾'; }
@@ -356,19 +361,19 @@
     var r=reqs[_bidReq]; if(!r){ closeBids(); return; }
     var bids=(r.bids||[]).slice();
     bids.sort(function(a,b){ return EX[b.idx].match-EX[a.idx].match; });   // 매칭도 높은 순 고정
-    var sub=[svcLabel(r.svc), (r.occ&&r.occ.length?r.occ.join('·'):''), (r.budget?'예산 '+r.budget:''), (r.date||'')].filter(Boolean).join(' · ');
     var back = r.awarded ? '<button class="bids-back" onclick="openReqDetail('+_bidReq+')">‹ 진행 상황</button>' : '';
-    var head='<div class="bids-head"><button class="xbtn" onclick="closeBids()">✕</button>'+ back +
-      '<span class="reqtype open">견적 요청 결과</span><h2>'+(r.awarded?'지난 견적':'받은 견적')+'</h2>'+
-      '<p><b class="num">'+bids.length+'</b>명의 쇼퍼가 견적을 보냈어요 · '+sub+'</p>'+
+    var badge = r.awarded ? '' : '<span class="reqtype open">견적 요청 결과</span>';   // 지난 견적: 뒤로가기만 (배지 중복 제거)
+    var head='<div class="bids-head"><button class="xbtn" onclick="closeBids()">✕</button>'+ back + badge +
+      '<h2>'+(r.awarded?'지난 견적':'받은 견적')+'</h2>'+
+      '<p><b class="num">'+bids.length+'</b>명의 쇼퍼가 견적을 보냈어요</p>'+
       '<button class="req-toggle" onclick="toggleReqSummary(this)">내가 보낸 요청 내용 <span class="tg">▾</span></button>'+
       '<div class="req-summary" id="reqSummaryPanel">'+reqSummaryHTML(r)+'</div></div>';
     var awardedIdx = (r.awarded && typeof r.awarded.idx!=='undefined') ? r.awarded.idx : null;
     var canPick = (r.status==='견적중');   // 취소·진행중이면 더 이상 쇼퍼 선택 불가
     var cards=bids.map(function(b){ var e=EX[b.idx];
       var isSel=(awardedIdx===b.idx);
-      var badges=(isSel?'<span class="q-sel">✓ 매칭 완료</span>':'');
-      var action = isSel ? '<button class="tinybtn" disabled style="opacity:.55;cursor:default">진행 중 ✓</button>'
+      var badges='';   // 선택 표시는 카드 강조 + 하단 '진행중' 버튼으로 (상단 배지 제거)
+      var action = isSel ? '<span class="q-status">진행중</span>'
                  : (canPick ? '<button class="tinybtn" onclick="confirmAward('+b.idx+')">진행하기</button>' : '');
       return '<div class="qcard'+(isSel?' sel':'')+'">'+
         '<div class="q-l">'+

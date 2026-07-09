@@ -462,7 +462,7 @@
   #my .offerbox{flex:1; min-width:200px; color:var(--ink-soft);} #my .offerbox b{color:var(--green);} #my .offerbox .num{font-family:var(--num); font-weight:800;}
   #my .offerbox .omsg{font-size:12.5px; color:var(--sub); margin-top:4px;}
   #my .obtns{display:flex; gap:8px; margin-left:auto;}
-  #my .st.offer{background:var(--green); color:#fff;} #my .st.cancel{background:var(--soft); color:var(--sub2);}
+  #my .st.offer{background:var(--green); color:#fff;} #my .st.cancel{background:var(--warn-soft); color:var(--warn);}
   #my .revshow{color:var(--ink-soft);} #my .revshow .starsRO{letter-spacing:1px;} #my .revshow .rtx{margin-left:6px;}
   #my .reviewform{width:100%;} #my .reviewform .stars{display:flex; gap:5px; font-size:24px; cursor:pointer;}
   #my .reviewform .stars span{color:var(--line2); transition:.1s;} #my .reviewform .stars span.on{color:var(--ink);}
@@ -472,7 +472,7 @@
   #my .req .ic{width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,var(--green),var(--green-mid)); flex:none;}
   #my .req .info{flex:1;} #my .req .info b{font-size:14.5px;} #my .req .info small{display:block; font-size:12.5px; color:var(--sub); margin-top:2px;}
   #my .st{font-size:12px; font-weight:800; padding:5px 11px; border-radius:20px;}
-  #my .st.wait{background:var(--soft); color:var(--sub);} #my .st.prog{background:var(--green-soft); color:var(--green);} #my .st.done{background:var(--green-soft); color:var(--green);}
+  #my .st.wait{background:var(--soft); color:var(--sub);} #my .st.prog{background:var(--green-soft); color:var(--green);} #my .st.done{background:var(--soft); color:var(--ink);}
   #my .fav{display:grid; grid-template-columns:repeat(2,1fr); gap:14px;}
   #my .fcard{border:1px solid var(--line); border-radius:14px; overflow:hidden;}
   #my .fcard .cov{height:90px; position:relative; background:linear-gradient(135deg,var(--ink-soft),var(--green-mid));}
@@ -670,8 +670,8 @@
   .bids-list{display:flex; flex-direction:column; gap:14px;}
   .qcard{position:relative; display:flex; gap:16px; align-items:flex-start; background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px 22px; box-shadow:0 4px 14px rgba(20,18,16,.05);}
   .qcard.best{border-color:var(--green); box-shadow:0 0 0 1.5px var(--green-soft), 0 10px 26px rgba(46,74,59,.12);}
-  .qcard.sel{border-color:var(--green);}
-  .qcard .q-sel{font-size:11px; font-weight:800; color:#fff; background:var(--green); padding:3px 9px; border-radius:20px;}
+  .qcard.sel{border-color:var(--green); background:var(--green-soft); box-shadow:0 0 0 1px var(--green);}
+  .qcard .q-status{display:block; width:100%; text-align:center; padding:11px 10px; font-size:13.5px; font-weight:800; border-radius:10px; background:var(--ink); color:#fff; opacity:.4; cursor:default; white-space:nowrap;}
   .qcard .q-l{flex:1; min-width:0;}
   .qcard .q-top{display:flex; align-items:center; gap:11px;}
   .qcard .q-ph{width:44px; height:44px; border-radius:50%; object-fit:cover; filter:saturate(.6); flex:none;}
@@ -691,6 +691,9 @@
   .req-summary{display:none; margin-top:14px;}
   .req-summary.on{display:block;}
   .req-summary-in{background:var(--soft); border-radius:14px; padding:6px 16px;}
+  .rs-head{padding:14px 2px 13px; border-bottom:1px solid var(--line);}
+  .rs-title{display:block; font-size:17px; font-weight:800; color:var(--ink); letter-spacing:-.01em;}
+  .rs-sum{display:block; margin-top:5px; font-size:13px; color:var(--sub); font-weight:600;}
   .rs-row{display:flex; justify-content:space-between; align-items:center; gap:16px; padding:11px 0; border-bottom:1px solid var(--line); font-size:13.5px;}
   .rs-row:last-of-type{border-bottom:none;}
   .rs-row span{color:var(--sub); flex:none;} .rs-row b{color:var(--ink); font-weight:700; text-align:right;}
@@ -730,7 +733,7 @@
   .bids-overlay .reviewform .rtext:focus{outline:none; border-color:var(--green);}
   .bids-overlay .reviewform .rbtns{display:flex; gap:8px; justify-content:flex-end; margin-top:10px;}
   .bids-overlay .st{font-size:12px; font-weight:800; padding:5px 11px; border-radius:20px;}
-  .bids-overlay .st.wait{background:var(--soft); color:var(--sub);} .bids-overlay .st.prog{background:var(--green-soft); color:var(--green);} .bids-overlay .st.done{background:var(--green-soft); color:var(--green);} .bids-overlay .st.offer{background:var(--green); color:#fff;} .bids-overlay .st.cancel{background:var(--soft); color:var(--sub2);}
+  .bids-overlay .st.wait{background:var(--soft); color:var(--sub);} .bids-overlay .st.prog{background:var(--green-soft); color:var(--green);} .bids-overlay .st.done{background:var(--soft); color:var(--ink);} .bids-overlay .st.offer{background:var(--green); color:#fff;} .bids-overlay .st.cancel{background:var(--warn-soft); color:var(--warn);}
   @media(max-width:560px){ .bids-inner{padding:24px 18px 70px;} .qcard{flex-direction:column; gap:14px;} .qcard .q-r{flex-direction:row; width:100%;} }
 </style>
 </head>
