@@ -146,6 +146,7 @@ def size_norm(label):
 
 
 specs, skipped = [], 0
+anchor_bids = set()      # isAnchor=true 브랜드(브랜드 단위 진실) — 착용경험 입력 대상 = 앵커.
 for f in sorted(raw.glob("*.csv")):
     cs = next(((cat, sub) for k, (cat, sub) in FILES.items() if k in nfc(f.name)), None)
     if not cs:
@@ -173,6 +174,8 @@ for f in sorted(raw.glob("*.csv")):
         if not (bid and fit and g and size):
             skipped += 1
             continue
+        if nfc(row.get("isAnchor")).strip().lower() == "true":  # 앵커=브랜드 단위(컬럼 없는 반팔은 아래서 상속)
+            anchor_bids.add(bid)
         garment = {}
         for col, key in cols.items():
             v = num(row.get(col))
@@ -195,9 +198,11 @@ for f in sorted(raw.glob("*.csv")):
         specs.append(spec)
 
 cats = sorted(set(s["category"] for s in specs))
+anchor_brands = sorted(anchor_bids)
 doc = {
     "$meta": {
         "purpose": "A축 garmentCm 시드 — 착용경험 역산(규칙①②③)·추천 사이즈 실계산의 재료.",
+        "anchorBrands": anchor_brands,   # 착용경험 입력 대상(오프라인 시착 편의+garment실측 역산). UI 브랜드 드롭다운의 소스.
         "schemaRef": "web/js/engine.js — garmentCm 계약(부위별 단면 flat)",
         "source": "브랜드 자사몰 사이즈표 수동 수집",
         "collectedAt": "2026-07-07",
@@ -225,3 +230,4 @@ doc = {
 out.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
 by = {c: sum(1 for s in specs if s["category"] == c) for c in cats}
 print(f"wrote {out.relative_to(repo)} — {len(specs)} specs {by} (skipped {skipped})")
+print(f"  anchorBrands({len(anchor_brands)}): {anchor_brands}")

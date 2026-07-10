@@ -147,6 +147,10 @@
      드롭다운 표기 → garments의 brandId 매핑. 데이터 없는 브랜드/카테고리는 DEFAULT_SIZES. */
   var BRANDID={'유니클로':'uniqlo','무신사 스탠다드':'musinsa-standard','나이키':'nike','탑텐':'topten',
     '스파오':'spao','에잇세컨즈':'8seconds','노스페이스':'northface','H&M (편차 큼)':'hm','자라 (편차 큼)':'zara'};
+  // 착용경험 입력은 앵커 브랜드만(오프라인 시착 편의+garment실측 역산). 목록은 garments $meta.anchorBrands(데이터 진실).
+  //  하드코딩 옵션이 아니라 데이터로 필터 → 수집 확장 시 자동 반영, 비앵커(나이키·노스페이스·H&M) 유입 차단.
+  var ANCHOR_BRANDS=[];
+  var FALLBACK_BRAND='— 목록에 없음 —';   // 앵커 밖 브랜드만 입어본 사용자 → 선호핏만 플로우로.
   var DEFAULT_SIZES=['XS','S','M','L','XL'];
   var GARMENTS=null;
   // 실측(garment cm) 데이터가 있는 카테고리 = 착용경험 역산 대상. 없으면 선호핏만 받아 진단.
@@ -215,6 +219,18 @@
     el.innerHTML=list.map(function(o){
       return '<div class="opt'+(o===defObj?' on':'')+'" data-size="'+o.raw+'" onclick="pick(this)">'+o.display+'</div>';
     }).join('');
+  }
+  // 브랜드 드롭다운 = 앵커 브랜드(데이터)만 + 폴백. BRANDID 정의순 유지, 선택값 보존.
+  //  ANCHOR_BRANDS 비면(garments 로드 실패=file:// 등) 정적 HTML 옵션 그대로 둠.
+  function renderBrands(){
+    if(!ANCHOR_BRANDS.length) return;
+    var opts=Object.keys(BRANDID).filter(function(disp){ return ANCHOR_BRANDS.indexOf(BRANDID[disp])>=0; });
+    opts.push(FALLBACK_BRAND);
+    [1,2].forEach(function(g){
+      var el=document.getElementById('brand'+g); if(!el) return;
+      var prev=el.value;
+      el.innerHTML=opts.map(function(o){ return '<option'+(o===prev?' selected':'')+'>'+o+'</option>'; }).join('');
+    });
   }
   /* 품목 드롭다운 = 셀(브랜드×핏라인/실루엣) — 제품명(SKU)이 아니라 재인 가능한 핏/실루엣만 노출.
      엔진(bodyFromExperiences)은 이미 셀 단위(같은 fitLine/silhouette 제품들의 garmentCm 평균)로 역산하므로
@@ -459,6 +475,7 @@
   }
   function boot(){
     applyGenderFilter();
+    renderBrands();   // 앵커 브랜드만 노출(데이터 로드 후) — applyTarget이 brand select을 읽기 전에
     const routed=initFromQuery();
     applyTarget();
     if(routed==='base'){ gateTargets(); render(); }
@@ -466,6 +483,7 @@
   // A축 사이즈 시드 로드 → 데이터 보유 카테고리(DATA_CATS) 판별 + 브랜드별 사이즈 라벨.
   // 로드 후 플로우 시작(실패=file:// 등 → 현재 데이터 반영 폴백으로 boot).
   fetch('data/garments.json').then(function(r){return r.json();})
-    .then(function(j){ GARMENTS=j.specs; DATA_CATS=categoriesWithData(j.specs); })
+    .then(function(j){ GARMENTS=j.specs; DATA_CATS=categoriesWithData(j.specs);
+      ANCHOR_BRANDS=(j.$meta&&j.$meta.anchorBrands)||[]; })
     .catch(function(){})
     .then(boot);
