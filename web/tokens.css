@@ -43,8 +43,8 @@
   --fs-h2:24px;       /* H2 · 800 */
   --fs-h3:19px;       /* H3 · 800 */
   --fs-body:16px;     /* 본문 · 450 */
-  --fs-sm:13.5px;     /* 보조 · 450 */
-  --fs-label:12px;    /* 라벨 · 800 · uppercase */
+  --fs-sm:14px;       /* 보조 · 450 */
+  --fs-label:13px;    /* 라벨 · 800 · uppercase */
   /* 자간 */
   --ls-tight:-.05em;  /* 큰 제목 */
   --ls-body:-.02em;   /* 본문 기본 */
