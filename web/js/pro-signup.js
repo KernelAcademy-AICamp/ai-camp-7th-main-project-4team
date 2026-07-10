@@ -42,7 +42,7 @@
   var SIGNUP_SERVICES=[
     {type:'online',   label:'온라인 스타일링', row:'svcOnline',   on:'svcOnlineOn',   price:'priceOnline'},
     {type:'shopping', label:'동행 쇼핑',       row:'svcShopping', on:'svcShoppingOn', price:'priceShopping'},
-    {type:'imaging',  label:'이미지 컨설팅',   row:'svcImaging',  on:'svcImagingOn',  price:'priceImaging'}
+    {type:'image',  label:'이미지 컨설팅',   row:'svcImaging',  on:'svcImagingOn',  price:'priceImaging'}
   ];
   function enabledServices(){
     var s=[];

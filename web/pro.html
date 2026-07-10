@@ -95,7 +95,7 @@
   .svcbadge svg{width:13px;height:13px;vertical-align:-2px;margin-right:2px}
   .svcbadge.online{background:var(--green-soft);color:var(--green)}
   .svcbadge.shopping{background:#fbeede;color:#b9741a}
-  .svcbadge.imaging{background:#efeafb;color:#7a5bb0}
+  .svcbadge.image{background:#efeafb;color:#7a5bb0}
   .svcbadge.visit{background:#fbeede;color:#b9741a}
   .reqact{margin-top:12px;padding:12px 14px;background:var(--soft);border-radius:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--sub)}
   .reqnote{font-style:normal;color:var(--ink-soft)}
@@ -328,10 +328,10 @@
           <label class="etog"><input type="checkbox" id="edImagingOn" onchange="edToggleSvc()"> 이미지 컨설팅</label>
           <input class="epr" id="edImagingPrice" type="number"><span class="won">원</span>
         </div>
-        <div class="esvcreg" id="edRegBlock_imaging" style="display:none">
+        <div class="esvcreg" id="edRegBlock_image" style="display:none">
           <label class="efl" style="margin:0 0 7px">활동 지역 <small style="font-weight:600;color:var(--sub2)">· 텍스트로 입력하면 태그로 추가</small></label>
-          <div class="eftags" id="edRegTags_imaging"></div>
-          <div class="eftagadd"><input class="efin" id="edRegInput_imaging" type="text" placeholder="지역 입력 후 추가 (예: 서울 강남)"><button class="tinybtn ghost" onclick="edAddRegion('imaging')">추가</button></div>
+          <div class="eftags" id="edRegTags_image"></div>
+          <div class="eftagadd"><input class="efin" id="edRegInput_image" type="text" placeholder="지역 입력 후 추가 (예: 서울 강남)"><button class="tinybtn ghost" onclick="edAddRegion('image')">추가</button></div>
         </div>
         <div class="efhint">최소 1개 유형을 켜야 저장돼요. 대면 서비스(동행 쇼핑·이미지 컨설팅)는 활동 지역을 입력하세요.</div>
 
