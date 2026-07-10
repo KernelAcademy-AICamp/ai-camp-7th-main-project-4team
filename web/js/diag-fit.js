@@ -162,14 +162,17 @@
     if(LEG_CATS.includes(target))    return (legLength[g]==='short')?'shorts':'long_pants';
     return null;
   }
-  // 특정 브랜드·성별·서브타입에서 실제 존재하는 사이즈 라벨(정렬) — 없으면 null.
-  function garmentSizeLabels(brandId, gender, subtype){
+  // 특정 브랜드·성별·서브타입(+선택 셀)에서 실제 존재하는 사이즈 라벨(정렬) — 없으면 null.
+  //  cellCode(핏라인/실루엣) 주면 그 셀로 스코프 — 브랜드 내 제품군마다 사이즈 체계가 달라서
+  //  (탑텐 인치 vs 600번대·유니클로 인치 vs cm) union으로 뭉치면 셀에 없는 사이즈가 섞여 조용히 버려짐.
+  function garmentSizeLabels(brandId, gender, subtype, cellCode){
     if(!GARMENTS || !brandId) return null;
-    var set={};
+    var onSil=LEG_CATS.includes(target), set={};
     GARMENTS.forEach(function(s){
       if(s.brandId!==brandId) return;
       if(!(s.gender===gender || s.gender==='unisex')) return;
       if(subtype && s.subtype!==subtype) return;
+      if(cellCode){ var v=onSil?s.silhouette:s.fitLine; if(v!==cellCode) return; }
       set[s.sizeLabel]=1;
     });
     var labels=Object.keys(set);
@@ -187,41 +190,59 @@
     var bsel=document.getElementById('brand'+g);
     var brandId=bsel?BRANDID[bsel.value]:null;
     var gender=BASIC.gender||'female';
-    var labels=hasData(target) ? garmentSizeLabels(brandId, gender, subtypeOf(g)) : null;  // 데이터 있는 카테고리(TOP·BOTTOM)는 실 사이즈
+    // 선택 셀(데이터 브랜드의 핏라인/실루엣 옵션)로 사이즈 스코프 — 폴백 라벨(data-axis 없음)은 필터 안 함.
+    var isel=document.getElementById('item'+g), opt=isel&&isel.selectedOptions?isel.selectedOptions[0]:null;
+    var cellCode=(opt && opt.getAttribute('data-axis')) ? isel.value : null;
+    var labels=hasData(target) ? garmentSizeLabels(brandId, gender, subtypeOf(g), cellCode) : null;  // 데이터 있는 카테고리(TOP·BOTTOM)는 실 사이즈
     if(!labels || !labels.length) labels=DEFAULT_SIZES;
     var prev=el.querySelector('.opt.on'); var prevLab=prev?prev.textContent.trim():null;
     var def = (prevLab && labels.indexOf(prevLab)>=0) ? prevLab
             : (labels.indexOf('M')>=0 ? 'M' : labels[Math.floor(labels.length/2)]);
     el.innerHTML=labels.map(function(l){ return '<div class="opt'+(l===def?' on':'')+'" onclick="pick(this)">'+l+'</div>'; }).join('');
   }
-  // 품목 = 우리가 수집한 실제 제품(브랜드·성별·subtype별). 데이터 없으면 CATS 기본 목록.
-  function garmentProducts(brandId, gender, subtype){
+  /* 품목 드롭다운 = 셀(브랜드×핏라인/실루엣) — 제품명(SKU)이 아니라 재인 가능한 핏/실루엣만 노출.
+     엔진(bodyFromExperiences)은 이미 셀 단위(같은 fitLine/silhouette 제품들의 garmentCm 평균)로 역산하므로
+     제품명은 다운스트림과 무관. 제품명 노출은 false precision·미스매치 불안·staleness(자라 SKU 회전)를
+     유발하므로 셀로 추상화한다(anchor-sku-to-cell-abstraction). 데이터 없는 브랜드는 CATS 기본 라벨 폴백. */
+  var FITLINE_LABEL={slim:'슬림핏', regular:'레귤러핏', loose:'루즈핏', oversize:'오버핏'};
+  var SIL_LABEL={skinny:'스키니', slim:'슬림', straight:'스트레이트', tapered:'테이퍼드', wide:'와이드', bootcut:'부츠컷'};
+  var FITLINE_ORDER=['slim','regular','loose','oversize'];
+  var SIL_ORDER=['skinny','slim','straight','tapered','wide','bootcut'];
+  // 이 브랜드·성별·subtype에서 실측 데이터가 있는 셀(핏라인/실루엣)만 추출·정렬. 없으면 null.
+  function cellsForItems(brandId, gender, subtype){
     if(!GARMENTS || !brandId) return null;
-    var seen={}, list=[];
+    var onSil=LEG_CATS.includes(target), present={};
     GARMENTS.forEach(function(s){
       if(s.brandId!==brandId) return;
       if(!(s.gender===gender || s.gender==='unisex')) return;
       if(subtype && s.subtype!==subtype) return;
-      if(s.product && !seen[s.product]){ seen[s.product]=1; list.push(s.product); }
+      var v=onSil?s.silhouette:s.fitLine;
+      if(v) present[v]=1;
     });
-    return list.length?list:null;
+    var order=onSil?SIL_ORDER:FITLINE_ORDER, label=onSil?SIL_LABEL:FITLINE_LABEL, axis=onSil?'silhouette':'fitLine';
+    var codes=order.filter(function(c){return present[c];});
+    Object.keys(present).forEach(function(c){ if(codes.indexOf(c)<0) codes.push(c); });  // 매핑 밖 값도 보존
+    if(!codes.length) return null;
+    return codes.map(function(c){ return {code:c, label:label[c]||c, axis:axis}; });
   }
   function renderItems(g){
     var el=document.getElementById('item'+g); if(!el) return;
     var bsel=document.getElementById('brand'+g);
     var brandId=bsel?BRANDID[bsel.value]:null;
-    var prods=hasData(target) ? garmentProducts(brandId, BASIC.gender||'female', subtypeOf(g)) : null;
-    var items=prods || (CATS[target]?CATS[target].items:[]);
+    var cells=hasData(target) ? cellsForItems(brandId, BASIC.gender||'female', subtypeOf(g)) : null;
     var prev=el.value;
-    el.innerHTML=items.map(function(i){ return '<option'+(i===prev?' selected':'')+'>'+i+'</option>'; }).join('');
-  }
-  // 선택한 실제 제품의 시드 스펙 조회 — fitLine·silhouette·waistband를 제품명 재파싱 대신 정본값으로.
-  function specOfItem(brandId, product, gender, subtype){
-    if(!GARMENTS || !brandId || !product) return null;
-    for(var i=0;i<GARMENTS.length;i++){ var s=GARMENTS[i];
-      if(s.brandId===brandId && s.product===product &&
-         (s.gender===gender || s.gender==='unisex') && (!subtype || s.subtype===subtype)) return s; }
-    return null;
+    if(cells){
+      el.innerHTML=cells.map(function(c){
+        return '<option value="'+c.code+'" data-axis="'+c.axis+'"'+(c.code===prev?' selected':'')+'>'+c.label+'</option>'; }).join('');
+    } else {
+      var items=(CATS[target]?CATS[target].items:[]);   // 폴백: value=라벨 텍스트(collectExp가 파싱)
+      el.innerHTML=items.map(function(i){ return '<option value="'+i+'"'+(i===prev?' selected':'')+'>'+i+'</option>'; }).join('');
+    }
+    // 필드 라벨: 상의=핏 / 하의=실루엣 (제품명 아님)
+    var lab=el.parentElement&&el.parentElement.querySelector('label');
+    if(lab) lab.textContent=LEG_CATS.includes(target)?'실루엣':'핏';
+    // 셀이 바뀌면 사이즈 체계도 달라질 수 있어 사이즈 재렌더(브랜드 union→셀 스코프)
+    el.onchange=function(){ renderSizes(g); };
   }
   var LABELKEY={'어깨':'shoulder','가슴':'chest','가슴·품':'chest','배':'belly','소매':'sleeve','총장':'length',
     '허리':'waist','엉덩이':'hip','허벅지':'thigh','밑위':'rise','기장':'length',
@@ -296,19 +317,22 @@
     [1,2].slice(0,n).forEach(function(g){
       var f=collectFeel('feel'+g);
       var bsel=document.getElementById('brand'+g), brandTxt=bsel?bsel.value:'';
-      var isel=document.getElementById('item'+g), itemTxt=isel?isel.value:'';
+      var isel=document.getElementById('item'+g), opt=isel&&isel.selectedOptions?isel.selectedOptions[0]:null;
+      var itemVal=isel?isel.value:'', axis=opt?opt.getAttribute('data-axis'):null;
+      var itemLab=opt?opt.textContent.trim():itemVal;   // 표시/디버그용 라벨(엔진 미사용)
       var szEl=document.querySelector('#size'+g+' .opt.on');
       var brandId=BRANDID[brandTxt]||'unknown', gen=BASIC.gender||'female';
-      // 선택한 실제 제품의 시드 스펙 — fitLine·silhouette·waistband를 정본값으로(없으면 제품명 파싱 폴백).
-      var sp=specOfItem(brandId, itemTxt, gen, subtypeOf(g));
-      // 허리 밴드: 사용자 토글 우선 → '모름'이면 선택 제품의 밴딩값(hidden/side/full/partial→있음).
+      // 셀 코드 직접 사용(데이터 브랜드) / 데이터 없는 브랜드는 라벨 텍스트 파싱 폴백.
+      var fitLine = axis==='fitLine' ? itemVal : garmentFitLine(itemLab);
+      var silh    = axis==='silhouette' ? itemVal : garmentSilhouette(itemVal);
+      // 허리 밴드: 사용자 토글만(garments.json엔 밴딩 필드 없음).
       var wbEl=document.querySelector('#feel'+g+' .wband-seg .opt.on'), wbLab=wbEl?wbEl.textContent.trim():'';
-      var waistband=wbLab==='없음'?'none':(wbLab==='있음'?'banded':((sp&&sp.waistband)?'banded':undefined));
+      var waistband=wbLab==='없음'?'none':(wbLab==='있음'?'banded':undefined);
       exps.push({ category:cat, brandId:brandId, brandName:brandTxt,
-        fitLine: sp?sp.fitLine:garmentFitLine(itemTxt), item:itemTxt, sizeLabel:szEl?szEl.textContent.trim():'M',
+        fitLine: fitLine, item:itemLab, sizeLabel:szEl?szEl.textContent.trim():'M',
         subtype:subtypeOf(g), gender:gen, waistband:waistband,
         // 하의는 실루엣(형태축)이 엔진 1차 매칭키. 상의는 undefined(fitLine 사용).
-        silhouette: cat==='BOTTOM' ? (sp?sp.silhouette:garmentSilhouette(itemTxt)) : undefined,
+        silhouette: cat==='BOTTOM' ? silh : undefined,
         fits:f.fits, painFlags:f.painFlags, lengthPrefs:f.lengthPrefs, openNote:f.openNote });
     });
     // 기존 진단 결과에 병합 — 다른 카테고리(상↔하)는 보존하고, 같은 카테고리는 교체
