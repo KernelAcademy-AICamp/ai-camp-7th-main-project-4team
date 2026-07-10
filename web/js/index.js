@@ -81,25 +81,25 @@
   var SMODE={online:'비대면', shopping:'대면', image:'대면'};   // 제공 방식(타입 고정) · 대면이면 활동지역
   /* 쇼퍼 = 다중 서비스(services[{type,price,dur,regions?}]). 코드 image로 통일 */
   var EX=[
-    {lock:32, nm:'소희', photo:'photos/p1.jpg', occ:['date','daily','personal'], rating:4.9, review:96, match:97, tags:['미니멀','캐주얼','시크'],
+    {lock:32, nm:'소희', photo:'photos/p1.jpg', occ:['date','daily','personal'], rating:4.9, review:12, match:97, tags:['미니멀','캐주얼','시크'],
       services:[{type:'online',price:90000},{type:'shopping',price:130000,regions:['서울 강남','서울 마포']},{type:'image',price:110000,regions:['서울 강남','서울 마포']}],
       bio:'데일리·소개팅룩 전문 스타일리스트<br>온라인 쇼핑몰 MD 출신으로<br>비대면 큐레이션이 강점이에요', reviews:[['비대면인데도 사이즈까지 딱 맞게 골라주셨어요','30세 · 소개팅룩'],['길게 설명 안 해도 취향을 바로 잡아주셔서 편했어요','27세 · 데일리']]},
-    {lock:47, nm:'건형', photo:'photos/p2.jpg', occ:['interview','bodycover'], rating:4.8, review:74, match:90, tags:['클래식','시크','미니멀'],
+    {lock:47, nm:'건형', photo:'photos/p2.jpg', occ:['interview','bodycover'], rating:4.8, review:9, match:90, tags:['클래식','시크','미니멀'],
       services:[{type:'image',price:190000,regions:['서울 강남','서울 종로']}],
       bio:'남성 이미지 컨설턴트<br>면접·오피스 첫인상을<br>헤어부터 셔츠 핏까지 정돈해드려요', reviews:[['면접관 시선까지 짚어주셔서 자신감이 생겼어요','29세 · 면접']]},
-    {lock:15, nm:'상민', photo:'photos/p3.jpg', occ:['wedding','interview'], rating:4.7, review:58, match:86, tags:['클래식','시크','빈티지'],
+    {lock:15, nm:'상민', photo:'photos/p3.jpg', occ:['wedding','interview'], rating:4.7, review:7, match:86, tags:['클래식','시크','빈티지'],
       services:[{type:'shopping',price:150000,regions:['서울 종로','경기 성남']}],
       bio:'포멀·하객룩 동행 쇼핑 전문<br>매장을 함께 돌며 체형에 맞는<br>옷을 현장에서 골라드려요', reviews:[['혼자였으면 못 골랐을 옷을 잘 맞게 찾아주셨어요','34세 · 결혼식']]},
-    {lock:52, nm:'지현', occ:['date','daily'], rating:4.8, review:61, match:93, tags:['캐주얼','스포티','미니멀'],
+    {lock:52, nm:'지현', occ:['date','daily'], rating:4.8, review:8, match:93, tags:['캐주얼','스포티','미니멀'],
       services:[{type:'online',price:98000},{type:'shopping',price:115000,regions:['서울 강남']}],
       bio:'가성비 데일리룩 큐레이터<br>합리적인 예산 안에서<br>실용적인 코디를 짜드려요', reviews:[['예산을 딱 지켜서 골라주셔서 좋았어요','26세 · 데일리']]},
-    {lock:63, nm:'유나', occ:['date','wedding','personal'], rating:5.0, review:38, match:95, tags:['걸리시','시크','빈티지'],
+    {lock:63, nm:'유나', occ:['date','wedding','personal'], rating:5.0, review:6, match:95, tags:['걸리시','시크','빈티지'],
       services:[{type:'online',price:145000}],
       bio:'트렌디 여성 스타일링 전문<br>시즌 무드를 반영한<br>감각적인 큐레이션이 강점이에요', reviews:[['유행을 잘 녹여주면서 과하지 않았어요','28세 · 하객룩']]},
-    {lock:71, nm:'세라', occ:['interview','wedding','bodycover'], rating:4.9, review:52, match:92, tags:['클래식','시크','미니멀'],
+    {lock:71, nm:'세라', occ:['interview','wedding','bodycover'], rating:4.9, review:7, match:92, tags:['클래식','시크','미니멀'],
       services:[{type:'image',price:175000,regions:['서울 강남','서울 용산']}],
       bio:'퍼스널컬러·이미지 컨설턴트<br>색과 실루엣으로 첫인상을<br>목적에 맞게 설계해드려요', reviews:[['퍼스널컬러까지 잡아주셔서 만족했어요','31세 · 면접']]},
-    {lock:84, nm:'태오', occ:['daily','travel'], rating:4.6, review:44, match:88, tags:['캐주얼','스포티','스트리트'],
+    {lock:84, nm:'태오', occ:['daily','travel'], rating:4.6, review:5, match:88, tags:['캐주얼','스포티','스트리트'],
       services:[{type:'shopping',price:130000,regions:['서울 마포','서울 용산']}],
       bio:'남성 캐주얼 동행 쇼핑 전문<br>매장을 함께 돌며 핏에 맞는<br>데일리 아이템을 골라드려요', reviews:[['혼자 사면 실패했을 옷을 잘 잡아주셨어요','33세 · 데일리']]}
   ];
@@ -571,46 +571,46 @@
   /* 쇼퍼 상세 본문 — 페이지(detailView)와 요청 오버레이(bidsBody) 공용.
      opts.hideReq=견적 요청 버튼 숨김 · opts.back=뒤로 onclick · opts.fav=즐겨찾기 onclick */
   /* 쇼퍼 후기 = 원본(EX.reviews) + 내가 남긴 후기(reqs 후기완료) 합산 — 후기가 쇼퍼 쪽에 반영 */
+  /* 별점 5칸 (채움/빈칸) — 상단 평점 요약용 */
+  function starRow(r){ var n=Math.round(r), s=''; for(var i=1;i<=5;i++){ s+='<svg'+(i<=n?'':' class="e"')+' viewBox="0 0 24 24"><path d="M12 2l3 6.6 7 .7-5.2 4.7 1.5 6.9L12 18l-6.3 3.6 1.5-6.9L2 9.3l7-.7z"/></svg>'; } return '<span class="stars">'+s+'</span>'; }
   function reviewData(e){
     var mine=reqs.filter(function(r){ return r.nm===e.nm && r.status==='후기완료' && r.review; });
     var count=e.review+mine.length;
     var sum=(e.rating*e.review)+mine.reduce(function(a,r){ return a+(r.review.rating||5); },0);
     var rating=count>0 ? Math.round(sum/count*10)/10 : 0;
+    var av='<span class="rev-av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg></span>';
     var mineHTML=mine.map(function(r){ var occ=(r.occ&&r.occ.length?r.occ.join('·'):svcLabel(r.svc));
-      return '<div class="rev">"'+r.review.text+'"<div class="who">— 나 · '+occ+'</div></div>'; }).join('');
-    var baseHTML=e.reviews.map(function(r){ return '<div class="rev">"'+r[0]+'"<div class="who">— '+r[1]+'</div></div>'; }).join('');
+      return '<div class="rev">'+av+'<div class="rev-b">"'+r.review.text+'"<div class="who">— 나 · '+occ+'</div></div></div>'; }).join('');
+    var baseHTML=e.reviews.map(function(r){ return '<div class="rev">'+av+'<div class="rev-b">"'+r[0]+'"<div class="who">— '+r[1]+'</div></div></div>'; }).join('');
     return { rating:rating, count:count, html:(mineHTML+baseHTML) || '<div class="noreview">아직 등록된 후기가 없어요</div>' };
   }
   function detailBodyHTML(idx, opts){ var e=EX[idx];
     var rd=reviewData(e);
     var rt=rd.count>0?('★ '+rd.rating+' · 후기 '+rd.count+'건'):'신규 쇼퍼';
-    var heroSvc=e.services.length>1?'서비스 '+e.services.length+'가지':SVC[svcPrimary(e).type];
+    var svcIco=e.services.map(function(sv){ return '<span class="svcico" title="'+SVC[sv.type]+'">'+svcIcon(sv.type)+'</span>'; }).join('');
     var svcCards=e.services.map(function(sv){ var meta=SMODE[sv.type]+(sv.regions&&sv.regions.length?' · '+sv.regions.join('·'):'');
-      return '<div class="svccard"><span class="svcc-ic">'+svcIcon(sv.type)+'</span><div class="svcc-m"><b>'+SVC[sv.type]+'</b><span>'+meta+'</span></div><span class="svcc-pr"><span class="num">'+sv.price.toLocaleString()+'</span>원</span></div>'; }).join('');
+      return '<div class="svctile"><span class="svct-ic">'+svcIcon(sv.type)+'</span><b class="svct-nm">'+SVC[sv.type]+'</b><span class="svct-mode">'+meta+'</span><div class="svct-pr"><span class="num">'+sv.price.toLocaleString()+'</span>원</div></div>'; }).join('');
     var folioHTML=(e.portfolio&&e.portfolio.length?e.portfolio:DEMO_FOLIO).map(function(p){ var s=folioSpec(p); return '<div style="background-image:url(\''+p.src+'\')">'+(s?'<span class="pspec">'+s+'</span>':'')+'</div>'; }).join('');
-    function sic(p){ return '<span class="rmini"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg></span>'; }
-    var IC_SVC=sic('<path d="M4 7h16M4 12h16M4 17h10"/>'), IC_INTRO=sic('<circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/>'),
-        IC_REV=sic('<path d="M21 11.5a8.4 8.4 0 0 1-11.9 7.6L3 21l1.9-6.1A8.4 8.4 0 1 1 21 11.5z"/>'), IC_PORT=sic('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 15l5-4 4 3 3-2 6 5"/><circle cx="8.5" cy="9" r="1.5"/>');
     return '<div class="detailbody"><a class="back" onclick="'+opts.back+'">← 뒤로</a>'+
-      '<div class="dsplit">'+
-        '<div class="dside">'+
-          '<div class="dside-img"><img src="'+img(e)+'" onerror="'+FB+'"><span class="dside-match">매칭도 '+e.match+'%</span></div>'+
-          '<div class="dside-b"><span class="dsvc">'+heroSvc+'</span>'+
-            '<h1>'+e.nm+' 쇼퍼</h1><div class="dmeta">'+rt+'</div>'+
-            '<div class="dstyles">'+e.tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>'+
-            '<div class="dside-acts">'+
-              (opts.hideReq?'':'<button class="btn" onclick="requestFor('+idx+')">견적 요청하기 →</button>')+
-              '<button class="btn ghost" onclick="'+opts.fav+'">'+favIcon(isFav(e.nm),false)+' '+(isFav(e.nm)?'즐겨찾기 해제':'즐겨찾기 추가')+'</button>'+
-            '</div>'+
+      '<div class="dhero">'+
+        '<div class="dhero-img"><img src="'+img(e)+'" onerror="'+FB+'"><span class="dside-match">매칭도 '+e.match+'%</span></div>'+
+        '<div class="dhero-info">'+
+          '<div class="svcicons">'+svcIco+'</div>'+
+          '<h1>'+e.nm+' 쇼퍼</h1><div class="dmeta">'+rt+'</div>'+
+          '<div class="dstyles">'+e.tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>'+
+          '<p class="dbio">'+e.bio+'</p>'+
+          '<div class="dhero-acts">'+
+            (opts.hideReq?'':'<button class="btn" onclick="requestFor('+idx+')">견적 요청하기 →</button>')+
+            '<button class="btn ghost favonly" onclick="'+opts.fav+'" title="'+(isFav(e.nm)?'즐겨찾기 해제':'즐겨찾기 추가')+'" aria-label="'+(isFav(e.nm)?'즐겨찾기 해제':'즐겨찾기 추가')+'">'+favIcon(isFav(e.nm),false)+'</button>'+
           '</div>'+
         '</div>'+
-        '<div class="dblocks">'+
-          '<div class="rcard"><div class="rlabel">'+IC_SVC+'<span class="rlt">제공 서비스</span><span class="rcnt">'+e.services.length+'가지</span></div><div class="svccards">'+svcCards+'</div></div>'+
-          '<div class="rcard"><div class="rlabel">'+IC_INTRO+'<span class="rlt">소개</span></div><p class="dbio">'+e.bio+'</p></div>'+
-          '<div class="rcard"><div class="rlabel">'+IC_REV+'<span class="rlt">후기</span>'+(rd.count>0?'<span class="rcnt">★ '+rd.rating+' · '+rd.count+'건</span>':'')+'</div><div class="rrevs">'+rd.html+'</div></div>'+
-          '<div class="rcard"><div class="rlabel">'+IC_PORT+'<span class="rlt">포트폴리오</span><span class="rcnt">착용 cm·kg</span></div><div class="dgal">'+folioHTML+'</div></div>'+
+      '</div>'+
+      '<div class="dblocks">'+
+          '<div class="rcard"><div class="rlabel"><span class="rlt">제공 서비스</span></div><div class="svctiles">'+svcCards+'</div></div>'+
+          '<div class="rcard"><div class="rlabel"><span class="rlt">후기</span></div>'+(rd.count>0?'<div class="revsum"><div class="revsum-n num">'+rd.rating+'</div><div class="revsum-r">'+starRow(rd.rating)+'<span class="revsum-c">후기 '+rd.count+'개</span></div></div>':'')+'<div class="rrevs">'+rd.html+'</div></div>'+
+          '<div class="rcard"><div class="rlabel"><span class="rlt">포트폴리오</span><span class="rcnt">착용 cm·kg</span></div><div class="dgal">'+folioHTML+'</div></div>'+
         '</div>'+
-      '</div></div>';
+      '</div>';
   }
   /* 쇼퍼찾기 탭 내 상세 페이지 (목록에서 진입) */
   function openDetail(idx, hideReq){ hideReq=!!hideReq; if(!hideReq) _detailBack=null; closeAll();

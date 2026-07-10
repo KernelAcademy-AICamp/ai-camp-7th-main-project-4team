@@ -321,14 +321,29 @@
   /* 쇼퍼 상세 본문 — 오버레이 안쪽은 900px 고정 / 쇼퍼찾기 페이지만 목록 폭에 가깝게 넓혀 점프 완화 */
   .detailbody{max-width:900px; margin:0 auto;}
   #detailView .detailbody{max-width:1040px; margin:0 auto;}
-  .dhero{display:grid; grid-template-columns:380px 1fr; gap:38px; align-items:start;}
-  .dhero-img{border-radius:20px; overflow:hidden; height:440px; box-shadow:0 12px 32px rgba(20,18,16,.12);}
+  .dhero{display:grid; grid-template-columns:380px 1fr; gap:38px; align-items:stretch;}
+  .dhero-img{position:relative; border-radius:20px; overflow:hidden; height:440px; background:#EDE8E0; box-shadow:0 12px 32px rgba(20,18,16,.12);}
   .dhero-img img{width:100%; height:100%; object-fit:cover; filter:saturate(.55) brightness(1.03) contrast(.98);}
   .dsvc{display:inline-block; font-size:15px; font-weight:800; color:var(--green); background:var(--green-soft); padding:8px 16px; border-radius:24px; letter-spacing:-.02em;}
   .dhero-info h1{font-size:36px; font-weight:800; letter-spacing:-.045em; margin-top:16px;}
   .dmeta{font-size:15px; color:var(--sub); font-weight:700;} .dmeta b{color:var(--green);}
   .dnamerow{display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-top:14px;} .dnamerow h1{margin-top:0;} .dnamerow .dmeta{margin-top:0;}
   .dbio{font-size:15.5px; color:var(--ink-soft); line-height:1.7; margin-top:20px; max-width:520px;}
+  /* 정보 열을 사진 높이만큼 늘려, 버튼을 사진 하단에 맞춰 정렬 */
+  .dhero-info{min-width:0; display:flex; flex-direction:column;}
+  /* "서비스 N가지" 글자 대신 이 쇼퍼가 제공하는 서비스 아이콘을 나열 */
+  .svcicons{display:flex; gap:8px; margin-bottom:14px;}
+  .svcicons .svcico{width:38px; height:38px; border-radius:11px; background:var(--green-soft); color:var(--green); display:flex; align-items:center; justify-content:center;}
+  .svcicons .svcico svg{width:20px; height:20px;}
+  .dhero-info h1{margin-top:0;}
+  .dhero-info .dmeta{margin-top:8px;}
+  /* 스타일칩 아래 소개 텍스트(박스 없음) */
+  .dhero-info .dbio{margin:2px 0 0; max-width:560px;}
+  .dhero-acts{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:26px;}
+  .dhero-acts .btn{min-width:184px;}
+  /* 즐겨찾기 — 아이콘만(정사각) */
+  .dhero-acts .btn.favonly{min-width:0; width:48px; padding:0; height:46px; display:inline-flex; align-items:center; justify-content:center;}
+  .dhero-acts .btn.favonly .bk{width:20px; height:20px;}
   .dsecs{margin-top:46px; display:flex; flex-direction:column; gap:38px; max-width:840px;}
   #detailView .dsecs{max-width:1040px;}
   .dsec h3{font-size:18px; font-weight:800; letter-spacing:-.03em; margin-bottom:14px;}
@@ -450,50 +465,50 @@
   .feat{font-size:14px; font-weight:800; color:var(--sub); margin:20px 0 9px; letter-spacing:.01em;}
   .pgal{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
   .pgal div{height:82px; border-radius:10px; background-size:cover; background-position:center; background-color:var(--soft); filter:saturate(.6);}
-  .rev{border-bottom:1px solid var(--line); padding:11px 0; font-size:13.5px; color:var(--ink-soft); line-height:1.5;}
-  .rev .who{font-size:12px; color:var(--sub2); margin-top:3px; font-weight:600;}
+  /* 후기 — 상단 평점 요약 */
+  .revsum{display:flex; align-items:center; gap:18px; padding:0 0 16px; margin-bottom:6px; border-bottom:1px solid var(--line);}
+  .revsum-n{font-size:42px; font-weight:800; line-height:1;}
+  .revsum-r{display:flex; flex-direction:column; gap:5px;}
+  .revsum-c{font-size:12.5px; color:var(--sub); font-weight:700;}
+  .revsum .stars{display:inline-flex; gap:2px; color:var(--green);}
+  .revsum .stars svg{width:19px; height:19px; fill:currentColor;}
+  .revsum .stars svg.e{fill:none; stroke:var(--green); stroke-width:1.6; opacity:.4;}
+  /* 후기 항목 — 사람 아이콘 + 본문 */
+  .rev{display:flex; gap:13px; align-items:center; padding:15px 0; border-bottom:1px solid var(--line);}
+  .rev .rev-av{flex:none; width:36px; height:36px; border-radius:50%; background:var(--green-soft); color:var(--green); display:flex; align-items:center; justify-content:center;}
+  .rev .rev-av svg{width:20px; height:20px;}
+  .rev .rev-b{flex:1; min-width:0; font-size:14px; color:var(--ink-soft); line-height:1.6;}
+  .rev .who{font-size:12.5px; color:var(--sub2); margin-top:5px; font-weight:600;}
   /* 내 후기 — 튀지 않게, 다른 후기와 같은 행 + 작은 회색 라벨만 */
   .rev.mine{background:none; border-radius:0; padding:14px 0;}
-  .rev.mine .revme{display:inline-block; font-size:11px; font-weight:800; color:var(--sub); background:var(--soft); padding:2px 8px; border-radius:20px; margin-right:7px; vertical-align:1px;}
+  .rev.mine .revme{display:inline-block; font-size:12px; font-weight:800; color:var(--sub); background:var(--soft); padding:2px 8px; border-radius:20px; margin-right:7px; vertical-align:1px;}
   .rev.mine .who{color:var(--sub2);}
   .svcinfo{background:var(--soft); border-radius:14px; padding:14px 16px;}
   .svcinfo .r{display:flex; justify-content:space-between; padding:6px 0; font-size:14px;} .svcinfo .r span{color:var(--sub);} .svcinfo .r b{font-weight:800;}
-  /* 상세 · 제공 서비스 카드 리스트 (다중 서비스) */
-  .svccards{display:flex; flex-direction:column; margin-top:12px;}
-  .svccard{display:flex; align-items:center; gap:13px; padding:14px 0; border-bottom:1px solid var(--line);}
-  .svccard:last-child{border-bottom:none;}
-  .svccard .svcc-ic{flex:none; width:24px; color:var(--green-mid); display:flex; align-items:center; justify-content:center; background:none; border:none;}
-  .svccard .svcc-ic svg{width:19px; height:19px;}
-  .svccard .svcc-m{flex:1; min-width:0;} .svccard .svcc-m b{font-size:15px; font-weight:800; display:block; letter-spacing:-.01em;} .svccard .svcc-m span{font-size:13px; color:var(--sub);}
-  .svccard .svcc-pr{font-size:15px; font-weight:800; white-space:nowrap; letter-spacing:-.02em;}
-  /* 쇼퍼 상세 — 사이드 히어로 2단 (세련) */
-  .dsplit{display:grid; grid-template-columns:320px 1fr; gap:24px; align-items:start; margin-top:6px;}
-  .dside{background:var(--surface); border:1px solid var(--line); border-radius:22px; overflow:hidden; box-shadow:0 16px 40px rgba(20,18,16,.08); position:sticky; top:88px;}
-  .dside-img{height:300px; position:relative; background:#EDE8E0; overflow:hidden;}
-  .dside-img img{width:100%; height:100%; object-fit:cover; filter:saturate(.55) brightness(1.03); display:block;}
+  /* 상세 · 제공 서비스 (타일) — flex+고정폭: 서비스가 1개여도 붕 안 뜨고 항상 왼쪽 정렬 */
+  .svctiles{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px;}
+  .svctile{flex:1 1 150px; max-width:240px; border:1px solid var(--line); border-radius:14px; padding:16px 12px; text-align:center; background:var(--surface); display:flex; flex-direction:column; align-items:center;}
+  .svctile .svct-ic{width:42px; height:42px; margin-bottom:10px; border-radius:12px; background:var(--green-soft); color:var(--green); display:flex; align-items:center; justify-content:center;}
+  .svctile .svct-ic svg{width:22px; height:22px;}
+  .svctile .svct-nm{font-size:14px; font-weight:800; letter-spacing:-.03em; white-space:nowrap;}
+  .svctile .svct-mode{font-size:12px; color:var(--sub); margin-top:3px;}
+  .svctile .svct-pr{font-size:15px; font-weight:800; color:var(--green); margin-top:auto; padding-top:10px;}
+  /* 매칭도 뱃지 — 상세 히어로 사진 · 요청폼 쇼퍼 사진 공용 */
   .dside-match{position:absolute; top:14px; left:14px; font-size:12px; font-weight:800; background:var(--green); color:#fff; padding:5px 12px; border-radius:20px;}
-  .dside-b{padding:20px;}
-  .dside-b .dsvc{font-size:12.5px; font-weight:800; color:var(--green); background:var(--green-soft); padding:4px 11px; border-radius:20px; display:inline-block;}
-  .dside-b h1{font-size:22px; font-weight:800; margin:11px 0 6px; letter-spacing:-.02em;}
-  .dside-b .dmeta{font-size:13.5px; color:var(--sub); font-weight:700;}
-  .dstyles{display:flex; gap:6px; flex-wrap:wrap; margin:14px 0 18px;}
+  .dstyles{display:flex; gap:6px; flex-wrap:wrap; margin:16px 0 22px;}
   .dstyles span{font-size:12.5px; background:var(--soft); color:#6a6258; padding:4px 10px; border-radius:20px; font-weight:600;}
-  .dside-acts{display:flex; flex-direction:column; gap:9px;}
-  .dside-acts .btn{width:100%;}
-  .dblocks{display:flex; flex-direction:column; gap:16px; min-width:0;}
+  .dblocks{display:flex; flex-direction:column; gap:16px; min-width:0; margin-top:36px;}
   .dblocks .rcard{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:20px 22px; box-shadow:0 6px 18px rgba(20,18,16,.04);}
   .rlabel{display:flex; align-items:center; gap:10px;}
-  .rlabel .rmini{flex:none; width:31px; height:31px; border-radius:9px; background:var(--green-soft); color:var(--green); display:flex; align-items:center; justify-content:center;}
-  .rlabel .rmini svg{width:17px; height:17px;}
-  .rlabel .rlt{font-size:15px; font-weight:800; letter-spacing:-.02em; color:var(--green);}
+  .rlabel .rlt{font-size:18px; font-weight:800; letter-spacing:-.03em; color:var(--green);}
   .rlabel .rcnt{margin-left:auto; font-size:12.5px; font-weight:700; color:var(--sub);}
   /* 섹션 라벨 ↔ 콘텐츠 간격 통일(15px) — 모든 섹션 동일하게 */
   .dblocks .rcard .rlabel{margin-bottom:15px;}
-  .dblocks .svccards{margin-top:0;} .dblocks .svccard:first-child{padding-top:0;}
+  .dblocks .svctiles{margin-top:0;}
   .dblocks .dbio{font-size:14.5px; color:var(--ink-soft); line-height:1.7; margin:0; max-width:none;}
-  .dblocks .rrevs{margin-top:0;} .dblocks .rrevs .rev:first-child{padding-top:0;}
+  .dblocks .rrevs{margin-top:0;}
   .dblocks .dgal{margin-top:0;}
-  @media(max-width:760px){ .dsplit{grid-template-columns:1fr;} .dside{position:static;} }
+  @media(max-width:760px){ .dhero-acts .btn{min-width:0; flex:1;} }
   .svc3{display:grid; grid-template-columns:repeat(3,1fr); gap:9px;}
   .svc3 .s{border:1.5px solid var(--line2); border-radius:14px; padding:15px 8px; text-align:center; cursor:pointer;}
   .svc3 .s.on{border-color:var(--green); background:var(--green-soft);}
