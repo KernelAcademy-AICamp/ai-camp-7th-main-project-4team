@@ -311,6 +311,30 @@
   /* 결과 카운트 + 빈 상태 */
   .count{font-size:15px; color:var(--sub2); font-weight:700; margin:26px 0;}
   .count a{color:var(--green); font-weight:800; cursor:pointer;}
+  /* ===== 쇼퍼찾기 2단 (마이와 동일 정렬: 268px 사이드 + 본문) ===== */
+  #shop .shopwrap{display:grid; grid-template-columns:268px 1fr; gap:30px; align-items:start; margin-top:14px;}
+  #shop .shopside{position:sticky; top:88px; display:flex; flex-direction:column; gap:12px;}
+  /* 서비스 유형 → 세로 메뉴(마이 사이드 메뉴 톤) */
+  #shop .shopside .svctab{flex-direction:column; gap:3px; border-bottom:none; margin:0;}
+  #shop .shopside .svctab .t{border-bottom:none; margin:0; padding:11px 14px; border-radius:11px; font-size:15px; font-weight:600;}
+  #shop .shopside .svctab .t:hover{background:var(--soft); color:var(--ink);}
+  #shop .shopside .svctab .t.on{background:var(--green-soft); color:var(--green); font-weight:800;}
+  /* 필터 → 세로 스택 · 전체폭 */
+  #shop .shopside .fbar{flex-direction:column; align-items:stretch; gap:9px; margin:4px 0 0;}
+  #shop .shopside .dd{width:100%;}
+  #shop .shopside .ddbtn{width:100%; justify-content:space-between;}
+  #shop .shopside .ddbtn .ar{margin-left:auto;}
+  #shop .shopside .ddmenu{width:100%; min-width:0;}
+  #shop .shopside .search{max-width:none; width:100%; min-width:0; flex:none;}
+  #shop .shopside .btn.sm{width:100%; padding:12px; font-size:15px;}
+  /* 오른쪽 본문 */
+  #shop .shopmain{min-width:0;}
+  #shop .shopmain .grid{grid-template-columns:repeat(2,1fr);}
+  #shop .shopmain .listhead{margin-top:2px;}
+  #shop .shopmain .reqbanner{margin:22px 0;}
+  #shop .countrow{display:flex; align-items:center; justify-content:space-between; gap:12px; margin:22px 0;}
+  #shop .countrow .count{margin:0;}
+  @media(max-width:820px){ #shop .shopwrap{grid-template-columns:1fr;} #shop .shopside{position:static;} #shop .shopmain .grid{grid-template-columns:1fr 1fr;} }
   .empty{grid-column:1/-1; text-align:center; padding:56px 20px; color:var(--sub); background:#fff; border:1px solid var(--line); border-radius:18px;}
   .empty b{font-size:17px; font-weight:800; color:var(--ink);} .empty p{font-size:14px; margin-top:8px;}
   .empty a{color:var(--green); font-weight:800; cursor:pointer;}
@@ -361,22 +385,31 @@
   .reqpage{max-width:680px; margin:0 auto;}
   /* 지명 견적 요청 — 상세와 동일한 2단(쇼퍼 왼쪽 · 폼 오른쪽) */
   .reqsplit{max-width:1040px; margin:0 auto; display:grid; grid-template-columns:320px 1fr; gap:24px; align-items:start;}
-  .reqside{background:var(--surface); border:1px solid var(--line); border-radius:22px; overflow:hidden; box-shadow:0 16px 40px rgba(20,18,16,.08); position:sticky; top:88px;}
+  .reqside{background:var(--surface); border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 6px 18px rgba(20,18,16,.05); position:sticky; top:88px;}
   .reqside-img{height:220px; position:relative; background:#EDE8E0; overflow:hidden;}
   .reqside-img img{width:100%; height:100%; object-fit:cover; filter:saturate(.55) brightness(1.03); display:block;}
   .reqside-img .dside-match{position:absolute; top:14px; left:14px; font-size:13px; font-weight:800; background:var(--green); color:#fff; padding:5px 12px; border-radius:20px;}
   .reqside-b{padding:18px 20px;}
   .reqside-b .rl{font-size:13px; font-weight:800; color:var(--green);}
   .reqside-b .rn{font-size:19px; font-weight:800; margin-top:3px; letter-spacing:-.02em;}
+  .reqside-meta{display:flex; align-items:center; gap:5px; font-size:13px; color:var(--sub); font-weight:700; margin-top:9px;}
+  .reqside-svc{margin-top:13px; padding-top:13px; border-top:1px solid var(--line); font-size:14px; color:var(--ink-soft);}
+  .reqside-svc b{color:var(--green); font-weight:800;}
   .reqmain{min-width:0;}
   .reqmain h1{font-size:26px; font-weight:800; letter-spacing:-.03em; margin:2px 0 0;}
   .reqmain .lead{font-size:16px; color:var(--sub); margin-top:10px; line-height:1.6;}
   @media(max-width:760px){ .reqsplit{grid-template-columns:1fr;} .reqside{position:static;} }
   /* A안 — 요청 폼을 섹션 카드 3그룹으로 (무엇을/언제·얼마/요청 메모) */
-  .reqpage .grp, .reqmain .grp{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px 20px; margin-top:16px; box-shadow:0 4px 14px rgba(20,18,16,.04);}
-  .reqpage .grp-h, .reqmain .grp-h{display:flex; align-items:center; gap:9px; font-size:15px; font-weight:800; color:var(--green); margin-bottom:8px;}
+  .reqpage .grp, .reqmain .grp{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:20px 22px; margin-top:16px; box-shadow:0 4px 14px rgba(20,18,16,.04);}
+  .reqpage .grp-h, .reqmain .grp-h{display:flex; align-items:center; gap:9px; font-size:18px; font-weight:800; color:var(--green); margin-bottom:13px; letter-spacing:-.03em;}
   .reqpage .grp-h .n, .reqmain .grp-h .n{flex:none; width:22px; height:22px; border-radius:7px; background:var(--green-soft); color:var(--green); font-size:13px; font-weight:800; display:flex; align-items:center; justify-content:center;}
-  .reqpage .grp .feat:first-of-type, .reqmain .grp .feat:first-of-type{margin-top:12px;}
+  /* 각 하위 섹션(상황·예산·일정·선호스타일)은 여백으로 구분(선 없음) */
+  .reqpage .grp .feat, .reqmain .grp .feat{margin:20px 0 9px;}
+  .reqpage .grp-h + .feat, .reqmain .grp-h + .feat{margin-top:0;}
+  .reqpage .seg, .reqmain .seg{gap:6px;}
+  .reqpage .seg .o, .reqmain .seg .o{padding:8px 14px;}
+  /* 상황 세그: '여행' 다음 강제 줄바꿈(데일리·퍼스널·체형커버 아랫줄로) */
+  .segbrk{flex-basis:100%; height:0; margin-bottom:-6px;}
   .reqpage h1{font-size:30px; font-weight:800; letter-spacing:-.045em;}
   .reqpage .lead{font-size:17px; color:var(--sub); margin-top:12px; line-height:1.6;}
   .reqto{display:flex; align-items:center; gap:12px; background:var(--soft); border-radius:14px; padding:13px 15px;}
@@ -510,8 +543,8 @@
   .dblocks .rrevs{margin-top:0;}
   .dblocks .dgal{margin-top:0;}
   @media(max-width:760px){ .dhero-acts .btn{min-width:0; flex:1;} }
-  .svc3{display:grid; grid-template-columns:repeat(3,1fr); gap:9px;}
-  .svc3 .s{border:1.5px solid var(--line2); border-radius:14px; padding:15px 8px; text-align:center; cursor:pointer;}
+  .svc3{display:flex; flex-wrap:wrap; gap:9px;}
+  .svc3 .s{flex:1 1 120px; border:1.5px solid var(--line2); border-radius:14px; padding:15px 8px; text-align:center; cursor:pointer;}
   .svc3 .s.on{border-color:var(--green); background:var(--green-soft);}
   .svc3 .s .i{display:flex; justify-content:center; color:var(--sub);} .svc3 .s .i svg{width:24px; height:24px;} .svc3 .s.on .i{color:var(--green);}
   .svc3 .s b{display:block; font-size:13px; margin-top:6px;}
@@ -790,11 +823,35 @@
   /* 공용 확인 모달 */
   .confirm-scrim{position:fixed; inset:0; background:rgba(22,20,15,.5); z-index:140; display:none; align-items:center; justify-content:center; padding:24px;}
   .confirm-scrim.on{display:flex; animation:f .18s ease;}
-  .confirm-box{background:#fff; border-radius:20px; padding:26px 24px 20px; max-width:340px; width:100%; box-shadow:0 24px 60px rgba(10,11,14,.28); text-align:center;}
+  .confirm-box{background:#fff; border-radius:20px; padding:26px 24px 20px; max-width:340px; width:100%; box-shadow:0 24px 60px rgba(10,11,14,.28); text-align:center; transition:max-width .22s ease;}
+  /* 요청 완료 — 확인 모달 그 자리에서 성공으로 전환(전체화면 점프 없음) */
+  .confirm-box:has(.cf-done){max-width:400px;}
+  .cf-done{padding:6px 0 2px;}
+  .cf-done-ic{width:60px; height:60px; border-radius:50%; background:var(--green-soft); color:var(--green); font-size:30px; font-weight:800; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; animation:cfpop .32s cubic-bezier(.2,1.4,.4,1);}
+  .cf-done-t{font-size:21px; font-weight:800; letter-spacing:-.03em;}
+  .cf-done-s{font-size:14px; color:var(--sub); margin-top:5px; line-height:1.55;} .cf-done-s b{color:var(--green); font-weight:800;}
+  @keyframes cfpop{from{transform:scale(.5); opacity:0;} to{transform:scale(1); opacity:1;}}
   .confirm-msg{font-size:17px; font-weight:700; color:var(--ink); line-height:1.55;}
   .confirm-msg b{font-weight:800; color:var(--green);}
   .confirm-msg .cf-sub{font-size:13px; color:var(--sub); font-weight:600; margin-top:9px; line-height:1.5;}
-  /* 견적 보내기 전 '내 요청서' 확인 프리뷰 (B안) — 이 경우만 모달 넓고 크게 */
+  /* 견적 보내기 전 '내 요청서' 확인 — 미니멀 명세(A) */
+  .confirm-box:has(.cf-a){max-width:460px;}
+  .cf-a{text-align:left;}
+  .cf-a-ic{display:flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:13px; background:var(--green-soft); color:var(--green); margin-bottom:14px;}
+  .cf-a-ic svg{width:24px; height:24px;}
+  .cf-a-eye{font-size:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--green-mid);}
+  .cf-a-title{font-size:22px; font-weight:800; letter-spacing:-.04em; margin:9px 0 5px; line-height:1.32;}
+  .cf-a-sub{font-size:13.5px; color:var(--sub); margin-bottom:18px; line-height:1.5;}
+  .cf-a-list{display:flex; flex-direction:column;}
+  .cf-a-item{display:flex; justify-content:space-between; gap:16px; padding:13px 0; border-bottom:1px solid var(--line); font-size:15px;}
+  .cf-a-item:last-child{border-bottom:none;}
+  .cf-a-item .k{color:var(--sub); font-weight:600; flex:none;}
+  .cf-a-item .v{font-weight:800; text-align:right; color:var(--ink);}
+  .cf-a-chip{display:inline-flex; align-items:center; gap:7px; margin-top:16px; font-size:13px; font-weight:700; color:var(--green); background:var(--green-soft); padding:9px 13px; border-radius:11px;}
+  .cf-a-chip svg{width:15px; height:15px; flex:none;}
+  .cf-a-chip.off{color:var(--sub); background:var(--soft);}
+  .confirm-box:has(.cf-a) .confirm-btns{margin-top:28px;}   /* 첨부 칩과 버튼 사이 간격 ↑ */
+  /* (구) 영수증형 — 미사용, 호환용 유지 */
   .confirm-box:has(.cf-receipt){max-width:500px;}
   .cf-lead{font-size:22px; font-weight:800; color:var(--ink); margin-bottom:16px;}
   .cf-receipt{text-align:left; background:var(--surface); border:1px solid var(--line); border-radius:16px; margin-top:2px; overflow:hidden; box-shadow:0 6px 18px rgba(20,18,16,.06);}
@@ -1045,21 +1102,10 @@
 
     <!-- 1.2 목록 (둘러보기) -->
     <div id="listView">
-      <div class="listhead" style="margin-top:6px">
-        <div>
-          <h2 class="sec" style="margin:0">나에게 맞는 쇼퍼</h2>
-          <p style="font-size:15px; color:var(--sub); margin-top:8px">내 체형·사이즈 기준 <b style="color:var(--ink)">매칭도순</b> · 결과물·후기로 검증된 쇼퍼만 찾아드려요</p>
-        </div>
-      </div>
-
-
-      <!-- 견적 요청(여러 쇼퍼) 배너 -->
-      <div class="reqbanner">
-        <div class="txt"><b>어떤 쇼퍼가 맞을지 모르겠다면?</b><p>요청을 보내면 여러 쇼퍼가 견적을 보내요 · 비교하고 선택해보세요</p></div>
-        <button class="btn" onclick="openMatch()">견적 요청하기 →</button>
-      </div>
-
-      <!-- 서비스 유형 (탭) -->
+     <div class="shopwrap">
+      <!-- 왼쪽 필터 레일 (마이 사이드바와 동일 정렬) -->
+      <aside class="shopside">
+      <!-- 서비스 유형 -->
       <div class="svctab" id="svctab">
         <div class="t on" data-svc="all" onclick="setSvc(this)">전체</div>
         <div class="t" data-svc="online" onclick="setSvc(this)">온라인 스타일링</div>
@@ -1067,7 +1113,7 @@
         <div class="t" data-svc="image" onclick="setSvc(this)">이미지 컨설팅</div>
       </div>
 
-      <!-- 상황·예산 드롭다운 + 검색 + 정렬 -->
+      <!-- 상황·예산·스타일 필터 + 검색 -->
       <div class="fbar">
         <div class="dd" id="ddOcc">
           <button class="ddbtn" onclick="toggleDD(event,'ddOcc')">상황<span class="lab"></span> <span class="ar">▾</span></button>
@@ -1108,16 +1154,33 @@
         </div>
         <div class="search"><span class="mag">⌕</span><input id="q" placeholder="이름·스타일로 찾기" oninput="toggleClr()" onkeydown="if(event.key==='Enter')doSearch()"><span class="clr" id="clrBtn" onclick="clearSearch()" style="display:none">✕</span></div>
         <button class="btn sm" onclick="doSearch()">찾기</button>
-        <div class="sort"><select id="sort" onchange="render()">
-          <option value="match">매칭도순</option>
-          <option value="rating">평점순</option>
-          <option value="priceA">가격 낮은순</option>
-          <option value="priceD">가격 높은순</option>
-        </select></div>
       </div>
+      </aside>
 
-      <div class="count" id="count"></div>
-      <div class="grid" id="grid"></div>
+      <!-- 오른쪽 본문 -->
+      <main class="shopmain">
+        <div class="listhead">
+          <div>
+            <h2 class="sec" style="margin:0">나에게 맞는 쇼퍼</h2>
+            <p style="font-size:15px; color:var(--sub); margin-top:8px">내 체형·사이즈 기준 <b style="color:var(--ink)">매칭도순</b> · 결과물·후기로 검증된 쇼퍼만 찾아드려요</p>
+          </div>
+        </div>
+        <div class="reqbanner">
+          <div class="txt"><b>어떤 쇼퍼가 맞을지 모르겠다면?</b><p>요청을 보내면 여러 쇼퍼가 견적을 보내요 · 비교하고 선택해보세요</p></div>
+          <button class="btn" onclick="openMatch()">견적 요청하기 →</button>
+        </div>
+        <div class="countrow">
+          <div class="count" id="count"></div>
+          <div class="sort"><select id="sort" onchange="render()">
+            <option value="match">매칭도순</option>
+            <option value="rating">평점순</option>
+            <option value="priceA">가격 낮은순</option>
+            <option value="priceD">가격 높은순</option>
+          </select></div>
+        </div>
+        <div class="grid" id="grid"></div>
+      </main>
+     </div><!-- /shopwrap -->
     </div><!-- /listView -->
 
     <!-- 1.3.x 쇼퍼 상세 / 견적 요청 (탭 내 화면 전환) -->
