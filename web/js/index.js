@@ -229,7 +229,7 @@
       var rating=(f.rating!=null?f.rating:(e&&e.rating));
       var review=e?e.review:null;
       var tags=(e&&e.tags)?e.tags.slice(0,2):[];              // 스타일 태그 2개 (쇼퍼찾기 카드와 동일)
-      var rt=rating?'<span class="star">★ '+rating+(review!=null?' <small class="rv">('+review+')</small>':'')+'</span>':'';
+      var rt=rating?'<span class="star"><span class="rvstar">'+starSVG()+'</span> '+rating+(review!=null?' <small class="rv">('+review+')</small>':'')+'</span>':'';
       var svcico=e?'<div class="cardmid"><span class="svcico">'+e.services.map(function(sv){return '<span class="b" title="'+SVC[sv.type]+'">'+svcIcon(sv.type)+'</span>';}).join('')+'</span></div>':'';
       return '<div class="fcard"'+(e?' onclick="favOpen(\''+f.nm+'\')"':'')+'><div class="cov"><img class="favimg" src="'+face+'" alt="" onerror="'+FB+'"><span class="heart" title="즐겨찾기 해제" onclick="event.stopPropagation();toggleFav(\''+f.nm+'\')">'+favIcon(true,true)+'</span></div>'+
         '<div class="fb"><div class="top"><b>'+f.nm+' 쇼퍼</b>'+rt+'</div>'+
@@ -427,7 +427,7 @@
     var e=EX.filter(function(x){return x.nm===r.nm;})[0];
     var shopper = e ? '<div class="rq-sec"><div class="rq-h">쇼퍼</div><div class="req-summary-in"><div class="rs-shopper">'+
         '<img class="av" src="'+img(e)+'" alt="" onerror="'+FB+'">'+
-        '<div class="who"><div class="nm">'+e.nm+' 쇼퍼</div><div class="mt">★ <span class="num">'+e.rating+'</span> · 매칭도 '+e.match+'%</div></div>'+
+        '<div class="who"><div class="nm">'+e.nm+' 쇼퍼</div><div class="mt"><span class="rvstar">'+starSVG()+'</span> <span class="num">'+e.rating+'</span> · 매칭도 '+e.match+'%</div></div>'+
         '<button class="prof" onclick="detailFromReq('+EX.indexOf(e)+','+_bidReq+',\'req\')">프로필</button>'+
       '</div></div></div>' : '';
     var head='<div class="bids-head"><button class="xbtn" onclick="closeBids()">✕</button>'+
@@ -462,7 +462,7 @@
         '<div class="q-l">'+
           '<div class="q-top"><img class="q-ph" src="'+img(e)+'" alt="" onerror="'+FB+'"><div class="q-nm">'+e.nm+' 쇼퍼</div>'+badges+'</div>'+
           '<div class="q-price">총 <span class="num">'+b.price.toLocaleString()+'</span>원</div>'+
-          '<div class="q-meta">★ <span class="num">'+e.rating+'</span> ('+e.review+') · 매칭도 <b>'+e.match+'%</b> · '+svcLabel(r.svc)+' · '+(b.eta||'')+'</div>'+
+          '<div class="q-meta"><span class="rvstar">'+starSVG()+'</span> <span class="num">'+e.rating+'</span> ('+e.review+') · 매칭도 <b>'+e.match+'%</b> · '+svcLabel(r.svc)+' · '+(b.eta||'')+'</div>'+
           '<div class="q-tags">'+e.tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>'+
           '<div class="q-msg">"'+b.msg+'"</div>'+
         '</div>'+
@@ -501,7 +501,7 @@
   /* 빈 상태 · 오픈 알림 신청 → 로그인 후 요청내역에 대기로 기록 */
   function notifySignup(){ var done=function(){ addReq({kind:'notify', svc:'image', status:'대기'}); toast('오픈 알림을 신청했어요 · 마이 > 코디 요청 내역에서 확인'); }; if(loggedIn()) done(); else openLogin('오픈 알림 신청', done); }
 
-  var curSvc='all', curOcc='all', curBudget='all', query='';
+  var curSvc='all', curOcc='all', curBudget='all', curStyles=[], query='';
   function toggleClr(){ document.getElementById('clrBtn').style.display=document.getElementById('q').value?'inline':'none'; }
   function doSearch(){ query=(document.getElementById('q').value||'').trim(); toggleClr(); render(); }
   function clearSearch(){ document.getElementById('q').value=''; query=''; toggleClr(); render(); }
@@ -510,6 +510,19 @@
   function setSvc(el){ setActive(el); curSvc=el.dataset.svc; render(); }
   function setOcc(el){ setActive(el); curOcc=el.dataset.occ; updateDD('ddOcc', curOcc==='all'?'':OCC[curOcc]); closeDD(); render(); }
   function setBud(el){ setActive(el); curBudget=el.dataset.bud; updateDD('ddBud', curBudget==='all'?'':BUD[curBudget]); closeDD(); render(); }
+  /* 스타일은 다중선택(OR) — 메뉴 열어둔 채 토글 */
+  function setStyle(e, el){ e.stopPropagation();
+    var v=el.dataset.style;
+    if(v==='all') curStyles=[];
+    else { var i=curStyles.indexOf(v); if(i>=0) curStyles.splice(i,1); else curStyles.push(v); }
+    syncStyleDD(); render();
+  }
+  function styleLabel(){ return !curStyles.length ? '' : (curStyles.length<=2 ? curStyles.join('·') : curStyles[0]+' 외 '+(curStyles.length-1)); }
+  function syncStyleDD(){
+    [].forEach.call(document.querySelectorAll('#ddStyle .ddopt'), function(o){ var v=o.dataset.style;
+      o.classList.toggle('on', v==='all' ? curStyles.length===0 : curStyles.indexOf(v)>=0); });
+    updateDD('ddStyle', styleLabel());
+  }
   function updateDD(id, val){ var d=document.getElementById(id); d.classList.toggle('active', !!val); d.querySelector('.lab').textContent = val ? ' · '+val : ''; }
   function toggleDD(e, id){ e.stopPropagation(); var d=document.getElementById(id); var open=d.classList.contains('open'); closeDD(); if(!open) d.classList.add('open'); }
   function closeDD(){ [].forEach.call(document.querySelectorAll('.dd.open'), function(d){d.classList.remove('open');}); }
@@ -517,9 +530,9 @@
     [].forEach.call(document.querySelectorAll('#svctab .t'), function(t){t.classList.toggle('on', t.dataset.svc===curSvc);});
     [].forEach.call(document.querySelectorAll('#ddOcc .ddopt'), function(o){o.classList.toggle('on', o.dataset.occ===curOcc);});
     [].forEach.call(document.querySelectorAll('#ddBud .ddopt'), function(o){o.classList.toggle('on', o.dataset.bud===curBudget);});
-    updateDD('ddOcc', curOcc==='all'?'':OCC[curOcc]); updateDD('ddBud', curBudget==='all'?'':BUD[curBudget]);
+    updateDD('ddOcc', curOcc==='all'?'':OCC[curOcc]); updateDD('ddBud', curBudget==='all'?'':BUD[curBudget]); syncStyleDD();
   }
-  function browseAll(){ curSvc='all'; curOcc='all'; curBudget='all'; query=''; document.getElementById('q').value=''; toggleClr(); document.getElementById('sort').value='match'; syncControls(); render(); }
+  function browseAll(){ curSvc='all'; curOcc='all'; curBudget='all'; curStyles=[]; query=''; document.getElementById('q').value=''; toggleClr(); document.getElementById('sort').value='match'; syncControls(); render(); }
 
   function render(){
     var q=query;
@@ -528,22 +541,23 @@
       return (curSvc==='all'||svcHas(e,curSvc))
         && (curOcc==='all'||e.occ.indexOf(curOcc)>=0)
         && (curBudget==='all'||budOf(svcMinPrice(e))===curBudget)
+        && (!curStyles.length||curStyles.some(function(st){return e.tags.indexOf(st)>=0;}))
         && (!q || e.nm.indexOf(q)>=0 || e.tags.join(' ').indexOf(q)>=0);
     });
     list.sort(function(a,b){ return s==='rating'?b.rating-a.rating : s==='priceA'?svcMinPrice(a)-svcMinPrice(b) : s==='priceD'?svcMinPrice(b)-svcMinPrice(a) : b.match-a.match; });
-    var cond = list.length+'명 · '+(curSvc==='all'?'전체 유형':SVC[curSvc])+(curOcc==='all'?'':' · '+OCC[curOcc])+(curBudget==='all'?'':' · 예산 '+BUD[curBudget])+(q?' · "'+q+'"':'');
-    var active = curSvc!=='all'||curOcc!=='all'||curBudget!=='all'||q;
+    var cond = list.length+'명 · '+(curSvc==='all'?'전체 유형':SVC[curSvc])+(curOcc==='all'?'':' · '+OCC[curOcc])+(curBudget==='all'?'':' · 예산 '+BUD[curBudget])+(curStyles.length?' · '+styleLabel():'')+(q?' · "'+q+'"':'');
+    var active = curSvc!=='all'||curOcc!=='all'||curBudget!=='all'||curStyles.length||q;
     document.getElementById('count').innerHTML = cond + (active?'  ·  <a onclick="browseAll()">초기화하기</a>':'');
     var g=document.getElementById('grid');
     if(!list.length){ g.innerHTML='<div class="empty"><b>조건에 맞는 쇼퍼가 아직 없어요</b><p>초기라 쇼퍼를 모으는 중이에요 · <a onclick="notifySignup()">오픈 알림 신청하기</a> 또는 <a onclick="browseAll()">전체 보기</a></p></div>'; return; }
     g.innerHTML=list.map(function(e){ var idx=EX.indexOf(e);
-      var rt=e.rating>0?'<span class="star">★ '+e.rating+' <small class="rv">('+e.review+')</small></span>':'<span class="star new">신규</span>';
+      var rt=e.rating>0?'<span class="star"><span class="rvstar">'+starSVG()+'</span> '+e.rating+' <small class="rv">('+e.review+')</small></span>':'<span class="star new">신규</span>';
       var svcico='<span class="svcico">'+e.services.map(function(sv){return '<span class="b" title="'+SVC[sv.type]+'">'+svcIcon(sv.type)+'</span>';}).join('')+'</span>';
       return '<div class="ecard" onclick="openDetail('+idx+')"><div class="cover"><img src="'+img(e)+'" alt="" onerror="'+FB+'"><span class="match">매칭도 '+e.match+'%</span>'+
         '<button class="favbtn" title="즐겨찾기" onclick="event.stopPropagation();toggleFav(\''+e.nm+'\')">'+favIcon(isFav(e.nm),true)+'</button></div>'+
         '<div class="eb"><div class="top"><span class="nm">'+e.nm+' 쇼퍼</span>'+rt+'</div>'+
         '<div class="subtags">'+e.tags.slice(0,2).join(' · ')+'</div>'+
-        '<div class="cardmid">'+svcico+'</div>'+
+        '<div class="cardmid">'+svcico+'<span class="cardprice"><span class="num">'+svcMinPrice(e).toLocaleString()+'</span>원~</span></div>'+
         '</div></div>';
     }).join('');
   }
@@ -571,8 +585,6 @@
   /* 쇼퍼 상세 본문 — 페이지(detailView)와 요청 오버레이(bidsBody) 공용.
      opts.hideReq=견적 요청 버튼 숨김 · opts.back=뒤로 onclick · opts.fav=즐겨찾기 onclick */
   /* 쇼퍼 후기 = 원본(EX.reviews) + 내가 남긴 후기(reqs 후기완료) 합산 — 후기가 쇼퍼 쪽에 반영 */
-  /* 별점 5칸 (채움/빈칸) — 상단 평점 요약용 */
-  function starRow(r){ var n=Math.round(r), s=''; for(var i=1;i<=5;i++){ s+='<svg'+(i<=n?'':' class="e"')+' viewBox="0 0 24 24"><path d="M12 2l3 6.6 7 .7-5.2 4.7 1.5 6.9L12 18l-6.3 3.6 1.5-6.9L2 9.3l7-.7z"/></svg>'; } return '<span class="stars">'+s+'</span>'; }
   function reviewData(e){
     var mine=reqs.filter(function(r){ return r.nm===e.nm && r.status==='후기완료' && r.review; });
     var count=e.review+mine.length;
@@ -586,7 +598,7 @@
   }
   function detailBodyHTML(idx, opts){ var e=EX[idx];
     var rd=reviewData(e);
-    var rt=rd.count>0?('★ '+rd.rating+' · 후기 '+rd.count+'건'):'신규 쇼퍼';
+    var rt=rd.count>0?('<span class="rvstar">'+starSVG()+'</span> '+rd.rating+' · 후기 '+rd.count+'건'):'신규 쇼퍼';
     var svcIco=e.services.map(function(sv){ return '<span class="svcico" title="'+SVC[sv.type]+'">'+svcIcon(sv.type)+'</span>'; }).join('');
     var svcCards=e.services.map(function(sv){ var meta=SMODE[sv.type]+(sv.regions&&sv.regions.length?' · '+sv.regions.join('·'):'');
       return '<div class="svctile"><span class="svct-ic">'+svcIcon(sv.type)+'</span><b class="svct-nm">'+SVC[sv.type]+'</b><span class="svct-mode">'+meta+'</span><div class="svct-pr"><span class="num">'+sv.price.toLocaleString()+'</span>원</div></div>'; }).join('');
@@ -607,7 +619,7 @@
       '</div>'+
       '<div class="dblocks">'+
           '<div class="rcard"><div class="rlabel"><span class="rlt">제공 서비스</span></div><div class="svctiles">'+svcCards+'</div></div>'+
-          '<div class="rcard"><div class="rlabel"><span class="rlt">후기</span></div>'+(rd.count>0?'<div class="revsum"><div class="revsum-n num">'+rd.rating+'</div><div class="revsum-r">'+starRow(rd.rating)+'<span class="revsum-c">후기 '+rd.count+'개</span></div></div>':'')+'<div class="rrevs">'+rd.html+'</div></div>'+
+          '<div class="rcard"><div class="rlabel"><span class="rlt">후기</span></div>'+(rd.count>0?'<div class="revsum"><div class="revsum-n num">'+rd.rating+'</div><div class="revsum-r">'+'<span class="revstars">'+starsRO(Math.round(rd.rating))+'</span>'+'<span class="revsum-c">후기 '+rd.count+'개</span></div></div>':'')+'<div class="rrevs">'+rd.html+'</div></div>'+
           '<div class="rcard"><div class="rlabel"><span class="rlt">포트폴리오</span><span class="rcnt">착용 cm·kg</span></div><div class="dgal">'+folioHTML+'</div></div>'+
         '</div>'+
       '</div>';
