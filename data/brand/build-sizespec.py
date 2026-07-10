@@ -198,7 +198,11 @@ for f in sorted(raw.glob("*.csv")):
         specs.append(spec)
 
 cats = sorted(set(s["category"] for s in specs))
-anchor_brands = sorted(anchor_bids)
+# 앵커 순서 = 커버리지(spec 수) 내림차순 → 수집 많은 브랜드가 앞(데이터 기반, 하드코딩 순서 없음).
+_bcount = {}
+for s in specs:
+    _bcount[s["brandId"]] = _bcount.get(s["brandId"], 0) + 1
+anchor_brands = sorted(anchor_bids, key=lambda b: (-_bcount.get(b, 0), b))
 doc = {
     "$meta": {
         "purpose": "A축 garmentCm 시드 — 착용경험 역산(규칙①②③)·추천 사이즈 실계산의 재료.",

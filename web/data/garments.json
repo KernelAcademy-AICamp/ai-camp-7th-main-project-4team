@@ -2,12 +2,12 @@
  "$meta": {
   "purpose": "A축 garmentCm 시드 — 착용경험 역산(규칙①②③)·추천 사이즈 실계산의 재료.",
   "anchorBrands": [
-   "8seconds",
+   "zara",
    "musinsa-standard",
-   "spao",
    "topten",
    "uniqlo",
-   "zara"
+   "8seconds",
+   "spao"
   ],
   "schemaRef": "web/js/engine.js — garmentCm 계약(부위별 단면 flat)",
   "source": "브랜드 자사몰 사이즈표 수동 수집",

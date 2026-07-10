@@ -145,12 +145,12 @@
   /* 사이즈 옵션은 브랜드·성별·서브타입별로 다르다(유니클로 남성=4XL까지, H&M=XXS부터…).
      garments.json(A축)에서 실제 sizeLabel 집합을 뽑아 렌더 → 하드코딩 XS~XL 제거.
      드롭다운 표기 → garments의 brandId 매핑. 데이터 없는 브랜드/카테고리는 DEFAULT_SIZES. */
-  var BRANDID={'유니클로':'uniqlo','무신사 스탠다드':'musinsa-standard','나이키':'nike','탑텐':'topten',
-    '스파오':'spao','에잇세컨즈':'8seconds','노스페이스':'northface','H&M (편차 큼)':'hm','자라 (편차 큼)':'zara'};
-  // 착용경험 입력은 앵커 브랜드만(오프라인 시착 편의+garment실측 역산). 목록은 garments $meta.anchorBrands(데이터 진실).
-  //  하드코딩 옵션이 아니라 데이터로 필터 → 수집 확장 시 자동 반영, 비앵커(나이키·노스페이스·H&M) 유입 차단.
+  // 착용경험 입력은 앵커 브랜드만(오프라인 시착 편의+garment실측 역산). 브랜드 목록·표시명 전부 데이터에서:
+  //  id·순서=garments $meta.anchorBrands, 표시명=spec.brandName. 하드코딩 레지스트리 없음 → 신규 브랜드 자동 반영.
+  //  option value=brandId(엔진 키), text=brandName. 폴백 옵션은 value=''(앵커 밖 브랜드 → 선호핏만 플로우).
   var ANCHOR_BRANDS=[];
-  var FALLBACK_BRAND='— 목록에 없음 —';   // 앵커 밖 브랜드만 입어본 사용자 → 선호핏만 플로우로.
+  var BRAND_CAVEAT={zara:'편차 큼'};   // 사이즈 편차 UI 주석만(브랜드 레지스트리 아님) — 데이터 확장과 무관.
+  var FALLBACK_BRAND='— 목록에 없음 —';
   var DEFAULT_SIZES=['XS','S','M','L','XL'];
   var GARMENTS=null;
   // 실측(garment cm) 데이터가 있는 카테고리 = 착용경험 역산 대상. 없으면 선호핏만 받아 진단.
@@ -197,7 +197,7 @@
   function renderSizes(g){
     var el=document.getElementById('size'+g); if(!el) return;
     var bsel=document.getElementById('brand'+g);
-    var brandId=bsel?BRANDID[bsel.value]:null;
+    var brandId=(bsel&&bsel.value)?bsel.value:null;   // option value=brandId(데이터). 폴백('')=null.
     var gender=BASIC.gender||'female';
     // 선택 셀(데이터 브랜드의 핏라인/실루엣 옵션)로 사이즈 스코프 — 폴백 라벨(data-axis 없음)은 필터 안 함.
     var isel=document.getElementById('item'+g), opt=isel&&isel.selectedOptions?isel.selectedOptions[0]:null;
@@ -220,16 +220,25 @@
       return '<div class="opt'+(o===defObj?' on':'')+'" data-size="'+o.raw+'" onclick="pick(this)">'+o.display+'</div>';
     }).join('');
   }
-  // 브랜드 드롭다운 = 앵커 브랜드(데이터)만 + 폴백. BRANDID 정의순 유지, 선택값 보존.
-  //  ANCHOR_BRANDS 비면(garments 로드 실패=file:// 등) 정적 HTML 옵션 그대로 둠.
+  // 앵커 브랜드 [{id,label}] — garments 데이터에서 추출($meta.anchorBrands 순서, brandName 표시). 없으면 null.
+  function anchorBrandList(){
+    if(!GARMENTS || !ANCHOR_BRANDS.length) return null;
+    var name={};
+    GARMENTS.forEach(function(s){ if(ANCHOR_BRANDS.indexOf(s.brandId)>=0 && !name[s.brandId]) name[s.brandId]=s.brandName||s.brandId; });
+    return ANCHOR_BRANDS.filter(function(id){ return name[id]; }).map(function(id){
+      var cav=BRAND_CAVEAT[id]; return {id:id, label:name[id]+(cav?' ('+cav+')':'')};
+    });
+  }
+  // 브랜드 드롭다운을 데이터로 생성 — 하드코딩 없음, 신규 앵커 브랜드 자동 포함. 선택값(id) 보존.
+  //  데이터 로드 실패(file:// 등)면 정적 HTML 옵션 그대로 둠(폴백).
   function renderBrands(){
-    if(!ANCHOR_BRANDS.length) return;
-    var opts=Object.keys(BRANDID).filter(function(disp){ return ANCHOR_BRANDS.indexOf(BRANDID[disp])>=0; });
-    opts.push(FALLBACK_BRAND);
+    var list=anchorBrandList(); if(!list) return;
     [1,2].forEach(function(g){
       var el=document.getElementById('brand'+g); if(!el) return;
       var prev=el.value;
-      el.innerHTML=opts.map(function(o){ return '<option'+(o===prev?' selected':'')+'>'+o+'</option>'; }).join('');
+      var html=list.map(function(b){ return '<option value="'+b.id+'"'+(b.id===prev?' selected':'')+'>'+b.label+'</option>'; }).join('');
+      html+='<option value="">'+FALLBACK_BRAND+'</option>';
+      el.innerHTML=html;
     });
   }
   /* 품목 드롭다운 = 셀(브랜드×핏라인/실루엣) — 제품명(SKU)이 아니라 재인 가능한 핏/실루엣만 노출.
@@ -260,7 +269,7 @@
   function renderItems(g){
     var el=document.getElementById('item'+g); if(!el) return;
     var bsel=document.getElementById('brand'+g);
-    var brandId=bsel?BRANDID[bsel.value]:null;
+    var brandId=(bsel&&bsel.value)?bsel.value:null;   // option value=brandId(데이터). 폴백('')=null.
     var cells=hasData(target) ? cellsForItems(brandId, BASIC.gender||'female', subtypeOf(g)) : null;
     var prev=el.value;
     if(cells){
@@ -348,14 +357,15 @@
     var exps=[], n=DIAGNOSE_AT[cur]||1;
     [1,2].slice(0,n).forEach(function(g){
       var f=collectFeel('feel'+g);
-      var bsel=document.getElementById('brand'+g), brandTxt=bsel?bsel.value:'';
+      var bsel=document.getElementById('brand'+g), bopt=bsel&&bsel.selectedOptions?bsel.selectedOptions[0]:null;
+      var brandTxt=bopt?bopt.textContent.trim():'';   // 표시명(brandName). id는 value.
       var isel=document.getElementById('item'+g), opt=isel&&isel.selectedOptions?isel.selectedOptions[0]:null;
       var itemVal=isel?isel.value:'', axis=opt?opt.getAttribute('data-axis'):null;
       var itemLab=opt?opt.textContent.trim():itemVal;   // 표시/디버그용 라벨(엔진 미사용)
       var szEl=document.querySelector('#size'+g+' .opt.on');
       // 표시라벨(canonical·접두)이 아니라 data-size(원본 sizeLabel)를 엔진에 넘겨 정확일치 round-trip.
       var szRaw=szEl?(szEl.getAttribute('data-size')||szEl.textContent.trim()):'M';
-      var brandId=BRANDID[brandTxt]||'unknown', gen=BASIC.gender||'female';
+      var brandId=(bsel&&bsel.value)||'unknown', gen=BASIC.gender||'female';   // 폴백('')·미로드=unknown → 선호핏 폴백
       // 셀 코드 직접 사용(데이터 브랜드) / 데이터 없는 브랜드는 라벨 텍스트 파싱 폴백.
       var fitLine = axis==='fitLine' ? itemVal : garmentFitLine(itemLab);
       var silh    = axis==='silhouette' ? itemVal : garmentSilhouette(itemVal);
