@@ -18,7 +18,7 @@ raw = here / "raw"
 out = repo / "web" / "data" / "garments.json"
 
 BRAND_ID = {
-    "유니클로": "uniqlo", "무신사스탠다드": "musinsa-standard", "나이키": "nike",
+    "유니클로": "uniqlo", "무신사 스탠다드": "musinsa-standard", "나이키": "nike",
     "스파오": "spao", "H&M": "hm", "에잇세컨즈": "8seconds", "탑텐": "topten",
     "노스페이스": "northface", "자라": "zara",
 }
