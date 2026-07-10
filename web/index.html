@@ -58,6 +58,8 @@
   .page{display:none; animation:f .3s cubic-bezier(.2,.8,.2,1); padding:38px 0 90px;}
   .page.on{display:block;}
   @keyframes f{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;}}
+  /* 쇼퍼찾기 화면 전환 — 잔잔한 페이드 */
+  @keyframes viewIn{from{opacity:0;} to{opacity:1;}}
 
   h2.sec{font-size:23px; font-weight:800; letter-spacing:-.04em; margin:44px 0 18px;}
   /* .btn 은 tokens.css 정의(잉크블랙, hover #000)를 그대로 사용. 아래는 화면별 변형만. */
@@ -311,30 +313,6 @@
   /* 결과 카운트 + 빈 상태 */
   .count{font-size:15px; color:var(--sub2); font-weight:700; margin:26px 0;}
   .count a{color:var(--green); font-weight:800; cursor:pointer;}
-  /* ===== 쇼퍼찾기 2단 (마이와 동일 정렬: 268px 사이드 + 본문) ===== */
-  #shop .shopwrap{display:grid; grid-template-columns:268px 1fr; gap:30px; align-items:start; margin-top:14px;}
-  #shop .shopside{position:sticky; top:88px; display:flex; flex-direction:column; gap:12px;}
-  /* 서비스 유형 → 세로 메뉴(마이 사이드 메뉴 톤) */
-  #shop .shopside .svctab{flex-direction:column; gap:3px; border-bottom:none; margin:0;}
-  #shop .shopside .svctab .t{border-bottom:none; margin:0; padding:11px 14px; border-radius:11px; font-size:15px; font-weight:600;}
-  #shop .shopside .svctab .t:hover{background:var(--soft); color:var(--ink);}
-  #shop .shopside .svctab .t.on{background:var(--green-soft); color:var(--green); font-weight:800;}
-  /* 필터 → 세로 스택 · 전체폭 */
-  #shop .shopside .fbar{flex-direction:column; align-items:stretch; gap:9px; margin:4px 0 0;}
-  #shop .shopside .dd{width:100%;}
-  #shop .shopside .ddbtn{width:100%; justify-content:space-between;}
-  #shop .shopside .ddbtn .ar{margin-left:auto;}
-  #shop .shopside .ddmenu{width:100%; min-width:0;}
-  #shop .shopside .search{max-width:none; width:100%; min-width:0; flex:none;}
-  #shop .shopside .btn.sm{width:100%; padding:12px; font-size:15px;}
-  /* 오른쪽 본문 */
-  #shop .shopmain{min-width:0;}
-  #shop .shopmain .grid{grid-template-columns:repeat(2,1fr);}
-  #shop .shopmain .listhead{margin-top:2px;}
-  #shop .shopmain .reqbanner{margin:22px 0;}
-  #shop .countrow{display:flex; align-items:center; justify-content:space-between; gap:12px; margin:22px 0;}
-  #shop .countrow .count{margin:0;}
-  @media(max-width:820px){ #shop .shopwrap{grid-template-columns:1fr;} #shop .shopside{position:static;} #shop .shopmain .grid{grid-template-columns:1fr 1fr;} }
   .empty{grid-column:1/-1; text-align:center; padding:56px 20px; color:var(--sub); background:#fff; border:1px solid var(--line); border-radius:18px;}
   .empty b{font-size:17px; font-weight:800; color:var(--ink);} .empty p{font-size:14px; margin-top:8px;}
   .empty a{color:var(--green); font-weight:800; cursor:pointer;}
@@ -343,7 +321,7 @@
   .back{display:inline-flex; align-items:center; gap:6px; font-size:15px; font-weight:700; color:var(--sub); cursor:pointer; margin-bottom:22px;}
   .back:hover{color:var(--ink);}
   /* 쇼퍼찾기 내부 전환(목록↔상세↔요청)에도 탭 전환과 동일한 페이드 — 딱 끊기는 느낌 제거 */
-  #shop #listView, #shop #detailView, #shop #requestView{animation:f .3s cubic-bezier(.2,.8,.2,1);}
+  #shop #listView, #shop #detailView, #shop #requestView{max-width:1040px; margin:0 auto; animation:viewIn .28s ease;}
   /* 쇼퍼 상세 본문 — 오버레이 안쪽은 900px 고정 / 쇼퍼찾기 페이지만 목록 폭에 가깝게 넓혀 점프 완화 */
   .detailbody{max-width:900px; margin:0 auto;}
   #detailView .detailbody{max-width:1040px; margin:0 auto;}
@@ -1102,10 +1080,20 @@
 
     <!-- 1.2 목록 (둘러보기) -->
     <div id="listView">
-     <div class="shopwrap">
-      <!-- 왼쪽 필터 레일 (마이 사이드바와 동일 정렬) -->
-      <aside class="shopside">
-      <!-- 서비스 유형 -->
+      <div class="listhead" style="margin-top:6px">
+        <div>
+          <h2 class="sec" style="margin:0">나에게 맞는 쇼퍼</h2>
+          <p style="font-size:15px; color:var(--sub); margin-top:8px">내 체형·사이즈 기준 <b style="color:var(--ink)">매칭도순</b> · 결과물·후기로 검증된 쇼퍼만 찾아드려요</p>
+        </div>
+      </div>
+
+      <!-- 견적 요청(여러 쇼퍼) 배너 -->
+      <div class="reqbanner">
+        <div class="txt"><b>어떤 쇼퍼가 맞을지 모르겠다면?</b><p>요청을 보내면 여러 쇼퍼가 견적을 보내요 · 비교하고 선택해보세요</p></div>
+        <button class="btn" onclick="openMatch()">견적 요청하기 →</button>
+      </div>
+
+      <!-- 서비스 유형 (탭) -->
       <div class="svctab" id="svctab">
         <div class="t on" data-svc="all" onclick="setSvc(this)">전체</div>
         <div class="t" data-svc="online" onclick="setSvc(this)">온라인 스타일링</div>
@@ -1113,7 +1101,7 @@
         <div class="t" data-svc="image" onclick="setSvc(this)">이미지 컨설팅</div>
       </div>
 
-      <!-- 상황·예산·스타일 필터 + 검색 -->
+      <!-- 상황·예산 드롭다운 + 검색 + 정렬 -->
       <div class="fbar">
         <div class="dd" id="ddOcc">
           <button class="ddbtn" onclick="toggleDD(event,'ddOcc')">상황<span class="lab"></span> <span class="ar">▾</span></button>
@@ -1154,33 +1142,16 @@
         </div>
         <div class="search"><span class="mag">⌕</span><input id="q" placeholder="이름·스타일로 찾기" oninput="toggleClr()" onkeydown="if(event.key==='Enter')doSearch()"><span class="clr" id="clrBtn" onclick="clearSearch()" style="display:none">✕</span></div>
         <button class="btn sm" onclick="doSearch()">찾기</button>
+        <div class="sort"><select id="sort" onchange="render()">
+          <option value="match">매칭도순</option>
+          <option value="rating">평점순</option>
+          <option value="priceA">가격 낮은순</option>
+          <option value="priceD">가격 높은순</option>
+        </select></div>
       </div>
-      </aside>
 
-      <!-- 오른쪽 본문 -->
-      <main class="shopmain">
-        <div class="listhead">
-          <div>
-            <h2 class="sec" style="margin:0">나에게 맞는 쇼퍼</h2>
-            <p style="font-size:15px; color:var(--sub); margin-top:8px">내 체형·사이즈 기준 <b style="color:var(--ink)">매칭도순</b> · 결과물·후기로 검증된 쇼퍼만 찾아드려요</p>
-          </div>
-        </div>
-        <div class="reqbanner">
-          <div class="txt"><b>어떤 쇼퍼가 맞을지 모르겠다면?</b><p>요청을 보내면 여러 쇼퍼가 견적을 보내요 · 비교하고 선택해보세요</p></div>
-          <button class="btn" onclick="openMatch()">견적 요청하기 →</button>
-        </div>
-        <div class="countrow">
-          <div class="count" id="count"></div>
-          <div class="sort"><select id="sort" onchange="render()">
-            <option value="match">매칭도순</option>
-            <option value="rating">평점순</option>
-            <option value="priceA">가격 낮은순</option>
-            <option value="priceD">가격 높은순</option>
-          </select></div>
-        </div>
-        <div class="grid" id="grid"></div>
-      </main>
-     </div><!-- /shopwrap -->
+      <div class="count" id="count"></div>
+      <div class="grid" id="grid"></div>
     </div><!-- /listView -->
 
     <!-- 1.3.x 쇼퍼 상세 / 견적 요청 (탭 내 화면 전환) -->
