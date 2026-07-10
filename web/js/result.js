@@ -62,6 +62,32 @@
     slot.innerHTML='<iframe src="card.html?type='+(type||'BAL')+'&g='+gender+'" scrolling="no" title="내 결과 카드"></iframe>'+cardNoteHTML();
   }
   var cardType=dx.bodyType||'BAL';
+  // 유형 정체성 / 잘맞·피할 FIT / 한 끗 — 마이 '내 진단결과' 디자인 통일 (8유형 동적)
+  (function(){
+    var okC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+    var noC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>';
+    function chips(a){ return (a||[]).map(function(c){ return '<span>'+c+'</span>'; }).join(''); }
+    window._renderType=function(list){
+      var t=(list||[]).filter(function(x){ return x.code===cardType; })[0]; if(!t) return;
+      var tp=t.point||'#2E4A3B';
+      var idEl=document.getElementById('rtypeid');
+      if(idEl){ idEl.style.setProperty('--tp',tp);
+        idEl.innerHTML='<span class="dtl-code">'+t.code+'</span><h2 class="dtl-name">'+t.name+'</h2>'+
+          '<span class="dtl-korea">사이즈코리아 · '+t.sizeKorea+'</span>'+
+          '<p class="dtl-desc">'+(t.profile||[]).map(function(p,i){ return i===0?'<b>'+p+'</b>':p; }).join('<br>')+'</p>'+
+          '<div class="dtl-hash">'+chips(t.signature)+'</div>'; }
+      var fEl=document.getElementById('rfit');
+      if(fEl){ fEl.style.setProperty('--tp',tp);
+        fEl.innerHTML='<div class="dtl-fit ok"><div class="dtl-fit-h">'+okC+'잘맞 FIT</div><div class="dtl-chips">'+chips(t.fitOk)+'</div></div>'+
+          '<div class="dtl-fit no"><div class="dtl-fit-h">'+noC+'피할 FIT</div><div class="dtl-chips">'+chips(t.fitNo)+'</div></div>'; }
+      var tEl=document.getElementById('rtip');
+      if(tEl && t.insight){ tEl.style.setProperty('--tp',tp); tEl.innerHTML='<div class="k">FITTING의 한 끗</div><p>'+t.insight+'</p>'; }
+    };
+    fetch('data/bodytypes.json').then(function(r){ return r.json(); }).then(function(j){
+      window._btList=Array.isArray(j)?j:(j.types||Object.keys(j).map(function(k){ return j[k]; }));
+      window._renderType(window._btList);
+    }).catch(function(){});
+  })();
   if(showCard){
     slot.className='rcard';
     renderCard(cardType);
@@ -88,15 +114,16 @@
     document.getElementById('recs').innerHTML=
       '<div class="rrow"><div class="rkicker">가장 잘 맞을 브랜드·사이즈</div><span class="rchip">이번 진단 · '+curLabel+'</span></div>'+
       '<div class="rnote">평소 착용감 기준, 몸에 <b style="color:var(--ink2)">가장 잘 맞을 순</b>으로 추렸어요 · <b style="color:var(--ink2)">핏 지수</b>=예상 적합도</div>'+
-      '<div class="rsthead"><span>브랜드</span><span>사이즈 · 핏 지수</span></div>'+
+      '<div class="s2list">'+
       ranked.map(function(r){
         var note=(FLK[r.fitLine]||'')+' · '+r.bottleneck+' 기준'+(r.variance?' · '+r.variance:'');
-        // 핏 라벨 + 지수를 한 칩에: "딱맞음 75%"
-        var scoreTxt=(r.fitScore!=null)?' '+r.fitScore+'%':'';
-        var pillCls=(r.warn?' warn':(r.fitScore!=null&&r.fitScore<70?' lo':''));
-        return '<div class="rszrow"><div class="rbd">'+r.brandName+'<small>'+note+'</small></div>'+
-          '<div class="rsz"><span class="n">'+r.size+'</span><span class="rpill'+pillCls+'">'+r.fit+scoreTxt+'</span></div></div>';
-      }).join('')+
+        var pct=(r.fitScore!=null)?r.fitScore:0;
+        var scoreTxt=(r.fitScore!=null)?r.fit+' '+r.fitScore+'%':r.fit;
+        var loCls=(r.warn||(r.fitScore!=null&&r.fitScore<70))?' lo':'';
+        return '<div class="s2row'+loCls+'"><div class="s2fill" style="width:'+pct+'%"></div>'+
+          '<div class="s2in"><div class="b">'+r.brandName+'<small>'+note+'</small></div>'+
+          '<div class="r"><span class="sz">'+r.size+'</span><span class="p">'+scoreTxt+'</span></div></div></div>';
+      }).join('')+'</div>'+
       (real?'<div class="rfoot">※ 핏 지수 = 브랜드 실측(단면) 대비 '+(curCat==='BOTTOM'?'허리·엉덩이·허벅지 여유로 계산 · 바지':'가슴·어깨 여유로 계산 · 긴팔')+' 기준 · 착용경험을 넣으면 정밀해져요</div>':'');
   }
   // 추천은 A축 사이즈 시드가 있는 TOP만 실제. 나머지 카테고리는 측정만 보여주고 추천은 '준비중'.
@@ -116,9 +143,13 @@
   // 왼쪽 poleL=낮은 끝, 오른쪽 poleR=높은 끝. 막대는 백분위만큼 왼→오. 강조(dom)는 가까운 쪽.
   function specRow(poleL,pct,poleR,axis){
     pct=Math.max(3,Math.min(97,Math.round(pct||50)));
-    var lc=pct<50?' dom':'', rc=pct>=50?' dom':'';
-    return '<div class="rspec"><div class="top"><span class="pole'+lc+'">'+poleL+'</span><span class="pct"><span class="n">'+pct+'</span>%</span><span class="pole'+rc+'">'+poleR+'</span></div>'+
-      '<div class="rtrack"><i style="width:'+pct+'%"></i></div><div class="raxis">'+axis+'</div></div>';
+    var part=(axis||'').split(/\s*[—-]\s*/)[0].trim();
+    var adjL=(poleL||'').split(' ')[0], adjR=(poleR||'').split(' ')[0];
+    var zone = pct>=62 ? adjR+' 편' : (pct<=38 ? adjL+' 편' : '표준');
+    var idx=Math.min(4,Math.max(0,Math.round(pct/100*4))), segs='';
+    for(var i=0;i<5;i++){ segs+='<div class="n2seg'+(i===idx?' on':(Math.abs(i-idx)===1?' near':''))+'"></div>'; }
+    return '<div class="n2row"><div class="n2top"><span class="part">'+part+'</span><span class="zone">'+zone+'</span></div>'+
+      '<div class="n2segs">'+segs+'</div><div class="n2scale"><span>'+adjL+'</span><span>'+adjR+'</span></div></div>';
   }
   // 여유축(상의): skinny..oversize / 형태축(하의 실루엣): slim..wide 슬림도로 근사 배치.
   var FITPCT={skinny:20,slim:32,regular:55,loose:70,oversize:85,
@@ -148,7 +179,7 @@
         var bt=FitBodyType.classify({ gender:est.sex,
           heightCm:(payload.basic&&payload.basic.height), weightKg:(payload.basic&&payload.basic.weight),
           chestFull:cm.chestFull, chestUpper:cm.chestUpper, waist:cm.waist, hip:cm.hip });
-        if(bt && bt!==cardType){ cardType=bt; renderCard(bt); }
+        if(bt && bt!==cardType){ cardType=bt; renderCard(bt); if(window._renderType&&window._btList) window._renderType(window._btList); }
       }
 
       // 측정: 이번 진단 카테고리의 필수 부위 + 여유 선호핏 (역산 반영된 pm)
