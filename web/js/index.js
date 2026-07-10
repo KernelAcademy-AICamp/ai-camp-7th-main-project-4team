@@ -485,9 +485,10 @@
   /* 공용 확인 모달 */
   function askConfirm(msg, yesLabel, onYes, noLabel){
     document.getElementById('confirmMsg').innerHTML=msg;
-    var n=document.getElementById('confirmNo'); if(n) n.textContent=noLabel||'취소하기';
+    var n=document.getElementById('confirmNo'); if(n){ n.textContent=noLabel||'취소하기'; n.onclick=function(){ closeConfirm(); }; }
     var y=document.getElementById('confirmYes'); y.textContent=yesLabel||'확인';
     y.onclick=function(){ closeConfirm(); if(onYes) onYes(); };
+    document.getElementById('confirmModal').onclick=function(){ closeConfirm(); };   // 바깥 클릭 닫기 복구(완료 화면에서 해제되므로 매번 복원)
     document.getElementById('confirmModal').classList.add('on');
   }
   function closeConfirm(){ document.getElementById('confirmModal').classList.remove('on'); }
@@ -556,7 +557,7 @@
       return '<div class="ecard" onclick="openDetail('+idx+')"><div class="cover"><img src="'+img(e)+'" alt="" onerror="'+FB+'"><span class="match">매칭도 '+e.match+'%</span>'+
         '<button class="favbtn" title="즐겨찾기" onclick="event.stopPropagation();toggleFav(\''+e.nm+'\')">'+favIcon(isFav(e.nm),true)+'</button></div>'+
         '<div class="eb"><div class="top"><span class="nm">'+e.nm+' 쇼퍼</span>'+rt+'</div>'+
-        '<div class="subtags">'+e.tags.slice(0,2).join(' · ')+'</div>'+
+        '<div class="subtags">'+e.tags.slice(0,3).join(' · ')+'</div>'+
         '<div class="cardmid">'+svcico+'<span class="cardprice"><span class="num">'+svcMinPrice(e).toLocaleString()+'</span>원~</span></div>'+
         '</div></div>';
     }).join('');
@@ -644,37 +645,43 @@
 
   /* 견적 요청 폼 (A안 — 섹션 카드 3그룹: 무엇을 / 언제·얼마 / 요청 메모) */
   function reqFormHTML(svc3, g1label, noBudget){
-    return '<div class="grp"><div class="grp-h"><span class="n">1</span>'+(g1label||'무엇을 받을까요')+'</div><div class="svc3" id="mSvc">'+svc3+'</div></div>'+
+    return '<div class="grp"><div class="grp-h"><span class="n">1</span>'+(g1label||'어떤 서비스로 받을까요?')+'</div><div class="svc3" id="mSvc">'+svc3+'</div></div>'+
       '<div class="grp"><div class="grp-h"><span class="n">2</span>언제 어디서 진행할까요?</div>'+
-        '<div class="feat">상황 · 최대 2개 · <em>필수</em></div><div class="seg" id="mOcc"><span class="o" onclick="toggleOcc(this)">소개팅·데이트</span><span class="o" onclick="toggleOcc(this)">면접·발표</span><span class="o" onclick="toggleOcc(this)">결혼식 하객</span><span class="o" onclick="toggleOcc(this)">여행</span><span class="o" onclick="toggleOcc(this)">데일리 스타일링</span><span class="o" onclick="toggleOcc(this)">퍼스널 스타일링</span><span class="o" onclick="toggleOcc(this)">체형 커버 스타일링</span></div>'+
+        '<div class="feat">상황 · 최대 2개 · <em>필수</em></div><div class="seg" id="mOcc"><span class="o" onclick="toggleOcc(this)">소개팅·데이트</span><span class="o" onclick="toggleOcc(this)">면접·발표</span><span class="o" onclick="toggleOcc(this)">결혼식 하객</span><span class="o" onclick="toggleOcc(this)">여행</span><span class="segbrk"></span><span class="o" onclick="toggleOcc(this)">데일리 스타일링</span><span class="o" onclick="toggleOcc(this)">퍼스널 스타일링</span><span class="o" onclick="toggleOcc(this)">체형 커버 스타일링</span></div>'+
         (noBudget?'':'<div class="feat">예산 · <em>필수</em></div><div class="seg" id="mBud"><span class="o" onclick="pickBud(this)">~5만</span><span class="o" onclick="pickBud(this)">5~10만</span><span class="o" onclick="pickBud(this)">10~15만</span><span class="o" onclick="pickBud(this)">15만+</span></div>')+
         '<div class="feat">일정 · <em>필수</em> · 오늘 이후만 선택 가능</div><input class="inp" type="date" id="reqDate" min="'+todayStr()+'" onchange="validate()">'+
       '</div>'+
       '<div class="grp"><div class="grp-h"><span class="n">3</span>요청사항을 적어주세요</div>'+
         '<input class="inp" id="reqNote" maxlength="100" placeholder="예) 과하지 않게 깔끔한 첫인상 원해요">'+
-        '<div class="attach" style="margin-top:12px"><div class="at"><b>내 체형·사이즈 측정 결과 첨부</b><div>시크 스트레이트 · 상·하의 측정값</div></div><div class="toggle on" id="reqAttach" onclick="this.classList.toggle(\'on\')"></div></div>'+
+        '<div class="feat">선호 스타일 · 최대 3개</div><div class="seg" id="mStyle">'+['캐주얼','미니멀','시크','클래식','스트리트','빈티지','스포티','걸리시'].map(function(s){return '<span class="o" onclick="toggleStyleSel(this)">'+s+'</span>';}).join('')+'</div>'+
+        '<div class="attach" style="margin-top:16px"><div class="at"><b>내 체형·사이즈 측정 결과 첨부</b><div>시크 스트레이트 · 상·하의 측정값</div></div><div class="toggle on" id="reqAttach" onclick="this.classList.toggle(\'on\')"></div></div>'+
       '</div>';
   }
 
   var curReq={nm:null, svc:'online'};
+  /* 지명 요청 왼쪽 카드의 '선택 서비스 · 가격' 줄 (svc3 선택 시 갱신) */
+  function reqSideSvcHTML(e, type){ var sv=svcOf(e,type)||{}; return SVC[type]+' · <b class="num">'+(sv.price||0).toLocaleString()+'</b>원'; }
+  function updateReqSide(){ var el=document.getElementById('reqSideSvc'); if(!el||!curReq.nm) return; var e=EX.filter(function(x){return x.nm===curReq.nm;})[0]; if(e) el.innerHTML=reqSideSvcHTML(e, curReq.svc); }
 
   /* 특정 쇼퍼에게 견적 요청 (로그인 게이트) */
   function requestFor(idx){
     if(!loggedIn()){ closeAll(); openLogin(EX[idx].nm+' 쇼퍼 견적 요청', function(){ requestFor(idx); }); return; }
     var e=EX[idx]; curReq={nm:e.nm, svc:svcPrimary(e).type};
     var SNM={online:'온라인 스타일링', shopping:'동행 쇼핑', image:'이미지 컨설팅'};
-    var g1=e.services.length>1?'어떤 서비스로 받을까요? · 택 1':'서비스 유형';
     var svc3=e.services.map(function(sv,i){ return '<div class="s '+(i===0?'on':'')+'" data-v="'+sv.type+'" onclick="pickSvc(this)"><div class="i">'+svcIcon(sv.type)+'</div><b>'+SNM[sv.type]+'</b><span class="p num">'+sv.price.toLocaleString()+'</span></div>'; }).join('');
     document.getElementById('requestView').innerHTML=
       '<a class="back" onclick="openDetail('+idx+')">← 뒤로</a>'+
       '<div class="reqsplit">'+
         '<div class="reqside">'+
           '<div class="reqside-img"><img src="'+img(e)+'" onerror="'+FB+'"><span class="dside-match">매칭도 '+e.match+'%</span></div>'+
-          '<div class="reqside-b"><div class="rl">견적 요청 대상</div><div class="rn">'+e.nm+' 쇼퍼</div></div>'+
+          '<div class="reqside-b"><div class="rl">견적 요청 대상</div><div class="rn">'+e.nm+' 쇼퍼</div>'+
+            '<div class="reqside-meta"><span class="rvstar">'+starSVG()+'</span> '+e.rating+' · 후기 '+e.review+'</div>'+
+            '<div class="reqside-svc" id="reqSideSvc">'+reqSideSvcHTML(e, curReq.svc)+'</div>'+
+          '</div>'+
         '</div>'+
         '<div class="reqmain">'+
           '<h1>견적 요청</h1><p class="lead">조건을 남기면 이 쇼퍼가 검토하고 제안(견적)을 보내드려요</p>'+
-          reqFormHTML(svc3, g1, true)+
+          reqFormHTML(svc3, null, true)+
           '<button class="btn full" id="reqBtn" disabled style="margin-top:22px" onclick="confirmMatch()">견적 요청 보내기</button>'+
           '<p class="reqhint" id="reqHint">상황·일정을 입력하면 보낼 수 있어요</p>'+
         '</div>'+
@@ -697,7 +704,7 @@
       '<p class="reqhint" id="reqHint">상황·예산·일정을 모두 입력하면 보낼 수 있어요</p></div>';
     closeAll(); showOnly('requestView'); validate();
   }
-  function pickSvc(el){ pickOne(el); curReq.svc=el.dataset.v; }
+  function pickSvc(el){ pickOne(el); curReq.svc=el.dataset.v; updateReqSide(); }
   function toggleOcc(el){
     if(el.classList.contains('on')){ el.classList.remove('on'); }
     else { if(document.querySelectorAll('#mOcc .o.on').length>=2) return; el.classList.add('on'); }
@@ -705,48 +712,64 @@
     [].forEach.call(document.querySelectorAll('#mOcc .o'), function(o){ if(!o.classList.contains('on')) o.classList.toggle('dis', full); });
     validate();
   }
+  /* 선호 스타일 — 최대 3개 다중선택(선택 사항) */
+  function toggleStyleSel(el){
+    if(el.classList.contains('on')){ el.classList.remove('on'); }
+    else { if(document.querySelectorAll('#mStyle .o.on').length>=3) return; el.classList.add('on'); }
+    var full=document.querySelectorAll('#mStyle .o.on').length>=3;
+    [].forEach.call(document.querySelectorAll('#mStyle .o'), function(o){ if(!o.classList.contains('on')) o.classList.toggle('dis', full); });
+  }
   /* 보내기 전 '내 요청서' 확인 (B안 프리뷰) → 확인 시 실제 전송 */
   function confirmMatch(){
     var occ=[].map.call(document.querySelectorAll('#mOcc .o.on'), function(o){ return o.textContent; });
     var budEl=document.querySelector('#mBud .o.on'); var budget=budEl?budEl.textContent:'';
     var dEl=document.getElementById('reqDate'); var date=(dEl && dEl.value)?dEl.value.replace(/-/g,'.'):'';
     var nEl=document.getElementById('reqNote'); var note=(nEl && nEl.value.trim())?nEl.value.trim():'';
+    var styles=[].map.call(document.querySelectorAll('#mStyle .o.on'), function(o){ return o.textContent; });
     var she=curReq.nm?EX.filter(function(x){return x.nm===curReq.nm;})[0]:null;
     var sPrice=she?((svcOf(she,curReq.svc)||{}).price||null):null;
     var rows=[['서비스', SVC[curReq.svc]||curReq.svc], ['상황', occ.join(' · ')||'—'],
       (curReq.nm?['예상 가격', sPrice?sPrice.toLocaleString()+'원':'—']:['예산', budget||'—']),
       ['희망 일정', date||'—']];
+    if(styles.length) rows.push(['선호 스타일', styles.join(' · ')]);
     if(note) rows.push(['메모', note]);
     var attEl=document.getElementById('reqAttach'); var attach=attEl?attEl.classList.contains('on'):true;
-    var icClip='<svg class="cfr-hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.4h6V6a1.2 1.2 0 0 1-1.2 1.2h-3.6A1.2 1.2 0 0 1 9 6V4.4z"/><path d="M9 12h6M9 16h4"/></svg>';
-    var icPin='<svg class="cfr-ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11l-8.5 8.5a4.5 4.5 0 0 1-6.4-6.4l8.5-8.5a3 3 0 0 1 4.3 4.3l-8.6 8.5a1.5 1.5 0 0 1-2.1-2.1l7.9-7.9"/></svg>';
-    var receipt='<div class="cf-lead">이대로 요청할까요?</div>'+
-      '<div class="cf-receipt">'+
-        '<div class="cfr-h">'+icClip+'내 요청서'+(curReq.nm?' · '+curReq.nm+' 쇼퍼':'')+'</div>'+
-        '<div class="cfr-body">'+rows.map(function(x){ return '<div class="cfr-row"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>'; }).join('')+'</div>'+
-        (attach?'<div class="cfr-note">'+icPin+'체형·사이즈 측정 결과가 함께 전달돼요</div>':'<div class="cfr-note off">체형·사이즈 측정 결과는 첨부하지 않아요</div>')+
-      '</div>';
-    askConfirm(receipt, '요청하기', function(){ submitMatch(); }, '돌아가기');
+    var icPin='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11l-8.5 8.5a4.5 4.5 0 0 1-6.4-6.4l8.5-8.5a3 3 0 0 1 4.3 4.3l-8.6 8.5a1.5 1.5 0 0 1-2.1-2.1l7.9-7.9"/></svg>';
+    var cfTitle=curReq.nm?(curReq.nm+' 쇼퍼에게<br>견적을 요청할까요?'):'이 조건으로<br>견적을 요청할까요?';
+    var cfSub=curReq.nm?'쇼퍼가 검토 후 제안을 보내드려요':'조건에 맞는 여러 쇼퍼가 견적을 보내드려요';
+    var receipt='<div class="cf-a">'+
+      '<span class="cf-a-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 12h6M9 16h4"/></svg></span>'+
+      '<div class="cf-a-eye">요청 내용 확인</div>'+
+      '<div class="cf-a-title">'+cfTitle+'</div>'+
+      '<div class="cf-a-sub">'+cfSub+'</div>'+
+      '<div class="cf-a-list">'+rows.map(function(x){ return '<div class="cf-a-item"><span class="k">'+x[0]+'</span><span class="v">'+x[1]+'</span></div>'; }).join('')+'</div>'+
+      (attach?'<span class="cf-a-chip">'+icPin+'체형·사이즈 측정 결과 첨부됨</span>':'<span class="cf-a-chip off">체형·사이즈 측정 결과 미첨부</span>')+
+    '</div>';
+    askConfirm(receipt, '요청하기', null, '돌아가기');
+    document.getElementById('confirmYes').onclick=function(){ submitMatch(); };   // 닫지 않고 그 자리에서 성공 전환
+    // 돌아가기 = 모달만 닫힘 → 작성하던 요청서 화면으로 복귀(askConfirm 기본값 유지)
   }
   function submitMatch(){
     var occ=[].map.call(document.querySelectorAll('#mOcc .o.on'), function(o){ return o.textContent; });
     var budEl=document.querySelector('#mBud .o.on'); var budget=budEl?budEl.textContent:'';
     var dEl=document.getElementById('reqDate'); var date=(dEl && dEl.value)?dEl.value.replace(/-/g,'.'):'';
     var nEl=document.getElementById('reqNote'); var note=nEl?nEl.value:'';
+    var styles=[].map.call(document.querySelectorAll('#mStyle .o.on'), function(o){ return o.textContent; });
     var attEl=document.getElementById('reqAttach'); var attach=attEl?attEl.classList.contains('on'):true;
     var isOpen = !curReq.nm;   // 지명(쇼퍼 선택) 아니면 오픈 요청(여러 쇼퍼 견적)
-    if(isOpen) addReq({open:true, svc:curReq.svc, occ:occ, budget:budget, date:date, note:note, attach:attach, status:'견적중', bids:makeBids(curReq.svc, occ)});
+    if(isOpen) addReq({open:true, svc:curReq.svc, occ:occ, budget:budget, date:date, note:note, styles:styles, attach:attach, status:'견적중', bids:makeBids(curReq.svc, occ)});
     else { var she=EX.filter(function(x){return x.nm===curReq.nm;})[0]; var sp=she?((svcOf(she,curReq.svc)||{}).price||null):null;
-      addReq({nm:curReq.nm, svc:curReq.svc, occ:occ, price:sp, date:date, note:note, attach:attach, status:'대기'}); }
-    document.getElementById('requestView').innerHTML=
-      '<div class="reqdone"><div class="cc">✓</div>'+
-      '<h1>견적 요청을 보냈어요</h1>'+
-      '<p>'+(isOpen?'조건에 맞는 여러 쇼퍼가 견적을 보내드려요<br>마이페이지에서 <b>비교하고 선택</b>할 수 있어요':(curReq.nm+' 쇼퍼가 검토하고 제안(견적)을 보내드려요<br>진행 상황은 마이페이지에서 볼 수 있어요'))+'</p>'+
-      '<div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:26px">'+
-        '<button class="btn ghost" onclick="showOnly(\'listView\')">목록으로 돌아가기</button>'+
-        '<button class="btn" onclick="goMy(\'mp-req\')">마이로 이동하기</button>'+
-      '</div></div>';
-    showOnly('requestView');
+      addReq({nm:curReq.nm, svc:curReq.svc, occ:occ, price:sp, date:date, note:note, styles:styles, attach:attach, status:'대기'}); }
+    // 모달을 닫지 않고 그 자리에서 성공 화면으로 전환 (전체화면 점프 없이 자연스럽게)
+    var doneSub=isOpen?'마이에서 <b>여러 쇼퍼</b>의 견적을 기다려보세요'
+      :('마이에서 '+curReq.nm+' 쇼퍼의 견적을 기다려보세요');
+    document.getElementById('confirmMsg').innerHTML=
+      '<div class="cf-done"><div class="cf-done-ic">✓</div>'+
+      '<div class="cf-done-t">견적 요청을 보냈어요</div>'+
+      '<div class="cf-done-s">'+doneSub+'</div></div>';
+    var no=document.getElementById('confirmNo'); no.textContent='목록으로'; no.onclick=function(){ closeConfirm(); showOnly('listView'); };
+    var yes=document.getElementById('confirmYes'); yes.textContent='마이로 이동'; yes.onclick=function(){ closeConfirm(); goMy('mp-req'); };
+    document.getElementById('confirmModal').onclick=null;   // 완료 화면: 바깥 클릭으로 안 닫힘(두 버튼만) — 스테일 폼 노출 방지
   }
 
   /* ===== 전역 이벤트 ===== */
