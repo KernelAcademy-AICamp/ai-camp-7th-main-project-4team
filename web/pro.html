@@ -23,7 +23,7 @@
   .navr .cust{cursor:pointer} .navr .me{font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px;cursor:pointer}
   .navr .me img{width:28px;height:28px;border-radius:50%;object-fit:cover;filter:saturate(.6)}
   .navr .caret{font-size:11px;color:var(--sub2)}
-  .navr .bell{position:relative;cursor:pointer;font-size:17px}
+  .navr .bell{position:relative;cursor:pointer;display:inline-flex;color:var(--sub)} .navr .bell svg{width:20px;height:20px}
   .bell-badge{position:absolute;top:-6px;right:-8px;min-width:16px;height:16px;padding:0 4px;background:#e5484d;color:#fff;font-size:10px;font-weight:800;border-radius:20px;display:flex;align-items:center;justify-content:center}
   .accmenu{position:absolute;top:58px;right:30px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.13);padding:6px;display:none;z-index:60;min-width:150px}
   .accmenu.on{display:block}
@@ -53,7 +53,7 @@
   .smenu a{display:flex;align-items:center;gap:11px;padding:13px 15px;border-radius:12px;font-size:15px;font-weight:600;color:var(--sub)}
   .smenu a:hover{background:var(--soft);color:var(--ink)}
   .smenu a.on{background:var(--green-soft);color:var(--green);font-weight:800}
-  .smenu a .i{width:20px;text-align:center}
+  .smenu a .i{width:20px;display:inline-flex;align-items:center;justify-content:center} .smenu a .i svg{width:18px;height:18px}
   .smenu a .cnt{margin-left:auto;font-size:11px;font-weight:800;background:var(--green);color:#fff;border-radius:20px;padding:1px 8px}
 
   .panel{display:none;animation:f .24s} .panel.on{display:block}
@@ -76,6 +76,12 @@
 
   .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:6px 24px;box-shadow:0 6px 18px rgba(20,18,16,.05)}
   .subhead{font-size:15px;font-weight:800;margin:20px 0 8px}
+  /* 요청함 그룹 헤더 — 마이페이지 요청내역과 동일 */
+  .rghead{display:flex;align-items:center;gap:13px;padding:2px 0 14px;border-bottom:1px solid var(--line);margin-bottom:6px}
+  .rghead .rgicon{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex:none;background:var(--green-soft);color:var(--green)}
+  .rghead .rgicon svg{width:21px;height:21px}
+  .rghead .rgtx{flex:1;min-width:0} .rghead .rgtx b{font-size:16px;font-weight:800;letter-spacing:-.03em} .rghead .rgtx p{font-size:12.5px;color:var(--sub);margin-top:3px;line-height:1.5}
+  .rghead .rgcount{font-size:12.5px;font-weight:800;color:var(--sub);background:var(--soft);padding:5px 11px;border-radius:20px;flex:none}
 
   /* 요청 아이템 */
   .req{padding:16px 0;border-bottom:1px solid var(--line)} .req:last-child{border:none}
@@ -86,9 +92,10 @@
   .st.nw{background:var(--green);color:#fff} .st.sent{background:var(--soft);color:var(--sub)} .st.prog{background:var(--green-soft);color:var(--green)} .st.done{background:var(--green-soft);color:var(--green)}
   /* 서비스 유형 배지(온라인 스타일링·동행 쇼핑·이미지 컨설팅) */
   .svcbadge{display:inline-block;font-size:11px;font-weight:800;border-radius:20px;padding:2px 9px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+  .svcbadge svg{width:13px;height:13px;vertical-align:-2px;margin-right:2px}
   .svcbadge.online{background:var(--green-soft);color:var(--green)}
   .svcbadge.shopping{background:#fbeede;color:#b9741a}
-  .svcbadge.imaging{background:#efeafb;color:#7a5bb0}
+  .svcbadge.image{background:#efeafb;color:#7a5bb0}
   .svcbadge.visit{background:#fbeede;color:#b9741a}
   .reqact{margin-top:12px;padding:12px 14px;background:var(--soft);border-radius:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--sub)}
   .reqnote{font-style:normal;color:var(--ink-soft)}
@@ -113,6 +120,7 @@
   .svclist{display:flex;flex-direction:column;gap:9px;padding:2px 0 8px}
   .svcrow{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--soft)}
   .svcrow .ic{width:38px;height:38px;flex:none;border-radius:10px;background:var(--green-soft);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:18px}
+  .svcrow .ic svg{width:19px;height:19px}
   .svcrow .nm{flex:1;min-width:0} .svcrow .nm b{font-size:14.5px;font-weight:800} .svcrow .nm small{display:block;font-size:12px;color:var(--sub2);margin-top:1px}
   .svcrow .pr{font-family:var(--num);font-weight:800;font-size:17px;color:var(--ink);white-space:nowrap} .svcrow .pr small{font-size:12.5px;color:var(--sub);font-weight:700;margin-left:2px}
 
@@ -134,6 +142,7 @@
   .ef .esvc.off{opacity:.45} .ef .esvc.off .epr{background:var(--soft)}
   .ef .won{font-size:13px;color:var(--sub)}
   .ef .efhint{font-size:12px;color:var(--sub2);margin-top:8px}
+  .ef .esvcreg{margin:2px 0 6px 4px;padding:8px 0 6px 12px;border-left:2px solid var(--green-soft)}
   .ef .ehw{display:flex;align-items:center;gap:8px} .ef .ehw .efin{width:auto;flex:1} .ef .ehw .won{font-size:13px;color:var(--sub)}
   .ef .eftags{display:flex;flex-wrap:wrap;gap:8px}
   .ef .eftags .tag{cursor:pointer;border:1.5px solid var(--line2);background:#fff;color:var(--sub)}
@@ -193,12 +202,12 @@
   <span class="pill-role">쇼퍼 지원</span>
   <div class="navr">
     <span class="cust" onclick="location.href='index.html'">← 고객 화면</span>
-    <span class="bell" onclick="goPanel('inbox')" title="새 요청 알림">🔔<span class="bell-badge" id="bellBadge" style="display:none">0</span></span>
+    <span class="bell" onclick="goPanel('inbox')" title="새 요청 알림"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 1 0-12 0c0 6-2.5 7.5-2.5 7.5h17S18 14.5 18 8.5z"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg><span class="bell-badge" id="bellBadge" style="display:none">0</span></span>
     <span class="me" onclick="toggleAccMenu(event)"><img id="hdrAvatar" src="photos/p1.jpg" alt="프로필 사진" onerror="this.style.visibility='hidden'"><span id="hdrName">소희 쇼퍼</span> <span class="caret">▾</span></span>
   </div>
   <div class="accmenu" id="accMenu">
-    <a onclick="goPanel('profile')">👤 내 프로필</a>
-    <a onclick="logout()">↩ 로그아웃</a>
+    <a onclick="goPanel('profile')">내 프로필</a>
+    <a onclick="logout()">로그아웃</a>
   </div>
 </div></header>
 
@@ -211,12 +220,12 @@
       <div class="rate">★ <span class="num" id="pRate">—</span> · 후기 <span class="num" id="pRev">0</span></div>
     </div>
     <nav class="smenu" id="smenu">
-      <a class="on" data-p="dash" onclick="nav(this)"><span class="i">📊</span> 대시보드</a>
-      <a data-p="inbox" onclick="nav(this)"><span class="i">🧾</span> 요청함 <span class="cnt" id="newCnt">0</span></a>
-      <a data-p="propose" onclick="nav(this)"><span class="i">🙋</span> 먼저 제안</a>
-      <a data-p="profile" onclick="nav(this)"><span class="i">👤</span> 내 프로필</a>
-      <a data-p="reviews" onclick="nav(this)"><span class="i">⭐</span> 받은 후기</a>
-      <a data-p="settle" onclick="nav(this)"><span class="i">💰</span> 정산</a>
+      <a class="on" data-p="dash" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg></span> 대시보드</a>
+      <a data-p="inbox" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h5"/></svg></span> 요청 내역 <span class="cnt" id="newCnt">0</span></a>
+      <a data-p="propose" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4L3 11l7 2.5L12.5 21 21 4z"/><path d="M10 13.5L21 4"/></svg></span> 먼저 제안</a>
+      <a data-p="profile" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg></span> 내 프로필</a>
+      <a data-p="reviews" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 L14.1 9.6 20.1 9.9 15.4 13.6 17 19.4 12 16.1 7 19.4 8.6 13.6 3.9 9.9 9.9 9.6Z"/></svg></span> 받은 후기</a>
+      <a data-p="settle" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M3 10.5h18"/><path d="M15.5 14.5h2.5"/></svg></span> 정산</a>
     </nav>
   </aside>
 
@@ -224,7 +233,7 @@
     <!-- 대시보드 -->
     <section class="panel on" id="dash">
       <div class="crumb">쇼퍼 지원 · 대시보드</div>
-      <h1 id="dashHello">안녕하세요, 소희 쇼퍼님 👋</h1>
+      <h1 id="dashHello">안녕하세요, 소희 쇼퍼님</h1>
       <p class="lead">오늘의 요청과 진행 현황이에요</p>
       <div class="stats" id="dashStats"></div>
       <div class="card urgent" id="dashUrgent"></div>
@@ -233,12 +242,21 @@
 
     <!-- 요청함 -->
     <section class="panel" id="inbox">
-      <div class="crumb">쇼퍼 지원 · 요청함</div>
-      <h1>요청함</h1>
+      <div class="crumb">쇼퍼 지원 · 요청 내역</div>
+      <h1>요청 내역</h1>
       <p class="lead">고객이 보낸 견적 요청을 검토하고 제안을 보내세요</p>
-      <div class="card"><div class="subhead">새 요청</div><div id="inboxNewList"></div></div>
-      <div class="card" style="margin-top:16px"><div class="subhead">진행 중</div><div id="inboxProgList"></div></div>
-      <div class="card" id="inboxDoneCard" style="margin-top:16px"><div class="subhead">✓ 완료·취소된 요청</div><div id="inboxDoneList"></div></div>
+      <div class="card">
+        <div class="rghead"><span class="rgicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/><path d="M8 11l4 4 4-4"/><path d="M12 3.5v11.5"/></svg></span><div class="rgtx"><b>새 요청</b><p>고객이 보낸 견적 요청이에요</p></div><span class="rgcount"><span class="num" id="cntNew">0</span>건</span></div>
+        <div id="inboxNewList"></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="rghead"><span class="rgicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3.2 2"/></svg></span><div class="rgtx"><b>진행 중</b><p>수락하고 진행 중인 코디예요</p></div><span class="rgcount"><span class="num" id="cntProg">0</span>건</span></div>
+        <div id="inboxProgList"></div>
+      </div>
+      <div class="card" id="inboxDoneCard" style="margin-top:16px">
+        <div class="rghead"><span class="rgicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12a8.5 8.5 0 1 1-3.4-6.8"/><path d="M9 12l2.5 2.5L21 5.5"/></svg></span><div class="rgtx"><b>완료·취소된 요청</b><p>완료·거절·취소된 요청이에요</p></div><span class="rgcount"><span class="num" id="cntDone">0</span>건</span></div>
+        <div id="inboxDoneList"></div>
+      </div>
     </section>
 
     <!-- 먼저 제안 -->
@@ -246,8 +264,8 @@
       <div class="crumb">쇼퍼 지원 · 먼저 제안</div>
       <h1>먼저 제안</h1>
       <p class="lead">제안받기를 원하는 고객에게 <b style="color:var(--ink)">내가 먼저 제안</b>하고, 보낸 제안을 관리해요</p>
-      <div class="card" id="dashCandCard"><div class="subhead">🙋 제안받기를 원하는 고객 <small style="font-weight:600;color:var(--sub2)">· 먼저 제안해보세요</small></div><div id="dashCand"></div></div>
-      <div class="card" id="inboxOutCard" style="margin-top:16px"><div class="subhead">📤 내가 보낸 제안</div><div id="inboxOutList"></div></div>
+      <div class="card" id="dashCandCard"><div class="subhead">제안받기를 원하는 고객 <small style="font-weight:600;color:var(--sub2)">· 먼저 제안해보세요</small></div><div id="dashCand"></div></div>
+      <div class="card" id="inboxOutCard" style="margin-top:16px"><div class="subhead">내가 보낸 제안</div><div id="inboxOutList"></div></div>
     </section>
 
     <!-- 내 프로필 -->
@@ -259,12 +277,10 @@
       <div class="card" id="profileView">
         <div class="subhead">기본 정보</div>
         <div class="field"><span>이름</span><span class="v" id="pfName">소희 쇼퍼</span></div>
-        <div class="field" id="pfBodyField"><span>키 · 몸무게</span><span class="v" id="pfBody">—</span></div>
-        <div class="field" style="align-items:flex-start"><span>전문 분야</span><span class="v" id="pfTags"><span class="tag">데일리룩</span><span class="tag">소개팅룩</span><span class="tag">미니멀</span></span></div>
+        <div class="field" style="align-items:flex-start"><span>전문 분야</span><span class="v" id="pfFields"></span></div>
+        <div class="field" style="align-items:flex-start"><span>전문 스타일</span><span class="v" id="pfStyles"></span></div>
         <div class="subhead">서비스·가격</div>
         <div class="svclist" id="pfServices"></div>
-        <div class="subhead" id="pfRegionHead">활동 지역 <small style="font-weight:600;color:var(--sub2)">· 대면</small></div>
-        <div id="pfRegions" style="padding-bottom:4px;text-align:right"></div>
         <div class="subhead">소개</div>
         <p id="pfBio" style="font-size:14px;color:var(--ink-soft);line-height:1.6;padding-bottom:16px">데일리·소개팅룩 전문 스타일리스트 · 온라인 쇼핑몰 MD 출신으로 비대면 큐레이션이 강점이에요</p>
         <div class="subhead">포트폴리오</div>
@@ -287,12 +303,6 @@
         <label class="efl">활동명 (고객에게 보여요)</label>
         <input class="efin" id="edName" type="text" placeholder="예: 소희 쇼퍼">
 
-        <label class="efl">키 · 몸무게 (선택 — 비슷한 체형 고객이 나를 찾기 쉬워요)</label>
-        <div class="ehw">
-          <input class="efin" id="edHeight" type="number" placeholder="키"><span class="won">cm</span>
-          <input class="efin" id="edWeight" type="number" placeholder="몸무게"><span class="won">kg</span>
-        </div>
-
         <label class="efl">서비스 유형별 가격 (제공할 유형을 켜고 가격 입력)</label>
         <div class="esvc" id="edSvcOnline">
           <label class="etog"><input type="checkbox" id="edOnlineOn" onchange="edToggleSvc()"> 온라인 스타일링</label>
@@ -302,24 +312,29 @@
           <label class="etog"><input type="checkbox" id="edShoppingOn" onchange="edToggleSvc()"> 동행 쇼핑</label>
           <input class="epr" id="edShoppingPrice" type="number"><span class="won">원</span>
         </div>
+        <div class="esvcreg" id="edRegBlock_shopping" style="display:none">
+          <label class="efl" style="margin:0 0 7px">활동 지역 <small style="font-weight:600;color:var(--sub2)">· 텍스트로 입력하면 태그로 추가</small></label>
+          <div class="eftags" id="edRegTags_shopping"></div>
+          <div class="eftagadd"><input class="efin" id="edRegInput_shopping" type="text" placeholder="지역 입력 후 추가 (예: 서울 강남)"><button class="tinybtn ghost" onclick="edAddRegion('shopping')">추가</button></div>
+        </div>
         <div class="esvc" id="edSvcImaging">
           <label class="etog"><input type="checkbox" id="edImagingOn" onchange="edToggleSvc()"> 이미지 컨설팅</label>
           <input class="epr" id="edImagingPrice" type="number"><span class="won">원</span>
         </div>
-        <div class="efhint">최소 1개 유형을 켜야 저장돼요.</div>
+        <div class="esvcreg" id="edRegBlock_image" style="display:none">
+          <label class="efl" style="margin:0 0 7px">활동 지역 <small style="font-weight:600;color:var(--sub2)">· 텍스트로 입력하면 태그로 추가</small></label>
+          <div class="eftags" id="edRegTags_image"></div>
+          <div class="eftagadd"><input class="efin" id="edRegInput_image" type="text" placeholder="지역 입력 후 추가 (예: 서울 강남)"><button class="tinybtn ghost" onclick="edAddRegion('image')">추가</button></div>
+        </div>
+        <div class="efhint">최소 1개 유형을 켜야 저장돼요. 대면 서비스(동행 쇼핑·이미지 컨설팅)는 활동 지역을 입력하세요.</div>
 
-        <label class="efl">한 줄 소개</label>
-        <input class="efin" id="edTagline" type="text" placeholder="예: 데일리·소개팅룩 전문 스타일리스트">
-        <label class="efl">경력 소개</label>
-        <textarea class="efin" id="edBio" placeholder="예: 온라인 쇼핑몰 MD 출신, 비대면 큐레이션이 강점이에요."></textarea>
+        <label class="efl">소개</label>
+        <input class="efin" id="edTagline" type="text" placeholder="예: 데일리·소개팅룩 전문, 비대면 큐레이션이 강점이에요">
 
-        <label class="efl">전문 분야 (여러 개 선택)</label>
-        <div class="eftags" id="edTags"></div>
-        <div class="eftagadd"><input class="efin" id="edTagInput" type="text" placeholder="직접 추가 (예: 하객룩)"><button class="tinybtn ghost" onclick="edAddTag()">추가</button></div>
-
-        <label class="efl">활동 지역 (대면 서비스 — 텍스트로 입력하면 태그로 추가돼요)</label>
-        <div class="eftags" id="edRegions"></div>
-        <div class="eftagadd"><input class="efin" id="edRegionInput" type="text" placeholder="지역 입력 후 추가 (예: 서울 강남)"><button class="tinybtn ghost" onclick="edAddRegion()">추가</button></div>
+        <label class="efl">전문 분야 <span id="edFieldCnt" style="color:var(--green)">0/3</span> <small style="font-weight:600;color:var(--sub2)">· 최대 3개</small></label>
+        <div class="eftags" id="edFields"></div>
+        <label class="efl">전문 스타일 <span id="edStyleCnt" style="color:var(--green)">0/3</span> <small style="font-weight:600;color:var(--sub2)">· 최대 3개</small></label>
+        <div class="eftags" id="edStyles"></div>
 
         <label class="efl">포트폴리오 (최대 8장 — 사진마다 착용 모델 키·몸무게 입력)</label>
         <div class="eplist" id="edPgal"></div>
