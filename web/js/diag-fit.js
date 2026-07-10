@@ -147,7 +147,6 @@
      드롭다운 표기 → garments의 brandId 매핑. 데이터 없는 브랜드/카테고리는 DEFAULT_SIZES. */
   var BRANDID={'유니클로':'uniqlo','무신사 스탠다드':'musinsa-standard','나이키':'nike','탑텐':'topten',
     '스파오':'spao','에잇세컨즈':'8seconds','노스페이스':'northface','H&M (편차 큼)':'hm','자라 (편차 큼)':'zara'};
-  var SIZE_ORDER=['XXS','XS','S','M','L','XL','XXL','2XL','3XL','4XL','5XL'];
   var DEFAULT_SIZES=['XS','S','M','L','XL'];
   var GARMENTS=null;
   // 실측(garment cm) 데이터가 있는 카테고리 = 착용경험 역산 대상. 없으면 선호핏만 받아 진단.
@@ -162,29 +161,35 @@
     if(LEG_CATS.includes(target))    return (legLength[g]==='short')?'shorts':'long_pants';
     return null;
   }
-  // 특정 브랜드·성별·서브타입(+선택 셀)에서 실제 존재하는 사이즈 라벨(정렬) — 없으면 null.
+  // 특정 브랜드·성별·서브타입(+선택 셀)에서 실제 존재하는 사이즈(정렬) — 없으면 null.
   //  cellCode(핏라인/실루엣) 주면 그 셀로 스코프 — 브랜드 내 제품군마다 사이즈 체계가 달라서
   //  (탑텐 인치 vs 600번대·유니클로 인치 vs cm) union으로 뭉치면 셀에 없는 사이즈가 섞여 조용히 버려짐.
+  //  반환: [{raw(원본 sizeLabel=엔진 매칭키), canonical(재인 라벨), system, order}] — 체계·정렬순.
+  //  원본은 sizeLabel 그대로 실어(round-trip 무손실), 표시는 canonical/체계 접두로만 정규화.
+  var SIZE_SYS_RANK={letter:0, code:1, range:2, inch:3, cm:4};
   function garmentSizeLabels(brandId, gender, subtype, cellCode){
     if(!GARMENTS || !brandId) return null;
-    var onSil=LEG_CATS.includes(target), set={};
+    var onSil=LEG_CATS.includes(target), byRaw={};
     GARMENTS.forEach(function(s){
       if(s.brandId!==brandId) return;
       if(!(s.gender===gender || s.gender==='unisex')) return;
       if(subtype && s.subtype!==subtype) return;
       if(cellCode){ var v=onSil?s.silhouette:s.fitLine; if(v!==cellCode) return; }
-      set[s.sizeLabel]=1;
+      byRaw[s.sizeLabel]={ raw:s.sizeLabel, canonical:s.sizeCanonical||s.sizeLabel,
+        system:s.sizeSystem||'letter', order:(s.sizeOrder==null?99:s.sizeOrder) };  // 원본 라벨당 1개(제품 중복 제거)
     });
-    var labels=Object.keys(set);
-    if(!labels.length) return null;
-    labels.sort(function(a,b){
-      if(/^\d/.test(a) && /^\d/.test(b)) return parseFloat(a)-parseFloat(b);  // 숫자 사이즈(바지 26·73…) 오름차순
-      var ia=SIZE_ORDER.indexOf(a), ib=SIZE_ORDER.indexOf(b);
-      return (ia<0?99:ia)-(ib<0?99:ib);
+    var list=Object.keys(byRaw).map(function(k){ return byRaw[k]; });
+    if(!list.length) return null;
+    list.sort(function(a,b){
+      var ra=(SIZE_SYS_RANK[a.system]==null?9:SIZE_SYS_RANK[a.system]);
+      var rb=(SIZE_SYS_RANK[b.system]==null?9:SIZE_SYS_RANK[b.system]);
+      return ra-rb || a.order-b.order;
     });
-    return labels;
+    return list;
   }
-  // 사이즈 세그를 브랜드·카테고리에 맞춰 렌더. TOP만 데이터 기반, 나머지는 기본값.
+  // 셀에 물리체계가 2개 이상 공존할 때만 재인 위해 접두(인치 30 / cm 79). 단일체계는 맨라벨. letter/code/range=무접두.
+  var SIZE_SYS_TAG={inch:'인치', cm:'cm'};
+  // 사이즈 세그를 브랜드·카테고리(+선택 셀)에 맞춰 렌더. 데이터 있으면 실 사이즈, 없으면 기본값.
   function renderSizes(g){
     var el=document.getElementById('size'+g); if(!el) return;
     var bsel=document.getElementById('brand'+g);
@@ -193,12 +198,23 @@
     // 선택 셀(데이터 브랜드의 핏라인/실루엣 옵션)로 사이즈 스코프 — 폴백 라벨(data-axis 없음)은 필터 안 함.
     var isel=document.getElementById('item'+g), opt=isel&&isel.selectedOptions?isel.selectedOptions[0]:null;
     var cellCode=(opt && opt.getAttribute('data-axis')) ? isel.value : null;
-    var labels=hasData(target) ? garmentSizeLabels(brandId, gender, subtypeOf(g), cellCode) : null;  // 데이터 있는 카테고리(TOP·BOTTOM)는 실 사이즈
-    if(!labels || !labels.length) labels=DEFAULT_SIZES;
-    var prev=el.querySelector('.opt.on'); var prevLab=prev?prev.textContent.trim():null;
-    var def = (prevLab && labels.indexOf(prevLab)>=0) ? prevLab
-            : (labels.indexOf('M')>=0 ? 'M' : labels[Math.floor(labels.length/2)]);
-    el.innerHTML=labels.map(function(l){ return '<div class="opt'+(l===def?' on':'')+'" onclick="pick(this)">'+l+'</div>'; }).join('');
+    var list=hasData(target) ? garmentSizeLabels(brandId, gender, subtypeOf(g), cellCode) : null;
+    if(!list || !list.length){   // 폴백: 데이터 없는 브랜드/카테고리는 기본 레터
+      list=DEFAULT_SIZES.map(function(l,i){ return {raw:l, canonical:l, system:'letter', order:i}; });
+    }
+    var systems={}; list.forEach(function(o){ systems[o.system]=1; });
+    var multi=Object.keys(systems).length>1;   // 체계 공존 시에만 접두
+    list.forEach(function(o){
+      var tag=multi&&SIZE_SYS_TAG[o.system];
+      o.display=tag?(tag+' '+o.canonical):o.canonical;
+    });
+    var prev=el.querySelector('.opt.on'), prevRaw=prev?(prev.getAttribute('data-size')||prev.textContent.trim()):null;
+    var byPrev=list.filter(function(o){ return o.raw===prevRaw; })[0];
+    var byM=list.filter(function(o){ return o.canonical==='M'; })[0];
+    var defObj=byPrev || byM || list[Math.floor(list.length/2)];   // 이전 선택 유지 → M → 중앙
+    el.innerHTML=list.map(function(o){
+      return '<div class="opt'+(o===defObj?' on':'')+'" data-size="'+o.raw+'" onclick="pick(this)">'+o.display+'</div>';
+    }).join('');
   }
   /* 품목 드롭다운 = 셀(브랜드×핏라인/실루엣) — 제품명(SKU)이 아니라 재인 가능한 핏/실루엣만 노출.
      엔진(bodyFromExperiences)은 이미 셀 단위(같은 fitLine/silhouette 제품들의 garmentCm 평균)로 역산하므로
@@ -321,6 +337,8 @@
       var itemVal=isel?isel.value:'', axis=opt?opt.getAttribute('data-axis'):null;
       var itemLab=opt?opt.textContent.trim():itemVal;   // 표시/디버그용 라벨(엔진 미사용)
       var szEl=document.querySelector('#size'+g+' .opt.on');
+      // 표시라벨(canonical·접두)이 아니라 data-size(원본 sizeLabel)를 엔진에 넘겨 정확일치 round-trip.
+      var szRaw=szEl?(szEl.getAttribute('data-size')||szEl.textContent.trim()):'M';
       var brandId=BRANDID[brandTxt]||'unknown', gen=BASIC.gender||'female';
       // 셀 코드 직접 사용(데이터 브랜드) / 데이터 없는 브랜드는 라벨 텍스트 파싱 폴백.
       var fitLine = axis==='fitLine' ? itemVal : garmentFitLine(itemLab);
@@ -329,7 +347,7 @@
       var wbEl=document.querySelector('#feel'+g+' .wband-seg .opt.on'), wbLab=wbEl?wbEl.textContent.trim():'';
       var waistband=wbLab==='없음'?'none':(wbLab==='있음'?'banded':undefined);
       exps.push({ category:cat, brandId:brandId, brandName:brandTxt,
-        fitLine: fitLine, item:itemLab, sizeLabel:szEl?szEl.textContent.trim():'M',
+        fitLine: fitLine, item:itemLab, sizeLabel:szRaw,
         subtype:subtypeOf(g), gender:gen, waistband:waistband,
         // 하의는 실루엣(형태축)이 엔진 1차 매칭키. 상의는 undefined(fitLine 사용).
         silhouette: cat==='BOTTOM' ? silh : undefined,

@@ -105,6 +105,46 @@ def silhouette_of(product, fitline):
     return _SIL_FROM_FIT.get(fitline, "straight")
 
 
+# ── 사이즈 라벨 정규화 ────────────────────────────────────────────────
+# 엔진은 sizeLabel 정확일치(engine.js)라 원본은 보존하되, 사용자에게 보여줄 재인 라벨과
+#   물리체계 태그·정렬키를 파생한다. 하의는 한 셀에 인치·cm·코드가 공존할 수 있어
+#   (uniqlo 28-42 & 73-105, 탑텐 M(28)/M(630)) flow가 sizeSystem으로 그룹핑해 제시한다.
+_LETTER_ORDER = {"XXS": -2, "XS": -1, "S": 0, "M": 1, "L": 2,
+                 "XL": 3, "XXL": 4, "3XL": 5, "4XL": 6, "5XL": 7}
+_LETTER_ALIAS = {"2XL": "XXL", "XXXL": "3XL", "XXXXL": "4XL", "XXXXXL": "5XL"}
+_W_LETTER = {"WS": 0, "WM": 1, "WL": 2}   # 여성 라인 레터(northface unisex)
+
+
+def size_norm(label):
+    """sizeLabel → (system, canonical, order). 원본 파괴 없이 표시·정렬용 파생만.
+    system: letter(레터)·inch(허리 소수)·cm(허리 대수)·code(탑텐 라인코드→레터)·range(합사이즈)."""
+    s = nfc(label or "").strip()
+    if not s:
+        return ("letter", s, 99.0)
+    if s.upper() in _W_LETTER:                          # 노스페이스 여성 라인
+        return ("letter", s.upper(), float(_W_LETTER[s.upper()]))
+    if "-" in s and re.search(r"[A-Za-z]", s):          # 레인지(자라 상의 S-M·L-XL)
+        os_ = [_LETTER_ORDER.get(_LETTER_ALIAS.get(p.strip().upper(), p.strip().upper()))
+               for p in s.split("-")]
+        os_ = [o for o in os_ if o is not None]
+        return ("range", s, (sum(os_) / len(os_)) if os_ else 50.0)
+    m = re.match(r"^([A-Za-z0-9]+)\((\d+)\)$", s)        # 탑텐 복합 X(nn)
+    if m:
+        inner = int(m.group(2))
+        if inner < 100:                                 # 인치 라벨 라인 → 숫자 표시
+            return ("inch", str(inner), float(inner))
+        can = _LETTER_ALIAS.get(m.group(1).upper(), m.group(1).upper())  # 코드 라인 → 레터로 인지
+        return ("code", can, float(_LETTER_ORDER.get(can, 50)))
+    if re.fullmatch(r"\d+", s):                          # 순수 숫자(하의): ≥50=cm, <50=인치
+        v = int(s)
+        return ("cm", str(v), float(v)) if v >= 50 else ("inch", str(v), float(v))
+    up = s.upper()                                       # 순수 레터
+    can = _LETTER_ALIAS.get(up, up)
+    if can in _LETTER_ORDER:
+        return ("letter", can, float(_LETTER_ORDER[can]))
+    return ("letter", s, 90.0)                           # 미지 라벨 보존
+
+
 specs, skipped = [], 0
 for f in sorted(raw.glob("*.csv")):
     cs = next(((cat, sub) for k, (cat, sub) in FILES.items() if k in nfc(f.name)), None)
@@ -141,10 +181,12 @@ for f in sorted(raw.glob("*.csv")):
         if keypart not in garment:          # 최소 기준부위 없으면 제외
             skipped += 1
             continue
+        sys_, can, order = size_norm(size)
         spec = {
             "brandId": bid, "brandName": brand, "category": category,
             "fitLine": fit, "gender": g, "subtype": subtype,
             "sizeLabel": size, "garmentCm": garment,
+            "sizeSystem": sys_, "sizeCanonical": can, "sizeOrder": order,
             "product": (row.get("product") or "").strip(),
         }
         if category == "BOTTOM":
@@ -164,7 +206,10 @@ doc = {
                 "BOTTOM.waistband=밴딩 유형(hidden/side/full/partial/null) — 허리 수용범위·역산 신뢰도에 영향. "
                 "BOTTOM.silhouette=형태축(skinny/slim/straight/tapered/wide/bootcut) — 수집단 `정규화실루엣` 컬럼 우선"
                 "(없으면 상품명 파싱 폴백), 역산·매칭의 1차 키(fitLine 여유축과 직교). "
-                "fitLine=상의 `정규화여유` 컬럼 우선. waistband는 아직 product명 추출이라 부분 커버.",
+                "fitLine=상의 `정규화여유` 컬럼 우선. waistband는 아직 product명 추출이라 부분 커버. "
+                "sizeSystem/sizeCanonical/sizeOrder=sizeLabel 원본에서 파생한 표시·정렬용(원본 불변, "
+                "엔진은 sizeLabel만 매칭). sizeSystem=letter/inch/cm/code/range — 한 셀에 여러 체계가 "
+                "공존하면(uniqlo 인치+cm, 탑텐 M(28)/M(630)) flow가 체계별로 그룹핑해 재인 가능하게 제시.",
         "parts": {
             "TOP": {"chest": "가슴단면(circ,flat→×2)", "shoulder": "어깨너비(width)",
                     "sleeve": "소매길이(len)", "length": "총장(len)"},
