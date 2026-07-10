@@ -25,8 +25,7 @@
       {type:'image',label:'이미지 컨설팅',price:90000,mode:'대면',regions:['서울 강남']}
     ],
     bio:'데일리·소개팅룩 전문 스타일리스트 · 비대면 큐레이션이 강점이에요',
-    occ:['date','daily'], tags:['미니멀','시크'], portfolio:DEMO_PORTFOLIO,
-    height:167, weight:52
+    occ:['date','daily'], tags:['미니멀','시크'], portfolio:DEMO_PORTFOLIO
   };
   /* 전문분야(=쇼퍼찾기 상황) 7가지 · 코드↔라벨 (데이터 계약) */
   var FIELD_OPTS = [
@@ -304,15 +303,6 @@
     if(pf) pf.innerHTML=(base.occ||base.fields||[]).map(function(c){ return '<span class="tag">'+fieldLabel(c)+'</span>'; }).join('') || dash;
     if(ps) ps.innerHTML=(base.tags||base.styles||[]).map(function(t){ return '<span class="tag">'+t+'</span>'; }).join('') || dash;
   }
-  /* 키·몸무게를 보기 화면에 (없으면 행 숨김) */
-  function renderBody(){
-    var base = PROFILE || DEFAULT_PROFILE;
-    var f=document.getElementById('pfBodyField'), v=document.getElementById('pfBody');
-    if(!f||!v) return;
-    var parts=[]; if(base.height) parts.push(base.height+'cm'); if(base.weight) parts.push(base.weight+'kg');
-    if(parts.length){ f.style.display=''; v.textContent=parts.join(' · '); }
-    else { f.style.display='none'; }
-  }
   /* 프로필 사진 확대 */
   function openAvatar(){
     var src=(PROFILE&&PROFILE.avatar)||DEFAULT_AVATAR;
@@ -365,8 +355,6 @@
     edAvatar = base.avatar || DEFAULT_AVATAR;
     var ap=document.getElementById('edAvatarPreview'); if(ap){ ap.src=edAvatar; ap.style.visibility='visible'; }
     document.getElementById('edName').value = base.name||'';
-    document.getElementById('edHeight').value = base.height||'';
-    document.getElementById('edWeight').value = base.weight||'';
     edSvcRegions={};
     ED_SERVICES.forEach(function(sv){
       var found=findSvc(base, sv.type);
@@ -421,8 +409,7 @@
     next.registered = true;
     next.avatar = edAvatar;
     next.name = name;
-    next.height = parseInt(document.getElementById('edHeight').value,10) || null;
-    next.weight = parseInt(document.getElementById('edWeight').value,10) || null;
+    delete next.height; delete next.weight;   // 쇼퍼 본인 신체정보 제거(계약 미포함)
     next.services = svc;                                           // 활동지역은 services[].regions 안에 포함
     next.bio = document.getElementById('edTagline').value.trim();  // 소개 = bio 하나로 통일(경력소개 제거)
     delete next.tagline; delete next.regions;                      // 구 필드 정리
@@ -432,7 +419,7 @@
     next.portfolio = edPhotos.slice();
     PROFILE = next; MY_PRICE = svc[0].price;
     saveLS('pro.profile', next);
-    applyProfile(); renderAvatar(); renderServices(); renderBody(); renderTagsView(); renderPortfolio();
+    applyProfile(); renderAvatar(); renderServices(); renderTagsView(); renderPortfolio();
     cancelEdit();
     toast('프로필을 저장했어요');
   }
@@ -504,7 +491,6 @@
   applyProfile();
   renderAvatar();
   renderServices();
-  renderBody();
   renderTagsView();
   renderPortfolio();
   renderAll();
