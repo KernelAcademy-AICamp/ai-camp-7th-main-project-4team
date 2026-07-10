@@ -67,7 +67,7 @@
   }
   function shareInvite(d){
     var url=inviteURL(d);
-    var text='나는 '+d.name+'('+d.code+')! 너의 체형에 맞는 핏도 3분이면 나와 — fitting에서 확인해봐';
+    var text='너는 어떤 핏이야? 나는 \''+d.name+'\' 나왔어 · 착용 경험 3분이면 내 체형·사이즈가 나와 — fitting';
     if(navigator.share){ navigator.share({title:'fitting — 내 핏 결과', text:text, url:url}).catch(function(){}); return; }
     if(navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(text+'\n'+url).then(function(){ cardToast('초대 링크를 복사했어요 · 친구에게 붙여넣기 해보세요'); }).catch(function(){ cardToast('링크: '+url); });

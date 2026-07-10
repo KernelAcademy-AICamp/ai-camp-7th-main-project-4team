@@ -1,36 +1,43 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">
   <defs>
-    <radialGradient id="glow" cx="26%" cy="20%" r="80%">
-      <stop offset="0%" stop-color="#3E6350"/>
-      <stop offset="60%" stop-color="#2E4A3B"/>
-      <stop offset="100%" stop-color="#223A2E"/>
+    <radialGradient id="bgw" cx="22%" cy="14%" r="90%">
+      <stop offset="0%" stop-color="#EEF2FB"/><stop offset="55%" stop-color="#F6F6F5"/><stop offset="100%" stop-color="#ECEBE7"/>
     </radialGradient>
+    <radialGradient id="cardglow" cx="50%" cy="0%" r="75%">
+      <stop offset="0%" stop-color="#9DB8FF" stop-opacity="0.5"/><stop offset="60%" stop-color="#9DB8FF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bodyg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#B9CCFF"/><stop offset="100%" stop-color="#8AA6F5"/>
+    </linearGradient>
   </defs>
-  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect width="1200" height="630" fill="url(#bgw)"/>
 
   <!-- 로고 -->
-  <text x="80" y="118" fill="#F6F6F5" font-size="40" font-weight="800" letter-spacing="-1">fitting</text>
-  <rect x="80" y="140" width="46" height="4" rx="2" fill="#9CC1AE"/>
+  <text x="80" y="112" fill="#16140F" font-size="40" font-weight="800" letter-spacing="-1">fitting</text>
+  <rect x="80" y="132" width="46" height="4" rx="2" fill="#2E4A3B"/>
 
-  <!-- 초대 태그 -->
-  <g>
-    <rect x="80" y="196" width="360" height="52" rx="26" fill="#9CC1AE" fill-opacity="0.16"/>
-    <text x="112" y="230" fill="#9CC1AE" font-size="24" font-weight="800">🎁  친구가 보낸 핏 진단 초대</text>
+  <!-- 왼쪽 텍스트 (위로 올림) -->
+  <g transform="translate(0,-28)">
+    <text x="78" y="300" fill="#16140F" font-size="82" font-weight="800" letter-spacing="-3">너는 어떤</text>
+    <text x="78" y="392" fill="#16140F" font-size="82" font-weight="800" letter-spacing="-3">핏이야?</text>
+    <text x="80" y="466" fill="#6E6B63" font-size="29" font-weight="600">착용 경험 3분이면 내 체형·사이즈가 나와요</text>
+    <rect x="80" y="502" width="298" height="58" rx="29" fill="#16140F"/>
+    <text x="112" y="539" fill="#F6F6F5" font-size="24" font-weight="800">무료 체형 진단 시작하기 →</text>
   </g>
 
-  <!-- 헤드라인 -->
-  <text x="78" y="330" fill="#F6F6F5" font-size="76" font-weight="800" letter-spacing="-2">안 입어본 브랜드도</text>
-  <text x="78" y="418" fill="#F6F6F5" font-size="76" font-weight="800" letter-spacing="-2">내 사이즈로 딱 <tspan fill="#9CC1AE">FIT</tspan></text>
-
-  <!-- 서브 -->
-  <text x="80" y="500" fill="#CBD8CF" font-size="30" font-weight="600">착용 경험만으로 브랜드를 가로질러 사이즈를 번역 · 3분 체형 진단</text>
-
-  <!-- 우측 캐릭터 카드 모티프 -->
-  <g transform="translate(946,150)">
-    <rect x="0" y="0" width="170" height="330" rx="24" fill="#16171b" stroke="#3E6350" stroke-width="2"/>
-    <circle cx="85" cy="96" r="46" fill="#f2d6b8"/>
-    <path d="M45 90 C42 40 85 30 85 30 C85 30 128 40 125 90 C125 66 108 50 85 50 C62 50 45 66 45 90 Z" fill="#3a2c22"/>
-    <path d="M30 300 C34 210 60 188 85 188 C110 188 136 210 140 300 Z" fill="#2E4A3B"/>
-    <text x="85" y="250" fill="#9CC1AE" font-size="22" font-weight="800" text-anchor="middle">MY FIT</text>
+  <!-- 오른쪽 STR 결과카드 -->
+  <g transform="translate(792,88) rotate(4 202 229)">
+    <rect x="0" y="0" width="404" height="458" rx="30" fill="#16171b"/>
+    <rect x="0" y="0" width="404" height="458" rx="30" fill="url(#cardglow)"/>
+    <text x="202" y="58" fill="#9DB8FF" font-size="19" font-weight="800" letter-spacing="3" text-anchor="middle">MY FIT</text>
+    <g transform="translate(202,204) scale(0.84)">
+      <path d="M-46 -70 L46 -70 L46 62 L52 150 L-52 150 L-46 62 Z" fill="url(#bodyg)"/>
+      <rect x="-46" y="-70" width="38" height="220" fill="#ffffff" opacity="0.14"/>
+      <rect x="-24" y="-118" width="48" height="52" rx="13" fill="#ecd9c9"/>
+      <path d="M-27 -96 C-30 -140 24 -140 27 -96 C27 -120 12 -132 0 -132 C-12 -132 -27 -120 -27 -96 Z" fill="#2a2b30"/>
+      <circle cx="-9" cy="-90" r="2.6" fill="#2a2b30"/><circle cx="9" cy="-90" r="2.6" fill="#2a2b30"/>
+    </g>
+    <text x="202" y="378" fill="#9DB8FF" font-size="20" font-weight="800" letter-spacing="6" text-anchor="middle">STR</text>
+    <text x="202" y="414" fill="#F6F6F5" font-size="30" font-weight="800" letter-spacing="-1" text-anchor="middle">시크 스트레이트</text>
   </g>
 </svg>
