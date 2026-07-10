@@ -20,7 +20,7 @@ out = repo / "web" / "data" / "garments.json"
 BRAND_ID = {
     "유니클로": "uniqlo", "무신사스탠다드": "musinsa-standard", "나이키": "nike",
     "스파오": "spao", "H&M": "hm", "에잇세컨즈": "8seconds", "탑텐": "topten",
-    "노스페이스": "northface",
+    "노스페이스": "northface", "자라": "zara",
 }
 # 브랜드 원본 핏 표기 → 표준 5단계(fitLine). 상의는 '핏' 접미, 하의는 스타일명이 섞임.
 #   와이드·세미와이드·루즈·릴랙스=loose, 리얼와이드=oversize, 스트레이트·테이퍼드·크링클·커브드=regular.
@@ -88,6 +88,12 @@ SILHOUETTE = [   # (토큰, 실루엣) — 위에서부터 우선 매칭(더 구
 ]
 _SIL_FROM_FIT = {"skinny": "skinny", "slim": "slim", "regular": "straight",
                  "loose": "wide", "oversize": "wide"}
+# 정규화 컬럼(수기 정본) 유효값 — 있으면 원본 fit 재파싱보다 우선.
+FITLINE_ENUM = {"skinny", "slim", "regular", "loose", "oversize"}
+SIL_ENUM = {"skinny", "slim", "straight", "tapered", "wide", "bootcut"}
+# 하의 fit(여유축) 매핑 실패 시 실루엣에서 근사 — 엔진은 하의 매칭에 fit을 쓰지 않으므로 표시/보조용.
+_FIT_FROM_SIL = {"skinny": "slim", "slim": "slim", "straight": "regular",
+                 "tapered": "regular", "wide": "loose", "bootcut": "regular"}
 
 
 def silhouette_of(product, fitline):
@@ -112,9 +118,18 @@ for f in sorted(raw.glob("*.csv")):
             skipped += 1
             continue
         bid = BRAND_ID.get(brand)
-        fit = FITLINE.get(nfc(row.get("fit")).strip())
         g = GENDER.get(nfc(row.get("성별")).strip())
         size = (row.get("size") or "").strip()
+        # fitLine(여유축): 정규화여유 컬럼(수기 정본, 상의) 우선 → 없으면 원본 fit 매핑.
+        norm_fit = nfc(row.get("정규화여유")).strip()
+        fit = norm_fit if norm_fit in FITLINE_ENUM else FITLINE.get(nfc(row.get("fit")).strip())
+        # 하의 실루엣(형태축·1차 매칭키): 정규화실루엣 컬럼(수기 정본) 우선 → 상품명 파싱 폴백.
+        sil = None
+        if category == "BOTTOM":
+            nsil = nfc(row.get("정규화실루엣")).strip()
+            sil = nsil if nsil in SIL_ENUM else silhouette_of(row.get("product"), fit)
+            if not fit:                     # 하의 fit이 자유서술이라 매핑 실패 시 실루엣에서 근사(엔진 매칭 미사용)
+                fit = _FIT_FROM_SIL.get(sil, "regular")
         if not (bid and fit and g and size):
             skipped += 1
             continue
@@ -134,7 +149,7 @@ for f in sorted(raw.glob("*.csv")):
         }
         if category == "BOTTOM":
             spec["waistband"] = waistband_of(row.get("product"))  # 허리 밴딩(수용범위·역산에 영향)
-            spec["silhouette"] = silhouette_of(spec["product"], fit)  # 형태축(1차 매칭키)
+            spec["silhouette"] = sil                               # 형태축(1차 매칭키)
         specs.append(spec)
 
 cats = sorted(set(s["category"] for s in specs))
@@ -147,8 +162,9 @@ doc = {
         "categories": cats,
         "note": "값은 사이즈표 '단면(flat) 원본' 그대로. 둘레=단면×2 환산·여유 계산은 규칙 모듈이 조회 시 수행. "
                 "BOTTOM.waistband=밴딩 유형(hidden/side/full/partial/null) — 허리 수용범위·역산 신뢰도에 영향. "
-                "BOTTOM.silhouette=형태축(skinny/slim/straight/tapered/wide/bootcut) — 상품명 파싱, 역산·매칭의 1차 키"
-                "(fitLine 여유축과 직교). 둘 다 현재 product명 추출이라 부분 커버 — 정식은 수집단 `밴딩`·`실루엣` 컬럼 필요.",
+                "BOTTOM.silhouette=형태축(skinny/slim/straight/tapered/wide/bootcut) — 수집단 `정규화실루엣` 컬럼 우선"
+                "(없으면 상품명 파싱 폴백), 역산·매칭의 1차 키(fitLine 여유축과 직교). "
+                "fitLine=상의 `정규화여유` 컬럼 우선. waistband는 아직 product명 추출이라 부분 커버.",
         "parts": {
             "TOP": {"chest": "가슴단면(circ,flat→×2)", "shoulder": "어깨너비(width)",
                     "sleeve": "소매길이(len)", "length": "총장(len)"},

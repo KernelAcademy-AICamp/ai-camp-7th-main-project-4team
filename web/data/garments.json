@@ -8,7 +8,7 @@
    "BOTTOM",
    "TOP"
   ],
-  "note": "값은 사이즈표 '단면(flat) 원본' 그대로. 둘레=단면×2 환산·여유 계산은 규칙 모듈이 조회 시 수행. BOTTOM.waistband=밴딩 유형(hidden/side/full/partial/null) — 허리 수용범위·역산 신뢰도에 영향. BOTTOM.silhouette=형태축(skinny/slim/straight/tapered/wide/bootcut) — 상품명 파싱, 역산·매칭의 1차 키(fitLine 여유축과 직교). 둘 다 현재 product명 추출이라 부분 커버 — 정식은 수집단 `밴딩`·`실루엣` 컬럼 필요.",
+  "note": "값은 사이즈표 '단면(flat) 원본' 그대로. 둘레=단면×2 환산·여유 계산은 규칙 모듈이 조회 시 수행. BOTTOM.waistband=밴딩 유형(hidden/side/full/partial/null) — 허리 수용범위·역산 신뢰도에 영향. BOTTOM.silhouette=형태축(skinny/slim/straight/tapered/wide/bootcut) — 수집단 `정규화실루엣` 컬럼 우선(없으면 상품명 파싱 폴백), 역산·매칭의 1차 키(fitLine 여유축과 직교). fitLine=상의 `정규화여유` 컬럼 우선. waistband는 아직 product명 추출이라 부분 커버.",
   "parts": {
    "TOP": {
     "chest": "가슴단면(circ,flat→×2)",
@@ -53,7 +53,8 @@
    "H&M": "hm",
    "에잇세컨즈": "8seconds",
    "탑텐": "topten",
-   "노스페이스": "northface"
+   "노스페이스": "northface",
+   "자라": "zara"
   },
   "provenance": {
    "method": "manual",
@@ -6210,264 +6211,360 @@
    "product": "여성 누베 후디"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "slim",
-   "gender": "male",
-   "subtype": "long_sleeve",
-   "sizeLabel": "XXS",
-   "garmentCm": {
-    "length": 62.0,
-    "shoulder": 38.0,
-    "chest": 37.0,
-    "sleeve": 17.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "slim",
-   "gender": "male",
-   "subtype": "long_sleeve",
-   "sizeLabel": "XS",
-   "garmentCm": {
-    "length": 64.0,
-    "shoulder": 40.0,
-    "chest": 39.0,
-    "sleeve": 18.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
    "fitLine": "slim",
    "gender": "male",
    "subtype": "long_sleeve",
    "sizeLabel": "S",
    "garmentCm": {
-    "length": 66.0,
+    "length": 77.0,
     "shoulder": 42.0,
-    "chest": 43.0,
-    "sleeve": 19.5
+    "chest": 52.5,
+    "sleeve": 64.5
    },
-   "product": "사이즈 가이드표"
+   "product": "코튼 슬림핏 셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
    "fitLine": "slim",
    "gender": "male",
    "subtype": "long_sleeve",
    "sizeLabel": "M",
    "garmentCm": {
-    "length": 68.0,
+    "length": 78.0,
     "shoulder": 44.0,
-    "chest": 47.0,
-    "sleeve": 20.5
+    "chest": 54.5,
+    "sleeve": 65.5
    },
-   "product": "사이즈 가이드표"
+   "product": "코튼 슬림핏 셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
    "fitLine": "slim",
    "gender": "male",
    "subtype": "long_sleeve",
    "sizeLabel": "L",
    "garmentCm": {
-    "length": 70.0,
+    "length": 79.0,
     "shoulder": 46.0,
-    "chest": 51.0,
-    "sleeve": 21.5
+    "chest": 56.5,
+    "sleeve": 66.5
    },
-   "product": "사이즈 가이드표"
+   "product": "코튼 슬림핏 셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
    "fitLine": "slim",
    "gender": "male",
    "subtype": "long_sleeve",
    "sizeLabel": "XL",
    "garmentCm": {
-    "length": 72.0,
+    "length": 80.0,
     "shoulder": 48.0,
-    "chest": 55.0,
-    "sleeve": 22.5
+    "chest": 58.5,
+    "sleeve": 67.5
    },
-   "product": "사이즈 가이드표"
+   "product": "코튼 슬림핏 셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
-   "fitLine": "slim",
-   "gender": "male",
-   "subtype": "long_sleeve",
-   "sizeLabel": "XXL",
-   "garmentCm": {
-    "length": 74.0,
-    "shoulder": 50.0,
-    "chest": 59.0,
-    "sleeve": 23.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "loose",
-   "gender": "male",
-   "subtype": "long_sleeve",
-   "sizeLabel": "XXS",
-   "garmentCm": {
-    "length": 64.0,
-    "shoulder": 40.0,
-    "chest": 38.0,
-    "sleeve": 18.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "loose",
-   "gender": "male",
-   "subtype": "long_sleeve",
-   "sizeLabel": "XS",
-   "garmentCm": {
-    "length": 66.0,
-    "shoulder": 42.0,
-    "chest": 41.0,
-    "sleeve": 19.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "loose",
+   "fitLine": "regular",
    "gender": "male",
    "subtype": "long_sleeve",
    "sizeLabel": "S",
    "garmentCm": {
-    "length": 68.0,
-    "shoulder": 44.0,
-    "chest": 44.0,
-    "sleeve": 20.5
+    "length": 70.0,
+    "shoulder": 46.0,
+    "chest": 55.5,
+    "sleeve": 61.0
    },
-   "product": "사이즈 가이드표"
+   "product": "린넨-코튼 레귤러핏 셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
-   "fitLine": "loose",
+   "fitLine": "regular",
    "gender": "male",
    "subtype": "long_sleeve",
    "sizeLabel": "M",
    "garmentCm": {
-    "length": 70.0,
-    "shoulder": 46.0,
-    "chest": 48.0,
-    "sleeve": 21.5
+    "length": 73.0,
+    "shoulder": 48.0,
+    "chest": 58.5,
+    "sleeve": 63.0
    },
-   "product": "사이즈 가이드표"
+   "product": "린넨-코튼 레귤러핏 셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
-   "fitLine": "loose",
+   "fitLine": "regular",
    "gender": "male",
    "subtype": "long_sleeve",
    "sizeLabel": "L",
-   "garmentCm": {
-    "length": 72.0,
-    "shoulder": 48.0,
-    "chest": 52.0,
-    "sleeve": 22.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "loose",
-   "gender": "male",
-   "subtype": "long_sleeve",
-   "sizeLabel": "XL",
-   "garmentCm": {
-    "length": 74.0,
-    "shoulder": 50.0,
-    "chest": 56.0,
-    "sleeve": 23.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "loose",
-   "gender": "male",
-   "subtype": "long_sleeve",
-   "sizeLabel": "XXL",
    "garmentCm": {
     "length": 76.0,
-    "shoulder": 52.0,
-    "chest": 60.0,
-    "sleeve": 24.5
+    "shoulder": 50.0,
+    "chest": 61.5,
+    "sleeve": 65.0
    },
-   "product": "사이즈 가이드표"
+   "product": "린넨-코튼 레귤러핏 셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
-   "fitLine": "oversize",
+   "fitLine": "regular",
    "gender": "male",
    "subtype": "long_sleeve",
-   "sizeLabel": "XXS",
+   "sizeLabel": "XL",
    "garmentCm": {
-    "length": 67.0,
-    "shoulder": 43.0,
-    "chest": 39.0,
-    "sleeve": 20.5
+    "length": 79.0,
+    "shoulder": 52.0,
+    "chest": 64.5,
+    "sleeve": 67.0
    },
-   "product": "사이즈 가이드표"
+   "product": "린넨-코튼 레귤러핏 셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
-   "fitLine": "oversize",
+   "fitLine": "regular",
    "gender": "male",
    "subtype": "long_sleeve",
-   "sizeLabel": "XS",
+   "sizeLabel": "XXL",
+   "garmentCm": {
+    "length": 82.0,
+    "shoulder": 54.0,
+    "chest": 67.5,
+    "sleeve": 69.0
+   },
+   "product": "린넨-코튼 레귤러핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
    "garmentCm": {
     "length": 69.0,
-    "shoulder": 45.0,
-    "chest": 43.0,
-    "sleeve": 21.5
+    "shoulder": 47.5,
+    "chest": 59.0,
+    "sleeve": 63.0
    },
-   "product": "사이즈 가이드표"
+   "product": "리오셀-코튼 레귤러핏 셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 71.0,
+    "shoulder": 49.5,
+    "chest": 61.0,
+    "sleeve": 64.0
+   },
+   "product": "리오셀-코튼 레귤러핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 73.0,
+    "shoulder": 51.5,
+    "chest": 63.0,
+    "sleeve": 65.0
+   },
+   "product": "리오셀-코튼 레귤러핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 75.0,
+    "shoulder": 53.5,
+    "chest": 65.0,
+    "sleeve": 66.0
+   },
+   "product": "리오셀-코튼 레귤러핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 76.0,
+    "shoulder": 49.0,
+    "chest": 53.5,
+    "sleeve": 63.5
+   },
+   "product": "레귤러핏 코튼 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 78.0,
+    "shoulder": 50.0,
+    "chest": 56.0,
+    "sleeve": 64.0
+   },
+   "product": "레귤러핏 코튼 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 80.0,
+    "shoulder": 51.0,
+    "chest": 58.5,
+    "sleeve": 64.5
+   },
+   "product": "레귤러핏 코튼 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 82.0,
+    "shoulder": 52.0,
+    "chest": 61.0,
+    "sleeve": 65.0
+   },
+   "product": "레귤러핏 코튼 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 74.0,
+    "shoulder": 48.0,
+    "chest": 58.0,
+    "sleeve": 60.0
+   },
+   "product": "린넨-코튼 릴렉스핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 75.0,
+    "shoulder": 49.0,
+    "chest": 60.0,
+    "sleeve": 61.5
+   },
+   "product": "린넨-코튼 릴렉스핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 76.0,
+    "shoulder": 50.0,
+    "chest": 62.0,
+    "sleeve": 63.0
+   },
+   "product": "린넨-코튼 릴렉스핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 77.0,
+    "shoulder": 51.0,
+    "chest": 64.0,
+    "sleeve": 64.5
+   },
+   "product": "린넨-코튼 릴렉스핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XXL",
+   "garmentCm": {
+    "length": 78.0,
+    "shoulder": 52.0,
+    "chest": 66.0,
+    "sleeve": 66.0
+   },
+   "product": "린넨-코튼 릴렉스핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
    "fitLine": "oversize",
    "gender": "male",
@@ -6475,31 +6572,1279 @@
    "sizeLabel": "S",
    "garmentCm": {
     "length": 71.0,
-    "shoulder": 47.0,
-    "chest": 45.0,
-    "sleeve": 22.5
+    "shoulder": 55.0,
+    "chest": 73.5,
+    "sleeve": 60.5
    },
-   "product": "사이즈 가이드표"
+   "product": "릴렉스핏 텍스처 오버셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
    "fitLine": "oversize",
    "gender": "male",
    "subtype": "long_sleeve",
    "sizeLabel": "M",
    "garmentCm": {
-    "length": 73.0,
-    "shoulder": 49.0,
-    "chest": 49.0,
-    "sleeve": 23.5
+    "length": 72.0,
+    "shoulder": 56.5,
+    "chest": 75.0,
+    "sleeve": 61.0
    },
-   "product": "사이즈 가이드표"
+   "product": "릴렉스핏 텍스처 오버셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "oversize",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 73.0,
+    "shoulder": 58.0,
+    "chest": 76.5,
+    "sleeve": 61.5
+   },
+   "product": "릴렉스핏 텍스처 오버셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "oversize",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 74.0,
+    "shoulder": 59.5,
+    "chest": 78.0,
+    "sleeve": 62.0
+   },
+   "product": "릴렉스핏 텍스처 오버셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 69.0,
+    "shoulder": 49.0,
+    "chest": 58.0,
+    "sleeve": 63.0
+   },
+   "product": "라이트웨이트 롱 슬리브 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 70.5,
+    "shoulder": 50.5,
+    "chest": 60.0,
+    "sleeve": 64.0
+   },
+   "product": "라이트웨이트 롱 슬리브 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 72.0,
+    "shoulder": 52.0,
+    "chest": 62.0,
+    "sleeve": 65.0
+   },
+   "product": "라이트웨이트 롱 슬리브 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 73.5,
+    "shoulder": 53.5,
+    "chest": 64.0,
+    "sleeve": 66.0
+   },
+   "product": "라이트웨이트 롱 슬리브 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 64.0,
+    "shoulder": 48.5,
+    "chest": 58.0,
+    "sleeve": 59.5
+   },
+   "product": "레귤러핏 니트 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 65.0,
+    "shoulder": 49.5,
+    "chest": 60.0,
+    "sleeve": 60.5
+   },
+   "product": "레귤러핏 니트 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 66.0,
+    "shoulder": 50.5,
+    "chest": 62.0,
+    "sleeve": 61.5
+   },
+   "product": "레귤러핏 니트 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 59.5,
+    "shoulder": 42.5,
+    "chest": 47.0,
+    "sleeve": 61.0
+   },
+   "product": "울 브이넥 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 61.5,
+    "shoulder": 43.5,
+    "chest": 49.0,
+    "sleeve": 62.5
+   },
+   "product": "울 브이넥 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 63.5,
+    "shoulder": 44.5,
+    "chest": 51.0,
+    "sleeve": 64.0
+   },
+   "product": "울 브이넥 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XS",
+   "garmentCm": {
+    "length": 72.0,
+    "shoulder": 45.0,
+    "chest": 46.0,
+    "sleeve": 61.0
+   },
+   "product": "스트라이프 포플린 타이트핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 73.0,
+    "shoulder": 47.0,
+    "chest": 48.0,
+    "sleeve": 61.5
+   },
+   "product": "스트라이프 포플린 타이트핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 74.0,
+    "shoulder": 49.0,
+    "chest": 50.0,
+    "sleeve": 62.0
+   },
+   "product": "스트라이프 포플린 타이트핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 75.0,
+    "shoulder": 51.0,
+    "chest": 52.0,
+    "sleeve": 62.5
+   },
+   "product": "스트라이프 포플린 타이트핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XS",
+   "garmentCm": {
+    "length": 69.5,
+    "shoulder": 43.0,
+    "chest": 51.0,
+    "sleeve": 61.0
+   },
+   "product": "스트라이프 포플린 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 70.5,
+    "shoulder": 44.5,
+    "chest": 53.5,
+    "sleeve": 62.0
+   },
+   "product": "스트라이프 포플린 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 71.5,
+    "shoulder": 46.0,
+    "chest": 56.0,
+    "sleeve": 63.0
+   },
+   "product": "스트라이프 포플린 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 72.5,
+    "shoulder": 47.5,
+    "chest": 58.5,
+    "sleeve": 64.0
+   },
+   "product": "스트라이프 포플린 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 73.5,
+    "shoulder": 49.0,
+    "chest": 61.0,
+    "sleeve": 65.0
+   },
+   "product": "스트라이프 포플린 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XXL",
+   "garmentCm": {
+    "length": 74.5,
+    "shoulder": 50.5,
+    "chest": 63.5,
+    "sleeve": 66.0
+   },
+   "product": "스트라이프 포플린 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "oversize",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XS",
+   "garmentCm": {
+    "length": 71.0,
+    "shoulder": 53.5,
+    "chest": 61.0,
+    "sleeve": 53.0
+   },
+   "product": "오버사이즈 포켓 거즈 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "oversize",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 71.5,
+    "shoulder": 55.0,
+    "chest": 63.0,
+    "sleeve": 54.0
+   },
+   "product": "오버사이즈 포켓 거즈 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "oversize",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 72.0,
+    "shoulder": 56.5,
+    "chest": 65.0,
+    "sleeve": 55.0
+   },
+   "product": "오버사이즈 포켓 거즈 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "oversize",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 72.5,
+    "shoulder": 58.0,
+    "chest": 67.0,
+    "sleeve": 56.0
+   },
+   "product": "오버사이즈 포켓 거즈 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "oversize",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 73.0,
+    "shoulder": 59.5,
+    "chest": 69.0,
+    "sleeve": 57.0
+   },
+   "product": "오버사이즈 포켓 거즈 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "oversize",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XXL",
+   "garmentCm": {
+    "length": 73.5,
+    "shoulder": 61.0,
+    "chest": 71.0,
+    "sleeve": 58.0
+   },
+   "product": "오버사이즈 포켓 거즈 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 61.0,
+    "shoulder": 33.0,
+    "chest": 35.0,
+    "sleeve": 74.0
+   },
+   "product": "수피마 롱 슬리브 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 62.0,
+    "shoulder": 34.0,
+    "chest": 36.5,
+    "sleeve": 76.0
+   },
+   "product": "수피마 롱 슬리브 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 63.0,
+    "shoulder": 35.0,
+    "chest": 38.0,
+    "sleeve": 78.0
+   },
+   "product": "수피마 롱 슬리브 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 63.0,
+    "shoulder": 49.0,
+    "chest": 49.0,
+    "sleeve": 57.5
+   },
+   "product": "스트라이프 롱 슬리브 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 64.5,
+    "shoulder": 50.0,
+    "chest": 51.0,
+    "sleeve": 59.0
+   },
+   "product": "스트라이프 롱 슬리브 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 67.0,
+    "shoulder": 53.0,
+    "chest": 53.0,
+    "sleeve": 59.5
+   },
+   "product": "스트라이프 롱 슬리브 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 69.0,
+    "shoulder": 55.0,
+    "chest": 55.0,
+    "sleeve": 60.5
+   },
+   "product": "스트라이프 롱 슬리브 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 65.5,
+    "shoulder": 52.5,
+    "chest": 54.0,
+    "sleeve": 55.0
+   },
+   "product": "컷아웃 프린트 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 68.5,
+    "shoulder": 54.0,
+    "chest": 57.0,
+    "sleeve": 56.0
+   },
+   "product": "컷아웃 프린트 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 71.5,
+    "shoulder": 55.5,
+    "chest": 60.0,
+    "sleeve": 57.0
+   },
+   "product": "컷아웃 프린트 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "oversize",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 61.5,
+    "shoulder": 60.0,
+    "chest": 65.5,
+    "sleeve": 46.0
+   },
+   "product": "루즈핏 오버사이즈 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "oversize",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 63.5,
+    "shoulder": 62.0,
+    "chest": 66.5,
+    "sleeve": 46.5
+   },
+   "product": "루즈핏 오버사이즈 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "oversize",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 65.5,
+    "shoulder": 64.0,
+    "chest": 67.5,
+    "sleeve": 47.0
+   },
+   "product": "루즈핏 오버사이즈 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XS",
+   "garmentCm": {
+    "length": 72.0,
+    "shoulder": 47.0,
+    "chest": 55.0,
+    "sleeve": 55.0
+   },
+   "product": "스트라이프 오버사이즈 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 73.0,
+    "shoulder": 48.0,
+    "chest": 57.0,
+    "sleeve": 55.5
+   },
+   "product": "스트라이프 오버사이즈 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 74.0,
+    "shoulder": 49.0,
+    "chest": 59.0,
+    "sleeve": 56.0
+   },
+   "product": "스트라이프 오버사이즈 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 75.0,
+    "shoulder": 50.0,
+    "chest": 61.0,
+    "sleeve": 56.5
+   },
+   "product": "스트라이프 오버사이즈 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 76.0,
+    "shoulder": 51.0,
+    "chest": 63.0,
+    "sleeve": 57.0
+   },
+   "product": "스트라이프 오버사이즈 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XS",
+   "garmentCm": {
+    "length": 68.0,
+    "shoulder": 49.0,
+    "chest": 57.5,
+    "sleeve": 70.0
+   },
+   "product": "오버사이즈 옥스퍼드 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 68.5,
+    "shoulder": 52.0,
+    "chest": 59.5,
+    "sleeve": 72.0
+   },
+   "product": "오버사이즈 옥스퍼드 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 69.0,
+    "shoulder": 55.0,
+    "chest": 61.5,
+    "sleeve": 74.0
+   },
+   "product": "오버사이즈 옥스퍼드 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 69.5,
+    "shoulder": 58.0,
+    "chest": 63.5,
+    "sleeve": 76.0
+   },
+   "product": "오버사이즈 옥스퍼드 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 70.0,
+    "shoulder": 61.0,
+    "chest": 65.5,
+    "sleeve": 78.0
+   },
+   "product": "오버사이즈 옥스퍼드 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 60.5,
+    "shoulder": 34.5,
+    "chest": 37.0,
+    "sleeve": 56.5
+   },
+   "product": "울 크로스 하이넥 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 62.0,
+    "shoulder": 36.5,
+    "chest": 39.0,
+    "sleeve": 57.5
+   },
+   "product": "울 크로스 하이넥 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 63.5,
+    "shoulder": 38.5,
+    "chest": 41.0,
+    "sleeve": 58.5
+   },
+   "product": "울 크로스 하이넥 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 65.0,
+    "shoulder": 40.5,
+    "chest": 43.0,
+    "sleeve": 59.5
+   },
+   "product": "울 크로스 하이넥 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 56.0,
+    "shoulder": 31.5,
+    "chest": 41.0,
+    "sleeve": 56.5
+   },
+   "product": "베이직 플레인 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 58.0,
+    "shoulder": 34.0,
+    "chest": 43.0,
+    "sleeve": 57.0
+   },
+   "product": "베이직 플레인 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 60.0,
+    "shoulder": 36.5,
+    "chest": 45.0,
+    "sleeve": 57.5
+   },
+   "product": "베이직 플레인 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 62.0,
+    "shoulder": 39.0,
+    "chest": 47.0,
+    "sleeve": 58.0
+   },
+   "product": "베이직 플레인 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XXL",
+   "garmentCm": {
+    "length": 64.0,
+    "shoulder": 41.5,
+    "chest": 49.0,
+    "sleeve": 58.5
+   },
+   "product": "베이직 플레인 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 60.0,
+    "shoulder": 37.0,
+    "chest": 47.5,
+    "sleeve": 61.5
+   },
+   "product": "스트라이프 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 61.5,
+    "shoulder": 39.0,
+    "chest": 49.5,
+    "sleeve": 62.5
+   },
+   "product": "스트라이프 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 63.0,
+    "shoulder": 41.0,
+    "chest": 51.5,
+    "sleeve": 63.5
+   },
+   "product": "스트라이프 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 70.0,
+    "shoulder": 54.5,
+    "chest": 57.0,
+    "sleeve": 48.5
+   },
+   "product": "롱 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 71.0,
+    "shoulder": 55.5,
+    "chest": 59.0,
+    "sleeve": 49.0
+   },
+   "product": "롱 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 72.0,
+    "shoulder": 56.5,
+    "chest": 61.0,
+    "sleeve": 49.5
+   },
+   "product": "롱 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 73.0,
+    "shoulder": 57.5,
+    "chest": 63.0,
+    "sleeve": 50.0
+   },
+   "product": "롱 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XS",
+   "garmentCm": {
+    "length": 53.5,
+    "shoulder": 61.5,
+    "chest": 58.0,
+    "sleeve": 47.0
+   },
+   "product": "소프트 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 55.5,
+    "shoulder": 63.5,
+    "chest": 60.0,
+    "sleeve": 47.5
+   },
+   "product": "소프트 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 57.5,
+    "shoulder": 65.5,
+    "chest": 62.0,
+    "sleeve": 48.0
+   },
+   "product": "소프트 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 59.5,
+    "shoulder": 67.5,
+    "chest": 64.0,
+    "sleeve": 48.5
+   },
+   "product": "소프트 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 61.5,
+    "shoulder": 69.5,
+    "chest": 66.0,
+    "sleeve": 49.0
+   },
+   "product": "소프트 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "oversize",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S-M",
+   "garmentCm": {
+    "length": 69.0,
+    "shoulder": 78.0,
+    "chest": 80.0,
+    "sleeve": 42.0
+   },
+   "product": "울 오버사이즈 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "oversize",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L-XL",
+   "garmentCm": {
+    "length": 71.0,
+    "shoulder": 81.0,
+    "chest": 83.0,
+    "sleeve": 43.0
+   },
+   "product": "울 오버사이즈 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "oversize",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S-M",
+   "garmentCm": {
+    "length": 64.5,
+    "shoulder": 34.5,
+    "chest": 45.0,
+    "sleeve": 38.0
+   },
+   "product": "오버사이즈 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "oversize",
+   "gender": "female",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L-XL",
+   "garmentCm": {
+    "length": 67.0,
+    "shoulder": 36.5,
+    "chest": 49.0,
+    "sleeve": 40.0
+   },
+   "product": "오버사이즈 니트 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "oversize",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 69.0,
+    "shoulder": 59.0,
+    "chest": 63.5,
+    "sleeve": 56.5
+   },
+   "product": "오버사이즈 핏 옥스퍼드 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "oversize",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 72.0,
+    "shoulder": 61.0,
+    "chest": 65.5,
+    "sleeve": 57.5
+   },
+   "product": "오버사이즈 핏 옥스퍼드 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
    "fitLine": "oversize",
    "gender": "male",
@@ -6507,379 +7852,475 @@
    "sizeLabel": "L",
    "garmentCm": {
     "length": 75.0,
-    "shoulder": 51.0,
-    "chest": 53.0,
-    "sleeve": 24.5
+    "shoulder": 63.0,
+    "chest": 67.5,
+    "sleeve": 58.5
    },
-   "product": "사이즈 가이드표"
+   "product": "오버사이즈 핏 옥스퍼드 셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
    "fitLine": "oversize",
    "gender": "male",
    "subtype": "long_sleeve",
    "sizeLabel": "XL",
    "garmentCm": {
-    "length": 77.0,
-    "shoulder": 53.0,
-    "chest": 57.0,
-    "sleeve": 25.5
+    "length": 78.0,
+    "shoulder": 65.0,
+    "chest": 69.5,
+    "sleeve": 59.5
    },
-   "product": "사이즈 가이드표"
+   "product": "오버사이즈 핏 옥스퍼드 셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
    "fitLine": "oversize",
    "gender": "male",
-   "subtype": "long_sleeve",
-   "sizeLabel": "XXL",
-   "garmentCm": {
-    "length": 79.0,
-    "shoulder": 55.0,
-    "chest": 61.0,
-    "sleeve": 26.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "slim",
-   "gender": "female",
-   "subtype": "long_sleeve",
-   "sizeLabel": "XXS",
-   "garmentCm": {
-    "length": 54.0,
-    "shoulder": 33.0,
-    "chest": 37.0,
-    "sleeve": 13.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "slim",
-   "gender": "female",
-   "subtype": "long_sleeve",
-   "sizeLabel": "XS",
-   "garmentCm": {
-    "length": 55.5,
-    "shoulder": 34.5,
-    "chest": 39.0,
-    "sleeve": 14.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "slim",
-   "gender": "female",
    "subtype": "long_sleeve",
    "sizeLabel": "S",
-   "garmentCm": {
-    "length": 57.0,
-    "shoulder": 36.0,
-    "chest": 41.0,
-    "sleeve": 15.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "slim",
-   "gender": "female",
-   "subtype": "long_sleeve",
-   "sizeLabel": "M",
-   "garmentCm": {
-    "length": 58.5,
-    "shoulder": 37.5,
-    "chest": 45.0,
-    "sleeve": 16.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "slim",
-   "gender": "female",
-   "subtype": "long_sleeve",
-   "sizeLabel": "L",
-   "garmentCm": {
-    "length": 60.0,
-    "shoulder": 39.0,
-    "chest": 49.0,
-    "sleeve": 17.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "slim",
-   "gender": "female",
-   "subtype": "long_sleeve",
-   "sizeLabel": "XL",
-   "garmentCm": {
-    "length": 61.5,
-    "shoulder": 40.5,
-    "chest": 53.5,
-    "sleeve": 18.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "slim",
-   "gender": "female",
-   "subtype": "long_sleeve",
-   "sizeLabel": "XXL",
    "garmentCm": {
     "length": 63.0,
-    "shoulder": 42.0,
-    "chest": 59.5,
-    "sleeve": 19.5
+    "shoulder": 50.5,
+    "chest": 61.5,
+    "sleeve": 64.5
    },
-   "product": "사이즈 가이드표"
+   "product": "박시핏 체크 셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
-   "fitLine": "loose",
-   "gender": "female",
-   "subtype": "long_sleeve",
-   "sizeLabel": "XXS",
-   "garmentCm": {
-    "length": 56.0,
-    "shoulder": 35.0,
-    "chest": 38.0,
-    "sleeve": 14.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "loose",
-   "gender": "female",
-   "subtype": "long_sleeve",
-   "sizeLabel": "XS",
-   "garmentCm": {
-    "length": 57.5,
-    "shoulder": 36.5,
-    "chest": 40.0,
-    "sleeve": 15.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "loose",
-   "gender": "female",
-   "subtype": "long_sleeve",
-   "sizeLabel": "S",
-   "garmentCm": {
-    "length": 59.0,
-    "shoulder": 38.0,
-    "chest": 43.0,
-    "sleeve": 16.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "loose",
-   "gender": "female",
+   "fitLine": "oversize",
+   "gender": "male",
    "subtype": "long_sleeve",
    "sizeLabel": "M",
    "garmentCm": {
-    "length": 60.5,
-    "shoulder": 39.5,
-    "chest": 47.0,
-    "sleeve": 17.5
+    "length": 65.0,
+    "shoulder": 52.0,
+    "chest": 63.0,
+    "sleeve": 65.0
    },
-   "product": "사이즈 가이드표"
+   "product": "박시핏 체크 셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
-   "fitLine": "loose",
-   "gender": "female",
+   "fitLine": "oversize",
+   "gender": "male",
    "subtype": "long_sleeve",
    "sizeLabel": "L",
    "garmentCm": {
-    "length": 62.0,
-    "shoulder": 41.0,
-    "chest": 51.3,
-    "sleeve": 18.5
+    "length": 67.0,
+    "shoulder": 53.5,
+    "chest": 64.5,
+    "sleeve": 65.5
    },
-   "product": "사이즈 가이드표"
+   "product": "박시핏 체크 셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
-   "fitLine": "loose",
-   "gender": "female",
+   "fitLine": "oversize",
+   "gender": "male",
    "subtype": "long_sleeve",
    "sizeLabel": "XL",
    "garmentCm": {
-    "length": 63.5,
-    "shoulder": 42.5,
-    "chest": 56.5,
-    "sleeve": 19.5
+    "length": 69.0,
+    "shoulder": 55.0,
+    "chest": 66.0,
+    "sleeve": 66.0
    },
-   "product": "사이즈 가이드표"
+   "product": "박시핏 체크 셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
-   "fitLine": "loose",
-   "gender": "female",
+   "fitLine": "oversize",
+   "gender": "male",
    "subtype": "long_sleeve",
-   "sizeLabel": "XXL",
+   "sizeLabel": "S",
    "garmentCm": {
-    "length": 65.0,
-    "shoulder": 44.0,
+    "length": 65.5,
+    "shoulder": 55.0,
     "chest": 62.5,
-    "sleeve": 20.5
+    "sleeve": 57.5
    },
-   "product": "사이즈 가이드표"
+   "product": "밴드 자수 박시핏 스웨트셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
    "fitLine": "oversize",
-   "gender": "female",
-   "subtype": "long_sleeve",
-   "sizeLabel": "XXS",
-   "garmentCm": {
-    "length": 59.0,
-    "shoulder": 38.0,
-    "chest": 39.0,
-    "sleeve": 16.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "oversize",
-   "gender": "female",
-   "subtype": "long_sleeve",
-   "sizeLabel": "XS",
-   "garmentCm": {
-    "length": 60.5,
-    "shoulder": 39.5,
-    "chest": 41.0,
-    "sleeve": 17.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "oversize",
-   "gender": "female",
-   "subtype": "long_sleeve",
-   "sizeLabel": "S",
-   "garmentCm": {
-    "length": 62.0,
-    "shoulder": 41.0,
-    "chest": 45.0,
-    "sleeve": 18.5
-   },
-   "product": "사이즈 가이드표"
-  },
-  {
-   "brandId": "hm",
-   "brandName": "H&M",
-   "category": "TOP",
-   "fitLine": "oversize",
-   "gender": "female",
+   "gender": "male",
    "subtype": "long_sleeve",
    "sizeLabel": "M",
    "garmentCm": {
-    "length": 63.5,
-    "shoulder": 42.5,
-    "chest": 49.0,
-    "sleeve": 19.5
+    "length": 67.0,
+    "shoulder": 56.5,
+    "chest": 64.5,
+    "sleeve": 59.0
    },
-   "product": "사이즈 가이드표"
+   "product": "밴드 자수 박시핏 스웨트셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
    "fitLine": "oversize",
-   "gender": "female",
+   "gender": "male",
    "subtype": "long_sleeve",
    "sizeLabel": "L",
    "garmentCm": {
-    "length": 65.0,
-    "shoulder": 44.0,
-    "chest": 53.5,
-    "sleeve": 20.5
+    "length": 68.5,
+    "shoulder": 58.0,
+    "chest": 66.5,
+    "sleeve": 60.5
    },
-   "product": "사이즈 가이드표"
+   "product": "밴드 자수 박시핏 스웨트셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
    "fitLine": "oversize",
-   "gender": "female",
+   "gender": "male",
    "subtype": "long_sleeve",
    "sizeLabel": "XL",
    "garmentCm": {
-    "length": 66.5,
-    "shoulder": 45.5,
-    "chest": 59.5,
-    "sleeve": 21.5
+    "length": 70.0,
+    "shoulder": 59.5,
+    "chest": 68.5,
+    "sleeve": 62.0
    },
-   "product": "사이즈 가이드표"
+   "product": "밴드 자수 박시핏 스웨트셔츠"
   },
   {
-   "brandId": "hm",
-   "brandName": "H&M",
+   "brandId": "zara",
+   "brandName": "자라",
    "category": "TOP",
-   "fitLine": "oversize",
-   "gender": "female",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 75.5,
+    "shoulder": 44.0,
+    "chest": 54.5,
+    "sleeve": 64.0
+   },
+   "product": "슬림핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 77.5,
+    "shoulder": 46.0,
+    "chest": 56.0,
+    "sleeve": 65.0
+   },
+   "product": "슬림핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 79.5,
+    "shoulder": 48.0,
+    "chest": 57.5,
+    "sleeve": 66.0
+   },
+   "product": "슬림핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 81.5,
+    "shoulder": 50.0,
+    "chest": 59.0,
+    "sleeve": 67.0
+   },
+   "product": "슬림핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 68.5,
+    "shoulder": 46.5,
+    "chest": 50.5,
+    "sleeve": 64.5
+   },
+   "product": "꽈배기 스트럭처 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 69.0,
+    "shoulder": 47.5,
+    "chest": 52.5,
+    "sleeve": 65.5
+   },
+   "product": "꽈배기 스트럭처 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 69.5,
+    "shoulder": 48.5,
+    "chest": 54.5,
+    "sleeve": 66.5
+   },
+   "product": "꽈배기 스트럭처 스웨터"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 75.5,
+    "shoulder": 44.0,
+    "chest": 48.0,
+    "sleeve": 61.5
+   },
+   "product": "커프스 링크스 슬림핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 77.5,
+    "shoulder": 46.0,
+    "chest": 52.0,
+    "sleeve": 63.5
+   },
+   "product": "커프스 링크스 슬림핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 79.5,
+    "shoulder": 48.0,
+    "chest": 56.0,
+    "sleeve": 65.5
+   },
+   "product": "커프스 링크스 슬림핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 81.5,
+    "shoulder": 50.0,
+    "chest": 60.0,
+    "sleeve": 67.5
+   },
+   "product": "커프스 링크스 슬림핏 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 75.0,
+    "shoulder": 44.0,
+    "chest": 46.0,
+    "sleeve": 66.0
+   },
+   "product": "엘라스틱 스트럭처 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 77.0,
+    "shoulder": 46.0,
+    "chest": 50.0,
+    "sleeve": 66.5
+   },
+   "product": "엘라스틱 스트럭처 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 79.0,
+    "shoulder": 48.0,
+    "chest": 54.0,
+    "sleeve": 67.0
+   },
+   "product": "엘라스틱 스트럭처 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 81.0,
+    "shoulder": 50.0,
+    "chest": 58.0,
+    "sleeve": 67.5
+   },
+   "product": "엘라스틱 스트럭처 셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 67.5,
+    "shoulder": 45.0,
+    "chest": 44.5,
+    "sleeve": 62.0
+   },
+   "product": "슬림핏 베이직 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 68.5,
+    "shoulder": 47.0,
+    "chest": 47.5,
+    "sleeve": 63.0
+   },
+   "product": "슬림핏 베이직 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 69.5,
+    "shoulder": 49.0,
+    "chest": 50.5,
+    "sleeve": 64.0
+   },
+   "product": "슬림핏 베이직 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 70.5,
+    "shoulder": 51.0,
+    "chest": 53.5,
+    "sleeve": 65.0
+   },
+   "product": "슬림핏 베이직 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "male",
    "subtype": "long_sleeve",
    "sizeLabel": "XXL",
    "garmentCm": {
-    "length": 68.0,
-    "shoulder": 47.0,
-    "chest": 65.5,
-    "sleeve": 22.5
+    "length": 71.5,
+    "shoulder": 53.0,
+    "chest": 56.5,
+    "sleeve": 66.0
    },
-   "product": "사이즈 가이드표"
+   "product": "슬림핏 베이직 티셔츠"
   },
   {
    "brandId": "musinsa-standard",
@@ -8199,7 +9640,7 @@
    },
    "product": "커브드 데님 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8219,7 +9660,7 @@
    },
    "product": "커브드 데님 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8239,7 +9680,7 @@
    },
    "product": "커브드 데님 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8259,7 +9700,7 @@
    },
    "product": "커브드 데님 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8279,7 +9720,7 @@
    },
    "product": "커브드 데님 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8299,7 +9740,7 @@
    },
    "product": "커브드 데님 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8319,7 +9760,7 @@
    },
    "product": "커브드 데님 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8339,7 +9780,7 @@
    },
    "product": "커브드 데님 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8359,7 +9800,7 @@
    },
    "product": "커브드 데님 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8379,7 +9820,7 @@
    },
    "product": "커브드 데님 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8399,7 +9840,7 @@
    },
    "product": "커브드 데님 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -8419,7 +9860,7 @@
    },
    "product": "커브드 데님 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9979,7 +11420,7 @@
    },
    "product": "우먼즈 코튼 커브드 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -9999,7 +11440,7 @@
    },
    "product": "우먼즈 코튼 커브드 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10019,7 +11460,7 @@
    },
    "product": "우먼즈 코튼 커브드 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10039,7 +11480,7 @@
    },
    "product": "우먼즈 코튼 커브드 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10059,7 +11500,7 @@
    },
    "product": "우먼즈 코튼 커브드 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10079,7 +11520,7 @@
    },
    "product": "우먼즈 코튼 커브드 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10099,7 +11540,7 @@
    },
    "product": "우먼즈 코튼 커브드 팬츠",
    "waistband": null,
-   "silhouette": "slim"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10119,7 +11560,7 @@
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
    "waistband": "hidden",
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -10139,7 +11580,7 @@
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
    "waistband": "hidden",
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -10159,7 +11600,7 @@
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
    "waistband": "hidden",
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -10179,7 +11620,7 @@
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
    "waistband": "hidden",
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -10199,7 +11640,7 @@
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
    "waistband": "hidden",
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -10219,7 +11660,7 @@
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
    "waistband": "hidden",
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -10239,7 +11680,7 @@
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
    "waistband": "hidden",
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -10259,7 +11700,7 @@
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
    "waistband": "hidden",
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -10279,7 +11720,7 @@
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
    "waistband": "hidden",
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -10299,7 +11740,7 @@
    },
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
    "waistband": "hidden",
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "musinsa-standard",
@@ -10579,7 +12020,7 @@
    },
    "product": "우먼즈 스트레이트 데님 팬츠",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10599,7 +12040,7 @@
    },
    "product": "우먼즈 스트레이트 데님 팬츠",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10619,7 +12060,7 @@
    },
    "product": "우먼즈 스트레이트 데님 팬츠",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10639,7 +12080,7 @@
    },
    "product": "우먼즈 스트레이트 데님 팬츠",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10659,7 +12100,7 @@
    },
    "product": "우먼즈 스트레이트 데님 팬츠",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10679,7 +12120,7 @@
    },
    "product": "우먼즈 스트레이트 데님 팬츠",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10699,7 +12140,7 @@
    },
    "product": "우먼즈 스트레이트 데님 팬츠",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10719,7 +12160,7 @@
    },
    "product": "우먼즈 스트레이트 데님 팬츠",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "wide"
   },
   {
    "brandId": "musinsa-standard",
@@ -10739,7 +12180,7 @@
    },
    "product": "우먼즈 스트레이트 데님 팬츠",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "wide"
   },
   {
    "brandId": "uniqlo",
@@ -17626,7 +19067,7 @@
    },
    "product": "여성) 크링클 이지 팬츠",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -17646,7 +19087,7 @@
    },
    "product": "여성) 크링클 이지 팬츠",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -17666,7 +19107,7 @@
    },
    "product": "여성) 크링클 이지 팬츠",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -17686,7 +19127,7 @@
    },
    "product": "여성) 크링클 이지 팬츠",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -17706,7 +19147,7 @@
    },
    "product": "여성) 크링클 이지 팬츠",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -17726,7 +19167,7 @@
    },
    "product": "여성) 크링클 이지 팬츠",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -17746,7 +19187,7 @@
    },
    "product": "여성) 크링클 이지 팬츠",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "wide"
   },
   {
    "brandId": "topten",
@@ -17986,7 +19427,7 @@
    },
    "product": "여성) COOL 슬림 스트레이트 데님",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -18006,7 +19447,7 @@
    },
    "product": "여성) COOL 슬림 스트레이트 데님",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -18026,7 +19467,7 @@
    },
    "product": "여성) COOL 슬림 스트레이트 데님",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -18046,7 +19487,7 @@
    },
    "product": "여성) COOL 슬림 스트레이트 데님",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -18066,7 +19507,7 @@
    },
    "product": "여성) COOL 슬림 스트레이트 데님",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -18086,7 +19527,7 @@
    },
    "product": "여성) COOL 슬림 스트레이트 데님",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -18106,7 +19547,7 @@
    },
    "product": "여성) COOL 슬림 스트레이트 데님",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -18126,7 +19567,7 @@
    },
    "product": "여성) COOL 슬림 스트레이트 데님",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -18146,7 +19587,7 @@
    },
    "product": "여성) COOL 슬림 스트레이트 데님",
    "waistband": null,
-   "silhouette": "straight"
+   "silhouette": "slim"
   },
   {
    "brandId": "topten",
@@ -18307,6 +19748,4596 @@
    "product": "여성) 컴포트 와이드 이지 슬랙스",
    "waistband": null,
    "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "29",
+   "garmentCm": {
+    "length": 103.0,
+    "waist": 34.5,
+    "hip": 46.5,
+    "rise": 27.0
+   },
+   "product": "슬림핏 베이직 진",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 104.0,
+    "waist": 36.5,
+    "hip": 48.5,
+    "rise": 28.0
+   },
+   "product": "슬림핏 베이직 진",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "31",
+   "garmentCm": {
+    "length": 105.0,
+    "waist": 38.5,
+    "hip": 50.5,
+    "rise": 29.0
+   },
+   "product": "슬림핏 베이직 진",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 106.0,
+    "waist": 40.5,
+    "hip": 52.5,
+    "rise": 30.0
+   },
+   "product": "슬림핏 베이직 진",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 107.0,
+    "waist": 42.5,
+    "hip": 54.5,
+    "rise": 31.0
+   },
+   "product": "슬림핏 베이직 진",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 108.0,
+    "waist": 44.5,
+    "hip": 56.5,
+    "rise": 32.0
+   },
+   "product": "슬림핏 베이직 진",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "38",
+   "garmentCm": {
+    "length": 109.0,
+    "waist": 46.5,
+    "hip": 58.5,
+    "rise": 33.0
+   },
+   "product": "슬림핏 베이직 진",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "29",
+   "garmentCm": {
+    "length": 107.5,
+    "waist": 36.5,
+    "hip": 51.5,
+    "rise": 29.0
+   },
+   "product": "스트레이트핏 진",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 108.5,
+    "waist": 38.5,
+    "hip": 53.5,
+    "rise": 30.0
+   },
+   "product": "스트레이트핏 진",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "31",
+   "garmentCm": {
+    "length": 109.5,
+    "waist": 40.5,
+    "hip": 55.5,
+    "rise": 31.0
+   },
+   "product": "스트레이트핏 진",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 110.5,
+    "waist": 42.5,
+    "hip": 57.5,
+    "rise": 32.0
+   },
+   "product": "스트레이트핏 진",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 111.5,
+    "waist": 44.5,
+    "hip": 59.5,
+    "rise": 33.0
+   },
+   "product": "스트레이트핏 진",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 112.5,
+    "waist": 46.5,
+    "hip": 61.5,
+    "rise": 34.0
+   },
+   "product": "스트레이트핏 진",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "38",
+   "garmentCm": {
+    "length": 113.5,
+    "waist": 48.5,
+    "hip": 63.5,
+    "rise": 35.0
+   },
+   "product": "스트레이트핏 진",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 106.5,
+    "waist": 35.0,
+    "hip": 52.5,
+    "rise": 30.5
+   },
+   "product": "루즈핏 청바지",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "29",
+   "garmentCm": {
+    "length": 107.0,
+    "waist": 37.0,
+    "hip": 54.5,
+    "rise": 31.5
+   },
+   "product": "루즈핏 청바지",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 107.5,
+    "waist": 39.0,
+    "hip": 56.5,
+    "rise": 32.5
+   },
+   "product": "루즈핏 청바지",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "31",
+   "garmentCm": {
+    "length": 108.0,
+    "waist": 41.0,
+    "hip": 58.5,
+    "rise": 33.5
+   },
+   "product": "루즈핏 청바지",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 108.5,
+    "waist": 43.0,
+    "hip": 60.5,
+    "rise": 34.5
+   },
+   "product": "루즈핏 청바지",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 109.0,
+    "waist": 45.0,
+    "hip": 62.5,
+    "rise": 35.5
+   },
+   "product": "루즈핏 청바지",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 109.5,
+    "waist": 47.0,
+    "hip": 64.5,
+    "rise": 36.5
+   },
+   "product": "루즈핏 청바지",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 104.0,
+    "waist": 40.5,
+    "hip": 48.0,
+    "rise": 32.5
+   },
+   "product": "슬림핏 수트 팬츠",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "31",
+   "garmentCm": {
+    "length": 104.5,
+    "waist": 42.0,
+    "hip": 50.0,
+    "rise": 33.5
+   },
+   "product": "슬림핏 수트 팬츠",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 105.0,
+    "waist": 43.5,
+    "hip": 52.0,
+    "rise": 34.5
+   },
+   "product": "슬림핏 수트 팬츠",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 105.5,
+    "waist": 45.0,
+    "hip": 54.0,
+    "rise": 35.5
+   },
+   "product": "슬림핏 수트 팬츠",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 106.0,
+    "waist": 46.5,
+    "hip": 56.0,
+    "rise": 36.5
+   },
+   "product": "슬림핏 수트 팬츠",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 94.5,
+    "waist": 38.0,
+    "hip": 52.5,
+    "rise": 33.5
+   },
+   "product": "스트레이트핏 루즈 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "31",
+   "garmentCm": {
+    "length": 98.0,
+    "waist": 39.5,
+    "hip": 54.5,
+    "rise": 34.5
+   },
+   "product": "스트레이트핏 루즈 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 101.5,
+    "waist": 41.0,
+    "hip": 56.5,
+    "rise": 35.5
+   },
+   "product": "스트레이트핏 루즈 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 105.0,
+    "waist": 42.5,
+    "hip": 58.5,
+    "rise": 36.5
+   },
+   "product": "스트레이트핏 루즈 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "29",
+   "garmentCm": {
+    "length": 106.0,
+    "waist": 38.5,
+    "hip": 49.0,
+    "rise": 31.0
+   },
+   "product": "릴렉스핏 치노 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 107.0,
+    "waist": 39.5,
+    "hip": 52.0,
+    "rise": 32.0
+   },
+   "product": "릴렉스핏 치노 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "31",
+   "garmentCm": {
+    "length": 108.0,
+    "waist": 40.5,
+    "hip": 55.0,
+    "rise": 33.0
+   },
+   "product": "릴렉스핏 치노 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 109.0,
+    "waist": 41.5,
+    "hip": 58.0,
+    "rise": 34.0
+   },
+   "product": "릴렉스핏 치노 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 110.0,
+    "waist": 42.5,
+    "hip": 61.0,
+    "rise": 35.0
+   },
+   "product": "릴렉스핏 치노 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 111.0,
+    "waist": 43.5,
+    "hip": 64.0,
+    "rise": 36.0
+   },
+   "product": "릴렉스핏 치노 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 101.0,
+    "waist": 39.0,
+    "hip": 49.5,
+    "rise": 31.5
+   },
+   "product": "스트레이트 핏 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "31",
+   "garmentCm": {
+    "length": 101.5,
+    "waist": 41.0,
+    "hip": 51.5,
+    "rise": 32.5
+   },
+   "product": "스트레이트 핏 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 102.0,
+    "waist": 43.0,
+    "hip": 53.5,
+    "rise": 33.5
+   },
+   "product": "스트레이트 핏 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 102.5,
+    "waist": 45.0,
+    "hip": 55.5,
+    "rise": 34.5
+   },
+   "product": "스트레이트 핏 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 103.0,
+    "waist": 47.0,
+    "hip": 57.5,
+    "rise": 35.5
+   },
+   "product": "스트레이트 핏 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 100.5,
+    "waist": 36.0,
+    "hip": 53.0,
+    "rise": 35.0
+   },
+   "product": "릴렉스핏 코튼 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "31",
+   "garmentCm": {
+    "length": 101.5,
+    "waist": 39.0,
+    "hip": 55.0,
+    "rise": 36.0
+   },
+   "product": "릴렉스핏 코튼 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 102.5,
+    "waist": 42.0,
+    "hip": 57.0,
+    "rise": 37.0
+   },
+   "product": "릴렉스핏 코튼 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 103.5,
+    "waist": 45.0,
+    "hip": 59.0,
+    "rise": 38.0
+   },
+   "product": "릴렉스핏 코튼 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 103.0,
+    "waist": 39.0,
+    "hip": 51.0,
+    "rise": 31.0
+   },
+   "product": "레귤러핏 스트럭처 수트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "31",
+   "garmentCm": {
+    "length": 104.0,
+    "waist": 41.0,
+    "hip": 52.0,
+    "rise": 32.0
+   },
+   "product": "레귤러핏 스트럭처 수트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 105.0,
+    "waist": 43.0,
+    "hip": 53.0,
+    "rise": 33.0
+   },
+   "product": "레귤러핏 스트럭처 수트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 106.0,
+    "waist": 45.0,
+    "hip": 54.0,
+    "rise": 34.0
+   },
+   "product": "레귤러핏 스트럭처 수트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 107.0,
+    "waist": 47.0,
+    "hip": 55.0,
+    "rise": 35.0
+   },
+   "product": "레귤러핏 스트럭처 수트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 108.0,
+    "waist": 34.5,
+    "hip": 48.5,
+    "rise": 35.0
+   },
+   "product": "릴렉스핏 핀스트라이프 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "29",
+   "garmentCm": {
+    "length": 109.0,
+    "waist": 36.5,
+    "hip": 50.5,
+    "rise": 36.0
+   },
+   "product": "릴렉스핏 핀스트라이프 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 110.0,
+    "waist": 38.5,
+    "hip": 52.5,
+    "rise": 37.0
+   },
+   "product": "릴렉스핏 핀스트라이프 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "31",
+   "garmentCm": {
+    "length": 111.0,
+    "waist": 40.5,
+    "hip": 54.5,
+    "rise": 38.0
+   },
+   "product": "릴렉스핏 핀스트라이프 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 112.0,
+    "waist": 42.5,
+    "hip": 56.5,
+    "rise": 39.0
+   },
+   "product": "릴렉스핏 핀스트라이프 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 113.0,
+    "waist": 44.5,
+    "hip": 58.5,
+    "rise": 40.0
+   },
+   "product": "릴렉스핏 핀스트라이프 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 114.0,
+    "waist": 46.5,
+    "hip": 60.5,
+    "rise": 41.0
+   },
+   "product": "릴렉스핏 핀스트라이프 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 104.5,
+    "waist": 41.5,
+    "hip": 49.0,
+    "rise": 31.0
+   },
+   "product": "컴포트 스트럭처 수트 팬츠",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "31",
+   "garmentCm": {
+    "length": 105.0,
+    "waist": 43.5,
+    "hip": 51.0,
+    "rise": 32.0
+   },
+   "product": "컴포트 스트럭처 수트 팬츠",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 105.5,
+    "waist": 45.5,
+    "hip": 53.0,
+    "rise": 33.0
+   },
+   "product": "컴포트 스트럭처 수트 팬츠",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 106.0,
+    "waist": 47.5,
+    "hip": 55.0,
+    "rise": 34.0
+   },
+   "product": "컴포트 스트럭처 수트 팬츠",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 106.5,
+    "waist": 49.5,
+    "hip": 57.0,
+    "rise": 35.0
+   },
+   "product": "컴포트 스트럭처 수트 팬츠",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "22",
+   "garmentCm": {
+    "length": 97.0,
+    "waist": 33.5,
+    "hip": 43.0,
+    "rise": 24.0
+   },
+   "product": "ZW 컬렉션 로우라이즈 슬림 청바지",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 98.5,
+    "waist": 35.5,
+    "hip": 45.0,
+    "rise": 25.0
+   },
+   "product": "ZW 컬렉션 로우라이즈 슬림 청바지",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 100.0,
+    "waist": 37.5,
+    "hip": 47.0,
+    "rise": 26.0
+   },
+   "product": "ZW 컬렉션 로우라이즈 슬림 청바지",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 101.5,
+    "waist": 39.5,
+    "hip": 49.0,
+    "rise": 27.0
+   },
+   "product": "ZW 컬렉션 로우라이즈 슬림 청바지",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 103.0,
+    "waist": 41.5,
+    "hip": 51.0,
+    "rise": 28.0
+   },
+   "product": "ZW 컬렉션 로우라이즈 슬림 청바지",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 104.5,
+    "waist": 43.5,
+    "hip": 53.0,
+    "rise": 29.0
+   },
+   "product": "ZW 컬렉션 로우라이즈 슬림 청바지",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 106.0,
+    "waist": 45.5,
+    "hip": 55.0,
+    "rise": 30.0
+   },
+   "product": "ZW 컬렉션 로우라이즈 슬림 청바지",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 107.5,
+    "waist": 47.5,
+    "hip": 57.0,
+    "rise": 31.0
+   },
+   "product": "ZW 컬렉션 로우라이즈 슬림 청바지",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "22",
+   "garmentCm": {
+    "length": 95.5,
+    "waist": 30.5,
+    "hip": 42.5,
+    "rise": 31.5
+   },
+   "product": "JEANS Z1975 STRAIGHT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 96.0,
+    "waist": 32.5,
+    "hip": 44.5,
+    "rise": 32.0
+   },
+   "product": "JEANS Z1975 STRAIGHT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 96.5,
+    "waist": 34.5,
+    "hip": 46.5,
+    "rise": 32.5
+   },
+   "product": "JEANS Z1975 STRAIGHT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 97.0,
+    "waist": 36.5,
+    "hip": 48.5,
+    "rise": 33.0
+   },
+   "product": "JEANS Z1975 STRAIGHT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 97.5,
+    "waist": 38.5,
+    "hip": 50.5,
+    "rise": 33.5
+   },
+   "product": "JEANS Z1975 STRAIGHT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 98.0,
+    "waist": 40.5,
+    "hip": 52.5,
+    "rise": 34.0
+   },
+   "product": "JEANS Z1975 STRAIGHT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 98.5,
+    "waist": 42.5,
+    "hip": 54.5,
+    "rise": 34.5
+   },
+   "product": "JEANS Z1975 STRAIGHT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "22",
+   "garmentCm": {
+    "length": 106.5,
+    "waist": 31.5,
+    "hip": 47.0,
+    "rise": 28.5
+   },
+   "product": "JEANS Z1975 STRAIGHT 롱렝스",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 107.0,
+    "waist": 33.5,
+    "hip": 49.0,
+    "rise": 29.5
+   },
+   "product": "JEANS Z1975 STRAIGHT 롱렝스",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 107.5,
+    "waist": 35.5,
+    "hip": 51.0,
+    "rise": 30.5
+   },
+   "product": "JEANS Z1975 STRAIGHT 롱렝스",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 108.0,
+    "waist": 37.5,
+    "hip": 53.0,
+    "rise": 31.5
+   },
+   "product": "JEANS Z1975 STRAIGHT 롱렝스",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 108.5,
+    "waist": 39.5,
+    "hip": 55.0,
+    "rise": 32.5
+   },
+   "product": "JEANS Z1975 STRAIGHT 롱렝스",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 109.0,
+    "waist": 41.5,
+    "hip": 57.0,
+    "rise": 33.5
+   },
+   "product": "JEANS Z1975 STRAIGHT 롱렝스",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 109.5,
+    "waist": 43.5,
+    "hip": 59.0,
+    "rise": 34.5
+   },
+   "product": "JEANS Z1975 STRAIGHT 롱렝스",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 110.0,
+    "waist": 45.5,
+    "hip": 61.0,
+    "rise": 35.5
+   },
+   "product": "JEANS Z1975 STRAIGHT 롱렝스",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "22",
+   "garmentCm": {
+    "length": 94.5,
+    "waist": 29.0,
+    "hip": 42.0,
+    "rise": 29.5
+   },
+   "product": "JEANS Z1975 MOM FIT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 95.5,
+    "waist": 31.0,
+    "hip": 44.0,
+    "rise": 30.5
+   },
+   "product": "JEANS Z1975 MOM FIT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 96.5,
+    "waist": 33.0,
+    "hip": 46.0,
+    "rise": 31.5
+   },
+   "product": "JEANS Z1975 MOM FIT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 97.5,
+    "waist": 35.0,
+    "hip": 48.0,
+    "rise": 32.5
+   },
+   "product": "JEANS Z1975 MOM FIT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 98.5,
+    "waist": 37.0,
+    "hip": 50.0,
+    "rise": 33.5
+   },
+   "product": "JEANS Z1975 MOM FIT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 99.5,
+    "waist": 39.0,
+    "hip": 52.0,
+    "rise": 34.5
+   },
+   "product": "JEANS Z1975 MOM FIT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 100.5,
+    "waist": 41.0,
+    "hip": 54.0,
+    "rise": 35.5
+   },
+   "product": "JEANS Z1975 MOM FIT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 101.5,
+    "waist": 43.0,
+    "hip": 56.0,
+    "rise": 36.5
+   },
+   "product": "JEANS Z1975 MOM FIT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "22",
+   "garmentCm": {
+    "length": 101.5,
+    "waist": 35.0,
+    "hip": 50.0,
+    "rise": 30.5
+   },
+   "product": "JEANS Z1975 WIDE LEG 하이웨이스트",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 102.5,
+    "waist": 36.0,
+    "hip": 52.5,
+    "rise": 31.0
+   },
+   "product": "JEANS Z1975 WIDE LEG 하이웨이스트",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 103.5,
+    "waist": 37.0,
+    "hip": 55.0,
+    "rise": 31.5
+   },
+   "product": "JEANS Z1975 WIDE LEG 하이웨이스트",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 104.5,
+    "waist": 38.0,
+    "hip": 57.5,
+    "rise": 32.0
+   },
+   "product": "JEANS Z1975 WIDE LEG 하이웨이스트",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 105.5,
+    "waist": 39.0,
+    "hip": 60.0,
+    "rise": 32.5
+   },
+   "product": "JEANS Z1975 WIDE LEG 하이웨이스트",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 106.5,
+    "waist": 40.0,
+    "hip": 62.5,
+    "rise": 33.0
+   },
+   "product": "JEANS Z1975 WIDE LEG 하이웨이스트",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 107.5,
+    "waist": 41.0,
+    "hip": 65.0,
+    "rise": 33.5
+   },
+   "product": "JEANS Z1975 WIDE LEG 하이웨이스트",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "22",
+   "garmentCm": {
+    "length": 109.0,
+    "waist": 32.5,
+    "hip": 49.0,
+    "rise": 28.5
+   },
+   "product": "JEANS Z1975 BOOTCUT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 109.5,
+    "waist": 34.5,
+    "hip": 51.0,
+    "rise": 29.5
+   },
+   "product": "JEANS Z1975 BOOTCUT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 110.0,
+    "waist": 36.5,
+    "hip": 53.0,
+    "rise": 30.5
+   },
+   "product": "JEANS Z1975 BOOTCUT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 110.5,
+    "waist": 38.5,
+    "hip": 55.0,
+    "rise": 31.5
+   },
+   "product": "JEANS Z1975 BOOTCUT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 111.0,
+    "waist": 40.5,
+    "hip": 57.0,
+    "rise": 32.5
+   },
+   "product": "JEANS Z1975 BOOTCUT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 111.5,
+    "waist": 42.5,
+    "hip": 59.0,
+    "rise": 33.5
+   },
+   "product": "JEANS Z1975 BOOTCUT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 112.0,
+    "waist": 44.5,
+    "hip": 61.0,
+    "rise": 34.5
+   },
+   "product": "JEANS Z1975 BOOTCUT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 112.5,
+    "waist": 46.5,
+    "hip": 63.0,
+    "rise": 35.5
+   },
+   "product": "JEANS Z1975 BOOTCUT 하이웨이스트",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 106.0,
+    "waist": 36.0,
+    "hip": 46.0,
+    "rise": 31.0
+   },
+   "product": "슬림핏 새틴 팬츠",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 106.5,
+    "waist": 38.0,
+    "hip": 48.0,
+    "rise": 32.0
+   },
+   "product": "슬림핏 새틴 팬츠",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 107.0,
+    "waist": 40.0,
+    "hip": 50.0,
+    "rise": 33.0
+   },
+   "product": "슬림핏 새틴 팬츠",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 107.5,
+    "waist": 42.0,
+    "hip": 52.0,
+    "rise": 34.0
+   },
+   "product": "슬림핏 새틴 팬츠",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 108.0,
+    "waist": 44.0,
+    "hip": 54.0,
+    "rise": 35.0
+   },
+   "product": "슬림핏 새틴 팬츠",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 96.0,
+    "waist": 31.5,
+    "hip": 44.5,
+    "rise": 34.0
+   },
+   "product": "하이웨이스트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 97.0,
+    "waist": 33.0,
+    "hip": 45.5,
+    "rise": 35.0
+   },
+   "product": "하이웨이스트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 98.0,
+    "waist": 34.5,
+    "hip": 46.5,
+    "rise": 36.0
+   },
+   "product": "하이웨이스트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 99.0,
+    "waist": 36.0,
+    "hip": 47.5,
+    "rise": 37.0
+   },
+   "product": "하이웨이스트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 100.0,
+    "waist": 37.5,
+    "hip": 48.5,
+    "rise": 38.0
+   },
+   "product": "하이웨이스트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 101.0,
+    "waist": 39.0,
+    "hip": 49.5,
+    "rise": 39.0
+   },
+   "product": "하이웨이스트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 95.5,
+    "waist": 32.5,
+    "hip": 44.0,
+    "rise": 35.5
+   },
+   "product": "하이웨이스트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 96.0,
+    "waist": 33.5,
+    "hip": 46.0,
+    "rise": 36.0
+   },
+   "product": "하이웨이스트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 96.5,
+    "waist": 34.5,
+    "hip": 48.0,
+    "rise": 36.5
+   },
+   "product": "하이웨이스트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 97.0,
+    "waist": 35.5,
+    "hip": 50.0,
+    "rise": 37.0
+   },
+   "product": "하이웨이스트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 97.5,
+    "waist": 36.5,
+    "hip": 52.0,
+    "rise": 37.5
+   },
+   "product": "하이웨이스트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 98.0,
+    "waist": 37.5,
+    "hip": 54.0,
+    "rise": 38.0
+   },
+   "product": "하이웨이스트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 103.5,
+    "waist": 35.5,
+    "hip": 45.0,
+    "rise": 31.5
+   },
+   "product": "스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 104.0,
+    "waist": 37.5,
+    "hip": 47.0,
+    "rise": 32.0
+   },
+   "product": "스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 104.5,
+    "waist": 39.5,
+    "hip": 49.0,
+    "rise": 32.5
+   },
+   "product": "스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 105.0,
+    "waist": 41.5,
+    "hip": 51.0,
+    "rise": 33.0
+   },
+   "product": "스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 105.5,
+    "waist": 43.5,
+    "hip": 53.0,
+    "rise": 33.5
+   },
+   "product": "스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 105.5,
+    "waist": 36.0,
+    "hip": 47.5,
+    "rise": 30.5
+   },
+   "product": "로 라이즈 스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 106.0,
+    "waist": 37.0,
+    "hip": 49.5,
+    "rise": 31.5
+   },
+   "product": "로 라이즈 스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 106.5,
+    "waist": 38.0,
+    "hip": 51.5,
+    "rise": 32.5
+   },
+   "product": "로 라이즈 스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 107.0,
+    "waist": 39.0,
+    "hip": 53.5,
+    "rise": 33.5
+   },
+   "product": "로 라이즈 스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 107.5,
+    "waist": 40.0,
+    "hip": 55.5,
+    "rise": 34.5
+   },
+   "product": "로 라이즈 스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 108.0,
+    "waist": 41.0,
+    "hip": 57.5,
+    "rise": 35.5
+   },
+   "product": "로 라이즈 스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 106.0,
+    "waist": 34.5,
+    "hip": 44.5,
+    "rise": 32.0
+   },
+   "product": "하이웨이스트 스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 107.0,
+    "waist": 36.5,
+    "hip": 46.5,
+    "rise": 33.0
+   },
+   "product": "하이웨이스트 스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 108.0,
+    "waist": 38.5,
+    "hip": 48.5,
+    "rise": 34.0
+   },
+   "product": "하이웨이스트 스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 109.0,
+    "waist": 40.5,
+    "hip": 50.5,
+    "rise": 35.0
+   },
+   "product": "하이웨이스트 스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 110.0,
+    "waist": 42.5,
+    "hip": 52.5,
+    "rise": 36.0
+   },
+   "product": "하이웨이스트 스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 108.0,
+    "waist": 33.0,
+    "hip": 49.5,
+    "rise": 34.5
+   },
+   "product": "플리츠 와이드 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 108.5,
+    "waist": 35.0,
+    "hip": 51.5,
+    "rise": 35.5
+   },
+   "product": "플리츠 와이드 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 109.0,
+    "waist": 37.0,
+    "hip": 53.5,
+    "rise": 36.5
+   },
+   "product": "플리츠 와이드 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 109.5,
+    "waist": 39.0,
+    "hip": 55.5,
+    "rise": 37.5
+   },
+   "product": "플리츠 와이드 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 110.0,
+    "waist": 41.0,
+    "hip": 57.5,
+    "rise": 38.5
+   },
+   "product": "플리츠 와이드 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 107.5,
+    "waist": 34.0,
+    "hip": 52.0,
+    "rise": 32.0
+   },
+   "product": "플리츠 루즈 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 108.0,
+    "waist": 35.0,
+    "hip": 54.0,
+    "rise": 32.5
+   },
+   "product": "플리츠 루즈 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 108.5,
+    "waist": 36.0,
+    "hip": 56.0,
+    "rise": 33.0
+   },
+   "product": "플리츠 루즈 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 109.0,
+    "waist": 37.0,
+    "hip": 58.0,
+    "rise": 33.5
+   },
+   "product": "플리츠 루즈 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 109.5,
+    "waist": 38.0,
+    "hip": 60.0,
+    "rise": 34.0
+   },
+   "product": "플리츠 루즈 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 110.0,
+    "waist": 39.0,
+    "hip": 62.0,
+    "rise": 34.5
+   },
+   "product": "플리츠 루즈 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 111.5,
+    "waist": 36.5,
+    "hip": 49.5,
+    "rise": 32.5
+   },
+   "product": "ZW 컬렉션 턱 디테일 와이드 레그 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 112.0,
+    "waist": 38.5,
+    "hip": 51.5,
+    "rise": 33.5
+   },
+   "product": "ZW 컬렉션 턱 디테일 와이드 레그 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 112.5,
+    "waist": 40.5,
+    "hip": 53.5,
+    "rise": 34.5
+   },
+   "product": "ZW 컬렉션 턱 디테일 와이드 레그 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 113.0,
+    "waist": 42.5,
+    "hip": 55.5,
+    "rise": 35.5
+   },
+   "product": "ZW 컬렉션 턱 디테일 와이드 레그 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 113.5,
+    "waist": 44.5,
+    "hip": 57.5,
+    "rise": 36.5
+   },
+   "product": "ZW 컬렉션 턱 디테일 와이드 레그 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 109.5,
+    "waist": 33.0,
+    "hip": 44.5,
+    "rise": 35.5
+   },
+   "product": "루즈 와이드 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 110.0,
+    "waist": 35.0,
+    "hip": 46.5,
+    "rise": 36.5
+   },
+   "product": "루즈 와이드 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 110.5,
+    "waist": 37.0,
+    "hip": 48.5,
+    "rise": 37.5
+   },
+   "product": "루즈 와이드 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 111.0,
+    "waist": 39.0,
+    "hip": 50.5,
+    "rise": 38.5
+   },
+   "product": "루즈 와이드 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 111.5,
+    "waist": 41.0,
+    "hip": 52.5,
+    "rise": 39.5
+   },
+   "product": "루즈 와이드 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 112.0,
+    "waist": 43.0,
+    "hip": 54.5,
+    "rise": 40.5
+   },
+   "product": "루즈 와이드 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 88.0,
+    "waist": 37.5,
+    "hip": 44.5,
+    "rise": 27.0
+   },
+   "product": "미니 플레어 포켓 팬츠",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 89.0,
+    "waist": 38.5,
+    "hip": 46.5,
+    "rise": 28.0
+   },
+   "product": "미니 플레어 포켓 팬츠",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 90.0,
+    "waist": 39.5,
+    "hip": 48.5,
+    "rise": 29.0
+   },
+   "product": "미니 플레어 포켓 팬츠",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 91.0,
+    "waist": 40.5,
+    "hip": 50.5,
+    "rise": 30.0
+   },
+   "product": "미니 플레어 포켓 팬츠",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 92.0,
+    "waist": 41.5,
+    "hip": 52.5,
+    "rise": 31.0
+   },
+   "product": "미니 플레어 포켓 팬츠",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 93.0,
+    "waist": 42.5,
+    "hip": 54.5,
+    "rise": 32.0
+   },
+   "product": "미니 플레어 포켓 팬츠",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 101.0,
+    "waist": 32.5,
+    "hip": 52.0,
+    "rise": 28.0
+   },
+   "product": "코튼 스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 103.0,
+    "waist": 34.5,
+    "hip": 55.0,
+    "rise": 29.0
+   },
+   "product": "코튼 스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 105.0,
+    "waist": 36.5,
+    "hip": 58.0,
+    "rise": 30.0
+   },
+   "product": "코튼 스트레이트 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 94.5,
+    "waist": 36.5,
+    "hip": 47.0,
+    "rise": 31.0
+   },
+   "product": "스트레이트 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 96.0,
+    "waist": 38.5,
+    "hip": 49.0,
+    "rise": 32.0
+   },
+   "product": "스트레이트 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 97.5,
+    "waist": 40.5,
+    "hip": 51.0,
+    "rise": 33.0
+   },
+   "product": "스트레이트 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 99.0,
+    "waist": 42.5,
+    "hip": 53.0,
+    "rise": 34.0
+   },
+   "product": "스트레이트 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 100.5,
+    "waist": 44.5,
+    "hip": 55.0,
+    "rise": 35.0
+   },
+   "product": "스트레이트 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 106.0,
+    "waist": 35.0,
+    "hip": 49.0,
+    "rise": 33.0
+   },
+   "product": "루즈 플리츠 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 106.5,
+    "waist": 37.0,
+    "hip": 51.0,
+    "rise": 34.0
+   },
+   "product": "루즈 플리츠 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 107.0,
+    "waist": 39.0,
+    "hip": 53.0,
+    "rise": 35.0
+   },
+   "product": "루즈 플리츠 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 107.5,
+    "waist": 41.0,
+    "hip": 55.0,
+    "rise": 36.0
+   },
+   "product": "루즈 플리츠 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 108.0,
+    "waist": 43.0,
+    "hip": 57.0,
+    "rise": 37.0
+   },
+   "product": "루즈 플리츠 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 108.5,
+    "waist": 45.0,
+    "hip": 59.0,
+    "rise": 38.0
+   },
+   "product": "루즈 플리츠 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 105.0,
+    "waist": 36.5,
+    "hip": 50.0,
+    "rise": 36.5
+   },
+   "product": "린넨 와이드 플리츠 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 105.5,
+    "waist": 37.5,
+    "hip": 51.5,
+    "rise": 37.0
+   },
+   "product": "린넨 와이드 플리츠 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 106.0,
+    "waist": 38.5,
+    "hip": 53.0,
+    "rise": 37.5
+   },
+   "product": "린넨 와이드 플리츠 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 106.5,
+    "waist": 39.5,
+    "hip": 54.5,
+    "rise": 38.0
+   },
+   "product": "린넨 와이드 플리츠 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 107.0,
+    "waist": 40.5,
+    "hip": 56.0,
+    "rise": 38.5
+   },
+   "product": "린넨 와이드 플리츠 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 107.5,
+    "waist": 41.5,
+    "hip": 57.5,
+    "rise": 39.0
+   },
+   "product": "린넨 와이드 플리츠 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "22",
+   "garmentCm": {
+    "length": 91.5,
+    "waist": 35.0,
+    "hip": 43.0,
+    "rise": 30.0
+   },
+   "product": "JEANS Z1975 CHINO LOOSE",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 92.0,
+    "waist": 37.0,
+    "hip": 45.0,
+    "rise": 31.0
+   },
+   "product": "JEANS Z1975 CHINO LOOSE",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 92.5,
+    "waist": 39.0,
+    "hip": 47.0,
+    "rise": 32.0
+   },
+   "product": "JEANS Z1975 CHINO LOOSE",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 93.0,
+    "waist": 41.0,
+    "hip": 49.0,
+    "rise": 33.0
+   },
+   "product": "JEANS Z1975 CHINO LOOSE",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 93.5,
+    "waist": 43.0,
+    "hip": 51.0,
+    "rise": 34.0
+   },
+   "product": "JEANS Z1975 CHINO LOOSE",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 94.0,
+    "waist": 45.0,
+    "hip": 53.0,
+    "rise": 35.0
+   },
+   "product": "JEANS Z1975 CHINO LOOSE",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 94.5,
+    "waist": 47.0,
+    "hip": 55.0,
+    "rise": 36.0
+   },
+   "product": "JEANS Z1975 CHINO LOOSE",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 95.0,
+    "waist": 49.0,
+    "hip": 57.0,
+    "rise": 37.0
+   },
+   "product": "JEANS Z1975 CHINO LOOSE",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 99.5,
+    "waist": 36.5,
+    "hip": 49.0,
+    "rise": 35.0
+   },
+   "product": "ZW 컬렉션 벨트 루프 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 100.0,
+    "waist": 38.0,
+    "hip": 51.0,
+    "rise": 36.0
+   },
+   "product": "ZW 컬렉션 벨트 루프 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 100.5,
+    "waist": 39.5,
+    "hip": 53.0,
+    "rise": 37.0
+   },
+   "product": "ZW 컬렉션 벨트 루프 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 101.0,
+    "waist": 41.0,
+    "hip": 55.0,
+    "rise": 38.0
+   },
+   "product": "ZW 컬렉션 벨트 루프 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 101.5,
+    "waist": 42.5,
+    "hip": 57.0,
+    "rise": 39.0
+   },
+   "product": "ZW 컬렉션 벨트 루프 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 94.0,
+    "waist": 37.0,
+    "hip": 51.0,
+    "rise": 35.0
+   },
+   "product": "린넨 배럴 팬츠",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 95.0,
+    "waist": 38.0,
+    "hip": 53.0,
+    "rise": 36.0
+   },
+   "product": "린넨 배럴 팬츠",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 96.0,
+    "waist": 39.0,
+    "hip": 55.0,
+    "rise": 37.0
+   },
+   "product": "린넨 배럴 팬츠",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 97.0,
+    "waist": 40.0,
+    "hip": 57.0,
+    "rise": 38.0
+   },
+   "product": "린넨 배럴 팬츠",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 98.0,
+    "waist": 41.0,
+    "hip": 59.0,
+    "rise": 39.0
+   },
+   "product": "린넨 배럴 팬츠",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 101.5,
+    "waist": 34.0,
+    "hip": 47.0,
+    "rise": 33.0
+   },
+   "product": "도트 패턴 배럴 팬츠",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 102.0,
+    "waist": 36.5,
+    "hip": 49.0,
+    "rise": 34.0
+   },
+   "product": "도트 패턴 배럴 팬츠",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 102.5,
+    "waist": 39.0,
+    "hip": 51.0,
+    "rise": 35.0
+   },
+   "product": "도트 패턴 배럴 팬츠",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 103.0,
+    "waist": 41.5,
+    "hip": 53.0,
+    "rise": 36.0
+   },
+   "product": "도트 패턴 배럴 팬츠",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 103.5,
+    "waist": 44.0,
+    "hip": 55.0,
+    "rise": 37.0
+   },
+   "product": "도트 패턴 배럴 팬츠",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 91.5,
+    "waist": 35.5,
+    "hip": 45.5,
+    "rise": 31.5
+   },
+   "product": "스트라이프 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 92.0,
+    "waist": 37.5,
+    "hip": 47.5,
+    "rise": 32.0
+   },
+   "product": "스트라이프 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 92.5,
+    "waist": 39.5,
+    "hip": 49.5,
+    "rise": 32.5
+   },
+   "product": "스트라이프 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 93.0,
+    "waist": 41.5,
+    "hip": 51.5,
+    "rise": 33.0
+   },
+   "product": "스트라이프 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 93.5,
+    "waist": 43.5,
+    "hip": 53.5,
+    "rise": 33.5
+   },
+   "product": "스트라이프 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 94.0,
+    "waist": 45.5,
+    "hip": 55.5,
+    "rise": 34.0
+   },
+   "product": "스트라이프 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 94.5,
+    "waist": 47.5,
+    "hip": 57.5,
+    "rise": 34.5
+   },
+   "product": "스트라이프 치노 팬츠",
+   "waistband": null,
+   "silhouette": "straight"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 107.5,
+    "waist": 34.0,
+    "hip": 48.0,
+    "rise": 33.0
+   },
+   "product": "ZW COLLECTION 코튼 와이드 레그 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 108.5,
+    "waist": 36.0,
+    "hip": 50.0,
+    "rise": 34.0
+   },
+   "product": "ZW COLLECTION 코튼 와이드 레그 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 109.5,
+    "waist": 38.0,
+    "hip": 52.0,
+    "rise": 35.0
+   },
+   "product": "ZW COLLECTION 코튼 와이드 레그 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 110.5,
+    "waist": 40.0,
+    "hip": 54.0,
+    "rise": 36.0
+   },
+   "product": "ZW COLLECTION 코튼 와이드 레그 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "loose",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 111.5,
+    "waist": 42.0,
+    "hip": 56.0,
+    "rise": 37.0
+   },
+   "product": "ZW COLLECTION 코튼 와이드 레그 팬츠",
+   "waistband": null,
+   "silhouette": "wide"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "22",
+   "garmentCm": {
+    "length": 94.5,
+    "waist": 28.5,
+    "hip": 34.5,
+    "rise": 26.0
+   },
+   "product": "TRF 하이웨이스트 스키니 청바지",
+   "waistband": null,
+   "silhouette": "skinny"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 95.5,
+    "waist": 30.0,
+    "hip": 36.0,
+    "rise": 27.0
+   },
+   "product": "TRF 하이웨이스트 스키니 청바지",
+   "waistband": null,
+   "silhouette": "skinny"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 96.5,
+    "waist": 31.5,
+    "hip": 37.5,
+    "rise": 28.0
+   },
+   "product": "TRF 하이웨이스트 스키니 청바지",
+   "waistband": null,
+   "silhouette": "skinny"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 97.5,
+    "waist": 33.0,
+    "hip": 39.0,
+    "rise": 29.0
+   },
+   "product": "TRF 하이웨이스트 스키니 청바지",
+   "waistband": null,
+   "silhouette": "skinny"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 98.5,
+    "waist": 34.5,
+    "hip": 40.5,
+    "rise": 30.0
+   },
+   "product": "TRF 하이웨이스트 스키니 청바지",
+   "waistband": null,
+   "silhouette": "skinny"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 99.5,
+    "waist": 36.0,
+    "hip": 42.0,
+    "rise": 31.0
+   },
+   "product": "TRF 하이웨이스트 스키니 청바지",
+   "waistband": null,
+   "silhouette": "skinny"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 100.5,
+    "waist": 37.5,
+    "hip": 43.5,
+    "rise": 32.0
+   },
+   "product": "TRF 하이웨이스트 스키니 청바지",
+   "waistband": null,
+   "silhouette": "skinny"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 101.5,
+    "waist": 39.0,
+    "hip": 45.0,
+    "rise": 33.0
+   },
+   "product": "TRF 하이웨이스트 스키니 청바지",
+   "waistband": null,
+   "silhouette": "skinny"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "22",
+   "garmentCm": {
+    "length": 91.5,
+    "waist": 29.0,
+    "hip": 39.5,
+    "rise": 26.0
+   },
+   "product": "JEANS TRF CROPPED FLARE TIRO ALTO",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 92.0,
+    "waist": 31.0,
+    "hip": 41.5,
+    "rise": 27.0
+   },
+   "product": "JEANS TRF CROPPED FLARE TIRO ALTO",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 92.5,
+    "waist": 33.0,
+    "hip": 43.5,
+    "rise": 28.0
+   },
+   "product": "JEANS TRF CROPPED FLARE TIRO ALTO",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 93.0,
+    "waist": 35.0,
+    "hip": 45.5,
+    "rise": 29.0
+   },
+   "product": "JEANS TRF CROPPED FLARE TIRO ALTO",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 93.5,
+    "waist": 37.0,
+    "hip": 47.5,
+    "rise": 30.0
+   },
+   "product": "JEANS TRF CROPPED FLARE TIRO ALTO",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 94.0,
+    "waist": 39.0,
+    "hip": 49.5,
+    "rise": 31.0
+   },
+   "product": "JEANS TRF CROPPED FLARE TIRO ALTO",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 94.5,
+    "waist": 41.0,
+    "hip": 51.5,
+    "rise": 32.0
+   },
+   "product": "JEANS TRF CROPPED FLARE TIRO ALTO",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 95.0,
+    "waist": 43.0,
+    "hip": 53.5,
+    "rise": 33.0
+   },
+   "product": "JEANS TRF CROPPED FLARE TIRO ALTO",
+   "waistband": null,
+   "silhouette": "bootcut"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "22",
+   "garmentCm": {
+    "length": 91.5,
+    "waist": 32.5,
+    "hip": 47.0,
+    "rise": 23.5
+   },
+   "product": "JEANS ZW COLLECTION 스트라이프 미드라이즈 슬림",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "24",
+   "garmentCm": {
+    "length": 92.0,
+    "waist": 35.5,
+    "hip": 48.0,
+    "rise": 24.5
+   },
+   "product": "JEANS ZW COLLECTION 스트라이프 미드라이즈 슬림",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "26",
+   "garmentCm": {
+    "length": 92.5,
+    "waist": 38.5,
+    "hip": 49.0,
+    "rise": 25.5
+   },
+   "product": "JEANS ZW COLLECTION 스트라이프 미드라이즈 슬림",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "28",
+   "garmentCm": {
+    "length": 93.0,
+    "waist": 41.5,
+    "hip": 50.0,
+    "rise": 26.5
+   },
+   "product": "JEANS ZW COLLECTION 스트라이프 미드라이즈 슬림",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 93.5,
+    "waist": 44.5,
+    "hip": 51.0,
+    "rise": 27.5
+   },
+   "product": "JEANS ZW COLLECTION 스트라이프 미드라이즈 슬림",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 94.0,
+    "waist": 47.5,
+    "hip": 52.0,
+    "rise": 28.5
+   },
+   "product": "JEANS ZW COLLECTION 스트라이프 미드라이즈 슬림",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 94.5,
+    "waist": 50.5,
+    "hip": 53.0,
+    "rise": 29.5
+   },
+   "product": "JEANS ZW COLLECTION 스트라이프 미드라이즈 슬림",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "slim",
+   "gender": "female",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 95.0,
+    "waist": 53.5,
+    "hip": 54.0,
+    "rise": 30.5
+   },
+   "product": "JEANS ZW COLLECTION 스트라이프 미드라이즈 슬림",
+   "waistband": null,
+   "silhouette": "slim"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "29",
+   "garmentCm": {
+    "length": 99.0,
+    "waist": 36.5,
+    "hip": 49.5,
+    "rise": 28.0
+   },
+   "product": "JEANS SLIM TAPERED FIT",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "30",
+   "garmentCm": {
+    "length": 100.0,
+    "waist": 38.5,
+    "hip": 51.5,
+    "rise": 29.0
+   },
+   "product": "JEANS SLIM TAPERED FIT",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "31",
+   "garmentCm": {
+    "length": 101.0,
+    "waist": 40.5,
+    "hip": 53.5,
+    "rise": 30.0
+   },
+   "product": "JEANS SLIM TAPERED FIT",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "32",
+   "garmentCm": {
+    "length": 102.0,
+    "waist": 42.5,
+    "hip": 55.5,
+    "rise": 31.0
+   },
+   "product": "JEANS SLIM TAPERED FIT",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "34",
+   "garmentCm": {
+    "length": 103.0,
+    "waist": 44.5,
+    "hip": 57.5,
+    "rise": 32.0
+   },
+   "product": "JEANS SLIM TAPERED FIT",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "36",
+   "garmentCm": {
+    "length": 104.0,
+    "waist": 46.5,
+    "hip": 59.5,
+    "rise": 33.0
+   },
+   "product": "JEANS SLIM TAPERED FIT",
+   "waistband": null,
+   "silhouette": "tapered"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "BOTTOM",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "long_pants",
+   "sizeLabel": "38",
+   "garmentCm": {
+    "length": 105.0,
+    "waist": 48.5,
+    "hip": 61.5,
+    "rise": 34.0
+   },
+   "product": "JEANS SLIM TAPERED FIT",
+   "waistband": null,
+   "silhouette": "tapered"
   },
   {
    "brandId": "uniqlo",
@@ -23491,6 +29522,150 @@
     "sleeve": 28.0
    },
    "product": "남성 아이스큐브 반팔 티"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "short_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 64.0,
+    "shoulder": 48.0,
+    "chest": 50.0,
+    "sleeve": 29.0
+   },
+   "product": "라이트웨이트 래글런 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "short_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 66.0,
+    "shoulder": 51.0,
+    "chest": 53.0,
+    "sleeve": 31.0
+   },
+   "product": "라이트웨이트 래글런 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "short_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 68.0,
+    "shoulder": 54.0,
+    "chest": 56.0,
+    "sleeve": 33.0
+   },
+   "product": "라이트웨이트 래글런 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "regular",
+   "gender": "male",
+   "subtype": "short_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 70.0,
+    "shoulder": 57.0,
+    "chest": 59.0,
+    "sleeve": 35.0
+   },
+   "product": "라이트웨이트 래글런 티셔츠"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "short_sleeve",
+   "sizeLabel": "S",
+   "garmentCm": {
+    "length": 70.0,
+    "shoulder": 42.5,
+    "chest": 42.5,
+    "sleeve": 15.0
+   },
+   "product": "슬림핏 베이직 티셔츠 /01"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "short_sleeve",
+   "sizeLabel": "M",
+   "garmentCm": {
+    "length": 70.5,
+    "shoulder": 44.5,
+    "chest": 46.5,
+    "sleeve": 18.0
+   },
+   "product": "슬림핏 베이직 티셔츠 /01"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "short_sleeve",
+   "sizeLabel": "L",
+   "garmentCm": {
+    "length": 71.0,
+    "shoulder": 46.5,
+    "chest": 50.5,
+    "sleeve": 21.0
+   },
+   "product": "슬림핏 베이직 티셔츠 /01"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "short_sleeve",
+   "sizeLabel": "XL",
+   "garmentCm": {
+    "length": 71.5,
+    "shoulder": 48.5,
+    "chest": 54.5,
+    "sleeve": 24.0
+   },
+   "product": "슬림핏 베이직 티셔츠 /01"
+  },
+  {
+   "brandId": "zara",
+   "brandName": "자라",
+   "category": "TOP",
+   "fitLine": "slim",
+   "gender": "male",
+   "subtype": "short_sleeve",
+   "sizeLabel": "XXL",
+   "garmentCm": {
+    "length": 72.0,
+    "shoulder": 50.5,
+    "chest": 58.5,
+    "sleeve": 27.0
+   },
+   "product": "슬림핏 베이직 티셔츠 /01"
   }
  ]
 }
