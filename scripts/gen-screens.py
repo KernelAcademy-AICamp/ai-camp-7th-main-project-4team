@@ -56,6 +56,16 @@ def out_links(html_text):
         targets.add(m.group(1))
     return targets
 
+def scan_data(text):
+    """화면이 읽고/쓰는 상태 키(sessionStorage/localStorage) + fetch 데이터소스.
+    화면 확정 시 이 계약이 DB 스키마의 입력이 됨(현재는 sessionStorage 임시저장)."""
+    # 끝이 '.'이면 동적 키 결합(getItem('fitting.'+x)) → `prefix*`로 정직 표기.
+    def norm(k): return (k + "*") if k.endswith((".", "-", "_")) else k
+    reads = {norm(k) for k in re.findall(r"(?:session|local)Storage\.getItem\(\s*['\"]([^'\"]+)", text)}
+    writes = {norm(k) for k in re.findall(r"(?:session|local)Storage\.setItem\(\s*['\"]([^'\"]+)", text)}
+    fetches = set(re.findall(r"fetch\(\s*['\"]([^'\"?]+)", text))
+    return sorted(reads), sorted(writes), sorted(fetches)
+
 # 대응 JS까지 포함해 git·연결 판정
 def js_stem(stem):
     return web / "js" / f"{stem}.js"
@@ -78,6 +88,7 @@ for f in htmls:
     # 이동 대상은 HTML 정적 링크 + JS 이동(location.href 등) 둘 다 스캔 — JS 이동을 놓치면 오탐 고아 발생.
     js_text = jsf.read_text(encoding="utf-8", errors="ignore") if js_exists else ""
     links = out_links(text + "\n" + js_text) - {stem}
+    reads, writes, fetches = scan_data(text + "\n" + js_text)
     outgoing[stem] = links
     screens.append({
         "stem": stem,
@@ -89,6 +100,7 @@ for f in htmls:
         "js_exists": js_exists, "js_ref": js_ref, "js_wired": js_wired,
         "commit": h, "author": a, "date": d,
         "links": links,
+        "reads": reads, "writes": writes, "fetches": fetches,
     })
 
 # 2차: 들어오는 링크(고아 판정)
@@ -171,6 +183,38 @@ if flagged:
     lines.append("## ⚑ 확인 필요")
     for s in flagged:
         lines.append(f"- **{s['name']}** ({s['stem']}.html): " + " · ".join(s["flags"]))
+    lines.append("")
+
+# 데이터 계약 — 화면이 곧 데이터. 화면 확정 시 이 표가 DB 스키마의 입력이 된다(브리지).
+data_rows = [s for s in screens if s["reads"] or s["writes"] or s["fetches"]]
+if data_rows:
+    lines.append("## 🔌 화면 × 데이터 계약 (DB 설계 입력)")
+    lines.append("> 각 화면이 읽고/쓰는 상태 키·데이터 소스(JS 자동 스캔). **화면이 확정되면 이 계약이 DB 스키마의 입력**이 됩니다 — 현재는 `sessionStorage` 임시저장(→ 영속화 대상).")
+    lines.append("")
+    lines.append("| 화면 | 읽음 in | 씀 out | fetch 소스 |")
+    lines.append("|---|---|---|---|")
+    for s in data_rows:
+        r = ", ".join(f"`{k}`" for k in s["reads"]) or "—"
+        w = ", ".join(f"`{k}`" for k in s["writes"]) or "—"
+        fe = ", ".join(f"`{k}`" for k in s["fetches"]) or "—"
+        lines.append(f"| {s['name']} | {r} | {w} | {fe} |")
+    lines.append("")
+    # 상태 키별 생산자·소비자 — proto 스키마(엔티티 후보) 역인덱스.
+    keys = {}
+    for s in screens:
+        for k in s["writes"]:
+            keys.setdefault(k, {"w": [], "r": []})["w"].append(s["stem"])
+        for k in s["reads"]:
+            keys.setdefault(k, {"w": [], "r": []})["r"].append(s["stem"])
+    lines.append("### 상태 키별 생산자·소비자 (proto 스키마)")
+    lines.append("> 키 하나 = DB 엔티티/레코드 후보. 생산(씀)·소비(읽음) 화면이 스키마 경계·소유를 가늠하게 함.")
+    lines.append("")
+    lines.append("| 상태 키 | 씀(생산) | 읽음(소비) |")
+    lines.append("|---|---|---|")
+    for k in sorted(keys):
+        w = ", ".join(sorted(set(keys[k]["w"]))) or "—"
+        r = ", ".join(sorted(set(keys[k]["r"]))) or "—"
+        lines.append(f"| `{k}` | {w} | {r} |")
     lines.append("")
 
 # 이동 그래프(참고)
