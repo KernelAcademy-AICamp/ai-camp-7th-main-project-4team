@@ -10,6 +10,7 @@ import hashlib, pathlib, re, sys
 
 repo = pathlib.Path(__file__).resolve().parents[1]
 web = repo / "web"
+cssdir = web / "css"                             # CSS는 web/css/ 폴더
 PRINT_CHANGED = "--print-changed" in sys.argv   # 훅용: 바뀐 html 경로만 stdout(정확한 스테이징)
 
 # CSS 파일 내용 → 짧은 해시(8) 캐시
@@ -17,7 +18,7 @@ _cache = {}
 def css_hash(name):
     if name in _cache:
         return _cache[name]
-    p = web / name
+    p = cssdir / name
     h = hashlib.sha256(p.read_bytes()).hexdigest()[:8] if p.exists() else None
     _cache[name] = h
     return h

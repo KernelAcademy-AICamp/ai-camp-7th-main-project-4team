@@ -27,17 +27,17 @@
 | 역할 | 소유 경로 |
 |---|---|
 | 팀장 | `data/**` · 생성물 JSON(`web/data/{garments,body-*,archetypes}.json`) |
-| 디자이너 | `web/*.html`(마크업) · `web/*.css` · `web/tokens.css` · `web/data/bodytypes.json` |
+| 디자이너 | `web/*.html`(마크업) · `web/css/**`(`tokens.css` 포함) · `web/data/bodytypes.json` |
 | 개발자 | `engine/**` · `web/js/**` |
 | 공동 | `docs/**` |
 
 - 남의 소유 경로를 바꿔야 하면 그 소유자에게 알리고 PR 리뷰어로 넣는다.
-- 색·폰트·간격은 `tokens.css` 변수만 참조(하드코딩 금지). DOM `id`/`class`는 디자이너가 정의, JS가 참조 — 바꾸면 서로 알림.
+- 색·폰트·간격은 `web/css/tokens.css` 변수만 참조(하드코딩 금지). DOM `id`/`class`는 디자이너가 정의, JS가 참조 — 바꾸면 서로 알림.
 
 ## 검증
 
 - **엔진 변경** → `npm test` (무의존성 골든 테스트, 초록불 확인).
 - **화면 변경** → `npm run serve`로 해당 화면 로드 확인.
 - **화면 추가/수정** → [docs/화면-현황.source.json](docs/화면-현황.source.json) 상태 한 줄 갱신 후 `npm run screens`로 [docs/화면-현황.md](docs/화면-현황.md) 재생성(전체 진행상황판 — 소유·JS연결·최근커밋·IA 이슈는 자동, 상태·비고만 손관리).
-- **CSS 수정** → `npm run stamp-css`로 `<link>`에 `?v=<내용해시>` 재스탬프(캐시버스트). pre-commit 훅이 `web/*.css` 커밋 시 자동 실행하니 보통 신경 안 써도 됨.
+- **CSS 수정** → `npm run stamp-css`로 `<link>`에 `?v=<내용해시>` 재스탬프(캐시버스트). pre-commit 훅이 `web/css/**` 커밋 시 자동 실행하니 보통 신경 안 써도 됨. (CSS는 `web/css/` 폴더)
 - `web/data/*.json`은 **생성물** — 손으로 고치지 말고 소스+생성기로 재생성(협업가이드 §4). 예외: `bodytypes.json`(디자이너 직접 관리).
