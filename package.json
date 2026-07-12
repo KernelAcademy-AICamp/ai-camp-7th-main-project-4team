@@ -8,7 +8,8 @@
     "serve": "node scripts/serve.js",
     "screens": "python3 scripts/gen-screens.py",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "stamp-css": "python3 scripts/stamp-css.py"
   },
   "engines": {
     "node": ">=18"
