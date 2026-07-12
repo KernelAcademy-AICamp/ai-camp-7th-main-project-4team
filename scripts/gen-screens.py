@@ -183,6 +183,36 @@ for s in screens:
 lines.append("")
 
 out.write_text("\n".join(lines), encoding="utf-8")
-print(f"wrote {out.relative_to(repo)} — 화면 {len(screens)}개, 이슈 {len(flagged)}개")
+
+# README 마커 구간 자동 주입 — 앞면에서 바로 확인. 전체(소유·비고·그래프)는 docs/화면-현황.md.
+def readme_block():
+    b = []
+    b.append("<!-- 자동 생성 — 손대지 마세요. `npm run screens`로 갱신됩니다. -->")
+    b.append(f"**화면 {len(screens)}개** · " +
+             " · ".join(f"{STATUS_ICON.get(k, k)} {v}" for k, v in sorted(by_status.items())) +
+             f" · ⚑ 이슈 {len(flagged)}개 · 전체·비고·이동그래프 → [docs/화면-현황.md](docs/화면-현황.md)")
+    b.append("")
+    b.append("| 화면 | 상태 | JS | 최근 변경 | 이슈 |")
+    b.append("|---|---|---|---|---|")
+    for s in screens:
+        js = "✅" if s["js_wired"] else ("⚠️" if s["js_exists"] else "—")
+        chg = f"`{s['commit']}` {s['author']}·{s['date']}" if s["commit"] else "—"
+        iss = "<br>".join(s["flags"]) if s["flags"] else "—"
+        b.append(f"| {s['name']} | {STATUS_ICON.get(s['status'], s['status'])} | {js} | {chg} | {iss} |")
+    return "\n".join(b)
+
+readme = repo / "README.md"
+START, END = "<!-- SCREENS:START -->", "<!-- SCREENS:END -->"
+injected = False
+if readme.exists():
+    txt = readme.read_text(encoding="utf-8")
+    if START in txt and END in txt:
+        txt = re.sub(re.escape(START) + r".*?" + re.escape(END),
+                     START + "\n" + readme_block() + "\n" + END, txt, flags=re.S)
+        readme.write_text(txt, encoding="utf-8")
+        injected = True
+
+print(f"wrote {out.relative_to(repo)} — 화면 {len(screens)}개, 이슈 {len(flagged)}개"
+      + (" · README 갱신" if injected else " · README 마커 없음(주입 생략)"))
 if not src_path.exists():
     print(f"  ⚠️ 상태소스 없음: {src_path.relative_to(repo)} 를 만들면 상태·비고가 채워집니다.")
