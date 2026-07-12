@@ -10,6 +10,14 @@
     return '<div class="fig">'+head+'<div class="body '+d.silhouette+'" style="background-color:'+d.point+'; height:150px"></div></div>';
   }
   function pills(a){ return '<div class="ps">'+a.map(function(x){return '<span>'+x+'</span>';}).join('')+'</div>'; }
+  // 8유형 성별 축: 구조필드(공유) + gender.{male,female} 콘텐츠 병합. 구 포맷(gender 없음)은 raw 폴백.
+  function btResolve(t, g){
+    if(!t) return t;
+    g=(g==='male'||g==='female')?g:'female';
+    var c=(t.gender&&(t.gender[g]||t.gender.female))||t;
+    return { code:t.code, name:t.name, sizeKorea:t.sizeKorea, silhouette:t.silhouette, point:t.point,
+      profile:c.profile, fitOk:c.fitOk, fitNo:c.fitNo, insight:c.insight, match:c.match, signature:c.signature };
+  }
 
   function render(d){
     var card=document.getElementById('card');
@@ -82,7 +90,7 @@
   fetch('data/bodytypes.json')
     .then(function(r){ return r.json(); })
     .then(function(j){
-      var map={}; j.types.forEach(function(t){ map[t.code]=t; });
+      var map={}; j.types.forEach(function(t){ map[t.code]=btResolve(t, gender); });   // 성별별 콘텐츠 해석
       if(!map[cur]) cur='STR';
       render(map[cur]);
     })
