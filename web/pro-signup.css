@@ -6,8 +6,8 @@
 
   .shell{width:480px;max-width:100%;padding:22px 16px 60px}
   .brandbar{display:flex;align-items:center;gap:10px;padding:6px 2px 16px}
-  .logo{font-size:20px;font-weight:800;letter-spacing:-.05em;color:var(--green,var(--green))}
-  .logo i{display:inline-block;width:6px;height:6px;background:var(--green,var(--green));margin-left:2px}
+  .logo{font-size:20px;font-weight:800;letter-spacing:-.05em;color:var(--green,#2E4A3B)}
+  .logo i{display:inline-block;width:6px;height:6px;background:var(--green,#2E4A3B);margin-left:2px}
   .closex{margin-left:auto;font-size:13px;color:var(--sub,#6b675f);cursor:pointer}
 
   .card{background:#fff;border:1px solid var(--line,#e7e4de);border-radius:18px;box-shadow:0 8px 26px rgba(20,18,16,.06);overflow:hidden}
@@ -16,7 +16,7 @@
   .chead .ttl{color:var(--ink,#1c1a17);font-weight:800}
   .chead .stp{margin-left:auto;font-variant-numeric:tabular-nums}
   .prog{height:5px;background:#eee9e2}
-  .prog>i{display:block;height:100%;background:var(--green,var(--green));transition:width .3s}
+  .prog>i{display:block;height:100%;background:var(--green,#2E4A3B);transition:width .3s}
   .cbody{padding:24px 22px 26px}
 
   .panel{display:none;animation:f .22s} .panel.on{display:block}
@@ -32,19 +32,19 @@
   .lbl:first-child{margin-top:4px}
   input[type=text],input[type=email],input[type=tel],input[type=number],textarea{width:100%;border:1.5px solid var(--line2,#d8d4cc);border-radius:10px;padding:11px 13px;font-family:inherit;font-size:14px;background:#fff;color:var(--ink,#1c1a17)}
   textarea{resize:vertical;min-height:64px}
-  input:focus,textarea:focus{outline:none;border-color:var(--green,var(--green))}
+  input:focus,textarea:focus{outline:none;border-color:var(--green,#2E4A3B)}
   .hint{font-size:12px;color:var(--sub2,#8a857b);margin-top:8px}
   .err{font-size:12.5px;color:#c0392b;font-weight:700;margin-top:8px;display:none}
   .err.on{display:block}
 
   .chk{display:flex;align-items:center;gap:10px;font-size:13.5px;margin-top:12px;cursor:pointer}
-  .chk input{width:17px;height:17px;accent-color:var(--green,var(--green))}
+  .chk input{width:17px;height:17px;accent-color:var(--green,#2E4A3B)}
 
   /* 서비스 유형별 가격 */
   .svc{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line,#e7e4de)}
   .svc:last-of-type{border-bottom:none}
   .svc .tog{display:flex;align-items:center;gap:9px;flex:1;font-size:14px;font-weight:700;cursor:pointer}
-  .svc .tog input{width:17px;height:17px;accent-color:var(--green,var(--green))}
+  .svc .tog input{width:17px;height:17px;accent-color:var(--green,#2E4A3B)}
   .svc .price{width:120px} .svc .price input{width:100%;text-align:right}
   .svc .won{font-size:13px;color:var(--sub,#6b675f)}
   .svc.off{opacity:.45} .svc.off .price input{background:var(--soft,#f6f5f2)}
@@ -52,7 +52,7 @@
   /* 전문분야 태그 */
   .tags{display:flex;flex-wrap:wrap;gap:8px}
   .tag{font-size:13px;font-weight:700;border:1.5px solid var(--line2,#d8d4cc);border-radius:20px;padding:8px 13px;color:var(--sub,#6b675f);cursor:pointer;user-select:none}
-  .tag.on{border-color:var(--green,var(--green));color:var(--green,var(--green));background:var(--green-soft,var(--green-soft))}
+  .tag.on{border-color:var(--green,#2E4A3B);color:var(--green,#2E4A3B);background:var(--green-soft,#E7EFEA)}
   .tagadd{display:flex;gap:8px;margin-top:10px}
   .tagadd input{flex:1}
   .tagadd button{font:inherit;font-size:13px;font-weight:800;border:1.5px solid var(--line2,#d8d4cc);background:#fff;border-radius:10px;padding:0 14px;cursor:pointer}
@@ -63,7 +63,7 @@
   .pcell img{width:100%;height:100%;object-fit:cover}
   .pcell .del{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center}
 
-  .btn{display:block;width:100%;text-align:center;padding:14px;border:none;border-radius:11px;background:var(--green,var(--green));color:#fff;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;margin-top:22px}
+  .btn{display:block;width:100%;text-align:center;padding:14px;border:none;border-radius:11px;background:var(--green,#2E4A3B);color:#fff;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;margin-top:22px}
   .btn:disabled{opacity:.4;cursor:not-allowed}
   .link{display:block;text-align:center;font-size:13px;color:var(--sub,#6b675f);margin-top:14px;cursor:pointer}
 

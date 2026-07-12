@@ -5,8 +5,8 @@
   a{color:inherit;text-decoration:none;cursor:pointer}
   header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line,#e7e4de)}
   .nav{max-width:1120px;margin:0 auto;height:64px;display:flex;align-items:center;gap:14px;padding:0 28px}
-  .logo{font-size:20px;font-weight:800;letter-spacing:-.05em;color:var(--green,var(--green))}
-  .logo i{display:inline-block;width:6px;height:6px;background:var(--green,var(--green));margin-left:2px}
+  .logo{font-size:20px;font-weight:800;letter-spacing:-.05em;color:var(--green,#2E4A3B)}
+  .logo i{display:inline-block;width:6px;height:6px;background:var(--green,#2E4A3B);margin-left:2px}
   .back{margin-left:auto;font-size:14px;color:var(--sub,#6b675f);cursor:pointer}
 
   .qwrap{max-width:1120px;margin:0 auto;padding:30px 28px 80px}
@@ -15,12 +15,12 @@
   .htags{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
   .svcbadge{display:inline-block;font-size:12px;font-weight:800;border-radius:20px;padding:3px 11px}
   .svcbadge svg{width:13px;height:13px;vertical-align:-2px;margin-right:2px}
-  .svcbadge.online{background:var(--green-soft,var(--green-soft));color:var(--green,var(--green))}
+  .svcbadge.online{background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B)}
   .svcbadge.shopping{background:#fbeede;color:#b9741a}
   .svcbadge.image{background:#efeafb;color:#7a5bb0}
   .st{font-size:12px;font-weight:800;padding:4px 11px;border-radius:20px}
-  .st.nw{background:var(--green,var(--green));color:#fff} .st.sent{background:var(--soft,#eee);color:var(--sub,#777)}
-  .st.prog{background:var(--green-soft,var(--green-soft));color:var(--green,var(--green))} .st.done{background:var(--green-soft,var(--green-soft));color:var(--green,var(--green))}
+  .st.nw{background:var(--green,#2E4A3B);color:#fff} .st.sent{background:var(--soft,#eee);color:var(--sub,#777)}
+  .st.prog{background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B)} .st.done{background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B)}
 
   .qgrid{display:grid;grid-template-columns:360px 1fr;gap:28px;align-items:start;margin-top:24px}
   @media(max-width:820px){.qgrid{grid-template-columns:1fr}}
@@ -29,7 +29,7 @@
   .bodycard iframe{width:100%;height:628px;border:0;display:block}
   .bodymeta{text-align:center;font-size:13px;color:var(--sub,#6b675f);font-weight:700;margin-top:12px}
 
-  .seclabel{font-size:12px;font-weight:800;color:var(--green,var(--green));letter-spacing:.02em;margin:2px 0 10px}
+  .seclabel{font-size:12px;font-weight:800;color:var(--green,#2E4A3B);letter-spacing:.02em;margin:2px 0 10px}
   .subhead{font-size:15px;font-weight:800;margin:0 0 10px}
   .btname{font-size:19px;font-weight:800;letter-spacing:-.03em;display:flex;align-items:center;gap:8px}
   .btname i{width:12px;height:12px;border-radius:50%;flex:none}
@@ -42,14 +42,14 @@
   .note-quote{background:var(--soft,#f6f5f2);border-radius:12px;padding:14px 16px;font-size:14px;color:var(--ink-soft,#3a382f);line-height:1.55}
   .note-quote.muted{color:var(--sub2,#8a857b)}
 
-  .btn{display:block;width:100%;text-align:center;padding:14px;border:none;border-radius:12px;background:var(--green,var(--green));color:#fff;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer}
+  .btn{display:block;width:100%;text-align:center;padding:14px;border:none;border-radius:12px;background:var(--green,#2E4A3B);color:#fff;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer}
   .btn.ghost{background:#fff;color:var(--ink,#1c1a17);border:1.5px solid var(--line2,#d8d4cc)}
   .tinybtn{font-size:13px;font-weight:800;padding:10px 16px;border-radius:10px;background:var(--ink,#1c1a17);color:#fff;border:none;cursor:pointer}
   .tinybtn.ghost{background:#fff;color:var(--ink,#1c1a17);border:1.5px solid var(--line2,#d8d4cc)}
   .offerform label{font-size:12.5px;font-weight:800;color:var(--sub2,#8a857b);display:block;margin:12px 0 6px}
   .offerform input,.offerform textarea{width:100%;border:1.5px solid var(--line2,#d8d4cc);border-radius:10px;padding:11px 13px;font-family:inherit;font-size:14px}
   .offerform textarea{resize:vertical;min-height:60px}
-  .offerform input:focus,.offerform textarea:focus{outline:none;border-color:var(--green,var(--green))}
+  .offerform input:focus,.offerform textarea:focus{outline:none;border-color:var(--green,#2E4A3B)}
   .obtns{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
   .num{font-family:var(--num,inherit);font-weight:800}
 
