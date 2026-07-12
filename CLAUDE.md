@@ -39,5 +39,5 @@
 - **엔진 변경** → `npm test` (무의존성 골든 테스트, 초록불 확인).
 - **화면 변경** → `npm run serve`로 해당 화면 로드 확인.
 - **화면 추가/수정** → [docs/화면-현황.source.json](docs/화면-현황.source.json) 상태 한 줄 갱신 후 `npm run screens`로 [docs/화면-현황.md](docs/화면-현황.md) 재생성(전체 진행상황판 — 소유·JS연결·최근커밋·IA 이슈는 자동, 상태·비고만 손관리).
-- **CSS 수정** → `npm run stamp-css`로 `<link>`에 `?v=<내용해시>` 재스탬프(캐시버스트). pre-commit 훅이 `web/css/**` 커밋 시 자동 실행하니 보통 신경 안 써도 됨. (CSS는 `web/css/` 폴더)
+- **CSS·JS 수정** → `npm run stamp-assets`로 `<link>`·`<script>`에 `?v=<내용해시>` 재스탬프(캐시버스트). pre-commit 훅이 `web/css/**`·`web/js/**` 커밋 시 자동 실행하니 보통 신경 안 써도 됨. (CSS=`web/css/`, JS=`web/js/`)
 - `web/data/*.json`은 **생성물** — 손으로 고치지 말고 소스+생성기로 재생성(협업가이드 §4). 예외: `bodytypes.json`(디자이너 직접 관리).

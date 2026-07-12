@@ -15,13 +15,13 @@ if printf '%s\n' "$staged" | grep -qE '^docs/([^/]+\.md|html/_src/_tpl\.html)$';
   echo "✓ 통합문서.html 자동 재생성 (docs md/템플릿 변경 감지)"
 fi
 
-# 2) web/css/*.css → 캐시버스트 ?v=<내용해시> 재스탬프 후, 바뀐 html만 정확히 스테이징
-if printf '%s\n' "$staged" | grep -qE '^web/css/[^/]+\.css$'; then
-  changed=$(python3 scripts/stamp-css.py --print-changed) || {
-    echo "✗ CSS 캐시버스트 스탬프 실패 — scripts/stamp-css.py 확인" >&2; exit 1; }
+# 2) web/css/*.css·web/js/*.js → 캐시버스트 ?v=<내용해시> 재스탬프 후, 바뀐 html만 정확히 스테이징
+if printf '%s\n' "$staged" | grep -qE '^web/(css|js)/[^/]+\.(css|js)$'; then
+  changed=$(python3 scripts/stamp-assets.py --print-changed) || {
+    echo "✗ 에셋 캐시버스트 스탬프 실패 — scripts/stamp-assets.py 확인" >&2; exit 1; }
   if [ -n "$changed" ]; then
     printf '%s\n' "$changed" | while IFS= read -r f; do git add "$f"; done
-    echo "✓ CSS ?v= 재스탬프 (web/css/*.css 변경 감지): $changed"
+    echo "✓ 에셋 ?v= 재스탬프 (web/css·js 변경 감지): $changed"
   fi
 fi
 

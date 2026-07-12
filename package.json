@@ -9,7 +9,7 @@
     "screens": "python3 scripts/gen-screens.py",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "stamp-css": "python3 scripts/stamp-css.py"
+    "stamp-assets": "python3 scripts/stamp-assets.py"
   },
   "engines": {
     "node": ">=18"
