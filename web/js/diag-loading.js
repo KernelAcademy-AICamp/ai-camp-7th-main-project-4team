@@ -18,9 +18,9 @@
     const first=document.querySelector('#steps li[data-i="0"]');
     if(first)first.textContent='저장된 체형 프로필 재사용 (재측정 없음)';
   } else if(G==='1'){
-    document.getElementById('lsub').textContent='한 벌의 착용 경험을 거꾸로 풀어 추정합니다. 한 벌 더 넣으면 더 정교해져요.';
+    document.getElementById('lsub').textContent='입어본 옷을 바탕으로 체형과 선호핏을 분석하고 있어요';
     const first=document.querySelector('#steps li[data-i="0"]');
-    if(first)first.textContent='착용 경험 1벌 → 부위별 여유(cm) 환산';
+    if(first)first.textContent='착용감 분석';
   }
   const lis=[...document.querySelectorAll('#steps li')];
   let i=0;
