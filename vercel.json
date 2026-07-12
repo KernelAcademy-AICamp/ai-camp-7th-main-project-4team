@@ -3,9 +3,6 @@
   "outputDirectory": "web",
   "rewrites": [
     { "source": "/og-image-v2.png", "destination": "/img/og-image-v2.png" },
-    { "source": "/og-image.png", "destination": "/img/og-image.png" },
-    { "source": "/pro.html", "destination": "/expert/pro.html" },
-    { "source": "/pro-signup.html", "destination": "/expert/pro-signup.html" },
-    { "source": "/pro-quote.html", "destination": "/expert/pro-quote.html" }
+    { "source": "/og-image.png", "destination": "/img/og-image.png" }
   ]
 }

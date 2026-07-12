@@ -71,8 +71,7 @@ def js_stem(stem):
     return web / "js" / f"{stem}.js"
 
 source = load_source()
-htmls = sorted(list(web.glob("*.html")) + list((web / "expert").glob("*.html")),
-               key=lambda p: p.name)   # 사용자 앱(web/) + 전문가 앱(web/expert/)
+htmls = sorted(web.glob("*.html"), key=lambda p: p.name)
 
 # 1차 스캔: 화면별 사실 수집 + 링크 그래프
 screens = []
@@ -85,7 +84,6 @@ for f in htmls:
     js_exists = jsf.exists()
     js_ref = bool(re.search(r'src="[^"]*js/' + re.escape(stem) + r'\.js', text))
     js_wired = js_exists and js_ref
-    relpath = str(f.relative_to(web))   # web 기준 경로(pro.html 또는 expert/pro.html)
     h, a, d = git_last([f, jsf])
     # 이동 대상은 HTML 정적 링크 + JS 이동(location.href 등) 둘 다 스캔 — JS 이동을 놓치면 오탐 고아 발생.
     js_text = jsf.read_text(encoding="utf-8", errors="ignore") if js_exists else ""
@@ -93,7 +91,7 @@ for f in htmls:
     reads, writes, fetches = scan_data(text + "\n" + js_text)
     outgoing[stem] = links
     screens.append({
-        "stem": stem, "relpath": relpath,
+        "stem": stem,
         "title": title_of(text),
         "name": meta.get("name") or title_of(text) or stem,
         "kind": meta.get("kind", "app"),
@@ -168,7 +166,7 @@ lines.append("|---|---|---|---|---|---|---|")
 for s in screens:
     chg = f"`{s['commit']}` {s['author']} · {s['date']}" if s["commit"] else "—"
     issues = "<br>".join(s["flags"]) if s["flags"] else "—"
-    lines.append(f"| {s['name']} | [{s['relpath']}](../web/{s['relpath']}) | {owner_of(s)} "
+    lines.append(f"| {s['name']} | [{s['stem']}.html](../web/{s['stem']}.html) | {owner_of(s)} "
                  f"| {STATUS_ICON.get(s['status'], s['status'])} | {js_cell(s)} | {chg} | {issues} |")
 lines.append("")
 

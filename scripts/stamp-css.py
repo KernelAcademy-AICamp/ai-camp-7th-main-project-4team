@@ -26,8 +26,7 @@ def css_hash(name):
 LINK_RE = re.compile(r'href="([^"]+?\.css)(\?v=[0-9a-f]+)?"')
 
 changed_files, stamped = [], 0
-html_files = sorted(list(web.glob("*.html")) + list((web / "expert").glob("*.html")))
-for html in html_files:
+for html in sorted(web.glob("*.html")):
     text = html.read_text(encoding="utf-8")
     def repl(m):
         global stamped
@@ -43,12 +42,11 @@ for html in html_files:
     new = LINK_RE.sub(repl, text)
     if new != text:
         html.write_text(new, encoding="utf-8")
-        changed_files.append(str(html.relative_to(repo)))   # repo 기준 경로(web/… 또는 web/expert/…)
+        changed_files.append(html.name)
 
 if PRINT_CHANGED:
-    for rel in changed_files:                 # 훅이 정확히 이 파일만 git add
-        print(rel)
+    for name in changed_files:                # 훅이 정확히 이 파일만 git add
+        print(f"web/{name}")
 else:
-    names = [pathlib.Path(r).name for r in changed_files]
     print(f"stamped {stamped}개 CSS 링크 · 갱신된 HTML {len(changed_files)}개"
-          + (f": {', '.join(names)}" if names else " (변경 없음)"))
+          + (f": {', '.join(changed_files)}" if changed_files else " (변경 없음)"))
