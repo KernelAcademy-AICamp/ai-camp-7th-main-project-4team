@@ -9,6 +9,11 @@
   var NORM={ TOP:[['slim','슬림'],['regular','레귤러'],['loose','루즈'],['oversize','오버'],['skinny','스키니']],
              BOTTOM:[['skinny','스키니'],['slim','슬림'],['straight','스트레이트'],['tapered','테이퍼드'],['wide','와이드'],['bootcut','부츠컷']] };
   var rows=[{size:'',cells:{},note:''}];
+  var BRANDS=[];   // garments.json의 기존 브랜드(선택용). 새 브랜드는 직접 입력(datalist).
+  fetch('data/garments.json').then(function(r){return r.json();}).then(function(j){
+    var seen={}; (j.specs||[]).forEach(function(s){ if(s.brandName && !seen[s.brandName]){ seen[s.brandName]=1; BRANDS.push(s.brandName); } });
+    BRANDS.sort(); buildMeta();
+  }).catch(function(){});
 
   // ── 이미지 붙여넣기/드롭/파일 ──
   function showImage(file){ if(!file) return; var r=new FileReader();
@@ -31,9 +36,11 @@
     function sel(id,opts,cur){return '<select id="'+id+'" onchange="__meta()">'+opts.map(function(o){return '<option value="'+o[0]+'"'+(o[0]===cur?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>';}
     function inp(id,ph,w){return '<input id="'+id+'" placeholder="'+ph+'" oninput="__build()" style="width:'+(w||120)+'px">';}
     var cat=(($('iCat')&&$('iCat').value))||'TOP';
+    var brandDL='<input id="mBrand" list="brandDL" placeholder="선택 또는 새 브랜드" oninput="__build()" style="width:150px">'+
+      '<datalist id="brandDL">'+BRANDS.map(function(b){return '<option value="'+b.replace(/"/g,'&quot;')+'">';}).join('')+'</datalist>';
     $('metaForm').innerHTML=
-      fld('브랜드',inp('mBrand','예: 자라',110))+
-      fld('성별',sel('mGen',[['female','여성'],['male','남성'],['unisex','공용']],'female'))+
+      fld('브랜드',brandDL)+
+      fld('성별',sel('mGen',[['여성','여성'],['남성','남성'],['공용','공용']],'여성'))+   // CSV 성별은 한글(build-sizespec GENDER)
       fld('카테고리',sel('iCat',[['TOP','상의'],['BOTTOM','하의']],cat))+
       fld('정규화핏/실루엣',sel('mNorm',NORM[cat],cat==='TOP'?'regular':'straight'))+
       fld('원본 fit',inp('mFit','예: 슬림핏(선택)',110))+
@@ -106,6 +113,53 @@
     var blob=new Blob(['﻿'+window.__csv],{type:'text/csv;charset=utf-8'});   // BOM(엑셀 한글)
     var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
     a.download='수집-'+(v('mBrand')||'brand')+'-'+cat+'.csv'; document.body.appendChild(a); a.click(); a.remove();
+  };
+
+  // ── AI 브릿지: 스키마 프롬프트 복사 + CSV 가져오기(백엔드 불필요) ──
+  window.__toggleImport=function(){ var b=$('importBox'); if(b) b.hidden=!b.hidden; };
+  window.__aiPrompt=function(){
+    var cat=(($('iCat')&&$('iCat').value))||'TOP';
+    var cols=cat==='TOP'
+      ? '브랜드,isAnchor,fit,소재,앵커역할,정규화여유,성별,product,size,총장,어깨너비,가슴단면,소매길이,비고'
+      : '브랜드,isAnchor,fit,소재,정규화실루엣,성별,product,size,총장,허리단면,엉덩이단면,허벅지단면,밑위,밑단단면,밴딩,비고';
+    var brand=v('mBrand')||'?', gen=v('mGen'), norm=v('mNorm'), fit=v('mFit')||norm, product=v('mProduct')||'?', mat=v('mMat'), anchor=($('mAnchor')&&$('mAnchor').checked)?'true':'false', band=v('mBand');
+    var fixed=cat==='TOP'
+      ? '브랜드='+brand+', 성별='+gen+', fit='+fit+', 정규화여유='+norm+', product='+product+', isAnchor='+anchor+', 소재='+mat+', 앵커역할=기반'
+      : '브랜드='+brand+', 성별='+gen+', fit='+fit+', 정규화실루엣='+norm+', product='+product+', isAnchor='+anchor+', 소재='+mat+', 밴딩='+band;
+    var p='첨부한 의류 사이즈표 이미지를 읽어 아래 CSV로만 출력해줘(설명·코드블록 없이 CSV 원문만).\n\n'
+      +'규칙:\n- 값은 cm, 소수점 그대로. 사이즈 라벨은 이미지 표기 그대로(예: S(090)).\n'
+      +'- 표 방향(사이즈가 행이든 열이든) 알아서 판단해 사이즈별로 한 행.\n'
+      +'- 부위 매핑: 어깨→어깨너비, 가슴→가슴단면, 소매→소매길이, 전체길이/기장→총장'
+      +(cat==='BOTTOM'?', 허리→허리단면, 엉덩이→엉덩이단면, 허벅지→허벅지단면, 밑위→밑위, 밑단→밑단단면':'')+'. 없는 값은 빈칸.\n'
+      +'- 가슴/허리/엉덩이가 "둘레"면 값 그대로 두고 비고에 "둘레"라 표기(단면 아님).\n\n'
+      +'컬럼(정확히 이 순서): '+cols+'\n모든 행 공통 값: '+fixed+'\n\n헤더 1행 + 사이즈별 데이터 행으로 CSV만 출력.';
+    $('importBox').hidden=false;
+    (navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(p):Promise.reject())
+      .then(function(){ $('importMsg').textContent='✅ 프롬프트 복사됨 — LLM에 이미지와 함께 붙여넣기'; })
+      .catch(function(){ $('importMsg').textContent='복사 실패(콘솔 참조)'; try{console.log(p);}catch(e){} });
+  };
+  function parseCsvLine(line){ var out=[],cur='',q=false; for(var i=0;i<line.length;i++){ var ch=line[i];
+    if(q){ if(ch==='"'){ if(line[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=ch; }
+    else { if(ch==='"')q=true; else if(ch===','){ out.push(cur); cur=''; } else cur+=ch; } }
+    out.push(cur); return out.map(function(s){return s.trim();}); }
+  window.__importCsv=function(){
+    var txt=($('csvIn')&&$('csvIn').value||'').trim();
+    var lines=txt.split(/\r?\n/).filter(function(l){return l.trim();});
+    if(lines.length<2){ $('importMsg').textContent='헤더+데이터 행이 필요해요.'; return; }
+    var head=parseCsvLine(lines[0]), idx={}; head.forEach(function(h,i){ idx[h]=i; });
+    if(idx['size']==null){ $('importMsg').textContent='헤더에 size 컬럼이 없어요.'; return; }
+    var cat=(idx['허리단면']!=null||idx['정규화실루엣']!=null)?'BOTTOM':'TOP'; setCategory(cat);
+    var d0=parseCsvLine(lines[1]);
+    function setMeta(id,col){ var el=$(id); if(el&&idx[col]!=null&&d0[idx[col]]) el.value=d0[idx[col]]; }
+    setMeta('mBrand','브랜드'); setMeta('mProduct','product'); setMeta('mFit','fit'); setMeta('mNorm',cat==='TOP'?'정규화여유':'정규화실루엣'); setMeta('mGen','성별'); setMeta('mMat','소재'); if(cat==='BOTTOM')setMeta('mBand','밴딩');
+    var parts=PARTS[cat], nr=[];
+    for(var r=1;r<lines.length;r++){ var c=parseCsvLine(lines[r]);
+      var o={size:c[idx['size']]||'', cells:{}, note:(idx['비고']!=null?c[idx['비고']]:'')||''};
+      parts.forEach(function(pp){ if(idx[pp]!=null && c[idx[pp]]) o.cells[pp]=c[idx[pp]]; });
+      if(o.size||Object.keys(o.cells).length) nr.push(o);
+    }
+    if(nr.length){ rows=nr; buildGrid(); build(); $('importMsg').textContent='✅ '+nr.length+'행 가져옴 — 확인 후 내보내기'; }
+    else $('importMsg').textContent='파싱 결과 없음 — CSV 형식 확인.';
   };
 
   // ── OCR 자동 추출(베타) — Tesseract.js로 단어+좌표 → 행/열 재구성 ──

@@ -25,7 +25,7 @@
 
 <div class="awrap">
   <div class="crumb"><a href="admin.html">사이즈·데이터</a> › <b>이미지 붙여넣기 수집 (3.A.1)</b></div>
-  <p class="subnote"><b>사이즈표 이미지를 붙여넣고(⌘/Ctrl+V) 보면서 전사</b> → 기존 수집 CSV 포맷으로 내보내기. 자동 OCR은 표 인식 신뢰도 문제로 제외(수동 전사가 정확). 내보낸 CSV를 <span class="pill">data/brand/raw/*.csv</span>에 붙여넣고 <span class="pill">build-sizespec.py</span>로 재생성하면 반영돼요.</p>
+  <p class="subnote">사이즈표 이미지 → 기존 수집 CSV. <b>3가지 방법</b>: ① 이미지 보며 <b>수동 전사</b> ② <b>OCR 자동추출(베타)</b> — 표만 크롭 ③ <b>🤖 AI 프롬프트</b>(가장 정확·백엔드 불필요) — 프롬프트 복사해 Claude/ChatGPT에 이미지와 붙여 CSV 받기. 내보낸 CSV를 <span class="pill">data/brand/raw/*.csv</span>에 붙여넣고 <span class="pill">build-sizespec.py</span>로 재생성하면 반영돼요.</p>
 
   <div class="collect">
     <!-- 이미지 붙여넣기 영역 -->
@@ -58,6 +58,13 @@
       <div class="gridbtns">
         <button class="abtn ghost" onclick="__addRow()">+ 사이즈 행</button>
         <button class="abtn ghost" onclick="__addRows(5)">+ 5행</button>
+        <button class="abtn ghost" onclick="__aiPrompt()" title="비전 AI로 정확 추출(백엔드 불필요)">🤖 AI 프롬프트 복사</button>
+        <button class="abtn ghost" onclick="__toggleImport()">📥 CSV 붙여넣기</button>
+      </div>
+      <div id="importBox" hidden style="margin:8px 0 12px">
+        <p class="ahint" style="margin:0 0 6px"><b>AI 브릿지</b>: 위 <b>AI 프롬프트 복사</b> → Claude/ChatGPT에 <b>이미지와 함께</b> 붙여넣기 → 받은 CSV를 아래에 붙이고 그리드 채우기(또는 CSV를 수집 시트에 바로 붙여넣기).</p>
+        <textarea id="csvIn" placeholder="AI가 출력한 CSV를 여기에 붙여넣기 (헤더 포함)" style="width:100%;height:120px;font-family:ui-monospace,Menlo,monospace;font-size:12px;padding:10px;border:1px solid var(--line);border-radius:10px"></textarea>
+        <div class="exportbar" style="margin-top:6px"><button class="abtn ghost" onclick="__importCsv()">그리드 채우기</button><span class="cnt" id="importMsg"></span></div>
       </div>
 
       <div class="sec-h">3 · 내보내기</div>
@@ -72,6 +79,6 @@
 </div>
 
 <script src="js/admin-common.js?v=b64f60d3"></script>
-<script src="js/admin-collect.js?v=5b5393c2"></script>
+<script src="js/admin-collect.js?v=82fa67f0"></script>
 </body>
 </html>
