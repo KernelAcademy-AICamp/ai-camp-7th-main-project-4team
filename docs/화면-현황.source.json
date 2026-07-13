@@ -1,0 +1,19 @@
+{
+  "_readme": "화면 현황판의 손관리 소스 — 상태·비고·kind만. 나머지(소유·커밋·JS연결·IA플래그)는 gen-screens.py가 자동. 화면 추가/수정 시 여기 한 줄만 갱신하고 npm run screens.",
+  "_status_enum": "시안 → 구현 → 실연결 → 완료 · 보류",
+  "_kind_enum": "app(진단/허브) · pro(공급자) · info(정보/정책, JS 없어도 정상) · util(플래그 제외)",
+
+  "index":        { "name": "홈·허브(탭 홈/쇼퍼찾기/마이)", "kind": "app",  "status": "구현",   "note": "단일 페이지에 탭 3섹션(#home/#shop/#my). 쇼퍼찾기=페이크도어." },
+  "diag-basic":   { "name": "기본 정보 입력",              "kind": "app",  "status": "구현",   "note": "성별·키·몸무게. 성별 선택 시 평균값 프리필." },
+  "diag-fit":     { "name": "착용경험 보정 입력",          "kind": "app",  "status": "실연결", "note": "앵커 브랜드·사이즈 완전 데이터화(#20). 엔진 역산 실연결은 상의(TOP) 기준." },
+  "diag-loading": { "name": "진단 로딩",                  "kind": "app",  "status": "구현",   "note": "역산+매칭 계산 대기 → result로 이동." },
+  "result":       { "name": "진단 결과",                  "kind": "app",  "status": "실연결", "note": "상의만 실계산, 파생 카테고리는 선호핏 폴백/게이트." },
+  "card":         { "name": "결과 공유 카드",             "kind": "app",  "status": "시안",   "note": "OG 공유 카드(소유자 아티팩트). card.js가 초대링크 index.html?from=CODE 생성 → 초대받은 사람은 홈으로 전환. 단 card 페이지 자체엔 뷰어용 '나도 진단' CTA 버튼은 없음." },
+  "pro":          { "name": "쇼퍼 지원(공급자)",          "kind": "pro",  "status": "구현",   "note": "공급자 진입." },
+  "pro-signup":   { "name": "쇼퍼 가입",                 "kind": "pro",  "status": "구현",   "note": "" },
+  "pro-quote":    { "name": "견적 요청",                 "kind": "pro",  "status": "구현",   "note": "#17에서 개편. 수요자 인라인 견적(index #shop)과 표면 관계 정리 필요." },
+  "about":        { "name": "서비스 소개·작동원리",        "kind": "info", "status": "구현",   "note": "소개→diag-basic 전환 CTA 있음." },
+  "privacy":      { "name": "개인정보 처리방침",           "kind": "info", "status": "완료",   "note": "" },
+  "terms":        { "name": "이용약관",                  "kind": "info", "status": "완료",   "note": "" },
+  "_reset":       { "name": "데모 초기화",                "kind": "util", "status": "구현",   "note": "sessionStorage 리셋 유틸." }
+}

@@ -10,23 +10,23 @@
 
 :root{
   /* 폰트 스택 — 모두 한글 지원 */
-  --sans:"Pretendard Variable","Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;
+  --sans:'Pretendard','Apple SD Gothic Neo',system-ui,sans-serif;
   --suit:"SUIT Variable","SUIT","Pretendard Variable",-apple-system,sans-serif; /* 지오메트릭 숫자: 사이즈·측정 */
   --mono:ui-monospace,SFMono-Regular,Menlo,"Courier New",monospace;
 
   /* Precision 테마 토큰 */
-  --canvas:#ffffff;
-  --ink:#0a0a0a;
-  --muted:#71717a;
-  --faint:#a1a1aa;
-  --line:#e9e9e9;
-  --line-strong:#0a0a0a;
-  --field:#fafafa;
-  --field-line:#dcdcdc;
-  --accent:#0a0a0a;       /* Precision = 블랙 액센트 */
+  --canvas:#F6F6F5;
+  --ink:#16140F;
+  --muted:#6E6B63;
+  --faint:#A6A29A;
+  --line:#E6E5E1;
+  --line-strong:#16140F;
+  --field:#FFFFFF;
+  --field-line:#DAD8D2;
+  --accent:#2E4A3B;       /* 딥그린 액센트(구 블랙→수렴) */
   --accentInk:#ffffff;
-  --ok:#1f7a3d;           /* 동의·성공 (절제된 그린) */
-  --warn:#b4451f;         /* 주의·실패 (테라코타) */
+  --ok:#2E4A3B;           /* 동의·성공 (절제된 그린) */
+  --warn:#B0553F;         /* 주의·실패 (테라코타) */
   --btnR:6px;             /* 각진 버튼 */
   --cardR:10px;
 

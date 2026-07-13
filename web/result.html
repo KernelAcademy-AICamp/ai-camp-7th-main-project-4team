@@ -6,123 +6,9 @@
 <title>핏팅 — 진단 결과</title>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="fitting.css">
-<link rel="stylesheet" href="diag.css">
-<style>
-  /* 결과 화면 — sohee 디자인 언어 + sangmin 콘텐츠 (자체 팔레트로 클래스 격리) */
-  .rwrap{ --g:#2E4A3B; --gs:#E7EFEA; --ink:#16140F; --ink2:#3A382F; --sub:#6E6B63; --sub2:#A6A29A;
-          --line:#E6E5E1; --line2:#DAD8D2; --warn:#B0553F; --wsoft:#F7ECE8;
-          max-width:1180px; margin:0 auto; padding:36px 30px 90px; }
-  .rwrap h1{ font-size:28px; font-weight:800; letter-spacing:-.04em; color:var(--ink); }
-  .rwrap .subttl{ font-size:15px; color:var(--sub); margin-top:8px; }
-  .rgrid{ display:grid; grid-template-columns:392px 1fr; gap:34px; align-items:start; margin-top:28px; }
-  @media(max-width:840px){ .rgrid{ grid-template-columns:1fr; } }
-  .rcard iframe{ width:392px; max-width:100%; height:684px; border:0; border-radius:22px; display:block; position:sticky; top:80px; box-shadow:0 18px 44px rgba(20,22,28,.14); }
-  .rlock{ border:1.5px dashed var(--line2); border-radius:22px; background:repeating-linear-gradient(135deg,#fbfaf8,#fbfaf8 10px,#f5f4f1 10px,#f5f4f1 20px);
-          min-height:520px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px 26px; position:sticky; top:80px; }
-  .rlock .lk{ font-size:30px; } .rlock .t1{ font-size:17px; font-weight:800; color:var(--sub); margin-top:12px; }
-  .rlock .t2{ font-size:14px; color:var(--sub2); margin-top:8px; line-height:1.55; max-width:240px; }
-  .rlock .b{ margin-top:18px; background:var(--g); color:#fff; font-size:15px; font-weight:800; padding:12px 18px; border-radius:12px; text-decoration:none; }
-  /* 카드 하단 신뢰도 배지 + 정확도 넛지 */
-  .rcardnote{ display:flex; flex-direction:column; gap:7px; align-items:center; text-align:center; margin-top:13px; }
-  .rconf{ font-size:12px; font-weight:800; letter-spacing:.02em; padding:4px 11px; border-radius:999px; }
-  .rconf.low{ background:#f2ece0; color:#8a7a52; } .rconf.mid{ background:#e7efe7; color:#4a7a4a; } .rconf.high{ background:var(--g); color:#fff; }
-  .rconf-msg{ font-size:13px; color:var(--sub2); line-height:1.5; max-width:300px; } .rconf-msg a{ color:var(--ink); font-weight:700; }
-
-  .rcol{ display:flex; flex-direction:column; gap:18px; min-width:0; }
-  .rpanel{ background:#fff; border:1px solid var(--line); border-radius:18px; padding:22px 24px; }
-  .rkicker{ font-size:17px; font-weight:800; letter-spacing:-.03em; color:var(--ink); }
-  .rrow{ display:flex; justify-content:space-between; align-items:center; }
-  .rchip{ font-size:12px; font-weight:700; color:var(--g); background:var(--gs); padding:5px 11px; border-radius:20px; white-space:nowrap; }
-  .rnote{ font-size:13px; color:var(--sub); margin-top:6px; line-height:1.5; }
-  .rfoot{ font-size:13px; color:var(--sub2); margin-top:14px; line-height:1.5; }
-  /* 추천 */
-  .rsthead{ display:flex; justify-content:space-between; font-size:12px; font-weight:800; color:var(--sub2); letter-spacing:.06em; padding:14px 0 2px; }
-  .rszrow{ display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--line); }
-  .rszrow:last-child{ border:0; padding-bottom:0; }
-  .rbd{ font-size:16px; font-weight:700; color:var(--ink); } .rbd small{ display:block; font-size:13px; color:var(--sub2); font-weight:500; margin-top:3px; }
-  .rsz{ display:flex; align-items:center; gap:10px; } .rsz .n{ font-size:22px; font-weight:800; font-family:var(--suit,inherit); font-feature-settings:"tnum"; }
-  .rpill{ font-size:12px; font-weight:700; padding:4px 10px; border-radius:20px; background:var(--gs); color:var(--g); white-space:nowrap; }
-  .rpill.warn{ background:var(--wsoft); color:var(--warn); }
-  .rpill.lo{ background:#f0efec; color:var(--sub2); }  /* 핏 지수 낮은 추천 — 톤다운 */
-  .rpill{ font-feature-settings:"tnum"; }              /* 핏 지수 숫자 정렬 */
-  /* 스펙트럼 */
-  .rgrp{ font-size:12px; font-weight:800; color:var(--sub2); margin:18px 0 2px; }
-  .rspec{ margin-top:16px; } .rspec:first-of-type{ margin-top:14px; }
-  .rspec .top{ display:flex; justify-content:space-between; align-items:baseline; font-size:13px; }
-  .rspec .pole{ color:var(--sub2); font-weight:600; } .rspec .pole.dom{ color:var(--ink); font-weight:800; }
-  .rspec .pct{ color:var(--g); font-weight:800; } .rspec .pct .n{ font-size:15px; font-feature-settings:"tnum"; }
-  .rtrack{ height:7px; background:#EDECE8; border-radius:4px; margin:8px 0 7px; overflow:hidden; } .rtrack i{ display:block; height:100%; background:var(--g); border-radius:4px; }
-  .raxis{ font-size:13px; color:var(--sub); }
-  /* 결과 풀이 */
-  .rex{ margin-top:16px; } .rex:first-of-type{ margin-top:14px; }
-  .rex .lbl{ display:flex; align-items:center; gap:8px; font-size:14px; font-weight:800; color:var(--ink); }
-  .rex .mk{ width:22px; height:22px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; }
-  .rex.plus .mk{ background:var(--gs); color:var(--g); } .rex.eq .mk{ background:#EDEEF1; color:var(--ink2); } .rex.warn .mk{ background:var(--wsoft); color:var(--warn); }
-  .rex p{ font-size:14px; color:var(--sub); line-height:1.6; margin-top:7px; } .rex p strong{ color:var(--ink); font-weight:700; }
-  /* 옷장 게이트 */
-  .rcat{ display:flex; align-items:center; gap:10px; padding:13px 0; border-bottom:1px solid var(--line); } .rcat:last-child{ border:0; padding-bottom:0; }
-  .rcat .nm{ font-size:16px; font-weight:700; color:var(--ink); min-width:52px; }
-  .rkind{ font-size:12px; font-weight:800; padding:2px 7px; border-radius:6px; } .rkind.base{ background:var(--gs); color:var(--g); } .rkind.der{ background:#EDEEF1; color:var(--sub); }
-  .rcat .meta{ font-size:13px; color:var(--sub); flex:1; } .rcat .go{ font-size:14px; font-weight:800; color:var(--g); white-space:nowrap; text-decoration:none; }
-  .rcat.done .go{ color:var(--sub2); } .rcat.lock{ opacity:.5; } .rcat.lock .go{ color:var(--sub2); }
-  .rgnotice{ background:var(--gs); border-radius:12px; padding:13px 15px; font-size:13px; color:var(--ink2); line-height:1.55; margin-top:16px; } .rgnotice b{ font-weight:800; }
-  /* 피드백·버튼 */
-  .rfbq{ font-size:16px; font-weight:700; color:var(--ink); } .rfbq span{ font-size:13px; color:var(--sub); font-weight:500; }
-  .rseg{ display:flex; gap:10px; margin-top:14px; } .rseg .o{ flex:1; text-align:center; padding:13px; border:1px solid var(--line); border-radius:12px; font-size:15px; font-weight:700; color:var(--ink); cursor:pointer; }
-  .rconsent{ display:flex; align-items:flex-start; gap:8px; margin-top:14px; cursor:pointer; }
-  .rconsent input{ margin-top:2px; width:15px; height:15px; accent-color:var(--g); flex:none; }
-  .rconsent-txt{ font-size:13px; color:var(--sub); line-height:1.55; } .rconsent-txt > b{ color:var(--ink2); font-weight:700; }
-  .rconsent-sub{ display:block; margin-top:3px; font-size:12px; color:var(--sub2); } .rconsent-sub b{ color:var(--sub); font-weight:700; }
-  .rseg .o.on{ background:var(--g); border-color:var(--g); color:#fff; }
-  .rcta{ display:flex; gap:12px; } .rbtn{ flex:1; text-align:center; padding:16px; border-radius:13px; font-size:16px; font-weight:800; text-decoration:none; }
-  .rbtn.p{ background:var(--ink); color:#fff; } .rbtn.l{ background:#fff; border:1.5px solid var(--line2); color:var(--ink); }
-  .rcta-note{ text-align:center; font-size:13px; color:var(--sub2); margin-top:4px; }
-  /* ── 마이 '내 진단결과'와 디자인 통일 — 유형 정체성 / 잘맞·피할 FIT / 한 끗 ── */
-  .rwrap{ --soft:#EDEDEA; --gl:#9CC1AE; }
-  .rleft{ display:flex; flex-direction:column; gap:16px; }
-  .rleft #cardslot iframe{ position:static; height:664px; }
-  .dtl-id:empty, .dtl-fitbox:empty, .dtl-tip:empty{ display:none; }
-  .dtl-id{ --tp:var(--g); background:#fff; border:1px solid var(--line); border-radius:18px; padding:26px 26px 24px; box-shadow:0 6px 18px rgba(20,18,16,.05); }
-  .dtl-code{ font-family:var(--suit,inherit); font-feature-settings:'tnum'; font-weight:800; font-size:14px; letter-spacing:.14em; color:color-mix(in srgb, var(--tp) 72%, #16140F); background:color-mix(in srgb, var(--tp) 22%, #fff); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--tp) 40%, #fff); display:inline-block; padding:5px 12px; border-radius:8px; }
-  .dtl-name{ font-size:27px; font-weight:800; letter-spacing:-.04em; margin:14px 0 8px; color:var(--ink); }
-  .dtl-korea{ font-size:14px; font-weight:700; color:var(--sub2); background:var(--soft); padding:5px 11px; border-radius:20px; display:inline-block; }
-  .dtl-desc{ font-size:16px; color:var(--ink2); line-height:1.7; margin:16px 0 18px; } .dtl-desc b{ color:var(--ink); font-weight:800; }
-  .dtl-hash{ display:flex; flex-wrap:wrap; gap:7px; }
-  .dtl-hash span{ font-size:14px; font-weight:800; color:color-mix(in srgb, var(--tp) 62%, #16140F); background:color-mix(in srgb, var(--tp) 20%, #fff); padding:6px 13px; border-radius:20px; }
-  .dtl-fitbox{ --tp:var(--g); background:#fff; border:1px solid var(--line); border-radius:18px; padding:4px 20px; box-shadow:0 6px 18px rgba(20,18,16,.05); }
-  .dtl-fit{ display:flex; align-items:center; gap:12px; padding:16px 0; border-bottom:1px solid var(--line); }
-  .dtl-fitbox .dtl-fit:last-child{ border-bottom:none; }
-  .dtl-fit-h{ font-size:14px; font-weight:800; flex:none; width:90px; display:flex; align-items:center; gap:5px; }
-  .dtl-fit-h svg{ width:15px; height:15px; flex:none; }
-  .dtl-fit.ok .dtl-fit-h{ color:var(--g); } .dtl-fit.no .dtl-fit-h{ color:var(--warn); }
-  .dtl-chips{ display:flex; flex-wrap:wrap; gap:7px; }
-  .dtl-chips span{ font-size:13.5px; font-weight:700; padding:6px 12px; border-radius:20px; }
-  .dtl-fit.ok .dtl-chips span{ background:var(--gs); color:var(--g); } .dtl-fit.no .dtl-chips span{ background:var(--wsoft); color:var(--warn); }
-  .dtl-tip{ --tp:var(--gl); position:relative; background:linear-gradient(135deg,#211E18,var(--ink)); border-radius:18px; padding:22px 24px; box-shadow:0 10px 26px rgba(20,18,16,.28); overflow:hidden; }
-  .dtl-tip::after{ content:""; position:absolute; right:-30px; top:-30px; width:130px; height:130px; border-radius:50%; background:radial-gradient(circle, color-mix(in srgb, var(--tp) 32%, transparent), transparent 70%); }
-  .dtl-tip .k{ position:relative; font-size:13px; font-weight:800; letter-spacing:.1em; color:var(--tp); margin-bottom:9px; }
-  .dtl-tip p{ position:relative; font-size:17px; color:#fff; line-height:1.62; margin:0; } .dtl-tip p b{ color:#fff; font-weight:800; }
-  /* 브랜드 추천 — 마이 %막대 스타일 (s2row) */
-  .s2list{ margin-top:14px; }
-  .s2row{ position:relative; border-radius:11px; padding:12px 16px; margin-bottom:8px; overflow:hidden; background:#F1F5F2; }
-  .s2row:last-child{ margin-bottom:0; }
-  .s2fill{ position:absolute; left:0; top:0; bottom:0; background:color-mix(in srgb, var(--g) 16%, #fff); z-index:0; }
-  .s2in{ position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:12px; }
-  .s2in .b{ font-size:16px; font-weight:800; color:var(--ink); } .s2in .b small{ font-weight:600; color:var(--sub); font-size:14px; margin-left:8px; }
-  .s2in .r{ display:flex; align-items:center; gap:14px; flex:none; }
-  .s2in .sz{ font-family:var(--suit,inherit); font-feature-settings:'tnum'; font-size:22px; font-weight:800; color:var(--ink); }
-  .s2in .p{ font-size:14px; font-weight:800; color:var(--g); }
-  .s2row.lo .s2fill{ background:#F0EFEC; } .s2row.lo .s2in .p{ color:var(--sub2); }
-  /* 체형 측정 — 마이 5칸 스펙트럼 (n2row) */
-  .n2row{ padding:12px 0; border-bottom:1px solid var(--line); } .n2row:last-of-type{ border-bottom:none; }
-  .n2top{ display:flex; justify-content:space-between; align-items:baseline; }
-  .n2top .part{ font-weight:800; font-size:16px; color:var(--ink); } .n2top .zone{ font-weight:800; font-size:14px; color:var(--g); }
-  .n2segs{ display:flex; gap:5px; margin:10px 0 6px; }
-  .n2seg{ flex:1; height:13px; border-radius:4px; background:var(--gs); }
-  .n2seg.on{ background:var(--g); } .n2seg.near{ background:var(--gl); }
-  .n2scale{ display:flex; justify-content:space-between; font-size:13px; color:var(--sub); font-weight:600; }
-</style>
+<link rel="stylesheet" href="css/fitting.css?v=8ad71bfe">
+<link rel="stylesheet" href="css/diag.css?v=b79dcf45">
+<link rel="stylesheet" href="css/result.css?v=3ad24730">
 </head>
 <body>
 
@@ -157,10 +43,9 @@
   </div>
 </div>
 
-<script src="js/body-model.js"></script>
-<script src="js/engine.js"></script>
-<script src="js/bodytype.js"></script>
-<script src="js/engine-mock.js"></script>
-<script src="js/result.js"></script>
+<script src="js/body-model.js?v=634d818d"></script>
+<script src="js/engine.js?v=a57bb9c0"></script>
+<script src="js/bodytype.js?v=b00f36c1"></script>
+<script src="js/result.js?v=698abfa3"></script>
 </body>
 </html>

@@ -6,8 +6,10 @@
   "scripts": {
     "test": "node engine/test.js",
     "serve": "node scripts/serve.js",
+    "screens": "python3 scripts/gen-screens.py",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "stamp-assets": "python3 scripts/stamp-assets.py"
   },
   "engines": {
     "node": ">=18"

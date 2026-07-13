@@ -1,17 +1,28 @@
 #!/bin/sh
-# docs/*.md 또는 뷰어 템플릿(_tpl.html)이 커밋에 포함되면 통합문서.html을 자동 재생성해 함께 스테이징한다.
+# 커밋에 포함된 파일 종류에 따라 생성물을 자동 갱신·스테이징한다.
 # 설정: git config core.hooksPath .githooks  (클론 후 한 번)
-changed=$(git -c core.quotepath=false diff --cached --name-only --diff-filter=ACM \
-  | grep -E '^docs/([^/]+\.md|html/_src/_tpl\.html)$')
-[ -z "$changed" ] && exit 0
 
-# web 배포 임시본이 있으면 그것도 같이 갱신(미추적이라 커밋엔 안 들어감)
-if [ -f web/docs.html ]; then FLAG="--web"; else FLAG=""; fi
+staged=$(git -c core.quotepath=false diff --cached --name-only --diff-filter=ACM)
 
-if ! python3 docs/html/_src/build.py $FLAG >/dev/null; then
-  echo "✗ 통합문서.html 자동 재생성 실패 — python3 / docs/html/_src/build.py 확인" >&2
-  exit 1
+# 1) docs/*.md·뷰어 템플릿(_tpl.html) → 통합문서.html 재생성
+if printf '%s\n' "$staged" | grep -qE '^docs/([^/]+\.md|html/_src/_tpl\.html)$'; then
+  if [ -f web/docs.html ]; then FLAG="--web"; else FLAG=""; fi   # web 배포 임시본 있으면 같이 갱신(미추적)
+  if ! python3 docs/html/_src/build.py $FLAG >/dev/null; then
+    echo "✗ 통합문서.html 자동 재생성 실패 — python3 / docs/html/_src/build.py 확인" >&2
+    exit 1
+  fi
+  git add docs/html/통합문서.html
+  echo "✓ 통합문서.html 자동 재생성 (docs md/템플릿 변경 감지)"
 fi
-git add docs/html/통합문서.html
-echo "✓ 통합문서.html 자동 재생성 (docs md/템플릿 변경 감지)"
+
+# 2) web/css/*.css·web/js/*.js → 캐시버스트 ?v=<내용해시> 재스탬프 후, 바뀐 html만 정확히 스테이징
+if printf '%s\n' "$staged" | grep -qE '^web/(css|js)/[^/]+\.(css|js)$'; then
+  changed=$(python3 scripts/stamp-assets.py --print-changed) || {
+    echo "✗ 에셋 캐시버스트 스탬프 실패 — scripts/stamp-assets.py 확인" >&2; exit 1; }
+  if [ -n "$changed" ]; then
+    printf '%s\n' "$changed" | while IFS= read -r f; do git add "$f"; done
+    echo "✓ 에셋 ?v= 재스탬프 (web/css·js 변경 감지): $changed"
+  fi
+fi
+
 exit 0
