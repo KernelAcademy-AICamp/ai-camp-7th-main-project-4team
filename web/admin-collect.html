@@ -33,8 +33,9 @@
       <div class="dropzone" id="dropzone" tabindex="0">
         <div class="dz-hint" id="dzHint">
           <div class="dz-ico">📋</div>
-          <b>여기에 사이즈표 이미지 붙여넣기</b>
+          <b>사이즈표 부분만 붙여넣기</b>
           <span>⌘/Ctrl + V · 드래그&드롭 · <label class="dz-file">파일 선택<input type="file" id="fileIn" accept="image/*" hidden></label></span>
+          <span style="color:var(--warn)">표만 잘라서(크롭) 붙여야 인식 정확</span>
         </div>
         <img id="preview" alt="사이즈표" hidden>
       </div>
@@ -43,7 +44,8 @@
         <span class="alink" onclick="__clear()">이미지 지우기</span>
       </div>
       <div class="ocrprog" id="ocrProg" hidden><div class="ocrbar"><i id="ocrFill"></i></div><span id="ocrMsg"></span></div>
-      <p class="ahint" style="margin-top:10px">자동 추출은 <b>베타</b>예요 — 실측표를 OCR해 행/열을 추정합니다. <b>반드시 그리드에서 값을 확인·교정</b>하세요. 첫 실행은 한글 인식 데이터를 받느라 몇 초 걸립니다.</p>
+      <p class="ahint" style="margin-top:10px">자동 추출은 <b>베타</b>예요 — <b>사이즈표만 잘라서(크롭)</b> 붙여야 정확합니다(화면 전체 캡처는 글자가 많아 실패). 소수점·특수 사이즈는 뭉갤 수 있으니 <b>그리드에서 꼭 교정</b>하세요. 첫 실행은 한글 인식 데이터를 받느라 몇 초 걸립니다.</p>
+      <details id="ocrRawWrap" hidden style="margin-top:8px"><summary class="alink">OCR 인식 텍스트 보기</summary><pre class="csvout" id="ocrRaw" style="max-height:200px;overflow:auto;margin-top:6px"></pre></details>
     </div>
 
     <!-- 메타 + 전사 그리드 -->
@@ -70,6 +72,6 @@
 </div>
 
 <script src="js/admin-common.js?v=b64f60d3"></script>
-<script src="js/admin-collect.js?v=8b1e39b5"></script>
+<script src="js/admin-collect.js?v=5b5393c2"></script>
 </body>
 </html>

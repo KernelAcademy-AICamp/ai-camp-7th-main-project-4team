@@ -126,6 +126,7 @@
         else prog(12,m.status||''); } });
     }).then(function(r){
       prog(98,'표 재구성…');
+      try{ $('ocrRaw').textContent=(r.data&&r.data.text)||'(빈 결과)'; $('ocrRawWrap').hidden=false; }catch(e){}
       var rowsW=clusterRows((r.data&&r.data.words)||[]);
       var parsed=autoFill(rowsW);
       if(parsed && parsed.rows.length){ rows=parsed.rows; buildGrid(); build();
@@ -190,7 +191,8 @@
       var nums=cells.slice(1).map(toNum).filter(function(x){return x!=null;});
       nums.forEach(function(v,i){ if(i<parts.length) o.cells[parts[i]]=v; });
       return o;
-    }).filter(function(o){ return o.size || Object.keys(o.cells).length; });
+    // 노이즈 제거: 사이즈 같은 첫칸이거나 숫자 2개 이상인 행만(라벨·문장 줄 배제)
+    }).filter(function(o){ return isSize(o.size) || Object.keys(o.cells).length>=2; });
   }
 
   // 방향 판정: 사이즈 키워드(S/M/L·90/95/100…)가 헤더 행에 있으면 열=사이즈(행=부위),
