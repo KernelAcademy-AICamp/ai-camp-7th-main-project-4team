@@ -516,7 +516,7 @@
   /* 빈 상태 · 오픈 알림 신청 → 로그인 후 요청내역에 대기로 기록 */
   function notifySignup(){ var done=function(){ addReq({kind:'notify', svc:'image', status:'대기'}); toast('오픈 알림을 신청했어요 · 마이 > 코디 요청 내역에서 확인'); }; if(loggedIn()) done(); else openLogin('오픈 알림 신청', done); }
 
-  var curSvc='all', curOcc='all', curBudget='all', curStyles=[], query='';
+  var curSvc='all', curOcc='all', curBudget='all', curStyles=[], query='', favOnly=false;
   function toggleClr(){ document.getElementById('clrBtn').style.display=document.getElementById('q').value?'inline':'none'; }
   function doSearch(){ query=(document.getElementById('q').value||'').trim(); toggleClr(); render(); }
   function clearSearch(){ document.getElementById('q').value=''; query=''; toggleClr(); render(); }
@@ -525,6 +525,8 @@
   function setSvc(el){ setActive(el); curSvc=el.dataset.svc; render(); }
   function setOcc(el){ setActive(el); curOcc=el.dataset.occ; updateDD('ddOcc', curOcc==='all'?'':OCC[curOcc]); closeDD(); render(); }
   function setBud(el){ setActive(el); curBudget=el.dataset.bud; updateDD('ddBud', curBudget==='all'?'':BUD[curBudget]); closeDD(); render(); }
+  // 즐겨찾기 필터 — 켜면 즐겨찾기한 쇼퍼만 목록에 표시(다른 필터와 함께 동작)
+  function toggleFavOnly(){ favOnly=!favOnly; var b=document.getElementById('favFilterBtn'); if(b) b.classList.toggle('on', favOnly); render(); }
   /* 스타일은 다중선택(OR) — 메뉴 열어둔 채 토글 */
   function setStyle(e, el){ e.stopPropagation();
     var v=el.dataset.style;
@@ -546,8 +548,9 @@
     [].forEach.call(document.querySelectorAll('#ddOcc .ddopt'), function(o){o.classList.toggle('on', o.dataset.occ===curOcc);});
     [].forEach.call(document.querySelectorAll('#ddBud .ddopt'), function(o){o.classList.toggle('on', o.dataset.bud===curBudget);});
     updateDD('ddOcc', curOcc==='all'?'':OCC[curOcc]); updateDD('ddBud', curBudget==='all'?'':BUD[curBudget]); syncStyleDD();
+    var fb=document.getElementById('favFilterBtn'); if(fb) fb.classList.toggle('on', favOnly);
   }
-  function browseAll(){ curSvc='all'; curOcc='all'; curBudget='all'; curStyles=[]; query=''; document.getElementById('q').value=''; toggleClr(); document.getElementById('sort').value='match'; syncControls(); render(); }
+  function browseAll(){ curSvc='all'; curOcc='all'; curBudget='all'; curStyles=[]; query=''; favOnly=false; document.getElementById('q').value=''; toggleClr(); document.getElementById('sort').value='match'; syncControls(); render(); }
 
   function render(){
     var q=query;
@@ -557,14 +560,19 @@
         && (curOcc==='all'||e.occ.indexOf(curOcc)>=0)
         && (curBudget==='all'||budOf(svcMinPrice(e))===curBudget)
         && (!curStyles.length||curStyles.some(function(st){return e.tags.indexOf(st)>=0;}))
-        && (!q || e.nm.indexOf(q)>=0 || e.tags.join(' ').indexOf(q)>=0);
+        && (!q || e.nm.indexOf(q)>=0 || e.tags.join(' ').indexOf(q)>=0)
+        && (!favOnly || isFav(e.nm));
     });
     list.sort(function(a,b){ return s==='rating'?b.rating-a.rating : s==='priceA'?svcMinPrice(a)-svcMinPrice(b) : s==='priceD'?svcMinPrice(b)-svcMinPrice(a) : b.match-a.match; });
-    var cond = list.length+'명 · '+(curSvc==='all'?'전체 유형':SVC[curSvc])+(curOcc==='all'?'':' · '+OCC[curOcc])+(curBudget==='all'?'':' · 예산 '+BUD[curBudget])+(curStyles.length?' · '+styleLabel():'')+(q?' · "'+q+'"':'');
-    var active = curSvc!=='all'||curOcc!=='all'||curBudget!=='all'||curStyles.length||q;
+    var cond = list.length+'명 · '+(favOnly?'즐겨찾기 · ':'')+(curSvc==='all'?'전체 유형':SVC[curSvc])+(curOcc==='all'?'':' · '+OCC[curOcc])+(curBudget==='all'?'':' · 예산 '+BUD[curBudget])+(curStyles.length?' · '+styleLabel():'')+(q?' · "'+q+'"':'');
+    var active = curSvc!=='all'||curOcc!=='all'||curBudget!=='all'||curStyles.length||q||favOnly;
     document.getElementById('count').innerHTML = cond + (active?'  ·  <a onclick="browseAll()">초기화하기</a>':'');
     var g=document.getElementById('grid');
-    if(!list.length){ g.innerHTML='<div class="empty"><b>조건에 맞는 쇼퍼가 아직 없어요</b><p>초기라 쇼퍼를 모으는 중이에요 · <a onclick="notifySignup()">오픈 알림 신청하기</a> 또는 <a onclick="browseAll()">전체 보기</a></p></div>'; return; }
+    if(!list.length){
+      g.innerHTML = favOnly
+        ? '<div class="empty"><b>아직 즐겨찾기한 쇼퍼가 없어요</b><p>쇼퍼 카드의 <span style="color:var(--green)">북마크</span>를 눌러 담아보세요 · <a onclick="browseAll()">전체 보기</a></p></div>'
+        : '<div class="empty"><b>조건에 맞는 쇼퍼가 아직 없어요</b><p>초기라 쇼퍼를 모으는 중이에요 · <a onclick="notifySignup()">오픈 알림 신청하기</a> 또는 <a onclick="browseAll()">전체 보기</a></p></div>';
+      return; }
     g.innerHTML=list.map(function(e){ var idx=EX.indexOf(e);
       var rt=e.rating>0?'<span class="star"><span class="rvstar">'+starSVG()+'</span> '+e.rating+' <small class="rv">('+e.review+')</small></span>':'<span class="star new">신규</span>';
       var svcico='<span class="svcico">'+e.services.map(function(sv){return '<span class="b" title="'+SVC[sv.type]+'">'+svcIcon(sv.type)+'</span>';}).join('')+'</span>';
