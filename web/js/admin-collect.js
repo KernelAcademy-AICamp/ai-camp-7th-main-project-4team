@@ -164,43 +164,48 @@
   var BOTTOMPARTS=['허리단면','엉덩이단면','허벅지단면','밑위','밑단단면'];
   function setCategory(cat){ var el=$('iCat'); if(el && el.value!==cat){ el.value=cat; buildMeta(); } }
 
-  function autoFill(rowsW){
+  // 행(clusterRows) → 열(x) 정렬 2D 행렬. 앵커=셀 가장 많은 행의 x를 열 기준으로, 각 단어를 최근접 열에.
+  function buildMatrix(rowsW){
     if(!rowsW.length) return null;
-    // Layout A: 부위가 각 행의 첫 셀, 사이즈는 헤더 행
-    var partRows=[]; rowsW.forEach(function(r){ var p=matchPart(r[0].t); if(p) partRows.push({part:p, cells:r}); });
-    var sizeRow=null, best=0;
-    rowsW.forEach(function(r){ var c=r.filter(function(w){return isSize(w.t);}).length; if(c>best){best=c;sizeRow=r;} });
-    if(partRows.length>=2 && sizeRow && best>=2){
-      var sizes=sizeRow.filter(function(w){return isSize(w.t);});
-      var catA=partRows.some(function(p){return BOTTOMPARTS.indexOf(p.part)>=0;})?'BOTTOM':'TOP';
-      setCategory(catA);
-      var nrA=sizes.map(function(s){return {size:sizeLabel(s.t), cells:{}, note:'', _x:s.x};});
-      partRows.forEach(function(pr){
-        // 부위 행의 숫자는 전부 실측(2~3자리라도 사이즈 아님). 부위 라벨 셀은 비수치라 자동 제외.
-        var nums=pr.cells.filter(function(w){return toNum(w.t)!=null;});
-        nrA.forEach(function(nr){ var near=nearestX(nums,nr._x); if(near) nr.cells[pr.part]=toNum(near.t); });
-      });
-      nrA.forEach(function(r){ delete r._x; });
-      var okA=nrA.filter(function(r){return Object.keys(r.cells).length;});
-      if(okA.length) return {cat:catA, rows:okA};
+    var anchor=rowsW[0]; rowsW.forEach(function(r){ if(r.length>anchor.length) anchor=r; });
+    var colX=anchor.map(function(w){return w.x;}); var nc=colX.length; if(nc<2) return null;
+    function colOf(x){ var bi=0,bd=1e9; for(var i=0;i<nc;i++){ var d=Math.abs(colX[i]-x); if(d<bd){bd=d;bi=i;} } return bi; }
+    return rowsW.map(function(r){
+      var cells=[]; for(var i=0;i<nc;i++) cells.push('');
+      r.forEach(function(w){ var c=colOf(w.x); cells[c]=(cells[c]?cells[c]+' ':'')+w.t; });
+      return cells;
+    });
+  }
+  function countSize(arr){ return arr.filter(function(t){return isSize(t);}).length; }
+
+  // 방향 판정: 사이즈 키워드(S/M/L·90/95/100…)가 헤더 행에 있으면 열=사이즈(행=부위),
+  //   첫 열에 있으면 행=사이즈(열=부위). 사이즈 없는 축 = 부위. → 표 정규화.
+  function autoFill(rowsW){
+    var m=buildMatrix(rowsW); if(!m || m.length<2) return null;
+    var nc=m[0].length;
+    var headerSizes=countSize(m[0]);
+    var col0Sizes=countSize(m.map(function(row){return row[0];}));
+    if(headerSizes<2 && col0Sizes<2) return null;   // 어느 축에도 사이즈 라벨 없음 → 실패
+    var out=[], c, r;
+    if(headerSizes>=col0Sizes){
+      // 헤더 행 = 사이즈, 각 행 = 부위
+      for(c=1;c<nc;c++){ if(isSize(m[0][c])) out.push({size:sizeLabel(m[0][c]), cells:{}, note:'', _c:c}); }
+      for(r=1;r<m.length;r++){ var partA=matchPart(m[r][0]); if(!partA) continue;
+        out.forEach(function(o){ var v=toNum(m[r][o._c]); if(v!=null) o.cells[partA]=v; }); }
+    } else {
+      // 첫 열 = 사이즈, 헤더 행 = 부위
+      var partCols=[]; for(c=1;c<nc;c++) partCols.push({c:c, part:matchPart(m[0][c])});
+      for(r=1;r<m.length;r++){ if(!isSize(m[r][0])) continue;
+        var o2={size:sizeLabel(m[r][0]), cells:{}, note:''};
+        partCols.forEach(function(pc){ if(!pc.part) return; var v=toNum(m[r][pc.c]); if(v!=null) o2.cells[pc.part]=v; });
+        out.push(o2); }
     }
-    // Layout B: 사이즈가 각 행 첫 셀, 부위가 헤더 행
-    var sizeRows=rowsW.filter(function(r){return isSize(r[0].t);});
-    var header=null; rowsW.forEach(function(r){ var c=r.filter(function(w){return matchPart(w.t);}).length; if(c>=2 && !header) header=r; });
-    if(sizeRows.length>=2 && header){
-      var parts=header.map(function(w){return {part:matchPart(w.t), x:w.x};}).filter(function(p){return p.part;});
-      var catB=parts.some(function(p){return BOTTOMPARTS.indexOf(p.part)>=0;})?'BOTTOM':'TOP';
-      setCategory(catB);
-      var nrB=sizeRows.map(function(r){
-        var o={size:sizeLabel(r[0].t), cells:{}, note:''};
-        var nums=r.slice(1).filter(function(w){return toNum(w.t)!=null;});
-        parts.forEach(function(p){ var near=nearestX(nums,p.x); if(near) o.cells[p.part]=toNum(near.t); });
-        return o;
-      });
-      var okB=nrB.filter(function(r){return Object.keys(r.cells).length;});
-      if(okB.length) return {cat:catB, rows:okB};
-    }
-    return null;
+    out.forEach(function(o){ delete o._c; });
+    out=out.filter(function(o){ return Object.keys(o.cells).length; });
+    if(!out.length) return null;
+    var cat=out.some(function(o){ return Object.keys(o.cells).some(function(p){return BOTTOMPARTS.indexOf(p)>=0;}); })?'BOTTOM':'TOP';
+    setCategory(cat);
+    return {cat:cat, rows:out};
   }
 
   buildMeta(); buildGrid(); build();
