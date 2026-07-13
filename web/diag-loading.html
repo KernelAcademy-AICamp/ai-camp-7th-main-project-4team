@@ -7,28 +7,40 @@
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=8ad71bfe">
-<link rel="stylesheet" href="css/diag.css?v=b79dcf45">
+<link rel="stylesheet" href="css/diag.css?v=cec12df3">
 </head>
 <body>
 
-<div class="dhead"><div class="dhead-in"><a class="logo" href="index.html">Fitting<i></i></a><div class="dprog"><div class="prog"><span class="seg done"></span><span class="seg done"></span></div></div><a class="dx" href="index.html" title="닫기">✕</a></div></div>
-
-<div class="flow">
-  <div class="loading-wrap">
-    <div class="spinner"></div>
-    <span class="kicker">Translating your size</span>
-    <h2 class="step-h center" style="margin-top:6px" id="ltitle">체형을 역산하고 있어요</h2>
-    <p class="lead center" style="max-width:360px" id="lsub">착용 경험을 거꾸로 풀어 부위별 치수와 여유 선호를 추정합니다.</p>
-
-    <ul class="load-steps" id="steps">
-      <li data-i="0"><span class="tick"></span>착용 경험 → 부위별 여유(cm) 환산</li>
-      <li data-i="1"><span class="tick"></span>체형 프로필 역산</li>
-      <li data-i="2"><span class="tick"></span>브랜드 실측 DB에 투영</li>
-      <li data-i="3"><span class="tick"></span>핏 인사이트 서술 생성</li>
-    </ul>
+<div class="dhead">
+  <div class="dhead-in">
+    <a class="dx" href="index.html" title="닫기">✕</a>
   </div>
 </div>
 
-<script src="js/diag-loading.js?v=8cf7fa5c"></script>
+<div class="flow">
+  <div class="dstepc">
+    <div class="dnode done"><span class="ddot">1</span><span class="dlbl">기본정보</span></div>
+    <div class="dconn solid done"></div>
+    <div class="dnode done"><span class="ddot">2</span><span class="dlbl">착용경험</span></div>
+    <div class="dconn fillnow"><i></i></div>
+    <div class="dnode now"><span class="ddot">3</span><span class="dlbl">진단중</span></div>
+  </div>
+  <div class="loading-wrap">
+    <div class="lmark">FITTING</div>
+    <div class="lruler">
+      <div class="nums"><span>0</span><span>60</span><span>120</span><span>180</span></div>
+      <div class="tape"><i class="lfill" id="lfill"></i></div>
+      <div class="ticks"></div>
+      <div class="ticks major"></div>
+      <div class="marker" id="lmarker"></div>
+    </div>
+    <div class="lpct" id="lpct">0%</div>
+    <h2 class="step-h" id="ltitle">체형을 진단하고 있어요</h2>
+    <p class="lsub" id="lsub">입어본 옷을 바탕으로 체형과 선호핏을 분석하고 있어요</p>
+    <ul class="load-steps" id="steps"></ul>
+  </div>
+</div>
+
+<script src="js/diag-loading.js?v=5b4c31bb"></script>
 </body>
 </html>
