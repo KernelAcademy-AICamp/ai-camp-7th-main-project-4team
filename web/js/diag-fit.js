@@ -124,7 +124,13 @@
   steps.forEach(function(s,i){ if(i===0) return;
     var l=document.createElement('div'); l.className='qtarget'; l.innerHTML='<b class="catword">상의</b> 진단';
     s.insertBefore(l, s.firstChild); });
-  let cur=0;
+  let cur=0, skipCat=false;   // skipCat = ?cat=으로 카테고리 선택(idx0)을 건너뛰고 선호핏부터 시작한 진입
+  // ?cat= base면 garments fetch(→boot) 기다리지 않고 첫 페인트에 바로 선호핏(idx1)을 active로.
+  // (안 하면 idx0 '어떤 옷을 진단할까요?'가 잠깐 떴다가 idx1로 바뀌어 깜빡임)
+  (function(){
+    var qc=new URLSearchParams(location.search).get('cat');
+    if(qc && CATS[qc] && CATS[qc].kind==='base'){ cur=1; skipCat=true; steps.forEach(function(s,k){ s.classList.toggle('active', k===cur); }); }
+  })();
   // 실측 데이터 없는 기반 카테고리(구조적 예외): 선호핏(idx1) 단계에서 착용경험 없이 바로 진단.
   function isPrefOnlyBase(){ return CATS[target] && CATS[target].kind==='base' && !hasData(target); }
   function render(){
@@ -140,7 +146,11 @@
   }
   function goTo(i){ cur=i; render(); }
   function next(){ if(cur<steps.length-1){cur++;render()} }
-  function prev(){ if(cur>0){cur--;render()} else location.href=PREV_URL; }
+  function prev(){
+    // 카테고리 선택을 건너뛰고 들어온 경우(결과화면 '상의/하의 진단하기') 첫 화면(선호핏)에서 '이전'은 결과 페이지로
+    if(skipCat && cur===1){ if(history.length>1) history.back(); else location.href='result.html'; return; }
+    if(cur>0){cur--;render()} else location.href=PREV_URL;
+  }
   function footerAction(){
     if(!stepDone()) return;
     if(isPrefOnlyBase() && cur===1){ collectPrefOnly(); location.href='diag-loading.html?cat='+target; return; }
@@ -521,7 +531,13 @@
     renderBrands();   // 앵커 브랜드만 노출(데이터 로드 후) — applyTarget이 brand select을 읽기 전에
     const routed=initFromQuery();
     applyTarget();
-    if(routed==='base'){ gateTargets(); render(); }
+    if(routed==='base'){
+      gateTargets();
+      // ?cat=으로 대상이 정해져 들어오면(결과화면 '상의/하의 진단하기') 카테고리 선택(idx0)은 건너뛰고 선호핏(idx1)부터 시작
+      var qcat=new URLSearchParams(location.search).get('cat');
+      if(qcat && CATS[qcat] && CATS[qcat].kind==='base'){ cur=1; skipCat=true; }
+      render();
+    }
   }
   // A축 사이즈 시드 로드 → 데이터 보유 카테고리(DATA_CATS) 판별 + 브랜드별 사이즈 라벨.
   // 로드 후 플로우 시작(실패=file:// 등 → 현재 데이터 반영 폴백으로 boot).

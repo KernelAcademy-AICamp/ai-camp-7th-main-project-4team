@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=8ad71bfe">
 <link rel="stylesheet" href="css/diag.css?v=6f27ec63">
-<link rel="stylesheet" href="css/result.css?v=509734c9">
+<link rel="stylesheet" href="css/result.css?v=d4178c44">
 </head>
 <body>
 
@@ -29,16 +29,14 @@
       <div class="rpanel"><div class="rfbq">추천 결과가 잘 맞나요? <span>· 정확도 검증</span></div>
         <div class="rseg"><div class="o ok" onclick="fb(this,'맞음')"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> 맞아요</div><div class="o mid" onclick="fb(this,'보통')"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg> 보통</div><div class="o no" onclick="fb(this,'안맞음')"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg> 안 맞아요</div></div>
         <label class="rconsent"><input type="checkbox" id="eiConsent" onchange="setEngineConsent(this.checked)">
-          <span class="rconsent-txt">이 진단·피드백을 <b>익명으로 엔진 개선</b>에 활용하는 데 동의합니다.
-            <span class="rconsent-sub">체크 시 <b>만 14세 이상</b>이거나 법정대리인의 동의를 받은 것으로 간주해요 · 선택</span>
+          <span class="rconsent-txt"><b>익명으로 진단 개선</b>에 활용하는 데 동의하며, <b>만 14세 이상</b> 또는 법정대리인 동의를 확인했어요 (선택)
           </span></label></div>
       <div id="meas" class="rpanel"></div>
       <div id="means" class="rpanel"></div>
-      <div id="gate" class="rpanel"></div>
-      <div class="rcta"><a class="rbtn p" href="index.html">결과 저장하기</a><a class="rbtn l" href="index.html#shop">전문가에게 받기</a></div>
+      <div class="rcta"><button type="button" class="rbtn p" onclick="saveResult()">결과 저장하기</button><button type="button" class="rbtn l" onclick="goExpert()">전문가에게 받기</button></div>
       <p class="rcta-note">비회원 진단은 끝까지 무료예요 · 저장·전문가 매칭은 로그인 후 이어져요</p>
       <p class="rcta-note" style="margin-top:10px"><a href="#" onclick="resetDiag();return false" style="color:var(--sub);text-decoration:underline"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg> 진단 초기화 — 입력을 지우고 처음부터</a></p>
-      <p class="rcta-note" style="margin-top:22px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--sub2)"><a href="about.html" style="color:var(--sub2)">서비스 소개</a> · <a href="terms.html" style="color:var(--sub2)">이용약관</a> · <a href="privacy.html" style="color:var(--sub2)">개인정보 처리방침</a></p>
+      <p class="rcta-note" style="margin-top:22px;padding-top:16px;border-top:1px solid var(--line);font-size:14.5px;color:var(--sub2)"><a href="about.html" style="color:var(--sub2)">서비스 소개</a> · <a href="terms.html" style="color:var(--sub2)">이용약관</a> · <a href="privacy.html" style="color:var(--sub2)">개인정보 처리방침</a></p>
     </div>
   </div>
 </div>
@@ -46,6 +44,6 @@
 <script src="js/body-model.js?v=e2d5b284"></script>
 <script src="js/engine.js?v=a57bb9c0"></script>
 <script src="js/bodytype.js?v=b00f36c1"></script>
-<script src="js/result.js?v=05950fc3"></script>
+<script src="js/result.js?v=7416c2f4"></script>
 </body>
 </html>

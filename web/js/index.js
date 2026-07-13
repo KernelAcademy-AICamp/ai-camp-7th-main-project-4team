@@ -163,6 +163,8 @@
 
   /* 마이페이지 · 프로필 아바타 — 진단 전=잉크블랙+이니셜 / 진단 후=결과 카드 캐릭터 얼굴 + 유형 색(bodytypes.json 단일 출처) */
   var USER={ name:'김도현', initial:'김', gender:'male', age:33, height:172, weight:68, fit:'슬림', type:'STR' };   // type:null = 진단 전
+  // 결과 페이지에서 '결과 저장' 시 기록한 진단 프로필(fitting.user)을 병합 → 마이가 실제 진단 결과를 보여줌.
+  (function(){ try{ var s=JSON.parse(localStorage.getItem('fitting.user')||'null'); if(s&&typeof s==='object') Object.assign(USER, s); }catch(e){} })();
   var _btCache=null;
   function avatarFaceHTML(){ return '<div class="head '+USER.gender+'">'+(USER.gender==='female'?'<span class="longhair"></span>':'')+'<span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div>'; }
   function renderMyAvatar(){
@@ -783,6 +785,12 @@
   /* 친구 초대 링크로 유입(card 공유 → index.html?from=CODE) — 홈 상단 배너로 맞이 */
   (function(){ try{ var from=new URLSearchParams(location.search).get('from'); if(!from) return;
     go('home'); var b=document.getElementById('inviteBanner'); if(b) b.classList.add('on');
+  }catch(e){} })();
+
+  /* 결과 페이지의 로그인 게이트로 유입(index.html?login=1&next=my|shop) — 로그인 시트를 열고, 완료 시 해당 탭으로 */
+  (function(){ try{ var q=new URLSearchParams(location.search); if(q.get('login')!=='1') return;
+    var next=(q.get('next')==='shop')?'shop':'my';
+    openLogin(next==='shop'?'전문가 매칭':'결과 저장', function(){ go(next); });
   }catch(e){} })();
 
   /* ================= 홈 (줄자 리디자인) 인터랙션 — _home2 이식 ================= */
