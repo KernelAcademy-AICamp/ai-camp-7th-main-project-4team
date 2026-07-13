@@ -9,6 +9,7 @@
   var NORM={ TOP:[['slim','슬림'],['regular','레귤러'],['loose','루즈'],['oversize','오버'],['skinny','스키니']],
              BOTTOM:[['skinny','스키니'],['slim','슬림'],['straight','스트레이트'],['tapered','테이퍼드'],['wide','와이드'],['bootcut','부츠컷']] };
   var rows=[{size:'',cells:{},note:''}];
+  var urlBrand=(new URLSearchParams(location.search)).get('brand')||'';   // 브랜드 관리에서 ?brand=로 진입 시 프리필
   var BRANDS=[];   // garments.json의 기존 브랜드(선택용). 새 브랜드는 직접 입력(datalist).
   fetch('data/garments.json').then(function(r){return r.json();}).then(function(j){
     var seen={}; (j.specs||[]).forEach(function(s){ if(s.brandName && !seen[s.brandName]){ seen[s.brandName]=1; BRANDS.push(s.brandName); } });
@@ -36,7 +37,7 @@
     function sel(id,opts,cur){return '<select id="'+id+'" onchange="__meta()">'+opts.map(function(o){return '<option value="'+o[0]+'"'+(o[0]===cur?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>';}
     function inp(id,ph,w){return '<input id="'+id+'" placeholder="'+ph+'" oninput="__build()" style="width:'+(w||120)+'px">';}
     var cat=(($('iCat')&&$('iCat').value))||'TOP';
-    var brandDL='<input id="mBrand" list="brandDL" placeholder="선택 또는 새 브랜드" oninput="__build()" style="width:150px">'+
+    var brandDL='<input id="mBrand" list="brandDL" value="'+esc(urlBrand)+'" placeholder="선택 또는 새 브랜드" oninput="__build()" style="width:150px">'+
       '<datalist id="brandDL">'+BRANDS.map(function(b){return '<option value="'+b.replace(/"/g,'&quot;')+'">';}).join('')+'</datalist>';
     $('metaForm').innerHTML=
       fld('브랜드',brandDL)+
