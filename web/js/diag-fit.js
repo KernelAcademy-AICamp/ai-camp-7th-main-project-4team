@@ -124,7 +124,13 @@
   steps.forEach(function(s,i){ if(i===0) return;
     var l=document.createElement('div'); l.className='qtarget'; l.innerHTML='<b class="catword">상의</b> 진단';
     s.insertBefore(l, s.firstChild); });
-  let cur=0;
+  let cur=0, skipCat=false;   // skipCat = ?cat=으로 카테고리 선택(idx0)을 건너뛰고 선호핏부터 시작한 진입
+  // ?cat= base면 garments fetch(→boot) 기다리지 않고 첫 페인트에 바로 선호핏(idx1)을 active로.
+  // (안 하면 idx0 '어떤 옷을 진단할까요?'가 잠깐 떴다가 idx1로 바뀌어 깜빡임)
+  (function(){
+    var qc=new URLSearchParams(location.search).get('cat');
+    if(qc && CATS[qc] && CATS[qc].kind==='base'){ cur=1; skipCat=true; steps.forEach(function(s,k){ s.classList.toggle('active', k===cur); }); }
+  })();
   // 실측 데이터 없는 기반 카테고리(구조적 예외): 선호핏(idx1) 단계에서 착용경험 없이 바로 진단.
   function isPrefOnlyBase(){ return CATS[target] && CATS[target].kind==='base' && !hasData(target); }
   function render(){
@@ -132,14 +138,16 @@
     var wf=document.getElementById('wfill'); if(wf) wf.style.width=((cur+1)/steps.length*100)+'%';
     document.querySelectorAll('#qconn span').forEach(function(el,k){ el.classList.toggle('on', k<=cur); });  // 질문 진행(연결선)
     const btn=document.getElementById('nextbtn');
-    if(isPrefOnlyBase() && cur===1) btn.textContent='이대로 진단하기 (선호핏만)';
-    else if(DIAGNOSE_AT[cur]) btn.textContent='이대로 진단하기 ('+DIAGNOSE_AT[cur]+'벌)';
-    else btn.textContent = cur===0 ? '이 종류로 시작' : '다음';
+    if(isPrefOnlyBase() && cur===1) btn.textContent='진단하기';
+    else if(DIAGNOSE_AT[cur]) btn.textContent='진단하기';
+    else btn.textContent = cur===0 ? '시작하기' : '다음';
     updateNext();
     window.scrollTo(0,0);
   }
   function goTo(i){ cur=i; render(); }
   function next(){ if(cur<steps.length-1){cur++;render()} }
+  // 이전 = 항상 직전 단계로(그 전 입력 그대로 남아 수정 가능). idx0(대상 선택)에서만 기본정보 화면으로.
+  // skip 진입(상의/하의 진단하기)이라도 이전을 누르면 건너뛴 대상 선택(idx0)으로 내려가 편집 가능.
   function prev(){ if(cur>0){cur--;render()} else location.href=PREV_URL; }
   function footerAction(){
     if(!stepDone()) return;
@@ -152,9 +160,10 @@
   function sizeDone(g){ return !!document.querySelector('#size'+g+' .opt.on'); }
   function feelDone(boxId){
     var box=document.getElementById(boxId); if(!box) return true;
-    // 필수 = 주부위(4지선다: 끼임/딱맞음/여유/큼)만. 허리밴드(3지선다)·접힌 항목은 선택.
+    // 필수 = 메인 그룹의 착용감 전부(상의=주부위 3 / 하의=주부위 3 + 허리밴드 = 4).
+    // '더 자세한 착용감'(feel-more-body)·접힌(details) 항목만 선택.
     var rows=[].slice.call(box.querySelectorAll('.feel-row')).filter(function(r){
-      return !r.closest('details') && r.querySelectorAll('.feel-opts .opt').length===4;
+      return !r.closest('details') && !r.closest('.feel-more-body');
     });
     return rows.every(function(r){ return !!r.querySelector('.feel-opts .opt.on'); });
   }
@@ -521,7 +530,13 @@
     renderBrands();   // 앵커 브랜드만 노출(데이터 로드 후) — applyTarget이 brand select을 읽기 전에
     const routed=initFromQuery();
     applyTarget();
-    if(routed==='base'){ gateTargets(); render(); }
+    if(routed==='base'){
+      gateTargets();
+      // ?cat=으로 대상이 정해져 들어오면(결과화면 '상의/하의 진단하기') 카테고리 선택(idx0)은 건너뛰고 선호핏(idx1)부터 시작
+      var qcat=new URLSearchParams(location.search).get('cat');
+      if(qcat && CATS[qcat] && CATS[qcat].kind==='base'){ cur=1; skipCat=true; }
+      render();
+    }
   }
   // A축 사이즈 시드 로드 → 데이터 보유 카테고리(DATA_CATS) 판별 + 브랜드별 사이즈 라벨.
   // 로드 후 플로우 시작(실패=file:// 등 → 현재 데이터 반영 폴백으로 boot).
