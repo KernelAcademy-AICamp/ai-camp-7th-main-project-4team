@@ -4,5 +4,13 @@
   "rewrites": [
     { "source": "/og-image-v2.png", "destination": "/img/og-image-v2.png" },
     { "source": "/og-image.png", "destination": "/img/og-image.png" }
+  ],
+  "headers": [
+    {
+      "source": "/admin(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
+      ]
+    }
   ]
 }
