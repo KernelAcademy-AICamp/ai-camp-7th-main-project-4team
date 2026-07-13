@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅 관리자 — 이미지 붙여넣기 수집</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/tokens.css?v=dc9975ef">
+<link rel="stylesheet" href="css/admin.css?v=42c370a5">
+</head>
+<body>
+<div class="anav"><div class="anav-in">
+  <span class="brand">fitting</span><span class="tag">관리자 · 프로토타입</span>
+  <nav class="asecs">
+    <a class="s on" href="admin.html">사이즈·데이터</a>
+    <a class="s" href="admin-members.html">회원·거래</a>
+    <a class="s" href="admin-business.html">사업현황</a>
+    <a class="s" href="admin-api.html">B2B API</a>
+    <a class="s" href="admin-ops.html">내부운영</a>
+  </nav>
+  <span class="who">👤 <b id="adminWho">—</b></span>
+  <span class="lo" onclick="adminLogout()">로그아웃</span>
+</div></div>
+
+<div class="awrap">
+  <div class="crumb"><a href="admin.html">사이즈·데이터</a> › <b>이미지 붙여넣기 수집 (3.A.1)</b></div>
+  <p class="subnote"><b>사이즈표 이미지를 붙여넣고(⌘/Ctrl+V) 보면서 전사</b> → 기존 수집 CSV 포맷으로 내보내기. 자동 OCR은 표 인식 신뢰도 문제로 제외(수동 전사가 정확). 내보낸 CSV를 <span class="pill">data/brand/raw/*.csv</span>에 붙여넣고 <span class="pill">build-sizespec.py</span>로 재생성하면 반영돼요.</p>
+
+  <div class="collect">
+    <!-- 이미지 붙여넣기 영역 -->
+    <div class="collect-img">
+      <div class="dropzone" id="dropzone" tabindex="0">
+        <div class="dz-hint" id="dzHint">
+          <div class="dz-ico">📋</div>
+          <b>여기에 사이즈표 이미지 붙여넣기</b>
+          <span>⌘/Ctrl + V · 드래그&드롭 · <label class="dz-file">파일 선택<input type="file" id="fileIn" accept="image/*" hidden></label></span>
+        </div>
+        <img id="preview" alt="사이즈표" hidden>
+      </div>
+      <div class="dz-tools" id="dzTools" hidden>
+        <span class="alink" onclick="__clear()">이미지 지우기</span>
+      </div>
+    </div>
+
+    <!-- 메타 + 전사 그리드 -->
+    <div class="collect-form">
+      <div class="sec-h">1 · 제품 정보</div>
+      <div class="filters" id="metaForm"></div>
+
+      <div class="sec-h">2 · 사이즈 전사 <span class="muted" style="font-weight:400" id="partsHint"></span></div>
+      <div class="tablewrap"><table class="dt" id="gridTable"></table></div>
+      <div class="gridbtns">
+        <button class="abtn ghost" onclick="__addRow()">+ 사이즈 행</button>
+        <button class="abtn ghost" onclick="__addRows(5)">+ 5행</button>
+      </div>
+
+      <div class="sec-h">3 · 내보내기</div>
+      <div class="exportbar">
+        <button class="abtn" onclick="__copyCsv()">CSV 복사</button>
+        <button class="abtn ghost" onclick="__downloadCsv()">CSV 다운로드</button>
+        <span class="cnt" id="exportMsg"></span>
+      </div>
+      <div class="tablewrap" style="margin-top:10px"><pre class="csvout" id="csvOut"></pre></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/admin-common.js?v=b64f60d3"></script>
+<script src="js/admin-collect.js?v=c7429ae1"></script>
+</body>
+</html>
