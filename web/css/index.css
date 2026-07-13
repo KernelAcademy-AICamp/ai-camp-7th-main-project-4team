@@ -63,10 +63,20 @@
   /* 줄자(주인공) */
   #home .rulerwrap{max-width:740px;margin:50px auto 0;user-select:none}
   #home .ruler{position:relative;height:74px}
-  #home .ruler .nums{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;font-size:13px;font-weight:800;color:var(--sub2);font-family:var(--num);font-feature-settings:'tnum'}
+  /* 숫자 라벨을 눈금(0·25·50·75·100% = 150·160·170·180·190)에 정확히 정렬 */
+  #home .ruler .nums{position:absolute;left:0;right:0;top:0;height:16px;font-size:13px;font-weight:800;color:var(--sub2);font-family:var(--num);font-feature-settings:'tnum'}
+  #home .ruler .nums span{position:absolute;top:0;transform:translateX(-50%)}
+  #home .ruler .nums span:nth-child(1){left:0;transform:none}
+  #home .ruler .nums span:nth-child(2){left:25%}
+  #home .ruler .nums span:nth-child(3){left:50%}
+  #home .ruler .nums span:nth-child(4){left:75%}
+  #home .ruler .nums span:nth-child(5){left:100%;transform:translateX(-100%)}
   #home .ruler .tape{position:absolute;left:0;right:0;top:28px;height:40px;border-radius:9px;background:linear-gradient(180deg,#fff,#FBFBFA);border:1px solid var(--line);overflow:hidden;box-shadow:0 8px 22px rgba(20,22,28,.07)}
-  #home .ruler .ticks{position:absolute;left:0;right:0;top:28px;height:40px;background-image:repeating-linear-gradient(90deg,var(--line2) 0 1px,transparent 1px 13px);opacity:.9}
-  #home .ruler .ticks.major{background-image:repeating-linear-gradient(90deg,var(--sub2) 0 1.4px,transparent 1.4px 65px);height:17px}
+  /* 눈금: JS가 정수 픽셀 위치로 선(i) 생성 → 균일 렌더. 얇은줄=2cm마다(양끝 제외), 굵은줄=160·170·180만 */
+  #home .ruler .ticks{position:absolute;left:0;right:0;top:28px;height:40px;opacity:.9}
+  #home .ruler .ticks i{position:absolute;top:0;height:100%;width:1px;background:var(--line2)}
+  #home .ruler .ticks.major{height:17px}
+  #home .ruler .ticks.major i{width:2px;margin-left:-1px;background:var(--sub2)}
   #home .ruler .shimmer{position:absolute;left:0;right:0;top:28px;height:40px;border-radius:9px;overflow:hidden;pointer-events:none}
   #home .ruler .shimmer::after{content:"";position:absolute;top:0;bottom:0;width:38%;background:linear-gradient(100deg,transparent,rgba(156,193,174,.4),transparent);transform:translateX(-160%);animation:hshim 3.6s ease-in-out 1.6s infinite}
   @keyframes hshim{0%{transform:translateX(-160%)}55%,100%{transform:translateX(320%)}}
@@ -106,8 +116,8 @@
   /* 결과 카드 쇼케이스 (블러+잠금) */
   #home .showpanel{background:linear-gradient(180deg,#fff,#FBFBFA);border:1px solid var(--line);border-radius:28px;padding:52px}
   #home .show-in{display:grid;grid-template-columns:1fr 440px;gap:56px;align-items:center}
-  #home .types{display:flex;flex-wrap:wrap;gap:9px;margin-top:24px}
-  #home .types .ty{font-size:14px;font-weight:800;font-family:var(--num);letter-spacing:.1em;color:var(--sub);background:#fff;border:1.5px solid var(--line2);padding:9px 15px;border-radius:11px;transition:.3s}
+  #home .types{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:24px}
+  #home .types .ty{font-size:14px;font-weight:800;font-family:var(--num);letter-spacing:.1em;color:var(--sub);background:#fff;border:1.5px solid var(--line2);padding:9px 15px;border-radius:11px;transition:.3s;text-align:center}
   #home .types .ty.on{color:#fff;background:var(--green);border-color:var(--green)}
   #home .tyname{margin-top:20px;font-size:15px;color:var(--sub)}#home .tyname b{color:var(--ink);font-weight:800}
   #home .stats{display:flex;gap:16px;margin-top:30px}
