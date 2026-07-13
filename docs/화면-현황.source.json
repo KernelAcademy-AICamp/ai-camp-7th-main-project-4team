@@ -1,9 +1,15 @@
 {
   "_readme": "화면 현황판의 손관리 소스 — 상태·비고·kind만. 나머지(소유·커밋·JS연결·IA플래그)는 gen-screens.py가 자동. 화면 추가/수정 시 여기 한 줄만 갱신하고 npm run screens.",
   "_status_enum": "시안 → 구현 → 실연결 → 완료 · 보류",
-  "_kind_enum": "app(진단/허브) · pro(공급자) · info(정보/정책, JS 없어도 정상) · util(플래그 제외)",
+  "_kind_enum": "app(진단/허브) · pro(공급자) · admin(운영) · info(정보/정책, JS 없어도 정상) · util(플래그 제외)",
 
   "index":        { "name": "홈·허브(탭 홈/쇼퍼찾기/마이)", "kind": "app",  "status": "구현",   "note": "단일 페이지에 탭 3섹션(#home/#shop/#my). 쇼퍼찾기=페이크도어." },
+  "admin-login":  { "name": "관리자 로그인(구글+이메일2FA)", "kind": "admin", "status": "시안", "note": "프로토타입 — 인증은 목업(실제 아님). 승격 시 Supabase Auth(구글)+이메일 OTP." },
+  "admin":        { "name": "관리자 · 사이즈/데이터(3.A)",   "kind": "admin", "status": "구현", "note": "브랜드 실측(garments.json)+신체 사이즈(body-*) 실파일 브라우징. 커버리지·필터. 데이터는 실제, 로그인만 목업." },
+  "admin-members":  { "name": "관리자 · 회원·거래(3.B)",     "kind": "admin", "status": "시안", "note": "IA 스텁(빈 파일) — 전문가심사·회원·입찰·분쟁·정산·리뷰. v2." },
+  "admin-business": { "name": "관리자 · 사업현황(3.C)",      "kind": "admin", "status": "시안", "note": "IA 스텁 — 운영 대시보드·제품 메트릭." },
+  "admin-api":      { "name": "관리자 · B2B API(3.D)",       "kind": "admin", "status": "시안", "note": "IA 스텁 — API 고객·키·과금. v3." },
+  "admin-ops":      { "name": "관리자 · 내부운영(3.E)",       "kind": "admin", "status": "시안", "note": "IA 스텁 — RBAC·감사로그·쿠폰. 후순위." },
   "diag-basic":   { "name": "기본 정보 입력",              "kind": "app",  "status": "구현",   "note": "성별·키·몸무게. 성별 선택 시 평균값 프리필." },
   "diag-fit":     { "name": "착용경험 보정 입력",          "kind": "app",  "status": "실연결", "note": "앵커 브랜드·사이즈 완전 데이터화(#20). 엔진 역산 실연결은 상의(TOP) 기준." },
   "diag-loading": { "name": "진단 로딩",                  "kind": "app",  "status": "구현",   "note": "역산+매칭 계산 대기 → result로 이동." },

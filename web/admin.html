@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅 관리자 — 데이터</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/tokens.css?v=dc9975ef">
+<link rel="stylesheet" href="css/admin.css?v=59eaa8ed">
+</head>
+<body>
+<div class="anav"><div class="anav-in">
+  <span class="brand">fitting</span><span class="tag">관리자 · 프로토타입</span>
+  <nav class="asecs">
+    <a class="s on" href="admin.html">사이즈·데이터</a>
+    <a class="s" href="admin-members.html">회원·거래</a>
+    <a class="s" href="admin-business.html">사업현황</a>
+    <a class="s" href="admin-api.html">B2B API</a>
+    <a class="s" href="admin-ops.html">내부운영</a>
+  </nav>
+  <span class="who">👤 <b id="adminWho">—</b></span>
+  <span class="lo" onclick="adminLogout()">로그아웃</span>
+</div></div>
+
+<div class="awrap">
+  <div class="atabs" id="atabs">
+    <div class="t on" data-tab="garments" onclick="showTab('garments')">브랜드 실측 사이즈</div>
+    <div class="t" data-tab="body" onclick="showTab('body')">신체 사이즈</div>
+  </div>
+
+  <!-- 브랜드 실측(garments.json) -->
+  <div class="apanel on" id="panel-garments">
+    <div class="kpis" id="gKpis"></div>
+    <div class="sec-h">브랜드 × 카테고리 커버리지</div>
+    <div class="tablewrap"><table class="dt" id="covTable"></table></div>
+    <div class="sec-h">실측 데이터 (필터)</div>
+    <div class="filters" id="gFilters"></div>
+    <div class="tablewrap"><table class="dt" id="specTable"></table></div>
+  </div>
+
+  <!-- 신체 사이즈(body-base-model / body-distribution) -->
+  <div class="apanel" id="panel-body">
+    <div class="kpis" id="bKpis"></div>
+    <div class="sec-h">성별별 신체 기준값 · 분포</div>
+    <div class="filters" id="bFilters"></div>
+    <div class="tablewrap"><table class="dt" id="bodyTable"></table></div>
+  </div>
+</div>
+<script src="js/admin-common.js?v=b64f60d3"></script>
+<script src="js/admin.js?v=9db2c7fb"></script>
+</body>
+</html>

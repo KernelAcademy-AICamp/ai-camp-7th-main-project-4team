@@ -112,12 +112,12 @@ for stem, links in outgoing.items():
             incoming[t] += 1
 
 # 플래그 계산
-ENTRY = "index"   # 랜딩/허브 = 외부 진입점이라 고아 아님
+ENTRIES = {"index", "admin-login"}   # 외부 진입점(랜딩·관리자 로그인) = 고아 아님
 for s in screens:
     stem, kind = s["stem"], s["kind"]
     flags = []
     if kind != "util":
-        if incoming[stem] == 0 and stem != ENTRY:
+        if incoming[stem] == 0 and stem not in ENTRIES:
             flags.append("🕳️고아(들어오는 링크 없음)")
         if not s["links"]:
             flags.append("🚧막다른길(나가는 링크 없음)")
