@@ -106,8 +106,8 @@
   /* 결과 카드 쇼케이스 (블러+잠금) */
   #home .showpanel{background:linear-gradient(180deg,#fff,#FBFBFA);border:1px solid var(--line);border-radius:28px;padding:52px}
   #home .show-in{display:grid;grid-template-columns:1fr 440px;gap:56px;align-items:center}
-  #home .types{display:flex;flex-wrap:wrap;gap:9px;margin-top:24px}
-  #home .types .ty{font-size:14px;font-weight:800;font-family:var(--num);letter-spacing:.1em;color:var(--sub);background:#fff;border:1.5px solid var(--line2);padding:9px 15px;border-radius:11px;transition:.3s}
+  #home .types{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:24px}
+  #home .types .ty{font-size:14px;font-weight:800;font-family:var(--num);letter-spacing:.1em;color:var(--sub);background:#fff;border:1.5px solid var(--line2);padding:9px 15px;border-radius:11px;transition:.3s;text-align:center}
   #home .types .ty.on{color:#fff;background:var(--green);border-color:var(--green)}
   #home .tyname{margin-top:20px;font-size:15px;color:var(--sub)}#home .tyname b{color:var(--ink);font-weight:800}
   #home .stats{display:flex;gap:16px;margin-top:30px}
