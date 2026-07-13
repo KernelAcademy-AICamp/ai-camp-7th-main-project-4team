@@ -101,11 +101,19 @@
   }
 
   /* ── 전체 렌더 ── */
+  // 8유형 성별 축: 구조필드(공유)+gender.{male,female} 콘텐츠 병합. 구 포맷은 raw 폴백.
+  function btResolve(t, g){
+    if(!t) return t;
+    g=(g==='male'||g==='female')?g:'female';
+    var c=(t.gender&&(t.gender[g]||t.gender.female))||t;
+    return { code:t.code, name:t.name, sizeKorea:t.sizeKorea, silhouette:t.silhouette, point:t.point,
+      profile:c.profile, fitOk:c.fitOk, fitNo:c.fitNo, insight:c.insight, match:c.match, signature:c.signature };
+  }
   function render(){
     var r = reqs[idx];
     if(!r){ $('quoteRoot').innerHTML='<p class="crumb">요청을 찾을 수 없어요.</p><p style="margin-top:10px"><a class="tinybtn" onclick="location.href=\'pro.html\'">요청 내역으로</a></p>'; return; }
     var out = r.dir==='out';
-    var bt = BTMAP[r.type] || {};
+    var bt = btResolve(BTMAP[r.type], r.gender) || {};   // 고객 성별로 콘텐츠 해석
     var m = MEASURE_BY_CUST[r.cust] || MEASURE_DEFAULT;
     var profileLines = (bt.profile||[]).map(function(p){ return '<p class="bdesc">'+esc(p)+'</p>'; }).join('');
 
