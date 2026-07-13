@@ -4,12 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>fitting · 쇼퍼 가입</title>
+<!-- 이미 가입한 쇼퍼면 화면 그리기 전에 포털로 (가입 화면 깜빡임 방지) -->
+<script>try{var p=JSON.parse(localStorage.getItem('fitting.pro.profile')||'null');if(p&&p.registered)location.replace('pro.html');}catch(e){}</script>
 <!-- 쇼퍼(공급자) 가입 온보딩 위저드. 메인 "쇼퍼 지원" → 여기 → 완료 시 pro.html.
      수집 데이터는 localStorage 'fitting.pro.profile'에 저장(데이터 계약: docs/쇼퍼가입-화면정의서.md §5). -->
 <link rel="stylesheet" href="css/tokens.css?v=dc9975ef">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/pro-signup.css?v=bcf88374">
+<link rel="stylesheet" href="css/pro-signup.css?v=099a2aa8">
 </head>
 <body>
 <div class="shell">
@@ -30,11 +32,11 @@
       <!-- SP-0 소개 -->
       <section class="panel on" data-step="0">
         <div class="hero">
-          <div class="ic">🧑‍💼</div>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.2a1.9 1.9 0 1 1 1.9 1.9c-1.05 0-1.9.7-1.9 1.7v.7"/><path d="M12 8.5 3.7 14.6a1 1 0 0 0 .6 1.8h15.4a1 1 0 0 0 .6-1.8L12 8.5z"/></svg></div>
           <h1>내 안목으로 수익을 만들어보세요</h1>
           <p>고객의 체형·상황에 맞춰 스타일을 제안하고 수익을 얻는 쇼퍼가 되어보세요.</p>
         </div>
-        <div class="benefits"><span>✔ 요청 받기</span><span>✔ 제안·코디</span><span>✔ 정산</span></div>
+        <div class="benefits"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>요청 받기</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>제안·코디</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>정산</span></div>
         <button class="btn" onclick="go(1)">쇼퍼 시작하기</button>
         <span class="link" onclick="location.href='index.html'">← 고객 화면으로 돌아가기</span>
       </section>
@@ -99,7 +101,7 @@
       <!-- SP-5 완료 -->
       <section class="panel" data-step="5">
         <div class="hero" style="padding:20px 0 6px">
-          <div class="ic">🎉</div>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.3 12.3l2.5 2.5 5-5.4"/></svg></div>
           <h1>쇼퍼 등록 완료!</h1>
           <p><b id="doneName">쇼퍼</b>님, 이제 고객 요청을 받을 수 있어요.</p>
         </div>

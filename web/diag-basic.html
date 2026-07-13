@@ -7,22 +7,30 @@
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=8ad71bfe">
-<link rel="stylesheet" href="css/diag.css?v=b79dcf45">
+<link rel="stylesheet" href="css/diag.css?v=cec12df3">
 </head>
 <body>
 
-<div class="dhead"><div class="dhead-in">
-  <a class="logo" href="index.html">Fitting<i></i></a>
-  <div class="dprog"><div class="prog"><span class="seg"><i id="wfill"></i></span><span class="seg"></span></div></div>
-  <a class="dx" href="index.html" title="닫기">✕</a>
-</div></div>
+<div class="dhead">
+  <div class="dhead-in">
+    <a class="logo" href="index.html">Fitting<i></i></a>
+    <a class="dx" href="index.html" title="닫기">✕</a>
+  </div>
+</div>
 
 <div class="flow">
+  <div class="dstepc">
+    <div class="dnode now"><span class="ddot">1</span><span class="dlbl">기본정보</span></div>
+    <div class="dconn seg" id="qconn"><span><i></i></span><span><i></i></span></div>
+    <div class="dnode"><span class="ddot">2</span><span class="dlbl">착용경험</span></div>
+    <div class="dconn solid"></div>
+    <div class="dnode"><span class="ddot">3</span><span class="dlbl">진단중</span></div>
+  </div>
+
   <!-- Q1 성별 -->
   <div class="wstep active">
-    <span class="qnum">Question 1</span>
     <h2 class="qhead">성별을 알려주세요</h2>
-    <p class="qhelp">브랜드 사이즈 체계가 성별로 갈려서 먼저 여쭤요.</p>
+    <p class="qhelp">성별에 따라 사이즈 기준이 달라져요</p>
     <div class="qbody">
       <div class="seg stack">
         <div class="opt" onclick="pickSex(this)">남성</div>
@@ -33,9 +41,8 @@
 
   <!-- Q2 나이·키·몸무게 (한 화면) -->
   <div class="wstep">
-    <span class="qnum">Question 2</span>
-    <h2 class="qhead">나이 · 키 · 몸무게를<br>알려주세요</h2>
-    <p class="qhelp">체형 분포를 좁히는 데 쓰여요. 특히 <strong>몸무게가 사이즈 정확도에 가장 큰 영향</strong>을 줘요.</p>
+    <h2 class="qhead">나이, 키, 몸무게를 알려주세요</h2>
+    <p class="qhelp">체형을 분석하는 데 필요한 정보예요</p>
     <div class="qbody">
       <div class="grid-3">
         <div class="field"><label>나이</label><select id="age"></select></div>
@@ -49,10 +56,10 @@
   <div class="wnav">
     <button class="btn-line" onclick="prev()">이전</button>
     <span class="spacer"></span>
-    <button class="btn-primary" id="nextbtn" onclick="next()">다음</button>
+    <button class="btn-primary" id="nextbtn" onclick="next()" disabled>다음</button>
   </div>
 </div>
 
-<script src="js/diag-basic.js?v=e69d101d"></script>
+<script src="js/diag-basic.js?v=4dc7c9b3"></script>
 </body>
 </html>

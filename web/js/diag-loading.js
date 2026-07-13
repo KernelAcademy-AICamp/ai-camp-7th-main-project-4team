@@ -7,26 +7,47 @@
   if(SKIP) RESULT='result.html?conf=low';
   else if(G==='1') RESULT='result.html?conf=mid';
   if(CAT) RESULT += (RESULT.indexOf('?')>=0?'&':'?')+'cat='+encodeURIComponent(CAT);
+
+  // 이름 — 저장돼 있으면 "OO님의 …", 없으면(로그인 전 진단) 이름 없이.
+  var NAME='';
+  try{ NAME=(JSON.parse(sessionStorage.getItem('fitting.basic')||'{}').name)||''; }catch(e){}
+  var titleEl=document.getElementById('ltitle');
+  if(titleEl) titleEl.textContent = NAME ? (NAME+'님의 체형을 진단하고 있어요') : '체형을 진단하고 있어요';
+
+  // 케이스별 설명 + 단계 (기본진단=skip · 옷 기반=g · 파생=derived)
+  var subEl=document.getElementById('lsub');
+  var desc, STEPS;
   if(SKIP){
-    document.getElementById('ltitle').textContent='기본 추정을 만들고 있어요';
-    document.getElementById('lsub').textContent='착용 경험 없이 키·몸무게로만 추정합니다. 정확도는 낮을 수 있어요.';
-    const first=document.querySelector('#steps li[data-i="0"]');
-    if(first)first.textContent='착용 경험 없음 — 통계 기반 추정으로 진행';
+    desc='키와 몸무게를 바탕으로 분석하고 있어요';
+    STEPS=['기본 정보 분석','체형 분석','추천 결과 생성'];
   } else if(DERIVED){
-    document.getElementById('ltitle').textContent='이미 아는 체형으로 맞춰요';
-    document.getElementById('lsub').textContent='실측을 다시 재지 않아요 — 저장된 체형에 선호핏만 반영해 이 종류 사이즈로 번역합니다.';
-    const first=document.querySelector('#steps li[data-i="0"]');
-    if(first)first.textContent='저장된 체형 프로필 재사용 (재측정 없음)';
-  } else if(G==='1'){
-    document.getElementById('lsub').textContent='한 벌의 착용 경험을 거꾸로 풀어 추정합니다. 한 벌 더 넣으면 더 정교해져요.';
-    const first=document.querySelector('#steps li[data-i="0"]');
-    if(first)first.textContent='착용 경험 1벌 → 부위별 여유(cm) 환산';
+    desc='저장된 체형에 선호핏을 반영하고 있어요';
+    STEPS=['저장된 체형 재사용','선호핏 반영','추천 결과 생성'];
+  } else if(G){
+    desc='입어본 옷을 바탕으로 체형과 선호핏을 분석하고 있어요';
+    STEPS=['착용감 분석','체형 분석','브랜드별 사이즈 비교','추천 결과 생성'];
+  } else {
+    desc='키와 몸무게를 바탕으로 분석하고 있어요';
+    STEPS=['기본 정보 분석','체형 분석','추천 결과 생성'];
   }
-  const lis=[...document.querySelectorAll('#steps li')];
-  let i=0;
-  function tick(){
-    if(i>0)lis[i-1].classList.replace('active','done');
-    if(i<lis.length){lis[i].classList.add('active');i++;setTimeout(tick,750)}
-    else{lis[lis.length-1].classList.replace('active','done');setTimeout(()=>location.href=RESULT,500)}
+  if(subEl) subEl.textContent=desc;
+  var stepsUl=document.getElementById('steps');
+  if(stepsUl) stepsUl.innerHTML=STEPS.map(function(t){ return '<li><span class="tick"></span>'+t+'</li>'; }).join('');
+
+  // 줄자 로딩 — 마커가 0→100% 지나가며(측정) 단계를 순차 체크, 끝나면 결과로.
+  var marker=document.getElementById('lmarker'), fill=document.getElementById('lfill'), pctEl=document.getElementById('lpct');
+  var lis=[].slice.call(document.querySelectorAll('#steps li'));
+  var DUR=3200, t0=null, gone=false;
+  function raf(ts){
+    if(t0===null) t0=ts;
+    var p=Math.min(100,(ts-t0)/DUR*100);
+    if(marker) marker.style.left=p+'%';
+    if(fill) fill.style.width=p+'%';
+    if(pctEl) pctEl.textContent=Math.round(p)+'%';
+    var idx=Math.min(lis.length, Math.floor(p/100*lis.length));
+    lis.forEach(function(l,k){ l.classList.toggle('done',k<idx); l.classList.toggle('active',k===idx && idx<lis.length); });
+    if(p<100){ requestAnimationFrame(raf); }
+    else if(!gone){ gone=true; lis.forEach(function(l){ l.classList.remove('active'); l.classList.add('done'); });
+      setTimeout(function(){ location.href=RESULT; },450); }
   }
-  setTimeout(tick,400);
+  requestAnimationFrame(raf);

@@ -7,27 +7,35 @@
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=8ad71bfe">
-<link rel="stylesheet" href="css/diag.css?v=b79dcf45">
+<link rel="stylesheet" href="css/diag.css?v=cec12df3">
 </head>
 <body>
 
-<div class="dhead"><div class="dhead-in">
-  <a class="logo" href="index.html">Fitting<i></i></a>
-  <div class="dprog"><div class="prog"><span class="seg done"></span><span class="seg"><i id="wfill"></i></span></div></div>
-  <a class="dx" href="index.html" title="닫기">✕</a>
-</div></div>
+<div class="dhead">
+  <div class="dhead-in">
+    <a class="logo" href="index.html">Fitting<i></i></a>
+    <a class="dx" href="index.html" title="닫기">✕</a>
+  </div>
+</div>
 
 <div class="flow">
 
+  <div class="dstepc">
+    <div class="dnode done"><span class="ddot">1</span><span class="dlbl">기본정보</span></div>
+    <div class="dconn solid done"></div>
+    <div class="dnode now"><span class="ddot">2</span><span class="dlbl">착용경험</span></div>
+    <div class="dconn seg" id="qconn"><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span></div>
+    <div class="dnode"><span class="ddot">3</span><span class="dlbl">진단중</span></div>
+  </div>
+
   <!-- idx0 · 진단 대상 카테고리 선택 -->
   <div class="wstep active">
-    <span class="qnum">진단 대상</span>
-    <h2 class="qhead">어떤 옷의 사이즈를<br>알고 싶으세요?</h2>
-    <p class="qhelp">진단은 <strong>옷 종류별로</strong> 따로 풀어요. 상의 경험은 어깨·가슴을, 하의 경험은 허리·엉덩이를 알려주거든요 — 그래서 알고 싶은 종류의 옷으로 입력받아요.</p>
+    <h2 class="qhead">어떤 옷을 진단할까요?</h2>
+    <p class="qhelp">옷 종류에 따라 분석 기준이 달라져요</p>
     <div class="qbody">
       <div class="notice hidden" id="reusebanner" style="margin-bottom:16px"></div>
       <div class="seg cat stack" id="target">
-        <div class="opt on" data-cat="top" onclick="pickTarget(this)">상의</div>
+        <div class="opt" data-cat="top" onclick="pickTarget(this)">상의</div>
         <div class="opt" data-cat="bottom" onclick="pickTarget(this)">하의</div>
         <div class="opt" data-cat="outer" onclick="pickTarget(this)">아우터</div>
         <div class="opt" data-cat="dress" onclick="pickTarget(this)">원피스</div>
@@ -36,18 +44,16 @@
 
       <div class="notice warn hidden mt-16" id="targetnote"></div>
 
-      <div class="center mt-24">
-        <a href="diag-loading.html?skip=1" class="btn-ghost" style="text-decoration:underline">입어본 옷이 없거나 기억나지 않아요 — 건너뛰기</a>
-        <p class="small" style="max-width:360px;margin:6px auto 0">건너뛰면 키·몸무게로만 <strong>기본 추정</strong>을 보여드려요. 정확도는 낮고, 나중에 옷을 추가하면 정교해져요.</p>
+      <div class="center" style="margin-top:44px">
+        <p class="small" style="margin:0 auto 2px">입어본 옷이 없나요?</p>
+        <a href="diag-loading.html?skip=1" class="btn-ghost" style="text-decoration:underline;padding:2px 0">기본 정보만으로 진단하기</a>
       </div>
     </div>
   </div>
 
   <!-- idx1 · 선호핏 (카테고리 스코프 — 종류마다 취향이 다름) -->
   <div class="wstep">
-    <span class="qnum num"><span class="catword">상의</span> · 선호핏</span>
-    <div class="target-chip">진단 대상 · <b class="catword">상의</b> <span class="change" onclick="goTo(0)">바꾸기</span></div>
-    <h2 class="qhead"><span class="catword">상의</span>는 평소<br>어떤 핏으로 입어요?</h2>
+    <h2 class="qhead">평소 어떤 핏을 즐겨 입나요?</h2>
     <p class="qhelp" id="prefhelp">선호하는 여유감은 <strong>옷 종류마다 달라서</strong> 종류를 고른 뒤 물어봐요. 이 취향은 <span class="catword">상의</span> 추천에만 적용돼요.</p>
     <div class="qbody">
       <div class="notice hidden" id="prefonlynote" style="margin-bottom:14px"></div>
@@ -64,10 +70,8 @@
 
   <!-- idx2 · 옷1 정보 -->
   <div class="wstep">
-    <span class="qnum num">옷 1 · 정보</span>
-    <div class="target-chip">진단 대상 · <b class="catword">상의</b> <span class="change" onclick="goTo(0)">바꾸기</span></div>
-    <h2 class="qhead"><span class="catword">상의</span>는 <span class="longword">긴팔</span>로<br>입어본 걸 알려주세요</h2>
-    <p class="qhelp"><strong>정확한 진단을 위해 <span class="longword">긴팔</span>을 부탁해요</strong> — 팔·다리까지 알려줘야 몸을 제대로 재거든요. 자주 입어 느낌이 또렷한 옷이면 더 좋고, 한 벌만으로도 진단돼요.</p>
+    <h2 class="qhead">입어본 <span class="longword">긴팔</span> <span class="catword">상의</span> 정보를 알려주세요</h2>
+    <p class="qhelp">자주 입는 옷일수록 더 정확하게 분석할 수 있어요</p>
     <div class="qbody">
       <div class="grid-2">
         <div class="field"><label>브랜드</label>
@@ -82,15 +86,14 @@
       <div class="field"><label>입었던 사이즈</label>
         <div class="seg compact" id="size1"></div>
       </div>
-      <p class="small"><a href="#" style="color:var(--ink);font-weight:700" onclick="alert('프로토타입: 직접 입력 / 해당 없음 분기');return false">찾는 브랜드가 없어요</a> — 직접 입력하거나 건너뛸 수 있어요.</p>
+      <p class="small"><a href="#" style="color:var(--ink);font-weight:700" onclick="alert('프로토타입: 직접 입력 / 해당 없음 분기');return false">찾는 브랜드가 없어요</a> — 직접 입력하거나 건너뛸 수 있어요</p>
     </div>
   </div>
 
   <!-- idx3 · 옷1 느낌 -->
   <div class="wstep">
-    <span class="qnum num">옷 1 · 느낌</span>
-    <h2 class="qhead">입었을 때 어땠어요?</h2>
-    <p class="qhelp"><span class="catword">상의</span> 부위별 느낌을 골라주세요. 걸린 곳·기장은 <strong>있으면만</strong> — 없으면 그대로 넘겨도 돼요.</p>
+    <h2 class="qhead">입었을 때 느낌은 어땠나요?</h2>
+    <p class="qhelp">부위별 착용감을 선택해 주세요</p>
     <div class="qbody">
       <div class="feelbox" id="feel1"></div>
     </div>
@@ -98,25 +101,24 @@
 
   <!-- idx4 · 입력 점검 (1벌) — 한 벌 더 / 이대로 진단 분기 -->
   <div class="wstep">
-    <span class="qnum">입력한 옷 · 1벌</span>
     <h2 class="qhead">한 벌만으로도<br>진단할 수 있어요</h2>
-    <p class="qhelp">지금 한 벌이 들어왔어요. 핏이 다른 옷을 한 벌 더 넣으면 체형이 더 또렷해지지만, <strong>한 벌만으로도 추천은 나와요</strong> — 정확도만 조금 낮아요.</p>
+    <p class="qhelp">다른 핏의 옷을 추가하면 더 정확해져요</p>
     <div class="qbody">
       <div class="card-soft mb-16">
-        <div class="size-row" style="border:none;padding:9px 0;opacity:.5"><span class="brand">0벌 · 건너뛰기</span><span class="small">기본 추정</span></div>
-        <div class="size-row" style="padding:9px 0"><span class="brand">1벌 · 지금 <span class="soon live">현재</span></span><span class="small">보통 — 추천 가능</span></div>
-        <div class="size-row" style="padding:9px 0;opacity:.5"><span class="brand">2~3벌</span><span class="small">정확 — 권장</span></div>
+        <div class="acc">
+          <div class="acc-row"><span class="l">0벌 · 건너뛰기</span><span class="r">기본 추정</span></div>
+          <div class="acc-row now"><span class="l">1벌 · 지금<span class="cur">현재</span></span><span class="r">보통 — 추천 가능</span></div>
+          <div class="acc-row"><span class="l">2~3벌</span><span class="r">정확 — 권장</span></div>
+        </div>
       </div>
-      <button class="add-garment" onclick="next()">+ 핏이 다른 <span class="catword">상의</span> 한 벌 더 <span style="color:var(--faint)">(정확도 ↑)</span></button>
+      <button class="add-garment" onclick="next()">+ 다른 핏의 <span class="catword">상의</span> 추가하기</button>
     </div>
   </div>
 
   <!-- idx5 · 옷2 정보 -->
   <div class="wstep">
-    <span class="qnum num">옷 2 · 정보</span>
-    <div class="target-chip">진단 대상 · <b class="catword">상의</b></div>
-    <h2 class="qhead">핏이 다른 <span class="catword">상의</span>도<br>하나 넣어볼까요?</h2>
-    <p class="qhelp">옷 1과 핏이 다를수록 체형이 또렷해져요. 이번에도 <strong><span class="longword">긴팔</span></strong>이면 가장 정확해요. <span class="small">(같은 종류로 — 그래야 같은 부위를 교차 검증해요)</span></p>
+    <h2 class="qhead">핏이 다른 <span class="catword">상의</span>도<br>추가해볼까요?</h2>
+    <p class="qhelp">핏이 다른 옷일수록 체형을 더 정확하게 분석할 수 있어요</p>
     <div class="qbody">
       <div class="grid-2">
         <div class="field"><label>브랜드</label>
@@ -135,9 +137,8 @@
 
   <!-- idx6 · 옷2 느낌 -->
   <div class="wstep">
-    <span class="qnum num">옷 2 · 느낌</span>
-    <h2 class="qhead">이 옷은 어땠어요?</h2>
-    <p class="qhelp"><span class="catword">상의</span> 부위별로 하나씩만요.</p>
+    <h2 class="qhead">이 옷은 느낌이 어땠나요?</h2>
+    <p class="qhelp">부위별 착용감을 알려주세요</p>
     <div class="qbody">
       <div class="feelbox" id="feel2"></div>
     </div>
@@ -145,12 +146,18 @@
 
   <!-- idx7 · 입력 점검 (2벌) -->
   <div class="wstep">
-    <span class="qnum">입력한 옷 · 2벌</span>
-    <h2 class="qhead"><span class="catword">상의</span> 2벌 입력 완료!</h2>
-    <p class="qhelp">정확도 좋은 상태예요. 한 벌 더 넣어도 좋고, 이대로 진단해도 됩니다. 다른 종류(하의·아우터…)는 진단 후 따로 돌릴 수 있어요.</p>
+    <h2 class="qhead"><span class="catword">상의</span> 입력이 완료됐어요!</h2>
+    <p class="qhelp">지금도 충분히 정확해요. 더 추가하면 정확도가 높아져요</p>
     <div class="qbody">
-      <button class="add-garment" onclick="alert('프로토타입: 같은 카테고리 옷을 한 벌 더 추가하면 정보·느낌 2단계가 더 생깁니다 (최대 3벌)')">+ <span class="catword">상의</span> 한 벌 더 추가 <span style="color:var(--faint)">(권장: 핏이 다른 옷)</span></button>
-      <div class="notice mt-16">입력은 자동 저장돼요. 결과 화면에서 언제든 수정·재진단할 수 있어요.</div>
+      <div class="card-soft mb-16">
+        <div class="acc">
+          <div class="acc-row"><span class="l">0벌 · 건너뛰기</span><span class="r">기본 추정</span></div>
+          <div class="acc-row done"><span class="l">1벌</span><span class="r">보통</span></div>
+          <div class="acc-row now"><span class="l">2벌 · 지금<span class="cur">현재</span></span><span class="r">정확 — 권장</span></div>
+        </div>
+      </div>
+      <button class="add-garment" onclick="alert('프로토타입: 같은 카테고리 옷을 한 벌 더 추가하면 정보·느낌 2단계가 더 생깁니다 (최대 3벌)')">+ <span class="catword">상의</span> 더 추가하기</button>
+      <div class="notice mt-16">입력은 자동 저장돼요. 결과 화면에서 언제든 수정·재진단할 수 있어요</div>
     </div>
   </div>
 
@@ -158,16 +165,15 @@
   <div class="wnav">
     <button class="btn-line" onclick="prev()">이전</button>
     <span class="spacer"></span>
-    <button class="btn-primary" id="nextbtn" onclick="footerAction()">다음</button>
+    <button class="btn-primary" id="nextbtn" onclick="footerAction()" disabled>다음</button>
   </div>
-  <p class="cta-note center" style="margin-top:-12px;margin-bottom:26px" id="wnote">한 벌씩 천천히 — 부담 없이 진행돼요.</p>
 
   <!-- ===== 파생 카테고리 · 선호핏만 (빠른 경로) — 기반(상/하의)이 체형을 잠근 뒤 진입 ===== -->
   <div id="derived-flow" class="hidden">
     <span class="derived-badge">파생 진단 · 체형 재사용</span>
     <div class="target-chip">진단 대상 · <b class="catword">아우터</b></div>
     <h2 class="qhead"><span class="catword">아우터</span>는<br>선호핏만 알려주세요</h2>
-    <p class="qhelp">체형은 이미 <strong>상의·하의 진단으로 확정</strong>됐어요. <span class="catword">아우터</span>는 몸 치수를 다시 잴 필요 없이, <strong>얼마나 여유 있게 입을지</strong>만 정하면 진단돼요.</p>
+    <p class="qhelp">체형은 이미 분석됐어요. 원하는 여유감만 선택하면 돼요</p>
     <div class="notice mb-16">체형 프로필 재사용 · <strong>새로 입력할 옷 없음</strong></div>
     <div class="seg stack mb-8">
       <div class="opt" onclick="pick(this)">타이트 — 몸에 붙게</div>
@@ -177,7 +183,7 @@
       <div class="opt" onclick="pick(this)">오버 — 크게 레이어링</div>
     </div>
     <div class="center mt-16">
-      <a href="#" class="btn-ghost" style="text-decoration:underline" onclick="alert('프로토타입: 정밀 보정 — 이 종류 실착 1벌을 옵션으로 받아 브랜드 여유폭 오차를 줄입니다(선택).');return false">＋ 실착 1벌로 정밀 보정 (선택)</a>
+      <a href="#" class="btn-ghost" style="text-decoration:underline" onclick="alert('프로토타입: 정밀 보정 — 이 종류 실착 1벌을 옵션으로 받아 브랜드 여유폭 오차를 줄입니다(선택).');return false">+ 실착 정보 추가로 정확도 높이기</a>
     </div>
     <div class="wnav">
       <a href="index.html" class="btn-line">이전</a>
@@ -190,8 +196,8 @@
   <div id="derived-blocked" class="hidden">
     <span class="derived-badge" style="background:var(--warn)">기반 진단 필요</span>
     <div class="target-chip">진단 대상 · <b class="catword">치마</b></div>
-    <h2 class="qhead">먼저 <b id="blocked-need">하의</b>를<br>진단해야 해요</h2>
-    <p class="qhelp"><span class="catword">치마</span>는 <b id="blocked-region">하체</b> 치수가 필요해요. 그 부위는 <b id="blocked-basecat">하의</b> 실착 경험에서만 나와요 — 한 번 해두면 이후엔 <span class="catword">치마</span>도 선호핏만으로 열려요.</p>
+    <h2 class="qhead">먼저 <b id="blocked-need">하의</b>를<br>진단해주세요</h2>
+    <p class="qhelp"><span class="catword">치마</span> 추천에는 <b id="blocked-region">하체</b> 체형 정보가 필요해요<b id="blocked-basecat" hidden></b></p>
     <div class="card-soft mb-16">
       <div class="size-row" style="border:none;padding:9px 0"><span class="brand">지금</span><span class="small">상의만 완료(상체 잠금)</span></div>
       <div class="size-row" style="padding:9px 0"><span class="brand" id="blocked-todo">하의 진단</span><span class="small">→ 하체 잠금</span></div>
@@ -205,6 +211,6 @@
   </div>
 </div>
 
-<script src="js/diag-fit.js?v=dc79731e"></script>
+<script src="js/diag-fit.js?v=e4fa7e89"></script>
 </body>
 </html>
