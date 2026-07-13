@@ -111,12 +111,13 @@
     // 부분 완료: 아직 안 한 기반으로 유도
     slot.className='rlock';
     var needLabel=upperDone?'하의':'상의';
+    var doneLabel=upperDone?'상의':'하의';
     var doneRegion=upperDone?'상체':'하체';
     var needHref=upperDone?'diag-fit.html?cat=bottom&reuse=1&have=top':'diag-fit.html?cat=top&reuse=1&have=bottom';
-    document.getElementById('rtitle').textContent=doneRegion+' 부분 진단이 끝났어요';
-    slot.innerHTML='<div class="lk">🔒</div><div class="t1">체형 카드는 상·하의를 모두 진단하면 나와요</div>'+
-      '<div class="t2">지금은 '+doneRegion+'만 파악됐어요 — 8유형 체형은 '+needLabel+'까지 해야 확정돼요</div>'+
-      '<a class="b" href="'+needHref+'">'+needLabel+' 진단하기 →</a>';
+    document.getElementById('rtitle').textContent=doneRegion+' 부분 진단이 나왔어요';
+    slot.innerHTML='<div class="lk"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><div class="t1">체형 카드는<br>상·하의를 모두 진단하면 나와요</div>'+
+      '<div class="t2">지금은 '+doneLabel+'만 파악됐어요</div>'+
+      '<a class="b" href="'+needHref+'">'+needLabel+' 진단하기</a>';
   }
 
   // ── 브랜드별 추천 사이즈 — TOP(가슴·어깨)·BOTTOM(허리·엉덩이+실루엣) 실계산, 파생은 '준비중' ──
@@ -128,8 +129,8 @@
     if(real){ var good=ranked.filter(function(r){ return (r.fitScore||0)>=60; }); ranked=(good.length?good:ranked).slice(0,3); }
     else ranked=ranked.slice(0,3);
     document.getElementById('recs').innerHTML=
-      '<div class="rrow"><div class="rkicker">가장 잘 맞을 브랜드·사이즈</div><span class="rchip">이번 진단 · '+curLabel+'</span></div>'+
-      '<div class="rnote">평소 착용감 기준, 몸에 <b style="color:var(--ink2)">가장 잘 맞을 순</b>으로 추렸어요 · <b style="color:var(--ink2)">핏 지수</b>=예상 적합도</div>'+
+      '<div class="rrow"><div class="rkicker">브랜드별 추천 사이즈</div><span class="rchip">'+curLabel+' 기준</span></div>'+
+      '<div class="rnote">몸에 <b style="color:var(--ink2)">가장 잘 맞을 순</b>으로 · <b style="color:var(--ink2)">핏 지수</b> = 예상 적합도</div>'+
       '<div class="s2list">'+
       ranked.map(function(r){
         var note=(FLK[r.fitLine]||'')+' · '+r.bottleneck+' 기준'+(r.variance?' · '+r.variance:'');
@@ -140,39 +141,39 @@
           '<div class="s2in"><div class="b">'+r.brandName+'<small>'+note+'</small></div>'+
           '<div class="r"><span class="sz">'+r.size+'</span><span class="p">'+scoreTxt+'</span></div></div></div>';
       }).join('')+'</div>'+
-      (real?'<div class="rfoot">※ 핏 지수 = 브랜드 실측(단면) 대비 '+(curCat==='BOTTOM'?'허리·엉덩이·허벅지 여유로 계산 · 바지':'가슴·어깨 여유로 계산 · 긴팔')+' 기준 · 착용경험을 넣으면 정밀해져요</div>':'');
+      '';
   }
   // 추천은 A축 사이즈 시드가 있는 TOP·BOTTOM만 실제. 나머지 카테고리는 측정만 보여주고 추천은 '준비중'.
   function renderRecsPending(){
     document.getElementById('recs').innerHTML=
-      '<div class="rrow"><div class="rkicker">브랜드별 추천 사이즈</div><span class="rchip">이번 진단 · '+curLabel+'</span></div>'+
-      '<div class="rgnotice" style="margin-top:12px">🔒 <b>'+curLabel+' 브랜드 추천은 준비 중</b>이에요 — '+curLabel+' 사이즈표 데이터를 모으는 단계라, 아래 <b>체형 측정</b>으로 먼저 보여드려요. <span style="color:var(--sub2)">(상의는 브랜드별 실계산 제공)</span></div>';
+      '<div class="rrow"><div class="rkicker">브랜드별 추천 사이즈</div><span class="rchip">'+curLabel+' 기준</span></div>'+
+      '<div class="rgnotice" style="margin-top:12px"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg> <b>'+curLabel+' 브랜드 추천은 준비 중</b>이에요 — '+curLabel+' 사이즈표 데이터를 모으는 단계라, 아래 <b>체형 측정</b>으로 먼저 보여드려요. <span style="color:var(--sub2)">(상의는 브랜드별 실계산 제공)</span></div>';
   }
   // 실엔진 계산 대기 상태 — 목업 canned 추천을 걷어낸 자리(가짜 브랜드 노출 방지).
   function renderRecsLoading(){
     document.getElementById('recs').innerHTML=
-      '<div class="rrow"><div class="rkicker">가장 잘 맞을 브랜드·사이즈</div><span class="rchip">이번 진단 · '+curLabel+'</span></div>'+
+      '<div class="rrow"><div class="rkicker">브랜드별 추천 사이즈</div><span class="rchip">'+curLabel+' 기준</span></div>'+
       '<div class="rgnotice" style="margin-top:12px">브랜드별 추천을 계산하고 있어요…</div>';
   }
   // 추천 로드 실패/데이터 부족 — 가짜 대신 정직한 안내.
   function renderRecsError(msg){
     document.getElementById('recs').innerHTML=
-      '<div class="rrow"><div class="rkicker">브랜드별 추천 사이즈</div><span class="rchip">이번 진단 · '+curLabel+'</span></div>'+
-      '<div class="rgnotice" style="margin-top:12px">⚠️ '+(msg||'추천을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.')+'</div>';
+      '<div class="rrow"><div class="rkicker">브랜드별 추천 사이즈</div><span class="rchip">'+curLabel+' 기준</span></div>'+
+      '<div class="rgnotice" style="margin-top:12px"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l9 16H3z"/><path d="M12 10v4"/><path d="M12 17h.01"/></svg> '+(msg||'추천을 불러오지 못했어요. 잠시 후 다시 시도해 주세요')+'</div>';
   }
   // 데이터 없음(basic 미입력) — 가짜 결과 대신 진단 유도.
   function renderNoData(){
     if(slot){ slot.className='rlock';
-      slot.innerHTML='<div class="lk">📏</div><div class="t1">아직 진단 데이터가 없어요</div>'+
+      slot.innerHTML='<div class="lk"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="8" rx="1.5"/><path d="M7 8v3M11 8v4M15 8v3"/></svg></div><div class="t1">아직 진단 데이터가 없어요</div>'+
         '<div class="t2">키·몸무게와 착용 경험을 입력하면 체형과 추천 사이즈가 나와요</div>'+
         '<a class="b" href="diag-basic.html">진단 시작 →</a>'; }
-    renderRecsError('진단을 먼저 완료해 주세요.');
+    renderRecsError('진단을 먼저 완료해 주세요');
     var mEl=document.getElementById('meas'); if(mEl) mEl.innerHTML='';
   }
   // 엔진/데이터 로드 실패 — 목업 유지가 아니라 정직한 오류.
   function renderLoadError(){
     if(slot && !cardType){ slot.className='rlock';
-      slot.innerHTML='<div class="lk">⚠️</div><div class="t1">결과를 불러오지 못했어요</div><div class="t2">잠시 후 새로고침해 주세요</div>'; }
+      slot.innerHTML='<div class="lk"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l9 16H3z"/><path d="M12 10v4"/><path d="M12 17h.01"/></svg></div><div class="t1">결과를 불러오지 못했어요</div><div class="t2">잠시 후 새로고침해 주세요</div>'; }
     renderRecsError();
   }
   if(isTop || curCat==='BOTTOM') renderRecsLoading();   // 실계산 카테고리는 로딩(실엔진이 채움)
@@ -183,7 +184,7 @@
   function specRow(poleL,pct,poleR,axis){
     pct=Math.max(3,Math.min(97,Math.round(pct||50)));
     var part=(axis||'').split(/\s*[—-]\s*/)[0].trim();
-    var adjL=(poleL||'').split(' ')[0], adjR=(poleR||'').split(' ')[0];
+    var adjL=(poleL||'').split(' ').slice(0,-1).join(' '), adjR=(poleR||'').split(' ').slice(0,-1).join(' ');   // 부위(마지막 단어) 떼고 형용사 전체 — '볼륨 있는'이 '볼륨'으로 잘리지 않게
     var zone = pct>=62 ? adjR+' 편' : (pct<=38 ? adjL+' 편' : '표준');
     var idx=Math.min(4,Math.max(0,Math.round(pct/100*4))), segs='';
     for(var i=0;i<5;i++){ segs+='<div class="n2seg'+(i===idx?' on':(Math.abs(i-idx)===1?' near':''))+'"></div>'; }
@@ -226,7 +227,7 @@
       var rows=(MEAS[curCat]||MEAS.TOP).map(function(m){ return specRow(m[1],pm[m[0]],m[2],m[3]); }).join('');
       document.getElementById('meas').innerHTML=
         '<div class="rrow"><div class="rkicker">내 체형 측정</div><span class="rchip">'+curLabel+' 기준</span></div>'+
-        '<div class="rgrp">필수 부위 — '+(expUsed?'착용경험으로 <b style="color:var(--ink2)">역산</b>한 몸':'키·몸무게로 추정한 몸')+'</div>'+
+        '<div class="rgrp">필수 부위 — '+(expUsed?'<b style="color:var(--ink2)">입어본 옷</b>으로 파악한 몸':'키·몸무게로 추정한 몸')+'</div>'+
         rows+
         '<div class="rgrp">선호</div>'+
         (curCat==='BOTTOM'
@@ -246,7 +247,7 @@
             out=FitEngine.recommendBottom({ waist:cm.waist, hip:cm.hip, thigh:cm.thigh }, pref, est.sex, 'long_pants', specs);
           }
           if(out && out.length) renderRecs(out, true);
-          else renderRecsError('이 입력만으로는 추천을 만들기 어려워요 — 착용 경험을 넣으면 정밀해져요.');
+          else renderRecsError('이 입력만으로는 추천을 만들기 어려워요 — 착용 경험을 넣으면 정밀해져요');
         }
       }
     });
@@ -264,10 +265,10 @@
   var mn=MEANS[curCat]||MEANS.TOP;
   document.getElementById('means').innerHTML=
     '<div class="rkicker">결과 풀이</div>'+
-    '<div class="rex plus"><div class="lbl"><span class="mk">＋</span> 강점</div><p>가장 또렷한 부위를 기준으로 맞추면 <strong>실루엣이 안정적으로</strong> 떨어져요.</p></div>'+
-    '<div class="rex eq"><div class="lbl"><span class="mk">＝</span> 핏 공식</div><p><strong>'+mn.eq+'</strong> 사이즈를 고르고, 나머지는 여유로 조절하세요.</p></div>'+
-    '<div class="rex warn"><div class="lbl"><span class="mk">！</span> 주의</div><p>'+mn.warn+' <strong>같은 치수에서 한 단계 위</strong>를 고려하세요.</p></div>'+
-    '<div class="rfoot">※ 캐릭터·해설 서술은 AI가 생성하는 자리예요(현재는 규칙 기반 예시).</div>';
+    '<div class="rex plus"><div class="lbl"><span class="mk">＋</span> 강점</div><p>가장 또렷한 부위를 기준으로 맞추면 <strong>실루엣이 안정적으로</strong> 떨어져요</p></div>'+
+    '<div class="rex eq"><div class="lbl"><span class="mk">＝</span> 핏 공식</div><p><strong>'+mn.eq+'</strong> 사이즈를 고르고, 나머지는 여유로 조절해요</p></div>'+
+    '<div class="rex warn"><div class="lbl"><span class="mk">！</span> 주의</div><p>'+mn.warn+' <strong>같은 치수에서 한 단계 위</strong>를 고려해요</p></div>'+
+    '<div class="rfoot">※ 캐릭터·해설 서술은 AI가 생성하는 자리예요(현재는 규칙 기반 예시)</div>';
 
   // ── 옷장 · 이어서 진단 ──
   function catRow(nm,kind,kcls,meta,go,href,cls){
@@ -280,8 +281,8 @@
     gateEl.innerHTML=
       '<div class="rrow"><div class="rkicker">옷장 · 이어서 진단</div><span class="rchip">기반 완료 · 파생 열림</span></div>'+
       '<div class="rgrp">기반 — 실착으로 <b style="color:var(--ink2)">체형을 잠갔어요</b></div>'+
-      catRow('상의','기반','base','상체 잠금 완료','완료 ✓',null,'done')+
-      catRow('하의','기반','base','하체 잠금 완료','완료 ✓',null,'done')+
+      catRow('상의','기반','base','상체 잠금 완료','완료 <svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',null,'done')+
+      catRow('하의','기반','base','하체 잠금 완료','완료 <svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',null,'done')+
       '<div class="rgrp">파생 — 체형 재사용, <b style="color:var(--ink2)">선호핏만</b></div>'+
       catRow('아우터','파생','der','상체 기반 · 해금됨','선호핏만 30초 →','diag-fit.html?cat=outer&reuse=1&have=top','')+
       // 치마·원피스는 여성만 노출 (남성 제외)

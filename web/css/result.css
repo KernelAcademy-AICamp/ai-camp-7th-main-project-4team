@@ -90,6 +90,11 @@
   .dtl-fitbox .dtl-fit:last-child{ border-bottom:none; }
   .dtl-fit-h{ font-size:14px; font-weight:800; flex:none; width:90px; display:flex; align-items:center; gap:5px; }
   .dtl-fit-h svg{ width:15px; height:15px; flex:none; }
+  /* 이모지 대체 인라인 아이콘 — 부모 글자 크기(1em)에 맞춰 스케일(피드백·공지·큰 슬롯 모두 대응) */
+  .ricon{ width:1em; height:1em; vertical-align:-.14em; flex:none; }
+  /* 피드백 아이콘 색 구분 — 맞음=초록 · 애매=회색 · 틀림=빨강 (선택 시 흰색) */
+  .rseg .o.ok .ricon{ color:var(--g); } .rseg .o.mid .ricon{ color:var(--sub2); } .rseg .o.no .ricon{ color:var(--warn); }
+  .rseg .o.on .ricon{ color:#fff; }
   .dtl-fit.ok .dtl-fit-h{ color:var(--g); } .dtl-fit.no .dtl-fit-h{ color:var(--warn); }
   .dtl-chips{ display:flex; flex-wrap:wrap; gap:7px; }
   .dtl-chips span{ font-size:13.5px; font-weight:700; padding:6px 12px; border-radius:20px; }

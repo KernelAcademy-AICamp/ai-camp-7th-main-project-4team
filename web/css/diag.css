@@ -155,9 +155,10 @@
 .feel-more-sum::before{ content:"＋"; font-weight:800; }
 .feel-more.open .feel-more-sum::before{ content:"−"; }
 /* 펼침을 높이 애니메이션으로 — content가 즉시 튀지 않고 스르륵 늘어남(레이아웃 안 흔들림) */
-.feel-more-body{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .3s ease; }
+.feel-more-body{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .34s cubic-bezier(.4,0,.2,1); }
 .feel-more.open .feel-more-body{ grid-template-rows:1fr; }
-.feel-more-inner{ overflow:hidden; padding-top:14px; }   /* 버튼 ↔ 첫 항목 간격 */
+.feel-more-inner{ overflow:hidden; min-height:0; padding-top:14px; opacity:0; transition:opacity .26s ease .05s; }   /* 버튼 ↔ 첫 항목 간격 + 부드러운 페이드 인 */
+.feel-more.open .feel-more-inner{ opacity:1; }
 
 /* ── 진단 중 화면 — 메인 히어로 줄자 이식 · 전부 중앙 정렬 · 위쪽 배치 ── */
 .flow:has(.loading-wrap){ padding-top:56px; }   /* 진단 중 화면만 전체 살짝 아래로 */
@@ -192,7 +193,7 @@
 .dstepc .dconn.fillnow i{ display:block; height:100%; width:0; background:var(--green); animation:dfillnow .7s cubic-bezier(.4,0,.2,1) .3s forwards; }
 @keyframes dfillnow{ to{ width:100%; } }
 @media(prefers-reduced-motion:reduce){ .dstepc .dconn.fillnow i{ animation:none; width:100%; } }
-@media(prefers-reduced-motion:reduce){ .feel-more-body{ transition:none; } }
+@media(prefers-reduced-motion:reduce){ .feel-more-body{ transition:none; } .feel-more-inner{ transition:none; } }
 
 /* 결과 사이즈표 — 셸 .szbox 룩(값 18/ink · 태그 딥그린 pill) */
 .size-row .brand{ font-size:15px; font-weight:700; }
