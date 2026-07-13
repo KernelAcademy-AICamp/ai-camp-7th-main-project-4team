@@ -7,6 +7,7 @@
   "admin-login":  { "name": "관리자 로그인(구글+이메일2FA)", "kind": "admin", "status": "시안", "note": "프로토타입 — 인증은 목업(실제 아님). 승격 시 Supabase Auth(구글)+이메일 OTP." },
   "admin":        { "name": "관리자 · 사이즈/데이터(3.A)",   "kind": "admin", "status": "구현", "note": "브랜드 실측(garments.json)+신체 사이즈(body-*) 실파일 브라우징. 커버리지·필터. 데이터는 실제, 로그인만 목업." },
   "admin-garments": { "name": "관리자 · 브랜드·제품 실측표(3.A.1)", "kind": "admin", "status": "구현", "note": "garments.json을 사이즈표(사이즈×부위 cm) 형태로 제품별 드릴다운. 생성물 뷰어(수정은 CSV+빌더)." },
+  "admin-engine": { "name": "관리자 · 엔진 시뮬레이터·튜닝(3.A.3)", "kind": "admin", "status": "구현", "note": "몸→사이즈 파이프라인을 실엔진(BodyModel·FitEngine)으로 재현. 신체추정→추천→핏스코어 분해→사이즈 래더+목표여유 what-if→파라미터(여유밴드·목표·가중치). 튜닝 인사이트." },
   "admin-members":  { "name": "관리자 · 회원·거래(3.B)",     "kind": "admin", "status": "시안", "note": "IA 스텁(빈 파일) — 전문가심사·회원·입찰·분쟁·정산·리뷰. v2." },
   "admin-business": { "name": "관리자 · 사업현황(3.C)",      "kind": "admin", "status": "시안", "note": "IA 스텁 — 운영 대시보드·제품 메트릭." },
   "admin-api":      { "name": "관리자 · B2B API(3.D)",       "kind": "admin", "status": "시안", "note": "IA 스텁 — API 고객·키·과금. v3." },
