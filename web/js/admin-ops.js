@@ -23,18 +23,17 @@
     support:['r', 'r', '-', '-', '-']
   };
   var USERS=[
-    {id:'u1',email:'trubard@gmail.com',name:'팀장',role:'owner',last:'2026-07-13T09:10:00',status:'활성'},
-    {id:'u2',email:'sangmin@fitting.kr',name:'상민',role:'data',last:'2026-07-12T22:40:00',status:'활성'},
-    {id:'u3',email:'sohee@fitting.kr', name:'소희',role:'ops', last:'2026-07-12T18:05:00',status:'활성'},
-    {id:'u4',email:'cs@fitting.kr',    name:'지원봇',role:'support',last:'2026-07-10T11:20:00',status:'정지'}
+    {id:'u1',email:'rjsgud1996@gmail.com', name:'강건형',role:'owner',last:'2026-07-13T09:10:00',status:'활성'},
+    {id:'u2',email:'dlthgml5628@gmail.com',name:'이소희',role:'ops', last:'2026-07-12T18:05:00',status:'활성'},
+    {id:'u3',email:'trubard@gmail.com',    name:'이상민',role:'data',last:'2026-07-12T22:40:00',status:'활성'}
   ];
   var AUDIT=[
-    {ts:'2026-07-13T09:12:00',who:'팀장',role:'owner',act:'로그인',target:'admin',area:'내부운영'},
-    {ts:'2026-07-12T22:41:00',who:'상민',role:'data',act:'실측표 재생성',target:'garments.json',area:'사이즈·데이터'},
-    {ts:'2026-07-12T21:03:00',who:'소희',role:'ops',act:'전문가 승인',target:'p214',area:'회원·거래'},
-    {ts:'2026-07-12T20:15:00',who:'소희',role:'ops',act:'회원 정지',target:'m1021',area:'회원·거래'},
-    {ts:'2026-07-12T15:30:00',who:'상민',role:'data',act:'엔진 파라미터 조회',target:'FitEngine',area:'사이즈·데이터'},
-    {ts:'2026-07-11T10:02:00',who:'팀장',role:'owner',act:'API 키 정지',target:'c06',area:'B2B API'}
+    {ts:'2026-07-13T09:12:00',who:'강건형',role:'owner',act:'로그인',target:'admin',area:'내부운영'},
+    {ts:'2026-07-12T22:41:00',who:'이상민',role:'data',act:'실측표 재생성',target:'garments.json',area:'사이즈·데이터'},
+    {ts:'2026-07-12T21:03:00',who:'이소희',role:'ops',act:'전문가 승인',target:'p214',area:'회원·거래'},
+    {ts:'2026-07-12T20:15:00',who:'이소희',role:'ops',act:'회원 정지',target:'m1021',area:'회원·거래'},
+    {ts:'2026-07-12T15:30:00',who:'이상민',role:'data',act:'엔진 파라미터 조회',target:'FitEngine',area:'사이즈·데이터'},
+    {ts:'2026-07-11T10:02:00',who:'강건형',role:'owner',act:'API 키 정지',target:'c06',area:'B2B API'}
   ];
   var FLAGS=[
     {key:'ocr_collect',   name:'OCR 사이즈 수집(베타)',    on:true,  scope:'admin'},
