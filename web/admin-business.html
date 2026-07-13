@@ -12,21 +12,31 @@
 <body>
 <div class="anav"><div class="anav-in">
   <span class="brand">fitting</span><span class="tag">관리자 · 프로토타입</span>
-  <nav class="asecs"><a class="s" href="admin.html">사이즈·데이터</a><a class="s" href="admin-members.html">회원·거래</a><a class="s on" href="admin-business.html">사업현황</a><a class="s" href="admin-api.html">B2B API</a><a class="s" href="admin-ops.html">내부운영</a></nav>
+  <nav class="asecs">
+    <a class="s" href="admin.html">사이즈·데이터</a>
+    <a class="s" href="admin-members.html">회원·거래</a>
+    <a class="s on" href="admin-business.html">사업현황</a>
+    <a class="s" href="admin-api.html">B2B API</a>
+    <a class="s" href="admin-ops.html">내부운영</a>
+  </nav>
   <span class="who">👤 <b id="adminWho">—</b></span>
   <span class="lo" onclick="adminLogout()">로그아웃</span>
 </div></div>
+
 <div class="awrap">
-  <div class="stub">
-    <div class="st">◐ 일부 구현</div>
-    <h1>3.C 사업 현황</h1>
-    <p>운영 대시보드(GMV·수수료 매출·성사율)와 제품 메트릭(진단 완료율·정확도 동의율·전환).</p>
-    <ul>
-      <li><b>3.C.1</b>운영 대시보드<small>GMV·수수료 매출·매칭 성사율 · ▢ 미착수</small></li>
-      <li><b>3.C.2</b><a href="admin-diagnostics.html" style="color:var(--green);font-weight:700;text-decoration:none">진단 응답·정확도 →</a><small>진단 응답 집계·정확도 동의율(킬 메트릭)·8유형/브랜드/페인 분해 · ◐ 화면 구현</small></li>
-    </ul>
-  </div>
+  <div class="crumb"><b>사업 현황 (3.C) · 운영 대시보드 (3.C.1)</b></div>
+  <p class="subnote"><b>제품·운영 개요.</b> 진단→수요→매칭→전문가로 이어지는 퍼널을 한눈에. <b class="pill">화면 우선</b> — 샘플 개요이며 상세·실집계는 각 화면(<a href="admin-diagnostics.html">진단 응답</a>·<a href="admin-members.html">회원·수요</a>)과 마일스톤1 배선에서. GMV·수수료 매출·정산(금전)은 실거래 오픈(v2) 대상.</p>
+
+  <div class="kpis" id="ovKpis"></div>
+
+  <div class="sec-h">퍼널 <span class="muted" style="font-weight:400">— 진단 → 결과 확인 → 매칭 요청 → 견적 수신 → 성사</span></div>
+  <div class="tablewrap"><table class="dt" id="funnelTable"></table></div>
+
+  <div class="sec-h">바로가기</div>
+  <div class="tablewrap"><table class="dt" id="linkTable"></table></div>
 </div>
+
 <script src="js/admin-common.js?v=b64f60d3"></script>
+<script src="js/admin-business.js?v=8df2eed3"></script>
 </body>
 </html>

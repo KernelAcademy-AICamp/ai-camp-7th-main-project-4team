@@ -12,18 +12,64 @@
 <body>
 <div class="anav"><div class="anav-in">
   <span class="brand">fitting</span><span class="tag">관리자 · 프로토타입</span>
-  <nav class="asecs"><a class="s" href="admin.html">사이즈·데이터</a><a class="s on" href="admin-members.html">회원·거래</a><a class="s" href="admin-business.html">사업현황</a><a class="s" href="admin-api.html">B2B API</a><a class="s" href="admin-ops.html">내부운영</a></nav>
+  <nav class="asecs">
+    <a class="s" href="admin.html">사이즈·데이터</a>
+    <a class="s on" href="admin-members.html">회원·거래</a>
+    <a class="s" href="admin-business.html">사업현황</a>
+    <a class="s" href="admin-api.html">B2B API</a>
+    <a class="s" href="admin-ops.html">내부운영</a>
+  </nav>
   <span class="who">👤 <b id="adminWho">—</b></span>
   <span class="lo" onclick="adminLogout()">로그아웃</span>
 </div></div>
+
 <div class="awrap">
-  <div class="stub">
-    <div class="st">▢ 미착수 (v2)</div>
-    <h1>3.B 회원·거래 운영</h1>
-    <p>전문가 심사·회원 관리·매칭/입찰 모니터링·분쟁·정산·리뷰 모더레이션. 실매칭(v2)과 함께 열립니다.</p>
-    <ul><li><b>3.B.1</b>전문가 승인/심사<small>자격 게이트</small></li><li><b>3.B.2</b>회원 관리<small>조회·정지·차단</small></li><li><b>3.B.3</b>입찰/매칭 모니터링·개입<small>미응답·어뷰징·유찰</small></li><li><b>3.B.4</b>분쟁·환불·신고</li><li><b>3.B.5</b>정산 집행·수수료 정책</li><li><b>3.B.6</b>리뷰 모더레이션</li></ul>
+  <div class="crumb"><b>회원·거래 운영 (3.B)</b></div>
+  <p class="subnote"><b>회원(진단 사용자)·전문가 심사</b>는 화면 구현. <b class="pill">화면 우선</b> — 샘플 데이터로 렌더하며 실회원 저장소·인증 배선은 마일스톤1(Supabase). 매칭·분쟁·정산·리뷰(3.B.3~6)는 실매칭 오픈(v2) 대상.</p>
+
+  <div class="atabs" id="atabs">
+    <div class="t on" data-tab="members" onclick="__mtab('members')">회원 <span class="muted">3.B.2</span></div>
+    <div class="t" data-tab="pros" onclick="__mtab('pros')">전문가 심사 <span class="muted">3.B.1</span></div>
+    <div class="t" data-tab="signals" onclick="__mtab('signals')">매칭 수요 신호 <span class="muted">3.B.3</span></div>
+  </div>
+
+  <!-- 3.B.2 회원 -->
+  <div class="apanel on" id="panel-members">
+    <div class="kpis" id="mKpis"></div>
+    <div class="sec-h">회원 <span class="muted" style="font-weight:400">— 진단 이력 기준. 상태 변경은 프로토타입(비영속)</span></div>
+    <div class="filters" id="mFilters"></div>
+    <div class="tablewrap"><table class="dt" id="memberTable"></table></div>
+  </div>
+
+  <!-- 3.B.1 전문가 심사 -->
+  <div class="apanel" id="panel-pros">
+    <div class="kpis" id="pKpis"></div>
+    <div class="sec-h">전문가(쇼퍼) 심사 대기열 <span class="muted" style="font-weight:400">— pro-signup 신청 → 자격 게이트. 승인/반려는 프로토타입</span></div>
+    <div class="filters" id="pFilters"></div>
+    <div class="tablewrap"><table class="dt" id="proTable"></table></div>
+  </div>
+
+  <!-- 3.B.3 매칭 수요 신호 (MVP 페이크도어 수집) -->
+  <div class="apanel" id="panel-signals">
+    <p class="subnote"><b>페이크도어(쇼퍼찾기)+견적요청</b>이 수집하는 <b>매칭 수요 신호</b>. 실매칭 오픈(v2) 전에 <b>어떤 서비스·상황·예산의 수요가 있는지</b>를 검증하는 게 목적. 소스: localStorage <code>fitting.reqs</code>(+샘플). 매칭 개입·분쟁·정산·리뷰(3.B.4~6)는 실매칭 오픈(v2) 대상.</p>
+    <div class="filters" id="sSrcBar"></div>
+    <div class="kpis" id="sKpis"></div>
+
+    <div class="sec-h">서비스 유형 수요 <span class="muted" style="font-weight:400">— 온라인/동행/이미지 중 어디에 수요가 몰리나</span></div>
+    <div class="tablewrap"><table class="dt" id="svcTable"></table></div>
+
+    <div class="sec-h">상황(Occasion) 수요 <span class="muted" style="font-weight:400">— 어떤 상황에 스타일링을 찾나(전문분야 우선순위)</span></div>
+    <div class="tablewrap"><table class="dt" id="occTable"></table></div>
+
+    <div class="sec-h">예산대 분포 <span class="muted" style="font-weight:400">— 오픈 견적(역경매) 기준. 가격 수용대 검증</span></div>
+    <div class="tablewrap"><table class="dt" id="budgetTable"></table></div>
+
+    <div class="sec-h">요청 로그 <span class="muted" style="font-weight:400">— 최신순. 오픈=역경매·지명=특정쇼퍼·알림=오픈알림 신청(순수 수요)</span></div>
+    <div class="tablewrap"><table class="dt" id="reqTable"></table></div>
   </div>
 </div>
+
 <script src="js/admin-common.js?v=b64f60d3"></script>
+<script src="js/admin-members.js?v=2c5ebb6e"></script>
 </body>
 </html>
