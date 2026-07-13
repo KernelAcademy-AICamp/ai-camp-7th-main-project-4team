@@ -819,13 +819,31 @@
     /* 1) 히어로 줄자 — cm·kg 측정 */
     (function(){
       var marker=$('hMarker'), cm=$('hCm'), kg=$('hKg'), tag=$('hMtag'); if(!marker) return;
-      var TO_CM=172, TO_KG=68, posEnd=((TO_CM-150)/40)*100;
-      if(RM){ marker.style.left=posEnd+'%'; cm.textContent=TO_CM; kg.textContent=TO_KG; tag.textContent='그래서 나는 어떤 FIT일까?'; return; }
-      var s0=null,dur=1700;
-      function s(t){ if(!s0)s0=t; var p=Math.min((t-s0)/dur,1),e=1-Math.pow(1-p,3);
-        marker.style.left=(2+(posEnd-2)*e)+'%'; cm.textContent=Math.round(150+(TO_CM-150)*e); kg.textContent=Math.round(45+(TO_KG-45)*e);
-        if(p<1)requestAnimationFrame(s); else tag.textContent='그래서 나는 어떤 FIT일까?'; }
-      requestAnimationFrame(s);
+      function rnd(a,b){ return a+Math.floor(Math.random()*(b-a+1)); }   // 랜덤 측정값
+      function kgFor(c){ var m=c/100; return Math.round((19+Math.random()*7)*m*m); } // 키에 맞춘 몸무게(BMI 19~26)
+      function pos(c){ return ((c-150)/40)*100; }                        // cm(150~190) → 줄자 위치 %
+      var curCm=150, curKg=45;
+      // 눈금선을 정수 픽셀 위치로 직접 생성(서브픽셀 두께 불균일 방지). 얇은줄=2cm마다(양끝 제외), 굵은줄=160·170·180
+      (function(){
+        var ruler=marker.closest('.ruler'); if(!ruler) return;
+        var minorEl=ruler.querySelector('.ticks:not(.major)'), majorEl=ruler.querySelector('.ticks.major');
+        function build(){ if(!minorEl) return; var w=minorEl.clientWidth; if(!w) return;
+          var mh=''; for(var i=1;i<20;i++) mh+='<i style="left:'+Math.round(w*i/20)+'px"></i>'; minorEl.innerHTML=mh;
+          if(majorEl){ var jh=''; [0.25,0.5,0.75].forEach(function(f){ jh+='<i style="left:'+Math.round(w*f)+'px"></i>'; }); majorEl.innerHTML=jh; } }
+        build(); window.addEventListener('resize', build);
+      })();
+      if(RM){ var c=rnd(155,186), k=kgFor(c); marker.style.left=pos(c)+'%'; cm.textContent=c; kg.textContent=k; tag.textContent='그래서 나는 어떤 FIT일까?'; return; }
+      function measure(){
+        var toCm=rnd(155,186), toKg=kgFor(toCm), fCm=curCm, fKg=curKg, s0=null, dur=1500;
+        tag.textContent='측정 중…';
+        function s(t){ if(!s0)s0=t; var p=Math.min((t-s0)/dur,1), e=1-Math.pow(1-p,3);
+          var c=fCm+(toCm-fCm)*e, k=fKg+(toKg-fKg)*e;
+          marker.style.left=pos(c)+'%'; cm.textContent=Math.round(c); kg.textContent=Math.round(k);
+          if(p<1) requestAnimationFrame(s);
+          else { curCm=toCm; curKg=toKg; tag.textContent='그래서 나는 어떤 FIT일까?'; setTimeout(measure, 2200); } }
+        requestAnimationFrame(s);
+      }
+      measure();   // 랜덤값으로 측정 → 잠시 멈춤 → 다시 랜덤 측정(반복)
     })();
 
     /* 2) 스크롤 리빌 */
