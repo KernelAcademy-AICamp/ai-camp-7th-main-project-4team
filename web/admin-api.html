@@ -12,18 +12,32 @@
 <body>
 <div class="anav"><div class="anav-in">
   <span class="brand">fitting</span><span class="tag">관리자 · 프로토타입</span>
-  <nav class="asecs"><a class="s" href="admin.html">사이즈·데이터</a><a class="s" href="admin-members.html">회원·거래</a><a class="s" href="admin-business.html">사업현황</a><a class="s on" href="admin-api.html">B2B API</a><a class="s" href="admin-ops.html">내부운영</a></nav>
+  <nav class="asecs">
+    <a class="s" href="admin.html">사이즈·데이터</a>
+    <a class="s" href="admin-members.html">회원·거래</a>
+    <a class="s" href="admin-business.html">사업현황</a>
+    <a class="s on" href="admin-api.html">B2B API</a>
+    <a class="s" href="admin-ops.html">내부운영</a>
+  </nav>
   <span class="who">👤 <b id="adminWho">—</b></span>
   <span class="lo" onclick="adminLogout()">로그아웃</span>
 </div></div>
+
 <div class="awrap">
-  <div class="stub">
-    <div class="st">▷ v3</div>
-    <h1>3.D B2B API 사업</h1>
-    <p>미표기 부위 검열추정 = 교차 데이터 해자. 쇼핑몰 대상 사이즈 API 사업(반품 절감).</p>
-    <ul><li><b>3.D.1</b>API 고객(쇼핑몰) 관리</li><li><b>3.D.2</b>키 발급</li><li><b>3.D.3</b>사용량·과금·매출</li><li><b>3.D.4</b>API 소개(외부용)</li></ul>
-  </div>
+  <div class="crumb"><b>B2B API 사업 (3.D)</b> <span class="pill">▷ v3</span></div>
+  <p class="subnote"><b>사이즈 추천 API</b>를 쇼핑몰에 판매(반품 절감). 미표기 부위 검열추정 = 교차 데이터 해자. <b class="pill">화면 우선</b> — 샘플 콘솔이며 실제 키 발급·과금·게이트웨이는 v3 백엔드에서. 엔드포인트는 현행 엔진 메서드(FitEngine) 기준.</p>
+
+  <div class="kpis" id="apiKpis"></div>
+
+  <div class="sec-h">API 고객(쇼핑몰) <span class="muted" style="font-weight:400">— 플랜·키·이번달 호출/한도·상태. 키 발급/정지는 프로토타입</span></div>
+  <div class="filters" id="apiFilters"></div>
+  <div class="tablewrap"><table class="dt" id="clientTable"></table></div>
+
+  <div class="sec-h">엔드포인트 사용량 <span class="muted" style="font-weight:400">— 이번달 호출 분포. 어떤 추론을 많이 쓰나</span></div>
+  <div class="tablewrap"><table class="dt" id="epTable"></table></div>
 </div>
+
 <script src="js/admin-common.js?v=b64f60d3"></script>
+<script src="js/admin-api.js?v=7b1b15c0"></script>
 </body>
 </html>
