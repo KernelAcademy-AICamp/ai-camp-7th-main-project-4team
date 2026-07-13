@@ -50,7 +50,7 @@
 
 /* ── 진행 표시 (C타입+텍스트) — 점 사이 연결선이 곧 진행 바. 현재 단계 구간이 질문마다 채워짐 ──
    페이지별로 .done/.now 클래스와 seg 연결선 위치만 다르게 준다. seg 칸 수 = 그 단계 질문 수. */
-.dstepc{ display:flex; align-items:flex-start; margin:16px 0 26px; padding:0 4px; }
+.dstepc{ display:flex; align-items:flex-start; margin:16px 0 52px; padding:0 4px; }
 .dstepc .dnode{ display:flex; flex-direction:column; align-items:center; gap:8px; flex:none; width:58px; }
 .dstepc .ddot{ width:22px; height:22px; border-radius:50%; border:1.5px solid var(--line); background:var(--field);
   display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:var(--faint); }
@@ -114,6 +114,21 @@
 
 /* 진단 대상 미니 라벨 — 각 착용경험 질문 제목 위 한 줄(대상 따라 자동 변경) */
 .qtarget{ font-size:13px; font-weight:800; color:var(--green); letter-spacing:.02em; margin-bottom:6px; }
+
+/* 정확도 타임라인(입력 점검) — 세로 스텝 · 지난 단계 초록 채움 · 현재 위치 강조(점이 옷 수에 따라 이동) */
+.acc{ position:relative; padding-left:24px; }
+.acc::before{ content:""; position:absolute; left:6px; top:16px; bottom:16px; width:2px; background:var(--line); border-radius:2px; }
+.acc-row{ position:relative; display:flex; justify-content:space-between; align-items:center; gap:12px; padding:11px 0; }
+.acc-row::before{ content:""; position:absolute; left:-24px; top:50%; transform:translateY(-50%); width:12px; height:12px;
+  border-radius:50%; background:var(--field); border:2px solid var(--line); transition:background .3s, box-shadow .3s; }
+.acc-row.done::before{ background:var(--green); border-color:var(--green); }
+.acc-row.now::before{ background:var(--green); border-color:var(--green); box-shadow:0 0 0 4px var(--green-soft); }
+.acc-row .l{ font-size:15px; font-weight:700; color:var(--faint); }
+.acc-row.done .l{ color:var(--muted); }
+.acc-row.now .l{ color:var(--ink); }
+.acc-row .r{ font-size:13.5px; color:var(--faint); }
+.acc-row.now .r{ color:var(--green); font-weight:700; }
+.acc-row .cur{ display:inline-block; font-size:11px; font-weight:800; color:#fff; background:var(--green); border-radius:11px; padding:2px 8px; margin-left:7px; }
 .step-h{ letter-spacing:-.045em; }
 .sub, .lead{ font-size:16px; }
 .small{ font-size:14px; }
@@ -135,11 +150,49 @@
 
 /* 느낌 입력: 선택 항목 접기(압도감↓) — 필수 착용감만 먼저 노출 */
 .feel-more{ margin-top:10px; border-top:1px solid var(--line); }
-.feel-more > summary{ cursor:pointer; list-style:none; font-size:14px; font-weight:700; color:var(--green); padding:12px 0 4px; display:flex; align-items:center; gap:7px; }
-.feel-more > summary::-webkit-details-marker{ display:none; }
-.feel-more > summary::before{ content:"＋"; font-weight:800; }
-.feel-more[open] > summary::before{ content:"−"; }
-.feel-more > summary .opt{ font-size:12px; font-weight:600; color:var(--sub2); }
+.feel-more-sum{ display:flex; align-items:center; gap:7px; width:100%; text-align:left; background:none; border:none; cursor:pointer;
+  font:inherit; font-size:14px; font-weight:700; color:var(--green); padding:12px 0 4px; }
+.feel-more-sum::before{ content:"＋"; font-weight:800; }
+.feel-more.open .feel-more-sum::before{ content:"−"; }
+/* 펼침을 높이 애니메이션으로 — content가 즉시 튀지 않고 스르륵 늘어남(레이아웃 안 흔들림) */
+.feel-more-body{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .3s ease; }
+.feel-more.open .feel-more-body{ grid-template-rows:1fr; }
+.feel-more-inner{ overflow:hidden; padding-top:14px; }   /* 버튼 ↔ 첫 항목 간격 */
+
+/* ── 진단 중 화면 — 메인 히어로 줄자 이식 · 전부 중앙 정렬 · 위쪽 배치 ── */
+.flow:has(.loading-wrap){ padding-top:56px; }   /* 진단 중 화면만 전체 살짝 아래로 */
+.loading-wrap{ min-height:auto; justify-content:flex-start; padding-top:10px; gap:0; }
+.loading-wrap .lmark{ font-size:15px; font-weight:800; letter-spacing:.26em; color:var(--green); margin-bottom:40px; }
+.lruler{ position:relative; width:100%; max-width:360px; height:70px; margin:0 auto; user-select:none; }
+.lruler .nums{ position:absolute; left:0; right:0; top:0; display:flex; justify-content:space-between;
+  font-size:11px; font-weight:800; color:var(--faint); font-family:ui-monospace,"SF Mono",Menlo,monospace; }
+.lruler .tape{ position:absolute; left:0; right:0; top:26px; height:40px; border-radius:9px; overflow:hidden;
+  background:linear-gradient(180deg,#fff,#FBFBFA); border:1px solid var(--field-line); box-shadow:0 8px 22px rgba(20,22,28,.07); }
+.lruler .tape .lfill{ position:absolute; left:0; top:0; bottom:0; width:0; background:var(--green-soft); }
+.lruler .ticks{ position:absolute; left:0; right:0; top:26px; height:40px; pointer-events:none;
+  background-image:repeating-linear-gradient(90deg,var(--field-line) 0 1px,transparent 1px 13px); opacity:.9; }
+.lruler .ticks.major{ background-image:repeating-linear-gradient(90deg,var(--faint) 0 1.4px,transparent 1.4px 60px); height:16px; }
+.lruler .marker{ position:absolute; top:18px; bottom:0; width:2.5px; border-radius:2px; background:var(--green); left:0; box-shadow:0 0 0 4px rgba(46,74,59,.1); }
+.lruler .marker::after{ content:""; position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:11px; height:11px; border-radius:50%; background:var(--green); box-shadow:0 2px 6px rgba(46,74,59,.4); }
+.loading-wrap .lpct{ font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:12px; font-weight:700; color:var(--green); margin-top:14px; letter-spacing:.02em; }
+.loading-wrap .step-h{ margin:28px 0 2px; }
+.loading-wrap .lsub{ font-size:14px; color:var(--muted); margin-top:13px; max-width:320px; }   /* 제목과 간격 */
+.loading-wrap .load-steps{ margin-top:26px; align-items:flex-start; }   /* 항목=왼쪽(아이콘 세로 정렬), 목록 블록=화면 중앙(inline-flex) */
+.loading-wrap .load-steps li{ font-size:14px; }
+.loading-wrap .load-steps li .tick{ width:18px; height:18px; }
+.loading-wrap .load-steps li.active{ color:var(--ink); }
+.loading-wrap .load-steps li.active .tick{ border-color:var(--green); }
+.loading-wrap .load-steps li.done{ color:var(--green); }
+.loading-wrap .load-steps li.done .tick{ background:var(--green); border-color:var(--green); position:relative; }
+.loading-wrap .load-steps li.done .tick::after{ content:""; position:absolute; left:6px; top:3.5px; width:4px; height:7px;
+  border:solid #fff; border-width:0 2px 2px 0; transform:rotate(45deg); box-sizing:border-box; }   /* 완료 체크 ✓ */
+
+/* 로딩 dstepc: 2→3 구간 선이 스르륵 채워짐 */
+.dstepc .dconn.fillnow{ display:block; background:var(--line); border-radius:2px; overflow:hidden; }
+.dstepc .dconn.fillnow i{ display:block; height:100%; width:0; background:var(--green); animation:dfillnow .7s cubic-bezier(.4,0,.2,1) .3s forwards; }
+@keyframes dfillnow{ to{ width:100%; } }
+@media(prefers-reduced-motion:reduce){ .dstepc .dconn.fillnow i{ animation:none; width:100%; } }
+@media(prefers-reduced-motion:reduce){ .feel-more-body{ transition:none; } }
 
 /* 결과 사이즈표 — 셸 .szbox 룩(값 18/ink · 태그 딥그린 pill) */
 .size-row .brand{ font-size:15px; font-weight:700; }

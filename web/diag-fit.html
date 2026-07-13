@@ -7,7 +7,7 @@
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=8ad71bfe">
-<link rel="stylesheet" href="css/diag.css?v=b79dcf45">
+<link rel="stylesheet" href="css/diag.css?v=cec12df3">
 </head>
 <body>
 
@@ -44,9 +44,9 @@
 
       <div class="notice warn hidden mt-16" id="targetnote"></div>
 
-      <div class="center mt-24">
-        <p class="small" style="margin:0 auto 8px">입어본 옷이 없나요?</p>
-        <a href="diag-loading.html?skip=1" class="btn-ghost" style="text-decoration:underline">기본 정보만으로 진단하기</a>
+      <div class="center" style="margin-top:44px">
+        <p class="small" style="margin:0 auto 2px">입어본 옷이 없나요?</p>
+        <a href="diag-loading.html?skip=1" class="btn-ghost" style="text-decoration:underline;padding:2px 0">기본 정보만으로 진단하기</a>
       </div>
     </div>
   </div>
@@ -102,12 +102,14 @@
   <!-- idx4 · 입력 점검 (1벌) — 한 벌 더 / 이대로 진단 분기 -->
   <div class="wstep">
     <h2 class="qhead">한 벌만으로도<br>진단할 수 있어요</h2>
-    <p class="qhelp">지금도 진단 가능해요. 다른 핏의 옷을 추가하면 정확도가 높아져요</p>
+    <p class="qhelp">다른 핏의 옷을 추가하면 더 정확해져요</p>
     <div class="qbody">
       <div class="card-soft mb-16">
-        <div class="size-row" style="border:none;padding:9px 0;opacity:.5"><span class="brand">0벌 · 건너뛰기</span><span class="small">기본 추정</span></div>
-        <div class="size-row" style="padding:9px 0"><span class="brand">1벌 · 지금 <span class="soon live">현재</span></span><span class="small">보통 — 추천 가능</span></div>
-        <div class="size-row" style="padding:9px 0;opacity:.5"><span class="brand">2~3벌</span><span class="small">정확 — 권장</span></div>
+        <div class="acc">
+          <div class="acc-row"><span class="l">0벌 · 건너뛰기</span><span class="r">기본 추정</span></div>
+          <div class="acc-row now"><span class="l">1벌 · 지금<span class="cur">현재</span></span><span class="r">보통 — 추천 가능</span></div>
+          <div class="acc-row"><span class="l">2~3벌</span><span class="r">정확 — 권장</span></div>
+        </div>
       </div>
       <button class="add-garment" onclick="next()">+ 다른 핏의 <span class="catword">상의</span> 추가하기</button>
     </div>
@@ -147,6 +149,13 @@
     <h2 class="qhead"><span class="catword">상의</span> 입력이 완료됐어요!</h2>
     <p class="qhelp">지금도 충분히 정확해요. 더 추가하면 정확도가 높아져요</p>
     <div class="qbody">
+      <div class="card-soft mb-16">
+        <div class="acc">
+          <div class="acc-row"><span class="l">0벌 · 건너뛰기</span><span class="r">기본 추정</span></div>
+          <div class="acc-row done"><span class="l">1벌</span><span class="r">보통</span></div>
+          <div class="acc-row now"><span class="l">2벌 · 지금<span class="cur">현재</span></span><span class="r">정확 — 권장</span></div>
+        </div>
+      </div>
       <button class="add-garment" onclick="alert('프로토타입: 같은 카테고리 옷을 한 벌 더 추가하면 정보·느낌 2단계가 더 생깁니다 (최대 3벌)')">+ <span class="catword">상의</span> 더 추가하기</button>
       <div class="notice mt-16">입력은 자동 저장돼요. 결과 화면에서 언제든 수정·재진단할 수 있어요</div>
     </div>
@@ -202,6 +211,6 @@
   </div>
 </div>
 
-<script src="js/diag-fit.js?v=dc79731e"></script>
+<script src="js/diag-fit.js?v=e4fa7e89"></script>
 </body>
 </html>

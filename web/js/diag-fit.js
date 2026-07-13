@@ -57,6 +57,7 @@
   function feelGroup(title,help,rows){
     return '<div class="feel-group">'+(title?'<h4>'+title+(help?' <span class="ghelp">'+help+'</span>':'')+'</h4>':'')+rows+'</div>';
   }
+  function toggleMore(btn){ btn.parentElement.classList.toggle('open'); }   // '더 자세한 착용감' 부드럽게 펼침
   function renderFeel(g){
     const c=CATS[target], box=document.getElementById('feel'+g);
     const hasSleeve=SLEEVE_CATS.includes(target), st=sleeveType[g]||'long';
@@ -71,9 +72,9 @@
     // ① 주부위 — 쪼임→헐렁 4단계(기본 딱맞음)
     const fit =(c.fit||[]).map(n=>feelRow(n,['끼임','딱맞음','여유','큼'],-1)).join('');
     // ② 병목 플래그 — 최소 2값(음성 '괜찮음' 기본). 이 신호가 브랜드 치수를 채움.
-    const flag=flags.map(n=>feelRow(n,['끼임','괜찮음'],1)).join('');
+    const flag=flags.map(n=>feelRow(n,['끼임','괜찮음'],-1)).join('');   // 기본 선택 없음(선택항목)
     // ③ 기장 — 취향(선택), 역산 아님
-    const pref=prefs.map(n=>feelRow(n,['짧음','딱 좋음','긺'],1)).join('');
+    const pref=prefs.map(n=>feelRow(n,['짧음','딱 좋음','긺'],-1)).join('');   // 기본 선택 없음(선택항목)
     // 선택 항목(걸린 곳·기장·그 외)은 접어둠 — 필수인 착용감만 먼저 보여 압도감↓ (값은 접혀도 수집됨)
     var optional=
       (flag?feelGroup('불편했던 부분','',flag):'')+
@@ -87,7 +88,8 @@
         return '<div class="opt" onclick="pick(this)">'+l+'</div>'; }).join('')+'</div></div>':'';
     box.innerHTML=
       feelGroup('','',fit+wband)+
-      '<details class="feel-more"><summary>더 자세한 착용감을 알려주세요</summary>'+optional+'</details>';
+      '<div class="feel-more"><button type="button" class="feel-more-sum" onclick="toggleMore(this)">더 자세한 착용감을 알려주세요</button>'+
+      '<div class="feel-more-body"><div class="feel-more-inner">'+optional+'</div></div></div>';
   }
 
   function applyTarget(){
@@ -150,8 +152,11 @@
   function sizeDone(g){ return !!document.querySelector('#size'+g+' .opt.on'); }
   function feelDone(boxId){
     var box=document.getElementById(boxId); if(!box) return true;
-    var rows=[].slice.call(box.querySelectorAll('.feel-row')).filter(function(r){ return !r.closest('details'); }); // 접힌 선택항목 제외
-    return rows.every(function(r){ return !!r.querySelector('.feel-opts .opt.on'); });   // 보이는 부위 전부 선택
+    // 필수 = 주부위(4지선다: 끼임/딱맞음/여유/큼)만. 허리밴드(3지선다)·접힌 항목은 선택.
+    var rows=[].slice.call(box.querySelectorAll('.feel-row')).filter(function(r){
+      return !r.closest('details') && r.querySelectorAll('.feel-opts .opt').length===4;
+    });
+    return rows.every(function(r){ return !!r.querySelector('.feel-opts .opt.on'); });
   }
   function stepDone(){
     if(isPrefOnlyBase() && cur===1) return !!document.querySelector('#prefseg .opt.on');
