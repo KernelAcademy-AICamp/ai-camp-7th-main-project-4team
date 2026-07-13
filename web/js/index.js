@@ -181,6 +181,18 @@
     var src='card.html?type='+(USER.type||'STR')+'&g='+g;
     if((f.getAttribute('src')||'')!==src) f.src=src;   // 값이 바뀐 경우에만 리로드
   }
+  /* FITTING의 한 끗(#myTip) — 유형별 insight로 채움(카드와 같이 움직이게). 하드코딩 데모 대체. */
+  function renderMyInsight(){
+    var el=document.getElementById('myTip'); if(!el) return;
+    function paint(t){ if(!t) return;
+      var tp=t.point||'#2E4A3B'; el.style.setProperty('--tp',tp);
+      var g=(USER.gender==='female')?'female':'male';
+      var c=(t.gender&&(t.gender[g]||t.gender.female))||t;   // 성별별 콘텐츠 해석
+      el.innerHTML='<div class="k">FITTING의 한 끗</div><p>'+(c.insight||'')+'</p>';
+    }
+    if(_btCache){ paint(_btCache[USER.type]); return; }
+    fetch('data/bodytypes.json').then(function(r){return r.json();}).then(function(j){ _btCache={}; j.types.forEach(function(x){_btCache[x.code]=x;}); paint(_btCache[USER.type]); }).catch(function(){});
+  }
 
   /* 마이페이지 · 프로필 기본정보 (읽기/편집) */
   var FIT_OPTS=['스키니','슬림','레귤러','루즈','오버'], _profEdit=false;
@@ -218,7 +230,7 @@
     var a=document.getElementById('pAge'), h=document.getElementById('pHeight'), w=document.getElementById('pWeight');
     if(a&&a.value) USER.age=+a.value; if(h&&h.value) USER.height=+h.value; if(w&&w.value) USER.weight=+w.value;
     var f=document.querySelector('#pFit .o.on'); if(f) USER.fit=f.dataset.fit;
-    _profEdit=false; renderProfile(); renderMyAvatar(); renderMyDiagCard(); toast('프로필을 저장했어요');
+    _profEdit=false; renderProfile(); renderMyAvatar(); renderMyDiagCard(); renderMyInsight(); toast('프로필을 저장했어요');
   }
 
   /* 마이페이지 · 즐겨찾기 렌더 */
@@ -780,7 +792,7 @@
   /* 외부 화면에서 #home·#shop·#my 로 돌아오면 해당 탭 열기 */
   (function(){ var h=(location.hash||'').replace('#',''); if(['home','shop','my'].indexOf(h)>=0) go(h); })();
 
-  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagCard();
+  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagCard(); renderMyInsight();
 
   /* 친구 초대 링크로 유입(card 공유 → index.html?from=CODE) — 홈 상단 배너로 맞이 */
   (function(){ try{ var from=new URLSearchParams(location.search).get('from'); if(!from) return;

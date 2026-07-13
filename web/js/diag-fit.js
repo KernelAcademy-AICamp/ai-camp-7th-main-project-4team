@@ -138,9 +138,9 @@
     var wf=document.getElementById('wfill'); if(wf) wf.style.width=((cur+1)/steps.length*100)+'%';
     document.querySelectorAll('#qconn span').forEach(function(el,k){ el.classList.toggle('on', k<=cur); });  // 질문 진행(연결선)
     const btn=document.getElementById('nextbtn');
-    if(isPrefOnlyBase() && cur===1) btn.textContent='이대로 진단하기 (선호핏만)';
-    else if(DIAGNOSE_AT[cur]) btn.textContent='이대로 진단하기 ('+DIAGNOSE_AT[cur]+'벌)';
-    else btn.textContent = cur===0 ? '이 종류로 시작' : '다음';
+    if(isPrefOnlyBase() && cur===1) btn.textContent='진단하기';
+    else if(DIAGNOSE_AT[cur]) btn.textContent='진단하기';
+    else btn.textContent = cur===0 ? '시작하기' : '다음';
     updateNext();
     window.scrollTo(0,0);
   }

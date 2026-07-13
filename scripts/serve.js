@@ -34,7 +34,13 @@ http
     if (!file.startsWith(ROOT)) { res.writeHead(403); return res.end("forbidden"); }
     fs.readFile(file, (err, data) => {
       if (err) { res.writeHead(404); return res.end("not found: " + p); }
-      res.writeHead(200, { "Content-Type": TYPES[path.extname(file)] || "application/octet-stream" });
+      res.writeHead(200, {
+        "Content-Type": TYPES[path.extname(file)] || "application/octet-stream",
+        // 개발 서버는 항상 최신 파일을 주도록 캐시 무효화 — HTML엔 ?v=가 없어 옛 문서가 캐시되면 옛 ?v(옛 JS/CSS)를 물어옴.
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+      });
       res.end(data);
     });
   })
