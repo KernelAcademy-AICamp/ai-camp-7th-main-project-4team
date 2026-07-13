@@ -8,83 +8,10 @@
 <script>try{var p=JSON.parse(localStorage.getItem('fitting.pro.profile')||'null');if(p&&p.registered)location.replace('pro.html');}catch(e){}</script>
 <!-- 쇼퍼(공급자) 가입 온보딩 위저드. 메인 "쇼퍼 지원" → 여기 → 완료 시 pro.html.
      수집 데이터는 localStorage 'fitting.pro.profile'에 저장(데이터 계약: docs/쇼퍼가입-화면정의서.md §5). -->
-<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="css/tokens.css?v=dc9975ef">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<style>
-  *{box-sizing:border-box}
-  body{margin:0;min-height:100vh;background:var(--soft,#f6f5f2);font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;color:var(--ink,#1c1a17);display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
-  a{color:inherit;text-decoration:none;cursor:pointer}
-
-  .shell{width:480px;max-width:100%;padding:22px 16px 60px}
-  .brandbar{display:flex;align-items:center;gap:10px;padding:6px 2px 16px}
-  .logo{font-size:20px;font-weight:800;letter-spacing:-.05em;color:var(--green,#1f7a3f)}
-  .logo i{display:inline-block;width:6px;height:6px;background:var(--green,#1f7a3f);margin-left:2px}
-  .closex{margin-left:auto;font-size:13px;color:var(--sub,#6b675f);cursor:pointer}
-
-  .card{background:#fff;border:1px solid var(--line,#e7e4de);border-radius:18px;box-shadow:0 8px 26px rgba(20,18,16,.06);overflow:hidden}
-  .chead{display:flex;align-items:center;gap:10px;padding:15px 20px;border-bottom:1px solid var(--line,#e7e4de);font-size:13px;color:var(--sub,#6b675f);font-weight:700}
-  .chead .back{cursor:pointer}
-  .chead .ttl{color:var(--ink,#1c1a17);font-weight:800}
-  .chead .stp{margin-left:auto;font-variant-numeric:tabular-nums}
-  .prog{height:5px;background:#eee9e2}
-  .prog>i{display:block;height:100%;background:var(--green,#1f7a3f);transition:width .3s}
-  .cbody{padding:24px 22px 26px}
-
-  .panel{display:none;animation:f .22s} .panel.on{display:block}
-  @keyframes f{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-
-  .hero{text-align:center;padding:6px 0 2px}
-  .hero .ic{display:flex;justify-content:center}
-  .hero .ic svg{width:46px;height:46px;color:var(--green,#1f7a3f)}
-  .hero h1{font-size:22px;font-weight:800;letter-spacing:-.03em;margin:12px 0 8px}
-  .hero p{font-size:14px;color:var(--sub,#6b675f);line-height:1.6;margin:0 auto;max-width:320px}
-  .benefits{display:flex;justify-content:center;gap:14px;margin:18px 0 6px;font-size:13px;font-weight:700;flex-wrap:wrap}
-  .benefits span{display:inline-flex;align-items:center;gap:5px}
-  .benefits svg{width:16px;height:16px;color:var(--green,#1f7a3f)}
-
-  .lbl{font-size:12.5px;font-weight:800;color:var(--sub2,#8a857b);margin:18px 0 7px}
-  .lbl:first-child{margin-top:4px}
-  input[type=text],input[type=email],input[type=tel],input[type=number],textarea{width:100%;border:1.5px solid var(--line2,#d8d4cc);border-radius:10px;padding:11px 13px;font-family:inherit;font-size:14px;background:#fff;color:var(--ink,#1c1a17)}
-  textarea{resize:vertical;min-height:64px}
-  input:focus,textarea:focus{outline:none;border-color:var(--green,#1f7a3f)}
-  .hint{font-size:12px;color:var(--sub2,#8a857b);margin-top:8px}
-  .err{font-size:12.5px;color:#c0392b;font-weight:700;margin-top:8px;display:none}
-  .err.on{display:block}
-
-  .chk{display:flex;align-items:center;gap:10px;font-size:13.5px;margin-top:12px;cursor:pointer}
-  .chk input{width:17px;height:17px;accent-color:var(--green,#1f7a3f)}
-
-  /* 서비스 유형별 가격 */
-  .svc{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line,#e7e4de)}
-  .svc:last-of-type{border-bottom:none}
-  .svc .tog{display:flex;align-items:center;gap:9px;flex:1;font-size:14px;font-weight:700;cursor:pointer}
-  .svc .tog input{width:17px;height:17px;accent-color:var(--green,#1f7a3f)}
-  .svc .price{width:120px} .svc .price input{width:100%;text-align:right}
-  .svc .won{font-size:13px;color:var(--sub,#6b675f)}
-  .svc.off{opacity:.45} .svc.off .price input{background:var(--soft,#f6f5f2)}
-
-  /* 전문분야 태그 */
-  .tags{display:flex;flex-wrap:wrap;gap:8px}
-  .tag{font-size:13px;font-weight:700;border:1.5px solid var(--line2,#d8d4cc);border-radius:20px;padding:8px 13px;color:var(--sub,#6b675f);cursor:pointer;user-select:none}
-  .tag.on{border-color:var(--green,#1f7a3f);color:var(--green,#1f7a3f);background:var(--green-soft,#e8f3ec)}
-  .tagadd{display:flex;gap:8px;margin-top:10px}
-  .tagadd input{flex:1}
-  .tagadd button{font:inherit;font-size:13px;font-weight:800;border:1.5px solid var(--line2,#d8d4cc);background:#fff;border-radius:10px;padding:0 14px;cursor:pointer}
-
-  /* 포트폴리오 */
-  .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:8px}
-  .pcell{aspect-ratio:1/1;border:1.5px dashed var(--line2,#d8d4cc);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--sub2,#8a857b);background:var(--soft,#f6f5f2);cursor:pointer;overflow:hidden;position:relative}
-  .pcell img{width:100%;height:100%;object-fit:cover}
-  .pcell .del{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center}
-
-  .btn{display:block;width:100%;text-align:center;padding:14px;border:none;border-radius:11px;background:var(--green,#1f7a3f);color:#fff;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;margin-top:22px}
-  .btn:disabled{opacity:.4;cursor:not-allowed}
-  .link{display:block;text-align:center;font-size:13px;color:var(--sub,#6b675f);margin-top:14px;cursor:pointer}
-
-  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(16px);background:var(--ink,#1c1a17);color:#fff;padding:12px 20px;border-radius:30px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:60}
-  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
-</style>
+<link rel="stylesheet" href="css/pro-signup.css?v=bcf88374">
 </head>
 <body>
 <div class="shell">
@@ -185,6 +112,6 @@
   </div>
 </div>
 <div class="toast" id="toast"></div>
-<script src="js/pro-signup.js"></script>
+<script src="js/pro-signup.js?v=1158842c"></script>
 </body>
 </html>
