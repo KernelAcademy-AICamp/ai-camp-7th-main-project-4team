@@ -28,7 +28,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
 .bar select{font-family:inherit; font-size:12px; padding:5px 8px; border:1px solid var(--line2); border-radius:8px; background:#fff; color:var(--ink); max-width:210px}
 
 .deck{display:flex; justify-content:center; padding:18px}
-.slide{display:none; width:min(98vw,1560px); aspect-ratio:297/210; background:var(--surface); border:1px solid var(--line2); border-radius:14px; overflow:hidden; box-shadow:0 6px 26px rgba(0,0,0,.10)}
+.slide{display:none; aspect-ratio:297/210; width:min(97vw, 1560px, calc(85vh * 297 / 210)); background:var(--surface); border:1px solid var(--line2); border-radius:14px; overflow:hidden; box-shadow:0 6px 26px rgba(0,0,0,.10)}
 .slide.on{display:flex}
 
 .stage{flex:0 0 55%; background:#f4f3f1; border-right:1px solid var(--line); padding:20px; display:flex; align-items:flex-start; justify-content:center; overflow:auto}
@@ -153,7 +153,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
 
 <div class="deck" id="deck">
 
-<!-- ═══ 1 홈 ═══ -->
 <section class="slide on" data-nm="1 · 홈(랜딩)">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app</div></div>
@@ -198,315 +197,8 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 2 쇼퍼찾기 목록 ═══ -->
-<section class="slide" data-nm="2 · 쇼퍼찾기(목록)">
-  <div class="stage"><div class="browser">
-    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/experts</div></div>
-    <div class="vp">
-      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span class="on">쇼퍼찾기</span><span>마이</span></div><div class="act">로그인</div></div>
-      <div class="pg">
-        <div class="tabs"><span class="mk">1</span><span class="tab on">전체</span><span class="tab">온라인 스타일링</span><span class="tab">동행 쇼핑</span><span class="tab">이미지 컨설팅</span></div>
-        <div class="row"><div class="field"><span class="mk">2</span>상황 ▾</div><div class="field">예산 ▾</div><div class="field">스타일 ▾</div><div class="field"><span class="mk">3</span>🔍 이름·키워드</div><div class="field">매칭도순 ▾</div></div>
-        <div class="cols c4" style="margin-top:9px">
-          <div class="card"><span class="mk">4</span><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:4px">소희 쇼퍼</div><div class="note" style="margin:2px 0"><span class="star">★</span>4.9 · 매칭 94%</div><div class="chips"><span class="chip">데일리</span><span class="chip">소개팅</span></div></div>
-          <div class="card"><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:4px">건형 쇼퍼</div><div class="note" style="margin:2px 0"><span class="star">★</span>4.8 · 매칭 89%</div></div>
-          <div class="card"><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:4px">지민 쇼퍼</div><div class="note" style="margin:2px 0"><span class="star">★</span>4.7 · 매칭 85%</div></div>
-          <div class="card"><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:4px">상민 쇼퍼</div><div class="note" style="margin:2px 0"><span class="star">★</span>4.9 · 매칭 82%</div></div>
-        </div>
-      </div>
-    </div>
-  </div></div>
-  <div class="spec">
-    <div class="sp-head"><span class="id">탭3</span><span class="nm">👔 쇼퍼찾기 (목록)</span><span class="pri">★ 페이크도어 · 🔍</span>
-      <div class="io"><b>서브뷰</b> 목록→상세→요청→입찰 · <b>I/O</b> <span class="w">RW</span> reqs·favs / R auth</div></div>
-    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">서비스 탭</div>
-      <div class="sp-l d"><span class="lb">설명</span>온라인/동행/이미지 유형 전환.</div>
-      <div class="sp-l i"><span class="lb">의도</span>어떤 서비스에 수요가 몰리는지 신호로 수집(3.B.3 축과 동일).</div>
-      <div class="sp-l c"><span class="lb">제약</span>온라인=비대면·나머지=대면(활동지역 노출).</div></div></div>
-    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">상황·예산·스타일 필터</div>
-      <div class="sp-l d"><span class="lb">설명</span>가로 필터 바 — 상황 7종·예산대·스타일 다중.</div>
-      <div class="sp-l i"><span class="lb">의도</span>견적 요청 폼과 같은 항목이라 탐색→요청 전환이 매끄럽고 재사용.</div>
-      <div class="sp-l c"><span class="lb">제약</span>상황 최대 2·스타일 다중(OR).</div></div></div>
-    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">검색 · 정렬</div>
-      <div class="sp-l d"><span class="lb">설명</span>이름/키워드 검색 + 매칭도·평점·가격 정렬.</div>
-      <div class="sp-l i"><span class="lb">의도</span>비교 마찰을 낮춰 상세 진입 촉진.</div>
-      <div class="sp-l c"><span class="lb">제약</span>결과 0건이면 "1기 모집·오픈 알림"으로 대체.</div></div></div>
-    <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">쇼퍼 카드 그리드</div>
-      <div class="sp-l d"><span class="lb">설명</span>PC는 4단 그리드 — 아바타·평점·매칭도·전문분야 태그.</div>
-      <div class="sp-l i"><span class="lb">의도</span>전체가 페이크도어 — 진짜처럼 만들어 전환신호(≥25%)만 측정.</div>
-      <div class="sp-l c"><span class="lb">제약</span>EX 배열 하드코딩(실쇼퍼 아님)·사진=SVG 일러스트.</div></div></div>
-  </div>
-</section>
 
-<!-- ═══ 3 쇼퍼 상세 ═══ -->
-<section class="slide" data-nm="3 · 쇼퍼 프로필">
-  <div class="stage"><div class="browser">
-    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/experts/sohee</div></div>
-    <div class="vp">
-      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span class="on">쇼퍼찾기</span><span>마이</span></div><div class="act">로그인</div></div>
-      <div class="pg"><div class="split l">
-        <div>
-          <div class="card"><span class="mk">1</span> <div class="row" style="align-items:center"><div class="av">🧑‍💼</div><div><div class="txt" style="font-weight:800">소희 쇼퍼</div><div class="note" style="margin:2px 0"><span class="star">★</span>4.9 (32) · 매칭도 94%</div></div></div></div>
-          <div class="note" style="font-weight:700;color:var(--ink)"><span class="mk">2</span> 제공 서비스</div>
-          <div class="row"><div class="card" style="margin:0;font-size:11px">온라인 스타일링<br><b>35,000원</b></div><div class="card" style="margin:0;font-size:11px">동행 쇼핑<br><b>120,000원</b></div></div>
-          <div class="btn"><span class="mk">4</span> 요청하기</div>
-        </div>
-        <div>
-          <div class="note" style="font-weight:700;color:var(--ink)"><span class="mk">3</span> 후기 32</div>
-          <div class="card" style="font-size:11px">"체형에 맞게 딱 골라주셨어요" <span class="note">— 지민님</span></div>
-          <div class="note" style="font-weight:700;color:var(--ink)">포트폴리오</div>
-          <div class="cols c3"><div class="box">🖼</div><div class="box">🖼</div><div class="box">🖼</div></div>
-        </div>
-      </div></div>
-    </div>
-  </div></div>
-  <div class="spec">
-    <div class="sp-head"><span class="id">1.2.5</span><span class="nm">쇼퍼 프로필</span><span class="pri">★ · 🔍</span>
-      <div class="io"><b>데이터</b> EX + 내 후기(fitting.reqs) · <b>이탈</b> 견적요청·목록복귀</div></div>
-    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">히어로(활동명·평점·매칭도)</div>
-      <div class="sp-l d"><span class="lb">설명</span>좌측 상단 신뢰 지표(아바타·별점·후기수).</div>
-      <div class="sp-l i"><span class="lb">의도</span>쇼퍼는 프로필이 곧 첫인상 — 신뢰 신호를 최상단에.</div>
-      <div class="sp-l c"><span class="lb">제약</span>매칭도는 데모 값.</div></div></div>
-    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">제공 서비스·가격</div>
-      <div class="sp-l d"><span class="lb">설명</span>유형별 가격 타일(온라인 35k·동행 120k).</div>
-      <div class="sp-l i"><span class="lb">의도</span>선택·요청의 판단 근거를 명확히.</div>
-      <div class="sp-l c"><span class="lb">제약</span>대면 서비스는 활동지역 표기.</div></div></div>
-    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">후기·포트폴리오</div>
-      <div class="sp-l d"><span class="lb">설명</span>PC는 우측 컬럼 — 작업물 갤러리 + 평가.</div>
-      <div class="sp-l i"><span class="lb">의도</span>매칭 전 확신을 주는 사회적 증거.</div>
-      <div class="sp-l c"><span class="lb">제약</span>포트폴리오는 DEMO_FOLIO(데모).</div></div></div>
-    <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">요청하기</div>
-      <div class="sp-l d"><span class="lb">설명</span>지명 견적 요청 진입.</div>
-      <div class="sp-l i"><span class="lb">의도</span>상세→전환. 로그인 게이트가 가입 유도 지점.</div>
-      <div class="sp-l c"><span class="lb">제약</span>비로그인 시 로그인 시트 후 이어감.</div></div></div>
-  </div>
-</section>
 
-<!-- ═══ 4 견적 요청 ═══ -->
-<section class="slide" data-nm="4 · 견적 요청">
-  <div class="stage"><div class="browser">
-    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/match</div></div>
-    <div class="vp">
-      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span class="on">쇼퍼찾기</span><span>마이</span></div><div class="act">👤 상민</div></div>
-      <div class="pg"><div class="center card">
-        <div class="txt" style="font-weight:800;text-align:center;margin-bottom:6px">소희 쇼퍼에게 코디 요청</div>
-        <div class="seg"><div class="on"><span class="mk">1</span>온라인</div><div>동행</div><div>이미지</div></div>
-        <div class="split"><div class="field"><span class="mk">2</span><div class="lb">상황 (최대 2)</div>소개팅·데이트</div><div class="field"><div class="lb">예산</div>5~10만원</div></div>
-        <div class="split"><div class="field"><div class="lb">일정</div>2026-07-20</div><div class="field"><div class="lb">스타일 (최대 3)</div>미니멀·캐주얼</div></div>
-        <div class="field"><div class="lb">한 줄 요청</div>깔끔한 데이트룩 추천해 주세요</div>
-        <div class="card note" style="text-align:center;background:var(--green-soft);border-color:var(--green);color:var(--green)"><span class="mk">3</span> 📎 체형진단 결과 자동 첨부 (STR · 173/72)</div>
-        <div class="btn"><span class="mk">4</span> 견적 요청 보내기</div>
-      </div></div>
-    </div>
-  </div></div>
-  <div class="spec">
-    <div class="sp-head"><span class="id">1.3</span><span class="nm">견적 요청 (오픈/지명)</span><span class="pri">★ · 🔒</span>
-      <div class="io"><b>I/O</b> <span class="w">W</span> fitting.reqs {open|nm, svc, occ, budget, status}</div></div>
-    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">서비스 유형</div>
-      <div class="sp-l d"><span class="lb">설명</span>온라인/동행/이미지 택1.</div>
-      <div class="sp-l i"><span class="lb">의도</span>수요를 유형별로 구조화(무엇을 원하나).</div>
-      <div class="sp-l c"><span class="lb">제약</span>진입 경로(지명/오픈)에 따라 폼 일부 달라짐.</div></div></div>
-    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">상황·예산·일정·스타일</div>
-      <div class="sp-l d"><span class="lb">설명</span>PC는 2단 폼 — 요청의 구조화된 축.</div>
-      <div class="sp-l i"><span class="lb">의도</span>최소 입력으로 수요를 데이터로 남김(얼마에·언제).</div>
-      <div class="sp-l c"><span class="lb">제약</span>상황 max2·스타일 max3·일정 min=오늘. 모두 채워야 제출 활성.</div></div></div>
-    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">체형진단 자동 첨부</div>
-      <div class="sp-l d"><span class="lb">설명</span>진단 결과(체형·사이즈)를 요청에 실어 보냄.</div>
-      <div class="sp-l i"><span class="lb">의도</span>제품의 핵심 차별점 — 쇼퍼가 더 정확히 제안(핸드오프).</div>
-      <div class="sp-l c"><span class="lb">제약</span>진단 전이면 체형정보 없이 전송.</div></div></div>
-    <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">견적 요청(오픈/지명)</div>
-      <div class="sp-l d"><span class="lb">설명</span>오픈=역경매(bids 생성)·지명=특정쇼퍼.</div>
-      <div class="sp-l i"><span class="lb">의도</span>공급 유동성(입찰)과 취향 매칭 병행.</div>
-      <div class="sp-l c"><span class="lb">제약</span>로그인 게이트(lazy) — 제출 시점에만.</div></div></div>
-  </div>
-</section>
-
-<!-- ═══ 4b 쇼퍼찾기 입찰·낙찰 ═══ -->
-<section class="slide" data-nm="쇼퍼찾기 · 입찰 비교·낙찰">
-  <div class="stage"><div class="browser">
-    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/match/12/bids</div></div>
-    <div class="vp">
-      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span class="on">쇼퍼찾기</span><span>마이</span></div><div class="act">👤 상민</div></div>
-      <div class="pg">
-        <div class="txt" style="font-weight:800"><span class="mk">1</span> 받은 견적 3개 · 소개팅 · 온라인</div>
-        <div class="note">여러 쇼퍼가 견적을 보냈어요 · 비교하고 선택하세요</div>
-        <div class="cols c3">
-          <div class="card"><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:3px">소희 <span class="star">★</span>4.9</div><div class="note"><b>90,000원</b> · 3일</div><div class="btn" style="margin:4px 0"><span class="mk">2</span>선택</div></div>
-          <div class="card"><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:3px">지민 <span class="star">★</span>4.7</div><div class="note"><b>75,000원</b> · 2일</div><div class="btn ghost" style="margin:4px 0">선택</div></div>
-          <div class="card"><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:3px">건형 <span class="star">★</span>4.8</div><div class="note"><b>110,000원</b> · 4일</div><div class="btn ghost" style="margin:4px 0">선택</div></div>
-        </div>
-        <div class="note"><span class="mk">3</span> 선택 시 → 진행중 · 나머지 자동 종료</div>
-      </div>
-    </div>
-  </div></div>
-  <div class="spec">
-    <div class="sp-head"><span class="id">1.3.8</span><span class="nm">입찰 비교·낙찰</span><span class="pri">● 입찰모델 · 🔒</span>
-      <div class="io"><b>진입</b> 요청 내역 "받은 견적 N개" · <b>I/O</b> <span class="w">RW</span> fitting.reqs(bids/awarded)</div></div>
-    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">받은 견적 오버레이</div>
-      <div class="sp-l d"><span class="lb">설명</span>오픈(역경매) 요청에 들어온 입찰 목록.</div>
-      <div class="sp-l i"><span class="lb">의도</span>여러 쇼퍼를 가격·평점·기간으로 비교하는 역경매 UX.</div>
-      <div class="sp-l c"><span class="lb">제약</span>bids는 makeBids로 EX 풀에서 결정적 생성(데모).</div></div></div>
-    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">쇼퍼별 입찰 카드</div>
-      <div class="sp-l d"><span class="lb">설명</span>가격·예상기간·제안 메시지 + [선택].</div>
-      <div class="sp-l i"><span class="lb">의도</span>낙찰 판단에 필요한 정보를 카드로 압축.</div>
-      <div class="sp-l c"><span class="lb">제약</span>online=비대면·나머지=대면(지역 표기).</div></div></div>
-    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">낙찰(선택)</div>
-      <div class="sp-l d"><span class="lb">설명</span>confirmAward → awardBid.</div>
-      <div class="sp-l i"><span class="lb">의도</span>선택 즉시 매칭 성사로 전환.</div>
-      <div class="sp-l c"><span class="lb">제약</span>status='진행중', awarded 세팅 · 나머지 입찰 종료.</div></div></div>
-  </div>
-</section>
-
-<!-- ═══ 5 마이 · 프로필 ═══ -->
-<section class="slide" data-nm="마이 · 프로필">
-  <div class="stage"><div class="browser">
-    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/my/profile</div></div>
-    <div class="vp">
-      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span>쇼퍼찾기</span><span class="on">마이</span></div><div class="act">👤 상민</div></div>
-      <div class="shell">
-        <div class="side"><span class="mk">1</span><div class="it on">프로필</div><div class="it">진단 결과</div><div class="it">요청 내역</div><div class="it">즐겨찾기</div><div class="it">계정</div></div>
-        <div class="main">
-          <div class="card"><div class="row" style="align-items:center"><div class="av">🧑</div><div><b class="txt">상민</b><div class="note"><span class="mk">2</span> 남성 · 173cm · 72kg</div></div></div></div>
-          <div class="txt" style="font-size:11.5px;font-weight:700"><span class="mk">3</span> 신체·선호핏 (진단서 자동)</div>
-          <div class="row"><div class="field"><div class="lb">선호핏</div>슬림</div><div class="field"><div class="lb">체형</div>STR</div></div>
-          <div class="btn ghost" style="max-width:100px">수정</div>
-        </div>
-      </div>
-    </div>
-  </div></div>
-  <div class="spec">
-    <div class="sp-head"><span class="id">1.4A</span><span class="nm">마이 · 프로필</span><span class="pri">◐ · 🔒</span>
-      <div class="io"><b>I/O</b> USER(메모리) · <b>사이드</b> 프로필·진단·요청·찜·계정</div></div>
-    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">좌측 사이드 내비(5)</div>
-      <div class="sp-l d"><span class="lb">설명</span>PC는 좌측 사이드바 — 5개 패널을 전환.</div>
-      <div class="sp-l i"><span class="lb">의도</span>SPA 패널을 데스크톱에선 사이드 내비로 펼침.</div>
-      <div class="sp-l c"><span class="lb">제약</span>탭 전환 = myNav(패널), URL 없이 한 페이지.</div></div></div>
-    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">프로필 헤더(진단서 자동)</div>
-      <div class="sp-l d"><span class="lb">설명</span>이름·성별·키·몸무게 요약.</div>
-      <div class="sp-l i"><span class="lb">의도</span>진단값 자동 채움으로 재입력 없이 개인화.</div>
-      <div class="sp-l c"><span class="lb">제약</span>USER는 메모리 — 저장소 미영속(재렌더만).</div></div></div>
-    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">신체·선호핏 view/edit</div>
-      <div class="sp-l d"><span class="lb">설명</span>선호핏·체형 표시 + 수정.</div>
-      <div class="sp-l i"><span class="lb">의도</span>진단 결과를 프로필로 승격.</div>
-      <div class="sp-l c"><span class="lb">제약</span>수정은 재렌더만 · 영속화는 v2.</div></div></div>
-  </div>
-</section>
-
-<!-- ═══ 6 마이 · 진단 결과 ═══ -->
-<section class="slide" data-nm="마이 · 진단 결과">
-  <div class="stage"><div class="browser">
-    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/my/diagnoses</div></div>
-    <div class="vp">
-      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span>쇼퍼찾기</span><span class="on">마이</span></div><div class="act">👤 상민</div></div>
-      <div class="shell">
-        <div class="side"><div class="it">프로필</div><div class="it on">진단 결과</div><div class="it">요청 내역</div><div class="it">즐겨찾기</div><div class="it">계정</div></div>
-        <div class="main">
-          <div class="box tall"><span class="mk">1</span> 진단 카드 (card.html iframe) · STR</div>
-          <div class="row"><div class="btn ghost" style="margin:6px 0"><span class="mk">2</span>다시 진단하기</div><div class="btn ghost" style="margin:6px 0">공유</div></div>
-        </div>
-      </div>
-    </div>
-  </div></div>
-  <div class="spec">
-    <div class="sp-head"><span class="id">1.4B</span><span class="nm">마이 · 진단 결과</span><span class="pri">● · 🔒</span>
-      <div class="io"><b>I/O</b> card.html?type=USER.type</div></div>
-    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">진단 카드</div>
-      <div class="sp-l d"><span class="lb">설명</span>내 8유형 결과 카드(iframe).</div>
-      <div class="sp-l i"><span class="lb">의도</span>내 결과를 언제든 다시 보는 재방문 훅.</div>
-      <div class="sp-l c"><span class="lb">제약</span>USER.type=null이면 "진단 전" 안내 · 이력·추이는 v2.</div></div></div>
-    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">다시 진단 / 공유</div>
-      <div class="sp-l d"><span class="lb">설명</span>재진단 → diag-basic · 카드 공유.</div>
-      <div class="sp-l i"><span class="lb">의도</span>결과 갱신·바이럴 재진입.</div>
-      <div class="sp-l c"><span class="lb">제약</span>재진단은 세션 진단키 초기화 후 시작.</div></div></div>
-  </div>
-</section>
-
-<!-- ═══ 7 마이 · 요청 내역 ═══ -->
-<section class="slide" data-nm="마이 · 요청 내역">
-  <div class="stage"><div class="browser">
-    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/my/requests</div></div>
-    <div class="vp">
-      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span>쇼퍼찾기</span><span class="on">마이</span></div><div class="act">👤 상민</div></div>
-      <div class="shell">
-        <div class="side"><div class="it">프로필</div><div class="it">진단 결과</div><div class="it on">요청 내역</div><div class="it">즐겨찾기</div><div class="it">계정</div></div>
-        <div class="main">
-          <div class="tabs"><span class="mk">1</span><span class="tab on">받은 견적</span><span class="tab">보낸 요청</span><span class="tab">알림</span></div>
-          <div class="tbl"><div class="tr hd"><span>쇼퍼</span><span>상황</span><span>견적</span><span class="r">상태</span></div><div class="tr"><span>오픈(3명)</span><span>소개팅</span><span>3개</span><span class="r"><span class="tag">견적중</span></span></div><div class="tr"><span>소희</span><span>면접</span><span>90k</span><span class="r"><span class="tag b">진행중</span></span></div><div class="tr"><span>건형</span><span>하객</span><span>—</span><span class="r">완료</span></div></div>
-          <div class="note"><span class="mk">2</span> 견적 클릭 → 받은 견적 비교(입찰) 오버레이</div>
-        </div>
-      </div>
-    </div>
-  </div></div>
-  <div class="spec">
-    <div class="sp-head"><span class="id">1.4C</span><span class="nm">마이 · 요청 내역</span><span class="pri">▷ · 🔒</span>
-      <div class="io"><b>I/O</b> <span class="w">RW</span> fitting.reqs</div></div>
-    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">받은견적/보낸요청/알림</div>
-      <div class="sp-l d"><span class="lb">설명</span>요청을 유형별로 그룹(오픈=받은견적·지명=보낸요청·notify=알림).</div>
-      <div class="sp-l i"><span class="lb">의도</span>매칭 라이프사이클을 사용자 쪽에서 추적.</div>
-      <div class="sp-l c"><span class="lb">제약</span>상태 8종(대기·견적중·진행중·수락·완료·후기완료·거절·취소함).</div></div></div>
-    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">라이프사이클 액션</div>
-      <div class="sp-l d"><span class="lb">설명</span>수락/거절/취소/완료/후기 + 입찰 비교.</div>
-      <div class="sp-l i"><span class="lb">의도</span>요청→성사→후기까지 한 곳에서.</div>
-      <div class="sp-l c"><span class="lb">제약</span>각 액션이 saveLS('reqs') · 후기 등록 시 후기완료.</div></div></div>
-  </div>
-</section>
-
-<!-- ═══ 8 마이 · 즐겨찾기 ═══ -->
-<section class="slide" data-nm="마이 · 즐겨찾기">
-  <div class="stage"><div class="browser">
-    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/my/favorites</div></div>
-    <div class="vp">
-      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span>쇼퍼찾기</span><span class="on">마이</span></div><div class="act">👤 상민</div></div>
-      <div class="shell">
-        <div class="side"><div class="it">프로필</div><div class="it">진단 결과</div><div class="it">요청 내역</div><div class="it on">즐겨찾기</div><div class="it">계정</div></div>
-        <div class="main">
-          <div class="cols c3"><div class="card"><span class="mk">1</span><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:3px">소희 쇼퍼</div><div class="note"><span class="star">★</span>4.9</div></div><div class="card"><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:3px">지민 쇼퍼</div><div class="note"><span class="star">★</span>4.7</div></div><div class="card"><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:3px">건형 쇼퍼</div><div class="note"><span class="star">★</span>4.8</div></div></div>
-        </div>
-      </div>
-    </div>
-  </div></div>
-  <div class="spec">
-    <div class="sp-head"><span class="id">1.4D</span><span class="nm">마이 · 즐겨찾기</span><span class="pri">▷ · 🔒</span>
-      <div class="io"><b>I/O</b> <span class="w">RW</span> fitting.favs</div></div>
-    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">찜한 쇼퍼 카드</div>
-      <div class="sp-l d"><span class="lb">설명</span>🤍로 담은 쇼퍼 그리드 · 클릭 → 상세(뒤로=찜 복귀).</div>
-      <div class="sp-l i"><span class="lb">의도</span>재방문 시 바로 요청할 후보를 모아둠.</div>
-      <div class="sp-l c"><span class="lb">제약</span>찜 토글은 로그인 후에만 · 원본 쇼퍼(EX) 참조로 얼굴·태그 동기화.</div></div></div>
-  </div>
-</section>
-
-<!-- ═══ 9 마이 · 계정 ═══ -->
-<section class="slide" data-nm="마이 · 계정">
-  <div class="stage"><div class="browser">
-    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/my/account</div></div>
-    <div class="vp">
-      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span>쇼퍼찾기</span><span class="on">마이</span></div><div class="act">👤 상민</div></div>
-      <div class="shell">
-        <div class="side"><div class="it">프로필</div><div class="it">진단 결과</div><div class="it">요청 내역</div><div class="it">즐겨찾기</div><div class="it on">계정</div></div>
-        <div class="main">
-          <div class="field"><span class="mk">1</span><div class="lb">로그인</div>카카오 계정 · sohee@…</div>
-          <div class="field">🔔 알림 설정 <span class="note">ON</span></div>
-          <div class="field">약관 · 개인정보 처리방침</div>
-          <div class="row"><div class="btn ghost" style="margin:6px 0"><span class="mk">2</span>로그아웃</div><div class="btn ghost" style="margin:6px 0;color:var(--sub)">탈퇴</div></div>
-        </div>
-      </div>
-    </div>
-  </div></div>
-  <div class="spec">
-    <div class="sp-head"><span class="id">1.4E</span><span class="nm">마이 · 계정</span><span class="pri">◐ · 🔒</span>
-      <div class="io"><b>I/O</b> R fitting.auth</div></div>
-    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">로그인 정보 · 알림 · 약관</div>
-      <div class="sp-l d"><span class="lb">설명</span>연결 계정·알림 토글·약관/개인정보 링크.</div>
-      <div class="sp-l i"><span class="lb">의도</span>계정·동의 관리의 최소 진입점.</div>
-      <div class="sp-l c"><span class="lb">제약</span>알림 설정은 표시만(v2) · 약관 링크는 주석 처리 상태.</div></div></div>
-    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">로그아웃 / 탈퇴</div>
-      <div class="sp-l d"><span class="lb">설명</span>세션 종료·회원 탈퇴.</div>
-      <div class="sp-l i"><span class="lb">의도</span>계정 통제권 제공.</div>
-      <div class="sp-l c"><span class="lb">제약</span>MVP는 토스트만(실 처리 v2).</div></div></div>
-  </div>
-</section>
-
-<!-- ═══ 6 기본정보 ═══ -->
 <section class="slide" data-nm="6 · 진단 2-1 기본정보">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/diagnose</div></div>
@@ -539,7 +231,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 7 착용경험 ═══ -->
 <section class="slide" data-nm="7 · 진단 2-2 착용경험">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/diagnose/fit</div></div>
@@ -582,7 +273,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 8 로딩 ═══ -->
 <section class="slide" data-nm="8 · 진단 2-3 로딩">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/diagnose/loading</div></div>
@@ -601,7 +291,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 9 결과카드 ═══ -->
 <section class="slide" data-nm="9 · 진단 2-4 결과카드">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/result</div></div>
@@ -650,7 +339,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 10 공유카드 ═══ -->
 <section class="slide" data-nm="10 · 결과 공유 카드">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/r/AB12</div></div>
@@ -678,7 +366,654 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 11 쇼퍼 가입 SP-0 소개 ═══ -->
+<section class="slide" data-nm="2 · 쇼퍼찾기(목록)">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/experts</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span class="on">쇼퍼찾기</span><span>마이</span></div><div class="act">로그인</div></div>
+      <div class="pg">
+        <div class="tabs"><span class="mk">1</span><span class="tab on">전체</span><span class="tab">온라인 스타일링</span><span class="tab">동행 쇼핑</span><span class="tab">이미지 컨설팅</span></div>
+        <div class="row"><div class="field"><span class="mk">2</span>상황 ▾</div><div class="field">예산 ▾</div><div class="field">스타일 ▾</div><div class="field"><span class="mk">3</span>🔍 이름·키워드</div><div class="field">매칭도순 ▾</div></div>
+        <div class="cols c4" style="margin-top:9px">
+          <div class="card"><span class="mk">4</span><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:4px">소희 쇼퍼</div><div class="note" style="margin:2px 0"><span class="star">★</span>4.9 · 매칭 94%</div><div class="chips"><span class="chip">데일리</span><span class="chip">소개팅</span></div></div>
+          <div class="card"><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:4px">건형 쇼퍼</div><div class="note" style="margin:2px 0"><span class="star">★</span>4.8 · 매칭 89%</div></div>
+          <div class="card"><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:4px">지민 쇼퍼</div><div class="note" style="margin:2px 0"><span class="star">★</span>4.7 · 매칭 85%</div></div>
+          <div class="card"><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:4px">상민 쇼퍼</div><div class="note" style="margin:2px 0"><span class="star">★</span>4.9 · 매칭 82%</div></div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">탭3</span><span class="nm">👔 쇼퍼찾기 (목록)</span><span class="pri">★ 페이크도어 · 🔍</span>
+      <div class="io"><b>서브뷰</b> 목록→상세→요청→입찰 · <b>I/O</b> <span class="w">RW</span> reqs·favs / R auth</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">서비스 탭</div>
+      <div class="sp-l d"><span class="lb">설명</span>온라인/동행/이미지 유형 전환.</div>
+      <div class="sp-l i"><span class="lb">의도</span>어떤 서비스에 수요가 몰리는지 신호로 수집(3.B.3 축과 동일).</div>
+      <div class="sp-l c"><span class="lb">제약</span>온라인=비대면·나머지=대면(활동지역 노출).</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">상황·예산·스타일 필터</div>
+      <div class="sp-l d"><span class="lb">설명</span>가로 필터 바 — 상황 7종·예산대·스타일 다중.</div>
+      <div class="sp-l i"><span class="lb">의도</span>견적 요청 폼과 같은 항목이라 탐색→요청 전환이 매끄럽고 재사용.</div>
+      <div class="sp-l c"><span class="lb">제약</span>상황 최대 2·스타일 다중(OR).</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">검색 · 정렬</div>
+      <div class="sp-l d"><span class="lb">설명</span>이름/키워드 검색 + 매칭도·평점·가격 정렬.</div>
+      <div class="sp-l i"><span class="lb">의도</span>비교 마찰을 낮춰 상세 진입 촉진.</div>
+      <div class="sp-l c"><span class="lb">제약</span>결과 0건이면 "1기 모집·오픈 알림"으로 대체.</div></div></div>
+    <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">쇼퍼 카드 그리드</div>
+      <div class="sp-l d"><span class="lb">설명</span>PC는 4단 그리드 — 아바타·평점·매칭도·전문분야 태그.</div>
+      <div class="sp-l i"><span class="lb">의도</span>전체가 페이크도어 — 진짜처럼 만들어 전환신호(≥25%)만 측정.</div>
+      <div class="sp-l c"><span class="lb">제약</span>EX 배열 하드코딩(실쇼퍼 아님)·사진=SVG 일러스트.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="3 · 쇼퍼 프로필">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/experts/sohee</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span class="on">쇼퍼찾기</span><span>마이</span></div><div class="act">로그인</div></div>
+      <div class="pg"><div class="split l">
+        <div>
+          <div class="card"><span class="mk">1</span> <div class="row" style="align-items:center"><div class="av">🧑‍💼</div><div><div class="txt" style="font-weight:800">소희 쇼퍼</div><div class="note" style="margin:2px 0"><span class="star">★</span>4.9 (32) · 매칭도 94%</div></div></div></div>
+          <div class="note" style="font-weight:700;color:var(--ink)"><span class="mk">2</span> 제공 서비스</div>
+          <div class="row"><div class="card" style="margin:0;font-size:11px">온라인 스타일링<br><b>35,000원</b></div><div class="card" style="margin:0;font-size:11px">동행 쇼핑<br><b>120,000원</b></div></div>
+          <div class="btn"><span class="mk">4</span> 요청하기</div>
+        </div>
+        <div>
+          <div class="note" style="font-weight:700;color:var(--ink)"><span class="mk">3</span> 후기 32</div>
+          <div class="card" style="font-size:11px">"체형에 맞게 딱 골라주셨어요" <span class="note">— 지민님</span></div>
+          <div class="note" style="font-weight:700;color:var(--ink)">포트폴리오</div>
+          <div class="cols c3"><div class="box">🖼</div><div class="box">🖼</div><div class="box">🖼</div></div>
+        </div>
+      </div></div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">1.2.5</span><span class="nm">쇼퍼 프로필</span><span class="pri">★ · 🔍</span>
+      <div class="io"><b>데이터</b> EX + 내 후기(fitting.reqs) · <b>이탈</b> 견적요청·목록복귀</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">히어로(활동명·평점·매칭도)</div>
+      <div class="sp-l d"><span class="lb">설명</span>좌측 상단 신뢰 지표(아바타·별점·후기수).</div>
+      <div class="sp-l i"><span class="lb">의도</span>쇼퍼는 프로필이 곧 첫인상 — 신뢰 신호를 최상단에.</div>
+      <div class="sp-l c"><span class="lb">제약</span>매칭도는 데모 값.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">제공 서비스·가격</div>
+      <div class="sp-l d"><span class="lb">설명</span>유형별 가격 타일(온라인 35k·동행 120k).</div>
+      <div class="sp-l i"><span class="lb">의도</span>선택·요청의 판단 근거를 명확히.</div>
+      <div class="sp-l c"><span class="lb">제약</span>대면 서비스는 활동지역 표기.</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">후기·포트폴리오</div>
+      <div class="sp-l d"><span class="lb">설명</span>PC는 우측 컬럼 — 작업물 갤러리 + 평가.</div>
+      <div class="sp-l i"><span class="lb">의도</span>매칭 전 확신을 주는 사회적 증거.</div>
+      <div class="sp-l c"><span class="lb">제약</span>포트폴리오는 DEMO_FOLIO(데모).</div></div></div>
+    <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">요청하기</div>
+      <div class="sp-l d"><span class="lb">설명</span>지명 견적 요청 진입.</div>
+      <div class="sp-l i"><span class="lb">의도</span>상세→전환. 로그인 게이트가 가입 유도 지점.</div>
+      <div class="sp-l c"><span class="lb">제약</span>비로그인 시 로그인 시트 후 이어감.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="4 · 견적 요청">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/match</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span class="on">쇼퍼찾기</span><span>마이</span></div><div class="act">🔔 👤 상민</div></div>
+      <div class="pg"><div class="center card">
+        <div class="txt" style="font-weight:800;text-align:center;margin-bottom:6px">소희 쇼퍼에게 코디 요청</div>
+        <div class="seg"><div class="on"><span class="mk">1</span>온라인</div><div>동행</div><div>이미지</div></div>
+        <div class="split"><div class="field"><span class="mk">2</span><div class="lb">상황 (최대 2)</div>소개팅·데이트</div><div class="field"><div class="lb">예산</div>5~10만원</div></div>
+        <div class="split"><div class="field"><div class="lb">일정</div>2026-07-20</div><div class="field"><div class="lb">스타일 (최대 3)</div>미니멀·캐주얼</div></div>
+        <div class="field"><div class="lb">한 줄 요청</div>깔끔한 데이트룩 추천해 주세요</div>
+        <div class="card note" style="text-align:center;background:var(--green-soft);border-color:var(--green);color:var(--green)"><span class="mk">3</span> 📎 체형진단 결과 자동 첨부 (STR · 173/72)</div>
+        <div class="btn"><span class="mk">4</span> 견적 요청 보내기</div>
+      </div></div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">1.3</span><span class="nm">견적 요청 (오픈/지명)</span><span class="pri">★ · 🔒</span>
+      <div class="io"><b>I/O</b> <span class="w">W</span> fitting.reqs {open|nm, svc, occ, budget, status}</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">서비스 유형</div>
+      <div class="sp-l d"><span class="lb">설명</span>온라인/동행/이미지 택1.</div>
+      <div class="sp-l i"><span class="lb">의도</span>수요를 유형별로 구조화(무엇을 원하나).</div>
+      <div class="sp-l c"><span class="lb">제약</span>진입 경로(지명/오픈)에 따라 폼 일부 달라짐.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">상황·예산·일정·스타일</div>
+      <div class="sp-l d"><span class="lb">설명</span>PC는 2단 폼 — 요청의 구조화된 축.</div>
+      <div class="sp-l i"><span class="lb">의도</span>최소 입력으로 수요를 데이터로 남김(얼마에·언제).</div>
+      <div class="sp-l c"><span class="lb">제약</span>상황 max2·스타일 max3·일정 min=오늘. 모두 채워야 제출 활성.</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">체형진단 자동 첨부</div>
+      <div class="sp-l d"><span class="lb">설명</span>진단 결과(체형·사이즈)를 요청에 실어 보냄.</div>
+      <div class="sp-l i"><span class="lb">의도</span>제품의 핵심 차별점 — 쇼퍼가 더 정확히 제안(핸드오프).</div>
+      <div class="sp-l c"><span class="lb">제약</span>진단 전이면 체형정보 없이 전송.</div></div></div>
+    <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">견적 요청(오픈/지명)</div>
+      <div class="sp-l d"><span class="lb">설명</span>오픈=역경매(bids 생성)·지명=특정쇼퍼.</div>
+      <div class="sp-l i"><span class="lb">의도</span>공급 유동성(입찰)과 취향 매칭 병행.</div>
+      <div class="sp-l c"><span class="lb">제약</span>로그인 게이트(lazy) — 제출 시점에만.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="쇼퍼찾기 · 지명 요청 응답(직접 신청)">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/match/8</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span class="on">쇼퍼찾기</span><span>마이</span></div><div class="act">🔔 👤 상민</div></div>
+      <div class="pg">
+        <div class="card"><span class="mk">1</span> <b>소희 쇼퍼</b>에게 보낸 요청 · 온라인 · 소개팅 · 90,000원</div>
+        <div class="split">
+          <div class="card" style="text-align:center"><div class="note" style="font-weight:700;color:var(--ink)"><span class="mk">2</span> 응답 대기</div><div style="font-size:20px">⏳</div><div class="note">쇼퍼가 요청을 검토 중이에요</div><div class="btn ghost" style="margin:6px 0">요청 취소</div></div>
+          <div class="card" style="background:var(--green-soft);border-color:var(--green)"><div class="note" style="font-weight:700;color:var(--green)"><span class="mk">3</span> 요청 수락됨 ✓</div><div class="note">소희 쇼퍼가 수락했어요</div><div class="btn"><span class="mk">3</span> 결제하고 시작 →</div></div>
+        </div>
+        <div class="card note"><span class="mk">4</span> 거절 시 → "다른 쇼퍼 찾기" (목록 복귀)</div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">1.3 / 1.6</span><span class="nm">지명 요청 응답 (직접 신청)</span><span class="pri">● 지명 · 🔒</span>
+      <div class="io"><b>진입</b> 쇼퍼 상세 "요청하기"(지명) · <b>이탈</b> 수락→결제(1.8) / 거절→목록 · <b>짝</b> 쇼퍼 견적서(수락/거절)</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">보낸 지명 요청</div>
+      <div class="sp-l d"><span class="lb">설명</span>특정 쇼퍼에게 직접 보낸 요청 요약(오픈 역경매와 대비).</div>
+      <div class="sp-l i"><span class="lb">의도</span>원하는 쇼퍼를 직접 지목 — 취향 매칭 경로.</div>
+      <div class="sp-l c"><span class="lb">제약</span>요청 폼은 견적요청(오픈)과 공유 · status='대기'로 저장.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">응답 대기 · 요청 취소</div>
+      <div class="sp-l d"><span class="lb">설명</span>쇼퍼 검토 중 상태 + 취소.</div>
+      <div class="sp-l i"><span class="lb">의도</span>지명은 1:1이라 응답까지 대기 — 상태를 명확히.</div>
+      <div class="sp-l c"><span class="lb">제약</span>미응답 자동만료 기간 정책 필요 · 데모는 수락/거절 시뮬.</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">수락됨 → 결제</div>
+      <div class="sp-l d"><span class="lb">설명</span>쇼퍼 수락 시 [결제하고 시작].</div>
+      <div class="sp-l i"><span class="lb">의도</span>지명·오픈 두 경로가 <b>결제(1.8)에서 수렴</b> — 이후 진행·완료 동일.</div>
+      <div class="sp-l c"><span class="lb">제약</span>데모는 수락→진행 직행(결제 단계 v2).</div></div></div>
+    <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">거절됨 → 다른 쇼퍼</div>
+      <div class="sp-l d"><span class="lb">설명</span>쇼퍼 거절 시 목록으로 안내.</div>
+      <div class="sp-l i"><span class="lb">의도</span>막다른 길 방지 — 재탐색/오픈 전환 유도.</div>
+      <div class="sp-l c"><span class="lb">제약</span>데모: reqReject → status='거절' + "다른 쇼퍼 찾기".</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="쇼퍼찾기 · 입찰 비교·낙찰">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/match/12/bids</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span class="on">쇼퍼찾기</span><span>마이</span></div><div class="act">🔔 👤 상민</div></div>
+      <div class="pg">
+        <div class="txt" style="font-weight:800"><span class="mk">1</span> 받은 견적 3개 · 소개팅 · 온라인</div>
+        <div class="note">여러 쇼퍼가 견적을 보냈어요 · 비교하고 선택하세요</div>
+        <div class="cols c3">
+          <div class="card"><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:3px">소희 <span class="star">★</span>4.9</div><div class="note"><b>90,000원</b> · 3일</div><div class="btn" style="margin:4px 0"><span class="mk">2</span>선택</div></div>
+          <div class="card"><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:3px">지민 <span class="star">★</span>4.7</div><div class="note"><b>75,000원</b> · 2일</div><div class="btn ghost" style="margin:4px 0">선택</div></div>
+          <div class="card"><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:3px">건형 <span class="star">★</span>4.8</div><div class="note"><b>110,000원</b> · 4일</div><div class="btn ghost" style="margin:4px 0">선택</div></div>
+        </div>
+        <div class="note"><span class="mk">3</span> 선택 시 → 진행중 · 나머지 자동 종료</div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">1.3.8</span><span class="nm">입찰 비교·낙찰</span><span class="pri">● 입찰모델 · 🔒</span>
+      <div class="io"><b>진입</b> 요청 내역 "받은 견적 N개" · <b>I/O</b> <span class="w">RW</span> fitting.reqs(bids/awarded)</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">받은 견적 오버레이</div>
+      <div class="sp-l d"><span class="lb">설명</span>오픈(역경매) 요청에 들어온 입찰 목록.</div>
+      <div class="sp-l i"><span class="lb">의도</span>여러 쇼퍼를 가격·평점·기간으로 비교하는 역경매 UX.</div>
+      <div class="sp-l c"><span class="lb">제약</span>bids는 makeBids로 EX 풀에서 결정적 생성(데모).</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">쇼퍼별 입찰 카드</div>
+      <div class="sp-l d"><span class="lb">설명</span>가격·예상기간·제안 메시지 + [선택].</div>
+      <div class="sp-l i"><span class="lb">의도</span>낙찰 판단에 필요한 정보를 카드로 압축.</div>
+      <div class="sp-l c"><span class="lb">제약</span>online=비대면·나머지=대면(지역 표기).</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">낙찰(선택)</div>
+      <div class="sp-l d"><span class="lb">설명</span>confirmAward → awardBid.</div>
+      <div class="sp-l i"><span class="lb">의도</span>선택 즉시 매칭 성사로 전환.</div>
+      <div class="sp-l c"><span class="lb">제약</span>status='진행중', awarded 세팅 · 나머지 입찰 종료.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="쇼퍼찾기 · 결제(에스크로)">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/match/12/pay</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span class="on">쇼퍼찾기</span><span>마이</span></div><div class="act">🔔 👤 상민</div></div>
+      <div class="pg"><div class="center card">
+        <div class="txt" style="font-weight:800;text-align:center;margin-bottom:6px">결제</div>
+        <div class="card"><div class="row" style="align-items:center"><div class="av">🧑‍💼</div><div><b class="txt"><span class="mk">1</span> 소희 쇼퍼</b><div class="note">온라인 스타일링 · 소개팅</div></div></div>
+          <div class="tbl"><div class="tr"><span>서비스 금액</span><span class="r">90,000원</span></div><div class="tr"><span>수수료(15%)</span><span class="r">포함</span></div><div class="tr hd"><span>결제 금액</span><span class="r">90,000원</span></div></div></div>
+        <div class="txt" style="font-size:11.5px;font-weight:700"><span class="mk">2</span> 결제 수단</div>
+        <div class="seg"><div class="on">카드</div><div>카카오페이</div><div>계좌이체</div></div>
+        <div class="card note"><span class="mk">3</span> 🔒 에스크로 — 결제금은 <b>안전 보관</b>되고, 작업 <b>완료 확인 후</b> 쇼퍼에게 정산됩니다.</div>
+        <div class="btn"><span class="mk">4</span> 90,000원 결제하고 시작</div>
+      </div></div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">1.8</span><span class="nm">결제 (에스크로)</span><span class="pri">○ v2 · 🔒</span>
+      <div class="io"><b>진입</b> 입찰 낙찰(1.3.8) · <b>이탈</b> 진행중(1.6) · <b>짝</b> 쇼퍼 포털 정산(2.6)</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">주문 요약</div>
+      <div class="sp-l d"><span class="lb">설명</span>낙찰된 쇼퍼·서비스·금액·수수료.</div>
+      <div class="sp-l i"><span class="lb">의도</span>결제 직전 무엇에·얼마를 내는지 명확화.</div>
+      <div class="sp-l c"><span class="lb">제약</span>금액=낙찰 입찰가 · 수수료 정책은 v2 확정.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">결제 수단</div>
+      <div class="sp-l d"><span class="lb">설명</span>카드·간편결제·계좌이체 선택.</div>
+      <div class="sp-l i"><span class="lb">의도</span>국내 결제 관행에 맞춘 선택지.</div>
+      <div class="sp-l c"><span class="lb">제약</span>실 PG 연동은 v2 — 현재 화면·플로우만.</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">에스크로 안내</div>
+      <div class="sp-l d"><span class="lb">설명</span>결제금 보관 → 완료 확인 후 정산.</div>
+      <div class="sp-l i"><span class="lb">의도</span>선입금·완료 후 릴리스로 양측 신뢰 확보(분쟁 대비).</div>
+      <div class="sp-l c"><span class="lb">제약</span>환불 규칙·정산 주기는 정책/법률 검토 필요(§1.8).</div></div></div>
+    <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">결제하고 시작</div>
+      <div class="sp-l d"><span class="lb">설명</span>결제 완료 → 요청 상태 진행중.</div>
+      <div class="sp-l i"><span class="lb">의도</span>낙찰→작업 시작의 게이트(무단 진행 방지).</div>
+      <div class="sp-l c"><span class="lb">제약</span>현행 MVP는 페이크도어라 이 단계 없이 낙찰→진행중 직행.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="쇼퍼찾기 · 진행·결과물 수령">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/match/12</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span class="on">쇼퍼찾기</span><span>마이</span></div><div class="act">🔔 👤 상민</div></div>
+      <div class="pg">
+        <div class="card" style="background:var(--green-soft);border-color:var(--green)"><span class="mk">1</span> <b>소희 쇼퍼로 매칭되었어요!</b> · 진행 중</div>
+        <div class="split l">
+          <div class="card"><div class="note" style="font-weight:700;color:var(--ink)"><span class="mk">2</span> 대화</div><div class="box" style="min-height:70px;text-align:left;align-items:flex-start">소희: 소개팅룩 3안 보내드려요 🙂<br>나: 감사해요!</div><div class="field">메시지 입력…</div></div>
+          <div><div class="note" style="font-weight:700;color:var(--ink)"><span class="mk">3</span> 받은 결과물</div><div class="card"><div class="cols c3"><div class="box">🖼</div><div class="box">🖼</div><div class="box">🖼</div></div><div class="note">코디 3안 · 구매 링크 5</div></div><div class="btn"><span class="mk">4</span> 받았어요 · 완료 확인 →</div></div>
+        </div>
+        <div class="card note" style="text-align:center"><span class="mk">5</span> 문제가 있거나 도움이 필요하면 · <b>고객센터 · 문의하기 →</b></div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">1.6 / 1.7</span><span class="nm">진행 · 결과물 수령 (대화)</span><span class="pri">○ v2 · 🔒</span>
+      <div class="io"><b>진입</b> 결제 완료(1.8) · <b>이탈</b> 완료·후기 · <b>짝</b> 쇼퍼 결과물 작성(2.1.2.2)</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">매칭 히어로 배너</div>
+      <div class="sp-l d"><span class="lb">설명</span>"○○ 쇼퍼로 매칭" + 진행 상태.</div>
+      <div class="sp-l i"><span class="lb">의도</span>결제 직후 신뢰·기대 강화(딥그린 배너).</div>
+      <div class="sp-l c"><span class="lb">제약</span>데모엔 배너만 존재(대화·결과물은 v2).</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">대화(메시지)</div>
+      <div class="sp-l d"><span class="lb">설명</span>수락/낙찰 후 개설 · 일정 조율·신고.</div>
+      <div class="sp-l i"><span class="lb">의도</span>결과물 전달·소통 채널 = 거래 진행의 몸통.</div>
+      <div class="sp-l c"><span class="lb">제약</span>IA 1.7 — v2(실시간/알림 포함).</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">받은 결과물</div>
+      <div class="sp-l d"><span class="lb">설명</span>코디 제안·구매 링크(쇼퍼가 작성).</div>
+      <div class="sp-l i"><span class="lb">의도</span>서비스의 실제 산출물 — 여기서 사용자가 '서비스를 받음'.</div>
+      <div class="sp-l c"><span class="lb">제약</span>작성은 쇼퍼 포털(2.1.2.2) · v2.</div></div></div>
+    <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">받았어요 · 완료 확인</div>
+      <div class="sp-l d"><span class="lb">설명</span>사용자가 수령 확인 → 완료 단계로.</div>
+      <div class="sp-l i"><span class="lb">의도</span>수령 확인이 에스크로 정산 릴리스의 트리거.</div>
+      <div class="sp-l c"><span class="lb">제약</span>미확인 시 자동확정 기간·분쟁(1.9) 정책 필요.</div></div></div>
+    <div class="sp-item"><span class="mk">5</span><div><div class="sp-nm">고객센터·문의 게이트</div>
+      <div class="sp-l d"><span class="lb">설명</span>진행/거래 화면 하단에 상시 노출되는 고객센터·문의(1.9) 진입.</div>
+      <div class="sp-l i"><span class="lb">의도</span>문제가 실제로 생기는 거래 진행 지점에 지원 게이트를 둠(맥락형 진입).</div>
+      <div class="sp-l c"><span class="lb">제약</span>거래 관련이면 문제 신고·환불(분쟁)로, 일반이면 고객센터 1:1 문의로 라우팅.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="쇼퍼찾기 · 완료·후기(거래 종료)">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/match/12/done</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span>쇼퍼찾기</span><span class="on">마이</span></div><div class="act">🔔 👤 상민</div></div>
+      <div class="pg"><div class="center card" style="text-align:center">
+        <div style="font-size:24px">✅</div>
+        <div class="txt" style="font-weight:800;font-size:13px"><span class="mk">1</span> 거래가 완료되었어요</div>
+        <div class="hs" style="text-align:center">소희 쇼퍼 · 온라인 스타일링 · 90,000원</div>
+        <div class="card note"><span class="mk">2</span> 🔒 에스크로 정산 릴리스 — 보관된 결제금이 쇼퍼에게 지급됩니다.</div>
+        <div class="txt" style="font-size:11.5px;font-weight:700"><span class="mk">3</span> 후기 남기기</div>
+        <div class="seg"><div class="on">★</div><div class="on">★</div><div class="on">★</div><div class="on">★</div><div class="on">★</div></div>
+        <div class="field">"체형에 맞게 딱 골라주셨어요"</div>
+        <div class="row"><div class="btn"><span class="mk">4</span>후기 등록</div><div class="btn ghost">영수증</div></div>
+      </div></div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">1.6 / 1.8</span><span class="nm">완료 · 후기 (거래 종료)</span><span class="pri">◐ 완료·후기 데모 · 🔒</span>
+      <div class="io"><b>I/O</b> <span class="w">W</span> fitting.reqs(status=완료·후기완료, review) · 정산 릴리스=v2</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">완료 확정</div>
+      <div class="sp-l d"><span class="lb">설명</span>거래 완료 요약(쇼퍼·서비스·금액).</div>
+      <div class="sp-l i"><span class="lb">의도</span>거래를 명확히 닫아 상태를 종결(완료).</div>
+      <div class="sp-l c"><span class="lb">제약</span>데모: reqComplete → status='완료' (마이 요청내역).</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">에스크로 정산 릴리스</div>
+      <div class="sp-l d"><span class="lb">설명</span>보관 결제금 → 쇼퍼 정산 지급.</div>
+      <div class="sp-l i"><span class="lb">의도</span>완료 확인=릴리스 트리거 · 쇼퍼 포털 정산(2.6)과 짝.</div>
+      <div class="sp-l c"><span class="lb">제약</span>실 정산·수수료 차감은 v2(§1.8).</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">후기(별점·텍스트)</div>
+      <div class="sp-l d"><span class="lb">설명</span>거래 후 평가 작성.</div>
+      <div class="sp-l i"><span class="lb">의도</span>평판이 다음 매칭의 매칭도·전환을 좌우.</div>
+      <div class="sp-l c"><span class="lb">제약</span>데모: submitReview → review{rating,text}, status='후기완료'.</div></div></div>
+    <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">후기 등록 · 영수증</div>
+      <div class="sp-l d"><span class="lb">설명</span>후기 저장 + 결제 영수증 열람.</div>
+      <div class="sp-l i"><span class="lb">의도</span>거래 종결·기록 · 재요청/공유로 재유입.</div>
+      <div class="sp-l c"><span class="lb">제약</span>영수증은 v2(결제 연동 후).</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="쇼퍼찾기 · 문제 신고·환불 요청(분쟁)">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/match/12/dispute</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span class="on">쇼퍼찾기</span><span>마이</span></div><div class="act">🔔 👤 상민</div></div>
+      <div class="pg"><div class="center card">
+        <div class="txt" style="font-weight:800;text-align:center;margin-bottom:6px">문제 신고 · 환불 요청</div>
+        <div class="card"><span class="mk">1</span> 소희 쇼퍼 · 소개팅 · <b>90,000원 에스크로 보관 중</b></div>
+        <div class="txt" style="font-size:11.5px;font-weight:700"><span class="mk">2</span> 사유</div>
+        <div class="seg"><div class="on">미이행</div><div>품질 불만</div><div>노쇼</div><div>기타</div></div>
+        <div class="field"><span class="mk">3</span><div class="lb">상세 설명</div>결과물을 받지 못했어요</div>
+        <div class="box" style="min-height:40px"><span class="mk">3</span> 📎 증빙 첨부(대화·스크린샷)</div>
+        <div class="card note"><span class="mk">4</span> 🔒 접수 시 <b>정산 릴리스 보류</b> · 쇼퍼 소명 후 관리자 중재</div>
+        <div class="btn"><span class="mk">4</span> 환불 요청 제출</div>
+      </div></div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">1.9</span><span class="nm">문제 신고 · 환불 요청 (분쟁)</span><span class="pri">○ v2 · 🔒</span>
+      <div class="io"><b>진입</b> 진행·완료 대기(1.6) · <b>이탈</b> 관리자 분쟁 큐(3.B.4) · <b>연계</b> 고객센터(1.9)</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">대상 거래</div>
+      <div class="sp-l d"><span class="lb">설명</span>쇼퍼·서비스·에스크로 보관금 확인.</div>
+      <div class="sp-l i"><span class="lb">의도</span>보관금이 있는 거래만 분쟁 대상 — 릴리스 전 문제제기 창구.</div>
+      <div class="sp-l c"><span class="lb">제약</span>완료 확인(정산 릴리스) 후·자동확정 기간 경과 시 제한.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">사유 유형</div>
+      <div class="sp-l d"><span class="lb">설명</span>미이행/품질 불만/노쇼/기타.</div>
+      <div class="sp-l i"><span class="lb">의도</span>관리자 분쟁 큐의 유형과 1:1 매핑(3.B.4).</div>
+      <div class="sp-l c"><span class="lb">제약</span>유형별 환불 규칙은 정책 확정 필요.</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">상세·증빙 첨부</div>
+      <div class="sp-l d"><span class="lb">설명</span>설명 + 대화·스크린샷 증빙.</div>
+      <div class="sp-l i"><span class="lb">의도</span>중재 판단 근거 제공(양측 소명의 시작).</div>
+      <div class="sp-l c"><span class="lb">제약</span>v2 · 파일 업로드는 실 스토리지 연동 후.</div></div></div>
+    <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">제출 → 릴리스 보류</div>
+      <div class="sp-l d"><span class="lb">설명</span>접수 시 에스크로 정산 릴리스 보류.</div>
+      <div class="sp-l i"><span class="lb">의도</span>보관금을 묶어 양측 보호 · 쇼퍼 소명→관리자 중재로 종결.</div>
+      <div class="sp-l c"><span class="lb">제약</span>v2 · 남용 방지(횟수·기간) 정책 필요.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="마이 · 프로필">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/my/profile</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span>쇼퍼찾기</span><span class="on">마이</span></div><div class="act">🔔 👤 상민</div></div>
+      <div class="shell">
+        <div class="side"><span class="mk">1</span><div class="it on">프로필</div><div class="it">진단 결과</div><div class="it">요청 내역</div><div class="it">즐겨찾기</div><div class="it">계정</div><div class="it">고객센터</div></div>
+        <div class="main">
+          <div class="card"><div class="row" style="align-items:center"><div class="av">🧑</div><div><b class="txt">상민</b><div class="note"><span class="mk">2</span> 남성 · 173cm · 72kg</div></div></div></div>
+          <div class="txt" style="font-size:11.5px;font-weight:700"><span class="mk">3</span> 신체·선호핏 (진단서 자동)</div>
+          <div class="row"><div class="field"><div class="lb">선호핏</div>슬림</div><div class="field"><div class="lb">체형</div>STR</div></div>
+          <div class="btn ghost" style="max-width:100px">수정</div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">1.4A</span><span class="nm">마이 · 프로필</span><span class="pri">◐ · 🔒</span>
+      <div class="io"><b>I/O</b> USER(메모리) · <b>사이드</b> 프로필·진단·요청·찜·계정</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">좌측 사이드 내비(5)</div>
+      <div class="sp-l d"><span class="lb">설명</span>PC는 좌측 사이드바 — 5개 패널을 전환.</div>
+      <div class="sp-l i"><span class="lb">의도</span>SPA 패널을 데스크톱에선 사이드 내비로 펼침.</div>
+      <div class="sp-l c"><span class="lb">제약</span>탭 전환 = myNav(패널), URL 없이 한 페이지.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">프로필 헤더(진단서 자동)</div>
+      <div class="sp-l d"><span class="lb">설명</span>이름·성별·키·몸무게 요약.</div>
+      <div class="sp-l i"><span class="lb">의도</span>진단값 자동 채움으로 재입력 없이 개인화.</div>
+      <div class="sp-l c"><span class="lb">제약</span>USER는 메모리 — 저장소 미영속(재렌더만).</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">신체·선호핏 view/edit</div>
+      <div class="sp-l d"><span class="lb">설명</span>선호핏·체형 표시 + 수정.</div>
+      <div class="sp-l i"><span class="lb">의도</span>진단 결과를 프로필로 승격.</div>
+      <div class="sp-l c"><span class="lb">제약</span>수정은 재렌더만 · 영속화는 v2.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="마이 · 진단 결과">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/my/diagnoses</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span>쇼퍼찾기</span><span class="on">마이</span></div><div class="act">🔔 👤 상민</div></div>
+      <div class="shell">
+        <div class="side"><div class="it">프로필</div><div class="it on">진단 결과</div><div class="it">요청 내역</div><div class="it">즐겨찾기</div><div class="it">계정</div><div class="it">고객센터</div></div>
+        <div class="main">
+          <div class="box tall"><span class="mk">1</span> 진단 카드 (card.html iframe) · STR</div>
+          <div class="row"><div class="btn ghost" style="margin:6px 0"><span class="mk">2</span>다시 진단하기</div><div class="btn ghost" style="margin:6px 0">공유</div></div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">1.4B</span><span class="nm">마이 · 진단 결과</span><span class="pri">● · 🔒</span>
+      <div class="io"><b>I/O</b> card.html?type=USER.type</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">진단 카드</div>
+      <div class="sp-l d"><span class="lb">설명</span>내 8유형 결과 카드(iframe).</div>
+      <div class="sp-l i"><span class="lb">의도</span>내 결과를 언제든 다시 보는 재방문 훅.</div>
+      <div class="sp-l c"><span class="lb">제약</span>USER.type=null이면 "진단 전" 안내 · 이력·추이는 v2.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">다시 진단 / 공유</div>
+      <div class="sp-l d"><span class="lb">설명</span>재진단 → diag-basic · 카드 공유.</div>
+      <div class="sp-l i"><span class="lb">의도</span>결과 갱신·바이럴 재진입.</div>
+      <div class="sp-l c"><span class="lb">제약</span>재진단은 세션 진단키 초기화 후 시작.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="마이 · 요청 내역">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/my/requests</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span>쇼퍼찾기</span><span class="on">마이</span></div><div class="act">🔔 👤 상민</div></div>
+      <div class="shell">
+        <div class="side"><div class="it">프로필</div><div class="it">진단 결과</div><div class="it on">요청 내역</div><div class="it">즐겨찾기</div><div class="it">계정</div><div class="it">고객센터</div></div>
+        <div class="main">
+          <div class="tabs"><span class="mk">1</span><span class="tab on">받은 견적</span><span class="tab">보낸 요청</span><span class="tab">알림</span></div>
+          <div class="tbl"><div class="tr hd"><span>쇼퍼</span><span>상황</span><span>견적</span><span class="r">상태</span></div><div class="tr"><span>오픈(3명)</span><span>소개팅</span><span>3개</span><span class="r"><span class="tag">견적중</span></span></div><div class="tr"><span>소희</span><span>면접</span><span>90k</span><span class="r"><span class="tag b">진행중</span></span></div><div class="tr"><span>건형</span><span>하객</span><span>—</span><span class="r">완료</span></div></div>
+          <div class="note"><span class="mk">2</span> 견적 클릭 → 받은 견적 비교(입찰) 오버레이</div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">1.4C</span><span class="nm">마이 · 요청 내역</span><span class="pri">▷ · 🔒</span>
+      <div class="io"><b>I/O</b> <span class="w">RW</span> fitting.reqs</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">받은견적/보낸요청/알림</div>
+      <div class="sp-l d"><span class="lb">설명</span>요청을 유형별로 그룹(오픈=받은견적·지명=보낸요청·notify=알림).</div>
+      <div class="sp-l i"><span class="lb">의도</span>매칭 라이프사이클을 사용자 쪽에서 추적.</div>
+      <div class="sp-l c"><span class="lb">제약</span>상태 8종(대기·견적중·진행중·수락·완료·후기완료·거절·취소함).</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">라이프사이클 액션</div>
+      <div class="sp-l d"><span class="lb">설명</span>수락/거절/취소/완료/후기 + 입찰 비교.</div>
+      <div class="sp-l i"><span class="lb">의도</span>요청→성사→후기까지 한 곳에서.</div>
+      <div class="sp-l c"><span class="lb">제약</span>각 액션이 saveLS('reqs') · 후기 등록 시 후기완료.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="마이 · 즐겨찾기">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/my/favorites</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span>쇼퍼찾기</span><span class="on">마이</span></div><div class="act">🔔 👤 상민</div></div>
+      <div class="shell">
+        <div class="side"><div class="it">프로필</div><div class="it">진단 결과</div><div class="it">요청 내역</div><div class="it on">즐겨찾기</div><div class="it">계정</div><div class="it">고객센터</div></div>
+        <div class="main">
+          <div class="cols c3"><div class="card"><span class="mk">1</span><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:3px">소희 쇼퍼</div><div class="note"><span class="star">★</span>4.9</div></div><div class="card"><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:3px">지민 쇼퍼</div><div class="note"><span class="star">★</span>4.7</div></div><div class="card"><div class="av">🧑‍💼</div><div class="txt" style="font-size:10px;font-weight:700;margin-top:3px">건형 쇼퍼</div><div class="note"><span class="star">★</span>4.8</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">1.4D</span><span class="nm">마이 · 즐겨찾기</span><span class="pri">▷ · 🔒</span>
+      <div class="io"><b>I/O</b> <span class="w">RW</span> fitting.favs</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">찜한 쇼퍼 카드</div>
+      <div class="sp-l d"><span class="lb">설명</span>🤍로 담은 쇼퍼 그리드 · 클릭 → 상세(뒤로=찜 복귀).</div>
+      <div class="sp-l i"><span class="lb">의도</span>재방문 시 바로 요청할 후보를 모아둠.</div>
+      <div class="sp-l c"><span class="lb">제약</span>찜 토글은 로그인 후에만 · 원본 쇼퍼(EX) 참조로 얼굴·태그 동기화.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="마이 · 계정">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/my/account</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span>쇼퍼찾기</span><span class="on">마이</span></div><div class="act">🔔 👤 상민</div></div>
+      <div class="shell">
+        <div class="side"><div class="it">프로필</div><div class="it">진단 결과</div><div class="it">요청 내역</div><div class="it">즐겨찾기</div><div class="it on">계정</div><div class="it">고객센터</div></div>
+        <div class="main">
+          <div class="field"><span class="mk">1</span><div class="lb">로그인</div>카카오 계정 · sohee@…</div>
+          <div class="field">🔔 알림 설정 <span class="note">→ 알림(G.6)</span></div>
+          <div class="field"><span class="mk">2</span> 개인정보·데이터 관리 <span class="note">열람·삭제·동의철회 → (1.4E)</span></div>
+          <div class="field">약관 · 개인정보 처리방침</div>
+          <div class="row"><div class="btn ghost" style="margin:6px 0"><span class="mk">3</span>로그아웃</div><div class="btn ghost" style="margin:6px 0;color:var(--sub)">탈퇴</div></div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">1.4E</span><span class="nm">마이 · 계정</span><span class="pri">◐ · 🔒</span>
+      <div class="io"><b>I/O</b> R fitting.auth</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">로그인 정보 · 알림 설정(→G.6)</div>
+      <div class="sp-l d"><span class="lb">설명</span>연결 계정 + 🔔 알림 설정(알림 화면 G.6으로) + 약관 링크.</div>
+      <div class="sp-l i"><span class="lb">의도</span>계정·동의 관리의 최소 진입점.</div>
+      <div class="sp-l c"><span class="lb">제약</span>알림 리스트 진입은 헤더 🔔 벨이 주 게이트.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">개인정보·데이터 관리 게이트(→1.4E)</div>
+      <div class="sp-l d"><span class="lb">설명</span>진단 데이터 열람·삭제·동의철회 화면으로의 진입 링크.</div>
+      <div class="sp-l i"><span class="lb">의도</span>1.4E 게이트 = 마이 &gt; 계정 &gt; 개인정보·데이터 관리(민감정보라 계정 하위).</div>
+      <div class="sp-l c"><span class="lb">제약</span>G.4 개인정보 처리방침(문서)과는 별개 — 이건 내 데이터 실제 관리.</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">로그아웃 / 탈퇴</div>
+      <div class="sp-l d"><span class="lb">설명</span>세션 종료·회원 탈퇴.</div>
+      <div class="sp-l i"><span class="lb">의도</span>계정 통제권 제공.</div>
+      <div class="sp-l c"><span class="lb">제약</span>MVP는 토스트만(실 처리 v2).</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="고객센터 · 1:1 문의(고객지원)">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/support</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span>쇼퍼찾기</span><span class="on">마이</span></div><div class="act">🔔 👤 상민</div></div>
+      <div class="shell">
+        <div class="side"><span class="mk">1</span><div class="it">프로필</div><div class="it">진단 결과</div><div class="it">요청 내역</div><div class="it">즐겨찾기</div><div class="it">계정</div><div class="it on">고객센터</div></div>
+        <div class="main">
+          <div class="card note" style="text-align:center"><span class="mk">2</span> 먼저 확인 · <b>자주 묻는 질문(FAQ) 더보기 → (G.2)</b></div>
+          <div class="txt" style="font-weight:800"><span class="mk">3</span> 1:1 문의</div>
+          <div class="row"><div class="field"><div class="lb">유형</div>결제·환불 ▾</div><div class="field"><div class="lb">관련 거래(선택)</div>#1024 ▾</div></div>
+          <div class="field"><div class="lb">내용</div>………</div>
+          <div class="box" style="min-height:30px">📎 첨부</div>
+          <div class="row"><div class="btn" style="margin:6px 0">문의 접수</div><div class="btn ghost" style="margin:6px 0"><span class="mk">4</span>거래 문제는 환불 요청 →</div></div>
+          <div class="note">내 문의 1건 답변완료</div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">1.9</span><span class="nm">고객센터 · 1:1 문의</span><span class="pri">○ v2 · 🔒</span>
+      <div class="io"><b>진입 게이트</b> 마이 좌측 메뉴 → 고객센터 (+ 거래화면·오류화면 "문의하기") · <b>짝</b> 관리자 CS(3.B.7)</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">진입 게이트 = 마이 좌측 메뉴</div>
+      <div class="sp-l d"><span class="lb">설명</span>마이의 좌측 사이드 메뉴(프로필·…·계정·<b>고객센터</b>) 하위 패널.</div>
+      <div class="sp-l i"><span class="lb">의도</span>상단 3탭(홈·쇼퍼찾기·마이) 구조를 흐트러뜨리지 않고 계정과 함께 묶음.</div>
+      <div class="sp-l c"><span class="lb">제약</span>거래 진행(1.6/1.7)·오류화면 "문의하기"로도 진입.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">FAQ 더보기 → G.2 (링크만)</div>
+      <div class="sp-l d"><span class="lb">설명</span>자주 묻는 질문은 <b>공개 FAQ(G.2)로 링크</b> — 여기선 콘텐츠를 중복하지 않음.</div>
+      <div class="sp-l i"><span class="lb">의도</span>FAQ 콘텐츠 정본은 G.2 한 곳(공개·SEO) · 자가해결 우선.</div>
+      <div class="sp-l c"><span class="lb">제약</span>G.2 소스는 관리자 CS(3.B.7 FAQ 관리)가 편집 — 세 화면이 공유.</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">1:1 문의 작성·내역 (주)</div>
+      <div class="sp-l d"><span class="lb">설명</span>유형·관련거래·내용·첨부 → 티켓 생성 + 내 문의 상태 추적.</div>
+      <div class="sp-l i"><span class="lb">의도</span>고객센터의 실체 = 문의 창구(FAQ는 링크로 축소).</div>
+      <div class="sp-l c"><span class="lb">제약</span>로그인 필요 🔒 · 답변은 알림(G.6) 회신.</div></div></div>
+    <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">거래 문제 → 환불 요청</div>
+      <div class="sp-l d"><span class="lb">설명</span>특정 거래 관련이면 분쟁(1.9) 플로우로 분기.</div>
+      <div class="sp-l i"><span class="lb">의도</span>일반 문의와 에스크로 분쟁을 구분해 라우팅.</div>
+      <div class="sp-l c"><span class="lb">제약</span>거래 분쟁은 릴리스 보류 게이트를 탐(문제 신고 화면).</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="마이 · 개인정보·데이터 관리(삭제·철회)">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/my/privacy</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span>쇼퍼찾기</span><span class="on">마이</span></div><div class="act">🔔 👤 상민</div></div>
+      <div class="pg"><div class="center card">
+        <div class="txt" style="font-weight:800;text-align:center;margin-bottom:6px">개인정보 · 데이터 관리</div>
+        <div class="card"><span class="mk">1</span> 내 진단 데이터 <span class="note">신체·착용경험·결과</span><div class="row"><div class="btn ghost" style="margin:4px 0">내려받기</div><div class="btn ghost" style="margin:4px 0;color:#7a1f1f">삭제 요청</div></div></div>
+        <div class="card"><span class="mk">2</span> 엔진 개선 활용 동의 <span class="tag">ON</span><div class="btn ghost" style="margin:4px 0">동의 철회</div></div>
+        <div class="card note"><span class="mk">3</span> 체형·치수 = 민감정보 · 삭제 시 진단 이력도 함께 삭제</div>
+      </div></div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">1.4E / G.4</span><span class="nm">개인정보 · 데이터 관리</span><span class="pri">○ v2(법적 필수) · 🔒</span>
+      <div class="io"><b>진입</b> 마이 계정 · <b>연계</b> 개인정보처리방침(G.4)·동의(consent)</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">데이터 열람·삭제 요청</div>
+      <div class="sp-l d"><span class="lb">설명</span>진단 데이터(신체·착용경험·결과) 내려받기·삭제.</div>
+      <div class="sp-l i"><span class="lb">의도</span>체형=민감정보 — 열람·삭제권은 개인정보보호법상 필수.</div>
+      <div class="sp-l c"><span class="lb">제약</span>v2 · 삭제 시 fitting.dx/feedback·서버 이력 함께 파기.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">엔진개선 동의 철회</div>
+      <div class="sp-l d"><span class="lb">설명</span>opt-in(2-5) 동의를 사후 철회.</div>
+      <div class="sp-l i"><span class="lb">의도</span>동의는 언제든 철회 가능 — 신뢰·법적 요건.</div>
+      <div class="sp-l c"><span class="lb">제약</span>철회 시 이후 개선 활용 중단(기수집분 처리 정책 명시).</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="알림(매칭·분쟁·문의 회신)">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/my/notifications</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span>쇼퍼찾기</span><span class="on">마이</span></div><div class="act">🔔 👤 상민</div></div>
+      <div class="pg"><div class="center card">
+        <div class="txt" style="font-weight:800;text-align:center;margin-bottom:6px">알림</div>
+        <div class="tbl"><div class="tr"><span><span class="mk">1</span> 소희 쇼퍼가 견적을 보냈어요</span><span class="r">10분 전</span></div><div class="tr"><span>문의 답변이 등록됐어요</span><span class="r">1시간</span></div><div class="tr"><span>분쟁 처리 결과 안내</span><span class="r">어제</span></div></div>
+        <div class="txt" style="font-size:11.5px;font-weight:700"><span class="mk">2</span> 채널 설정</div>
+        <div class="seg"><div class="on">이메일</div><div class="on">카카오 알림톡</div><div>푸시(v2)</div></div>
+      </div></div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">G.6</span><span class="nm">알림</span><span class="pri">○ v2 · 🔒</span>
+      <div class="io"><b>트리거</b> 견적·매칭·분쟁 결과·문의 답변 · <b>MVP</b> 이메일/알림톡(인앱 센터 v2)</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">알림 목록</div>
+      <div class="sp-l d"><span class="lb">설명</span>매칭·분쟁·문의 답변 등 이벤트 회신.</div>
+      <div class="sp-l i"><span class="lb">의도</span>비동기 처리(견적·중재·CS)의 결과를 놓치지 않게 — 리텐션 훅.</div>
+      <div class="sp-l c"><span class="lb">제약</span>MVP는 이메일/카카오 알림톡 · 인앱 센터는 v2.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">채널 설정</div>
+      <div class="sp-l d"><span class="lb">설명</span>이메일/알림톡/푸시 on-off.</div>
+      <div class="sp-l i"><span class="lb">의도</span>마케팅/거래 알림 분리 동의(스팸 방지).</div>
+      <div class="sp-l c"><span class="lb">제약</span>거래 필수 알림은 수신 강제(정책).</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="오류·빈 상태 & 문의 진입(G.7)">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/result (오류)</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span class="on">진단 결과</span></div><div class="act">✕</div></div>
+      <div class="pg"><div class="center card" style="text-align:center">
+        <div style="font-size:24px">😥</div>
+        <div class="txt" style="font-weight:800"><span class="mk">1</span> 사이즈를 못 찾았어요</div>
+        <div class="hs" style="text-align:center">옷을 하나만 더 알려주시면 정확해져요</div>
+        <div class="row"><div class="btn" style="margin:6px 0">옷 추가하기</div><div class="btn ghost" style="margin:6px 0"><span class="mk">2</span>문의하기</div></div>
+        <div class="note"><span class="mk">3</span> 같은 패턴: 404 · 공유링크 만료 · 네트워크 오류</div>
+      </div></div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">G.7</span><span class="nm">오류 · 빈 상태 & 문의 진입</span><span class="pri">◐ 폴백 존재 · 🔒</span>
+      <div class="io"><b>대상</b> 진단 실패(renderLoadError/NoData)·404·링크만료·네트워크</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">쉬운 말 오류 카피</div>
+      <div class="sp-l d"><span class="lb">설명</span>"사이즈를 못 찾았어요 · 옷 하나 더" 등 해결 유도.</div>
+      <div class="sp-l i"><span class="lb">의도</span>막다른 길 방지 — 다음 행동을 제시(디자인 라이팅).</div>
+      <div class="sp-l c"><span class="lb">제약</span>진단 폴백은 구현(result.js) · 404/링크만료(G.7)는 v2.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">문의하기 진입</div>
+      <div class="sp-l d"><span class="lb">설명</span>모든 오류·빈 상태에서 고객센터(1.9)로 바로.</div>
+      <div class="sp-l i"><span class="lb">의도</span>이탈 직전 지원으로 붙잡음 — 자가해결 실패의 안전망.</div>
+      <div class="sp-l c"><span class="lb">제약</span>오류 컨텍스트(화면·코드)를 문의에 자동 첨부.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="FAQ · 도움말(G.2 · 공개)">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/faq</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span>쇼퍼찾기</span><span class="on">마이</span></div><div class="act">문의하기</div></div>
+      <div class="pg">
+        <div class="field"><span class="mk">1</span>🔍 무엇이 궁금하세요?</div>
+        <div class="chips"><span class="chip on">진단</span><span class="chip">매칭</span><span class="chip">결제·환불</span><span class="chip">계정</span><span class="chip">전문가</span></div>
+        <div class="tbl"><div class="tr"><span><span class="mk">2</span> Q. 진단은 어떻게 정확해지나요?</span></div><div class="tr"><span>Q. 유니클로 M이면 자라는 몇일까요?</span></div><div class="tr"><span>Q. 환불 규정이 궁금해요</span></div><div class="tr"><span>Q. 쇼퍼가 응답이 없어요</span></div></div>
+        <div class="note"><span class="mk">3</span> 해결 안 되면 → 1:1 문의</div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">G.2</span><span class="nm">FAQ · 도움말</span><span class="pri">○ v2 · 🔍 색인</span>
+      <div class="io"><b>공개</b> 검색 유입 · <b>연계</b> 고객센터(1.9)·콘텐츠 SEO(5장)</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">검색·카테고리</div>
+      <div class="sp-l d"><span class="lb">설명</span>진단·매칭·결제·계정·전문가별 자주 묻는 질문.</div>
+      <div class="sp-l i"><span class="lb">의도</span>자가해결율↑ → CS 문의량↓ + 오가닉 유입.</div>
+      <div class="sp-l c"><span class="lb">제약</span>실 Q&A 콘텐츠 작성 필요 · 색인 공개(🔍).</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">엔진 데이터 기반 콘텐츠</div>
+      <div class="sp-l d"><span class="lb">설명</span>"유니클로 M = 자라?" 등 변환 가이드 결합.</div>
+      <div class="sp-l i"><span class="lb">의도</span>FAQ + 브랜드 변환 콘텐츠(4.2)로 SEO 쇼케이스.</div>
+      <div class="sp-l c"><span class="lb">제약</span>관리자 CS의 FAQ 관리(3.B.7)와 소스 공유.</div></div></div>
+  </div>
+</section>
+
 <section class="slide" data-nm="쇼퍼가입 · SP-0 소개">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/pro/apply</div></div>
@@ -712,7 +1047,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 12 쇼퍼 가입 SP-1 계정 ═══ -->
 <section class="slide" data-nm="쇼퍼가입 · SP-1 계정">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/pro/apply</div></div>
@@ -746,7 +1080,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 13 쇼퍼 가입 SP-2 기본정보 ═══ -->
 <section class="slide" data-nm="쇼퍼가입 · SP-2 기본정보·가격">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/pro/apply</div></div>
@@ -777,7 +1110,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 14 쇼퍼 가입 SP-3 이력 ═══ -->
 <section class="slide" data-nm="쇼퍼가입 · SP-3 이력·전문분야">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/pro/apply</div></div>
@@ -807,7 +1139,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 15 쇼퍼 가입 SP-4 포트폴리오 ═══ -->
 <section class="slide" data-nm="쇼퍼가입 · SP-4 포트폴리오">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/pro/apply</div></div>
@@ -838,7 +1169,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 16 쇼퍼 가입 SP-5 완료 ═══ -->
 <section class="slide" data-nm="쇼퍼가입 · SP-5 완료">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/pro/apply</div></div>
@@ -866,7 +1196,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 포털 · 대시보드 ═══ -->
 <section class="slide" data-nm="쇼퍼 포털 · 대시보드">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/pro/dashboard</div></div>
@@ -895,7 +1224,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 포털 · 요청 인박스 ═══ -->
 <section class="slide" data-nm="쇼퍼 포털 · 요청 인박스">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/pro/requests</div></div>
@@ -925,7 +1253,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 포털 · 먼저 제안 ═══ -->
 <section class="slide" data-nm="쇼퍼 포털 · 먼저 제안">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/pro/propose</div></div>
@@ -954,7 +1281,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 포털 · 내 프로필 ═══ -->
 <section class="slide" data-nm="쇼퍼 포털 · 내 프로필">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/pro/portfolio</div></div>
@@ -985,7 +1311,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 포털 · 받은 후기 ═══ -->
 <section class="slide" data-nm="쇼퍼 포털 · 받은 후기">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/pro/reviews</div></div>
@@ -1011,7 +1336,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 포털 · 정산 ═══ -->
 <section class="slide" data-nm="쇼퍼 포털 · 정산">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/pro/earnings</div></div>
@@ -1036,7 +1360,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 13 견적서 ═══ -->
 <section class="slide" data-nm="13 · 견적서(요청 상세)">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/pro/quote?req=2</div></div>
@@ -1069,7 +1392,102 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 14 관리자 로그인 ═══ -->
+<section class="slide" data-nm="쇼퍼 포털 · 진행·결과물 전달">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/pro/deliver?req=2</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span class="on">쇼퍼 포털</span></div><div class="act">← 요청 내역</div></div>
+      <div class="pg">
+        <div class="card" style="background:var(--green-soft);border-color:var(--green)"><span class="mk">1</span> <b>지민님 · 소개팅 · 진행 중</b> · 기한 07/20 · 결제완료(에스크로)</div>
+        <div class="split l">
+          <div class="card"><div class="note" style="font-weight:700;color:var(--ink)"><span class="mk">2</span> 고객 상담</div><div class="box" style="min-height:60px;text-align:left;align-items:flex-start">지민: 밝은 톤 선호해요<br>나: 넵, 3안 준비할게요</div><div class="field">답장…</div></div>
+          <div class="card"><div class="note" style="font-weight:700;color:var(--ink)"><span class="mk">3</span> 결과물 작성</div><div class="cols c3"><div class="box">＋사진</div><div class="box">🖼</div><div class="box">🖼</div></div><div class="field">코디 설명 · 구매 링크</div><div class="btn">고객에게 전송</div></div>
+        </div>
+        <div class="btn ghost"><span class="mk">4</span> 완료 처리 → 정산 대기</div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">2.1.2</span><span class="nm">포털 · 진행·결과물 전달</span><span class="pri">○ v2 · 🔒</span>
+      <div class="io"><b>짝</b> 사용자 진행·결과물 수령(1.6/1.7) · <b>이탈</b> 완료→정산(2.6) · <b>I/O</b> <span class="w">RW</span> pro.reqs</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">진행 상태 배너</div>
+      <div class="sp-l d"><span class="lb">설명</span>고객·서비스·기한·결제(에스크로) 확인.</div>
+      <div class="sp-l i"><span class="lb">의도</span>결제 완료된 건만 작업 — 무단 진행 방지.</div>
+      <div class="sp-l c"><span class="lb">제약</span>사용자 결제(1.8) 후 진행중으로 진입.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">고객 상담(대화)</div>
+      <div class="sp-l d"><span class="lb">설명</span>메시지로 요구 파악·조율(2.1.2.1).</div>
+      <div class="sp-l i"><span class="lb">의도</span>사용자 대화(1.7)의 공급자 측 짝.</div>
+      <div class="sp-l c"><span class="lb">제약</span>데모엔 saveReply(단순 답장)만 · 실 채팅 v2.</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">결과물 작성·전송</div>
+      <div class="sp-l d"><span class="lb">설명</span>코디 이미지·설명·구매 링크 작성 → 전송(2.1.2.2).</div>
+      <div class="sp-l i"><span class="lb">의도</span>쇼퍼의 실제 산출물 — 사용자 "결과물 수령"의 원천.</div>
+      <div class="sp-l c"><span class="lb">제약</span>현재 빠져 있던 핵심 화면 · v2 신규.</div></div></div>
+    <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">완료 처리 → 정산 대기</div>
+      <div class="sp-l d"><span class="lb">설명</span>작업 종료 표시 → 고객 완료 확인 대기.</div>
+      <div class="sp-l i"><span class="lb">의도</span>고객 완료 확인 시 에스크로 정산 릴리스(2.6).</div>
+      <div class="sp-l c"><span class="lb">제약</span>데모: completeReq → status 완료 · 릴리스는 v2.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="쇼퍼 포털 · 고객 신고(양방향)">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/pro/report?req=2</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span class="on">쇼퍼 포털</span></div><div class="act">← 요청 내역</div></div>
+      <div class="pg"><div class="center card">
+        <div class="txt" style="font-weight:800;text-align:center;margin-bottom:6px">고객 신고</div>
+        <div class="card"><span class="mk">1</span> 지민님 · 소개팅 · #1024</div>
+        <div class="txt" style="font-size:11.5px;font-weight:700"><span class="mk">2</span> 사유</div>
+        <div class="seg"><div class="on">노쇼</div><div>부적절 언행</div><div>무리한 요구</div><div>결제 후 잠적</div></div>
+        <div class="field"><div class="lb">상세 · 증빙</div>약속 시간에 나타나지 않았어요</div>
+        <div class="card note"><span class="mk">3</span> 관리자 검토 → 회원 제재(3.B.2)·분쟁 연계</div>
+        <div class="btn">신고 접수</div>
+      </div></div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">2.x / 3.B.4</span><span class="nm">쇼퍼 · 고객 신고 (양방향)</span><span class="pri">○ v2 · 🔒</span>
+      <div class="io"><b>대칭</b> 사용자 신고(1.9)의 공급자 방향 · <b>이탈</b> 관리자 신고 큐(3.B.4)</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">고객 신고(쇼퍼→고객)</div>
+      <div class="sp-l d"><span class="lb">설명</span>노쇼·부적절 언행·무리한 요구·결제 후 잠적 신고.</div>
+      <div class="sp-l i"><span class="lb">의도</span>신고가 사용자 방향만이면 반쪽 — <b>양방향</b>이어야 마켓 신뢰 대칭.</div>
+      <div class="sp-l c"><span class="lb">제약</span>v2 · 남용 방지·상호 신고 시 중재 규칙 필요.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">사유·증빙 → 제재 연계</div>
+      <div class="sp-l d"><span class="lb">설명</span>사유 유형+증빙 → 관리자 검토 → 회원 제재(3.B.2).</div>
+      <div class="sp-l i"><span class="lb">의도</span>어뷰징 고객 차단으로 공급자 보호.</div>
+      <div class="sp-l c"><span class="lb">제약</span>거래 관련이면 분쟁(3.B.4)과 병합 처리.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="쇼퍼 포털 · 전문가 문의(CS)">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/pro/support</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span class="on">쇼퍼 포털</span></div><div class="act">🔔 👤 소희</div></div>
+      <div class="pg"><div class="center card">
+        <div class="txt" style="font-weight:800;text-align:center;margin-bottom:6px">전문가 문의</div>
+        <div class="chips"><span class="chip on"><span class="mk">1</span> 정산</span><span class="chip">심사·승인</span><span class="chip">프로필 노출</span><span class="chip">계정</span></div>
+        <div class="field"><div class="lb">내용</div>이번달 정산이 안 들어왔어요</div>
+        <div class="box" style="min-height:34px">📎 첨부</div>
+        <div class="btn">문의 접수</div>
+        <div class="note"><span class="mk">2</span> 내 문의 2건 · 심사 반려 이의는 여기서</div>
+      </div></div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">2.x</span><span class="nm">쇼퍼 · 전문가 문의(CS)</span><span class="pri">○ v2 · 🔒</span>
+      <div class="io"><b>짝</b> 관리자 CS(3.B.7) · <b>연계</b> 정산(2.6·3.B.5)·심사(3.B.1)</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">쇼퍼 전용 문의 유형</div>
+      <div class="sp-l d"><span class="lb">설명</span>정산 지연·심사 반려 이의·프로필 노출·계정.</div>
+      <div class="sp-l i"><span class="lb">의도</span>공급자 이슈는 성격이 달라 사용자 고객센터와 분리.</div>
+      <div class="sp-l c"><span class="lb">제약</span>v2 · 정산 문의는 3.B.5, 심사 이의는 3.B.1과 연계.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">내 문의 내역</div>
+      <div class="sp-l d"><span class="lb">설명</span>접수·처리중·답변완료 추적.</div>
+      <div class="sp-l i"><span class="lb">의도</span>공급자 리텐션 — 응답 신뢰가 활동 지속을 좌우.</div>
+      <div class="sp-l c"><span class="lb">제약</span>관리자 CS 큐(3.B.7)에 사용자 문의와 함께 인입.</div></div></div>
+  </div>
+</section>
+
 <section class="slide" data-nm="14 · 관리자 로그인">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/login</div></div>
@@ -1098,7 +1516,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 3.A 콘솔 · 브랜드 실측 ═══ -->
 <section class="slide" data-nm="3.A 콘솔 · 브랜드 실측">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin</div></div>
@@ -1126,7 +1543,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 3.A 콘솔 · 신체 사이즈 ═══ -->
 <section class="slide" data-nm="3.A 콘솔 · 신체 사이즈(엔진 추정 기준)">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin#body</div></div>
@@ -1160,7 +1576,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 16 이미지 수집 ═══ -->
 <section class="slide" data-nm="16 · 3.A.1 이미지 수집">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/collect</div></div>
@@ -1192,7 +1607,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 17 브랜드 관리 ═══ -->
 <section class="slide" data-nm="17 · 3.A.1 브랜드 관리">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/brands</div></div>
@@ -1221,7 +1635,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 18 엔진 시뮬 ═══ -->
 <section class="slide" data-nm="18 · 3.A.3 엔진 시뮬·튜닝">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/engine</div></div>
@@ -1255,14 +1668,13 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 3.B 회원 ═══ -->
 <section class="slide" data-nm="3.B 회원·거래 · 회원">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/members</div></div>
     <div class="vp">
       <div class="topnav"><span class="logo">fitting</span><div class="menu"><span>사이즈·데이터</span><span class="on">회원·거래</span><span>사업</span><span>API</span><span>운영</span></div><div class="act">👤</div></div>
       <div class="pg">
-        <div class="tabs"><span class="mk">1</span><span class="tab on">회원</span><span class="tab">전문가 심사</span><span class="tab">매칭 수요 신호</span></div>
+        <div class="tabs"><span class="mk">1</span><span class="tab on">회원</span><span class="tab">전문가 심사</span><span class="tab">매칭 수요 신호</span><span class="tab">거래 운영</span><span class="tab">고객 문의</span></div>
         <div class="kpis"><div class="kpi"><div class="kn">1,042</div><div class="kl">회원</div></div><div class="kpi"><div class="kn">1,004</div><div class="kl">활성</div></div><div class="kpi"><div class="kn">2.4</div><div class="kl">1인 진단</div></div><div class="kpi"><div class="kn">312</div><div class="kl">재진단</div></div></div>
         <div class="tbl"><div class="tr hd"><span>회원</span><span>8유형</span><span>진단</span><span class="r">상태</span></div><div class="tr"><span>m1042 여</span><span>C</span><span>4</span><span class="r"><span class="tag">활성</span></span></div><div class="tr"><span>m1021 남</span><span>G</span><span>3</span><span class="r"><span class="tag w">정지</span></span></div></div>
         <div class="note"><span class="mk">2</span> 정지 · 차단 조치</div>
@@ -1283,14 +1695,13 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 3.B 전문가 심사 ═══ -->
 <section class="slide" data-nm="3.B 회원·거래 · 전문가 심사">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/members#pros</div></div>
     <div class="vp">
       <div class="topnav"><span class="logo">fitting</span><div class="menu"><span>사이즈·데이터</span><span class="on">회원·거래</span><span>사업</span><span>API</span><span>운영</span></div><div class="act">👤</div></div>
       <div class="pg">
-        <div class="tabs"><span class="tab">회원</span><span class="tab on">전문가 심사</span><span class="tab">매칭 수요 신호</span></div>
+        <div class="tabs"><span class="tab">회원</span><span class="tab on">전문가 심사</span><span class="tab">매칭 수요 신호</span><span class="tab">거래 운영</span><span class="tab">고객 문의</span></div>
         <div class="kpis"><div class="kpi"><div class="kn">12</div><div class="kl">신청</div></div><div class="kpi"><div class="kn">3</div><div class="kl">심사 대기</div></div><div class="kpi"><div class="kn">7</div><div class="kl">승인</div></div><div class="kpi"><div class="kn">2</div><div class="kl">반려</div></div></div>
         <div class="tbl"><div class="tr hd"><span>닉네임</span><span>지역</span><span>자격</span><span class="r">조치</span></div><div class="tr"><span>핏잡는언니</span><span>성수</span><span>스타일리스트 3년</span><span class="r"><span class="tag">승인</span> <span class="tag r">반려</span></span></div><div class="tr"><span>무신사덕후</span><span>온라인</span><span>리뷰 실적</span><span class="r"><span class="tag">승인</span> <span class="tag r">반려</span></span></div></div>
         <div class="note"><span class="mk">1</span> 자격 게이트 — 승인/반려</div>
@@ -1307,14 +1718,13 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 3.B 매칭 수요 신호 ═══ -->
 <section class="slide" data-nm="3.B 회원·거래 · 매칭 수요 신호">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/members#signals</div></div>
     <div class="vp">
       <div class="topnav"><span class="logo">fitting</span><div class="menu"><span>사이즈·데이터</span><span class="on">회원·거래</span><span>사업</span><span>API</span><span>운영</span></div><div class="act">👤</div></div>
       <div class="pg">
-        <div class="tabs"><span class="tab">회원</span><span class="tab">전문가 심사</span><span class="tab on">매칭 수요 신호</span></div>
+        <div class="tabs"><span class="tab">회원</span><span class="tab">전문가 심사</span><span class="tab on">매칭 수요 신호</span><span class="tab">거래 운영</span><span class="tab">고객 문의</span></div>
         <div class="kpis"><div class="kpi"><div class="kn">41</div><div class="kl">수요 신호</div></div><div class="kpi"><div class="kn">33</div><div class="kl">오픈 견적</div></div><div class="kpi"><div class="kn">2.4</div><div class="kl">오픈당 견적</div></div><div class="kpi"><div class="kn">9</div><div class="kl">오픈알림</div></div></div>
         <div class="note"><span class="mk">1</span> 서비스 / 상황 / 예산 수요</div>
         <div class="tbl"><div class="tr hd"><span>상황</span><span>요청</span><span class="r">비중</span></div><div class="tr"><span>소개팅·데이트</span><span>14</span><span class="r">34%</span></div><div class="tr"><span>결혼식 하객</span><span>9</span><span class="r">22%</span></div><div class="tr"><span>면접·발표</span><span>7</span><span class="r">17%</span></div></div>
@@ -1331,14 +1741,113 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 20 진단 응답·정확도 ═══ -->
+<section class="slide" data-nm="3.B 회원·거래 · 분쟁·환불·신고">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/disputes</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">fitting</span><div class="menu"><span>사이즈·데이터</span><span class="on">회원·거래</span><span>사업</span><span>API</span><span>운영</span></div><div class="act">👤</div></div>
+      <div class="pg">
+        <div class="tabs"><span class="tab">회원</span><span class="tab">전문가 심사</span><span class="tab">매칭 수요 신호</span><span class="tab on">거래 운영</span><span class="tab">고객 문의</span></div>
+        <div class="tabs" style="margin-top:-4px"><span class="note" style="margin:2px 6px 0 2px">└ 거래 운영</span><span class="tab">매칭 모니터링</span><span class="tab on">분쟁·환불·신고</span><span class="tab">정산</span><span class="tab">리뷰</span></div>
+        <div class="kpis"><div class="kpi"><div class="kn">3</div><div class="kl">분쟁 대기</div></div><div class="kpi"><div class="kn">5</div><div class="kl">환불 요청</div></div><div class="kpi"><div class="kn">2</div><div class="kl">신고</div></div><div class="kpi"><div class="kn">1.8일</div><div class="kl">평균 처리</div></div></div>
+        <div class="note"><span class="mk">1</span> 분쟁 큐 — 에스크로 보관금 기준 중재</div>
+        <div class="tbl"><div class="tr hd"><span>거래</span><span>당사자</span><span>유형</span><span>에스크로</span><span class="r">조치</span></div><div class="tr"><span>#1024</span><span>지민 ↔ 소희</span><span><span class="tag r">미이행</span></span><span>90,000 보관</span><span class="r"><span class="mk">2</span> <span class="tag">중재</span></span></div><div class="tr"><span>#1019</span><span>수현 ↔ 건형</span><span><span class="tag w">품질</span></span><span>120,000 보관</span><span class="r"><span class="tag">부분환불</span> <span class="tag r">기각</span></span></div></div>
+        <div class="note"><span class="mk">3</span> 신고(어뷰징·부적절 콘텐츠) 별도 큐</div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">3.B.4</span><span class="nm">분쟁 · 환불 · 신고</span><span class="pri">○ v2 · 🔒</span>
+      <div class="io"><b>짝</b> 결제·에스크로(1.8)·완료(1.6) · <b>연계</b> 정산(3.B.5)·고객센터(1.9)</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">분쟁 큐</div>
+      <div class="sp-l d"><span class="lb">설명</span>거래·당사자·유형(미이행/품질/노쇼/환불)·에스크로 보관금·상태.</div>
+      <div class="sp-l i"><span class="lb">의도</span>에스크로에 <b>보관된 결제금</b>이 있으니 중재로 릴리스/환불 결정 — 마켓 신뢰의 핵심.</div>
+      <div class="sp-l c"><span class="lb">제약</span>v2(실 에스크로·PG 연동 후) · 현재 MVP엔 분쟁 대상 거래 자체가 없음.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">조치(중재·환불·기각)</div>
+      <div class="sp-l d"><span class="lb">설명</span>전액/부분 환불 승인·기각·쇼퍼 소명 요청.</div>
+      <div class="sp-l i"><span class="lb">의도</span>보관금을 어느 쪽에 릴리스할지 판정(에스크로 종결).</div>
+      <div class="sp-l c"><span class="lb">제약</span>환불 규칙·정산 차감은 정책/법률 검토 필요(IA §1.8).</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">신고 처리</div>
+      <div class="sp-l d"><span class="lb">설명</span>어뷰징·부적절 콘텐츠·노쇼 신고 큐.</div>
+      <div class="sp-l i"><span class="lb">의도</span>양측 어뷰징 차단 — 회원 제재(3.B.2)와 연계.</div>
+      <div class="sp-l c"><span class="lb">제약</span>v2 · 신고 사유 유형·제재 정책 설계 필요.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="3.B 회원·거래 · 매칭 모니터링·정산·리뷰">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/matching</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">fitting</span><div class="menu"><span>사이즈·데이터</span><span class="on">회원·거래</span><span>사업</span><span>API</span><span>운영</span></div><div class="act">👤</div></div>
+      <div class="pg">
+        <div class="tabs"><span class="tab">회원</span><span class="tab">전문가 심사</span><span class="tab">매칭 수요 신호</span><span class="tab on">거래 운영</span><span class="tab">고객 문의</span></div>
+        <div class="tabs" style="margin-top:-4px"><span class="note" style="margin:2px 6px 0 2px">└ 거래 운영</span><span class="tab on">매칭 모니터링</span><span class="tab">분쟁·환불·신고</span><span class="tab">정산</span><span class="tab">리뷰</span></div>
+        <div class="note"><span class="mk">1</span> 매칭 모니터링·개입 (미응답·유찰·어뷰징)</div>
+        <div class="tbl"><div class="tr hd"><span>거래</span><span>상태</span><span>경과</span><span class="r">개입</span></div><div class="tr"><span>#1031 오픈</span><span>견적중(입찰 0)</span><span>36h</span><span class="r"><span class="tag w">유찰 임박</span></span></div><div class="tr"><span>#1028 지명</span><span>대기(미응답)</span><span>28h</span><span class="r"><span class="tag">리마인드</span></span></div></div>
+        <div class="split">
+          <div><div class="note"><span class="mk">2</span> 정산 집행 (에스크로 릴리스·수수료)</div><div class="tbl"><div class="tr hd"><span>거래</span><span>금액</span><span class="r">상태</span></div><div class="tr"><span>#1020</span><span>90k</span><span class="r"><span class="tag">정산대기</span></span></div></div></div>
+          <div><div class="note"><span class="mk">3</span> 리뷰 모더레이션</div><div class="tbl"><div class="tr hd"><span>후기</span><span class="r">조치</span></div><div class="tr"><span>신고된 후기 1</span><span class="r"><span class="tag r">숨김</span></span></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">3.B.3/5/6</span><span class="nm">매칭 모니터링 · 정산 · 리뷰</span><span class="pri">○ v2 · 🔒</span>
+      <div class="io"><b>짝</b> 낙찰/지명(1.3)·완료·정산(1.8·2.6)·후기(2.4)</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">매칭 모니터링·개입(3.B.3)</div>
+      <div class="sp-l d"><span class="lb">설명</span>진행 중 매칭 상태 + 미응답·유찰·어뷰징 개입.</div>
+      <div class="sp-l i"><span class="lb">의도</span>양면 시장의 응답률·성사율을 운영이 떠받침(리마인드·유찰 구제).</div>
+      <div class="sp-l c"><span class="lb">제약</span>v2 · MVP는 페이크도어라 실매칭 진행 건 없음.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">정산 집행·수수료(3.B.5)</div>
+      <div class="sp-l d"><span class="lb">설명</span>완료 거래의 에스크로 릴리스 집행 + 수수료 정책.</div>
+      <div class="sp-l i"><span class="lb">의도</span>완료 확인(1.6)→쇼퍼 정산(2.6)을 운영이 집행·정산 주기 관리.</div>
+      <div class="sp-l c"><span class="lb">제약</span>v2 · 수수료율·정산 주기·세금 처리 정책 필요.</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">리뷰 모더레이션(3.B.6)</div>
+      <div class="sp-l d"><span class="lb">설명</span>신고·부적절 후기 숨김·삭제.</div>
+      <div class="sp-l i"><span class="lb">의도</span>평판 시스템(2.4) 신뢰 유지.</div>
+      <div class="sp-l c"><span class="lb">제약</span>v2 · 모더레이션 기준·이의제기 절차 필요.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="3.B 회원·거래 · 고객 문의(CS) 처리">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/support</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">fitting</span><div class="menu"><span>사이즈·데이터</span><span class="on">회원·거래</span><span>사업</span><span>API</span><span>운영</span></div><div class="act">👤</div></div>
+      <div class="pg">
+        <div class="tabs"><span class="tab">회원</span><span class="tab">전문가 심사</span><span class="tab">매칭 수요 신호</span><span class="tab">거래 운영</span><span class="tab on">고객 문의</span></div>
+        <div class="kpis"><div class="kpi"><div class="kn">14</div><div class="kl">미처리 문의</div></div><div class="kpi"><div class="kn">4.2h</div><div class="kl">평균 응답</div></div><div class="kpi"><div class="kn">2</div><div class="kl">SLA 임박</div></div><div class="kpi"><div class="kn">86%</div><div class="kl">자가해결(FAQ)</div></div></div>
+        <div class="note"><span class="mk">1</span> 문의 티켓 큐 — 유형·상태·SLA</div>
+        <div class="tbl"><div class="tr hd"><span>티켓</span><span>유형</span><span>상태</span><span class="r">조치</span></div><div class="tr"><span>#T512 지민</span><span>결제·환불</span><span>미처리</span><span class="r"><span class="mk">2</span> <span class="tag">답변</span> <span class="tag r">분쟁 전환</span></span></div><div class="tr"><span>#T509 수현</span><span>진단 정확도</span><span>처리중</span><span class="r"><span class="tag">답변</span></span></div></div>
+        <div class="note"><span class="mk">3</span> FAQ 관리 — 반복 문의를 도움말로 승격</div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">3.B.7</span><span class="nm">고객 문의(CS) 처리</span><span class="pri">○ v2 · 🔒</span>
+      <div class="io"><b>짝</b> 사용자 고객센터(1.9) · <b>연계</b> 분쟁(3.B.4)·진단정확도(3.C.2)</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">문의 티켓 큐</div>
+      <div class="sp-l d"><span class="lb">설명</span>인입 1:1 문의를 유형·상태·SLA·우선순위로 관리.</div>
+      <div class="sp-l i"><span class="lb">의도</span>응답 SLA를 지켜 신뢰·리텐션 유지.</div>
+      <div class="sp-l c"><span class="lb">제약</span>v2 · MVP는 이메일/폼 인입을 스프레드시트로 수동 처리 가능.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">답변 · 분쟁 전환</div>
+      <div class="sp-l d"><span class="lb">설명</span>답변 작성 + 거래 문의는 분쟁 큐(3.B.4)로 전환.</div>
+      <div class="sp-l i"><span class="lb">의도</span>일반 문의와 에스크로 분쟁을 분리 처리(중재는 분쟁으로).</div>
+      <div class="sp-l c"><span class="lb">제약</span>진단 정확도 문의는 3.C.2 킬 메트릭과 연계.</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">FAQ 관리</div>
+      <div class="sp-l d"><span class="lb">설명</span>반복 문의를 도움말/FAQ(G.2)로 승격.</div>
+      <div class="sp-l i"><span class="lb">의도</span>자가해결율↑ → 문의량·CS 비용↓.</div>
+      <div class="sp-l c"><span class="lb">제약</span>v2 · 콘텐츠 SEO(5장)와 공유.</div></div></div>
+  </div>
+</section>
+
 <section class="slide" data-nm="20 · 3.C.2 진단 응답·정확도">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/diagnostics</div></div>
     <div class="vp">
       <div class="topnav"><span class="logo">fitting</span><div class="menu"><span>사이즈·데이터</span><span>회원·거래</span><span class="on">사업</span><span>API</span><span>운영</span></div><div class="act">👤</div></div>
       <div class="pg">
-        <div class="kpis"><div class="kpi"><div class="kn">68%</div><div class="kl">정확도 동의율</div></div><div class="kpi"><div class="kn">96</div><div class="kl">응답</div></div><div class="kpi"><div class="kn">18%</div><div class="kl">애매</div></div><div class="kpi"><div class="kn">14%</div><div class="kl">틀림</div></div></div>
+        <div class="tabs"><span class="tab">운영 대시보드</span><span class="tab on">진단 응답·정확도</span></div><div class="kpis"><div class="kpi"><div class="kn">68%</div><div class="kl">정확도 동의율</div></div><div class="kpi"><div class="kn">96</div><div class="kl">응답</div></div><div class="kpi"><div class="kn">18%</div><div class="kl">애매</div></div><div class="kpi"><div class="kn">14%</div><div class="kl">틀림</div></div></div>
         <div class="split"><div><div class="note"><span class="mk">1</span> 정확도 × 신뢰도</div>
           <div class="heat"><span class="hh"></span><span class="hh">낮음</span><span class="hh">중간</span><span class="hh">높음</span><span class="rl">맞음</span><b>4</b><b>18</b><b>23</b><span class="rl">애매</span><b>6</b><b>9</b><b class="z">2</b><span class="rl">틀림</span><b>7</b><b>5</b><b class="d">2</b></div></div>
           <div><div class="note"><span class="mk">2</span> 8유형 / 브랜드 / 페인</div>
@@ -1360,14 +1869,13 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 21 운영 대시보드 ═══ -->
 <section class="slide" data-nm="21 · 3.C.1 운영 대시보드">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/business</div></div>
     <div class="vp">
       <div class="topnav"><span class="logo">fitting</span><div class="menu"><span>사이즈·데이터</span><span>회원·거래</span><span class="on">사업</span><span>API</span><span>운영</span></div><div class="act">👤</div></div>
       <div class="pg">
-        <div class="kpis"><div class="kpi"><div class="kn">248</div><div class="kl">진단 완료</div></div><div class="kpi"><div class="kn">68%</div><div class="kl">정확도 동의율</div></div><div class="kpi"><div class="kn">41</div><div class="kl">매칭 수요</div></div><div class="kpi"><div class="kn">7/12</div><div class="kl">전문가 승인</div></div></div>
+        <div class="tabs"><span class="tab on">운영 대시보드</span><span class="tab">진단 응답·정확도</span></div><div class="kpis"><div class="kpi"><div class="kn">248</div><div class="kl">진단 완료</div></div><div class="kpi"><div class="kn">68%</div><div class="kl">정확도 동의율</div></div><div class="kpi"><div class="kn">41</div><div class="kl">매칭 수요</div></div><div class="kpi"><div class="kn">7/12</div><div class="kl">전문가 승인</div></div></div>
         <div class="note"><span class="mk">1</span> 퍼널: 진단 → 수요 → 매칭 → 성사</div>
         <div class="tbl"><div class="tr hd"><span>단계</span><span>수</span><span class="r">전환</span></div><div class="tr"><span>진단 시작</span><span>320</span><span class="r">—</span></div><div class="tr"><span>진단 완료</span><span>248</span><span class="r">78%</span></div><div class="tr"><span>매칭 요청</span><span>41</span><span class="r">17%</span></div><div class="tr"><span>성사</span><span>18</span><span class="r">44%</span></div></div>
         <div class="note"><span class="mk">2</span> 바로가기: 진단정확도 · 회원 · 데이터</div>
@@ -1388,13 +1896,13 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 3.D B2B API ═══ -->
 <section class="slide" data-nm="3.D B2B API 콘솔">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/api</div></div>
     <div class="vp">
       <div class="topnav"><span class="logo">fitting</span><div class="menu"><span>사이즈·데이터</span><span>회원·거래</span><span>사업</span><span class="on">API</span><span>운영</span></div><div class="act">👤</div></div>
       <div class="pg">
+        <div class="tabs"><span class="tab on">고객</span><span class="tab">사용량·과금</span><span class="tab">기술지원(CS)</span></div>
         <div class="kpis"><div class="kpi"><div class="kn">6</div><div class="kl">API 고객</div></div><div class="kpi"><div class="kn">4</div><div class="kl">활성 키</div></div><div class="kpi"><div class="kn">530k</div><div class="kl">이번달 호출</div></div><div class="kpi"><div class="kn">276만</div><div class="kl">MRR</div></div></div>
         <div class="note"><span class="mk">1</span> API 고객 · 플랜 · 호출/한도 · MRR</div>
         <div class="tbl"><div class="tr hd"><span>고객사</span><span>플랜</span><span>호출/한도</span><span class="r">MRR</span></div><div class="tr"><span>무드무드</span><span>스케일</span><span>184k / 300k</span><span class="r">99만</span></div><div class="tr"><span>핏스토어</span><span>그로스</span><span>62k / 60k <span class="tag r">초과</span></span><span class="r">39만</span></div></div>
@@ -1417,7 +1925,33 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
-<!-- ═══ 3.E 내부운영 ═══ -->
+<section class="slide" data-nm="3.D B2B API · 고객사 지원">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/api/support</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">fitting</span><div class="menu"><span>사이즈·데이터</span><span>회원·거래</span><span>사업</span><span class="on">API</span><span>운영</span></div><div class="act">👤</div></div>
+      <div class="pg">
+        <div class="tabs"><span class="tab">고객</span><span class="tab">사용량·과금</span><span class="tab on">기술지원(CS)</span></div>
+        <div class="note"><span class="mk">1</span> 고객사 티켓 — 연동·오류·한도</div>
+        <div class="tbl"><div class="tr hd"><span>고객사</span><span>유형</span><span>SLA</span><span class="r">조치</span></div><div class="tr"><span>무드무드</span><span>4xx 급증</span><span>2h</span><span class="r"><span class="tag">답변</span></span></div><div class="tr"><span>핏스토어</span><span>한도 상향</span><span>1d</span><span class="r"><span class="tag">플랜</span></span></div></div>
+        <div class="note"><span class="mk">2</span> 상태 페이지 · API 문서 · 변경 공지</div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">3.D.x</span><span class="nm">B2B API · 고객사 지원</span><span class="pri">○ v3 · 🔒</span>
+      <div class="io"><b>대상</b> API 고객사(쇼핑몰) · <b>연계</b> API 콘솔(3.D)·SLA</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">기술지원 티켓</div>
+      <div class="sp-l d"><span class="lb">설명</span>연동·오류·한도 상향 등 B2B 문의를 SLA로 처리.</div>
+      <div class="sp-l i"><span class="lb">의도</span>B2B는 계약·SLA 기반이라 소비자 CS와 별도 채널.</div>
+      <div class="sp-l c"><span class="lb">제약</span>v3(API 사업 오픈 시) · 유료 등급별 SLA 차등.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">셀프서비스(문서·상태·공지)</div>
+      <div class="sp-l d"><span class="lb">설명</span>API 문서·상태 페이지·변경 공지.</div>
+      <div class="sp-l i"><span class="lb">의도</span>개발자 자가해결로 지원 비용↓.</div>
+      <div class="sp-l c"><span class="lb">제약</span>v3 · 외부 개발자 포털 필요.</div></div></div>
+  </div>
+</section>
+
 <section class="slide" data-nm="3.E 내부운영 (RBAC·감사·플래그)">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/ops</div></div>
