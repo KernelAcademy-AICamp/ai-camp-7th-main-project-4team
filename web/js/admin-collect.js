@@ -108,5 +108,100 @@
     a.download='수집-'+(v('mBrand')||'brand')+'-'+cat+'.csv'; document.body.appendChild(a); a.click(); a.remove();
   };
 
+  // ── OCR 자동 추출(베타) — Tesseract.js로 단어+좌표 → 행/열 재구성 ──
+  var tessLoad=null;
+  function loadTess(){ if(window.Tesseract) return Promise.resolve();
+    if(!tessLoad) tessLoad=new Promise(function(res,rej){ var s=document.createElement('script');
+      s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'; s.onload=res;
+      s.onerror=function(){ tessLoad=null; rej(new Error('OCR 엔진 로드 실패(네트워크)')); }; document.head.appendChild(s); });
+    return tessLoad; }
+  function prog(p,m){ $('ocrProg').hidden=false; $('ocrFill').style.width=(p||0)+'%'; $('ocrMsg').textContent=m||''; }
+
+  window.__ocr=function(){
+    var img=$('preview'); if(!img||img.hidden||!img.src) return;
+    var btn=$('ocrBtn'); btn.disabled=true; prog(3,'OCR 엔진 로딩…');
+    loadTess().then(function(){ prog(10,'인식 준비…');
+      return window.Tesseract.recognize(img.src,'kor+eng',{ logger:function(m){
+        if(m.status==='recognizing text') prog(15+Math.round(m.progress*80),'인식 중… '+Math.round(m.progress*100)+'%');
+        else prog(12,m.status||''); } });
+    }).then(function(r){
+      prog(98,'표 재구성…');
+      var parsed=autoFill(clusterRows((r.data&&r.data.words)||[]));
+      if(parsed && parsed.rows.length){ rows=parsed.rows; buildGrid(); build();
+        prog(100,'✅ '+parsed.rows.length+'행 추출('+(parsed.cat==='TOP'?'상의':'하의')+') — 값을 꼭 확인·교정하세요'); }
+      else { prog(100,'⚠️ 표 구조를 못 잡았어요 — 수동 전사하거나 다시 시도(인식 텍스트는 콘솔).');
+        try{ console.log('OCR raw text:\n'+((r.data&&r.data.text)||'')); }catch(e){} }
+    }).catch(function(e){ prog(100,'❌ '+(e.message||'OCR 실패')); })
+    .then(function(){ btn.disabled=false; });
+  };
+
+  function median(a){ if(!a.length) return 0; var s=a.slice().sort(function(x,y){return x-y;}); return s[Math.floor(s.length/2)]; }
+  function clusterRows(words){
+    var ws=(words||[]).map(function(w){ var b=w.bbox||{}; return {t:(w.text||'').trim(),
+      x:((b.x0||0)+(b.x1||0))/2, y:((b.y0||0)+(b.y1||0))/2, h:((b.y1||0)-(b.y0||0))||12, conf:w.confidence||0}; })
+      .filter(function(w){ return w.t && w.conf>25; });
+    if(!ws.length) return [];
+    var medH=median(ws.map(function(w){return w.h;}))||12;
+    ws.sort(function(a,b){return a.y-b.y;});
+    var out=[], cur=[];
+    ws.forEach(function(w){ if(cur.length && Math.abs(w.y-cur[cur.length-1].y)>medH*0.7){ out.push(cur); cur=[]; } cur.push(w); });
+    if(cur.length) out.push(cur);
+    out.forEach(function(r){ r.sort(function(a,b){return a.x-b.x;}); });
+    return out;
+  }
+  // '소매' 먼저(소매길이) → 이후 '길이'류(전체길이·총길이)를 총장에. 순서 중요.
+  var PARTKW=[['소매길이',['소매','팔길이']],['어깨너비',['어깨','등너비']],['가슴단면',['가슴','젖가슴','품','가슴둘레']],
+    ['총장',['총장','총기장','전체길이','총길이','기장','앞기장','앞면길이']],
+    ['허리단면',['허리']],['엉덩이단면',['엉덩이','힙']],['허벅지단면',['허벅지']],['밑위',['밑위']],['밑단단면',['밑단','부리','밑단둘레']]];
+  function matchPart(t){ for(var i=0;i<PARTKW.length;i++) for(var j=0;j<PARTKW[i][1].length;j++) if(t.indexOf(PARTKW[i][1][j])>=0) return PARTKW[i][0]; return null; }
+  function cleanTok(t){ return (''+t).replace(/[^A-Za-z0-9.]/g,''); }
+  function sizeLabel(t){ return (''+t).trim(); }
+  // 사이즈: 레터(옵션으로 (090) 같은 KR호칭 병기) 또는 2~3자리 숫자
+  function isSize(t){ var c=(''+t).trim();
+    return /^(XXS|XS|S|M|L|XL|XXL|XXXL|[2-5]XL)(\s*\(\s*\d+\s*\))?$/i.test(c) || /^\d{2,3}$/.test(cleanTok(t)); }
+  function toNum(t){ var m=(''+t).match(/\d+(\.\d+)?/); return m?parseFloat(m[0]):null; }
+  function nearestX(cands,x){ var best=null,bd=1e9; cands.forEach(function(c){ var d=Math.abs(c.x-x); if(d<bd){bd=d;best=c;} }); return best; }
+  var BOTTOMPARTS=['허리단면','엉덩이단면','허벅지단면','밑위','밑단단면'];
+  function setCategory(cat){ var el=$('iCat'); if(el && el.value!==cat){ el.value=cat; buildMeta(); } }
+
+  function autoFill(rowsW){
+    if(!rowsW.length) return null;
+    // Layout A: 부위가 각 행의 첫 셀, 사이즈는 헤더 행
+    var partRows=[]; rowsW.forEach(function(r){ var p=matchPart(r[0].t); if(p) partRows.push({part:p, cells:r}); });
+    var sizeRow=null, best=0;
+    rowsW.forEach(function(r){ var c=r.filter(function(w){return isSize(w.t);}).length; if(c>best){best=c;sizeRow=r;} });
+    if(partRows.length>=2 && sizeRow && best>=2){
+      var sizes=sizeRow.filter(function(w){return isSize(w.t);});
+      var catA=partRows.some(function(p){return BOTTOMPARTS.indexOf(p.part)>=0;})?'BOTTOM':'TOP';
+      setCategory(catA);
+      var nrA=sizes.map(function(s){return {size:sizeLabel(s.t), cells:{}, note:'', _x:s.x};});
+      partRows.forEach(function(pr){
+        // 부위 행의 숫자는 전부 실측(2~3자리라도 사이즈 아님). 부위 라벨 셀은 비수치라 자동 제외.
+        var nums=pr.cells.filter(function(w){return toNum(w.t)!=null;});
+        nrA.forEach(function(nr){ var near=nearestX(nums,nr._x); if(near) nr.cells[pr.part]=toNum(near.t); });
+      });
+      nrA.forEach(function(r){ delete r._x; });
+      var okA=nrA.filter(function(r){return Object.keys(r.cells).length;});
+      if(okA.length) return {cat:catA, rows:okA};
+    }
+    // Layout B: 사이즈가 각 행 첫 셀, 부위가 헤더 행
+    var sizeRows=rowsW.filter(function(r){return isSize(r[0].t);});
+    var header=null; rowsW.forEach(function(r){ var c=r.filter(function(w){return matchPart(w.t);}).length; if(c>=2 && !header) header=r; });
+    if(sizeRows.length>=2 && header){
+      var parts=header.map(function(w){return {part:matchPart(w.t), x:w.x};}).filter(function(p){return p.part;});
+      var catB=parts.some(function(p){return BOTTOMPARTS.indexOf(p.part)>=0;})?'BOTTOM':'TOP';
+      setCategory(catB);
+      var nrB=sizeRows.map(function(r){
+        var o={size:sizeLabel(r[0].t), cells:{}, note:''};
+        var nums=r.slice(1).filter(function(w){return toNum(w.t)!=null;});
+        parts.forEach(function(p){ var near=nearestX(nums,p.x); if(near) o.cells[p.part]=toNum(near.t); });
+        return o;
+      });
+      var okB=nrB.filter(function(r){return Object.keys(r.cells).length;});
+      if(okB.length) return {cat:catB, rows:okB};
+    }
+    return null;
+  }
+
   buildMeta(); buildGrid(); build();
 })();

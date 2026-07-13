@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="css/tokens.css?v=dc9975ef">
-<link rel="stylesheet" href="css/admin.css?v=42c370a5">
+<link rel="stylesheet" href="css/admin.css?v=cc3c42d5">
 </head>
 <body>
 <div class="anav"><div class="anav-in">
@@ -39,8 +39,11 @@
         <img id="preview" alt="사이즈표" hidden>
       </div>
       <div class="dz-tools" id="dzTools" hidden>
+        <button class="abtn ghost" id="ocrBtn" onclick="__ocr()">🔍 이미지에서 자동 추출 (베타)</button>
         <span class="alink" onclick="__clear()">이미지 지우기</span>
       </div>
+      <div class="ocrprog" id="ocrProg" hidden><div class="ocrbar"><i id="ocrFill"></i></div><span id="ocrMsg"></span></div>
+      <p class="ahint" style="margin-top:10px">자동 추출은 <b>베타</b>예요 — 실측표를 OCR해 행/열을 추정합니다. <b>반드시 그리드에서 값을 확인·교정</b>하세요. 첫 실행은 한글 인식 데이터를 받느라 몇 초 걸립니다.</p>
     </div>
 
     <!-- 메타 + 전사 그리드 -->
@@ -67,6 +70,6 @@
 </div>
 
 <script src="js/admin-common.js?v=b64f60d3"></script>
-<script src="js/admin-collect.js?v=c7429ae1"></script>
+<script src="js/admin-collect.js?v=a46d8f95"></script>
 </body>
 </html>
