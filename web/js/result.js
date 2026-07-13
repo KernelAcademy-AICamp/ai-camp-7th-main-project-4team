@@ -59,6 +59,12 @@
   var slot=document.getElementById('cardslot');
   var noneDone=!upperDone && !lowerDone;
   var showCard=cardReady || noneDone;
+  var fullBody=cardReady || noneDone;   // 0벌(기본 추정)도 회귀로 전신 데이터가 있어 전신 결과로 표시(정확도 '낮음' 배지로 구분)
+  // ── 결과 준비 로딩 오버레이: 측정·추천 렌더(_contentReady) + 카드 iframe 로드(_cardPainted)가 실제로 끝나면 한 번에 공개 ──
+  var _contentReady=false, _cardPainted=false;
+  function hideRloading(){ var el=document.getElementById('rloading'); if(!el) return; el.classList.add('hide'); setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 400); }
+  function maybeHideLoading(){ if(_contentReady && (_cardPainted || !showCard)) hideRloading(); }
+  setTimeout(hideRloading, 4000);   // 안전장치: 무슨 일이 있어도 4초 뒤엔 공개(카드 로드 실패 등)
   function cardNoteHTML(){
     var tier=confidenceTier;
     if(!cardReady && tier==='high') tier='mid'; // 완성 전엔 '높음' 아님
@@ -72,6 +78,7 @@
   function renderCard(type){
     if(!type){ slot.innerHTML='<div class="rcard-load">체형 카드를 계산하고 있어요…</div>'; return; }  // 실분류 전 로딩(가짜 유형 X)
     slot.innerHTML='<iframe src="card.html?type='+type+'&g='+gender+'&host=result" scrolling="no" title="내 결과 카드"></iframe>'+cardNoteHTML();
+    var _ifr=slot.querySelector('iframe'); if(_ifr) _ifr.addEventListener('load', function(){ _cardPainted=true; maybeHideLoading(); });
   }
   var cardType=null;   // 실엔진(FitBodyType.classify)이 채움 — 초기 null이라 가짜 유형 안 뜸
   // 유형 정체성 / 잘맞·피할 FIT / 한 끗 — 마이 '내 진단결과' 디자인 통일 (8유형 동적)
@@ -82,7 +89,7 @@
     window._renderType=function(list){
       // 8유형 체형 상세(dtl-id/fitbox/tip)는 상·하의 모두 완료(cardReady) 시에만 — 미완료면
       // 빈 채로 둬 CSS(.dtl-*:empty{display:none})가 숨김. cardType이 'BAL' 폴백일 때 오노출 방지.
-      if(!cardReady) return;
+      if(!fullBody) return;   // 상·하의 완료 또는 0벌(전신 추정)이면 노출
       var t=(list||[]).filter(function(x){ return x.code===cardType; })[0]; if(!t) return;
       var tp=t.point||'#2E4A3B';
       var idEl=document.getElementById('rtypeid');
@@ -149,12 +156,12 @@
     document.getElementById('recs').innerHTML=recsHead(curLabel+' 기준')+recsListHTML(recs, real);
   }
   // 상·하의 모두 완료 → 상의·하의 추천을 그룹으로 함께
-  function renderRecsBoth(topRecs, botRecs){
+  function renderRecsBoth(topRecs, botRecs, chip){
     function grp(label,cls,recs){
       var body=(recs&&recs.length)?recsListHTML(recs,true):recsNotice('이 입력만으로는 추천을 만들기 어려워요 — 착용 경험을 넣으면 정밀해져요');
       return '<div class="dtl-grp '+cls+'">'+label+'</div>'+body;
     }
-    document.getElementById('recs').innerHTML=recsHead('전신 · 상·하의 완료')+grp('상의','up',topRecs)+grp('하의','lo',botRecs);
+    document.getElementById('recs').innerHTML=recsHead(chip||'전신 · 상·하의 완료')+grp('상의','up',topRecs)+grp('하의','lo',botRecs);
   }
   // 추천은 A축 사이즈 시드가 있는 TOP·BOTTOM만 실제. 나머지 카테고리는 측정만 보여주고 추천은 '준비중'.
   function renderRecsPending(){
@@ -204,10 +211,10 @@
   // 여유축(상의): skinny..oversize / 형태축(하의 실루엣): slim..wide 슬림도로 근사 배치.
   var FITPCT={skinny:20,slim:32,regular:55,loose:70,oversize:85,
     straight:50,tapered:45,wide:78,bootcut:62};
-  if(!hasBasic){ renderNoData(); }
+  if(!hasBasic){ renderNoData(); hideRloading(); }
   else if(window.BodyModel){ BodyModel.load().then(function(){
     var est=BodyModel.estimate(payload.basic||{});
-    if(!est.ready){ renderNoData(); return; }
+    if(!est.ready){ renderNoData(); hideRloading(); return; }
     var pm={}, cm={}; est.parts.forEach(function(p){ pm[p.key]=p.pct; cm[p.key]=p.cm; });
     var pref=(payload.prefs&&payload.prefs[curCat])||'regular';
 
@@ -236,7 +243,7 @@
       // 측정: 마이 '내 체형 측정' 디자인 통일(상체/하체/취향 그룹 + 5칸 스펙트럼).
       // 상·하의 모두 완료(cardReady)면 전신 카드, 아니면 이번 진단 카테고리만.
       var body, lowerCat=(curCat==='BOTTOM'||curCat==='SKIRT');
-      if(cardReady){
+      if(fullBody){
         var prefTopKey=(payload.prefs&&payload.prefs.TOP)||pref;
         body='<div class="dtl-grp up" style="margin-top:8px">상체 — 상의 진단</div>'+
              specRow('좁은 어깨',pm.shoulder,'넓은 어깨','어깨',false)+
@@ -256,11 +263,13 @@
                : specRow('타이트',FITPCT[pref]||55,'여유','핏 취향',false));
       }
       var btName='';
-      if(cardReady && window._btList){ var _bt=window._btList.filter(function(x){ return x.code===cardType; })[0]; if(_bt) btName=_bt.name+'('+_bt.code+')'; }
+      if(fullBody && window._btList){ var _bt=window._btList.filter(function(x){ return x.code===cardType; })[0]; if(_bt) btName=_bt.name+'('+_bt.code+')'; }
       var measNote = cardReady
         ? '어깨·가슴·허리·엉덩이 측정을 종합해 '+(btName?'<b style="color:var(--ink)">'+btName+'</b> ':'')+'유형으로 확정됐어요'
+        : noneDone
+        ? '키·몸무게로 어깨·가슴·허리·엉덩이를 추정한 <b style="color:var(--ink2)">기본 결과</b>예요 · 입어본 옷을 넣으면 정밀해져요'
         : '부위는 <b style="color:var(--ink2)">카테고리별로 달라져요</b>. 카테고리별 진단을 모두 완료하면 전신 비율까지 확인할 수 있어요.';
-      var measChip = cardReady ? '전신 · 상·하의 완료' : curLabel+(expUsed?' · 입어본 옷':' · 추정');
+      var measChip = cardReady ? '전신 · 상·하의 완료' : noneDone ? '전신 · 기본 추정' : curLabel+(expUsed?' · 입어본 옷':' · 추정');
       document.getElementById('meas').innerHTML=
         '<div class="dtl-meas-h"><span class="k">내 체형 측정</span><span class="chip">'+measChip+'</span></div>'+
         body+
@@ -268,12 +277,12 @@
 
       // 추천 — 상·하의 모두 완료(cardReady)면 상의·하의 함께, 아니면 이번 카테고리만. 역산 반영된 cm. 실패 시 정직한 안내.
       var prefsObj=payload.prefs||{};
-      if(cardReady && (isTop||curCat==='BOTTOM')){
+      if(fullBody && (isTop||curCat==='BOTTOM')){
         if(!specs){ renderRecsError(); }
         else {
           var topRecs=(cm.chestFull!=null)?FitEngine.recommend({ chest:cm.chestFull, shoulder:cm.shoulder }, prefsObj.TOP||'regular', est.sex, 'long_sleeve', specs):[];
           var botRecs=(FitEngine.recommendBottom && cm.waist!=null)?FitEngine.recommendBottom({ waist:cm.waist, hip:cm.hip, thigh:cm.thigh }, prefsObj.BOTTOM||'regular', est.sex, 'long_pants', specs):[];
-          renderRecsBoth(topRecs, botRecs);
+          renderRecsBoth(topRecs, botRecs, cardReady?'전신 · 상·하의 완료':'전신 · 기본 추정');
         }
       } else if(isTop || curCat==='BOTTOM'){
         if(!specs){ renderRecsError(); }
@@ -289,9 +298,10 @@
           else renderRecsError('이 입력만으로는 추천을 만들기 어려워요 — 착용 경험을 넣으면 정밀해져요');
         }
       }
+      _contentReady=true; maybeHideLoading();
     });
-  }).catch(function(){ renderLoadError(); }); }
-  else { renderLoadError(); }   // BodyModel 스크립트 로드 실패
+  }).catch(function(){ renderLoadError(); hideRloading(); }); }
+  else { renderLoadError(); hideRloading(); }   // BodyModel 스크립트 로드 실패
 
   // ── 결과 풀이 (＋강점 / ＝핏 공식 / ！주의) — 규칙 기반 골격, 서술은 AI 자리 ──
   var MEANS={
@@ -357,6 +367,8 @@
   }
   function saveResult(){
     if(!isAuthed()){ openRModal('login','my'); return; }
+    // 상의만/하의만(정확히 한 쪽) = 8유형 미완성 → 유형 저장 안 하고 나머지 진단 유도(대칭).
+    if(upperDone!==lowerDone){ openRModal('incomplete'); return; }
     persistResultToProfile();
     openRModal('saved');
   }
@@ -373,7 +385,13 @@
     var title, body, primaryLabel, primaryHref;
     if(kind==='saved'){
       title='결과를 저장했어요'; body='마이 &gt; 내 진단결과에서 언제든 다시 볼 수 있어요';
-      primaryLabel='마이에서 보기'; primaryHref='index.html#my';
+      primaryLabel='마이에서 보기'; primaryHref='index.html?my=mp-diag';
+    } else if(kind==='incomplete'){
+      var needTop=!upperDone;   // 지금 한 쪽만 완료 — 나머지 안내
+      var missKo=needTop?'상의':'하의', missCat=needTop?'top':'bottom', haveCat=needTop?'bottom':'top';
+      title='조금만 더 하면 완성돼요';
+      body='<b>'+missKo+'</b>도 진단하면 8체형 결과가 완성돼요';
+      primaryLabel=missKo+' 진단하기'; primaryHref='diag-fit.html?cat='+missCat+'&reuse=1&have='+haveCat;
     } else {
       title='로그인이 필요해요'; body='결과 저장·전문가 매칭은 로그인 후 이용할 수 있어요';
       primaryLabel='로그인하기'; primaryHref='index.html?login=1&next='+(next||'my');

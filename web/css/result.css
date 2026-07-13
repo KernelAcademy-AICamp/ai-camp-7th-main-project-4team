@@ -1,5 +1,13 @@
 /* result.html에서 분리한 페이지 스타일. 소유: 디자이너(web/*.css).
    인라인→외부화(순수 이동, 렌더 무변화) — 충돌면 축소. 색·폰트·간격 토큰화는 별도(디자인 결정). */
+  /* 결과 준비 로딩 오버레이 — 준비되면 result.js가 .hide 후 제거 */
+  .rloading{ position:fixed; inset:0; z-index:900; display:flex; align-items:center; justify-content:center; background:#FBFAF8; transition:opacity .35s ease; }
+  .rloading.hide{ opacity:0; pointer-events:none; }
+  .rloading-in{ display:flex; flex-direction:column; align-items:center; gap:16px; }
+  .rloading-spin{ width:38px; height:38px; border-radius:50%; border:3px solid #E6E5E1; border-top-color:#2E4A3B; animation:rspin .8s linear infinite; }
+  .rloading-in p{ margin:0; font-size:15px; font-weight:700; color:#6E6B63; letter-spacing:-.01em; }
+  @keyframes rspin{ to{ transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){ .rloading-spin{ animation:none; } }
   /* 결과 화면 — sohee 디자인 언어 + sangmin 콘텐츠 (자체 팔레트로 클래스 격리) */
   .rwrap{ --g:#2E4A3B; --gs:#E7EFEA; --ink:#16140F; --ink2:#3A382F; --sub:#6E6B63; --sub2:#A6A29A;
           --line:#E6E5E1; --line2:#DAD8D2; --warn:#B0553F; --wsoft:#F7ECE8;

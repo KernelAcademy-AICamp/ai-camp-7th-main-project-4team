@@ -14,9 +14,9 @@
 /* 개발용 상단 배너 숨김 (통합 앱은 자체 헤더 사용) */
 .protobar{ display:none !important; }
 
-/* 화면 전환: 슬라이드 빼고 짧은 페이드만 — 단계 이동이 차분하게(어수선함↓) */
-.wstep.active{ animation:wfade .18s ease; }
-@keyframes wfade{ from{opacity:0} to{opacity:1} }
+/* 화면 전환: 부드러운 슬라이드업 + 페이드 — 단계 이동이 스무스하게 넘어가는 느낌 */
+.wstep.active{ animation:wfade .45s cubic-bezier(.16,.7,.28,1); }
+@keyframes wfade{ from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none} }
 @media (prefers-reduced-motion:reduce){ .wstep.active{ animation:none; } }
 
 /* 버튼(주요) = 잉크블랙 (딥그린 원칙 2 — 초록 버튼 금지) */
@@ -27,6 +27,8 @@
 
 /* 활성 선택 = 딥그린 (칩·부위느낌·진행바·스텝·체크·서비스) */
 .seg .opt.on, .feel-opts .opt.on{ background:var(--green) !important; border-color:var(--green) !important; color:#fff; }
+/* 옵션 선택 스무스하게 — 배경·테두리·글자색이 툭 바뀌지 않고 부드럽게 전환 */
+.seg .opt, .feel-opts .opt{ transition:background .28s cubic-bezier(.22,.61,.36,1), border-color .28s cubic-bezier(.22,.61,.36,1), color .28s cubic-bezier(.22,.61,.36,1); }
 .wprogress .bar i, .stepper .dot.now, .stepper .dot.done{ background:var(--green); }
 .cb.on, .svc.on .check{ background:var(--green); border-color:var(--green); }
 .svc.on{ border-color:var(--green); background:var(--green-soft); }

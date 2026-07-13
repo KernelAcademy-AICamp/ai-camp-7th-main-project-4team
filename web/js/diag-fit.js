@@ -146,11 +146,9 @@
   }
   function goTo(i){ cur=i; render(); }
   function next(){ if(cur<steps.length-1){cur++;render()} }
-  function prev(){
-    // 카테고리 선택을 건너뛰고 들어온 경우(결과화면 '상의/하의 진단하기') 첫 화면(선호핏)에서 '이전'은 결과 페이지로
-    if(skipCat && cur===1){ if(history.length>1) history.back(); else location.href='result.html'; return; }
-    if(cur>0){cur--;render()} else location.href=PREV_URL;
-  }
+  // 이전 = 항상 직전 단계로(그 전 입력 그대로 남아 수정 가능). idx0(대상 선택)에서만 기본정보 화면으로.
+  // skip 진입(상의/하의 진단하기)이라도 이전을 누르면 건너뛴 대상 선택(idx0)으로 내려가 편집 가능.
+  function prev(){ if(cur>0){cur--;render()} else location.href=PREV_URL; }
   function footerAction(){
     if(!stepDone()) return;
     if(isPrefOnlyBase() && cur===1){ collectPrefOnly(); location.href='diag-loading.html?cat='+target; return; }
@@ -162,9 +160,10 @@
   function sizeDone(g){ return !!document.querySelector('#size'+g+' .opt.on'); }
   function feelDone(boxId){
     var box=document.getElementById(boxId); if(!box) return true;
-    // 필수 = 주부위(4지선다: 끼임/딱맞음/여유/큼)만. 허리밴드(3지선다)·접힌 항목은 선택.
+    // 필수 = 메인 그룹의 착용감 전부(상의=주부위 3 / 하의=주부위 3 + 허리밴드 = 4).
+    // '더 자세한 착용감'(feel-more-body)·접힌(details) 항목만 선택.
     var rows=[].slice.call(box.querySelectorAll('.feel-row')).filter(function(r){
-      return !r.closest('details') && r.querySelectorAll('.feel-opts .opt').length===4;
+      return !r.closest('details') && !r.closest('.feel-more-body');
     });
     return rows.every(function(r){ return !!r.querySelector('.feel-opts .opt.on'); });
   }
