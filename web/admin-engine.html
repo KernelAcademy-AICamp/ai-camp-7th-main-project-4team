@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="css/tokens.css?v=dc9975ef">
-<link rel="stylesheet" href="css/admin.css?v=ece151d3">
+<link rel="stylesheet" href="css/admin.css?v=b19a6a3c">
 </head>
 <body>
 <div class="anav"><div class="anav-in">
@@ -27,17 +27,13 @@
   <div class="crumb"><a href="admin.html">사이즈·데이터</a> › <b>엔진 시뮬레이터 · 튜닝 (3.A.3)</b></div>
   <p class="subnote"><b>몸 → 브랜드별 맞는 사이즈</b> 파이프라인을 처음부터 끝까지. 실엔진(BodyModel·FitEngine)을 그대로 돌려 추천을 재현하고, <b>여유·핏스코어·병목</b>을 분해해 보여줍니다. 목표 여유 슬라이더로 튜닝 감도도 확인. <span class="pill">규칙 정본: docs/6_사이즈엔진.md</span></p>
 
-  <!-- 입력 -->
-  <div class="simgrid">
-    <div class="simcol">
-      <div class="sec-h">1 · 입력</div>
-      <div class="simform" id="simIn"></div>
-    </div>
-    <div class="simcol">
-      <div class="sec-h">2 · 신체 추정 <span class="muted" style="font-weight:400">BodyModel 회귀</span></div>
-      <div class="tablewrap"><table class="dt" id="bodyEst"></table></div>
-    </div>
-  </div>
+  <!-- 1 · 입력 (가로 바) -->
+  <div class="sec-h">1 · 입력</div>
+  <div class="filters" id="simIn"></div>
+
+  <!-- 2 · 신체 추정 -->
+  <div class="sec-h">2 · 신체 추정 <span class="muted" style="font-weight:400">BodyModel 회귀</span></div>
+  <div class="tablewrap"><table class="dt" id="bodyEst"></table></div>
 
   <div class="sec-h">3 · 브랜드별 추천 <span class="muted" style="font-weight:400">FitEngine — 실엔진 결과(핏지수 순)</span></div>
   <div class="tablewrap"><table class="dt" id="recTable"></table></div>
@@ -54,6 +50,6 @@
 <script src="js/body-model.js?v=634d818d"></script>
 <script src="js/engine.js?v=a57bb9c0"></script>
 <script src="js/admin-common.js?v=b64f60d3"></script>
-<script src="js/admin-engine.js?v=c18132a9"></script>
+<script src="js/admin-engine.js?v=223715fb"></script>
 </body>
 </html>

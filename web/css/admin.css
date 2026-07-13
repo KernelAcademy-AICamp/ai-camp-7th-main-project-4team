@@ -103,18 +103,16 @@ table.sizechart th{ text-align:right; } table.sizechart th:first-child{ text-ali
 table.sizechart td{ text-align:right; } table.sizechart td:first-child{ text-align:left; }
 table.sizechart .num{ font-family:var(--num,inherit); }
 
-/* 엔진 시뮬레이터 */
-.simgrid{ display:grid; grid-template-columns:300px 1fr; gap:24px; align-items:start; }
-@media(max-width:720px){ .simgrid{ grid-template-columns:1fr; } }
-.simform{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px 16px; }
-.simrow{ display:flex; align-items:center; gap:10px; font-size:13px; color:var(--sub); padding:6px 0; }
-.simrow span{ width:76px; flex:none; }
-.simrow select, .simrow input{ flex:1; font-family:inherit; font-size:13px; padding:8px 10px; border:1px solid var(--line); border-radius:9px; color:var(--ink); background:#fff; }
-.simrow select:focus, .simrow input:focus{ outline:none; border-color:var(--green); }
+/* 엔진 시뮬레이터 — 입력은 .filters(가로 바)+.numin, 표는 .tablewrap. 다른 admin 페이지와 동일 패턴. */
+.simrow{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--sub); }
+.simrow span{ flex:none; }
+.simrow select{ flex:1; font-family:inherit; font-size:13px; padding:8px 10px; border:1px solid var(--line); border-radius:9px; color:var(--ink); background:#fff; }
+.numin select{ font-family:inherit; font-size:13px; padding:7px 9px; border:1px solid var(--line); border-radius:9px; color:var(--ink); background:#fff; }
+.numin select:focus, .numin input:focus{ outline:none; border-color:var(--green); }
 table.dt tr.top td{ background:var(--green-soft); }
 .scorecell{ min-width:130px; }
 .scorecell .bar{ display:inline-block; width:80px; height:8px; border-radius:5px; background:var(--soft); overflow:hidden; vertical-align:middle; margin-right:8px; }
-.scorecell .s2fill{ height:100%; background:var(--green); border-radius:5px; }
+.scorecell .s2fill{ display:block; height:100%; background:var(--green); border-radius:5px; }
 .tuner{ margin:6px 0 12px; }
 .tunerbox{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; background:var(--green-soft); border-radius:12px; padding:12px 16px; font-size:13px; }
 .tunerbox .tl{ font-weight:700; color:var(--green); }

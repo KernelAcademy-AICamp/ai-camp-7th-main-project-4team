@@ -43,7 +43,7 @@
       row('선호핏','<select id="iPref" onchange="__run()"></select>');
     syncPref();
   }
-  function row(l,ctrl){return '<label class="simrow"><span>'+l+'</span>'+ctrl+'</label>';}
+  function row(l,ctrl){return '<label class="numin"><span>'+l+'</span>'+ctrl+'</label>';}
   function syncPref(){
     var cat=val('iCat')||'TOP', el=$('iPref'); if(!el)return;
     var opts=cat==='TOP'?PREF_TOP:PREF_BOT, cur=el.value;
@@ -86,7 +86,7 @@
     var easeL=cat==='TOP'?'가슴 여유':'허리 여유';
     var rows=recs.map(function(r,i){
       var e=cat==='TOP'?r.chestEase:r.waistEase;
-      var score=r.fitScore||0, bar='<div class="s2fill" style="width:'+score+'%"></div>';
+      var score=r.fitScore||0, bar='<span class="s2fill" style="width:'+score+'%"></span>';
       return '<tr'+(i===0?' class="top"':'')+'><td><b>'+esc(r.brandName)+'</b>'+(r.variance?' <span class="pill" style="color:var(--warn);background:var(--warn-soft)">'+esc(r.variance)+'</span>':'')+'</td>'+
         '<td>'+esc(r.fitLine)+'</td><td><b class="num">'+esc(r.size)+'</b></td>'+
         '<td>'+esc(r.fit)+(r.warn?' ⚠️':'')+'</td>'+
