@@ -44,7 +44,7 @@
       var c=cov[b], isA=ANCHORS.indexOf(c.brandId)>=0;
       var cell=function(o){ var m=o.male||0,f=o.female||0,u=o.unisex||0; var t=m+f+u;
         return t?('<span class="num">'+t+'</span> <span class="muted">('+(m?'남'+m:'')+(m&&(f||u)?' ':'')+(f?'여'+f:'')+(u?' 공'+u:'')+')</span>'):'<span class="muted">—</span>'; };
-      return '<tr><td><b>'+esc(b)+'</b> '+(isA?'<span class="anchor">앵커</span>':'')+'</td>'+
+      return '<tr><td><a href="admin-garments.html?brand='+encodeURIComponent(b)+'"><b>'+esc(b)+'</b></a> '+(isA?'<span class="anchor">앵커</span>':'')+'</td>'+
         '<td>'+cell(c.TOP)+'</td><td>'+cell(c.BOTTOM)+'</td></tr>';
     }).join('');
     $('covTable').innerHTML='<thead><tr><th>브랜드</th><th>상의</th><th>하의</th></tr></thead><tbody>'+covRows+'</tbody>';

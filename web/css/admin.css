@@ -84,3 +84,18 @@ table.dt tr:hover td{ background:var(--green-soft); }
 .stub li{ font-size:13.5px; color:var(--ink-soft,var(--ink)); background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:13px 15px; }
 .stub li b{ color:var(--green); font-weight:800; margin-right:6px; }
 .stub li small{ display:block; color:var(--sub2,#a6a29a); font-size:12px; margin-top:3px; }
+
+/* 브랜드·제품 실측표(3.A.1) */
+.crumb{ font-size:13px; color:var(--sub); margin-bottom:4px; }
+.crumb a{ color:var(--green); text-decoration:none; } .crumb a:hover{ text-decoration:underline; }
+.subnote{ font-size:13px; color:var(--sub); line-height:1.55; margin:0 0 18px; max-width:720px; }
+.gshead{ display:flex; align-items:baseline; gap:12px; margin:6px 0 16px; }
+.gshead h1{ font-size:22px; font-weight:800; margin:0; }
+.gsmeta{ font-size:13px; color:var(--sub); }
+.gscard{ margin-bottom:20px; }
+.gscard-h{ display:flex; align-items:center; gap:10px; font-size:14px; margin:0 0 8px; }
+.gscard-h b{ font-weight:700; }
+.gscard-h .muted{ margin-left:auto; font-size:12px; }
+table.sizechart th{ text-align:right; } table.sizechart th:first-child{ text-align:left; }
+table.sizechart td{ text-align:right; } table.sizechart td:first-child{ text-align:left; }
+table.sizechart .num{ font-family:var(--num,inherit); }
