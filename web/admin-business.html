@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅 관리자 — 사업 현황</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/tokens.css?v=dc9975ef">
+<link rel="stylesheet" href="css/admin.css?v=abb2e899">
+</head>
+<body>
+<div class="anav"><div class="anav-in">
+  <span class="brand">fitting</span><span class="tag">관리자 · 프로토타입</span>
+  <nav class="asecs">
+    <a class="s" href="admin.html">사이즈·데이터</a>
+    <a class="s" href="admin-members.html">회원·거래</a>
+    <a class="s on" href="admin-business.html">사업현황</a>
+    <a class="s" href="admin-api.html">B2B API</a>
+    <a class="s" href="admin-ops.html">내부운영</a>
+  </nav>
+  <span class="who">👤 <b id="adminWho">—</b></span>
+  <span class="lo" onclick="adminLogout()">로그아웃</span>
+</div></div>
+
+<div class="awrap">
+  <div class="crumb"><b>사업 현황 (3.C) · 운영 대시보드 (3.C.1)</b></div>
+  <p class="subnote"><b>제품·운영 개요.</b> 진단→수요→매칭→전문가로 이어지는 퍼널을 한눈에. <b class="pill">화면 우선</b> — 샘플 개요이며 상세·실집계는 각 화면(<a href="admin-diagnostics.html">진단 응답</a>·<a href="admin-members.html">회원·수요</a>)과 마일스톤1 배선에서. GMV·수수료 매출·정산(금전)은 실거래 오픈(v2) 대상.</p>
+
+  <div class="kpis" id="ovKpis"></div>
+
+  <div class="sec-h">퍼널 <span class="muted" style="font-weight:400">— 진단 → 결과 확인 → 매칭 요청 → 견적 수신 → 성사</span></div>
+  <div class="tablewrap"><table class="dt" id="funnelTable"></table></div>
+
+  <div class="sec-h">바로가기</div>
+  <div class="tablewrap"><table class="dt" id="linkTable"></table></div>
+</div>
+
+<script src="js/admin-common.js?v=b64f60d3"></script>
+<script src="js/admin-business.js?v=8df2eed3"></script>
+</body>
+</html>
