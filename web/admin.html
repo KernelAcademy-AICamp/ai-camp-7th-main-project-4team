@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="css/tokens.css?v=dc9975ef">
-<link rel="stylesheet" href="css/admin.css?v=88fc259b">
+<link rel="stylesheet" href="css/admin.css?v=c160adc5">
 </head>
 <body>
 <div class="anav"><div class="anav-in">
@@ -39,15 +39,24 @@
     <div class="tablewrap"><table class="dt" id="specTable"></table></div>
   </div>
 
-  <!-- 신체 사이즈(body-base-model / body-distribution) -->
+  <!-- 신체 사이즈 = 엔진의 신체 추정 기준(회귀 모델 + 인구 분포) -->
   <div class="apanel" id="panel-body">
+    <p class="subnote"><b>엔진의 신체 추정 기준.</b> 사용자의 키·몸무게·나이로 부위 치수를 <b>회귀 추정</b>(body-base-model)하고, 그 값이 인구에서 어디쯤인지 <b>백분위</b>를 매김(body-distribution). 진단에서 착용경험이 없거나 0벌일 때 이 모델이 몸을 채워요. 출처: 사이즈코리아 제8차(2020~2024).</p>
     <div class="kpis" id="bKpis"></div>
-    <div class="sec-h">성별별 신체 기준값 · 분포</div>
-    <div class="filters" id="bFilters"></div>
-    <div class="tablewrap"><table class="dt" id="bodyTable"></table></div>
+
+    <div class="sec-h">추정 미리보기 <span class="muted" style="font-weight:400">— 이 입력으로 엔진이 뽑는 몸</span></div>
+    <div class="filters" id="bEstIn"></div>
+    <div class="tablewrap"><table class="dt" id="bEstTable"></table></div>
+
+    <div class="sec-h">회귀 모델 품질 <span class="muted" style="font-weight:400">— r²(적합도)·RMSE(오차)·표본. 낮은 부위 = 추정 신뢰도 낮음</span></div>
+    <div class="filters" id="bModelFilter"></div>
+    <div class="tablewrap"><table class="dt" id="bModelTable"></table></div>
+
+    <div class="sec-h">인구 분포 <span class="muted" style="font-weight:400">— 백분위 계산 기준(mean·sd·P5/P50/P95)</span></div>
+    <div class="tablewrap"><table class="dt" id="bDistTable"></table></div>
   </div>
 </div>
 <script src="js/admin-common.js?v=b64f60d3"></script>
-<script src="js/admin.js?v=3d85d3f0"></script>
+<script src="js/admin.js?v=34b476cf"></script>
 </body>
 </html>

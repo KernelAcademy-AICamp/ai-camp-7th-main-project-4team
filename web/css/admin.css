@@ -73,6 +73,9 @@ table.dt tr:hover td{ background:var(--green-soft); }
 .filters select{ font-family:inherit; font-size:13px; padding:8px 12px; border:1px solid var(--line);
   border-radius:10px; background:#fff; color:var(--ink); }
 .filters .cnt{ margin-left:auto; font-size:13px; color:var(--sub); }
+.numin{ font-size:13px; color:var(--sub); display:inline-flex; align-items:center; gap:6px; }
+.numin input{ width:72px; font-family:inherit; font-size:13px; padding:7px 9px; border:1px solid var(--line); border-radius:9px; color:var(--ink); }
+.numin input:focus{ outline:none; border-color:var(--green); }
 .pill{ display:inline-block; font-size:11px; padding:2px 8px; border-radius:6px; background:var(--soft); color:var(--sub); }
 
 /* 스텁(미착수 섹션) 플레이스홀더 */

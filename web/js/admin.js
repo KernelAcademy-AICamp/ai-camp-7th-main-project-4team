@@ -91,35 +91,83 @@
   function val(id){ var el=$(id); return el?el.value:''; }
   function kpi(n,l,s){ return '<div class="kpi"><div class="n">'+(typeof n==='number'?n.toLocaleString():n)+'</div><div class="l">'+l+'</div>'+(s?'<div class="s">'+s+'</div>':'')+'</div>'; }
 
-  // ── 신체 사이즈(body-base-model + body-distribution) ─────
+  // ── 신체 사이즈 = 엔진의 신체 추정 기준(회귀 모델 + 인구 분포) ─────
+  var BASE=null, DIST=null;
   Promise.all([
     fetch('data/body-base-model.json').then(function(r){return r.json();}).catch(function(){return null;}),
     fetch('data/body-distribution.json').then(function(r){return r.json();}).catch(function(){return null;})
-  ]).then(function(res){ renderBody(res[0],res[1]); });
+  ]).then(function(res){ BASE=res[0]; DIST=res[1]; renderBody(); });
 
-  function flat(o,pre){ // 중첩 dict → {경로:값}
-    var out={}; pre=pre||'';
-    if(o&&typeof o==='object'&&!Array.isArray(o)){
-      Object.keys(o).forEach(function(k){ if(k==='_meta')return; var v=o[k];
-        if(v&&typeof v==='object'&&!Array.isArray(v)) Object.assign(out,flat(v,pre+k+'.'));
-        else out[pre+k]=Array.isArray(v)?v.join(' / '):v;
-      });
-    }
-    return out;
+  function pctFromZ(z){ // 표준정규 CDF(Abramowitz-Stegun 근사) → 백분위(%)
+    var t=1/(1+0.2316419*Math.abs(z)), d=0.3989423*Math.exp(-z*z/2);
+    var p=d*t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));
+    p=z>0?1-p:p; return Math.max(1,Math.min(99,Math.round(p*100)));
   }
-  function renderBody(base,dist){
-    if(!base){ $('bKpis').innerHTML='<div class="kpi"><div class="l">신체 데이터 로드 실패</div></div>'; return; }
-    var mf=flat(base.male), ff=flat(base.female);
-    var keys=Object.keys(mf).length>=Object.keys(ff).length?Object.keys(mf):Object.keys(ff);
+  function estPart(m,h,w,age){ return m.a_height*h + m.b_weight*w + (m.c_age||0)*age + m.intercept; }
+  function f(x){ return x==null?'—':(''+x); }
+
+  function renderBody(){
+    if(!BASE){ $('bKpis').innerHTML='<div class="kpi"><div class="l">신체 데이터 로드 실패</div></div>'; return; }
+    var meta=BASE._meta||{}, r2s=[], ns=[];
+    ['male','female'].forEach(function(g){ Object.keys(BASE[g]||{}).forEach(function(k){ var m=BASE[g][k]; if(m.r2!=null)r2s.push(m.r2); if(m.n!=null)ns.push(m.n); }); });
+    var avgR2=r2s.length?(r2s.reduce(function(a,b){return a+b;},0)/r2s.length):null;
     $('bKpis').innerHTML=[
-      kpi(keys.length,'신체 지표','성별 기준값'),
-      kpi(2,'성별','남·여'),
-      kpi(base._meta&&base._meta.source?'':'사이즈코리아','출처',base._meta&&base._meta.source?base._meta.source:'회귀 base model')
+      kpi(Object.keys(BASE.male||{}).length,'추정 부위','회귀 모델'),
+      kpi(avgR2!=null?avgR2.toFixed(2):'—','평균 r²','1에 가까울수록 적합'),
+      kpi(ns.length?Math.min.apply(null,ns):'—','최소 표본','부위별 n 하한'),
+      kpi('8차','출처',meta.attribution||'사이즈코리아')
     ].join('');
-    var $b=$('bFilters'); if($b) $b.innerHTML='<span class="pill">body-base-model.json</span>'+(dist?'<span class="pill">body-distribution.json</span>':'')+'<span class="cnt">성별별 신체 기준값</span>';
-    var rows=keys.map(function(k){
-      return '<tr><td>'+esc(k)+'</td><td class="num">'+esc(mf[k]==null?'—':mf[k])+'</td><td class="num">'+esc(ff[k]==null?'—':ff[k])+'</td></tr>';
-    }).join('');
-    $('bodyTable').innerHTML='<thead><tr><th>지표</th><th>남성</th><th>여성</th></tr></thead><tbody>'+rows+'</tbody>';
+    buildEst(); renderEst(); buildModelFilter(); renderModel(); renderDist();
   }
+
+  // 추정 미리보기 — 이 입력으로 엔진이 뽑는 몸(회귀식 직접 적용)
+  function buildEst(){
+    $('bEstIn').innerHTML=
+      selRaw('eGen',[['female','여성'],['male','남성']],'female','__be')+
+      numIn('eH','키(cm)',170)+numIn('eW','몸무게(kg)',65)+numIn('eA','나이',28)+
+      '<span class="cnt">부위cm = a·키 + b·몸무게 + c·나이 + 절편</span>';
+  }
+  window.__be=function(){
+    var g=val('eGen'), h=+val('eH')||0, w=+val('eW')||0, age=+val('eA')||0;
+    var src=BASE[g]||{}, dist=(DIST&&DIST[g])||{};
+    var rows=Object.keys(src).map(function(k){
+      var m=src[k], cm=estPart(m,h,w,age), d=dist[k];
+      var pct=(d&&d.sd)?pctFromZ((cm-d.mean)/d.sd):null;
+      return '<tr><td>'+esc(m.label||k)+' <span class="muted">'+k+'</span></td>'+
+        '<td class="num"><b>'+cm.toFixed(1)+'</b> cm</td>'+
+        '<td class="num">'+(pct==null?'—':pct+'%tile')+'</td>'+
+        '<td class="num muted">'+(m.r2!=null?'r² '+m.r2:'')+'</td></tr>';
+    }).join('');
+    $('bEstTable').innerHTML='<thead><tr><th>부위</th><th>추정 치수</th><th>인구 백분위</th><th>적합도</th></tr></thead><tbody>'+rows+'</tbody>';
+  };
+  function renderEst(){ window.__be(); }
+
+  // 회귀 모델 품질 — 관리자 모니터링(어느 부위가 신뢰도 낮은지)
+  function buildModelFilter(){ $('bModelFilter').innerHTML=selRaw('mGen',[['female','여성'],['male','남성']],'female','__bm')+'<span class="cnt">r²·RMSE·표본으로 부위별 추정 신뢰도 점검</span>'; }
+  window.__bm=function(){
+    var g=val('mGen')||'female', src=BASE[g]||{};
+    var rows=Object.keys(src).map(function(k){ var m=src[k];
+      var q=m.r2==null?'':(m.r2>=0.75?'<span class="anchor">양호</span>':m.r2>=0.55?'<span class="pill">보통</span>':'<span class="pill" style="color:var(--warn);background:var(--warn-soft)">낮음</span>');
+      return '<tr><td>'+esc(m.label||k)+' <span class="muted">'+k+'</span></td>'+
+        '<td class="num">'+f(m.a_height)+'</td><td class="num">'+f(m.b_weight)+'</td><td class="num">'+f(m.c_age)+'</td><td class="num">'+f(m.intercept)+'</td>'+
+        '<td class="num"><b>'+f(m.r2)+'</b> '+q+'</td><td class="num">'+(m.rmse_cm==null?'—':'±'+m.rmse_cm)+'</td><td class="num muted">'+(m.n==null?'—':m.n.toLocaleString())+'</td></tr>';
+    }).join('');
+    $('bModelTable').innerHTML='<thead><tr><th>부위</th><th>키계수</th><th>몸무게계수</th><th>나이계수</th><th>절편</th><th>r²</th><th>RMSE(cm)</th><th>표본 n</th></tr></thead><tbody>'+rows+'</tbody>';
+  };
+  function renderModel(){ window.__bm(); }
+
+  function renderDist(){
+    if(!DIST){ $('bDistTable').innerHTML=''; return; }
+    var keys=Object.keys(DIST.female||DIST.male||{});
+    var rows=keys.map(function(k){
+      var fe=(DIST.female||{})[k]||{}, ma=(DIST.male||{})[k]||{};
+      return '<tr><td>'+esc(fe.label||ma.label||k)+' <span class="muted">'+k+'</span></td>'+
+        '<td class="num">'+f(fe.p5)+' / <b>'+f(fe.p50)+'</b> / '+f(fe.p95)+' <span class="muted">±'+f(fe.sd)+'</span></td>'+
+        '<td class="num">'+f(ma.p5)+' / <b>'+f(ma.p50)+'</b> / '+f(ma.p95)+' <span class="muted">±'+f(ma.sd)+'</span></td></tr>';
+    }).join('');
+    $('bDistTable').innerHTML='<thead><tr><th>부위</th><th>여성 P5 / P50 / P95</th><th>남성 P5 / P50 / P95</th></tr></thead><tbody>'+rows+'</tbody>';
+  }
+
+  function selRaw(id,opts,cur,cb){ return '<select id="'+id+'" onchange="'+(cb||'__be')+'()">'+opts.map(function(o){return '<option value="'+o[0]+'"'+(o[0]===cur?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>'; }
+  function numIn(id,label,def){ return '<label class="numin">'+label+' <input id="'+id+'" type="number" value="'+def+'" oninput="__be()"></label>'; }
 })();
