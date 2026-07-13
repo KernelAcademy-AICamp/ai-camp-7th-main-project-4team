@@ -126,10 +126,15 @@
         else prog(12,m.status||''); } });
     }).then(function(r){
       prog(98,'표 재구성…');
-      var parsed=autoFill(clusterRows((r.data&&r.data.words)||[]));
+      var rowsW=clusterRows((r.data&&r.data.words)||[]);
+      var parsed=autoFill(rowsW);
       if(parsed && parsed.rows.length){ rows=parsed.rows; buildGrid(); build();
-        prog(100,'✅ '+parsed.rows.length+'행 추출('+(parsed.cat==='TOP'?'상의':'하의')+') — 값을 꼭 확인·교정하세요'); }
-      else { prog(100,'⚠️ 표 구조를 못 잡았어요 — 수동 전사하거나 다시 시도(인식 텍스트는 콘솔).');
+        prog(100,'✅ '+parsed.rows.length+'행 추출('+(parsed.cat==='TOP'?'상의':'하의')+') — 값을 꼭 확인·교정하세요'); return; }
+      // 폴백: 구조 판정 실패해도 인식된 행렬을 러프하게 그리드에(빈 화면 대신).
+      var m=buildMatrix(rowsW), dumped=m?rawDump(m):[];
+      if(dumped.length){ rows=dumped; buildGrid(); build();
+        prog(100,'⚠️ 구조 자동판정 실패 — 러프 추출('+dumped.length+'행). 사이즈·부위·값을 꼭 확인·교정하세요'); }
+      else { prog(100,'⚠️ 인식이 약해요 — 수동 전사하세요(인식 텍스트는 콘솔).');
         try{ console.log('OCR raw text:\n'+((r.data&&r.data.text)||'')); }catch(e){} }
     }).catch(function(e){ prog(100,'❌ '+(e.message||'OCR 실패')); })
     .then(function(){ btn.disabled=false; });
@@ -177,6 +182,16 @@
     });
   }
   function countSize(arr){ return arr.filter(function(t){return isSize(t);}).length; }
+  // 자동 판정 실패 폴백: 행렬을 그대로 그리드에(사이즈=첫칸, 숫자=현재 카테고리 부위칸 순서대로). 사람이 교정.
+  function rawDump(m){
+    var cat=(($('iCat')&&$('iCat').value))||'TOP', parts=PARTS[cat];
+    return m.map(function(cells){
+      var o={size:sizeLabel(cells[0]||''), cells:{}, note:''};
+      var nums=cells.slice(1).map(toNum).filter(function(x){return x!=null;});
+      nums.forEach(function(v,i){ if(i<parts.length) o.cells[parts[i]]=v; });
+      return o;
+    }).filter(function(o){ return o.size || Object.keys(o.cells).length; });
+  }
 
   // 방향 판정: 사이즈 키워드(S/M/L·90/95/100…)가 헤더 행에 있으면 열=사이즈(행=부위),
   //   첫 열에 있으면 행=사이즈(열=부위). 사이즈 없는 축 = 부위. → 표 정규화.

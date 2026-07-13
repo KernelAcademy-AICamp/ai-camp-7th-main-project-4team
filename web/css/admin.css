@@ -2,6 +2,7 @@
    ⚠️ 프로토타입: 로그인/2FA는 목업(실제 인증 아님). 데이터는 web/data/*.json 실파일. */
 :root{ --admin-max:1180px; }
 *{ box-sizing:border-box; }
+[hidden]{ display:none !important; }   /* .dz-hint 등 display 규칙이 hidden 속성을 이기지 않도록 */
 body{ margin:0; font-family:var(--sans); color:var(--ink); background:var(--bg); -webkit-font-smoothing:antialiased; }
 a{ color:inherit; }
 
