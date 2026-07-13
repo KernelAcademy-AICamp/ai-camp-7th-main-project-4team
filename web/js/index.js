@@ -163,6 +163,8 @@
 
   /* 마이페이지 · 프로필 아바타 — 진단 전=잉크블랙+이니셜 / 진단 후=결과 카드 캐릭터 얼굴 + 유형 색(bodytypes.json 단일 출처) */
   var USER={ name:'김도현', initial:'김', gender:'male', age:33, height:172, weight:68, fit:'슬림', type:'STR' };   // type:null = 진단 전
+  // 결과 페이지에서 '결과 저장' 시 기록한 진단 프로필(fitting.user)을 병합 → 마이가 실제 진단 결과를 보여줌.
+  (function(){ try{ var s=JSON.parse(localStorage.getItem('fitting.user')||'null'); if(s&&typeof s==='object') Object.assign(USER, s); }catch(e){} })();
   var _btCache=null;
   function avatarFaceHTML(){ return '<div class="head '+USER.gender+'">'+(USER.gender==='female'?'<span class="longhair"></span>':'')+'<span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div>'; }
   function renderMyAvatar(){
@@ -178,6 +180,18 @@
     var g=(USER.gender==='female'?'female':'male');
     var src='card.html?type='+(USER.type||'STR')+'&g='+g;
     if((f.getAttribute('src')||'')!==src) f.src=src;   // 값이 바뀐 경우에만 리로드
+  }
+  /* FITTING의 한 끗(#myTip) — 유형별 insight로 채움(카드와 같이 움직이게). 하드코딩 데모 대체. */
+  function renderMyInsight(){
+    var el=document.getElementById('myTip'); if(!el) return;
+    function paint(t){ if(!t) return;
+      var tp=t.point||'#2E4A3B'; el.style.setProperty('--tp',tp);
+      var g=(USER.gender==='female')?'female':'male';
+      var c=(t.gender&&(t.gender[g]||t.gender.female))||t;   // 성별별 콘텐츠 해석
+      el.innerHTML='<div class="k">FITTING의 한 끗</div><p>'+(c.insight||'')+'</p>';
+    }
+    if(_btCache){ paint(_btCache[USER.type]); return; }
+    fetch('data/bodytypes.json').then(function(r){return r.json();}).then(function(j){ _btCache={}; j.types.forEach(function(x){_btCache[x.code]=x;}); paint(_btCache[USER.type]); }).catch(function(){});
   }
 
   /* 마이페이지 · 프로필 기본정보 (읽기/편집) */
@@ -216,7 +230,7 @@
     var a=document.getElementById('pAge'), h=document.getElementById('pHeight'), w=document.getElementById('pWeight');
     if(a&&a.value) USER.age=+a.value; if(h&&h.value) USER.height=+h.value; if(w&&w.value) USER.weight=+w.value;
     var f=document.querySelector('#pFit .o.on'); if(f) USER.fit=f.dataset.fit;
-    _profEdit=false; renderProfile(); renderMyAvatar(); renderMyDiagCard(); toast('프로필을 저장했어요');
+    _profEdit=false; renderProfile(); renderMyAvatar(); renderMyDiagCard(); renderMyInsight(); toast('프로필을 저장했어요');
   }
 
   /* 마이페이지 · 즐겨찾기 렌더 */
@@ -778,11 +792,22 @@
   /* 외부 화면에서 #home·#shop·#my 로 돌아오면 해당 탭 열기 */
   (function(){ var h=(location.hash||'').replace('#',''); if(['home','shop','my'].indexOf(h)>=0) go(h); })();
 
-  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagCard();
+  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagCard(); renderMyInsight();
 
   /* 친구 초대 링크로 유입(card 공유 → index.html?from=CODE) — 홈 상단 배너로 맞이 */
   (function(){ try{ var from=new URLSearchParams(location.search).get('from'); if(!from) return;
     go('home'); var b=document.getElementById('inviteBanner'); if(b) b.classList.add('on');
+  }catch(e){} })();
+
+  /* 결과 페이지의 로그인 게이트로 유입(index.html?login=1&next=my|shop) — 로그인 시트를 열고, 완료 시 해당 탭으로 */
+  (function(){ try{ var q=new URLSearchParams(location.search); if(q.get('login')!=='1') return;
+    var toShop=(q.get('next')==='shop');
+    openLogin(toShop?'전문가 매칭':'결과 저장', function(){ if(toShop) go('shop'); else goMy('mp-diag'); });
+  }catch(e){} })();
+
+  /* 결과 저장 후 '마이에서 보기'(index.html?my=mp-diag) — 마이의 해당 서브패널(내 진단결과)로 바로 이동 */
+  (function(){ try{ var mp=new URLSearchParams(location.search).get('my');
+    if(mp && document.querySelector('#smenu a[data-p="'+mp+'"]')) goMy(mp);
   }catch(e){} })();
 
   /* ================= 홈 (줄자 리디자인) 인터랙션 — _home2 이식 ================= */
@@ -794,13 +819,31 @@
     /* 1) 히어로 줄자 — cm·kg 측정 */
     (function(){
       var marker=$('hMarker'), cm=$('hCm'), kg=$('hKg'), tag=$('hMtag'); if(!marker) return;
-      var TO_CM=172, TO_KG=68, posEnd=((TO_CM-150)/40)*100;
-      if(RM){ marker.style.left=posEnd+'%'; cm.textContent=TO_CM; kg.textContent=TO_KG; tag.textContent='그래서 나는 어떤 FIT일까?'; return; }
-      var s0=null,dur=1700;
-      function s(t){ if(!s0)s0=t; var p=Math.min((t-s0)/dur,1),e=1-Math.pow(1-p,3);
-        marker.style.left=(2+(posEnd-2)*e)+'%'; cm.textContent=Math.round(150+(TO_CM-150)*e); kg.textContent=Math.round(45+(TO_KG-45)*e);
-        if(p<1)requestAnimationFrame(s); else tag.textContent='그래서 나는 어떤 FIT일까?'; }
-      requestAnimationFrame(s);
+      function rnd(a,b){ return a+Math.floor(Math.random()*(b-a+1)); }   // 랜덤 측정값
+      function kgFor(c){ var m=c/100; return Math.round((19+Math.random()*7)*m*m); } // 키에 맞춘 몸무게(BMI 19~26)
+      function pos(c){ return ((c-150)/40)*100; }                        // cm(150~190) → 줄자 위치 %
+      var curCm=150, curKg=45;
+      // 눈금선을 정수 픽셀 위치로 직접 생성(서브픽셀 두께 불균일 방지). 얇은줄=2cm마다(양끝 제외), 굵은줄=160·170·180
+      (function(){
+        var ruler=marker.closest('.ruler'); if(!ruler) return;
+        var minorEl=ruler.querySelector('.ticks:not(.major)'), majorEl=ruler.querySelector('.ticks.major');
+        function build(){ if(!minorEl) return; var w=minorEl.clientWidth; if(!w) return;
+          var mh=''; for(var i=1;i<20;i++) mh+='<i style="left:'+Math.round(w*i/20)+'px"></i>'; minorEl.innerHTML=mh;
+          if(majorEl){ var jh=''; [0.25,0.5,0.75].forEach(function(f){ jh+='<i style="left:'+Math.round(w*f)+'px"></i>'; }); majorEl.innerHTML=jh; } }
+        build(); window.addEventListener('resize', build);
+      })();
+      if(RM){ var c=rnd(155,186), k=kgFor(c); marker.style.left=pos(c)+'%'; cm.textContent=c; kg.textContent=k; tag.textContent='그래서 나는 어떤 FIT일까?'; return; }
+      function measure(){
+        var toCm=rnd(155,186), toKg=kgFor(toCm), fCm=curCm, fKg=curKg, s0=null, dur=1500;
+        tag.textContent='측정 중…';
+        function s(t){ if(!s0)s0=t; var p=Math.min((t-s0)/dur,1), e=1-Math.pow(1-p,3);
+          var c=fCm+(toCm-fCm)*e, k=fKg+(toKg-fKg)*e;
+          marker.style.left=pos(c)+'%'; cm.textContent=Math.round(c); kg.textContent=Math.round(k);
+          if(p<1) requestAnimationFrame(s);
+          else { curCm=toCm; curKg=toKg; tag.textContent='그래서 나는 어떤 FIT일까?'; setTimeout(measure, 2200); } }
+        requestAnimationFrame(s);
+      }
+      measure();   // 랜덤값으로 측정 → 잠시 멈춤 → 다시 랜덤 측정(반복)
     })();
 
     /* 2) 스크롤 리빌 */

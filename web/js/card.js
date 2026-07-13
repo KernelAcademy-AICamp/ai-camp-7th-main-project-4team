@@ -48,6 +48,10 @@
 
   // 결과 카드 이미지 저장 (PNG 다운로드) — 액션 버튼은 캡처에서 제외
   function saveCard(d){
+    // 결과 페이지(?host=result)에 임베드된 카드면 부모(result.js)의 계정 저장 흐름으로 위임(로그인 게이트+마이). 단독 열람은 PNG 저장.
+    if(q.get('host')==='result' && window.parent && window.parent!==window){
+      try{ window.parent.postMessage({type:'fitting:save'}, '*'); return; }catch(e){}
+    }
     var card=document.getElementById('card');
     if(!window.htmlToImage||!card){ return; }
     var btn=document.getElementById('cSave'); if(btn) btn.disabled=true;
