@@ -11,23 +11,31 @@
 </head>
 <body>
 
-<div class="dhead"><div class="dhead-in">
-  <a class="logo" href="index.html">Fitting<i></i></a>
-  <div class="dprog"><div class="prog"><span class="seg done"></span><span class="seg"><i id="wfill"></i></span></div></div>
-  <a class="dx" href="index.html" title="닫기">✕</a>
-</div></div>
+<div class="dhead">
+  <div class="dhead-in">
+    <a class="logo" href="index.html">Fitting<i></i></a>
+    <a class="dx" href="index.html" title="닫기">✕</a>
+  </div>
+</div>
 
 <div class="flow">
 
+  <div class="dstepc">
+    <div class="dnode done"><span class="ddot">1</span><span class="dlbl">기본정보</span></div>
+    <div class="dconn solid done"></div>
+    <div class="dnode now"><span class="ddot">2</span><span class="dlbl">착용경험</span></div>
+    <div class="dconn seg" id="qconn"><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span></div>
+    <div class="dnode"><span class="ddot">3</span><span class="dlbl">진단중</span></div>
+  </div>
+
   <!-- idx0 · 진단 대상 카테고리 선택 -->
   <div class="wstep active">
-    <span class="qnum">진단 대상</span>
     <h2 class="qhead">어떤 옷을 진단할까요?</h2>
-    <p class="qhelp">옷 종류마다 확인하는 체형이 달라요</p>
+    <p class="qhelp">옷 종류에 따라 분석 기준이 달라져요</p>
     <div class="qbody">
       <div class="notice hidden" id="reusebanner" style="margin-bottom:16px"></div>
       <div class="seg cat stack" id="target">
-        <div class="opt on" data-cat="top" onclick="pickTarget(this)">상의</div>
+        <div class="opt" data-cat="top" onclick="pickTarget(this)">상의</div>
         <div class="opt" data-cat="bottom" onclick="pickTarget(this)">하의</div>
         <div class="opt" data-cat="outer" onclick="pickTarget(this)">아우터</div>
         <div class="opt" data-cat="dress" onclick="pickTarget(this)">원피스</div>
@@ -37,15 +45,14 @@
       <div class="notice warn hidden mt-16" id="targetnote"></div>
 
       <div class="center mt-24">
-        <a href="diag-loading.html?skip=1" class="btn-ghost" style="text-decoration:underline">입어본 옷이 없어요</a>
-        <p class="small" style="max-width:360px;margin:6px auto 0">키와 몸무게를 기준으로 먼저 분석하고, 옷은 나중에 추가할 수 있어요</p>
+        <p class="small" style="margin:0 auto 8px">입어본 옷이 없나요?</p>
+        <a href="diag-loading.html?skip=1" class="btn-ghost" style="text-decoration:underline">기본 정보만으로 진단하기</a>
       </div>
     </div>
   </div>
 
   <!-- idx1 · 선호핏 (카테고리 스코프 — 종류마다 취향이 다름) -->
   <div class="wstep">
-    <div class="target-chip">진단 대상 · <b class="catword">상의</b></div>
     <h2 class="qhead">평소 어떤 핏을 즐겨 입나요?</h2>
     <p class="qhelp" id="prefhelp">선호하는 여유감은 <strong>옷 종류마다 달라서</strong> 종류를 고른 뒤 물어봐요. 이 취향은 <span class="catword">상의</span> 추천에만 적용돼요.</p>
     <div class="qbody">
@@ -63,9 +70,8 @@
 
   <!-- idx2 · 옷1 정보 -->
   <div class="wstep">
-    <div class="target-chip">진단 대상 · <b class="catword">상의</b></div>
     <h2 class="qhead">입어본 <span class="longword">긴팔</span> <span class="catword">상의</span> 정보를 알려주세요</h2>
-    <p class="qhelp">자주 입었던 <span class="longword">긴팔</span>일수록 더 정확하게 진단할 수 있어요</p>
+    <p class="qhelp">자주 입는 옷일수록 더 정확하게 분석할 수 있어요</p>
     <div class="qbody">
       <div class="grid-2">
         <div class="field"><label>브랜드</label>
@@ -87,7 +93,7 @@
   <!-- idx3 · 옷1 느낌 -->
   <div class="wstep">
     <h2 class="qhead">입었을 때 느낌은 어땠나요?</h2>
-    <p class="qhelp">부위별 착용감을 알려주세요. 해당되지 않으면 건너뛰어도 괜찮아요</p>
+    <p class="qhelp">부위별 착용감을 선택해 주세요</p>
     <div class="qbody">
       <div class="feelbox" id="feel1"></div>
     </div>
@@ -109,7 +115,6 @@
 
   <!-- idx5 · 옷2 정보 -->
   <div class="wstep">
-    <div class="target-chip">진단 대상 · <b class="catword">상의</b></div>
     <h2 class="qhead">핏이 다른 <span class="catword">상의</span>도<br>추가해볼까요?</h2>
     <p class="qhelp">핏이 다른 옷일수록 체형을 더 정확하게 분석할 수 있어요</p>
     <div class="qbody">
@@ -130,7 +135,7 @@
 
   <!-- idx6 · 옷2 느낌 -->
   <div class="wstep">
-    <h2 class="qhead">이 옷은 어땠나요?</h2>
+    <h2 class="qhead">이 옷은 느낌이 어땠나요?</h2>
     <p class="qhelp">부위별 착용감을 알려주세요</p>
     <div class="qbody">
       <div class="feelbox" id="feel2"></div>
@@ -143,7 +148,7 @@
     <p class="qhelp">지금도 충분히 정확해요. 더 추가하면 정확도가 높아져요</p>
     <div class="qbody">
       <button class="add-garment" onclick="alert('프로토타입: 같은 카테고리 옷을 한 벌 더 추가하면 정보·느낌 2단계가 더 생깁니다 (최대 3벌)')">+ <span class="catword">상의</span> 더 추가하기</button>
-      <div class="notice mt-16">입력은 자동 저장돼요. 결과 화면에서 언제든 수정·재진단할 수 있어요.</div>
+      <div class="notice mt-16">입력은 자동 저장돼요. 결과 화면에서 언제든 수정·재진단할 수 있어요</div>
     </div>
   </div>
 
@@ -151,7 +156,7 @@
   <div class="wnav">
     <button class="btn-line" onclick="prev()">이전</button>
     <span class="spacer"></span>
-    <button class="btn-primary" id="nextbtn" onclick="footerAction()">다음</button>
+    <button class="btn-primary" id="nextbtn" onclick="footerAction()" disabled>다음</button>
   </div>
 
   <!-- ===== 파생 카테고리 · 선호핏만 (빠른 경로) — 기반(상/하의)이 체형을 잠근 뒤 진입 ===== -->

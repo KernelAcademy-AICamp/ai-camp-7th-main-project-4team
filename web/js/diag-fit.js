@@ -55,7 +55,7 @@
       '</div></div>';
   }
   function feelGroup(title,help,rows){
-    return '<div class="feel-group"><h4>'+title+(help?' <span class="ghelp">'+help+'</span>':'')+'</h4>'+rows+'</div>';
+    return '<div class="feel-group">'+(title?'<h4>'+title+(help?' <span class="ghelp">'+help+'</span>':'')+'</h4>':'')+rows+'</div>';
   }
   function renderFeel(g){
     const c=CATS[target], box=document.getElementById('feel'+g);
@@ -69,24 +69,25 @@
     }
     if(hasLeg && lg==='short') flags=flags.filter(n=>!n.includes('종아리'));
     // ① 주부위 — 쪼임→헐렁 4단계(기본 딱맞음)
-    const fit =(c.fit||[]).map(n=>feelRow(n,['끼임','딱맞음','여유','큼'],1)).join('');
-    // ② 병목 플래그 — 최소 2값(음성 '괜찮았어요' 기본). 이 신호가 브랜드 치수를 채움.
-    const flag=flags.map(n=>feelRow(n,['꼈어요','괜찮았어요'],1)).join('');
+    const fit =(c.fit||[]).map(n=>feelRow(n,['끼임','딱맞음','여유','큼'],-1)).join('');
+    // ② 병목 플래그 — 최소 2값(음성 '괜찮음' 기본). 이 신호가 브랜드 치수를 채움.
+    const flag=flags.map(n=>feelRow(n,['끼임','괜찮음'],1)).join('');
     // ③ 기장 — 취향(선택), 역산 아님
     const pref=prefs.map(n=>feelRow(n,['짧음','딱 좋음','긺'],1)).join('');
     // 선택 항목(걸린 곳·기장·그 외)은 접어둠 — 필수인 착용감만 먼저 보여 압도감↓ (값은 접혀도 수집됨)
     var optional=
-      (flag?feelGroup('혹시 걸린 곳','없으면 괜찮았어요 — 이 신호가 브랜드 치수를 채워요',flag):'')+
-      (pref?feelGroup('기장','취향 · 선택',pref):'')+
-      '<div class="feel-group"><h4>그 외 <span class="ghelp">선택 · 자유롭게</span></h4>'+
+      (flag?feelGroup('불편했던 부분','',flag):'')+
+      (pref?feelGroup('기장','',pref):'')+
+      '<div class="feel-group"><h4>추가 의견</h4>'+
         '<textarea class="open-note" placeholder="예: 소매 끝이 조였어요 / 밑단이 걸렸어요"></textarea></div>';
     // 하의: 허리 밴드 토글 — 밴딩이면 허리가 신축이라 허리 역산을 건너뜀(엔진). 기본 '모름'(보수적).
-    var wband=(target==='bottom')?feelGroup('허리 밴드','고무밴드 있었나요 · 허리 사이즈 판정에 사용 · 선택',
-      '<div class="seg wband-seg">'+['모름','없음','있음'].map(function(l,i){
-        return '<div class="opt'+(i===0?' on':'')+'" onclick="pick(this)">'+l+'</div>'; }).join('')+'</div>'):'';
+    var wband=(target==='bottom')?
+      '<div class="feel-row"><span class="part">허리밴드</span><div class="feel-opts wband-seg">'+
+      ['모름','없음','있음'].map(function(l,i){
+        return '<div class="opt" onclick="pick(this)">'+l+'</div>'; }).join('')+'</div></div>':'';
     box.innerHTML=
-      feelGroup('착용감 · 부위별','한 부위씩 떠오르는 느낌 하나',fit)+ wband+
-      '<details class="feel-more"><summary>걸린 곳·기장 등 더 알려주기 <span class="opt">선택 · 없으면 넘겨도 돼요</span></summary>'+optional+'</details>';
+      feelGroup('','',fit+wband)+
+      '<details class="feel-more"><summary>더 자세한 착용감을 알려주세요</summary>'+optional+'</details>';
   }
 
   function applyTarget(){
@@ -117,27 +118,54 @@
   }
 
   const steps=[...document.querySelectorAll('.wstep')];
+  // 진단 대상 미니 라벨을 각 질문(진단대상 화면 제외) 제목 위에 주입 — catword가 상의/하의 자동 반영
+  steps.forEach(function(s,i){ if(i===0) return;
+    var l=document.createElement('div'); l.className='qtarget'; l.innerHTML='<b class="catword">상의</b> 진단';
+    s.insertBefore(l, s.firstChild); });
   let cur=0;
   // 실측 데이터 없는 기반 카테고리(구조적 예외): 선호핏(idx1) 단계에서 착용경험 없이 바로 진단.
   function isPrefOnlyBase(){ return CATS[target] && CATS[target].kind==='base' && !hasData(target); }
   function render(){
     steps.forEach((s,k)=>s.classList.toggle('active',k===cur));
-    document.getElementById('wfill').style.width=((cur+1)/steps.length*100)+'%';
+    var wf=document.getElementById('wfill'); if(wf) wf.style.width=((cur+1)/steps.length*100)+'%';
+    document.querySelectorAll('#qconn span').forEach(function(el,k){ el.classList.toggle('on', k<=cur); });  // 질문 진행(연결선)
     const btn=document.getElementById('nextbtn');
     if(isPrefOnlyBase() && cur===1) btn.textContent='이대로 진단하기 (선호핏만)';
     else if(DIAGNOSE_AT[cur]) btn.textContent='이대로 진단하기 ('+DIAGNOSE_AT[cur]+'벌)';
     else btn.textContent = cur===0 ? '이 종류로 시작' : '다음';
-    window.scrollTo({top:0,behavior:'smooth'});
+    updateNext();
+    window.scrollTo(0,0);
   }
   function goTo(i){ cur=i; render(); }
   function next(){ if(cur<steps.length-1){cur++;render()} }
   function prev(){ if(cur>0){cur--;render()} else location.href=PREV_URL; }
   function footerAction(){
+    if(!stepDone()) return;
     if(isPrefOnlyBase() && cur===1){ collectPrefOnly(); location.href='diag-loading.html?cat='+target; return; }
     if(DIAGNOSE_AT[cur]){ collectExp(); location.href='diag-loading.html?g='+DIAGNOSE_AT[cur]+'&cat='+target; }
     else next();
   }
-  function pick(el){[...el.parentElement.children].forEach(c=>c.classList.remove('on'));el.classList.add('on')}
+  function pick(el){[...el.parentElement.children].forEach(c=>c.classList.remove('on'));el.classList.add('on');updateNext();}
+  // ── 선택 게이팅: 첫 진입엔 미선택 → '다음' 비활성, 화면별 선택이 차야 활성 ──
+  function sizeDone(g){ return !!document.querySelector('#size'+g+' .opt.on'); }
+  function feelDone(boxId){
+    var box=document.getElementById(boxId); if(!box) return true;
+    var rows=[].slice.call(box.querySelectorAll('.feel-row')).filter(function(r){ return !r.closest('details'); }); // 접힌 선택항목 제외
+    return rows.every(function(r){ return !!r.querySelector('.feel-opts .opt.on'); });   // 보이는 부위 전부 선택
+  }
+  function stepDone(){
+    if(isPrefOnlyBase() && cur===1) return !!document.querySelector('#prefseg .opt.on');
+    switch(cur){
+      case 0: return !!document.querySelector('#target .opt.on');   // 진단 대상 고름
+      case 1: return !!document.querySelector('#prefseg .opt.on');  // 선호핏 고름
+      case 2: return sizeDone(1);                                    // 옷1 사이즈 고름
+      case 3: return feelDone('feel1');                             // 옷1 착용감(부위) 전부
+      case 5: return sizeDone(2);
+      case 6: return feelDone('feel2');
+      default: return true;   // 4·7 입력 점검 등 — 입력 없음
+    }
+  }
+  function updateNext(){ var b=document.getElementById('nextbtn'); if(b) b.disabled=!stepDone(); }
 
   /* 착용경험 수집 → sessionStorage(fitting.dx). 결과 화면(result.html)이 엔진 계약(diagnose)에 넘긴다.
      부위 라벨→스키마 key, 선택 라벨→값(FitRating/PainVerdict/LengthPref). 레이어는 옵션 수로 판별(4=fit·2=flag·3=pref). */
@@ -214,11 +242,11 @@
     });
     var prev=el.querySelector('.opt.on'), prevRaw=prev?(prev.getAttribute('data-size')||prev.textContent.trim()):null;
     var byPrev=list.filter(function(o){ return o.raw===prevRaw; })[0];
-    var byM=list.filter(function(o){ return o.canonical==='M'; })[0];
-    var defObj=byPrev || byM || list[Math.floor(list.length/2)];   // 이전 선택 유지 → M → 중앙
+    var defObj=byPrev || null;   // 이전 선택만 유지 — 기본 선택 없음(첫 진입엔 미선택)
     el.innerHTML=list.map(function(o){
       return '<div class="opt'+(o===defObj?' on':'')+'" data-size="'+o.raw+'" onclick="pick(this)">'+o.display+'</div>';
     }).join('');
+    updateNext();
   }
   // 앵커 브랜드 [{id,label}] — garments 데이터에서 추출($meta.anchorBrands 순서, brandName 표시). 없으면 null.
   function anchorBrandList(){
@@ -289,7 +317,7 @@
     '허리':'waist','엉덩이':'hip','허벅지':'thigh','밑위':'rise','기장':'length',
     '팔(소매통)':'arm','팔':'arm','목':'neck','목/칼라':'neck','암홀':'armhole','종아리':'calf','밑단':'hem','상하 비율':'ratio'};
   var FITV={'끼임':'TIGHT','딱맞음':'SNUG','여유':'RELAXED','큼':'BIG'};
-  var FLAGV={'꼈어요':'TIGHT','괜찮았어요':'OK'};
+  var FLAGV={'끼임':'TIGHT','괜찮음':'OK'};
   var PREFV={'짧음':'SHORT','딱 좋음':'GOOD','긺':'LONG'};
   var FITLINE={'스키니':'skinny','슬림':'slim','레귤러':'regular','루즈':'loose','오버':'oversize','타이트':'skinny'};
   // 선호핏(idx1) 옵션 — 카테고리 축이 다름: 상의/파생=여유(ease), 하의=실루엣(형태).
@@ -308,7 +336,7 @@
     var pseg=document.getElementById('prefseg'); if(!pseg) return;
     var ax=prefAxis(), def=PREF_DEFAULT[ax];
     pseg.innerHTML=PREFOPTS[ax].map(function(o){
-      return '<div class="opt'+(o[0]===def?' on':'')+'" onclick="pick(this)">'+o[0]+' — '+o[1]+'</div>'; }).join('');
+      return '<div class="opt" onclick="pick(this)">'+o[0]+' — '+o[1]+'</div>'; }).join('');
     var ph=document.getElementById('prefhelp'); if(ph) ph.innerHTML=PREFHELP[ax];
   }
   // 선호핏 선택 → enum. 하의=실루엣(형태축), 그 외=fitLine(여유축). prefs[cat]에 저장.
@@ -420,7 +448,7 @@
       miss.map(r=>REGION[r].catLabel).join('·')+'</strong>를 먼저 진단하면 열려요.';
   }
   // 기반 위저드만 숨김 — 파생 패널(#derived-flow/#blocked) 내부의 .wnav는 건드리지 않도록 직계 자식만 선택
-  function hideBaseWizard(){ document.querySelectorAll('.dhead .dprog, .flow > .wstep, .flow > .wnav, #wnote').forEach(e=>e.classList.add('hidden')); }
+  function hideBaseWizard(){ document.querySelectorAll('.flow > .dstepc, .flow > .wstep, .flow > .wnav, #wnote').forEach(e=>e.classList.add('hidden')); }
   function enterDerivedFlow(){
     document.getElementById('derived-flow').classList.remove('hidden');
     var go=document.getElementById('derived-go');

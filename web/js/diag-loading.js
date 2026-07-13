@@ -9,14 +9,14 @@
   if(CAT) RESULT += (RESULT.indexOf('?')>=0?'&':'?')+'cat='+encodeURIComponent(CAT);
   if(SKIP){
     document.getElementById('ltitle').textContent='기본 추정을 만들고 있어요';
-    document.getElementById('lsub').textContent='착용 경험 없이 키·몸무게로만 추정합니다. 정확도는 낮을 수 있어요.';
+    document.getElementById('lsub').textContent='입어본 옷 없이 키·몸무게로만 분석해요. 정확도는 조금 낮을 수 있어요';
     const first=document.querySelector('#steps li[data-i="0"]');
-    if(first)first.textContent='착용 경험 없음 — 통계 기반 추정으로 진행';
+    if(first)first.textContent='키·몸무게로 추정';
   } else if(DERIVED){
     document.getElementById('ltitle').textContent='이미 아는 체형으로 맞춰요';
-    document.getElementById('lsub').textContent='실측을 다시 재지 않아요 — 저장된 체형에 선호핏만 반영해 이 종류 사이즈로 번역합니다.';
+    document.getElementById('lsub').textContent='몸을 다시 재지 않아요 — 저장된 체형에 선호핏만 반영해 사이즈를 맞춰요';
     const first=document.querySelector('#steps li[data-i="0"]');
-    if(first)first.textContent='저장된 체형 프로필 재사용 (재측정 없음)';
+    if(first)first.textContent='저장된 체형 재사용';
   } else if(G==='1'){
     document.getElementById('lsub').textContent='입어본 옷을 바탕으로 체형과 선호핏을 분석하고 있어요';
     const first=document.querySelector('#steps li[data-i="0"]');
