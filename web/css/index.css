@@ -826,19 +826,20 @@
   #my .pedit.inrow3{display:flex; gap:10px;} #my .pedit.inrow3 > div{flex:1;}
 
   /* ===== 견적 요청 결과(받은 견적) 오버레이 (IA 1.3.8) ===== */
-  .bids-overlay{position:fixed; inset:0; background:rgba(22,20,15,.5); z-index:120; display:none;}
-  .bids-overlay.on{display:flex; align-items:flex-end; justify-content:center; animation:sheetfade .25s ease;}
-  .bids-inner{position:relative; width:100%; max-width:960px; max-height:94vh; overflow-y:auto; background:var(--bg); border-radius:22px 22px 0 0; box-shadow:0 -12px 44px rgba(10,11,14,.22); padding:16px 30px 80px; animation:sheetup .34s cubic-bezier(.2,.8,.2,1);}
-  .bids-inner::before{content:""; display:block; width:40px; height:4px; border-radius:99px; background:var(--line2); margin:0 auto 20px;}
-  @keyframes sheetfade{from{opacity:0;} to{opacity:1;}}
-  @keyframes sheetup{from{transform:translateY(100%);} to{transform:translateY(0);}}
-  .bids-head{position:relative; padding-right:52px; padding-bottom:20px; margin-bottom:22px; border-bottom:1px solid var(--line);}
+  /* 요청 상세 = 독립 전체 페이지. 상단 내비(67px)는 유지, 그 아래를 덮고 페이드 인 */
+  .bids-overlay{position:fixed; top:67px; left:0; right:0; bottom:0; background:var(--bg); z-index:110; display:none; overflow-y:auto;}
+  .bids-overlay.on{display:block; animation:reqfade .3s cubic-bezier(.2,.8,.2,1);}
+  .bids-inner{position:relative; width:100%; max-width:1040px; margin:0 auto; padding:34px 30px 90px;}
+  .bids-inner::before{content:none;}
+  @keyframes reqfade{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;}}
+  /* 마이페이지 헤더 톤과 통일 — crumb(13/sub2) + h1(25) + lead(15/sub), 하단선 없음 */
+  .bids-head{position:relative; padding-right:52px; margin-bottom:24px;}
   .bids-head .xbtn{position:absolute; top:0; right:0;}
-  .bids-back{display:inline-block; background:none; border:none; color:var(--sub); font-size:14px; font-weight:800; cursor:pointer; font-family:inherit; padding:0; margin-bottom:8px;}
-  .bids-back:hover{color:var(--green);}
-  .bids-head h2{font-size:27px; font-weight:800; letter-spacing:-.045em; margin:10px 0 0;}
-  .bids-head .reqtype{margin-bottom:2px;}
-  .bids-head p{font-size:15px; color:var(--sub); margin-top:10px; line-height:1.6;}
+  .bids-back, .bids-head .crumb-back{display:inline-block; background:none; border:none; color:var(--sub2); font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; padding:0; margin-bottom:9px;}
+  .bids-back:hover, .bids-head .crumb-back:hover{color:var(--green);}
+  .bids-head h2{font-size:25px; font-weight:800; letter-spacing:-.04em; margin:0 0 5px;}
+  .bids-head .reqtype{margin-bottom:8px;}
+  .bids-head p{font-size:15px; color:var(--sub); margin-top:0; line-height:1.6;}
   /* 공용 확인 모달 */
   .confirm-scrim{position:fixed; inset:0; background:rgba(22,20,15,.5); z-index:140; display:none; align-items:center; justify-content:center; padding:24px;}
   .confirm-scrim.on{display:flex; animation:f .18s ease;}
@@ -895,10 +896,16 @@
   .bids-cancel{text-align:center; margin-top:26px;}
   .bids-cancel button{background:none; border:none; color:var(--sub2); font-size:14px; font-weight:700; text-decoration:underline; text-underline-offset:2px; cursor:pointer; font-family:inherit;}
   .bids-cancel button:hover{color:var(--warn);}
-  .bids-overlay .tinybtn{font-weight:800; padding:11px 15px; border-radius:10px; background:var(--ink); color:#fff; border:none; cursor:pointer; white-space:nowrap; font-family:inherit;}
-  .bids-overlay .tinybtn:hover{background:#000;}
+  /* 오버레이 버튼 = 연한초록 채움 + 딥그린 텍스트(딥그린 풀필 지양). 핵심 CTA만 딥그린 테두리(.key) */
+  .bids-overlay .tinybtn{font-weight:800; padding:11px 15px; border-radius:10px; background:var(--green-soft); color:var(--green); border:1.5px solid var(--green-line); cursor:pointer; white-space:nowrap; font-family:inherit;}
+  .bids-overlay .tinybtn:hover{background:#dcebe2; border-color:var(--green-mid);}
+  .bids-overlay .tinybtn.key{border-color:var(--green);}
   .bids-overlay .tinybtn.ghost{background:#fff; color:var(--ink); border:1.5px solid var(--line2);}
   .bids-overlay .tinybtn.ghost:hover{background:var(--soft);}
+  .bids-overlay .btn{background:var(--green-soft); color:var(--green); border:1.5px solid var(--green-line);}
+  .bids-overlay .btn:hover{background:#dcebe2; border-color:var(--green-mid);}
+  .bids-overlay .btn.key{border-color:var(--green);}
+  .bids-overlay .btn.ghost{background:#fff; color:var(--ink); border:1.5px solid var(--line2);}
   /* 견적 카드 — 숨고형 세로 리스트 */
   .bids-list{display:flex; flex-direction:column; gap:14px; margin-top:18px;}
   .qcard{position:relative; display:flex; gap:16px; align-items:flex-start; background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px 22px; box-shadow:0 4px 14px rgba(20,18,16,.05);}
@@ -937,6 +944,27 @@
   /* 지명 요청 상세 — 섹션 */
   .rq-sec{margin-top:24px;}
   .rq-sec .rq-h{font-size:15px; font-weight:800; letter-spacing:-.02em; margin-bottom:11px;}
+  /* 요청 상세 B — 2단(좌:고정 정보 / 우:진행). 진행 콘텐츠 없으면 단일 중앙 컬럼 */
+  .rq-two{display:grid; grid-template-columns:322px 1fr; gap:16px; align-items:start; margin-top:6px;}
+  .rq-two .rq-col-l{position:sticky; top:14px;}
+  .rq-two .rq-col-l, .rq-two .rq-col-r, .rq-solo{display:flex; flex-direction:column; gap:14px;}
+  .rq-two .rq-col-r{min-width:0;}
+  .rq-solo{max-width:640px; margin:0 auto;}
+  .rq-two .rq-col-l > *, .rq-two .rq-col-r > *, .rq-solo > *{margin:0;}
+  /* 모든 섹션을 동일한 흰 카드로 통일(박스 정렬) — 안쪽 요약박스는 중복 방지로 투명화 */
+  .rq-two .rq-sec, .rq-solo .rq-sec{background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px 20px; box-shadow:0 4px 12px rgba(20,18,16,.04);}
+  .rq-two .rq-sec .req-summary-in, .rq-solo .rq-sec .req-summary-in{background:transparent; border:none; padding:0; box-shadow:none;}
+  /* 초반/종료 상태 오른쪽 패널 요소 */
+  .bids-overlay .rq-guide{font-size:13.5px; color:var(--ink-soft); line-height:1.65; margin:0 0 12px;}
+  .bids-overlay .rq-steps{display:flex; gap:6px; margin:2px 0 12px;}
+  .bids-overlay .rq-steps i{flex:1; height:4px; border-radius:4px; background:var(--line2);}
+  .bids-overlay .rq-steps i.on{background:var(--green);}
+  .bids-overlay .rq-mini{display:flex; align-items:center; gap:11px; padding:10px 0; border-bottom:1px solid var(--line);}
+  .bids-overlay .rq-mini:last-of-type{border-bottom:none;}
+  .bids-overlay .rq-mini img{width:34px; height:34px; border-radius:50%; object-fit:cover; flex:none; background:var(--soft);}
+  .bids-overlay .rq-mini .mtx{flex:1; min-width:0;} .bids-overlay .rq-mini .mtx b{font-size:13.5px; font-weight:800; display:block;} .bids-overlay .rq-mini .mtx span{font-size:12px; color:var(--sub);}
+  .bids-overlay .rq-mini .mpr{font-size:13.5px; font-weight:800; color:var(--green); white-space:nowrap;}
+  @media(max-width:820px){ .rq-two{grid-template-columns:1fr;} .rq-two .rq-col-l{position:static;} }
   /* 진행 상태 — 컬러 배너 (보낸 요청 상세) */
   .statban{display:flex; align-items:center; gap:14px; padding:15px 17px; border-radius:14px; margin-bottom:4px;}
   .statban .sb-ic{width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex:none;}
