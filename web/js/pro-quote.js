@@ -282,18 +282,13 @@
     var a=p(hex), b=p(to), o=a.map(function(v,i){ return Math.round(v+(b[i]-v)*t); });
     return '#'+o.map(function(x){ return ('0'+Math.max(0,Math.min(255,x)).toString(16)).slice(-2); }).join('');
   }
-  /* 태그 pill 배경 — 유형색 농도로. seg 0(가장 슬림)=가장 연하게 … 4(가장 볼륨)=가장 진하게 */
-  function tagBg(tc, seg){
-    if(seg<=0) return mixHex(tc,'#FFFFFF',0.78);   // 가장 슬림·좁은
-    if(seg===1) return mixHex(tc,'#FFFFFF',0.56);  // 슬림 편
-    if(seg===2) return mixHex(tc,'#FFFFFF',0.28);  // 표준(표준색)
-    if(seg===3) return mixHex(tc,'#2A2823',0.18);  // 볼륨 편
-    return mixHex(tc,'#2A2823',0.40);              // 가장 볼륨·넓은
+  /* 태그 톤 — 항상 옅은 유형색 배경 + 딥톤 유형색 글자/점/외곽선.
+     seg 0(가장 슬림)…4(가장 볼륨)로 갈수록 배경·글자 함께 진해지되, 대비 유지(글씨 항상 읽힘) */
+  var TAG_BGT=[0.88,0.80,0.72,0.64,0.56];   // 배경: 흰색 혼합비(작을수록 진함)
+  var TAG_FGT=[0.34,0.44,0.54,0.64,0.72];   // 글자·점·선: 다크 혼합비(클수록 진함)
+  function tagTone(tc, seg){
+    return { bg:mixHex(tc,'#FFFFFF',TAG_BGT[seg]), fg:mixHex(tc,'#2A2823',TAG_FGT[seg]) };
   }
-  /* 배경 명도로 글자색(흰/검정) 자동 */
-  function textOn(hex){ var h=hex.replace('#','');
-    var r=parseInt(h.substr(0,2),16), g=parseInt(h.substr(2,2),16), b=parseInt(h.substr(4,2),16);
-    return (0.299*r+0.587*g+0.114*b) > 150 ? '#2A2823' : '#FFFFFF'; }
   /* 부위 백분위(측정 기반)로 폭이 반응하는 파라메트릭 실루엣 아바타.
      좌: 슬림/표준/볼륨 태그(zoneLabel) · 우: 부위명 + 예상 cm(est) · 아래: 핏취향 칩.
      Catmull-Rom으로 몸통·다리 외곽선을 만들고, 팔은 스트로크. 세로 비율은 표준 템플릿 고정. cx=180 가운데정렬. */
@@ -326,20 +321,20 @@
       {name:'엉덩이', key:'엉덩이둘레', pct:m.bottom.hip,     lo:'슬림',hi:'볼륨',half:hi,y:hipY}];
     var estMap={}; (est||[]).forEach(function(e){ estMap[e.label]={val:e.val, pm:e.pm}; });
     var vx=240, guides='';
-    LV.forEach(function(x){ var i=segIdx(x.pct), tag=zoneLabel(i,x.lo,x.hi), bg=tagBg(tc,i), txt=textOn(bg);
+    LV.forEach(function(x){ var i=segIdx(x.pct), tag=zoneLabel(i,x.lo,x.hi), tn=tagTone(tc,i), bg=tn.bg, fg=tn.fg;
       var half=x.half, y=x.y, re=cx+half, le=cx-half, e=estMap[x.key];
       // 우: 부위명(+ 예상 cm을 바로 옆에). cm 있으면 이름은 위·수치 아래로.
       guides+='<circle cx="'+re.toFixed(1)+'" cy="'+y+'" r="2.6" fill="var(--fig-line)"/>'
         +'<line x1="'+(re+4).toFixed(1)+'" y1="'+y+'" x2="'+(vx-6)+'" y2="'+y+'" stroke="var(--guide)" stroke-width="1.2" stroke-dasharray="2 3"/>'
         +'<text class="g-name" x="'+vx+'" y="'+(e?(y-5):(y+4))+'">'+esc(x.name)+'</text>';
       if(e) guides+='<text class="g-val" x="'+vx+'" y="'+(y+13)+'">약 '+e.val+'<tspan class="g-unit" dx="1">cm</tspan> <tspan class="g-pm">±'+e.pm+'</tspan></text>';
-      // 좌: 슬림/표준/볼륨 태그 — 유형색 농도 + 작은 점 + 외곽선, 글자색 자동
-      var tw=tag.length*13+30, pe=le-9, ps=pe-tw, edge=mixHex(tc,'#2A2823',0.30);
+      // 좌: 슬림/표준/볼륨 태그 — 옅은 유형색 배경 + 딥톤 글자/점/외곽선(농도로 강약)
+      var tw=tag.length*13+30, pe=le-9, ps=pe-tw;
       guides+='<circle cx="'+le.toFixed(1)+'" cy="'+y+'" r="2.6" fill="var(--fig-line)"/>'
         +'<line x1="'+(le-4).toFixed(1)+'" y1="'+y+'" x2="'+(pe+1).toFixed(1)+'" y2="'+y+'" stroke="var(--guide)" stroke-width="1.2"/>'
-        +'<rect x="'+ps.toFixed(1)+'" y="'+(y-12)+'" width="'+tw.toFixed(1)+'" height="24" rx="12" fill="'+bg+'" stroke="'+edge+'" stroke-opacity=".55"/>'
-        +'<circle cx="'+(ps+13).toFixed(1)+'" cy="'+y+'" r="3.2" fill="'+txt+'"/>'
-        +'<text class="g-tag" x="'+(ps+24).toFixed(1)+'" y="'+(y+4)+'" fill="'+txt+'">'+esc(tag)+'</text>'; });
+        +'<rect x="'+ps.toFixed(1)+'" y="'+(y-12)+'" width="'+tw.toFixed(1)+'" height="24" rx="12" fill="'+bg+'" stroke="'+fg+'" stroke-opacity=".45"/>'
+        +'<circle cx="'+(ps+13).toFixed(1)+'" cy="'+y+'" r="3.2" fill="'+fg+'"/>'
+        +'<text class="g-tag" x="'+(ps+24).toFixed(1)+'" y="'+(y+4)+'" fill="'+fg+'">'+esc(tag)+'</text>'; });
     var svg='<svg viewBox="0 0 360 520" role="img" aria-label="고객 체형 실루엣">'
       +'<ellipse cx="'+cx+'" cy="514" rx="52" ry="9" fill="var(--fig-line)" opacity=".10"/>'
       +'<path d="'+arm(1)+'" fill="none" stroke="var(--fig-line)" stroke-width="13.5" stroke-linecap="round" opacity=".92"/>'
@@ -505,10 +500,9 @@
       '<a class="backlink" onclick="location.href=\'pro.html\'">← '+(r.status==='견적작성'?'견적 보내기로':'요청 내역으로')+'</a>'+
       '<p class="crumb">스타일리스트 지원 · '+(r.status==='견적작성'?'견적 보내기':(out?'보낸 제안':'받은 요청'))+'</p>'+
       '<h1>'+esc(r.cust)+' 님'+(r.occ?' · '+esc(r.occ):'')+'</h1>'+
-      '<div class="htags"><span class="st '+stClass(r.status)+'">'+esc(r.status)+'</span>'+svcBadgeIcon(r.service)+'</div>'+
       '<div class="qgrid2">'+
         '<div class="qleft">'+ requestReceipt(r, attached) +
-          '<div class="card offer-card">'+ statusBanner(r) +'<div class="subhead">'+(r.status==='견적작성'?'견적 작성':(out?'제안 현황':(r.status==='신규'?'요청을 수락하시겠습니까?':'진행 상태')))+'</div>'+ actionHTML(r) +'</div>'+
+          '<div class="card offer-card"><div class="subhead">'+(r.status==='견적작성'?'견적 작성':(out?'제안 현황':(r.status==='신규'?'요청을 수락하시겠습니까?':'진행 상태')))+'</div>'+ statusBanner(r) + actionHTML(r) +'</div>'+
         '</div>'+
         '<div class="qright">'+ bodyCard +'</div>'+
       '</div>';

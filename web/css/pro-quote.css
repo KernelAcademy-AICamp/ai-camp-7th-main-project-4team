@@ -96,7 +96,7 @@
   .bodymap2 .g-val{font-size:15px;font-weight:800;fill:var(--ink,#16140F)}
   .bodymap2 .g-unit{font-size:10px;font-weight:700;fill:var(--sub2,#A6A29A)}
   .bodymap2 .g-pm{font-size:10.5px;font-weight:700;fill:var(--sub2,#A6A29A)}
-  .bodymap2 .g-tag{font-size:12px;font-weight:800}
+  .bodymap2 .g-tag{font-size:12px;font-weight:600}
   .av-pref{display:flex;align-items:center;gap:9px}
   .av-pref span{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--sub2)}
   .av-pref b{font-size:12.5px;font-weight:800;color:#fff;background:var(--green);padding:5px 12px;border-radius:20px}
