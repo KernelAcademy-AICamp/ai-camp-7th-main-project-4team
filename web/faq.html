@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>자주 묻는 질문(FAQ) — 핏팅 도움말</title>
+<meta name="description" content="핏팅 자주 묻는 질문 — 안 입어본 브랜드 사이즈 번역이 어떻게 정확한지, 유니클로 M이면 자라는 몇인지, 환불 규정, 쇼퍼 매칭·응답, 계정·데이터까지 진단·매칭·결제·계정별로 정리했어요.">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+<link rel="stylesheet" href="css/fitting.css?v=8ad71bfe">
+<style>
+/* FAQ 전용 (개발 1차 구현 — 색·폰트는 fitting.css 변수만 참조 · 추후 디자이너가 fitting.css로 흡수) */
+.faq-search{position:relative;max-width:520px;margin:22px 0 4px}
+.faq-search input{width:100%;padding:14px 44px 14px 16px;border:1.5px solid var(--line);border-radius:14px;font-size:16px;font-family:var(--sans);background:var(--field);color:var(--ink)}
+.faq-search input:focus{outline:none;border-color:var(--accent)}
+.faq-search .ic{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:20px;pointer-events:none}
+.faq-cats{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.fcat{padding:9px 16px;border:1.5px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);font-size:14px;font-weight:700;font-family:var(--sans);cursor:pointer}
+.fcat:hover{border-color:var(--accent);color:var(--ink)}
+.fcat.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.faq-q{border:1px solid var(--line);border-radius:14px;padding:0;margin-bottom:12px;background:var(--field);overflow:hidden}
+.faq-q summary{list-style:none;cursor:pointer;padding:18px 48px 18px 20px;position:relative;font-size:16px;font-weight:700;color:var(--ink);line-height:1.5}
+.faq-q summary::-webkit-details-marker{display:none}
+.faq-q summary::after{content:"";position:absolute;right:22px;top:23px;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .18s ease}
+.faq-q[open] summary::after{transform:rotate(225deg)}
+.faq-q[open] summary{color:var(--accent)}
+.faq-a{padding:0 20px 20px;font-size:15px;line-height:1.75;color:var(--muted)}
+.faq-a strong{color:var(--ink);font-weight:700}
+.faq-a a{color:var(--accent);font-weight:700;text-decoration:none}
+.faq-empty{padding:22px;text-align:center;color:var(--muted);font-size:15px;border:1px dashed var(--line);border-radius:14px}
+.faq-more{background:var(--faint);border-radius:18px;padding:26px 24px;text-align:center}
+.faq-more h3{font-size:19px;font-weight:800;color:var(--ink);margin-bottom:6px}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <nav class="top">
+    <a href="index.html" class="logo">Fitting<i></i></a>
+    <div class="nav-r"><a href="index.html?my=mp-support" class="nav-login">문의하기</a></div>
+  </nav>
+
+  <section class="block" style="border-bottom:none">
+    <span class="kicker">Help center</span>
+    <h1 class="head">무엇이 궁금하세요?</h1>
+    <p class="sub">진단·매칭·결제·계정까지 자주 묻는 질문을 모았어요. 검색하거나 카테고리로 찾아보세요.</p>
+    <div class="faq-search">
+      <input id="faqQ" type="search" placeholder="궁금한 내용을 검색해보세요 (예: 환불, 유니클로)" oninput="faqFilter()" aria-label="자주 묻는 질문 검색">
+      <span class="ic">⌕</span>
+    </div>
+    <div class="faq-cats" id="faqCats">
+      <button class="fcat on" data-cat="all" onclick="faqCat(this)">전체</button>
+      <button class="fcat" data-cat="진단" onclick="faqCat(this)">진단</button>
+      <button class="fcat" data-cat="매칭" onclick="faqCat(this)">쇼퍼 매칭</button>
+      <button class="fcat" data-cat="결제" onclick="faqCat(this)">결제·환불</button>
+      <button class="fcat" data-cat="계정" onclick="faqCat(this)">계정·데이터</button>
+      <button class="fcat" data-cat="전문가" onclick="faqCat(this)">전문가(쇼퍼)</button>
+    </div>
+  </section>
+
+  <section class="block" id="faqList">
+    <!-- 진단 -->
+    <details class="faq-q" data-cat="진단">
+      <summary>Q. 안 입어본 브랜드 사이즈가 어떻게 정확한가요?</summary>
+      <div class="faq-a">핏팅은 <strong>평소 잘 맞는 옷의 착용 경험</strong>을 역산합니다. "그 브랜드 그 사이즈의 실측 − 당신이 느낀 여유"로 체형 치수를 거꾸로 풀고, 이걸 안 입어본 브랜드의 실측에 투영해 사이즈를 번역해요. 별점·추측이 아니라 규칙 기반 계산이라 추적·교정이 됩니다.</div>
+    </details>
+    <details class="faq-q" data-cat="진단">
+      <summary>Q. 유니클로 M이면 자라는 몇인가요?</summary>
+      <div class="faq-a">진단을 마치면 브랜드별 추천 사이즈 표에서 바로 확인할 수 있어요. 같은 "M"이라도 브랜드마다 실측이 달라서, 당신 체형 기준으로 <strong>브랜드별로 다른 사이즈</strong>가 나옵니다. (브랜드 간 변환 가이드는 순차 공개 예정)</div>
+    </details>
+    <details class="faq-q" data-cat="진단">
+      <summary>Q. 키·몸무게만 입력하면 되나요?</summary>
+      <div class="faq-a">기본 정보(성별·키·몸무게)로 체형을 <strong>초기 추정</strong>하고, 착용 경험(입어본 옷의 브랜드·핏·부위별 느낌)을 더하면 정확도가 크게 올라갑니다. 복잡한 신체 치수를 직접 잴 필요는 없어요.</div>
+    </details>
+    <details class="faq-q" data-cat="진단">
+      <summary>Q. 진단은 무료인가요?</summary>
+      <div class="faq-a">네, 체형·사이즈 진단은 무료입니다. 결과 저장·공유, 쇼퍼 매칭 요청 시점에만 로그인이 필요해요.</div>
+    </details>
+
+    <!-- 쇼퍼 매칭 -->
+    <details class="faq-q" data-cat="매칭">
+      <summary>Q. 쇼퍼가 응답이 없어요.</summary>
+      <div class="faq-a">지명 요청은 쇼퍼 1:1이라 검토에 시간이 걸릴 수 있어요. 응답이 늦으면 요청을 취소하고 <strong>오픈 견적 요청</strong>으로 여러 쇼퍼의 견적을 한 번에 받아볼 수 있습니다.</div>
+    </details>
+    <details class="faq-q" data-cat="매칭">
+      <summary>Q. 어떤 쇼퍼를 골라야 할지 모르겠어요.</summary>
+      <div class="faq-a">쇼퍼찾기에서 <strong>내 체형·사이즈 기준 매칭도순</strong>으로 정렬돼요. 프로필에서 제공 서비스·후기·포트폴리오(착용 모델 cm·kg)를 보고 고르거나, 오픈 요청을 보내 여러 견적을 비교하세요.</div>
+    </details>
+    <details class="faq-q" data-cat="매칭">
+      <summary>Q. 온라인 스타일링·동행 쇼핑·이미지 컨설팅은 뭐가 다른가요?</summary>
+      <div class="faq-a"><strong>온라인</strong>은 비대면 큐레이션, <strong>동행 쇼핑</strong>은 매장을 함께 도는 대면, <strong>이미지 컨설팅</strong>은 색·실루엣 중심 대면 서비스예요. 대면 서비스는 쇼퍼의 활동 지역이 표기됩니다.</div>
+    </details>
+
+    <!-- 결제·환불 -->
+    <details class="faq-q" data-cat="결제">
+      <summary>Q. 환불 규정이 궁금해요.</summary>
+      <div class="faq-a">서비스 시작 전에는 전액 환불돼요. 거래에 문제가 있으면 <a href="index.html?my=mp-support">1:1 문의</a>의 "거래 문제 신고"로 접수하면 분쟁 절차를 거쳐 처리합니다. (결제·에스크로 정식 오픈 시 세부 규정 안내)</div>
+    </details>
+    <details class="faq-q" data-cat="결제">
+      <summary>Q. 결제는 언제, 어떻게 이뤄지나요?</summary>
+      <div class="faq-a">쇼퍼를 선택(낙찰)하고 진행에 합의한 뒤 결제해요. 안전한 거래를 위해 <strong>에스크로</strong>(대금 보관 후 완료 시 정산)를 준비 중입니다.</div>
+    </details>
+
+    <!-- 계정·데이터 -->
+    <details class="faq-q" data-cat="계정">
+      <summary>Q. 로그인해야 진단할 수 있나요?</summary>
+      <div class="faq-a">아니요. 진단은 로그인 없이 할 수 있어요. 결과 저장·공유, 쇼퍼 요청처럼 <strong>내 것으로 이어지는 순간</strong>에만 가입(카카오 등)이 필요합니다.</div>
+    </details>
+    <details class="faq-q" data-cat="계정">
+      <summary>Q. 내 데이터를 삭제하고 싶어요.</summary>
+      <div class="faq-a">마이 &gt; 계정에서 회원 탈퇴 시 개인정보가 삭제돼요. 엔진 개선 동의는 언제든 철회할 수 있고, 자세한 내용은 <a href="privacy.html">개인정보 처리방침</a>을 참고하세요.</div>
+    </details>
+
+    <!-- 전문가(쇼퍼) -->
+    <details class="faq-q" data-cat="전문가">
+      <summary>Q. 쇼퍼(전문가)로 지원하려면?</summary>
+      <div class="faq-a"><a href="pro-signup.html">쇼퍼 지원</a>에서 계정·기본정보·이력·포트폴리오를 등록하면 심사 후 활동할 수 있어요. 심사는 프로필·포트폴리오 기준으로 진행됩니다.</div>
+    </details>
+    <details class="faq-q" data-cat="전문가">
+      <summary>Q. 쇼퍼 정산은 언제 되나요?</summary>
+      <div class="faq-a">서비스가 완료되고 고객이 확인하면 정산돼요. 정산 집행·수수료 세부는 결제·에스크로 정식 오픈과 함께 안내합니다.</div>
+    </details>
+
+    <div class="faq-empty" id="faqEmpty" style="display:none">검색 결과가 없어요 · 다른 키워드로 찾거나 아래에서 1:1 문의를 남겨주세요.</div>
+  </section>
+
+  <section class="block" style="border-bottom:none">
+    <div class="faq-more">
+      <h3>찾는 답이 없나요?</h3>
+      <p class="lead" style="max-width:none">1:1 문의를 남기면 알림으로 답변을 보내드려요.</p>
+      <div class="btn-row" style="justify-content:center;margin-top:14px"><a href="index.html?my=mp-support" class="btn-primary">1:1 문의하기</a></div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <a href="about.html">서비스 소개</a>
+    <a href="terms.html">이용약관</a>
+    <a href="privacy.html">개인정보 처리방침</a>
+    <a href="index.html">홈</a>
+  </footer>
+</div>
+
+<script>
+  function faqFilter(){
+    var q=(document.getElementById('faqQ').value||'').trim().toLowerCase();
+    var on=document.querySelector('#faqCats .fcat.on'); var cat=on?on.getAttribute('data-cat'):'all';
+    var items=document.querySelectorAll('#faqList .faq-q'), shown=0;
+    [].forEach.call(items, function(d){
+      var okCat = cat==='all' || d.getAttribute('data-cat')===cat;
+      var okQ = !q || d.textContent.toLowerCase().indexOf(q)>=0;
+      var show = okCat && okQ; d.style.display = show?'':'none'; if(show) shown++;
+    });
+    document.getElementById('faqEmpty').style.display = shown?'none':'block';
+  }
+  function faqCat(el){
+    [].forEach.call(document.querySelectorAll('#faqCats .fcat'), function(c){ c.classList.remove('on'); });
+    el.classList.add('on'); faqFilter();
+  }
+</script>
+</body>
+</html>

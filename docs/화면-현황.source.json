@@ -3,7 +3,7 @@
   "_status_enum": "시안 → 구현 → 실연결 → 완료 · 보류",
   "_kind_enum": "app(진단/허브) · pro(공급자) · admin(운영) · info(정보/정책, JS 없어도 정상) · util(플래그 제외)",
 
-  "index":        { "name": "홈·허브(탭 홈/쇼퍼찾기/마이)", "kind": "app",  "status": "구현",   "note": "단일 페이지에 탭 3섹션(#home/#shop/#my). 쇼퍼찾기=페이크도어." },
+  "index":        { "name": "홈·허브(탭 홈/쇼퍼찾기/마이)", "kind": "app",  "status": "구현",   "note": "단일 페이지에 탭 3섹션(#home/#shop/#my). 쇼퍼찾기=페이크도어. 마이 좌측메뉴에 고객센터(1.9·1:1문의, mp-support)·알림(G.6·mp-noti) 서브탭 + 상단 벨(미읽음 점). 계정 하위에 개인정보·데이터 관리(1.4E/G.4·mp-privacy, 내려받기·삭제·엔진개선 동의철회)." },
   "admin-login":  { "name": "관리자 로그인(구글+이메일2FA)", "kind": "admin", "status": "시안", "note": "프로토타입 — 인증은 목업(실제 아님). 승격 시 Supabase Auth(구글)+이메일 OTP." },
   "admin":        { "name": "관리자 · 사이즈/데이터(3.A)",   "kind": "admin", "status": "구현", "note": "브랜드 실측(garments.json)+신체 사이즈(body-*) 실파일 브라우징. 커버리지·필터. 데이터는 실제, 로그인만 목업." },
   "admin-garments": { "name": "관리자 · 브랜드·제품 실측표(3.A.1)", "kind": "admin", "status": "구현", "note": "garments.json을 사이즈표(사이즈×부위 cm) 형태로 제품별 드릴다운. 생성물 뷰어(수정은 CSV+빌더)." },
@@ -24,6 +24,8 @@
   "pro-signup":   { "name": "쇼퍼 가입",                 "kind": "pro",  "status": "구현",   "note": "" },
   "pro-quote":    { "name": "견적 요청",                 "kind": "pro",  "status": "구현",   "note": "#17에서 개편. 수요자 인라인 견적(index #shop)과 표면 관계 정리 필요." },
   "about":        { "name": "서비스 소개·작동원리",        "kind": "info", "status": "구현",   "note": "소개→diag-basic 전환 CTA 있음." },
+  "404":          { "name": "오류·빈 상태(G.7)",           "kind": "util", "status": "구현",   "note": "전역 오류 페이지. ?e=notfound/expired/network 유형별 카피 + 홈·진단·1:1문의 진입. 오류 컨텍스트를 고객센터 문의에 프리필. Vercel 404.html 컨벤션 + serve.js 라우팅(noindex). 서버 라우팅으로 도달 — incoming 링크 없음이 정상(util=플래그 제외)." },
+  "faq":          { "name": "자주 묻는 질문·도움말(G.2)",   "kind": "info", "status": "구현",   "note": "공개 SEO 페이지. 검색+카테고리(진단·매칭·결제·계정·전문가) 필터·네이티브 details 아코디언. 고객센터(mp-support)와 상호링크. 스타일 개발 1차(인라인, fitting.css 변수)." },
   "privacy":      { "name": "개인정보 처리방침",           "kind": "info", "status": "완료",   "note": "" },
   "terms":        { "name": "이용약관",                  "kind": "info", "status": "완료",   "note": "" },
   "_reset":       { "name": "데모 초기화",                "kind": "util", "status": "구현",   "note": "sessionStorage 리셋 유틸." }

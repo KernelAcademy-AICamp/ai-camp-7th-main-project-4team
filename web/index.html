@@ -40,7 +40,7 @@
       <a data-t="shop" onclick="go('shop',this)">쇼퍼찾기</a>
       <a data-t="my" onclick="go('my',this)">마이</a>
     </nav>
-    <div class="navr"><span class="sup" style="cursor:pointer" onclick="location.href='pro-signup.html'">쇼퍼 지원</span><span class="navdiv"></span><span class="navuser" onclick="go('my')"><span class="navav" id="myAv">김</span><span class="navname">김도현 님</span></span></div>
+    <div class="navr"><span class="sup" style="cursor:pointer" onclick="location.href='pro-signup.html'">쇼퍼 지원</span><span class="navdiv"></span><span class="navbell" onclick="goMy('mp-noti')" title="알림" aria-label="알림" style="position:relative;display:inline-flex;align-items:center;cursor:pointer;color:var(--sub)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 4.6-1.9 6-1.9 6h15.8s-1.9-1.4-1.9-6z"/><path d="M10.2 18.5a2 2 0 0 0 3.6 0"/></svg><span id="notiDot" style="position:absolute;top:-2px;right:-2px;width:7px;height:7px;border-radius:50%;background:var(--warn);border:1.5px solid var(--bg);display:none"></span></span><span class="navdiv"></span><span class="navuser" onclick="go('my')"><span class="navav" id="myAv">김</span><span class="navname">김도현 님</span></span></div>
   </div>
 </header>
 
@@ -258,6 +258,8 @@
           <a data-p="mp-req" onclick="myNav(this);scrollTo(0,0)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h5"/></svg></span> 요청 내역</a>
           <a data-p="mp-fav" onclick="myNav(this);scrollTo(0,0)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10a1 1 0 0 1 1 1v17l-6-3.5L6 21V4a1 1 0 0 1 1-1z"/></svg></span> 즐겨찾기</a>
           <a data-p="mp-acct" onclick="myNav(this);scrollTo(0,0)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.1"/><path d="M12 2.6v2.6M12 18.8v2.6M4.4 4.4l1.9 1.9M17.7 17.7l1.9 1.9M2.6 12h2.6M18.8 12h2.6M4.4 19.6l1.9-1.9M17.7 6.3l1.9-1.9"/></svg></span> 계정 관리</a>
+          <a data-p="mp-support" onclick="myNav(this);scrollTo(0,0)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5a8 8 0 0 1-11.7 7.1L4 20l1.4-4.3A8 8 0 1 1 20 11.5z"/></svg></span> 고객센터</a>
+          <a data-p="mp-noti" onclick="myNav(this);scrollTo(0,0)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 4.6-1.9 6-1.9 6h15.8s-1.9-1.4-1.9-6z"/><path d="M10.2 18.5a2 2 0 0 0 3.6 0"/></svg></span> 알림</a>
         </nav>
       </aside>
 
@@ -407,8 +409,79 @@
               <div class="links"><a href="privacy.html">개인정보 처리방침 <span class="arr">›</span></a><a href="terms.html">이용약관 <span class="arr">›</span></a></div>
             </div>
             -->
+            <div class="msub"><div class="subhead">개인정보·데이터 관리 <span class="pr core">★ 법적</span></div>
+              <div class="links"><a onclick="openMyPanel('mp-privacy')">내 데이터 내려받기·삭제 · 동의 관리 <span class="arr">›</span></a></div>
+            </div>
             <div class="msub"><div class="subhead">로그아웃 / 회원 탈퇴 <span class="pr half">◐ MVP</span></div>
               <div class="links"><a onclick="toast('로그아웃')">로그아웃 <span class="arr">›</span></a><a class="danger" onclick="toast('회원 탈퇴')">회원 탈퇴 <span class="arr">›</span></a></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 1.9 / G.2 고객센터 · 1:1 문의 -->
+        <section class="mpanel" id="mp-support">
+          <div class="crumb">마이페이지 · 고객지원</div>
+          <h1>고객센터</h1>
+          <p class="lead">먼저 자주 묻는 질문을 확인하고, 해결이 안 되면 1:1로 문의해요</p>
+          <div class="mcard">
+            <div class="msub"><div class="subhead">자주 묻는 질문 <span class="pr half">◐ MVP</span></div>
+              <div class="links"><a href="faq.html">자주 묻는 질문(FAQ) 더보기 <span class="arr">›</span></a></div>
+              <div class="note">FAQ 콘텐츠는 공개 도움말 한 곳에서 관리해요 · 자가 해결이 가장 빨라요</div>
+            </div>
+            <div class="msub"><div class="subhead">1:1 문의 <span class="pr half">◐ MVP</span></div>
+              <div class="feat">문의 유형</div>
+              <div class="seg" id="supType"><span class="o on" onclick="supPick(this)">결제·환불</span><span class="o" onclick="supPick(this)">매칭·쇼퍼</span><span class="o" onclick="supPick(this)">진단·엔진</span><span class="o" onclick="supPick(this)">계정·기타</span></div>
+              <div class="feat">관련 거래 · <em style="color:var(--sub2);font-style:normal">선택</em></div>
+              <div class="seg" id="supReq"><span class="o on" onclick="supPick(this)">없음</span><span class="o" onclick="supPick(this)">소개팅 견적</span><span class="o" onclick="supPick(this)">결혼식 하객 · 상민</span></div>
+              <div class="feat">내용 · <em>필수</em></div>
+              <textarea class="inp" id="supBody" rows="4" placeholder="문제 상황을 자세히 적어주세요 (스크린샷은 아래에서 첨부)"></textarea>
+              <div class="attach"><div class="at"><b>파일 첨부</b><div>주문 캡처·스크린샷 (선택)</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+              <button class="btn" style="margin-top:16px" onclick="submitSupport()">문의 접수</button>
+              <div class="note">답변은 알림(마이 &gt; 알림)으로 회신돼요 · 로그인이 필요해요</div>
+            </div>
+            <div class="msub"><div class="subhead">내 문의 내역</div>
+              <div id="supList"></div>
+            </div>
+            <div class="msub"><div class="subhead">거래에 문제가 있나요? <span class="pr v2">○ v2</span></div>
+              <div class="links"><a class="danger" onclick="supDispute()">거래 문제 신고 · 환불 요청 <span class="arr">›</span></a></div>
+              <div class="note">에스크로 거래 분쟁은 릴리스 보류 게이트를 거쳐 처리해요 · 관리자 CS와 연결</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- G.6 알림 센터 -->
+        <section class="mpanel" id="mp-noti">
+          <div class="crumb">마이페이지 · 알림</div>
+          <h1>알림</h1>
+          <p class="lead">매칭·문의 답변·소식을 여기서 모아봐요</p>
+          <div class="mcard">
+            <div class="msub"><div class="subhead">알림 <span class="pr v2">○ v2</span><a onclick="markAllNoti()" style="float:right;font-size:13px;font-weight:600;color:var(--sub2);cursor:pointer">모두 읽음</a></div>
+              <div class="links" id="notiList"></div>
+            </div>
+            <div class="msub"><div class="subhead">채널 설정</div>
+              <div class="field"><span>이메일</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+              <div class="field"><span>카카오 알림톡</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+              <div class="field"><span>앱 푸시 <span class="pr v2">○ v2</span></span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+              <div class="note">거래 필수 알림(견적·결제·분쟁 결과)은 정책상 항상 수신돼요 · MVP는 이메일/알림톡, 인앱 센터는 데모</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 1.4E / G.4 개인정보·데이터 관리 (계정 하위) -->
+        <section class="mpanel" id="mp-privacy">
+          <div class="crumb"><a onclick="goMy('mp-acct')" style="cursor:pointer;color:var(--sub2)">‹ 계정 관리</a> · 개인정보·데이터</div>
+          <h1>개인정보 · 데이터 관리</h1>
+          <p class="lead">내 데이터를 내려받거나 삭제하고, 동의를 관리해요</p>
+          <div class="mcard">
+            <div class="msub"><div class="subhead">내 진단 데이터 <span class="pr core">★ 법적</span></div>
+              <div id="privData"></div>
+              <div class="links"><a onclick="downloadMyData()">데이터 내려받기(JSON) <span class="arr">›</span></a><a class="danger" onclick="deleteMyData()">진단 데이터 삭제 <span class="arr">›</span></a></div>
+            </div>
+            <div class="msub"><div class="subhead">엔진 개선 활용 동의</div>
+              <div class="field"><span>내 진단을 엔진 개선에 활용<br><span class="note">동의는 선택 · 진단 이용엔 영향 없어요</span></span><div class="toggle" id="privConsent" onclick="toggleEngineConsent()"></div></div>
+            </div>
+            <div class="msub"><div class="subhead">안내</div>
+              <div class="note">체형·치수는 <b>민감정보</b>예요. 삭제하면 진단 이력도 함께 파기되고 되돌릴 수 없어요. 자세한 처리 방침은 <a href="privacy.html" style="color:var(--green);font-weight:700">개인정보 처리방침</a>을 참고하세요.</div>
             </div>
           </div>
         </section>
@@ -469,6 +542,6 @@
 <div class="toast" id="toast"></div>
 
 <!-- sangmin 모듈(⑥): 진단 입력 설문(M1) + 엔진 계약 목업(M2) -->
-<script src="js/index.js?v=d3d246e1"></script>
+<script src="js/index.js?v=d2ebefce"></script>
 </body>
 </html>
