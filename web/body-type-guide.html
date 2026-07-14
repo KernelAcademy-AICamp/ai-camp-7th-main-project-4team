@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>체형별 스타일 가이드 — 8가지 체형 코디법 | 핏팅</title>
+<meta name="description" content="사각체형·역삼각·모래시계 등 8가지 체형별 어울리는 옷과 피할 옷, 스타일 팁. 내 체형은 뭘까? 착용 경험 3분으로 진단하고 체형에 맞는 브랜드 사이즈까지 번역받으세요.">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+<link rel="stylesheet" href="css/fitting.css?v=f6422608">
+<style>
+/* 체형별 가이드 전용 (개발 1차 — 색·폰트는 fitting.css 변수만) */
+.btg-gender{display:flex;gap:8px;margin:22px 0 6px}
+.btgg{padding:8px 20px;border:1.5px solid var(--line);border-radius:12px;background:transparent;color:var(--muted);font-size:14px;font-weight:800;font-family:var(--sans);cursor:pointer}
+.btgg.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.btg-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:6px}
+@media(max-width:680px){.btg-grid{grid-template-columns:1fr}}
+.btg-card{border:1px solid var(--line);border-left:4px solid var(--pt,var(--accent));border-radius:14px;padding:18px 20px;background:var(--field)}
+.btg-h{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.btg-dot{width:34px;height:34px;border-radius:10px;background:var(--pt,var(--accent));flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800}
+.btg-h b{font-size:17px;font-weight:800;display:block;line-height:1.2}
+.btg-h span{font-size:12.5px;color:var(--muted);font-weight:600}
+.btg-profile{font-size:14px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+.btg-fit{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.btg-fit .lb{font-size:12px;font-weight:800;color:var(--muted)}
+.btg-chip{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12.5px;font-weight:700;margin:0 4px 4px 0}
+.btg-chip.ok{background:var(--green-soft,#e7efea);color:var(--green,#2E4A3B)}
+.btg-chip.no{background:var(--soft,#f3f1ec);color:var(--muted)}
+.btg-insight{font-size:13.5px;line-height:1.6;background:var(--faint);border-radius:10px;padding:11px 13px;margin-bottom:11px}
+.btg-insight b{color:var(--accent)}
+.btg-tags{font-size:12.5px;color:var(--muted);font-weight:700}
+.btg-cta{background:var(--faint);border-radius:18px;padding:26px;text-align:center;margin-top:8px}
+.btg-cta h3{font-size:19px;font-weight:800;margin-bottom:6px}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <nav class="top">
+    <a href="index.html" class="logo">Fitting<i></i></a>
+    <div class="nav-r"><a href="diag-basic.html" class="nav-login" onclick="try{['fitting.dx','fitting.basic','fitting.consent'].forEach(function(k){sessionStorage.removeItem(k)})}catch(e){}">내 체형 진단</a></div>
+  </nav>
+
+  <section class="block" style="border-bottom:none">
+    <span class="kicker">Body types</span>
+    <h1 class="head">체형별 스타일 가이드</h1>
+    <p class="sub">사각·역삼각·모래시계까지 <strong>8가지 체형</strong>별로 어울리는 옷과 스타일 팁을 정리했어요. 내 체형은 어디에 가까울까요?</p>
+    <div class="btg-gender" id="btgGender">
+      <button class="btgg on" data-g="female" onclick="btgG(this)">여성</button>
+      <button class="btgg" data-g="male" onclick="btgG(this)">남성</button>
+    </div>
+  </section>
+
+  <section class="block"><div class="btg-grid" id="btgGrid"><p class="sub">체형 데이터를 불러오는 중…</p></div></section>
+
+  <section class="block" style="border-bottom:none">
+    <div class="btg-cta">
+      <h3>내 체형은 8가지 중 뭘까요?</h3>
+      <p class="lead" style="max-width:none">복잡한 측정 없이, 평소 옷의 착용 경험 3분이면 내 체형과 브랜드별 맞는 사이즈까지 나와요.</p>
+      <div class="btn-row" style="justify-content:center;margin-top:14px"><a href="diag-basic.html" class="btn-primary" onclick="try{['fitting.dx','fitting.basic','fitting.consent'].forEach(function(k){sessionStorage.removeItem(k)})}catch(e){}">내 체형 진단하기</a></div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <a href="about.html">서비스 소개</a>
+    <a href="body-type-guide.html">체형별 가이드</a>
+    <a href="faq.html">도움말</a>
+    <a href="terms.html">이용약관</a>
+    <a href="privacy.html">개인정보 처리방침</a>
+    <a href="index.html">홈</a>
+  </footer>
+</div>
+
+<script>
+  var TYPES=[], curG='female';
+  function esc(s){ return String(s==null?'':s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+  fetch('data/bodytypes.json').then(function(r){ return r.json(); }).then(function(d){
+    TYPES=(d.types||[]).filter(function(t){ return t && t.gender; });
+    render();
+  }).catch(function(){ document.getElementById('btgGrid').innerHTML='<p class="sub">체형 데이터를 불러오지 못했어요 · 잠시 후 다시 시도해주세요.</p>'; });
+  function btgG(el){ [].forEach.call(document.querySelectorAll('#btgGender .btgg'),function(c){ c.classList.remove('on'); }); el.classList.add('on'); curG=el.getAttribute('data-g'); render(); }
+  function chips(arr, cls){ return (arr||[]).map(function(x){ return '<span class="btg-chip '+cls+'">'+esc(x)+'</span>'; }).join(''); }
+  function render(){
+    var el=document.getElementById('btgGrid');
+    if(!TYPES.length){ el.innerHTML='<p class="sub">체형 데이터가 없어요.</p>'; return; }
+    el.innerHTML=TYPES.map(function(t){
+      var g=t.gender[curG]||t.gender.female||{};
+      var profile=(g.profile||[]).map(esc).join('<br>');
+      return '<div class="btg-card" style="--pt:'+esc(t.point||'')+'">'+
+        '<div class="btg-h"><span class="btg-dot">'+esc(t.code||'')+'</span><div><b>'+esc(t.name||'')+'</b><span>'+esc(t.sizeKorea||'')+' · '+esc(g.match?('닮은꼴 '+g.match):'')+'</span></div></div>'+
+        '<p class="btg-profile">'+profile+'</p>'+
+        '<div class="btg-fit"><div><span class="lb">어울려요</span><br>'+chips(g.fitOk,'ok')+'</div><div><span class="lb">피해요</span><br>'+chips(g.fitNo,'no')+'</div></div>'+
+        (g.insight?'<div class="btg-insight">💡 '+g.insight+'</div>':'')+
+        '<div class="btg-tags">'+(g.signature||[]).map(esc).join(' ')+'</div>'+
+      '</div>';
+    }).join('');
+  }
+</script>
+</body>
+</html>
