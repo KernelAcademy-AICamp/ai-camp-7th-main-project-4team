@@ -61,11 +61,11 @@
   }
   function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2000); }
   function stClass(s){ return s==='신규'?'nw':(s==='제안발송'?'sent':(s==='수락됨'?'prog':(s==='완료'?'done':'sent'))); }
-  /* 서비스 유형 선(line) 아이콘 — 마이페이지 SVG 스타일 */
+  /* 서비스 유형 선(line) 아이콘 — 고객 화면(index.js SVCI_SVG)과 동일: 온라인=모니터·동행=쇼핑백·이미지=반짝임 */
   var SVC_SVG = {
-    online:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M8 20h8M12 16.5v3.5"/></svg>',
-    shopping:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7V6a3 3 0 0 1 6 0v1"/></svg>',
-    image:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.3"/><path d="M8.5 7l1.3-2h4.4l1.3 2"/></svg>'
+    online:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="11" rx="1.6"/><path d="M8.5 20h7"/><path d="M12 16v4"/></svg>',
+    shopping:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7.5h12l-1 12.5H7L6 7.5z"/><path d="M9.3 7.5V6a2.7 2.7 0 0 1 5.4 0v1.5"/></svg>',
+    image:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6l1.6 4.5 4.5 1.6-4.5 1.6L12 15.8l-1.6-4.5L5.9 9.7l4.5-1.6L12 3.6z"/><path d="M18.6 13.8v2.2M19.7 14.9h-2.2"/></svg>'
   };
   function svcSvg(t){ return SVC_SVG[t]||SVC_SVG.online; }
   function svcMeta(s){
@@ -78,11 +78,17 @@
   function starsRO(n){ var s=''; for(var k=1;k<=5;k++) s+='<span style="color:'+(k<=n?'var(--ink)':'var(--line2)')+'">★</span>'; return s; }
 
   /* ===== 요청 행(요약, 클릭 시 상세) ===== */
+  /* 날짜 6글자 — 2026.07.12 → 26.07.12 */
+  function shortDate(d){ return (typeof d==='string' && /^\d{4}\./.test(d)) ? d.slice(2) : (d||''); }
+  /* 통일 리스트 행(.ureq) — 1줄: 상황·서비스 / 2줄: 이름·날짜·예산. 서비스는 모노 아이콘, 색은 상태에만 */
   function reqTop(r, clickable){ var i=reqs.indexOf(r);
-    return '<div class="req'+(clickable?' rowbtn" onclick="goQuote('+i+')':'')+'">'+
-      '<div class="reqtop"><div class="av">'+(r.cust?r.cust.charAt(0):'?')+'</div>'+
-      '<div class="info"><b>'+r.cust+' 님 · '+r.occ+'</b>'+svcBadge(r.service)+'<small>'+r.bodytype+' · 예산 '+r.budget+' · '+r.date+'</small></div>'+
-      '<span class="st '+stClass(r.status)+'">'+r.status+'</span>'+(clickable?'<span class="chev">›</span>':'')+'</div></div>';
+    var title=(r.occ?r.occ+' · ':'')+svcLabel(r.service);
+    var meta=(r.cust?r.cust+' 님 · ':'')+shortDate(r.date)+(r.budget?' · <b>예산 '+r.budget+'</b>':'');
+    return '<div class="ureq'+(clickable?' rowbtn" onclick="goQuote('+i+')':'')+'">'+
+      '<span class="ureq-ic">'+svcSvg(r.service)+'</span>'+
+      '<div class="ureq-l"><div class="ureq-title">'+title+'</div><div class="ureq-meta">'+meta+'</div></div>'+
+      '<div class="ureq-r"><span class="st '+stClass(r.status)+'">'+r.status+'</span>'+(clickable?'<span class="chev">›</span>':'')+'</div>'+
+    '</div>';
   }
 
   /* ===== 상세 드로어 ===== */
