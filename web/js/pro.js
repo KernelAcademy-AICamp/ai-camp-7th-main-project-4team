@@ -36,12 +36,12 @@
   var STYLE_PRESETS = ['캐주얼','미니멀','시크','클래식','스트리트','빈티지','스포티','걸리시'];
   var REGION_PRESETS = ['서울','경기','인천','부산','대구','대전','광주'];
 
-  var REQS_VER = 3;   // 데모 버전 — 올리면 다음 로드에서 데모를 새로 시드(테스트로 다 수락됨된 상태 초기화)
+  var REQS_VER = 4;   // 데모 버전 — 올리면 다음 로드에서 데모를 새로 시드(테스트로 다 수락됨된 상태 초기화)
   var DEMO_REQS = [
     {cust:'한서준', type:'TUB', bodytype:'슬릭 라인',     gender:'male',   cm:180, kg:68, occ:'데일리',     budget:'5~10만',  date:'2026.07.14', service:'online', note:'심플하게, 근데 밋밋하지 않게 입고 싶어요', status:'신규'},
     {cust:'김도현', type:'STR', bodytype:'시크 스트레이트', gender:'male',   cm:172, kg:65, occ:'소개팅',     budget:'5~10만',  date:'2026.07.02', service:'online', note:'과하지 않게 깔끔한 첫인상 원해요', status:'신규'},
     {cust:'정예린', type:'INV', bodytype:'모던 V라인',     gender:'female', cm:167, kg:58, occ:'일상 코디',   budget:'~5만',    date:'2026.07.01', service:'shopping', note:'출근룩 위주로 데일리하게 입고 싶어요', status:'신규'},
-    {cust:'이서연', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:163, kg:52, occ:'면접·발표',   budget:'10~15만', date:'2026.06.30', service:'image', note:'신뢰감 있는 오피스룩', status:'제안발송', offer:{price:95000, msg:'면접관 시선까지 고려해 첫인상 깔끔하게 잡아드릴게요'}},
+    {cust:'이서연', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:163, kg:52, occ:'면접·발표',   budget:'10~15만', date:'2026.06.30', service:'image', note:'신뢰감 있는 오피스룩', dir:'out', status:'제안발송', offer:{price:95000, msg:'면접관 시선까지 고려해 첫인상 깔끔하게 잡아드릴게요'}},
     {cust:'박지우', type:'TRI', bodytype:'소프트 A라인',   gender:'female', cm:160, kg:54, occ:'결혼식 하객', budget:'10~15만', date:'2026.06.27', service:'shopping', note:'', status:'수락됨', offer:{price:120000, msg:'하객룩 단정하게 코디해드릴게요'}},
     {cust:'최민준', type:'BAL', bodytype:'이지 밸런스',    gender:'male',   cm:175, kg:70, occ:'데일리',     budget:'~5만',    date:'2026.06.18', service:'online', status:'완료', offer:{price:60000, msg:''}, review:{rating:5, text:'취향 저격이었어요! 반품 없이 한 번에 성공'}}
   ];
@@ -82,9 +82,11 @@
   function shortDate(d){ return (typeof d==='string' && /^\d{4}\./.test(d)) ? d.slice(2) : (d||''); }
   /* 통일 리스트 행(.ureq) — 1줄: 상황·서비스 / 2줄: 이름·날짜·예산. 서비스는 모노 아이콘, 색은 상태에만 */
   function reqTop(r, clickable){ var i=reqs.indexOf(r);
+    var s=r.status;
+    var xc=(s==='수락됨')?'active':((s==='완료'||s==='거절'||s==='취소')?'past':'');   // 진행중=활성 / 완료·취소·거절=지난
     var title=(r.occ?r.occ+' · ':'')+svcLabel(r.service);
     var meta=(r.cust?r.cust+' 님 · ':'')+shortDate(r.date)+(r.budget?' · <b>예산 '+r.budget+'</b>':'');
-    return '<div class="ureq'+(clickable?' rowbtn" onclick="goQuote('+i+')':'')+'">'+
+    return '<div class="ureq'+(xc?' '+xc:'')+(clickable?' rowbtn" onclick="goQuote('+i+')':'')+'">'+
       '<span class="ureq-ic">'+svcSvg(r.service)+'</span>'+
       '<div class="ureq-l"><div class="ureq-title">'+title+'</div><div class="ureq-meta">'+meta+'</div></div>'+
       '<div class="ureq-r"><span class="st '+stClass(r.status)+'">'+r.status+'</span>'+(clickable?'<span class="chev">›</span>':'')+'</div>'+
@@ -178,9 +180,11 @@
             '<div class="efbtns"><button class="tinybtn ghost" onclick="cancelCand()">취소</button><button class="tinybtn" onclick="sendCand('+i+')">제안 보내기</button></div>'+
           '</div>'
         : '';
-      return '<div class="urow" style="flex-wrap:wrap"><div class="uinfo"><b>'+c.cust+' 님 · '+c.occ+'</b>'+svcBadge(c.service)+
-        '<small>'+c.bodytype+' · 예산 '+c.budget+' · "'+c.note+'"</small></div>'+
-        (openCandIdx===i?'':'<button class="tinybtn" onclick="proposeCand('+i+')">제안하기</button>')+form+'</div>';
+      return '<div class="ureq" style="flex-wrap:wrap">'+
+        '<span class="ureq-ic">'+svcSvg(c.service)+'</span>'+
+        '<div class="ureq-l"><div class="ureq-title">'+c.occ+' · '+svcLabel(c.service)+'</div><div class="ureq-meta">'+c.cust+' 님 · <b>예산 '+c.budget+'</b> · "'+c.note+'"</div></div>'+
+        '<div class="ureq-r">'+(openCandIdx===i?'':'<button class="tinybtn" onclick="proposeCand('+i+')">제안하기</button>')+'</div>'+
+        form+'</div>';
     }).join('');
   }
   function proposeCand(i){ openCandIdx=i; renderCandidates(); }
@@ -262,11 +266,7 @@
     if(!news.length){ el.style.display='none'; return; }
     el.style.display='block';
     el.innerHTML='<div class="subhead">지금 응답이 필요해요 <span class="ucount">'+news.length+'건</span></div>'+
-      news.map(function(r,k){ var i=reqs.indexOf(r);
-        return '<div class="urow"><div class="uinfo"><b>'+r.cust+' 님 · '+r.occ+'</b>'+
-          '<small>'+r.bodytype+' · 예산 '+r.budget+' · '+DEMO_AGO[k%DEMO_AGO.length]+'</small></div>'+
-          '<button class="tinybtn" onclick="goQuote('+i+')">상세 보기</button></div>';
-      }).join('');
+      news.map(function(r){ return reqTop(r, true); }).join('');
   }
   function renderAll(){ renderStats(); renderUrgent(); renderCandidates(); renderRecent(); renderInbox(); renderReviews(); renderSettle(); }
   /* 요청 클릭 → 견적서 페이지로 이동(사이드 드로어 대신) */

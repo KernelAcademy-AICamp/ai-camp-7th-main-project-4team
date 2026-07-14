@@ -29,13 +29,12 @@
   .crumb{font-size:12.5px;color:var(--sub2,#8a857b);font-weight:700}
   h1{font-size:25px;font-weight:800;letter-spacing:-.04em;margin:6px 0 4px}
   .htags{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
-  .svcbadge{display:inline-block;font-size:12px;font-weight:800;border-radius:20px;padding:3px 11px}
-  .svcbadge svg{width:13px;height:13px;vertical-align:-2px;margin-right:2px}
-  .svcbadge.online{background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B)}
-  .svcbadge.shopping{background:#fbeede;color:#b9741a}
-  .svcbadge.image{background:#efeafb;color:#7a5bb0}
+  /* 서비스 배지 — 3색 제거, 모노(중립)로 통일. 색은 상태에만 */
+  .svcbadge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;border-radius:20px;padding:4px 11px;background:var(--soft,#f0efeb);color:var(--ink-soft,#3a382f)}
+  .svcbadge svg{width:13px;height:13px}
+  .svcbadge.online,.svcbadge.shopping,.svcbadge.image{background:var(--soft,#f0efeb);color:var(--ink-soft,#3a382f)}
   .st{font-size:12px;font-weight:800;padding:4px 11px;border-radius:20px}
-  .st.nw{background:var(--green,#2E4A3B);color:#fff} .st.sent{background:var(--soft,#eee);color:var(--sub,#777)}
+  .st.nw{background:var(--ink,#1c1a17);color:#fff} .st.sent{background:var(--soft,#eee);color:var(--sub,#777)}
   .st.prog{background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B)} .st.done{background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B)}
 
   .qgrid{display:grid;grid-template-columns:360px 1fr;gap:28px;align-items:start;margin-top:24px}
@@ -58,7 +57,7 @@
   .note-quote{background:var(--soft,#f6f5f2);border-radius:12px;padding:14px 16px;font-size:14px;color:var(--ink-soft,#3a382f);line-height:1.55}
   .note-quote.muted{color:var(--sub2,#8a857b)}
 
-  .btn{display:block;width:100%;text-align:center;padding:14px;border:none;border-radius:12px;background:var(--green,#2E4A3B);color:#fff;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer}
+  .btn{display:block;width:100%;text-align:center;padding:14px;border:none;border-radius:12px;background:var(--ink,#1c1a17);color:#fff;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer}
   .act-row{display:flex;gap:10px} .act-row .btn{flex:1}
   .btn.ghost{background:#fff;color:var(--ink,#1c1a17);border:1.5px solid var(--line2,#d8d4cc)}
   .tinybtn{font-size:13px;font-weight:800;padding:10px 16px;border-radius:10px;background:var(--ink,#1c1a17);color:#fff;border:none;cursor:pointer}
