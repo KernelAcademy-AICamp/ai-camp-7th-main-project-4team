@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="css/tokens.css?v=dc9975ef">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/index.css?v=11494eba">
+<link rel="stylesheet" href="css/index.css?v=8d02e51d">
 </head>
 <body>
 
@@ -36,9 +36,9 @@
   <div class="nav">
     <span class="logo" style="cursor:pointer" onclick="go('home')">Fitting<i class="sq"></i></span>
     <nav class="menu">
-      <a class="on" data-t="home" onclick="go('home',this)">홈</a>
-      <a data-t="shop" onclick="go('shop',this)">찾기</a>
-      <a data-t="my" onclick="go('my',this)">마이</a>
+      <a class="on" data-t="home" onclick="go('home',this)">Home</a>
+      <a data-t="shop" onclick="go('shop',this)">Stylists</a>
+      <a data-t="my" onclick="go('my',this)">My</a>
     </nav>
     <div class="navr"><span class="sup" style="cursor:pointer" onclick="location.href='pro-signup.html'">스타일리스트 지원</span><span class="navdiv"></span><span class="navbell" onclick="goMy('mp-noti')" title="알림" aria-label="알림" style="position:relative;display:inline-flex;align-items:center;cursor:pointer;color:var(--sub)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 4.6-1.9 6-1.9 6h15.8s-1.9-1.4-1.9-6z"/><path d="M10.2 18.5a2 2 0 0 0 3.6 0"/></svg><span id="notiDot" style="position:absolute;top:-2px;right:-2px;width:7px;height:7px;border-radius:50%;background:var(--warn);border:1.5px solid var(--bg);display:none"></span></span><span class="navdiv"></span><span class="navuser" onclick="go('my')"><span class="navav" id="myAv">김</span><span class="navname">김도현 님</span></span></div>
   </div>
@@ -76,8 +76,8 @@
         <div class="measure-tag" id="hMtag">측정 중…</div>
       </div>
       <div class="cta">
-        <button class="btn beige" onclick="startDiag()">내 사이즈 진단 시작하기 →</button>
         <button class="btn ghost" onclick="go('shop')">스타일리스트 둘러보기</button>
+        <button class="btn beige" onclick="startDiag()">내 체형 진단 시작하기 →</button>
       </div>
       <div class="downhint">측정값으로 8체형을 진단해요<span class="arr">↓</span></div>
     </div></section>
@@ -394,15 +394,13 @@
         <section class="mpanel" id="mp-acct">
           <div class="crumb">마이페이지 · 1.4·E</div>
           <h1>계정 관리</h1>
-          <p class="lead">로그인과 알림을 설정해요</p>
+          <p class="lead">로그인 정보와 계정을 관리해요</p>
           <div class="mcard">
             <div class="msub"><div class="subhead">로그인 정보 <span class="pr half">◐ MVP</span></div>
               <div class="field"><span>연결 계정</span><span class="v">카카오 · dlthg***@kakao.com</span></div>
               <div class="note">lazy registration — 진단·매칭 시점에 가입</div>
             </div>
-            <div class="msub"><div class="subhead">알림 설정 <span class="pr v2">○ v2</span></div>
-              <div class="field"><span>매칭·소식 알림 수신</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
-            </div>
+            <!-- 알림 설정은 '알림' 패널의 채널 설정으로 일원화(중복 제거) -->
             <!-- 웹 컨벤션상 약관·개인정보는 전역 푸터로 일원화(앱 패턴은 계정관리, 웹은 푸터).
                  디자이너 요청 시 아래 주석 해제하면 계정관리에도 부활 — lead에 '·약관'도 함께 복원.
             <div class="msub"><div class="subhead">개인정보·이용약관 <span class="pr core">★ MVP</span></div>
@@ -412,8 +410,9 @@
             <div class="msub"><div class="subhead">개인정보·데이터 관리 <span class="pr core">★ 법적</span></div>
               <div class="links"><a onclick="openMyPanel('mp-privacy')">내 데이터 내려받기·삭제 · 동의 관리 <span class="arr">›</span></a></div>
             </div>
-            <div class="msub"><div class="subhead">로그아웃 / 회원 탈퇴 <span class="pr half">◐ MVP</span></div>
-              <div class="links"><a onclick="toast('로그아웃')">로그아웃 <span class="arr">›</span></a><a class="danger" onclick="toast('회원 탈퇴')">회원 탈퇴 <span class="arr">›</span></a></div>
+            <div class="msub"><div class="subhead">로그아웃 <span class="pr half">◐ MVP</span></div>
+              <div class="links"><a onclick="toast('로그아웃')">로그아웃 <span class="arr">›</span></a></div>
+              <div class="quitrow"><a class="quitlink" onclick="toast('회원 탈퇴')">회원 탈퇴</a></div>
             </div>
           </div>
         </section>
@@ -422,11 +421,10 @@
         <section class="mpanel" id="mp-support">
           <div class="crumb">마이페이지 · 고객지원</div>
           <h1>고객센터</h1>
-          <p class="lead">먼저 자주 묻는 질문을 확인하고, 해결이 안 되면 1:1로 문의해요</p>
+          <p class="lead">자주 묻는 질문을 확인하고, 해결이 안 되면 1:1로 문의해요</p>
           <div class="mcard">
-            <div class="msub"><div class="subhead">자주 묻는 질문 <span class="pr half">◐ MVP</span></div>
-              <div class="links"><a href="faq.html">자주 묻는 질문(FAQ) 더보기 <span class="arr">›</span></a></div>
-              <div class="note">FAQ 콘텐츠는 공개 도움말 한 곳에서 관리해요 · 자가 해결이 가장 빨라요</div>
+            <div class="msub"><div class="subhead">자주 묻는 질문(FAQ) <span class="pr half">◐ MVP</span></div>
+              <div class="links"><a class="faqmore" href="faq.html">FAQ 더보기 <span class="arr">›</span></a></div>
             </div>
             <div class="msub"><div class="subhead">1:1 문의 <span class="pr half">◐ MVP</span></div>
               <div class="feat">문의 유형</div>
@@ -436,8 +434,7 @@
               <div class="feat">내용 · <em>필수</em></div>
               <textarea class="inp" id="supBody" rows="4" placeholder="문제 상황을 자세히 적어주세요 (스크린샷은 아래에서 첨부)"></textarea>
               <div class="attach"><div class="at"><b>파일 첨부</b><div>주문 캡처·스크린샷 (선택)</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
-              <button class="btn" style="margin-top:16px" onclick="submitSupport()">문의 접수</button>
-              <div class="note">답변은 알림(마이 &gt; 알림)으로 회신돼요 · 로그인이 필요해요</div>
+              <div class="sup-submit"><div class="note">답변은 알림(마이 &gt; 알림)으로 회신돼요 · 로그인이 필요해요</div><button class="btn" onclick="submitSupport()">문의 접수</button></div>
             </div>
             <div class="msub"><div class="subhead">내 문의 내역</div>
               <div id="supList"></div>
@@ -458,6 +455,8 @@
             <div class="msub"><div class="subhead">알림 <span class="pr v2">○ v2</span><a onclick="markAllNoti()" style="float:right;font-size:13px;font-weight:600;color:var(--sub2);cursor:pointer">모두 읽음</a></div>
               <div class="links" id="notiList"></div>
             </div>
+          </div>
+          <div class="mcard">
             <div class="msub"><div class="subhead">채널 설정</div>
               <div class="field"><span>이메일</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
               <div class="field"><span>카카오 알림톡</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
@@ -542,4 +541,4 @@
 <div class="toast" id="toast"></div>
 
 <!-- sangmin 모듈(⑥): 진단 입력 설문(M1) + 엔진 계약 목업(M2) -->
-<script src="js/index.js?v=ac5e4279"></script>
+<script src="js/index.js?v=b39836c0"></script>

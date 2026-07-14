@@ -194,10 +194,19 @@
   function supDispute(){ toast('거래 분쟁·환불은 실매칭(결제·에스크로) 오픈 후 지원해요'); }
 
   /* ===== 알림 센터 (G.6) — 매칭·문의 답변·소식 회신 ===== */
+  // 이모지 → SVG(라인 아이콘). 유형별 뱃지로 표시 (quote=견적·reply=문의답변·news=소식)
+  var NS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">';
+  var NOTI_IC = {
+    quote: NS+'<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>',
+    reply: NS+'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',
+    news:  NS+'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>'
+  };
+  var GO_TYPE = { 'mp-req':'quote', 'mp-support':'reply', 'shop':'news' };
+  function notiType(n){ return n.type || GO_TYPE[n.go] || 'news'; }
   var notis = loadLS('notis', [
-    {ic:'💬', msg:'소희 스타일리스트가 견적을 보냈어요', time:'10분 전', read:false, go:'mp-req'},
-    {ic:'📩', msg:'1:1 문의 답변이 등록됐어요', time:'1시간 전', read:false, go:'mp-support'},
-    {ic:'📢', msg:'새 스타일리스트가 합류했어요 · 매칭도를 확인해보세요', time:'어제', read:true, go:'shop'}
+    {type:'quote', msg:'소희 스타일리스트가 견적을 보냈어요', time:'10분 전', read:false, go:'mp-req'},
+    {type:'reply', msg:'1:1 문의 답변이 등록됐어요', time:'1시간 전', read:false, go:'mp-support'},
+    {type:'news', msg:'새 스타일리스트가 합류했어요 · 매칭도를 확인해보세요', time:'어제', read:true, go:'shop'}
   ]);
   function notiUnread(){ return notis.filter(function(n){ return !n.read; }).length; }
   function updateNotiDot(){ var d=document.getElementById('notiDot'); if(d) d.style.display=notiUnread()?'block':'none'; }
@@ -205,8 +214,11 @@
     var el=document.getElementById('notiList'); if(!el){ updateNotiDot(); return; }
     if(!notis.length){ el.innerHTML='<div class="note">새 알림이 없어요</div>'; updateNotiDot(); return; }
     el.innerHTML=notis.map(function(n,i){
-      var dot=n.read?'':'<i style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--warn);margin-right:7px;vertical-align:middle"></i>';
-      return '<a onclick="notiOpen('+i+')"><span'+(n.read?' style="color:var(--sub)"':'')+'>'+dot+n.ic+' '+esc(n.msg)+' <span class="note">'+n.time+'</span></span><span class="arr">›</span></a>';
+      var t=notiType(n);
+      return '<a class="noti'+(n.read?'':' unread')+'" onclick="notiOpen('+i+')">'+
+        '<span class="noti-ic t-'+t+'">'+(NOTI_IC[t]||NOTI_IC.news)+'</span>'+
+        '<span class="noti-bd"><span class="noti-msg">'+esc(n.msg)+'</span><span class="noti-time">'+esc(n.time)+'</span></span>'+
+        '<span class="arr">›</span></a>';
     }).join('');
     updateNotiDot();
   }
@@ -569,7 +581,7 @@
       var isSel=(awardedIdx===b.idx);
       var badges='';   // 선택 표시는 카드 강조 + 하단 '진행중' 버튼으로 (상단 배지 제거)
       var action = isSel ? '<span class="q-status">'+statusLabel(r.status)+'</span>'
-                 : (canPick ? '<button class="tinybtn" onclick="confirmAward('+b.idx+')">이 스타일리스트로 선택</button>' : '');
+                 : (canPick ? '<button class="tinybtn" onclick="confirmAward('+b.idx+')">선택하기</button>' : '');
       return '<div class="qcard'+(isSel?' sel':'')+'">'+
         '<div class="q-l">'+
           '<div class="q-top"><img class="q-ph" src="'+img(e)+'" alt="" onerror="'+FB+'"><div class="q-nm">'+e.nm+' 스타일리스트</div>'+badges+'</div>'+
@@ -588,7 +600,7 @@
   }
   /* 스타일리스트 선택은 되돌릴 수 없으므로 확인 모달 후 확정 */
   function confirmAward(idx){ var e=EX[idx];
-    askConfirm('<b>'+e.nm+' 스타일리스트</b>로 선택할까요?<div class="cf-sub">선택하면 바로 스타일리스트와 매칭돼 코디를 시작해요</div>', '이 스타일리스트로 선택', function(){ awardBid(idx); }); }
+    askConfirm('<b>'+e.nm+' 스타일리스트</b>로 선택할까요?<div class="cf-sub">선택하면 바로 스타일리스트와 매칭돼 코디를 시작해요</div>', '선택하기', function(){ awardBid(idx); }); }
   function awardBid(idx){ var r=reqs[_bidReq]; if(!r) return; var e=EX[idx];
     var win=(r.bids||[]).filter(function(b){return b.idx===idx;})[0];
     var so=svcOf(e, r.svc); r.nm=e.nm; r.status='진행중'; r.awarded={idx:idx, price:win?win.price:(so?so.price:svcMinPrice(e))};

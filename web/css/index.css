@@ -9,13 +9,14 @@
 
   /* 헤더 */
   header{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.9); backdrop-filter:blur(12px); border-bottom:1px solid var(--line);}
-  .nav{max-width:1240px; margin:0 auto; height:66px; display:flex; align-items:center; gap:28px; padding:0 30px;}
+  .nav{max-width:1320px; margin:0 auto; height:66px; display:flex; align-items:center; gap:48px; padding:0 24px;}
   .logo{display:inline-block; font-size:22px; font-weight:800; letter-spacing:-.05em; color:var(--green); line-height:1;}
   .logo .sq{display:inline-block; width:6px; height:6px; background:var(--green); margin-left:2px; vertical-align:baseline;}
   .menu{display:flex; gap:2px;}
-  .menu a{padding:8px 14px; border-radius:10px; font-size:16px; font-weight:600; color:var(--sub);}
+  .menu a{position:relative; padding:8px 14px; border-radius:10px; font-size:16px; font-weight:600; color:var(--sub);}
   .menu a:hover{color:var(--ink);}
-  .menu a.on{color:var(--ink); font-weight:800; background:var(--green-soft);}
+  .menu a.on{color:var(--ink); font-weight:800;}
+  .menu a.on::after{content:""; position:absolute; left:50%; transform:translateX(-50%); bottom:3px; width:5px; height:5px; border-radius:50%; background:var(--green);}
   .navr{margin-left:auto; display:flex; align-items:center; gap:16px; font-size:15px; color:var(--sub);}
   .navr .sup{font-weight:700; color:var(--green);}
   /* 헤더 우상단 사용자 = 아바타 + 이름(마이 사이드 프로필 카드 대체) */
@@ -619,6 +620,42 @@
   #my .fcard .cardmid .svcico .b{width:29px; height:29px; border-radius:9px; background:var(--green-soft); color:var(--green); display:flex; align-items:center; justify-content:center;}
   #my .fcard .cardmid .svcico .b svg{width:16px; height:16px;}
   #my .links a{display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--line); font-size:15px; font-weight:600; cursor:pointer;} #my .links a:last-child{border:none;} #my .links a .arr{color:var(--sub2);} #my .danger{color:var(--warn);}
+  /* 고객센터 — 이동 링크를 카드형으로 확실히 보이게(FAQ=회색, 거래문제=경고) */
+  #my .links a.faqmore,#my .links a.danger{border:none; border-radius:12px; padding:15px 18px; font-size:15.5px; font-weight:800; transition:background .15s;}
+  #my .links a.faqmore{background:#F4F3F0; border:1px solid var(--line); color:var(--ink);}
+  #my .links a.faqmore:hover{background:#EEEDE9;}
+  #my .links a.danger{background:var(--warn-soft); color:var(--warn);}
+  #my .links a.danger:hover{background:#f2ddd6;}
+  #my .links a.faqmore .arr{color:var(--sub);} #my .links a.danger .arr{color:var(--warn);}
+  #my .links a.faqmore .arr,#my .links a.danger .arr{font-size:22px; font-weight:800; transition:transform .15s;}
+  #my .links a.faqmore:hover .arr,#my .links a.danger:hover .arr{transform:translateX(3px);}
+  /* 파일 첨부 바 — FAQ 더보기와 동일한 연회색 톤 */
+  #mp-support .attach{background:#F4F3F0; border:1px solid var(--line);}
+  /* 고객센터 문의 — 선택칩 서브톤(딥그린 X)·높이 축소 */
+  #supType .o,#supReq .o{padding:8px 16px;}
+  #supType .o.on,#supReq .o.on{background:var(--green-soft); color:var(--green); border-color:var(--green-soft);}
+  /* 문의 접수 = 안내문 좌 / 버튼 우 정렬 */
+  #my .sup-submit{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:18px; flex-wrap:wrap;}
+  #my .sup-submit .note{margin-top:0; flex:1; min-width:200px;} #my .sup-submit .btn{flex:none;}
+  /* 문의내역·거래문제 섹션 구분 강화 */
+  #mp-support .msub{padding:22px 0;}
+  /* 회원 탈퇴 — 눈에 띄지 않는 작은 텍스트(누르면 진행) */
+  #my .quitrow{text-align:right; margin-top:10px;}
+  #my .quitrow .quitlink{display:inline; padding:0; border:none; font-size:12.5px; font-weight:500; color:var(--sub2); text-decoration:underline; text-underline-offset:2px; cursor:pointer;}
+  #my .quitrow .quitlink:hover{color:var(--warn);}
+  /* 알림 리스트 (B · 좌측 강조 바 카드) — 안읽음=흰 카드+초록 좌측 바 / 읽음=연회색 카드 */
+  #mp-noti #notiList{display:flex; flex-direction:column; gap:10px; padding:4px 0 2px;}
+  #mp-noti #notiList a{position:relative; display:flex; align-items:center; gap:12px; background:var(--bg); border:1px solid var(--line); border-radius:13px; padding:13px 15px 13px 17px; overflow:hidden;}
+  #mp-noti #notiList a.unread{background:#fff;}
+  #mp-noti #notiList a.unread::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--green);}
+  #mp-noti .noti-ic{flex:none; width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:var(--soft); color:var(--sub2);}
+  #mp-noti .noti-ic svg{width:19px; height:19px;}
+  #mp-noti a.unread .noti-ic{background:var(--green-soft); color:var(--green);}
+  #mp-noti .noti-bd{flex:1; min-width:0; display:flex; flex-direction:column; gap:3px;}
+  #mp-noti .noti-msg{font-size:14.5px; font-weight:500; color:var(--sub); line-height:1.4;}
+  #mp-noti a.unread .noti-msg{font-weight:700; color:var(--ink);}
+  #mp-noti .noti-time{font-size:12px; color:var(--sub2);}
+  #mp-noti #notiList a .arr{flex:none; color:var(--sub2);}
   #my .cardframe{height:672px;}
 
   /* ===== 마이 · 내 진단 결과 상세 (MBTI형 유형 풀이) ===== */
