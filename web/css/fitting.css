@@ -50,6 +50,7 @@ body{
   line-height:1.55;
   -webkit-font-smoothing:antialiased;
   min-height:100vh;
+  overflow-x:clip; /* full-bleed 헤더·푸터의 100vw가 가로 스크롤 만들지 않도록 */
 }
 
 /* 숫자(사이즈·치수·스텝)는 SUIT + tabular */
@@ -58,6 +59,13 @@ body{
 /* ---- 레이아웃 ---- */
 .container{max-width:940px;margin:0 auto;padding:0 24px}
 .flow{max-width:560px;margin:0 auto;padding:0 24px} /* 진단 단계 화면용 좁은 폭 */
+
+/* 헤더·푸터는 전체 폭 흰색 밴드, 내부 콘텐츠는 index와 동일 그리드(헤더 1320·푸터 1240)에 중앙 정렬.
+   본문(.container)은 940 유지 — 상하단 chrome만 넓게. */
+nav.top,
+footer.foot{margin-inline:calc(50% - 50vw);background:var(--field)}
+nav.top{padding-inline:max(24px, calc(50vw - 660px))}      /* 헤더 콘텐츠 1320 (index .nav와 동일) */
+footer.foot{padding-inline:max(24px, calc(50vw - 620px))}  /* 푸터 콘텐츠 1240 (index .site-foot .in과 동일) */
 
 /* ---- 상단 프로토타입 배너 (각 화면 식별 — 발표용) ---- */
 .protobar{
@@ -75,7 +83,7 @@ body{
 .protobar a:hover{color:#fff}
 
 /* ---- 글로벌 내비 ---- */
-nav.top{display:flex;align-items:center;justify-content:space-between;padding:22px 0;border-bottom:1px solid var(--line)}
+nav.top{display:flex;align-items:center;justify-content:space-between;padding-block:22px;border-bottom:1px solid var(--line)}
 .logo{font-size:21px;font-weight:var(--dW);letter-spacing:var(--dS);color:var(--ink);text-decoration:none}
 .nav-r{display:flex;gap:20px;align-items:center}
 .nav-link{font-size:14px;color:var(--muted);font-weight:600;cursor:pointer;text-decoration:none}
@@ -311,7 +319,7 @@ section.block{padding:48px 0;border-bottom:1px solid var(--line)}
 .notice.warn strong{color:var(--warn)}
 
 /* ---- 법적 고정 페이지 (G.3/G.4) ---- */
-.legal{max-width:720px;margin:0 auto;padding:40px 24px 80px}
+.legal{max-width:720px;margin:0 auto;padding:40px 24px 0} /* 아래 패딩 0 — 풀블리드 footer 밴드가 바닥에 붙도록(간격은 footer margin-top) */
 .legal h1{font-size:26px;font-weight:var(--dW);letter-spacing:var(--dS);margin-bottom:6px}
 .legal .updated{font-size:13px;color:var(--faint);margin-bottom:32px}
 .legal h2{font-size:17px;font-weight:800;margin:28px 0 10px}
@@ -464,12 +472,13 @@ section.block{padding:48px 0;border-bottom:1px solid var(--line)}
 @media(max-width:720px){.expert-list{grid-template-columns:1fr}}
 
 /* ---- 푸터 ---- */
-footer.foot{padding:30px 0;display:flex;gap:20px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:8px}
+footer.foot{padding-block:30px;display:flex;gap:20px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:8px}
 footer.foot a{font-size:13px;color:var(--muted);font-weight:500;text-decoration:none}
 footer.foot a:hover{color:var(--ink)}
 
 /* ---- 법적 페이지 헤더 (Precision, 절제) ---- */
-.legal-head{max-width:720px;margin:0 auto;padding:22px 24px 0;display:flex;align-items:center;justify-content:space-between}
+/* legal-head는 body 직속 → 전체폭 밴드 + 콘텐츠는 헤더 그리드(1320) 중앙 정렬 (nav.top과 동일 위치) */
+.legal-head{max-width:none;margin:0;padding:22px max(24px,calc(50vw - 660px));display:flex;align-items:center;justify-content:space-between;background:var(--field);border-bottom:1px solid var(--line)}
 .legal-head .logo{font-size:19px}
 .legal-head .back{font-size:14px;font-weight:700;color:var(--muted);text-decoration:none}
 .legal-head .back:hover{color:var(--ink)}
