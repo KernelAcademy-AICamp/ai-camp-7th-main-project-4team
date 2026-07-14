@@ -2,20 +2,22 @@
    인라인→외부화(순수 이동, 렌더 무변화) — 충돌면 축소. 색·폰트·간격 토큰화는 별도(디자인 결정). */
   *{box-sizing:border-box}
   html{scrollbar-gutter:stable}   /* 페이지 전환 시 스크롤바 유무로 바가 좌우로 튀는 것 방지 */
-  body{margin:0;min-height:100vh;background:var(--soft,#f6f5f2);font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;color:var(--ink,#1c1a17)}
+  body{margin:0;min-height:100vh;background:var(--bg,#F6F6F5);font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;color:var(--ink,#1c1a17)}
   a{color:inherit;text-decoration:none;cursor:pointer}
   header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line,#e7e4de)}
   .nav{max-width:1240px;margin:0 auto;height:66px;display:flex;align-items:center;gap:14px;padding:0 30px;position:relative}
-  .logo{font-size:22px;font-weight:800;letter-spacing:-.05em;color:var(--green,#2E4A3B)}
-  .logo i{display:inline-block;width:6px;height:6px;background:var(--green,#2E4A3B);margin-left:2px}
+  .logo{display:inline-block;font-size:22px;font-weight:800;letter-spacing:-.05em;color:var(--green,#2E4A3B);line-height:1}
+  .logo i,.logo .sq{display:inline-block;width:6px;height:6px;background:var(--green,#2E4A3B);margin-left:2px;vertical-align:baseline}
   .pill-role{font-size:11.5px;font-weight:800;color:var(--green);background:var(--green-soft);padding:5px 11px;border-radius:20px;letter-spacing:.02em}
-  /* 앱 상단바(pro.html과 동일) — 로고·스타일리스트지원·고객화면·알림·프로필 */
-  .navr{margin-left:auto;display:flex;align-items:center;gap:16px;font-size:14px;color:var(--sub)}
-  .navr .cust{cursor:pointer} .navr .me{font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px;cursor:pointer}
-  .navr .me img{width:28px;height:28px;border-radius:50%;object-fit:cover;filter:saturate(.6)}
-  .navr .caret{font-size:11px;color:var(--sub2)}
-  .navr .bell{position:relative;cursor:pointer;display:inline-flex;color:var(--sub)} .navr .bell svg{width:20px;height:20px}
-  .bell-badge{position:absolute;top:-6px;right:-8px;min-width:16px;height:16px;padding:0 4px;background:#e5484d;color:#fff;font-size:10px;font-weight:800;border-radius:20px;display:flex;align-items:center;justify-content:center}
+  /* 앱 상단바 — 고객(index) 내비와 동일 구조: 로고 · 고객화면 · 구분선 · 알림(점) · 구분선 · 프로필 */
+  .navr{margin-left:auto;display:flex;align-items:center;gap:16px;font-size:15px;color:var(--sub)}
+  .navr .cust{cursor:pointer;font-weight:700;color:var(--green)}
+  .navr .navdiv{width:1px;height:18px;background:var(--line2);display:inline-block;flex:none}
+  .navr .bell{position:relative;cursor:pointer;display:inline-flex;align-items:center;color:var(--sub)} .navr .bell svg{width:21px;height:21px}
+  .bell-badge{position:absolute;top:-2px;right:-3px;width:7px;height:7px;min-width:0;padding:0;background:var(--warn);color:transparent;font-size:0;border:1.5px solid var(--bg);border-radius:50%;display:flex}
+  .navr .me{display:flex;align-items:center;gap:9px;cursor:pointer;color:var(--ink);font-weight:700}
+  .navr .me .navav{width:34px;height:34px;border-radius:50%;overflow:hidden;flex:none}
+  .navr .me .navav img{width:100%;height:100%;object-fit:cover}
   .accmenu{position:absolute;top:58px;right:30px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.13);padding:6px;display:none;z-index:60;min-width:150px}
   .accmenu.on{display:block}
   .accmenu a{display:block;padding:10px 12px;font-size:13.5px;font-weight:700;color:var(--ink);border-radius:8px;cursor:pointer}
@@ -24,8 +26,8 @@
   .backlink{display:inline-block;font-size:14px;font-weight:800;color:var(--sub);cursor:pointer;margin-bottom:10px}
   .backlink:hover{color:var(--green)}
 
-  /* 상세(마스터→디테일) — 사이드바 없이 집중형 중앙 컬럼 */
-  .qwrap{max-width:760px;margin:0 auto;padding:30px 28px 90px}
+  /* 상세(마스터→디테일) — 2단: 좌 요청서+견적작성 / 우 고객 체형(아바타) */
+  .qwrap{max-width:1160px;margin:0 auto;padding:30px 28px 90px}
   .crumb{font-size:12.5px;color:var(--sub2,#8a857b);font-weight:700}
   h1{font-size:25px;font-weight:800;letter-spacing:-.04em;margin:6px 0 4px}
   .htags{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
@@ -33,6 +35,10 @@
   .svcbadge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;border-radius:20px;padding:4px 11px;background:var(--soft,#f0efeb);color:var(--ink-soft,#3a382f)}
   .svcbadge svg{width:13px;height:13px}
   .svcbadge.online,.svcbadge.shopping,.svcbadge.image{background:var(--soft,#f0efeb);color:var(--ink-soft,#3a382f)}
+  /* 아이콘 전용 칩(글자 뺌) — 연한 그린 원 배경 + 그린 아이콘 */
+  .svcbadge.icon-only{gap:0;padding:0;width:28px;height:28px;border-radius:50%;justify-content:center;
+    background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B)}
+  .svcbadge.icon-only svg{width:15px;height:15px}
   .st{font-size:12px;font-weight:800;padding:4px 11px;border-radius:20px}
   .st.nw{background:var(--ink,#1c1a17);color:#fff} .st.sent{background:var(--soft,#eee);color:var(--sub,#777)}
   .st.prog{background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B)} .st.done{background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B)} .st.warn{background:var(--warn,#c0392b);color:#fff}
@@ -69,10 +75,34 @@
   .obtns{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
   .num{font-family:var(--num,inherit);font-weight:800}
 
-  /* 2단: 좌(primary) 요청서→체형 · 우(sticky) 제안 */
-  /* 한 컬럼 스택 — 요청서 → 체형 → 제안(맨 아래) */
-  .qgrid2{display:block;margin-top:22px}
+  /* 2단: 좌(1fr) 요청서 → 견적작성 · 우(500px) 고객 체형(아바타) · 좁아지면 1단 스택 */
+  .qgrid2{display:grid;grid-template-columns:minmax(0,1fr) 500px;gap:24px;align-items:start;margin-top:22px}
+  @media(max-width:980px){.qgrid2{grid-template-columns:1fr}}
   .offer-card{margin-top:2px}
+
+  /* 진행 상태 배너(.statban) — 고객 화면(index)과 동일 컴포넌트로 통일 */
+  .statban{display:flex;align-items:center;gap:14px;padding:15px 17px;border-radius:14px;margin-bottom:18px}
+  .statban .sb-ic{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+  .statban .sb-ic svg{width:22px;height:22px}
+  .statban .sb-tx b{display:block;font-size:17px;font-weight:800;letter-spacing:-.02em}
+  .statban .sb-tx p{font-size:13px;margin-top:3px;line-height:1.5}
+  .statban.go{background:var(--green-soft)} .statban.go .sb-ic{background:var(--green);color:#fff} .statban.go .sb-tx b{color:var(--green)} .statban.go .sb-tx p{color:var(--green-mid)}
+  .statban.wait{background:var(--soft)} .statban.wait .sb-ic{background:var(--sub);color:#fff} .statban.wait .sb-tx b{color:var(--ink)} .statban.wait .sb-tx p{color:var(--sub)}
+  .statban.no{background:var(--warn-soft)} .statban.no .sb-ic{background:var(--warn);color:#fff} .statban.no .sb-tx b{color:var(--warn)} .statban.no .sb-tx p{color:var(--warn)}
+
+  /* 파라메트릭 실루엣 아바타 — 라인만(옅은 틴트 채움 + 유형색 라인). 색은 JS가 유형별로 인라인 주입. */
+  .bodymap2{--fig-fill:#F3F1EC;--fig-line:#43403A;--guide:#CBC8C0;--pill-bg:#E7EFEA;
+    margin-top:18px;display:flex;flex-direction:column;align-items:center;gap:18px}
+  .bodymap2 svg{width:100%;max-width:380px;height:auto;display:block}
+  .bodymap2 .g-name{font-size:11.5px;font-weight:700;fill:var(--sub,#6E6B63)}
+  .bodymap2 .g-val{font-size:15px;font-weight:800;fill:var(--ink,#16140F)}
+  .bodymap2 .g-unit{font-size:10px;font-weight:700;fill:var(--sub2,#A6A29A)}
+  .bodymap2 .g-pm{font-size:10.5px;font-weight:700;fill:var(--sub2,#A6A29A)}
+  .bodymap2 .g-tag{font-size:12px;font-weight:600}
+  .av-pref{display:flex;align-items:center;gap:9px}
+  .av-pref span{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--sub2)}
+  .av-pref b{font-size:12.5px;font-weight:800;color:#fff;background:var(--green);padding:5px 12px;border-radius:20px}
+  .av-cap{font-size:11px;font-weight:600;color:var(--sub2);text-align:center;line-height:1.5;max-width:340px}
 
   /* [프로토타입] 쇼퍼용 사이즈 인사이트 — 기준 옷 · 브랜드 추천 · 스타일링 힌트 */
   .cx-sec{margin-top:16px;padding-top:15px;border-top:1px solid var(--line,#E6E5E1)}

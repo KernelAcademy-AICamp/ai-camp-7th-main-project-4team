@@ -24,7 +24,7 @@
     var p1=d.profile[0]||'', p2=d.profile[1]||'';
     card.style.background='radial-gradient(ellipse 70% 34% at 50% 11%, '+d.point+'2b, transparent 60%), linear-gradient(160deg,#191a1f,#0f1014)';
     wmStyle.textContent='.card::after{content:"'+d.code+'";}';
-    var top='<div class="ctop"><span class="clogo">fitting</span><span class="cacts">'+
+    var top='<div class="ctop"><span class="clogo">Fitting<i class="sq"></i></span><span class="cacts">'+
       '<button id="cSave" title="결과 저장" aria-label="결과 저장">🔖</button>'+
       '<button id="cShare" title="카드 공유" aria-label="카드 공유">🔗</button>'+
       '</span></div>';

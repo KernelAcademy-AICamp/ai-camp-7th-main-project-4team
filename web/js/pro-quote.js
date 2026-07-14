@@ -45,44 +45,74 @@
   }
   function svcLabel(s){ return svcMeta(s).label; }
   function svcBadge(s){ var m=svcMeta(s); return '<span class="svcbadge '+m.cls+'">'+m.icon+' '+m.label+'</span>'; }
+  /* 서비스 아이콘만(글자 뺌) — 상단 태그줄용. 라벨은 title로 접근성 유지 */
+  function svcBadgeIcon(s){ var m=svcMeta(s); return '<span class="svcbadge '+m.cls+' icon-only" title="'+esc(m.label)+'" aria-label="'+esc(m.label)+'">'+m.icon+'</span>'; }
   function stClass(s){ return s==='신규'?'nw':(s==='제안발송'?'sent':(s==='수락됨'?'prog':(s==='분쟁'?'warn':(s==='완료'?'done':'sent')))); }
   function starsRO(n){ var s=''; for(var k=1;k<=5;k++) s+='<span style="color:'+(k<=n?'#e8a13a':'#ddd')+'">★</span>'; return s; }
 
-  /* ── 액션(상태별) ── 받은 요청: 수락/거절 · 진행 중: 완료/취소 · 보낸 제안: 응답 대기 ── */
+  /* 진행 상태 배너 — 고객 화면(index reqStatusBlock)과 동일 .statban 컴포넌트, 스타일리스트 시점 카피 */
+  function stIcon(k){
+    var P={ check:'<path d="M20 6L9 17l-5-5"/>',
+      clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+      flag:'<path d="M5 21V4h13l-2.6 4L18 12H5"/>',
+      star:'<path d="M12 3l2.7 5.5 6 .9-4.35 4.2 1.03 6L12 17l-5.38 2.6 1.03-6L3.3 9.4l6-.9z"/>',
+      x:'<path d="M18 6L6 18M6 6l12 12"/>',
+      card:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10.5h18"/>' };
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'+(P[k]||'')+'</svg>';
+  }
+  /* 상태 → [배너색, 아이콘, 제목, 설명] (스타일리스트 시점) */
+  var ST_BAN_PRO={
+    '신규':    ['wait','clock','새 요청 도착','새로운 요청을 확인해 주세요'],
+    '제안발송':['wait','clock','제안 발송됨','고객의 응답을 기다리고 있어요'],
+    '수락됨':  ['go','check','진행 중','결과물을 작성해 전달해 주세요'],
+    '완료':    ['go','flag','서비스 완료','고객의 후기를 기다리고 있어요'],
+    '거절':    ['no','x','요청 거절함','요청을 거절했어요'],
+    '취소':    ['wait','x','진행 취소됨','요청이 취소됐어요'],
+    '분쟁':    ['no','x','분쟁 처리 중','소명을 제출해 주세요']
+  };
+  function statusBanner(r){
+    var b=ST_BAN_PRO[r.status]; if(!b) return '';
+    return '<div class="statban '+b[0]+'"><span class="sb-ic">'+stIcon(b[1])+'</span>'+
+      '<div class="sb-tx"><b>'+esc(b[2])+'</b><p>'+esc(b[3]).replace(/ · /g,'<br>')+'</p></div></div>';
+  }
+
+  /* ── 액션(상태별) ── 버튼/입력만. 상태 배너는 render에서 진행상태 바 위에 별도로 붙임 ── */
   function actionHTML(r){
+    var banner='';
     if(r.status==='신규'){
-      return '<div class="act-row"><button class="btn ghost" onclick="confirmReject()">거절하기</button>'+
+      return banner+'<div class="act-row"><button class="btn ghost" onclick="confirmReject()">거절하기</button>'+
              '<button class="btn" onclick="confirmAccept()">수락하기</button></div>';
     }
     if(r.status==='제안발송'){ var o=r.offer||{};
-      return '<div class="note-quote"><b style="color:var(--green)">제안 발송됨</b> · <span class="num">'+((o.price||0).toLocaleString())+'</span>원<br>'+
-        '<span style="font-size:13px;color:var(--sub)">"'+esc(o.msg||'')+'"</span><br>'+
-        '<span style="font-size:12.5px;color:var(--sub2)">고객 응답을 기다리는 중이에요</span></div>'+
+      return banner+
+        '<div class="note-quote"><b style="color:var(--green)">보낸 견적</b> · <span class="num">'+((o.price||0).toLocaleString())+'</span>원'+
+        (o.msg?'<br><span style="font-size:13px;color:var(--sub)">"'+esc(o.msg)+'"</span>':'')+'</div>'+
         '<button class="btn ghost" style="margin-top:10px" onclick="simAccept()">고객 수락 · 데모</button>';
     }
     if(r.status==='수락됨'){
-      var hd='<div class="note-quote"><b style="color:var(--green,#2E4A3B)">수락됨 · 진행 중</b>'+((r.offer&&r.offer.price)?' · <span class="num">'+r.offer.price.toLocaleString()+'</span>원':'')+'</div>';
+      var price=(r.offer&&r.offer.price)?'<div class="note-quote"><b style="color:var(--green,#2E4A3B)">확정 금액</b> · <span class="num">'+r.offer.price.toLocaleString()+'</span>원</div>':'';
       var cancel='<button class="btn ghost" style="margin-top:8px" onclick="confirmCancel()">취소 처리</button>';
       // 제출 후에도 완료 전까지는 수정 가능. 결과물=사진·내용(전 서비스 공통) + 구매 상품·예산(온라인 추가)
-      if(r.deliver) return hd + deliverSummary(r) +
+      if(r.deliver) return banner + price + deliverSummary(r) +
         '<button class="btn ghost" style="margin-top:10px" onclick="editDeliver()">결과물 수정</button>'+
         '<button class="btn" style="margin-top:8px" onclick="confirmComplete()">완료 처리</button>' + cancel;
       var hasDraft=((r._draft||[]).length || (r._photos||[]).length || (r._dmsg||'').trim());
-      return hd + '<button class="btn" style="margin-top:10px" onclick="openDeliverModal()">결과물 작성'+(hasDraft?' (임시저장)':'')+' →</button>' + cancel;
+      return banner + price + '<button class="btn" style="margin-top:10px" onclick="openDeliverModal()">결과물 작성'+(hasDraft?' (임시저장)':'')+' →</button>' + cancel;
     }
     if(r.status==='분쟁'){ var dp=r.dispute||{};
-      return '<div class="note-quote" style="border-color:#e6b8b8;background:#fbf3f3"><b style="color:#c0392b">⚠ 분쟁 접수 · 정산 보류</b><br><span style="font-size:13px">사유: '+esc(dp.reason||'—')+'<br>"'+esc(dp.detail||'')+'"</span></div>'+
+      return banner+
+        '<div class="note-quote" style="border-color:#e6b8b8;background:#fbf3f3"><span style="font-size:13px">사유: '+esc(dp.reason||'—')+'<br>"'+esc(dp.detail||'')+'"</span></div>'+
         (dp.reply
           ? '<div class="note-quote" style="margin-top:10px"><b style="color:var(--green,#2E4A3B)">내 소명 제출됨</b><br><span style="font-size:13px;color:var(--sub,#6b6a67)">"'+esc(dp.reply)+'"</span><br><span style="font-size:12px;color:var(--sub2,#8a857b)">관리자 중재를 기다리는 중이에요</span></div>'
           : '<div class="offerform" style="margin-top:10px"><label>소명 · 반박</label><textarea id="dispReply" placeholder="결과물 전달 내역·대화 등 상황을 설명해주세요"></textarea><button class="btn" style="margin-top:10px" onclick="submitDisputeReply()">소명 제출</button></div>')+
         '<p class="note-quote muted" style="margin-top:10px">관리자 중재(3.B.4)로 환불·정산이 결정돼요</p>';
     }
     if(r.status==='완료'){
-      if(r.review) return '<div class="seclabel">고객 후기</div><div class="note-quote"><span style="letter-spacing:1px">'+starsRO(r.review.rating)+'</span><br>"'+esc(r.review.text)+'"</div>';
-      return '<div class="note-quote muted">완료 · 고객 후기를 기다리는 중이에요</div>';
+      if(r.review) return banner+'<div class="seclabel">고객 후기</div><div class="note-quote"><span style="letter-spacing:1px">'+starsRO(r.review.rating)+'</span><br>"'+esc(r.review.text)+'"</div>';
+      return banner;
     }
-    if(r.status==='거절'){ return '<div class="note-quote muted">거절한 요청이에요'+(r.reason?' · "'+esc(r.reason)+'"':'')+'</div><button class="btn ghost" style="margin-top:10px" onclick="undoReject()">되돌리기</button>'; }
-    if(r.status==='취소'){ return '<div class="note-quote muted">취소된 요청이에요'+(r.reason?' · "'+esc(r.reason)+'"':'')+'</div><button class="btn ghost" style="margin-top:10px" onclick="undoCancel()">되돌리기</button>'; }
+    if(r.status==='거절'){ return banner+(r.reason?'<div class="note-quote muted">"'+esc(r.reason)+'"</div>':'')+'<button class="btn ghost" style="margin-top:10px" onclick="undoReject()">되돌리기</button>'; }
+    if(r.status==='취소'){ return banner+(r.reason?'<div class="note-quote muted">"'+esc(r.reason)+'"</div>':'')+'<button class="btn ghost" style="margin-top:10px" onclick="undoCancel()">되돌리기</button>'; }
     if(r.status==='견적작성'){   // 먼저 견적 보내기 — 금액·메시지 입력 후 발송
       return '<div class="offerform">'+
         '<label style="display:block;font-size:12.5px;font-weight:800;color:var(--sub);margin:0 0 6px">견적 금액</label>'+
@@ -243,19 +273,88 @@
   /* ── 고객 체형 = 스타일리스트용 '결과 카드 값' 먼저, 측정값은 가독성 좋게 '자세히 보기' ── */
   function segIdx(pct){ return Math.max(0, Math.min(4, Math.floor((pct==null?50:pct)/20))); }
   function zoneLabel(i, L, R){ return i===0?L:(i===1?L+' 편':(i===2?'표준':(i===3?R+' 편':R))); }
-  /* 결과 카드 캐릭터(card.js .fig) 재사용 — 실루엣 clip-path로 체형 모양 + 성별 + 유형색. 옆에 측정 라벨 */
-  function bodySilhouette(m, bt, gender){
-    gender=(gender==='male'||gender==='female')?gender:'female';
-    var sil=(bt&&bt.silhouette)||'straight', pt=(bt&&bt.point)||'#2E4A3B';
-    var head='<div class="head '+gender+'">'+(gender==='female'?'<span class="longhair"></span>':'')
-      +'<span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div>';
-    var fig='<div class="fig">'+head+'<div class="body '+esc(sil)+'" style="background-color:'+esc(pt)+'; height:150px"></div></div>';
-    function zone(v,L,R){ return zoneLabel(segIdx(v),L,R); }
-    var rows=[['어깨',zone(m.top.shoulder,'좁은','넓은')],['가슴',zone(m.top.chestFull,'슬림','볼륨')],
-      ['허리',zone(m.bottom.waist,'슬림','볼륨')],['엉덩이',zone(m.bottom.hip,'슬림','볼륨')],
-      ['핏 취향',zone(m.prefTop,'타이트','여유')]];
-    var list=rows.map(function(x){ return '<div class="bm-row"><span class="bp">'+esc(x[0])+'</span><span class="bz">'+esc(x[1])+'</span></div>'; }).join('');
-    return '<div class="bodymap"><div class="bm-fig">'+fig+'</div><div class="bm-list">'+list+'</div></div>';
+  /* 8유형 시그니처 색(라이트 배경용 보정 톤) — 아바타 라인 색에 사용 */
+  var TYPE_COLOR={STR:'#7E9BE8',TRI:'#3FB9A6',INV:'#8A93A8',HRG:'#B675E8',
+    BAL:'#5FBE7E',DIA:'#EA6EA0',RND:'#F0855A',TUB:'#9184E0'};
+  /* hex 선형 보간 — a에서 to로 t만큼. color-mix 미지원 대비 JS 계산 */
+  function mixHex(hex,to,t){
+    function p(h){ h=h.replace('#',''); return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)]; }
+    var a=p(hex), b=p(to), o=a.map(function(v,i){ return Math.round(v+(b[i]-v)*t); });
+    return '#'+o.map(function(x){ return ('0'+Math.max(0,Math.min(255,x)).toString(16)).slice(-2); }).join('');
+  }
+  /* 태그 톤 — 항상 옅은 유형색 배경 + 딥톤 유형색 글자/점/외곽선.
+     seg 0(가장 슬림)…4(가장 볼륨)로 갈수록 배경·글자 함께 진해지되, 대비 유지(글씨 항상 읽힘) */
+  var TAG_BGT=[0.88,0.80,0.72,0.64,0.56];   // 배경: 흰색 혼합비(작을수록 진함)
+  var TAG_FGT=[0.34,0.44,0.54,0.64,0.72];   // 글자·점·선: 다크 혼합비(클수록 진함)
+  function tagTone(tc, seg){
+    return { bg:mixHex(tc,'#FFFFFF',TAG_BGT[seg]), fg:mixHex(tc,'#2A2823',TAG_FGT[seg]) };
+  }
+  /* 부위 백분위(측정 기반)로 폭이 반응하는 파라메트릭 실루엣 아바타.
+     좌: 슬림/표준/볼륨 태그(zoneLabel) · 우: 부위명 + 예상 cm(est) · 아래: 핏취향 칩.
+     Catmull-Rom으로 몸통·다리 외곽선을 만들고, 팔은 스트로크. 세로 비율은 표준 템플릿 고정. cx=180 가운데정렬. */
+  function bodySilhouette(m, bt, gender, est, conf){
+    var tc=TYPE_COLOR[(bt&&bt.code)||''] || '#57544C';   // 이 카드 유형색(태그 농도·라인 공용)
+    var cx=180, headCY=48, headRx=27, headRy=31, neckHalf=12;
+    var neckY=88, shoulderY=110, chestY=172, waistY=240, hipY=300, crotchY=330, kneeY=422, ankleY=498;
+    /* 백분위 50=표준 반폭, 0~100 → ±28%. shoulder=너비 / 나머지=둘레지만 시각 폭으로 통일 근사 */
+    var BASE={shoulder:42, chest:34, waist:27, hip:33};
+    function hw(part,p){ p=(p==null?50:p); return BASE[part]*(0.72+p/100*0.56); }
+    var sh=hw('shoulder',m.top.shoulder), ch=hw('chest',m.top.chestFull),
+        wa=hw('waist',m.bottom.waist), hi=hw('hip',m.bottom.hip);
+    function cr(pts){ var n=pts.length, P=function(i){return pts[(i%n+n)%n];};
+      var d='M '+pts[0][0].toFixed(1)+' '+pts[0][1].toFixed(1);
+      for(var i=0;i<n;i++){ var a=P(i-1),b=P(i),c=P(i+1),e=P(i+2);
+        d+=' C '+(b[0]+(c[0]-a[0])/6).toFixed(1)+' '+(b[1]+(c[1]-a[1])/6).toFixed(1)+', '
+          +(c[0]-(e[0]-b[0])/6).toFixed(1)+' '+(c[1]-(e[1]-b[1])/6).toFixed(1)+', '
+          +c[0].toFixed(1)+' '+c[1].toFixed(1); } return d+' Z'; }
+    function arm(s){ return 'M '+(cx+s*(sh-7)).toFixed(1)+' '+(shoulderY+6)
+      +' C '+(cx+s*(sh+13)).toFixed(1)+' '+(chestY-14)+', '+(cx+s*(sh+11)).toFixed(1)+' '+(chestY+34)
+      +', '+(cx+s*(sh-2)).toFixed(1)+' '+(hipY-6); }
+    var body=[[cx+neckHalf,neckY],[cx+sh,shoulderY],[cx+ch,chestY],[cx+wa,waistY],[cx+hi,hipY],
+      [cx+hi*0.9,crotchY+16],[cx+22,kneeY],[cx+18,ankleY],[cx+8,ankleY],[cx+9,kneeY],[cx+3,crotchY+24],
+      [cx,crotchY+6],[cx-3,crotchY+24],[cx-9,kneeY],[cx-8,ankleY],[cx-18,ankleY],[cx-22,kneeY],
+      [cx-hi*0.9,crotchY+16],[cx-hi,hipY],[cx-wa,waistY],[cx-ch,chestY],[cx-sh,shoulderY],[cx-neckHalf,neckY]];
+    var LV=[
+      {name:'어깨',   key:'어깨너비',  pct:m.top.shoulder,   lo:'좁은',hi:'넓은',half:sh,y:shoulderY},
+      {name:'가슴',   key:'가슴둘레',  pct:m.top.chestFull,  lo:'슬림',hi:'볼륨',half:ch,y:chestY},
+      {name:'허리',   key:'허리둘레',  pct:m.bottom.waist,   lo:'슬림',hi:'볼륨',half:wa,y:waistY},
+      {name:'엉덩이', key:'엉덩이둘레', pct:m.bottom.hip,     lo:'슬림',hi:'볼륨',half:hi,y:hipY}];
+    var estMap={}; (est||[]).forEach(function(e){ estMap[e.label]={val:e.val, pm:e.pm}; });
+    var vx=240, guides='';
+    LV.forEach(function(x){ var i=segIdx(x.pct), tag=zoneLabel(i,x.lo,x.hi), tn=tagTone(tc,i), bg=tn.bg, fg=tn.fg;
+      var half=x.half, y=x.y, re=cx+half, le=cx-half, e=estMap[x.key];
+      // 우: 부위명(+ 예상 cm을 바로 옆에). cm 있으면 이름은 위·수치 아래로.
+      guides+='<circle cx="'+re.toFixed(1)+'" cy="'+y+'" r="2.6" fill="var(--fig-line)"/>'
+        +'<line x1="'+(re+4).toFixed(1)+'" y1="'+y+'" x2="'+(vx-6)+'" y2="'+y+'" stroke="var(--guide)" stroke-width="1.2" stroke-dasharray="2 3"/>'
+        +'<text class="g-name" x="'+vx+'" y="'+(e?(y-5):(y+4))+'">'+esc(x.name)+'</text>';
+      if(e) guides+='<text class="g-val" x="'+vx+'" y="'+(y+13)+'">약 '+e.val+'<tspan class="g-unit" dx="1">cm</tspan> <tspan class="g-pm">±'+e.pm+'</tspan></text>';
+      // 좌: 슬림/표준/볼륨 태그 — 옅은 유형색 배경 + 딥톤 글자/점/외곽선(농도로 강약)
+      var tw=tag.length*13+30, pe=le-9, ps=pe-tw;
+      guides+='<circle cx="'+le.toFixed(1)+'" cy="'+y+'" r="2.6" fill="var(--fig-line)"/>'
+        +'<line x1="'+(le-4).toFixed(1)+'" y1="'+y+'" x2="'+(pe+1).toFixed(1)+'" y2="'+y+'" stroke="var(--guide)" stroke-width="1.2"/>'
+        +'<rect x="'+ps.toFixed(1)+'" y="'+(y-12)+'" width="'+tw.toFixed(1)+'" height="24" rx="12" fill="'+bg+'" stroke="'+fg+'" stroke-opacity=".45"/>'
+        +'<circle cx="'+(ps+13).toFixed(1)+'" cy="'+y+'" r="3.2" fill="'+fg+'"/>'
+        +'<text class="g-tag" x="'+(ps+24).toFixed(1)+'" y="'+(y+4)+'" fill="'+fg+'">'+esc(tag)+'</text>'; });
+    var svg='<svg viewBox="0 0 360 520" role="img" aria-label="고객 체형 실루엣">'
+      +'<ellipse cx="'+cx+'" cy="514" rx="52" ry="9" fill="var(--fig-line)" opacity=".10"/>'
+      +'<path d="'+arm(1)+'" fill="none" stroke="var(--fig-line)" stroke-width="13.5" stroke-linecap="round" opacity=".92"/>'
+      +'<path d="'+arm(-1)+'" fill="none" stroke="var(--fig-line)" stroke-width="13.5" stroke-linecap="round" opacity=".92"/>'
+      +'<path d="'+arm(1)+'" fill="none" stroke="var(--fig-fill)" stroke-width="9.5" stroke-linecap="round"/>'
+      +'<path d="'+arm(-1)+'" fill="none" stroke="var(--fig-fill)" stroke-width="9.5" stroke-linecap="round"/>'
+      +'<rect x="'+(cx-neckHalf)+'" y="70" width="'+(neckHalf*2)+'" height="34" rx="9" fill="var(--fig-fill)" stroke="var(--fig-line)" stroke-width="2"/>'
+      +'<path d="'+cr(body)+'" fill="var(--fig-fill)" stroke="var(--fig-line)" stroke-width="2" stroke-linejoin="round"/>'
+      +'<ellipse cx="'+cx+'" cy="'+headCY+'" rx="'+headRx+'" ry="'+headRy+'" fill="var(--fig-fill)" stroke="var(--fig-line)" stroke-width="2"/>'
+      +'<line x1="'+cx+'" y1="'+(shoulderY+6)+'" x2="'+cx+'" y2="'+(hipY-6)+'" stroke="var(--fig-line)" stroke-width="1" stroke-dasharray="1 5" opacity=".28"/>'
+      +guides+'</svg>';
+    var pref=zoneLabel(segIdx(m.prefTop),'타이트','여유');
+    var note=(est&&est.length)
+      ? '예상 치수 · 신뢰도 '+esc(conf||'—')+' · 폭=측정 반영, 세로=표준 비율'
+      : '폭 = 측정 백분위 반영 · 세로 = 표준 비율';
+    /* 라인만 스타일 — 유형색을 라인(80%+다크)으로, 채움은 아주 옅은 틴트(12%) */
+    var figLine=mixHex(tc,'#2A2823',0.20), figFill=mixHex(tc,'#FFFFFF',0.88);
+    return '<div class="bodymap2" style="--fig-fill:'+figFill+';--fig-line:'+figLine+'">'+svg
+      +'<div class="av-pref"><span>핏 취향</span><b>'+esc(pref)+'</b></div>'
+      +'<div class="av-cap">'+note+'</div></div>';
   }
 
   /* 스타일리스트용 체형 설명 한 줄(8유형) — 고객 체형을 '~체형이에요!'로 설명 */
@@ -290,10 +389,14 @@
       return {label:p[1], val:Math.round(val), pm:Math.max(1,Math.round(d.sd*band))};
     }).filter(Boolean);
   }
+  /* 신뢰도 라벨 — 착용경험 수로. 아바타 캡션·예상치수 공용 */
+  function estConf(r){
+    var n=(r.wearExp||[]).length;
+    return n>=2?'정확 (착용경험 2벌+)' : (n===1?'보통 (착용경험 1벌)' : '낮음 (키·몸무게만)');
+  }
   function estSection(r){
     var es=estBody(r); if(!es||!es.length) return '';
-    var n=(r.wearExp||[]).length;
-    var conf = n>=2?'정확 (착용경험 2벌+)' : (n===1?'보통 (착용경험 1벌)' : '낮음 (키·몸무게만)');
+    var conf = estConf(r);
     return '<div class="cx-sec"><div class="cx-h">예상 신체 치수 <span class="cx-ex">추정</span></div>'+
       '<table class="cx-tbl"><tbody>'+
       es.map(function(x){return '<tr><td>'+esc(x.label)+'</td><td style="text-align:right">약 <b>'+x.val+'</b>cm <span style="color:var(--sub2);font-weight:700">± '+x.pm+'</span></td></tr>';}).join('')+
@@ -333,9 +436,8 @@
         (guide?'<div class="guide-line" style="background:'+pt+'1f;border-left:3px solid '+pt+'">'+esc(guide)+'</div>':'')+
       '</div>'+
       /* ③ 캐릭터 + 어깨·가슴·허리·엉덩이·핏취향(같이) */
-      bodySilhouette(m, bt, r.gender)+
-      /* ④ 예상 신체 치수(회귀 추정 + ± 편차) */
-      estSection(r)+
+      /* ③ 아바타 + 부위별 슬림/표준/볼륨 + 예상 cm(라벨에 바로) */
+      bodySilhouette(m, bt, r.gender, estBody(r), estConf(r))+
       /* ⑤ [프로토타입] 기준 옷 · 브랜드별 추천 사이즈 · 스타일링 힌트 */
       refAndRecs(m, bt, r)+
     '</div>';
@@ -467,14 +569,13 @@
       '<a class="backlink" onclick="location.href=\'pro.html\'">← '+(r.status==='견적작성'?'견적 보내기로':'요청 내역으로')+'</a>'+
       '<p class="crumb">스타일리스트 지원 · '+(r.status==='견적작성'?'견적 보내기':(out?'보낸 제안':'받은 요청'))+'</p>'+
       '<h1>'+esc(r.cust)+' 님'+(r.occ?' · '+esc(r.occ):'')+'</h1>'+
-      '<div class="htags">'+svcBadge(r.service)+'<span class="st '+stClass(r.status)+'">'+esc(r.status)+'</span></div>'+
       '<div class="qgrid2">'+
-        '<div class="qleft">'+ requestReceipt(r, attached) + bodyCard +'</div>'+
-        '<div class="qright">'+
+        '<div class="qleft">'+ statusBanner(r) + requestReceipt(r, attached) +
           '<div class="card offer-card"><div class="subhead">'+(r.status==='견적작성'?'견적 작성':(out?'제안 현황':(r.status==='신규'?'요청을 수락하시겠습니까?':'진행 상태')))+'</div>'+ actionHTML(r) +
             (showReport?reportBoxHTML(r):'')+'</div>'+
           (showMsg?msgCardHTML(r):'')+
         '</div>'+
+        '<div class="qright">'+ bodyCard +'</div>'+
       '</div>';
     if(showMsg){ var th=$('pmThread'); if(th) th.scrollTop=th.scrollHeight; }
   }
