@@ -37,10 +37,10 @@
     <span class="logo" style="cursor:pointer" onclick="go('home')">Fitting<i class="sq"></i></span>
     <nav class="menu">
       <a class="on" data-t="home" onclick="go('home',this)">홈</a>
-      <a data-t="shop" onclick="go('shop',this)">쇼퍼찾기</a>
+      <a data-t="shop" onclick="go('shop',this)">찾기</a>
       <a data-t="my" onclick="go('my',this)">마이</a>
     </nav>
-    <div class="navr"><span class="sup" style="cursor:pointer" onclick="location.href='pro-signup.html'">쇼퍼 지원</span><span class="navdiv"></span><span class="navbell" onclick="goMy('mp-noti')" title="알림" aria-label="알림" style="position:relative;display:inline-flex;align-items:center;cursor:pointer;color:var(--sub)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 4.6-1.9 6-1.9 6h15.8s-1.9-1.4-1.9-6z"/><path d="M10.2 18.5a2 2 0 0 0 3.6 0"/></svg><span id="notiDot" style="position:absolute;top:-2px;right:-2px;width:7px;height:7px;border-radius:50%;background:var(--warn);border:1.5px solid var(--bg);display:none"></span></span><span class="navdiv"></span><span class="navuser" onclick="go('my')"><span class="navav" id="myAv">김</span><span class="navname">김도현 님</span></span></div>
+    <div class="navr"><span class="sup" style="cursor:pointer" onclick="location.href='pro-signup.html'">스타일리스트 지원</span><span class="navdiv"></span><span class="navbell" onclick="goMy('mp-noti')" title="알림" aria-label="알림" style="position:relative;display:inline-flex;align-items:center;cursor:pointer;color:var(--sub)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 4.6-1.9 6-1.9 6h15.8s-1.9-1.4-1.9-6z"/><path d="M10.2 18.5a2 2 0 0 0 3.6 0"/></svg><span id="notiDot" style="position:absolute;top:-2px;right:-2px;width:7px;height:7px;border-radius:50%;background:var(--warn);border:1.5px solid var(--bg);display:none"></span></span><span class="navdiv"></span><span class="navuser" onclick="go('my')"><span class="navav" id="myAv">김</span><span class="navname">김도현 님</span></span></div>
   </div>
 </header>
 
@@ -77,7 +77,7 @@
       </div>
       <div class="cta">
         <button class="btn beige" onclick="startDiag()">내 사이즈 진단 시작하기 →</button>
-        <button class="btn ghost" onclick="go('shop')">쇼퍼 둘러보기</button>
+        <button class="btn ghost" onclick="go('shop')">스타일리스트 둘러보기</button>
       </div>
       <div class="downhint">측정값으로 8체형을 진단해요<span class="arr">↓</span></div>
     </div></section>
@@ -129,12 +129,12 @@
       </div></div>
     </div></section>
 
-    <!-- 원하는 상황 → 쇼퍼 연결 -->
+    <!-- 원하는 상황 → 스타일리스트 연결 -->
     <section class="blk"><div class="hrow">
       <div class="reveal">
         <span class="eyebrow">Shopper match</span>
-        <h2 class="hsec">나와 상황이 맞는 쇼퍼와 함께<br>스타일 같이 해결해요</h2>
-        <p class="lead">내 체형·사이즈에 맞는 쇼퍼를 연결해, 뭘 입을지 고민을 대신 풀어드려요</p>
+        <h2 class="hsec">나와 상황이 맞는 스타일리스트와 함께<br>스타일 같이 해결해요</h2>
+        <p class="lead">내 체형·사이즈에 맞는 스타일리스트를 연결해, 뭘 입을지 고민을 대신 풀어드려요</p>
         <div class="occtokens" id="hOccRow">
           <span class="oc on">소개팅</span><span class="oc">면접·발표</span><span class="oc">결혼식 하객</span><span class="oc">여행</span><span class="oc">일상 코디</span>
         </div>
@@ -150,7 +150,7 @@
     <section class="blk" style="padding-top:0"><div class="hrow reveal">
       <div class="promo">
         <div><b>스타일까지 전문가에게</b></div>
-        <span class="pin" onclick="go('shop')">쇼퍼 찾기</span>
+        <span class="pin" onclick="go('shop')">스타일리스트 찾기</span>
       </div>
     </div></section>
 
@@ -163,21 +163,21 @@
 
   </section>
 
-  <!-- ===== 쇼퍼찾기 ===== -->
+  <!-- ===== 스타일리스트찾기 ===== -->
   <section class="page" id="shop">
 
     <!-- 1.2 목록 (둘러보기) -->
     <div id="listView">
       <div class="listhead" style="margin-top:6px">
         <div>
-          <h2 class="sec" style="margin:0">나에게 맞는 쇼퍼</h2>
-          <p style="font-size:15px; color:var(--sub); margin-top:8px">내 체형·사이즈 기준 <b style="color:var(--ink)">매칭도순</b> · 결과물·후기로 검증된 쇼퍼만 찾아드려요</p>
+          <h2 class="sec" style="margin:0">나에게 맞는 스타일리스트</h2>
+          <p style="font-size:15px; color:var(--sub); margin-top:8px">내 체형·사이즈 기준 <b style="color:var(--ink)">매칭도순</b> · 결과물·후기로 검증된 스타일리스트만 찾아드려요</p>
         </div>
       </div>
 
-      <!-- 견적 요청(여러 쇼퍼) 배너 -->
+      <!-- 견적 요청(여러 스타일리스트) 배너 -->
       <div class="reqbanner">
-        <div class="txt"><b>어떤 쇼퍼가 맞을지 모르겠다면?</b><p>요청을 보내면 여러 쇼퍼가 견적을 보내요 · 비교하고 선택해보세요</p></div>
+        <div class="txt"><b>어떤 스타일리스트가 맞을지 모르겠다면?</b><p>요청을 보내면 여러 스타일리스트가 견적을 보내요 · 비교하고 선택해보세요</p></div>
         <button class="btn" onclick="openMatch()">견적 요청하기 →</button>
       </div>
 
@@ -228,7 +228,7 @@
             <div class="ddopt" data-style="걸리시" onclick="setStyle(event,this)">걸리시</div>
           </div>
         </div>
-        <button class="favfilter" id="favFilterBtn" onclick="toggleFavOnly()" title="즐겨찾기한 쇼퍼만 보기" aria-label="즐겨찾기한 쇼퍼만 보기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4.7L5 21V4a1 1 0 0 1 1-1z"/></svg></button>
+        <button class="favfilter" id="favFilterBtn" onclick="toggleFavOnly()" title="즐겨찾기한 스타일리스트만 보기" aria-label="즐겨찾기한 스타일리스트만 보기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4.7L5 21V4a1 1 0 0 1 1-1z"/></svg></button>
         <div class="search"><span class="mag">⌕</span><input id="q" placeholder="이름·스타일로 찾기" oninput="toggleClr()" onkeydown="if(event.key==='Enter')doSearch()"><span class="clr" id="clrBtn" onclick="clearSearch()" style="display:none">✕</span></div>
         <button class="btn sm" onclick="doSearch()">찾기</button>
         <div class="sort"><select id="sort" onchange="render()">
@@ -243,7 +243,7 @@
       <div class="grid" id="grid"></div>
     </div><!-- /listView -->
 
-    <!-- 1.3.x 쇼퍼 상세 / 견적 요청 (탭 내 화면 전환) -->
+    <!-- 1.3.x 스타일리스트 상세 / 견적 요청 (탭 내 화면 전환) -->
     <section id="detailView" style="display:none"></section>
     <section id="requestView" style="display:none"></section>
   </section>
@@ -384,8 +384,8 @@
         <section class="mpanel" id="mp-fav">
           <div class="crumb">마이페이지 · 1.4·D</div>
           <h1>즐겨찾기</h1>
-          <p class="lead">찜한 쇼퍼를 모아봐요</p>
-          <div class="mcard"><div class="msub"><div class="subhead">찜한 쇼퍼 <span class="pr half">◐ MVP</span></div>
+          <p class="lead">찜한 스타일리스트를 모아봐요</p>
+          <div class="mcard"><div class="msub"><div class="subhead">찜한 스타일리스트 <span class="pr half">◐ MVP</span></div>
             <div class="fav" id="favList"></div>
           </div></div>
         </section>
@@ -430,7 +430,7 @@
             </div>
             <div class="msub"><div class="subhead">1:1 문의 <span class="pr half">◐ MVP</span></div>
               <div class="feat">문의 유형</div>
-              <div class="seg" id="supType"><span class="o on" onclick="supPick(this)">결제·환불</span><span class="o" onclick="supPick(this)">매칭·쇼퍼</span><span class="o" onclick="supPick(this)">진단·엔진</span><span class="o" onclick="supPick(this)">계정·기타</span></div>
+              <div class="seg" id="supType"><span class="o on" onclick="supPick(this)">결제·환불</span><span class="o" onclick="supPick(this)">매칭·스타일리스트</span><span class="o" onclick="supPick(this)">진단·엔진</span><span class="o" onclick="supPick(this)">계정·기타</span></div>
               <div class="feat">관련 거래 · <em style="color:var(--sub2);font-style:normal">선택</em></div>
               <div class="seg" id="supReq"><span class="o on" onclick="supPick(this)">없음</span><span class="o" onclick="supPick(this)">소개팅 견적</span><span class="o" onclick="supPick(this)">결혼식 하객 · 상민</span></div>
               <div class="feat">내용 · <em>필수</em></div>
@@ -517,7 +517,7 @@
 <div class="sheet" id="sheet">
   <div class="grip"></div>
   <h3 id="loginTitle">로그인하고 이어가기</h3>
-  <p class="ss">쇼퍼 둘러보기는 비회원도 자유예요 · 견적 요청·결과 저장은 로그인 후 이어져요</p>
+  <p class="ss">스타일리스트 둘러보기는 비회원도 자유예요 · 견적 요청·결과 저장은 로그인 후 이어져요</p>
   <div class="social">
     <button class="kakao" onclick="loginDone()">카카오로 계속하기</button>
     <button class="naver" onclick="loginDone()">네이버로 계속하기</button>

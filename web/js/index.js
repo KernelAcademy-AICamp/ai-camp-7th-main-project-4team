@@ -2,7 +2,7 @@
   function go(id, el){
     document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on', p.id===id));
     document.querySelectorAll('.menu a').forEach(a=>a.classList.toggle('on', a.dataset.t===id));
-    if(id==='shop') showOnly('listView');   // 쇼퍼찾기는 항상 목록부터
+    if(id==='shop') showOnly('listView');   // 스타일리스트찾기는 항상 목록부터
     window.scrollTo({top:0, behavior:'smooth'});
   }
 
@@ -34,7 +34,7 @@
   function goMy(panel){ go('my'); var a=document.querySelector('#smenu a[data-p="'+panel+'"]'); if(a) myNav(a); }
 
   /* =========================================================
-     쇼퍼찾기 (source: idea/데모/쇼퍼찾기_상세.html 이식)
+     스타일리스트찾기 (source: idea/데모/스타일리스트찾기_상세.html 이식)
      1.2 둘러보기(검색·정렬·필터) + 1.3 견적요청 + 1.3.7 결과
      찜·요청 상태는 localStorage에 저장 → 마이페이지와 연동
      ========================================================= */
@@ -48,12 +48,12 @@
     image:'<path d="M12 3.6l1.6 4.5 4.5 1.6-4.5 1.6L12 15.8l-1.6-4.5L5.9 9.7l4.5-1.6L12 3.6z"/><path d="M18.6 13.8v2.2M19.7 14.9h-2.2"/>'
   };
   function svcIcon(v){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+(SVCI_SVG[v]||'')+'</svg>'; }
-  /* 상황(=쇼퍼 전문분야, 고객 화면 라벨) — 7가지 확정 (docs/쇼퍼-데이터-계약.md) */
+  /* 상황(=스타일리스트 전문분야, 고객 화면 라벨) — 7가지 확정 (docs/스타일리스트-데이터-계약.md) */
   var OCC={date:'소개팅·데이트', interview:'면접·발표', wedding:'결혼식 하객', travel:'여행', daily:'데일리 스타일링', personal:'퍼스널 스타일링', bodycover:'체형 커버 스타일링'};
   var BUD={b1:'~5만', b2:'5~10만', b3:'10~15만', b4:'15만+'};
   function budOf(p){ return p<50000?'b1':(p<=100000?'b2':(p<=150000?'b3':'b4')); }
   var FB="this.onerror=null;";
-  /* 쇼퍼 프로필 이미지 — 외부 랜덤 사진 대신 일관된 '수트 입은 여성' 플랫 일러스트(SVG data URI).
+  /* 스타일리스트 프로필 이미지 — 외부 랜덤 사진 대신 일관된 '수트 입은 여성' 플랫 일러스트(SVG data URI).
      seed(lock)로 배경·정장·머리색만 살짝 변주해 카드가 똑같아 보이지 않게. */
   function suitPhoto(seed){
     var bgs=['#E7EFEA','#ECEAE3','#E6EDF2','#F0EAE4','#E9EEEA','#EEEAF0'];
@@ -77,9 +77,9 @@
   var BOOK_PATH='M6 3h12a1 1 0 0 1 1 1v17l-7-4.7L5 21V4a1 1 0 0 1 1-1z';
   function favIcon(on, onPhoto){ return '<svg class="bk'+(onPhoto?'':' lt')+(on?' on':'')+'" viewBox="0 0 24 24"><path d="'+BOOK_PATH+'"/></svg>'; }
 
-  /* 서비스 제공 방식(타입 고정) — 데이터 계약(docs/쇼퍼-데이터-계약.md §2) */
+  /* 서비스 제공 방식(타입 고정) — 데이터 계약(docs/스타일리스트-데이터-계약.md §2) */
   var SMODE={online:'비대면', shopping:'대면', image:'대면'};   // 제공 방식(타입 고정) · 대면이면 활동지역
-  /* 쇼퍼 = 다중 서비스(services[{type,price,dur,regions?}]). 코드 image로 통일 */
+  /* 스타일리스트 = 다중 서비스(services[{type,price,dur,regions?}]). 코드 image로 통일 */
   var EX=[
     {lock:32, nm:'소희', photo:'photos/p1.jpg', occ:['date','daily','personal'], rating:4.9, review:12, match:97, tags:['미니멀','캐주얼','시크'],
       services:[{type:'online',price:90000},{type:'shopping',price:130000,regions:['서울 강남','서울 마포']},{type:'image',price:110000,regions:['서울 강남','서울 마포']}],
@@ -121,8 +121,8 @@
   function saveLS(k, v){ try{ localStorage.setItem('fitting.'+k, JSON.stringify(v)); }catch(e){} }
   var favs = loadLS('favs', [ {nm:'소희', svc:'online', rating:4.9, photo:'photos/p1.jpg'} ]);
 
-  /* 입찰(역경매) 생성 — 오픈 요청에 서비스 유형이 맞는 쇼퍼들이 입찰.
-     입찰은 EX 쇼퍼 풀을 단일 출처로 참조(idx)하고, 가격·메시지·예상기간만 요청별로 붙임.
+  /* 입찰(역경매) 생성 — 오픈 요청에 서비스 유형이 맞는 스타일리스트들이 입찰.
+     입찰은 EX 스타일리스트 풀을 단일 출처로 참조(idx)하고, 가격·메시지·예상기간만 요청별로 붙임.
      제출 시 1회 생성해 저장 → 재렌더에도 고정(랜덤 없이 결정적). */
   function makeBids(svc, occ){
     var oc=(occ&&occ[0])||'이번';
@@ -157,7 +157,7 @@
     if(isFav(nm)) favs=favs.filter(function(f){return f.nm!==nm;});
     else if(e) favs.unshift({nm:e.nm, svc:svcTypes(e)[0], rating:e.rating, photo:e.photo||img(e)});
     saveLS('favs', favs); render(); renderFavs();
-    toast(isFav(nm)?(nm+' 쇼퍼를 즐겨찾기에 담았어요'):(nm+' 쇼퍼를 즐겨찾기에서 뺐어요'));
+    toast(isFav(nm)?(nm+' 스타일리스트를 즐겨찾기에 담았어요'):(nm+' 스타일리스트를 즐겨찾기에서 뺐어요'));
   }
   function addReq(r){ reqs.unshift(r); saveLS('reqs', reqs); renderReqs(); }
 
@@ -195,9 +195,9 @@
 
   /* ===== 알림 센터 (G.6) — 매칭·문의 답변·소식 회신 ===== */
   var notis = loadLS('notis', [
-    {ic:'💬', msg:'소희 쇼퍼가 견적을 보냈어요', time:'10분 전', read:false, go:'mp-req'},
+    {ic:'💬', msg:'소희 스타일리스트가 견적을 보냈어요', time:'10분 전', read:false, go:'mp-req'},
     {ic:'📩', msg:'1:1 문의 답변이 등록됐어요', time:'1시간 전', read:false, go:'mp-support'},
-    {ic:'📢', msg:'새 쇼퍼가 합류했어요 · 매칭도를 확인해보세요', time:'어제', read:true, go:'shop'}
+    {ic:'📢', msg:'새 스타일리스트가 합류했어요 · 매칭도를 확인해보세요', time:'어제', read:true, go:'shop'}
   ]);
   function notiUnread(){ return notis.filter(function(n){ return !n.read; }).length; }
   function updateNotiDot(){ var d=document.getElementById('notiDot'); if(d) d.style.display=notiUnread()?'block':'none'; }
@@ -328,22 +328,22 @@
   /* 마이페이지 · 즐겨찾기 렌더 */
   function renderFavs(){
     var el=document.getElementById('favList'); if(!el) return;
-    if(!favs.length){ el.innerHTML='<p class="note" style="grid-column:1/-1">아직 찜한 쇼퍼가 없어요 · 쇼퍼찾기에서 🤍 를 눌러 담아보세요</p>'; return; }
+    if(!favs.length){ el.innerHTML='<p class="note" style="grid-column:1/-1">아직 찜한 스타일리스트가 없어요 · 스타일리스트찾기에서 🤍 를 눌러 담아보세요</p>'; return; }
     el.innerHTML=favs.map(function(f){
-      var e=EX.filter(function(x){return x.nm===f.nm;})[0];   // 지정 쇼퍼 원본(얼굴·전문분야) 단일 출처
-      var face=e?img(e):(f.photo||'');                        // 실제 지정 쇼퍼 얼굴(SVG)
+      var e=EX.filter(function(x){return x.nm===f.nm;})[0];   // 지정 스타일리스트 원본(얼굴·전문분야) 단일 출처
+      var face=e?img(e):(f.photo||'');                        // 실제 지정 스타일리스트 얼굴(SVG)
       var rating=(f.rating!=null?f.rating:(e&&e.rating));
       var review=e?e.review:null;
-      var tags=(e&&e.tags)?e.tags.slice(0,2):[];              // 스타일 태그 2개 (쇼퍼찾기 카드와 동일)
+      var tags=(e&&e.tags)?e.tags.slice(0,2):[];              // 스타일 태그 2개 (스타일리스트찾기 카드와 동일)
       var rt=rating?'<span class="star"><span class="rvstar">'+starSVG()+'</span> '+rating+(review!=null?' <small class="rv">('+review+')</small>':'')+'</span>':'';
       var svcico=e?'<div class="cardmid"><span class="svcico">'+e.services.map(function(sv){return '<span class="b" title="'+SVC[sv.type]+'">'+svcIcon(sv.type)+'</span>';}).join('')+'</span></div>':'';
       return '<div class="fcard"'+(e?' onclick="favOpen(\''+f.nm+'\')"':'')+'><div class="cov"><img class="favimg" src="'+face+'" alt="" onerror="'+FB+'"><span class="heart" title="즐겨찾기 해제" onclick="event.stopPropagation();toggleFav(\''+f.nm+'\')">'+favIcon(true,true)+'</span></div>'+
-        '<div class="fb"><div class="top"><b>'+f.nm+' 쇼퍼</b>'+rt+'</div>'+
+        '<div class="fb"><div class="top"><b>'+f.nm+' 스타일리스트</b>'+rt+'</div>'+
         (tags.length?'<div class="subtags">'+tags.join(' · ')+'</div>':'')+svcico+
         '</div></div>';
     }).join('');
   }
-  /* 즐겨찾기 카드 클릭 → 쇼퍼찾기 탭의 상세 화면으로 전환(뒤로가기=즐겨찾기 복귀) */
+  /* 즐겨찾기 카드 클릭 → 스타일리스트찾기 탭의 상세 화면으로 전환(뒤로가기=즐겨찾기 복귀) */
   function favOpen(nm){
     var idx=EX.map(function(e){return e.nm;}).indexOf(nm); if(idx<0) return;
     go('shop'); openDetail(idx); _detailBack=function(){ goMy('mp-fav'); };
@@ -356,38 +356,38 @@
   function starSVG(){ return '<svg class="cutestar" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M12 4 L14.1 9.6 20.1 9.9 15.4 13.6 17 19.4 12 16.1 7 19.4 8.6 13.6 3.9 9.9 9.9 9.6Z"/></svg>'; }
   function reviewForm(r,i){ var rt=r._rating||5, st='';
     for(var k=1;k<=5;k++) st+='<span class="'+(k<=rt?'on':'')+'" onclick="setStar('+i+','+k+')">'+starSVG()+'</span>';
-    return '<div class="reqact"><div class="reviewform"><div class="stars">'+st+'</div><textarea class="rtext" id="rtext'+i+'" placeholder="쇼퍼와의 경험을 남겨주세요">'+(r._text||'')+'</textarea><div class="rbtns"><button class="tinybtn ghost" onclick="cancelReview('+i+')">취소</button><button class="tinybtn" onclick="submitReview('+i+')">후기 등록</button></div></div></div>';
+    return '<div class="reqact"><div class="reviewform"><div class="stars">'+st+'</div><textarea class="rtext" id="rtext'+i+'" placeholder="스타일리스트와의 경험을 남겨주세요">'+(r._text||'')+'</textarea><div class="rbtns"><button class="tinybtn ghost" onclick="cancelReview('+i+')">취소</button><button class="tinybtn" onclick="submitReview('+i+')">후기 등록</button></div></div></div>';
   }
-  /* 매칭 완료 히어로 배너 — 지난 견적/진행 상태에서 '○○ 쇼퍼로 매칭' 을 딥그린+얼굴로 예쁘게 */
+  /* 매칭 완료 히어로 배너 — 지난 견적/진행 상태에서 '○○ 스타일리스트로 매칭' 을 딥그린+얼굴로 예쁘게 */
   function matchedBannerHTML(r){
     var sub = r.status==='완료' ? '코디가 완료됐어요 · 후기를 남겨보세요'
             : r.status==='후기완료' ? '코디와 후기까지 완료됐어요 · 고마워요'
             : '곧 코디를 시작해요 · 완료되면 후기를 남겨주세요';
     var ck='<span class="mb-ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>';
     return '<div class="matchban">'+ck+
-      '<div class="mb-tx"><b>'+(r.nm||'')+' 쇼퍼로 매칭되었어요!</b><span>'+sub+'</span></div></div>';
+      '<div class="mb-tx"><b>'+(r.nm||'')+' 스타일리스트로 매칭되었어요!</b><span>'+sub+'</span></div></div>';
   }
   function reqAction(r,i){ var s=r.status;
     if(s==='견적중'){ var n=(r.bids||[]).length;
-      if(!n) return '<div class="reqact"><span>견적을 받는 중이에요 · 쇼퍼들이 견적을 준비하고 있어요</span></div>';
-      return '<div class="reqact"><div class="offerbox"><b>견적 <span class="num">'+n+'</span>개 도착</b><div class="omsg">여러 쇼퍼가 견적을 보냈어요 · 비교하고 선택하세요</div></div><button class="tinybtn" style="margin-left:auto" onclick="openBids('+i+')">받은 견적 보기 →</button></div>'; }
-    if(s==='대기') return '<div class="reqact"><span>쇼퍼가 요청을 검토하고 있어요 · 응답을 기다리는 중</span><button class="tinybtn ghost" style="margin-left:auto" onclick="confirmCancel('+i+')">요청 취소</button></div>'+
-      '<div class="reqact" style="background:none; padding:10px 2px 0"><span class="muted" style="font-size:12px">데모 · 쇼퍼 응답 시뮬레이션</span><div class="obtns" style="margin-left:auto"><button class="tinybtn ghost" onclick="reqReject('+i+')">거절</button><button class="tinybtn" onclick="reqAccept('+i+')">수락</button></div></div>';
+      if(!n) return '<div class="reqact"><span>견적을 받는 중이에요 · 스타일리스트들이 견적을 준비하고 있어요</span></div>';
+      return '<div class="reqact"><div class="offerbox"><b>견적 <span class="num">'+n+'</span>개 도착</b><div class="omsg">여러 스타일리스트가 견적을 보냈어요 · 비교하고 선택하세요</div></div><button class="tinybtn" style="margin-left:auto" onclick="openBids('+i+')">받은 견적 보기 →</button></div>'; }
+    if(s==='대기') return '<div class="reqact"><span>스타일리스트가 요청을 검토하고 있어요 · 응답을 기다리는 중</span><button class="tinybtn ghost" style="margin-left:auto" onclick="confirmCancel('+i+')">요청 취소</button></div>'+
+      '<div class="reqact" style="background:none; padding:10px 2px 0"><span class="muted" style="font-size:12px">데모 · 스타일리스트 응답 시뮬레이션</span><div class="obtns" style="margin-left:auto"><button class="tinybtn ghost" onclick="reqReject('+i+')">거절</button><button class="tinybtn" onclick="reqAccept('+i+')">수락</button></div></div>';
     if(s==='취소함') return '<div class="reqact"><span class="muted">요청을 취소했어요</span></div>';
-    if(s==='수락') return '<div class="reqact"><span><b style="color:var(--green)">요청 수락되었어요!</b> 이제 쇼퍼와 코디를 진행해요</span></div>';
+    if(s==='수락') return '<div class="reqact"><span><b style="color:var(--green)">요청 수락되었어요!</b> 이제 스타일리스트와 코디를 진행해요</span></div>';
     if(s==='진행중') return matchedBannerHTML(r)+
       '<div class="reqact" style="background:none; padding:10px 2px 0"><span class="muted" style="font-size:12px">데모 · 서비스 완료 시뮬레이션</span><button class="tinybtn ghost" style="margin-left:auto" onclick="reqComplete('+i+')">완료 처리</button></div>';
     if(s==='완료'){ if(r._reviewing) return matchedBannerHTML(r)+reviewForm(r,i);
       return matchedBannerHTML(r)+'<div class="reqact" style="background:none; padding:12px 2px 0"><span class="muted" style="font-size:12px">서비스가 완료됐어요</span><button class="tinybtn" style="margin-left:auto" onclick="openReviewForm('+i+')">후기 작성하기</button></div>'; }
     if(s==='후기완료'){ var rv=r.review||{}; return matchedBannerHTML(r)+'<div class="reqact"><div class="revshow"><span class="starsRO">'+starsRO(rv.rating||5)+'</span> <span class="rtx">"'+(rv.text||'')+'"</span></div></div>'; }
-    if(s==='거절') return '<div class="reqact"><span class="muted">아쉽게도 요청이 거절되었어요!</span><button class="tinybtn ghost" style="margin-left:auto" onclick="closeBids();go(\'shop\')">다른 쇼퍼 찾기</button></div>';
+    if(s==='거절') return '<div class="reqact"><span class="muted">아쉽게도 요청이 거절되었어요!</span><button class="tinybtn ghost" style="margin-left:auto" onclick="closeBids();go(\'shop\')">다른 스타일리스트 찾기</button></div>';
     return '';
   }
   /* 요청 카드 1개 (원본 reqs 인덱스 i 유지 — 액션 핸들러가 참조) */
   function reqCard(r,i){
     if(r.kind==='notify') return '<div class="req notify"><div class="reqtop"><div class="info"><b>오픈 알림 신청 완료</b></div><span class="st wait">오픈 대기</span></div></div>';
     var cls = r.open ? 'open' : 'named';
-    var title = (r.open && r.nm ? '선택 · '+r.nm+' 쇼퍼' : (r.nm ? r.nm+' 쇼퍼' : '견적 요청')) + ' · ' + svcLabel(r.svc);
+    var title = (r.open && r.nm ? '선택 · '+r.nm+' 스타일리스트' : (r.nm ? r.nm+' 스타일리스트' : '견적 요청')) + ' · ' + svcLabel(r.svc);
     var sub = [(r.occ&&r.occ.length?r.occ.join('·'):''), (r.date||'')].filter(Boolean).join(' · ');
     return '<div class="req '+cls+'"><div class="reqtop"><div class="ic"></div><div class="info"><b>'+title+'</b><small>'+sub+'</small></div><span class="st '+stClass(r.status)+'">'+statusLabel(r.status)+'</span></div>'+reqAction(r,i)+'</div>';
   }
@@ -402,14 +402,14 @@
   function shortDate(d){ return (typeof d==='string' && /^\d{4}\./.test(d)) ? d.slice(2) : (d||''); }
   /* 통일 리스트 행(.ureq) — 1줄: 상황·서비스 / 2줄: 이름·날짜·예산. 서비스는 모노 아이콘, 색은 상태에만 */
   function reqCardOpen(r,i,xc){
-    if(r.awarded) return reqCardNamed(r,i,xc);   // 매칭 완료 → 지명 요청과 동일하게(진행중 쇼퍼 · 진행 상세로)
+    if(r.awarded) return reqCardNamed(r,i,xc);   // 매칭 완료 → 지명 요청과 동일하게(진행중 스타일리스트 · 진행 상세로)
     var n=(r.bids||[]).length;
     var title = [(r.occ&&r.occ.length?r.occ.join('·'):''), svcLabel(r.svc)].filter(Boolean).join(' · ') || '코디 요청';
     var money = r.budget?' · <b>예산 '+r.budget+'</b>':'';
     var pill = (r.status==='견적중')?'<b class="cnt">견적 '+n+'개</b>':'<span class="st '+stClass(r.status)+'">'+statusLabel(r.status)+'</span>';
     return '<div class="ureq'+(xc?' '+xc:'')+'" onclick="openBids('+i+')">'+
         '<span class="ureq-ic">'+svcIcon(r.svc)+'</span>'+
-        '<div class="ureq-l"><div class="ureq-title">'+title+'</div><div class="ureq-meta">여러 쇼퍼 · '+shortDate(r.date)+money+'</div></div>'+
+        '<div class="ureq-l"><div class="ureq-title">'+title+'</div><div class="ureq-meta">여러 스타일리스트 · '+shortDate(r.date)+money+'</div></div>'+
         '<div class="ureq-r">'+pill+'<span class="chev">›</span></div>'+
       '</div>';
   }
@@ -419,7 +419,7 @@
     var money = r.budget?' · <b>예산 '+r.budget+'</b>':(r.price?' · <b>예상 '+r.price.toLocaleString()+'원</b>':'');
     return '<div class="ureq'+(xc?' '+xc:'')+'" onclick="openReqDetail('+i+')">'+
         '<span class="ureq-ic">'+svcIcon(r.svc)+'</span>'+
-        '<div class="ureq-l"><div class="ureq-title">'+title+'</div><div class="ureq-meta">'+(r.nm?r.nm+' 쇼퍼 · ':'')+shortDate(r.date)+money+'</div></div>'+
+        '<div class="ureq-l"><div class="ureq-title">'+title+'</div><div class="ureq-meta">'+(r.nm?r.nm+' 스타일리스트 · ':'')+shortDate(r.date)+money+'</div></div>'+
         '<div class="ureq-r"><span class="st '+stClass(r.status)+'">'+statusLabel(r.status)+'</span><span class="chev">›</span></div>'+
       '</div>';
   }
@@ -451,18 +451,18 @@
         '<div class="rglist">'+body+'</div></div>';
     }
     var html =
-      group(open,'open',ICON_RECV,'받은 견적', reqCardOpen, '여러 쇼퍼가 보낸 견적 · 비교하고 선택',
+      group(open,'open',ICON_RECV,'받은 견적', reqCardOpen, '여러 스타일리스트가 보낸 견적 · 비교하고 선택',
         '아직 없어요 · <a onclick="go(\'shop\');openMatch()">견적 요청 보내기</a>', true) +
-      group(named,'named',ICON_SENT,'보낸 요청', reqCardNamed, '내가 지명한 쇼퍼에게 직접 · 진행 확인',
-        '아직 없어요 · <a onclick="go(\'shop\')">쇼퍼 찾아 요청하기</a>');
+      group(named,'named',ICON_SENT,'보낸 요청', reqCardNamed, '내가 지명한 스타일리스트에게 직접 · 진행 확인',
+        '아직 없어요 · <a onclick="go(\'shop\')">스타일리스트 찾아 요청하기</a>');
     if(notify.length) html += '<div class="reqgroup"><div class="rghead alert"><span class="rgicon">'+ICON_BELL+'</span>'+
-      '<div class="rgtx"><b>오픈 알림 신청</b><p>쇼퍼가 모이면 · 가장 먼저 알림</p></div>'+
+      '<div class="rgtx"><b>오픈 알림 신청</b><p>스타일리스트가 모이면 · 가장 먼저 알림</p></div>'+
       '<span class="rgcount"><span class="num">'+notify.length+'</span>건</span></div>'+
       '<div class="rglist">'+notify.map(function(i){ return reqCard(reqs[i],i); }).join('')+'</div></div>';
     el.innerHTML = html;
   }
   /* 요청 라이프사이클 액션 (목업) — 지명 요청: 대기 → 수락(진행중→완료→후기) / 거절 */
-  function reqAccept(i){ reqs[i].status='진행중'; saveLS('reqs',reqs); syncReqViews(); toast((reqs[i].nm||'')+' 쇼퍼와 코디를 시작해요'); }
+  function reqAccept(i){ reqs[i].status='진행중'; saveLS('reqs',reqs); syncReqViews(); toast((reqs[i].nm||'')+' 스타일리스트와 코디를 시작해요'); }
   function reqReject(i){ reqs[i].status='거절'; saveLS('reqs',reqs); syncReqViews(); toast('아쉽게도 요청이 거절되었어요!'); }
   function reqCancel(i){ reqs[i].status='취소함'; saveLS('reqs',reqs); syncReqViews(); toast('요청을 취소했어요'); }
   function reqComplete(i){ reqs[i].status='완료'; saveLS('reqs',reqs); syncReqViews(); toast('서비스가 완료됐어요 · 후기를 남겨보세요'); }
@@ -510,12 +510,12 @@
   }
   /* 상태 → [배너색, 아이콘, 제목, 설명] */
   var ST_BAN={
-    '대기':    ['wait','clock','응답 대기 중','쇼퍼가 요청을 검토하고 있어요'],
-    '수락':    ['go','check','요청 수락됨','쇼퍼가 요청을 수락했어요 · 곧 코디를 시작해요'],
-    '진행중':  ['go','check','진행 중','쇼퍼와 코디를 진행하고 있어요 · 완료되면 후기를 남겨주세요'],
+    '대기':    ['wait','clock','응답 대기 중','스타일리스트가 요청을 검토하고 있어요'],
+    '수락':    ['go','check','요청 수락됨','스타일리스트가 요청을 수락했어요 · 곧 코디를 시작해요'],
+    '진행중':  ['go','check','진행 중','스타일리스트와 코디를 진행하고 있어요 · 완료되면 후기를 남겨주세요'],
     '완료':    ['go','flag','서비스 완료','코디가 완료됐어요 · 후기를 남겨보세요'],
     '후기완료':['go','star','후기 작성 완료','소중한 후기 고마워요'],
-    '거절':    ['no','x','요청 거절됨','아쉽게도 요청이 거절되었어요 · 다른 쇼퍼를 찾아보세요'],
+    '거절':    ['no','x','요청 거절됨','아쉽게도 요청이 거절되었어요 · 다른 스타일리스트를 찾아보세요'],
     '취소함':  ['wait','x','요청 취소됨','요청을 취소했어요']
   };
   function reqStatusBlock(status){
@@ -530,16 +530,16 @@
     if(s==='진행중') return '<div class="rq-btns"><button class="tinybtn ghost" onclick="reqComplete('+i+')">완료 처리 · 데모</button></div>';
     if(s==='완료'){ if(r._reviewing) return reviewForm(r,i); return '<div class="rq-btns"><button class="tinybtn" onclick="openReviewForm('+i+')">후기 작성하기</button></div>'; }
     if(s==='후기완료'){ var rv=r.review||{}; return '<div class="reqact"><div class="revshow"><span class="starsRO">'+starsRO(rv.rating||5)+'</span> <span class="rtx">"'+(rv.text||'')+'"</span></div></div>'; }
-    if(s==='거절') return '<div class="rq-btns"><button class="tinybtn ghost" onclick="closeBids();go(\'shop\')">다른 쇼퍼 찾기</button></div>';
+    if(s==='거절') return '<div class="rq-btns"><button class="tinybtn ghost" onclick="closeBids();go(\'shop\')">다른 스타일리스트 찾기</button></div>';
     return '';
   }
-  /* 지명 요청 상세 — 진행 상태(스테퍼+배너) + 액션 + 쇼퍼 + 요청 내용 */
+  /* 지명 요청 상세 — 진행 상태(스테퍼+배너) + 액션 + 스타일리스트 + 요청 내용 */
   function renderReqDetail(){
     var r=reqs[_bidReq]; if(!r){ closeBids(); return; }
     var e=EX.filter(function(x){return x.nm===r.nm;})[0];
-    var shopper = e ? '<div class="rq-sec"><div class="rq-h">쇼퍼</div><div class="req-summary-in"><div class="rs-shopper">'+
+    var shopper = e ? '<div class="rq-sec"><div class="rq-h">스타일리스트</div><div class="req-summary-in"><div class="rs-shopper">'+
         '<img class="av" src="'+img(e)+'" alt="" onerror="'+FB+'">'+
-        '<div class="who"><div class="nm">'+e.nm+' 쇼퍼</div><div class="mt"><span class="rvstar">'+starSVG()+'</span> <span class="num">'+e.rating+'</span> · 매칭도 '+e.match+'%</div></div>'+
+        '<div class="who"><div class="nm">'+e.nm+' 스타일리스트</div><div class="mt"><span class="rvstar">'+starSVG()+'</span> <span class="num">'+e.rating+'</span> · 매칭도 '+e.match+'%</div></div>'+
         '<button class="prof" onclick="detailFromReq('+EX.indexOf(e)+','+_bidReq+',\'req\')">프로필</button>'+
       '</div></div></div>' : '';
     var head='<div class="bids-head"><button class="xbtn" onclick="closeBids()">✕</button>'+
@@ -560,19 +560,19 @@
     var badge = r.awarded ? '' : '<span class="reqtype open">견적 요청 결과</span>';   // 지난 견적: 뒤로가기만 (배지 중복 제거)
     var head='<div class="bids-head"><button class="xbtn" onclick="closeBids()">✕</button>'+ back + badge +
       '<h2>'+(r.awarded?'지난 견적':'받은 견적')+'</h2>'+
-      '<p><b class="num">'+bids.length+'</b>명의 쇼퍼가 견적을 보냈어요</p>'+
+      '<p><b class="num">'+bids.length+'</b>명의 스타일리스트가 견적을 보냈어요</p>'+
       '<button class="req-toggle" onclick="toggleReqSummary(this)">내가 보낸 요청 내용 <span class="tg">▾</span></button>'+
       '<div class="req-summary" id="reqSummaryPanel">'+reqSummaryHTML(r)+'</div></div>';
     var awardedIdx = (r.awarded && typeof r.awarded.idx!=='undefined') ? r.awarded.idx : null;
-    var canPick = (r.status==='견적중');   // 취소·진행중이면 더 이상 쇼퍼 선택 불가
+    var canPick = (r.status==='견적중');   // 취소·진행중이면 더 이상 스타일리스트 선택 불가
     var cards=bids.map(function(b){ var e=EX[b.idx];
       var isSel=(awardedIdx===b.idx);
       var badges='';   // 선택 표시는 카드 강조 + 하단 '진행중' 버튼으로 (상단 배지 제거)
       var action = isSel ? '<span class="q-status">'+statusLabel(r.status)+'</span>'
-                 : (canPick ? '<button class="tinybtn" onclick="confirmAward('+b.idx+')">이 쇼퍼로 선택</button>' : '');
+                 : (canPick ? '<button class="tinybtn" onclick="confirmAward('+b.idx+')">이 스타일리스트로 선택</button>' : '');
       return '<div class="qcard'+(isSel?' sel':'')+'">'+
         '<div class="q-l">'+
-          '<div class="q-top"><img class="q-ph" src="'+img(e)+'" alt="" onerror="'+FB+'"><div class="q-nm">'+e.nm+' 쇼퍼</div>'+badges+'</div>'+
+          '<div class="q-top"><img class="q-ph" src="'+img(e)+'" alt="" onerror="'+FB+'"><div class="q-nm">'+e.nm+' 스타일리스트</div>'+badges+'</div>'+
           '<div class="q-price">총 <span class="num">'+b.price.toLocaleString()+'</span>원</div>'+
           '<div class="q-meta"><span class="rvstar">'+starSVG()+'</span> <span class="num">'+e.rating+'</span> ('+e.review+') · 매칭도 <b>'+e.match+'%</b> · '+svcLabel(r.svc)+' · '+(b.eta||'')+'</div>'+
           '<div class="q-tags">'+e.tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>'+
@@ -586,13 +586,13 @@
     var cancel = (r.status==='견적중') ? '<div class="bids-cancel"><button onclick="confirmCancel('+_bidReq+')">이 견적 요청 취소하기</button></div>' : '';
     document.getElementById('bidsBody').innerHTML=head+lifecycle+'<div class="bids-list">'+cards+'</div>'+cancel;
   }
-  /* 쇼퍼 선택은 되돌릴 수 없으므로 확인 모달 후 확정 */
+  /* 스타일리스트 선택은 되돌릴 수 없으므로 확인 모달 후 확정 */
   function confirmAward(idx){ var e=EX[idx];
-    askConfirm('<b>'+e.nm+' 쇼퍼</b>로 선택할까요?<div class="cf-sub">선택하면 바로 쇼퍼와 매칭돼 코디를 시작해요</div>', '이 쇼퍼로 선택', function(){ awardBid(idx); }); }
+    askConfirm('<b>'+e.nm+' 스타일리스트</b>로 선택할까요?<div class="cf-sub">선택하면 바로 스타일리스트와 매칭돼 코디를 시작해요</div>', '이 스타일리스트로 선택', function(){ awardBid(idx); }); }
   function awardBid(idx){ var r=reqs[_bidReq]; if(!r) return; var e=EX[idx];
     var win=(r.bids||[]).filter(function(b){return b.idx===idx;})[0];
     var so=svcOf(e, r.svc); r.nm=e.nm; r.status='진행중'; r.awarded={idx:idx, price:win?win.price:(so?so.price:svcMinPrice(e))};
-    saveLS('reqs',reqs); renderReqs(); openReqDetail(_bidReq); toast(e.nm+' 쇼퍼로 진행해요 · 코디를 시작할게요');
+    saveLS('reqs',reqs); renderReqs(); openReqDetail(_bidReq); toast(e.nm+' 스타일리스트로 진행해요 · 코디를 시작할게요');
   }
   /* 공용 확인 모달 */
   function askConfirm(msg, yesLabel, onYes, noLabel){
@@ -607,7 +607,7 @@
   /* 요청/견적 취소도 되돌릴 수 없으므로 재차 확인 */
   function confirmCancel(i){ var r=reqs[i]; if(!r) return; var isOpen=!!r.open;
     var msg = isOpen ? '이 견적 요청을 취소할까요?<div class="cf-sub">받은 견적이 모두 사라져요</div>'
-                     : '이 요청을 취소할까요?<div class="cf-sub">쇼퍼에게 보낸 요청이 취소돼요</div>';
+                     : '이 요청을 취소할까요?<div class="cf-sub">스타일리스트에게 보낸 요청이 취소돼요</div>';
     askConfirm(msg, '취소하기', function(){ if(isOpen) closeBids(); reqCancel(i); }, '돌아가기');
   }
 
@@ -623,7 +623,7 @@
   function setSvc(el){ setActive(el); curSvc=el.dataset.svc; render(); }
   function setOcc(el){ setActive(el); curOcc=el.dataset.occ; updateDD('ddOcc', curOcc==='all'?'':OCC[curOcc]); closeDD(); render(); }
   function setBud(el){ setActive(el); curBudget=el.dataset.bud; updateDD('ddBud', curBudget==='all'?'':BUD[curBudget]); closeDD(); render(); }
-  // 즐겨찾기 필터 — 켜면 즐겨찾기한 쇼퍼만 목록에 표시(다른 필터와 함께 동작)
+  // 즐겨찾기 필터 — 켜면 즐겨찾기한 스타일리스트만 목록에 표시(다른 필터와 함께 동작)
   function toggleFavOnly(){ favOnly=!favOnly; var b=document.getElementById('favFilterBtn'); if(b) b.classList.toggle('on', favOnly); render(); }
   /* 스타일은 다중선택(OR) — 메뉴 열어둔 채 토글 */
   function setStyle(e, el){ e.stopPropagation();
@@ -668,15 +668,15 @@
     var g=document.getElementById('grid');
     if(!list.length){
       g.innerHTML = favOnly
-        ? '<div class="empty"><b>아직 즐겨찾기한 쇼퍼가 없어요</b><p>쇼퍼 카드의 <span style="color:var(--green)">북마크</span>를 눌러 담아보세요 · <a onclick="browseAll()">전체 보기</a></p></div>'
-        : '<div class="empty"><b>조건에 맞는 쇼퍼가 아직 없어요</b><p>초기라 쇼퍼를 모으는 중이에요 · <a onclick="notifySignup()">오픈 알림 신청하기</a> 또는 <a onclick="browseAll()">전체 보기</a></p></div>';
+        ? '<div class="empty"><b>아직 즐겨찾기한 스타일리스트가 없어요</b><p>스타일리스트 카드의 <span style="color:var(--green)">북마크</span>를 눌러 담아보세요 · <a onclick="browseAll()">전체 보기</a></p></div>'
+        : '<div class="empty"><b>조건에 맞는 스타일리스트가 아직 없어요</b><p>초기라 스타일리스트를 모으는 중이에요 · <a onclick="notifySignup()">오픈 알림 신청하기</a> 또는 <a onclick="browseAll()">전체 보기</a></p></div>';
       return; }
     g.innerHTML=list.map(function(e){ var idx=EX.indexOf(e);
       var rt=e.rating>0?'<span class="star"><span class="rvstar">'+starSVG()+'</span> '+e.rating+' <small class="rv">('+e.review+')</small></span>':'<span class="star new">신규</span>';
       var svcico='<span class="svcico">'+e.services.map(function(sv){return '<span class="b" title="'+SVC[sv.type]+'">'+svcIcon(sv.type)+'</span>';}).join('')+'</span>';
       return '<div class="ecard" onclick="openDetail('+idx+')"><div class="cover"><img src="'+img(e)+'" alt="" onerror="'+FB+'"><span class="match">매칭도 '+e.match+'%</span>'+
         '<button class="favbtn" title="즐겨찾기" onclick="event.stopPropagation();toggleFav(\''+e.nm+'\')">'+favIcon(isFav(e.nm),true)+'</button></div>'+
-        '<div class="eb"><div class="top"><span class="nm">'+e.nm+' 쇼퍼</span>'+rt+'</div>'+
+        '<div class="eb"><div class="top"><span class="nm">'+e.nm+' 스타일리스트</span>'+rt+'</div>'+
         '<div class="subtags">'+e.tags.slice(0,3).join(' · ')+'</div>'+
         '<div class="cardmid">'+svcico+'<span class="cardprice"><span class="num">'+svcMinPrice(e).toLocaleString()+'</span>원~</span></div>'+
         '</div></div>';
@@ -699,13 +699,13 @@
 
   /* (구) 카드 클릭 → 오른쪽 퀵뷰 드로어 openProfile 제거 — 이제 카드 클릭 시 바로 상세(openDetail)로 이동 */
 
-  /* 자세히 보기 → 쇼퍼 상세 (탭 내 화면 전환)
+  /* 자세히 보기 → 스타일리스트 상세 (탭 내 화면 전환)
      hideReq=요청내역에서 진입(견적 요청 버튼 숨김) · _detailBack=뒤로가기 시 돌아갈 이전 화면 */
   var _detailBack=null;
   function backFromDetail(){ if(_detailBack){ var f=_detailBack; _detailBack=null; f(); } else showOnly('listView'); }
-  /* 쇼퍼 상세 본문 — 페이지(detailView)와 요청 오버레이(bidsBody) 공용.
+  /* 스타일리스트 상세 본문 — 페이지(detailView)와 요청 오버레이(bidsBody) 공용.
      opts.hideReq=견적 요청 버튼 숨김 · opts.back=뒤로 onclick · opts.fav=즐겨찾기 onclick */
-  /* 쇼퍼 후기 = 원본(EX.reviews) + 내가 남긴 후기(reqs 후기완료) 합산 — 후기가 쇼퍼 쪽에 반영 */
+  /* 스타일리스트 후기 = 원본(EX.reviews) + 내가 남긴 후기(reqs 후기완료) 합산 — 후기가 스타일리스트 쪽에 반영 */
   function reviewData(e){
     var mine=reqs.filter(function(r){ return r.nm===e.nm && r.status==='후기완료' && r.review; });
     var count=e.review+mine.length;
@@ -719,7 +719,7 @@
   }
   function detailBodyHTML(idx, opts){ var e=EX[idx];
     var rd=reviewData(e);
-    var rt=rd.count>0?('<span class="rvstar">'+starSVG()+'</span> '+rd.rating+' · 후기 '+rd.count+'건'):'신규 쇼퍼';
+    var rt=rd.count>0?('<span class="rvstar">'+starSVG()+'</span> '+rd.rating+' · 후기 '+rd.count+'건'):'신규 스타일리스트';
     var svcIco=e.services.map(function(sv){ return '<span class="svcico" title="'+SVC[sv.type]+'">'+svcIcon(sv.type)+'</span>'; }).join('');
     var svcCards=e.services.map(function(sv){ var meta=SMODE[sv.type]+(sv.regions&&sv.regions.length?' · '+sv.regions.join('·'):'');
       return '<div class="svctile"><span class="svct-ic">'+svcIcon(sv.type)+'</span><b class="svct-nm">'+SVC[sv.type]+'</b><span class="svct-mode">'+meta+'</span><div class="svct-pr"><span class="num">'+sv.price.toLocaleString()+'</span>원</div></div>'; }).join('');
@@ -729,7 +729,7 @@
         '<div class="dhero-img"><img src="'+img(e)+'" onerror="'+FB+'"><span class="dside-match">매칭도 '+e.match+'%</span></div>'+
         '<div class="dhero-info">'+
           '<div class="svcicons">'+svcIco+'</div>'+
-          '<h1>'+e.nm+' 쇼퍼</h1><div class="dmeta">'+rt+'</div>'+
+          '<h1>'+e.nm+' 스타일리스트</h1><div class="dmeta">'+rt+'</div>'+
           '<div class="dstyles">'+e.tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>'+
           '<p class="dbio">'+e.bio+'</p>'+
           '<div class="dhero-acts">'+
@@ -745,12 +745,12 @@
         '</div>'+
       '</div>';
   }
-  /* 쇼퍼찾기 탭 내 상세 페이지 (목록에서 진입) */
+  /* 스타일리스트찾기 탭 내 상세 페이지 (목록에서 진입) */
   function openDetail(idx, hideReq){ hideReq=!!hideReq; if(!hideReq) _detailBack=null; closeAll();
     document.getElementById('detailView').innerHTML = detailBodyHTML(idx, {hideReq:hideReq, back:'backFromDetail()', fav:'toggleFav(\''+EX[idx].nm+'\');openDetail('+idx+','+(hideReq?1:0)+')'});
     showOnly('detailView');
   }
-  /* 요청 오버레이 안에서 쇼퍼 상세 — 탭 전환·폭 점프 없이 같은 자리에서 (뒤로=요청으로 복귀) */
+  /* 요청 오버레이 안에서 스타일리스트 상세 — 탭 전환·폭 점프 없이 같은 자리에서 (뒤로=요청으로 복귀) */
   function overlayDetail(idx){
     document.getElementById('bidsBody').innerHTML = detailBodyHTML(idx, {hideReq:true, back:'reopenOverlay()', fav:'toggleFav(\''+EX[idx].nm+'\');overlayDetail('+idx+')'});
     window.scrollTo({top:0});
@@ -783,9 +783,9 @@
   function reqSideSvcHTML(e, type){ var sv=svcOf(e,type)||{}; return SVC[type]+' · <b class="num">'+(sv.price||0).toLocaleString()+'</b>원'; }
   function updateReqSide(){ var el=document.getElementById('reqSideSvc'); if(!el||!curReq.nm) return; var e=EX.filter(function(x){return x.nm===curReq.nm;})[0]; if(e) el.innerHTML=reqSideSvcHTML(e, curReq.svc); }
 
-  /* 특정 쇼퍼에게 견적 요청 (로그인 게이트) */
+  /* 특정 스타일리스트에게 견적 요청 (로그인 게이트) */
   function requestFor(idx){
-    if(!loggedIn()){ closeAll(); openLogin(EX[idx].nm+' 쇼퍼 견적 요청', function(){ requestFor(idx); }); return; }
+    if(!loggedIn()){ closeAll(); openLogin(EX[idx].nm+' 스타일리스트 견적 요청', function(){ requestFor(idx); }); return; }
     var e=EX[idx]; curReq={nm:e.nm, svc:svcPrimary(e).type};
     var SNM={online:'온라인 스타일링', shopping:'동행 쇼핑', image:'이미지 컨설팅'};
     var svc3=e.services.map(function(sv,i){ return '<div class="s '+(i===0?'on':'')+'" data-v="'+sv.type+'" onclick="pickSvc(this)"><div class="i">'+svcIcon(sv.type)+'</div><b>'+SNM[sv.type]+'</b><span class="p num">'+sv.price.toLocaleString()+'</span></div>'; }).join('');
@@ -794,13 +794,13 @@
       '<div class="reqsplit">'+
         '<div class="reqside">'+
           '<div class="reqside-img"><img src="'+img(e)+'" onerror="'+FB+'"><span class="dside-match">매칭도 '+e.match+'%</span></div>'+
-          '<div class="reqside-b"><div class="rl">견적 요청 대상</div><div class="rn">'+e.nm+' 쇼퍼</div>'+
+          '<div class="reqside-b"><div class="rl">견적 요청 대상</div><div class="rn">'+e.nm+' 스타일리스트</div>'+
             '<div class="reqside-meta"><span class="rvstar">'+starSVG()+'</span> '+e.rating+' · 후기 '+e.review+'</div>'+
             '<div class="reqside-svc" id="reqSideSvc">'+reqSideSvcHTML(e, curReq.svc)+'</div>'+
           '</div>'+
         '</div>'+
         '<div class="reqmain">'+
-          '<h1>견적 요청</h1><p class="lead">조건을 남기면 이 쇼퍼가 검토하고 제안(견적)을 보내드려요</p>'+
+          '<h1>견적 요청</h1><p class="lead">조건을 남기면 이 스타일리스트가 검토하고 제안(견적)을 보내드려요</p>'+
           reqFormHTML(svc3, null, true)+
           '<button class="btn full" id="reqBtn" disabled style="margin-top:22px" onclick="confirmMatch()">견적 요청 보내기</button>'+
           '<p class="reqhint" id="reqHint">상황·일정을 입력하면 보낼 수 있어요</p>'+
@@ -818,7 +818,7 @@
     document.getElementById('requestView').innerHTML=
       '<a class="back" onclick="showOnly(\'listView\')">← 목록으로</a>'+
       '<div class="reqpage">'+
-      '<h1>견적 요청</h1><p class="lead">조건을 남기면 <b style="color:var(--ink)">여러 쇼퍼가 견적</b>을 보내요</p>'+
+      '<h1>견적 요청</h1><p class="lead">조건을 남기면 <b style="color:var(--ink)">여러 스타일리스트가 견적</b>을 보내요</p>'+
       reqFormHTML(svc3)+
       '<button class="btn full" id="reqBtn" disabled style="margin-top:22px" onclick="confirmMatch()">견적 요청 보내기</button>'+
       '<p class="reqhint" id="reqHint">상황·예산·일정을 모두 입력하면 보낼 수 있어요</p></div>';
@@ -855,8 +855,8 @@
     if(note) rows.push(['메모', note]);
     var attEl=document.getElementById('reqAttach'); var attach=attEl?attEl.classList.contains('on'):true;
     var icPin='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11l-8.5 8.5a4.5 4.5 0 0 1-6.4-6.4l8.5-8.5a3 3 0 0 1 4.3 4.3l-8.6 8.5a1.5 1.5 0 0 1-2.1-2.1l7.9-7.9"/></svg>';
-    var cfTitle=curReq.nm?(curReq.nm+' 쇼퍼에게<br>견적을 요청할까요?'):'이 조건으로<br>견적을 요청할까요?';
-    var cfSub=curReq.nm?'쇼퍼가 검토 후 제안을 보내드려요':'조건에 맞는 여러 쇼퍼가 견적을 보내드려요';
+    var cfTitle=curReq.nm?(curReq.nm+' 스타일리스트에게<br>견적을 요청할까요?'):'이 조건으로<br>견적을 요청할까요?';
+    var cfSub=curReq.nm?'스타일리스트가 검토 후 제안을 보내드려요':'조건에 맞는 여러 스타일리스트가 견적을 보내드려요';
     var receipt='<div class="cf-a">'+
       '<span class="cf-a-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 12h6M9 16h4"/></svg></span>'+
       '<div class="cf-a-eye">요청 내용 확인</div>'+
@@ -876,13 +876,13 @@
     var nEl=document.getElementById('reqNote'); var note=nEl?nEl.value:'';
     var styles=[].map.call(document.querySelectorAll('#mStyle .o.on'), function(o){ return o.textContent; });
     var attEl=document.getElementById('reqAttach'); var attach=attEl?attEl.classList.contains('on'):true;
-    var isOpen = !curReq.nm;   // 지명(쇼퍼 선택) 아니면 오픈 요청(여러 쇼퍼 견적)
+    var isOpen = !curReq.nm;   // 지명(스타일리스트 선택) 아니면 오픈 요청(여러 스타일리스트 견적)
     if(isOpen) addReq({open:true, svc:curReq.svc, occ:occ, budget:budget, date:date, note:note, styles:styles, attach:attach, status:'견적중', bids:makeBids(curReq.svc, occ)});
     else { var she=EX.filter(function(x){return x.nm===curReq.nm;})[0]; var sp=she?((svcOf(she,curReq.svc)||{}).price||null):null;
       addReq({nm:curReq.nm, svc:curReq.svc, occ:occ, price:sp, date:date, note:note, styles:styles, attach:attach, status:'대기'}); }
     // 모달을 닫지 않고 그 자리에서 성공 화면으로 전환 (전체화면 점프 없이 자연스럽게)
-    var doneSub=isOpen?'마이에서 <b>여러 쇼퍼</b>의 견적을 기다려보세요'
-      :('마이에서 '+curReq.nm+' 쇼퍼의 견적을 기다려보세요');
+    var doneSub=isOpen?'마이에서 <b>여러 스타일리스트</b>의 견적을 기다려보세요'
+      :('마이에서 '+curReq.nm+' 스타일리스트의 견적을 기다려보세요');
     document.getElementById('confirmMsg').innerHTML=
       '<div class="cf-done"><div class="cf-done-ic">✓</div>'+
       '<div class="cf-done-t">견적 요청을 보냈어요</div>'+
@@ -992,7 +992,7 @@
       sObs.observe(home.querySelector('.showpanel'));   // 스크롤로 보이면 순환 시작
     })();
 
-    /* 6) 쇼퍼 연결 — 선 따라 연결 → 딱! 매칭 → 반복 */
+    /* 6) 스타일리스트 연결 — 선 따라 연결 → 딱! 매칭 → 반복 */
     (function(){
       var SH=[{nm:'소희',ph:'photos/p1.jpg',spec:'데일리·소개팅룩',svc:'온라인 스타일링'},{nm:'건형',ph:'photos/p2.jpg',spec:'면접·오피스',svc:'이미지 컨설팅'},{nm:'상민',ph:'photos/p3.jpg',spec:'포멀·하객룩',svc:'동행 쇼핑'}];
       var FLOW=[{occ:'소개팅',s:0,m:97},{occ:'면접·발표',s:1,m:94},{occ:'결혼식 하객',s:2,m:91},{occ:'여행',s:0,m:88},{occ:'일상 코디',s:0,m:95}];
@@ -1001,7 +1001,7 @@
       var wirefill=link.querySelector('.wirefill'), pulse=link.querySelector('.pulse');
       function highlight(idx){ chips.forEach(function(c,k){ c.classList.toggle('on', k===idx); }); }
       function render(f){ var s=SH[f.s];
-        node.innerHTML='<img class="ph" src="'+s.ph+'" alt="" onerror="this.style.visibility=\'hidden\'"><div><div class="snm">'+s.nm+' 쇼퍼</div><div class="spec">'+s.spec+'</div><span class="svcpill">'+s.svc+'</span></div><div class="mt"><div class="pct">–</div><div class="ml">매칭도</div></div><span class="matchbadge">✓ 매칭 완료</span>'; }
+        node.innerHTML='<img class="ph" src="'+s.ph+'" alt="" onerror="this.style.visibility=\'hidden\'"><div><div class="snm">'+s.nm+' 스타일리스트</div><div class="spec">'+s.spec+'</div><span class="svcpill">'+s.svc+'</span></div><div class="mt"><div class="pct">–</div><div class="ml">매칭도</div></div><span class="matchbadge">✓ 매칭 완료</span>'; }
       function countTo(to){ var pct=node.querySelector('.pct'); if(!pct) return; if(RM){ pct.textContent=to+'%'; return; }
         var from=Math.max(70,to-16),t0=null; function c(t){ if(!t0)t0=t; var p=Math.min((t-t0)/1300,1),e=1-Math.pow(1-p,3); pct.textContent=Math.round(from+(to-from)*e)+'%'; if(p<1)requestAnimationFrame(c);} requestAnimationFrame(c); }
       var i=0, timers=[];

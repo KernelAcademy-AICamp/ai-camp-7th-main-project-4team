@@ -34,7 +34,7 @@
   var PROS=[
     {id:'p221',appliedAt:'2026-07-12T09:30:00',nick:'핏잡는언니',region:'서울 성수',basis:'스타일리스트 3년 · 자체 룩북',status:'대기'},
     {id:'p219',appliedAt:'2026-07-11T15:10:00',nick:'무신사덕후',region:'온라인',basis:'리뷰 실적 · 브랜드 착용경험 다수',status:'대기'},
-    {id:'p214',appliedAt:'2026-07-10T11:02:00',nick:'대구쇼퍼K',region:'대구 동성로',basis:'편집샵 근무',status:'승인'},
+    {id:'p214',appliedAt:'2026-07-10T11:02:00',nick:'대구스타일리스트K',region:'대구 동성로',basis:'편집샵 근무',status:'승인'},
     {id:'p205',appliedAt:'2026-07-08T20:44:00',nick:'사이즈요정',region:'온라인',basis:'자격 근거 불충분',status:'반려'}
   ];
 
