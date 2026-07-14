@@ -77,7 +77,7 @@
   function reqTop(r, clickable){ var i=reqs.indexOf(r);
     return '<div class="req'+(clickable?' rowbtn" onclick="goQuote('+i+')':'')+'">'+
       '<div class="reqtop"><div class="av">'+(r.cust?r.cust.charAt(0):'?')+'</div>'+
-      '<div class="info"><b>'+r.cust+' 님 · '+r.occ+'</b>'+svcBadge(r.service)+'<small>'+r.bodytype+' · 예산 '+r.budget+' · '+r.date+'</small></div>'+
+      '<div class="info"><b>'+r.cust+' 님 · '+r.occ+'</b>'+svcBadge(r.service)+'<small>'+r.date+' · 예산 '+r.budget+'</small></div>'+
       '<span class="st '+stClass(r.status)+'">'+r.status+'</span>'+(clickable?'<span class="chev">›</span>':'')+'</div></div>';
   }
 
@@ -169,7 +169,7 @@
           '</div>'
         : '';
       return '<div class="urow" style="flex-wrap:wrap"><div class="uinfo"><b>'+c.cust+' 님 · '+c.occ+'</b>'+svcBadge(c.service)+
-        '<small>'+c.bodytype+' · 예산 '+c.budget+' · "'+c.note+'"</small></div>'+
+        '<small>예산 '+c.budget+' · "'+c.note+'"</small></div>'+
         (openCandIdx===i?'':'<button class="tinybtn" onclick="proposeCand('+i+')">제안하기</button>')+form+'</div>';
     }).join('');
   }
@@ -254,7 +254,7 @@
     el.innerHTML='<div class="subhead">지금 응답이 필요해요 <span class="ucount">'+news.length+'건</span></div>'+
       news.map(function(r,k){ var i=reqs.indexOf(r);
         return '<div class="urow"><div class="uinfo"><b>'+r.cust+' 님 · '+r.occ+'</b>'+
-          '<small>'+r.bodytype+' · 예산 '+r.budget+' · '+DEMO_AGO[k%DEMO_AGO.length]+'</small></div>'+
+          '<small>'+DEMO_AGO[k%DEMO_AGO.length]+' · 예산 '+r.budget+'</small></div>'+
           '<button class="tinybtn" onclick="goQuote('+i+')">상세 보기</button></div>';
       }).join('');
   }
