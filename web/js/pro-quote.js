@@ -50,41 +50,69 @@
   function stClass(s){ return s==='신규'?'nw':(s==='제안발송'?'sent':(s==='수락됨'?'prog':(s==='분쟁'?'warn':(s==='완료'?'done':'sent')))); }
   function starsRO(n){ var s=''; for(var k=1;k<=5;k++) s+='<span style="color:'+(k<=n?'#e8a13a':'#ddd')+'">★</span>'; return s; }
 
-  /* ── 액션(상태별) ── 받은 요청: 수락/거절 · 진행 중: 완료/취소 · 보낸 제안: 응답 대기 ── */
+  /* 진행 상태 배너 — 고객 화면(index reqStatusBlock)과 동일 .statban 컴포넌트, 스타일리스트 시점 카피 */
+  function stIcon(k){
+    var P={ check:'<path d="M20 6L9 17l-5-5"/>',
+      clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+      flag:'<path d="M5 21V4h13l-2.6 4L18 12H5"/>',
+      star:'<path d="M12 3l2.7 5.5 6 .9-4.35 4.2 1.03 6L12 17l-5.38 2.6 1.03-6L3.3 9.4l6-.9z"/>',
+      x:'<path d="M18 6L6 18M6 6l12 12"/>',
+      card:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10.5h18"/>' };
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'+(P[k]||'')+'</svg>';
+  }
+  /* 상태 → [배너색, 아이콘, 제목, 설명] (스타일리스트 시점) */
+  var ST_BAN_PRO={
+    '신규':    ['wait','clock','새 요청 도착','고객이 지명 요청을 보냈어요 · 수락하면 코디를 시작해요'],
+    '제안발송':['wait','clock','제안 발송됨','견적을 보냈어요 · 고객 응답을 기다리는 중이에요'],
+    '수락됨':  ['go','check','진행 중','고객이 수락했어요 · 결과물을 작성해 전달하세요'],
+    '완료':    ['go','flag','서비스 완료','코디가 완료됐어요 · 고객 후기를 기다리는 중이에요'],
+    '거절':    ['no','x','요청 거절함','거절한 요청이에요 · 필요하면 되돌릴 수 있어요'],
+    '취소':    ['wait','x','진행 취소됨','취소한 요청이에요 · 필요하면 되돌릴 수 있어요'],
+    '분쟁':    ['no','x','분쟁 처리 중','문제 신고가 접수돼 정산이 보류됐어요 · 소명을 제출해 주세요']
+  };
+  function statusBanner(r){
+    var b=ST_BAN_PRO[r.status]; if(!b) return '';
+    return '<div class="statban '+b[0]+'"><span class="sb-ic">'+stIcon(b[1])+'</span>'+
+      '<div class="sb-tx"><b>'+esc(b[2])+'</b><p>'+esc(b[3]).replace(/ · /g,'<br>')+'</p></div></div>';
+  }
+
+  /* ── 액션(상태별) ── 진행 상태 배너 + 상태별 버튼/입력 ── */
   function actionHTML(r){
+    var banner=statusBanner(r);
     if(r.status==='신규'){
-      return '<div class="act-row"><button class="btn ghost" onclick="confirmReject()">거절하기</button>'+
+      return banner+'<div class="act-row"><button class="btn ghost" onclick="confirmReject()">거절하기</button>'+
              '<button class="btn" onclick="confirmAccept()">수락하기</button></div>';
     }
     if(r.status==='제안발송'){ var o=r.offer||{};
-      return '<div class="note-quote"><b style="color:var(--green)">제안 발송됨</b> · <span class="num">'+((o.price||0).toLocaleString())+'</span>원<br>'+
-        '<span style="font-size:13px;color:var(--sub)">"'+esc(o.msg||'')+'"</span><br>'+
-        '<span style="font-size:12.5px;color:var(--sub2)">고객 응답을 기다리는 중이에요</span></div>'+
+      return banner+
+        '<div class="note-quote"><b style="color:var(--green)">보낸 견적</b> · <span class="num">'+((o.price||0).toLocaleString())+'</span>원'+
+        (o.msg?'<br><span style="font-size:13px;color:var(--sub)">"'+esc(o.msg)+'"</span>':'')+'</div>'+
         '<button class="btn ghost" style="margin-top:10px" onclick="simAccept()">고객 수락 · 데모</button>';
     }
     if(r.status==='수락됨'){
-      var hd='<div class="note-quote"><b style="color:var(--green,#2E4A3B)">수락됨 · 진행 중</b>'+((r.offer&&r.offer.price)?' · <span class="num">'+r.offer.price.toLocaleString()+'</span>원':'')+'</div>';
+      var price=(r.offer&&r.offer.price)?'<div class="note-quote"><b style="color:var(--green,#2E4A3B)">확정 금액</b> · <span class="num">'+r.offer.price.toLocaleString()+'</span>원</div>':'';
       var cancel='<button class="btn ghost" style="margin-top:8px" onclick="confirmCancel()">취소 처리</button>';
       // 제출 후에도 완료 전까지는 수정 가능. 결과물=사진·내용(전 서비스 공통) + 구매 상품·예산(온라인 추가)
-      if(r.deliver) return hd + deliverSummary(r) +
+      if(r.deliver) return banner + price + deliverSummary(r) +
         '<button class="btn ghost" style="margin-top:10px" onclick="editDeliver()">결과물 수정</button>'+
         '<button class="btn" style="margin-top:8px" onclick="confirmComplete()">완료 처리</button>' + cancel;
       var hasDraft=((r._draft||[]).length || (r._photos||[]).length || (r._dmsg||'').trim());
-      return hd + '<button class="btn" style="margin-top:10px" onclick="openDeliverModal()">결과물 작성'+(hasDraft?' (임시저장)':'')+' →</button>' + cancel;
+      return banner + price + '<button class="btn" style="margin-top:10px" onclick="openDeliverModal()">결과물 작성'+(hasDraft?' (임시저장)':'')+' →</button>' + cancel;
     }
     if(r.status==='분쟁'){ var dp=r.dispute||{};
-      return '<div class="note-quote" style="border-color:#e6b8b8;background:#fbf3f3"><b style="color:#c0392b">⚠ 분쟁 접수 · 정산 보류</b><br><span style="font-size:13px">사유: '+esc(dp.reason||'—')+'<br>"'+esc(dp.detail||'')+'"</span></div>'+
+      return banner+
+        '<div class="note-quote" style="border-color:#e6b8b8;background:#fbf3f3"><span style="font-size:13px">사유: '+esc(dp.reason||'—')+'<br>"'+esc(dp.detail||'')+'"</span></div>'+
         (dp.reply
           ? '<div class="note-quote" style="margin-top:10px"><b style="color:var(--green,#2E4A3B)">내 소명 제출됨</b><br><span style="font-size:13px;color:var(--sub,#6b6a67)">"'+esc(dp.reply)+'"</span><br><span style="font-size:12px;color:var(--sub2,#8a857b)">관리자 중재를 기다리는 중이에요</span></div>'
           : '<div class="offerform" style="margin-top:10px"><label>소명 · 반박</label><textarea id="dispReply" placeholder="결과물 전달 내역·대화 등 상황을 설명해주세요"></textarea><button class="btn" style="margin-top:10px" onclick="submitDisputeReply()">소명 제출</button></div>')+
         '<p class="note-quote muted" style="margin-top:10px">관리자 중재(3.B.4)로 환불·정산이 결정돼요</p>';
     }
     if(r.status==='완료'){
-      if(r.review) return '<div class="seclabel">고객 후기</div><div class="note-quote"><span style="letter-spacing:1px">'+starsRO(r.review.rating)+'</span><br>"'+esc(r.review.text)+'"</div>';
-      return '<div class="note-quote muted">완료 · 고객 후기를 기다리는 중이에요</div>';
+      if(r.review) return banner+'<div class="seclabel">고객 후기</div><div class="note-quote"><span style="letter-spacing:1px">'+starsRO(r.review.rating)+'</span><br>"'+esc(r.review.text)+'"</div>';
+      return banner;
     }
-    if(r.status==='거절'){ return '<div class="note-quote muted">거절한 요청이에요'+(r.reason?' · "'+esc(r.reason)+'"':'')+'</div><button class="btn ghost" style="margin-top:10px" onclick="undoReject()">되돌리기</button>'; }
-    if(r.status==='취소'){ return '<div class="note-quote muted">취소된 요청이에요'+(r.reason?' · "'+esc(r.reason)+'"':'')+'</div><button class="btn ghost" style="margin-top:10px" onclick="undoCancel()">되돌리기</button>'; }
+    if(r.status==='거절'){ return banner+(r.reason?'<div class="note-quote muted">"'+esc(r.reason)+'"</div>':'')+'<button class="btn ghost" style="margin-top:10px" onclick="undoReject()">되돌리기</button>'; }
+    if(r.status==='취소'){ return banner+(r.reason?'<div class="note-quote muted">"'+esc(r.reason)+'"</div>':'')+'<button class="btn ghost" style="margin-top:10px" onclick="undoCancel()">되돌리기</button>'; }
     if(r.status==='견적작성'){   // 먼저 견적 보내기 — 금액·메시지 입력 후 발송
       return '<div class="offerform">'+
         '<label style="display:block;font-size:12.5px;font-weight:800;color:var(--sub);margin:0 0 6px">견적 금액</label>'+

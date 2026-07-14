@@ -78,6 +78,16 @@
   @media(max-width:980px){.qgrid2{grid-template-columns:1fr}}
   .offer-card{margin-top:2px}
 
+  /* 진행 상태 배너(.statban) — 고객 화면(index)과 동일 컴포넌트로 통일 */
+  .statban{display:flex;align-items:center;gap:14px;padding:15px 17px;border-radius:14px;margin-bottom:12px}
+  .statban .sb-ic{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+  .statban .sb-ic svg{width:22px;height:22px}
+  .statban .sb-tx b{display:block;font-size:17px;font-weight:800;letter-spacing:-.02em}
+  .statban .sb-tx p{font-size:13px;margin-top:3px;line-height:1.5}
+  .statban.go{background:var(--green-soft)} .statban.go .sb-ic{background:var(--green);color:#fff} .statban.go .sb-tx b{color:var(--green)} .statban.go .sb-tx p{color:var(--green-mid)}
+  .statban.wait{background:var(--soft)} .statban.wait .sb-ic{background:var(--sub);color:#fff} .statban.wait .sb-tx b{color:var(--ink)} .statban.wait .sb-tx p{color:var(--sub)}
+  .statban.no{background:var(--warn-soft)} .statban.no .sb-ic{background:var(--warn);color:#fff} .statban.no .sb-tx b{color:var(--warn)} .statban.no .sb-tx p{color:var(--warn)}
+
   /* 파라메트릭 실루엣 아바타 — 라인만(옅은 틴트 채움 + 유형색 라인). 색은 JS가 유형별로 인라인 주입. */
   .bodymap2{--fig-fill:#F3F1EC;--fig-line:#43403A;--guide:#CBC8C0;--pill-bg:#E7EFEA;
     margin-top:18px;display:flex;flex-direction:column;align-items:center;gap:18px}
