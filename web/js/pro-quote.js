@@ -501,8 +501,8 @@
       '<p class="crumb">스타일리스트 지원 · '+(r.status==='견적작성'?'견적 보내기':(out?'보낸 제안':'받은 요청'))+'</p>'+
       '<h1>'+esc(r.cust)+' 님'+(r.occ?' · '+esc(r.occ):'')+'</h1>'+
       '<div class="qgrid2">'+
-        '<div class="qleft">'+ requestReceipt(r, attached) +
-          '<div class="card offer-card"><div class="subhead">'+(r.status==='견적작성'?'견적 작성':(out?'제안 현황':(r.status==='신규'?'요청을 수락하시겠습니까?':'진행 상태')))+'</div>'+ statusBanner(r) + actionHTML(r) +'</div>'+
+        '<div class="qleft">'+ statusBanner(r) + requestReceipt(r, attached) +
+          '<div class="card offer-card"><div class="subhead">'+(r.status==='견적작성'?'견적 작성':(out?'제안 현황':(r.status==='신규'?'요청을 수락하시겠습니까?':'진행 상태')))+'</div>'+ actionHTML(r) +'</div>'+
         '</div>'+
         '<div class="qright">'+ bodyCard +'</div>'+
       '</div>';
