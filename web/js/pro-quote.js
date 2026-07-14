@@ -75,8 +75,43 @@
     return '<div class="statban '+b[0]+'"><span class="sb-ic">'+stIcon(b[1])+'</span>'+
       '<div class="sb-tx"><b>'+esc(b[2])+'</b><p>'+esc(b[3]).replace(/ · /g,'<br>')+'</p></div></div>';
   }
+  /* 진행 스테퍼 — 정상 흐름(요청/제안→수락→진행→완료). 예외(거절/취소/분쟁/견적작성)는 null → 배너 폴백 */
+  function progressStepper(r){
+    var out = r.dir==='out';
+    var labels = out ? ['제안','수락','진행','완료'] : ['요청','수락','진행','완료'];
+    var FLOW = out ? {'제안발송':0,'수락됨':2,'완료':3} : {'신규':0,'수락됨':2,'완료':3};
+    /* 예외 — 흐름에서 멈춘 단계에 경고 표시 (거절=수락 단계 / 취소·분쟁=진행 단계) */
+    var EXC = {'거절':{at:1,lb:'거절'},'취소':{at:2,lb:'취소'},'분쟁':{at:2,lb:'분쟁'}};
+    var cur, exAt=-1;
+    if(r.status in FLOW){ cur=FLOW[r.status]; }
+    else if(r.status in EXC){ var e=EXC[r.status]; exAt=e.at; cur=e.at; labels=labels.slice(); labels[e.at]=e.lb; }
+    else return null;   // 견적작성 등 → 스테퍼 없음
+    var h='';
+    labels.forEach(function(lab,i){
+      var cls = i===exAt?'exc':(i<cur?'done':(i===cur?'now':''));
+      var mark = i===exAt?'✕':(i<cur?'✓':(i+1));
+      h+='<div class="pstep '+cls+'"><span class="pn">'+mark+'</span><span class="pl">'+esc(lab)+'</span></div>';
+    });
+    return '<div class="stepper">'+h+'</div>';
+  }
+  /* 상태 표시 — 스테퍼(진행 위치) + 상태 바(현재 상태·할 일)를 모든 상태에서 함께 */
+  function statusBlock(r){
+    var step=progressStepper(r), b=ST_BAN_PRO[r.status];
+    var bar = b ? '<div class="statbar '+b[0]+'"><span class="sb-dot"></span><b>'+esc(b[2])+'</b>'
+      +'<span class="sb-sep">·</span><span class="sb-d">'+esc(b[3])+'</span></div>' : '';
+    if(!step && !bar) return '';
+    return '<div class="card statcard">'+(step||'')+bar+'</div>';
+  }
 
-  /* ── 액션(상태별) ── 버튼/입력만. 상태 배너는 render에서 진행상태 바 위에 별도로 붙임 ── */
+  /* 요청서 아래 액션 박스 제목 — '진행 상태'(스테퍼가 대신) 대신 지금 할 일 중심 */
+  function actionTitle(r){
+    if(r.status==='견적작성') return '견적 작성';
+    if(r.status==='제안발송') return '제안 현황';
+    var T={'신규':'요청 수락','수락됨':'결과물 전달','완료':'완료','거절':'거절한 요청','취소':'취소한 요청','분쟁':'분쟁 대응'};
+    return T[r.status]||'진행 관리';
+  }
+
+  /* ── 액션(상태별) ── 버튼/입력만. 상태 표시는 render에서 statusBlock으로 별도 ── */
   function actionHTML(r){
     var banner='';
     if(r.status==='신규'){
@@ -438,8 +473,10 @@
       /* ③ 캐릭터 + 어깨·가슴·허리·엉덩이·핏취향(같이) */
       /* ③ 아바타 + 부위별 슬림/표준/볼륨 + 예상 cm(라벨에 바로) */
       bodySilhouette(m, bt, r.gender, estBody(r), estConf(r))+
-      /* ⑤ [프로토타입] 기준 옷 · 브랜드별 추천 사이즈 · 스타일링 힌트 */
+      /* ⑤ [프로토타입] 기준 옷 · 브랜드별 추천 사이즈 — 더보기로 접음 */
+      '<details class="meas-more"><summary>기준 옷 · 브랜드별 추천 사이즈 자세히 보기</summary>'+
       refAndRecs(m, bt, r)+
+      '</details>'+
     '</div>';
   }
 
@@ -570,8 +607,8 @@
       '<p class="crumb">스타일리스트 지원 · '+(r.status==='견적작성'?'견적 보내기':(out?'보낸 제안':'받은 요청'))+'</p>'+
       '<h1>'+esc(r.cust)+' 님'+(r.occ?' · '+esc(r.occ):'')+'</h1>'+
       '<div class="qgrid2">'+
-        '<div class="qleft">'+ statusBanner(r) + requestReceipt(r, attached) +
-          '<div class="card offer-card"><div class="subhead">'+(r.status==='견적작성'?'견적 작성':(out?'제안 현황':(r.status==='신규'?'요청을 수락하시겠습니까?':'진행 상태')))+'</div>'+ actionHTML(r) +
+        '<div class="qleft">'+ statusBlock(r) + requestReceipt(r, attached) +
+          '<div class="card offer-card"><div class="subhead">'+esc(actionTitle(r))+'</div>'+ actionHTML(r) +
             (showReport?reportBoxHTML(r):'')+'</div>'+
           (showMsg?msgCardHTML(r):'')+
         '</div>'+
