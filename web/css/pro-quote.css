@@ -78,8 +78,8 @@
   @media(max-width:980px){.qgrid2{grid-template-columns:1fr}}
   .offer-card{margin-top:2px}
 
-  /* 파라메트릭 실루엣 아바타 — 웜 차콜 선 + 따뜻한 연회색 채움(부드럽게), 가운데 정렬. 태그는 그린. */
-  .bodymap2{--fig-fill:#ECEAE4;--fig-line:#57544C;--guide:#CBC8C0;--pill-bg:#E7EFEA;
+  /* 파라메트릭 실루엣 아바타 — 라인만(옅은 틴트 채움 + 유형색 라인). 색은 JS가 유형별로 인라인 주입. */
+  .bodymap2{--fig-fill:#F3F1EC;--fig-line:#43403A;--guide:#CBC8C0;--pill-bg:#E7EFEA;
     margin-top:18px;display:flex;flex-direction:column;align-items:center;gap:18px}
   .bodymap2 svg{width:100%;max-width:380px;height:auto;display:block}
   .bodymap2 .g-name{font-size:11.5px;font-weight:700;fill:var(--sub,#6E6B63)}

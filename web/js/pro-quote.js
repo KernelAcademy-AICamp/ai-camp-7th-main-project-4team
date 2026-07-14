@@ -245,6 +245,15 @@
   /* ── 고객 체형 = 스타일리스트용 '결과 카드 값' 먼저, 측정값은 가독성 좋게 '자세히 보기' ── */
   function segIdx(pct){ return Math.max(0, Math.min(4, Math.floor((pct==null?50:pct)/20))); }
   function zoneLabel(i, L, R){ return i===0?L:(i===1?L+' 편':(i===2?'표준':(i===3?R+' 편':R))); }
+  /* 8유형 시그니처 색(라이트 배경용 보정 톤) — 아바타 라인 색에 사용 */
+  var TYPE_COLOR={STR:'#7E9BE8',TRI:'#3FB9A6',INV:'#8A93A8',HRG:'#B675E8',
+    BAL:'#5FBE7E',DIA:'#EA6EA0',RND:'#F0855A',TUB:'#9184E0'};
+  /* hex 선형 보간 — a에서 to로 t만큼. color-mix 미지원 대비 JS 계산 */
+  function mixHex(hex,to,t){
+    function p(h){ h=h.replace('#',''); return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)]; }
+    var a=p(hex), b=p(to), o=a.map(function(v,i){ return Math.round(v+(b[i]-v)*t); });
+    return '#'+o.map(function(x){ return ('0'+Math.max(0,Math.min(255,x)).toString(16)).slice(-2); }).join('');
+  }
   /* 부위 백분위(측정 기반)로 폭이 반응하는 파라메트릭 실루엣 아바타.
      좌: 슬림/표준/볼륨 태그(zoneLabel) · 우: 부위명 + 예상 cm(est) · 아래: 핏취향 칩.
      Catmull-Rom으로 몸통·다리 외곽선을 만들고, 팔은 스트로크. 세로 비율은 표준 템플릿 고정. cx=180 가운데정렬. */
@@ -305,7 +314,10 @@
     var note=(est&&est.length)
       ? '예상 치수 · 신뢰도 '+esc(conf||'—')+' · 폭=측정 반영, 세로=표준 비율'
       : '폭 = 측정 백분위 반영 · 세로 = 표준 비율';
-    return '<div class="bodymap2">'+svg
+    /* 라인만 스타일 — 유형색을 라인(80%+다크)으로, 채움은 아주 옅은 틴트(12%) */
+    var tc=TYPE_COLOR[(bt&&bt.code)||''] || '#57544C';
+    var figLine=mixHex(tc,'#2A2823',0.20), figFill=mixHex(tc,'#FFFFFF',0.88);
+    return '<div class="bodymap2" style="--fig-fill:'+figFill+';--fig-line:'+figLine+'">'+svg
       +'<div class="av-pref"><span>핏 취향</span><b>'+esc(pref)+'</b></div>'
       +'<div class="av-cap">'+note+'</div></div>';
   }
