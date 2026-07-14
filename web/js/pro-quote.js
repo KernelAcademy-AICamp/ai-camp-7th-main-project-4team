@@ -16,6 +16,7 @@
   function candRecord(){ var c=cands[candIdx]; return { cust:c.cust, occ:c.occ, service:c.service, type:c.type, bodytype:c.bodytype, gender:c.gender, cm:c.cm, kg:c.kg, budget:c.budget, note:c.note, date:'—', dir:'out', status:'견적작성' }; }
   var MY_PRICE = (profile && profile.services && profile.services[0]) ? profile.services[0].price : 120000;
   var BTMAP = {};
+  var BMODEL=null, BDIST=null;   // 예상 치수용 회귀모델·분포(사이즈코리아)
   var offering = false;
 
   /* 요청자별 임의(데모) 측정치 + 선호핏 */
@@ -146,6 +147,54 @@
     TUB:'레이어와 디테일로 입체감을 더하면 멋이 살아나는 체형이에요!'
   };
 
+  /* [프로토타입] A 기준 옷 · B 브랜드별 추천 사이즈 — 데모값(실데이터는 고객 착용경험·엔진 출력에서 와야 함) */
+  var DEMO_BRANDREC = {
+    female:[['무신사 스탠다드','M','27'],['H&M','M','S'],['COS','36','38'],['스파오','M','M']],
+    male:[['무신사 스탠다드','L','32'],['H&M','L','M'],['COS','50','48'],['스파오','L','L']]
+  };
+  /* 예상 신체 치수 — body-base-model(회귀: a·키+b·몸무게+c·나이+intercept) + body-distribution(sd). 착용경험 수로 ± 폭 조정 */
+  function estBody(r){
+    if(!BMODEL||!BDIST) return null;
+    var g=(r.gender==='male')?'male':'female';
+    var h=parseFloat(r.cm)||0, w=parseFloat(r.kg)||0, age=parseFloat(r.age)||30;
+    if(!h||!w||!BMODEL[g]||!BDIST[g]) return null;
+    var n=(r.wearExp||[]).length;
+    var band = n>=2?0.25 : (n===1?0.4 : 0.6);   // 착용경험 많을수록 ± 좁힘
+    var parts=[['shoulder','어깨너비'],['chestUpper','가슴둘레'],['waist','허리둘레'],['hip','엉덩이둘레']];
+    return parts.map(function(p){
+      var c=BMODEL[g][p[0]], d=BDIST[g][p[0]]; if(!c||!d) return null;
+      var val=c.a_height*h + c.b_weight*w + (c.c_age||0)*age + c.intercept;
+      return {label:p[1], val:Math.round(val), pm:Math.max(1,Math.round(d.sd*band))};
+    }).filter(Boolean);
+  }
+  function estSection(r){
+    var es=estBody(r); if(!es||!es.length) return '';
+    var n=(r.wearExp||[]).length;
+    var conf = n>=2?'정확 (착용경험 2벌+)' : (n===1?'보통 (착용경험 1벌)' : '낮음 (키·몸무게만)');
+    return '<div class="cx-sec"><div class="cx-h">예상 신체 치수 <span class="cx-ex">추정</span></div>'+
+      '<table class="cx-tbl"><tbody>'+
+      es.map(function(x){return '<tr><td>'+esc(x.label)+'</td><td style="text-align:right">약 <b>'+x.val+'</b>cm <span style="color:var(--sub2);font-weight:700">± '+x.pm+'</span></td></tr>';}).join('')+
+      '</tbody></table>'+
+      '<div class="cx-note">키·몸무게 기반 통계 추정(사이즈코리아 인체치수) · 신뢰도 '+esc(conf)+' — 착용경험이 많을수록 오차가 줄어요</div></div>';
+  }
+
+  function refAndRecs(m, bt, r){
+    var g=(r.gender==='male')?'male':'female';
+    var ex='<span class="cx-ex">예시</span>';
+    // A. 잘 맞는 기준 옷 — 고객 착용경험(딱맞음)에서. 진단엔 상품명이 없어 브랜드·카테고리·핏·사이즈만 표기
+    var fits=(r.wearExp||[]).filter(function(e){return e.feel==='딱맞음';});
+    var a='<div class="cx-sec"><div class="cx-h">잘 맞는 기준 옷</div>'+
+      (fits.length
+        ? '<div class="cx-tags">'+fits.map(function(e){return '<span class="cx-tag"><b>'+esc(e.brand)+'</b> · '+esc(e.cat)+' '+esc(e.fit)+' · <b>'+esc(e.size)+'</b></span>';}).join('')+'</div>'
+        : '<div class="cx-note">진단 때 착용경험을 입력하지 않았어요 · 기준 옷 정보 없음</div>')+
+    '</div>';
+    var b='<div class="cx-sec"><div class="cx-h">브랜드별 추천 사이즈 '+ex+'</div>'+
+      '<table class="cx-tbl"><thead><tr><th>브랜드</th><th>상의</th><th>하의</th></tr></thead><tbody>'+
+      DEMO_BRANDREC[g].map(function(x){return '<tr><td>'+esc(x[0])+'</td><td><b>'+esc(x[1])+'</b></td><td><b>'+esc(x[2])+'</b></td></tr>';}).join('')+
+      '</tbody></table></div>';
+    return a+b;
+  }
+
   /* 고객 체형 — 결과 카드(유형명) 없이: 기본정보 + 8유형색 설명 한 줄 + 웃긴 바디맵 */
   function measureCard(m, bt, r){
     var pt=esc(bt.point||'#2E4A3B');
@@ -162,6 +211,10 @@
       '</div>'+
       /* ③ 캐릭터 + 어깨·가슴·허리·엉덩이·핏취향(같이) */
       bodySilhouette(m, bt, r.gender)+
+      /* ④ 예상 신체 치수(회귀 추정 + ± 편차) */
+      estSection(r)+
+      /* ⑤ [프로토타입] 기준 옷 · 브랜드별 추천 사이즈 · 스타일링 힌트 */
+      refAndRecs(m, bt, r)+
     '</div>';
   }
 
@@ -251,6 +304,12 @@
   window.toggleAccMenu=toggleAccMenu;
   initHeader();
 
-  fetch('data/bodytypes.json').then(function(r){return r.json();}).then(function(j){
-    (j.types||[]).forEach(function(t){ BTMAP[t.code]=t; }); render();
+  Promise.all([
+    fetch('data/bodytypes.json').then(function(r){return r.json();}).catch(function(){return {};}),
+    fetch('data/body-base-model.json').then(function(r){return r.json();}).catch(function(){return null;}),
+    fetch('data/body-distribution.json').then(function(r){return r.json();}).catch(function(){return null;})
+  ]).then(function(res){
+    ((res[0]&&res[0].types)||[]).forEach(function(t){ BTMAP[t.code]=t; });
+    BMODEL=res[1]; BDIST=res[2];
+    render();
   }).catch(function(){ render(); });
