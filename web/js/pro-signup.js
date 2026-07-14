@@ -1,12 +1,12 @@
-  /* 쇼퍼 가입 온보딩 위저드 로직.
+  /* 스타일리스트 가입 온보딩 위저드 로직.
      단계 0(소개)~5(완료). 수집값을 localStorage 'fitting.pro.profile'에 저장.
-     데이터 계약: docs/쇼퍼가입-화면정의서.md §5. */
+     데이터 계약: docs/스타일리스트가입-화면정의서.md §5. */
   function loadLS(k, def){ try{ var v=localStorage.getItem('fitting.'+k); return v?JSON.parse(v):def; }catch(e){ return def; } }
   function saveLS(k, v){ try{ localStorage.setItem('fitting.'+k, JSON.stringify(v)); }catch(e){} }
   function $(id){ return document.getElementById(id); }
   function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2000); }
 
-  /* 이미 가입한 쇼퍼면 온보딩 건너뛰고 포털로 (재방문 처리, 화면정의서 SP-1) */
+  /* 이미 가입한 스타일리스트면 온보딩 건너뛰고 포털로 (재방문 처리, 화면정의서 SP-1) */
   (function(){ var p=loadLS('pro.profile',null); if(p&&p.registered){ location.replace('pro.html'); } })();
 
   var STEPS=6;               // 0~5
@@ -22,7 +22,7 @@
     var ps=document.querySelectorAll('.panel');
     for(var i=0;i<ps.length;i++) ps[i].classList.toggle('on', parseInt(ps[i].dataset.step,10)===cur);
     // 헤더/진행바
-    var titles=['쇼퍼 지원','쇼퍼 가입','기본 정보','이력·전문분야','포트폴리오','등록 완료'];
+    var titles=['스타일리스트 지원','스타일리스트 가입','기본 정보','이력·전문분야','포트폴리오','등록 완료'];
     $('headTitle').textContent=titles[cur];
     $('headStep').textContent = (cur>=1 && cur<=5) ? cur+'/5' : '';
     $('progBar').style.width = (cur/(STEPS-1)*100)+'%';
@@ -124,7 +124,7 @@
       email:$('email').value.trim(),
       phone:$('phone').value.trim(),
       agreeMkt:$('agreeMkt').checked,
-      name:$('name').value.trim()||'쇼퍼',
+      name:$('name').value.trim()||'스타일리스트',
       services:svc,
       tagline:$('tagline').value.trim(),
       bio:$('bio').value.trim(),

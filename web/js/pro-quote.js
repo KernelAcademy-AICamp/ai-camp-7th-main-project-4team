@@ -87,7 +87,7 @@
   function completeReq(){ reqs[idx].status='완료'; saveLS('pro.reqs',reqs); render(); toast('완료 처리했어요'); }
   function cancelReq(){ reqs[idx].reason=''; reqs[idx].status='취소'; saveLS('pro.reqs',reqs); render(); toast('진행을 취소했어요'); }
   function undoCancel(){ reqs[idx].status='수락됨'; reqs[idx].reason=''; saveLS('pro.reqs',reqs); render(); toast('취소를 되돌렸어요'); }
-  /* 분쟁 소명(2.x/3.B.4) — 쇼퍼 반박 제출 → 관리자 중재 대기 */
+  /* 분쟁 소명(2.x/3.B.4) — 스타일리스트 반박 제출 → 관리자 중재 대기 */
   function submitDisputeReply(){ var el=$('dispReply'); var v=el?el.value.trim():''; if(!v){ toast('소명 내용을 입력해주세요'); return; }
     if(!reqs[idx].dispute) reqs[idx].dispute={}; reqs[idx].dispute.reply=v; saveLS('pro.reqs',reqs); render(); toast('소명을 제출했어요 · 관리자 중재를 기다려요'); }
 
@@ -213,7 +213,7 @@
   function confirmComplete(){ askConfirm('완료 처리할까요? 고객 후기를 받을 수 있어요', completeReq, '완료 처리'); }
   function confirmCancel(){ askConfirm('진행을 취소할까요?', cancelReq, '취소하기'); }
 
-  /* ── 고객 체형 = 쇼퍼용 '결과 카드 값' 먼저, 측정값은 가독성 좋게 '자세히 보기' ── */
+  /* ── 고객 체형 = 스타일리스트용 '결과 카드 값' 먼저, 측정값은 가독성 좋게 '자세히 보기' ── */
   function segIdx(pct){ return Math.max(0, Math.min(4, Math.floor((pct==null?50:pct)/20))); }
   function zoneLabel(i, L, R){ return i===0?L:(i===1?L+' 편':(i===2?'표준':(i===3?R+' 편':R))); }
   /* 결과 카드 캐릭터(card.js .fig) 재사용 — 실루엣 clip-path로 체형 모양 + 성별 + 유형색. 옆에 측정 라벨 */
@@ -231,7 +231,7 @@
     return '<div class="bodymap"><div class="bm-fig">'+fig+'</div><div class="bm-list">'+list+'</div></div>';
   }
 
-  /* 쇼퍼용 체형 설명 한 줄(8유형) — 고객 체형을 '~체형이에요!'로 설명 */
+  /* 스타일리스트용 체형 설명 한 줄(8유형) — 고객 체형을 '~체형이에요!'로 설명 */
   var SHOPPER_DESC={
     STR:'벨트로 허리에 곡선을 더하면 직선 라인이 한층 살아나는 체형이에요!',
     TRI:'상체에 포인트를 주고 시선을 위로 올리면 균형이 살아나는 체형이에요!',
@@ -277,7 +277,7 @@
   var IC_PIN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11l-8.5 8.5a4.5 4.5 0 0 1-6.4-6.4l8.5-8.5a3 3 0 0 1 4.3 4.3l-8.6 8.5a1.5 1.5 0 0 1-2.1-2.1l7.9-7.9"/></svg>';
   function requestReceipt(r, att){
     var out = r.dir==='out';
-    // 지명(받은 요청)=이 쇼퍼 한 명에게 → 명확한 예상 가격 / 오픈(보낸 제안)=여러 쇼퍼에 뿌린 요청 → 고객 예산 범위
+    // 지명(받은 요청)=이 스타일리스트 한 명에게 → 명확한 예상 가격 / 오픈(보낸 제안)=여러 스타일리스트에 뿌린 요청 → 고객 예산 범위
     var money = out
       ? ['고객 예산', esc(r.budget||'—')]
       : ['예상 가격', '<span class="num">'+svcPrice(r.service).toLocaleString()+'</span>원'];
@@ -317,7 +317,7 @@
     // 좌(primary): ① 요청서 먼저 → ② 체형 참고 나중  /  우(sticky): ③ 제안
     $('quoteRoot').innerHTML =
       '<a class="backlink" onclick="location.href=\'pro.html\'">← 요청 내역으로</a>'+
-      '<p class="crumb">쇼퍼 지원 · '+(out?'보낸 제안':'받은 요청')+'</p>'+
+      '<p class="crumb">스타일리스트 지원 · '+(out?'보낸 제안':'받은 요청')+'</p>'+
       '<h1>'+esc(r.cust)+' 님'+(r.occ?' · '+esc(r.occ):'')+'</h1>'+
       '<div class="htags">'+svcBadge(r.service)+'<span class="st '+stClass(r.status)+'">'+esc(r.status)+'</span></div>'+
       '<div class="qgrid2">'+
@@ -334,7 +334,7 @@
   function setTxt(id,v){ var e=$(id); if(e&&v!=null) e.textContent=v; }
   function setSrc(id,v){ var e=$(id); if(e&&v) e.src=v; }
   function initHeader(){
-    var nm=(profile&&profile.name)||'소희 쇼퍼';
+    var nm=(profile&&profile.name)||'소희 스타일리스트';
     var av=(profile&&profile.avatar)||'photos/p1.jpg';
     var role=(profile&&profile.services&&profile.services[0]&&profile.services[0].label)||'온라인 스타일링';
     setTxt('hdrName',nm); setTxt('sideName',nm);

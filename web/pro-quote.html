@@ -4,20 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>fitting · 견적 요청</title>
-<!-- 쇼퍼가 요청을 클릭하면 오는 견적서 페이지. 고객의 체형진단 결과 상세(브랜드 추천 제외) + 요청 내용 + 제안. -->
+<!-- 스타일리스트가 요청을 클릭하면 오는 견적서 페이지. 고객의 체형진단 결과 상세(브랜드 추천 제외) + 요청 내용 + 제안. -->
 <link rel="stylesheet" href="css/tokens.css?v=dc9975ef">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/pro-quote.css?v=f6ceeaca">
+<link rel="stylesheet" href="css/pro-quote.css?v=214d3d70">
 </head>
 <body>
 <header><div class="nav">
   <span class="logo" style="cursor:pointer" onclick="location.href='index.html'">Fitting<i></i></span>
-  <span class="pill-role">쇼퍼 지원</span>
+  <span class="pill-role">스타일리스트 지원</span>
   <div class="navr">
     <span class="cust" onclick="location.href='index.html'">← 고객 화면</span>
     <span class="bell" onclick="location.href='pro.html'" title="새 요청 알림"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 1 0-12 0c0 6-2.5 7.5-2.5 7.5h17S18 14.5 18 8.5z"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg><span class="bell-badge" id="bellBadge" style="display:none">0</span></span>
-    <span class="me" onclick="toggleAccMenu(event)"><img id="hdrAvatar" src="photos/p1.jpg" alt="프로필 사진" onerror="this.style.visibility='hidden'"><span id="hdrName">소희 쇼퍼</span> <span class="caret">▾</span></span>
+    <span class="me" onclick="toggleAccMenu(event)"><img id="hdrAvatar" src="photos/p1.jpg" alt="프로필 사진" onerror="this.style.visibility='hidden'"><span id="hdrName">소희 스타일리스트</span> <span class="caret">▾</span></span>
   </div>
   <div class="accmenu" id="accMenu">
     <a onclick="location.href='pro.html'">내 프로필</a>
@@ -36,6 +36,6 @@
   </div>
 </div>
 <div class="toast" id="toast"></div>
-<script src="js/pro-quote.js?v=5512c46d"></script>
+<script src="js/pro-quote.js?v=0f4bd6a4"></script>
 </body>
 </html>

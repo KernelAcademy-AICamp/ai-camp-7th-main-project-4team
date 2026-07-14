@@ -1,8 +1,8 @@
-  /* 쇼퍼(공급자) 포털 — 시작 구조. 페르소나: 소희 쇼퍼.
+  /* 스타일리스트(공급자) 포털 — 시작 구조. 페르소나: 소희 스타일리스트.
      고객 측 요청 라이프사이클의 대칭 뷰. 요청 클릭 → 상세 드로어(체형·사이즈 첨부 + 요청 내용)에서 제안. */
   function loadLS(k, def){ try{ var v=localStorage.getItem('fitting.'+k); return v?JSON.parse(v):def; }catch(e){ return def; } }
   function saveLS(k, v){ try{ localStorage.setItem('fitting.'+k, JSON.stringify(v)); }catch(e){} }
-  /* 가입(온보딩)에서 저장한 프로필. 데이터 계약: docs/쇼퍼가입-화면정의서.md §5 */
+  /* 가입(온보딩)에서 저장한 프로필. 데이터 계약: docs/스타일리스트가입-화면정의서.md §5 */
   var PROFILE = loadLS('pro.profile', null);
   var MY_PRICE = (PROFILE && PROFILE.services && PROFILE.services[0]) ? PROFILE.services[0].price : 120000;
   /* 가입 전(직접 pro.html 진입) 편집 시 시드로 쓸 기본 프로필 = 화면의 데모값과 동일 */
@@ -18,7 +18,7 @@
     {src:'photos/folio2.jpg', height:174, weight:66}
   ];
   var DEFAULT_PROFILE = {
-    registered:false, name:'소희 쇼퍼',
+    registered:false, name:'소희 스타일리스트',
     services:[
       {type:'online',label:'온라인 스타일링',price:35000,mode:'비대면'},
       {type:'shopping',label:'동행 쇼핑',price:120000,mode:'대면',regions:['서울 강남','서울 마포']},
@@ -27,7 +27,7 @@
     bio:'데일리·소개팅룩 전문 스타일리스트 · 비대면 큐레이션이 강점이에요',
     occ:['date','daily'], tags:['미니멀','시크'], portfolio:DEMO_PORTFOLIO
   };
-  /* 전문분야(=쇼퍼찾기 상황) 7가지 · 코드↔라벨 (데이터 계약) */
+  /* 전문분야(=스타일리스트찾기 상황) 7가지 · 코드↔라벨 (데이터 계약) */
   var FIELD_OPTS = [
     {code:'date',label:'소개팅·데이트'},{code:'interview',label:'면접·발표'},{code:'wedding',label:'결혼식 하객'},
     {code:'travel',label:'여행'},{code:'daily',label:'데일리 스타일링'},{code:'personal',label:'퍼스널 스타일링'},{code:'bodycover',label:'체형 커버 스타일링'}
@@ -203,7 +203,7 @@
     document.getElementById('inboxOutList').innerHTML = out.length ? out.map(function(r){ return reqTop(r,true); }).join('') : '<p class="note" style="padding:14px 0">아직 보낸 제안이 없어요</p>';
   }
   function renderRecent(){ document.getElementById('dashRecent').innerHTML=reqs.filter(function(r){return r.dir!=='out';}).sort(byDateDesc).slice(0,3).map(function(r){ return reqTop(r,true); }).join(''); }
-  /* 역방향 제안: '제안받기' 설정한 고객(데모 · 고객 영역은 미구현) → 쇼퍼가 먼저 제안 */
+  /* 역방향 제안: '제안받기' 설정한 고객(데모 · 고객 영역은 미구현) → 스타일리스트가 먼저 제안 */
   var CANDIDATES = [
     {cust:'이수민', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:165, kg:53, occ:'결혼식 하객', budget:'10~15만', service:'shopping', note:'하객룩 단정하게, 과하지 않게'},
     {cust:'박준영', type:'INV', bodytype:'모던 V라인',   gender:'male',   cm:178, kg:74, occ:'면접·발표',   budget:'15만+',   service:'image',  note:'첫인상 신뢰감 있게'},
@@ -249,7 +249,7 @@
     var rv=reqs.filter(function(r){return r.review;});
     el.innerHTML = rv.length ? rv.map(function(r){ var i=reqs.indexOf(r);
       var replyBlock = r.reply
-        ? '<div class="rvreply"><b>쇼퍼 답글</b><br>'+r.reply+'</div>'
+        ? '<div class="rvreply"><b>스타일리스트 답글</b><br>'+r.reply+'</div>'
         : (replyIdx===i
             ? '<div class="rvreplyform"><textarea id="rvReplyInput" placeholder="후기에 답글을 남겨보세요"></textarea><div class="rb"><button class="tinybtn ghost" onclick="cancelReply()">취소</button><button class="tinybtn" onclick="saveReply('+i+')">답글 등록</button></div></div>'
             : '<div style="margin-top:10px"><button class="tinybtn ghost" onclick="openReply('+i+')">답글 달기</button></div>');
@@ -375,7 +375,7 @@
   }
 
   /* ===== 프로필 편집 ===== */
-  /* 쇼퍼 찾기(index.js)와 동일한 SVG 캐릭터 아바타 — 기본 프로필 사진 */
+  /* 스타일리스트 찾기(index.js)와 동일한 SVG 캐릭터 아바타 — 기본 프로필 사진 */
   function suitPhoto(seed){
     var bgs=['#E7EFEA','#ECEAE3','#E6EDF2','#F0EAE4','#E9EEEA','#EEEAF0'];
     var suits=['#2E4A3B','#39404B','#4B5563','#5A4632','#33475A','#3A3550'];
@@ -464,12 +464,12 @@
     next.registered = true;
     next.avatar = edAvatar;
     next.name = name;
-    delete next.height; delete next.weight;   // 쇼퍼 본인 신체정보 제거(계약 미포함)
+    delete next.height; delete next.weight;   // 스타일리스트 본인 신체정보 제거(계약 미포함)
     next.services = svc;                                           // 활동지역은 services[].regions 안에 포함
     next.bio = document.getElementById('edTagline').value.trim();  // 소개 = bio 하나로 통일(경력소개 제거)
     delete next.tagline; delete next.regions;                      // 구 필드 정리
-    next.occ = edFields.slice();   // 전문분야=상황(코드) → 쇼퍼찾기 occ[]
-    next.tags = edStyles.slice();  // 스타일 태그 → 쇼퍼찾기 tags[]
+    next.occ = edFields.slice();   // 전문분야=상황(코드) → 스타일리스트찾기 occ[]
+    next.tags = edStyles.slice();  // 스타일 태그 → 스타일리스트찾기 tags[]
     delete next.fields; delete next.styles; delete next.specialties;
     next.portfolio = edPhotos.slice();
     PROFILE = next; MY_PRICE = svc[0].price;
