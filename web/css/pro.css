@@ -1,6 +1,7 @@
 /* pro.html에서 분리한 페이지 스타일. 소유: 디자이너(web/*.css).
    인라인→외부화(순수 이동, 렌더 무변화) — 충돌면 축소. 색·폰트·간격 토큰화는 별도(디자인 결정). */
   a{color:inherit;text-decoration:none;cursor:pointer}
+  html{scrollbar-gutter:stable}   /* pro-quote와 동일 — 페이지 전환 시 바가 좌우로 튀지 않게 */
   body{min-height:100vh;display:flex;flex-direction:column}
   .wrap{max-width:1240px;margin:0 auto;padding:0 30px;width:100%;flex:1 0 auto}
 
@@ -67,7 +68,7 @@
   .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:6px 24px;box-shadow:0 6px 18px rgba(20,18,16,.05)}
   .subhead{font-size:15px;font-weight:800;margin:20px 0 8px}
   /* 요청함 그룹 헤더 — 마이페이지 요청내역과 동일 */
-  .rghead{display:flex;align-items:center;gap:13px;padding:2px 0 14px;border-bottom:1px solid var(--line);margin-bottom:6px}
+  .rghead{display:flex;align-items:center;gap:13px;padding:16px 0 14px;border-bottom:1px solid var(--line)}
   .rghead .rgicon{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex:none;background:var(--green-soft);color:var(--green)}
   .rghead .rgicon svg{width:21px;height:21px}
   .rghead .rgtx{flex:1;min-width:0} .rghead .rgtx b{font-size:16px;font-weight:800;letter-spacing:-.03em} .rghead .rgtx p{font-size:12.5px;color:var(--sub);margin-top:3px;line-height:1.5}
@@ -79,7 +80,20 @@
   .req .av{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--green),var(--green-mid));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}
   .req .info{flex:1;min-width:0} .req .info b{font-size:14.5px} .req .info small{display:block;font-size:12.5px;color:var(--sub);margin-top:2px}
   .st{font-size:12px;font-weight:800;padding:5px 11px;border-radius:20px;white-space:nowrap}
-  .st.nw{background:var(--green);color:#fff} .st.sent{background:var(--soft);color:var(--sub)} .st.prog{background:var(--green-soft);color:var(--green)} .st.done{background:var(--green-soft);color:var(--green)} .st.warn{background:var(--warn,#c0392b);color:#fff}
+  .st.nw{background:var(--ink);color:#fff} .st.sent{background:var(--soft);color:var(--sub)} .st.prog{background:var(--green-soft);color:var(--green)} .st.done{background:var(--green-soft);color:var(--green)} .st.warn{background:var(--warn,#c0392b);color:#fff}
+  /* 통일 리스트 행(.ureq) — 고객 화면과 동일 언어. 2줄 + 모노 아이콘, 색은 상태에만 */
+  .ureq{display:flex;align-items:center;gap:13px;padding:14px 0;border-bottom:1px solid var(--line)} .ureq:last-child{border:none}
+  .ureq-ic{width:42px;height:42px;border-radius:13px;background:var(--soft);color:var(--ink-soft);display:flex;align-items:center;justify-content:center;flex:none;border:1px solid var(--line)}
+  .ureq-ic svg{width:20px;height:20px}
+  .ureq-l{flex:1;min-width:0}
+  .ureq-title{font-size:15px;font-weight:800;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ureq-meta{font-size:12.5px;color:var(--sub);font-weight:600;margin-top:3px}
+  .ureq-meta b{color:var(--sub);font-weight:700}
+  .ureq-r{display:flex;align-items:center;gap:9px;flex:none}
+  /* 진행 중(수락됨)=아이콘 연초록 활성 / 완료·취소·거절=투명도 낮게 (고객 플로우와 통일) */
+  .ureq.active .ureq-ic{background:var(--green-soft);color:var(--green);border-color:var(--green-light)}
+  .ureq.active .ureq-title{color:var(--green)}
+  .ureq.past{opacity:.5}
   /* 서비스 유형 배지(온라인 스타일링·동행 쇼핑·이미지 컨설팅) */
   .svcbadge{display:inline-block;font-size:11px;font-weight:800;border-radius:20px;padding:2px 9px;margin-left:8px;vertical-align:middle;white-space:nowrap}
   .svcbadge svg{width:13px;height:13px;vertical-align:-2px;margin-right:2px}

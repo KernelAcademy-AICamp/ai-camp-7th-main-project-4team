@@ -8,18 +8,34 @@
 <link rel="stylesheet" href="css/tokens.css?v=dc9975ef">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/pro-quote.css?v=8d6fdce9">
+<link rel="stylesheet" href="css/pro-quote.css?v=f6ceeaca">
 </head>
 <body>
 <header><div class="nav">
-  <span class="logo" onclick="location.href='index.html'">Fitting<i></i></span>
-  <span class="back" onclick="location.href='pro.html'">← 요청 내역으로</span>
+  <span class="logo" style="cursor:pointer" onclick="location.href='index.html'">Fitting<i></i></span>
+  <span class="pill-role">쇼퍼 지원</span>
+  <div class="navr">
+    <span class="cust" onclick="location.href='index.html'">← 고객 화면</span>
+    <span class="bell" onclick="location.href='pro.html'" title="새 요청 알림"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 1 0-12 0c0 6-2.5 7.5-2.5 7.5h17S18 14.5 18 8.5z"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg><span class="bell-badge" id="bellBadge" style="display:none">0</span></span>
+    <span class="me" onclick="toggleAccMenu(event)"><img id="hdrAvatar" src="photos/p1.jpg" alt="프로필 사진" onerror="this.style.visibility='hidden'"><span id="hdrName">소희 쇼퍼</span> <span class="caret">▾</span></span>
+  </div>
+  <div class="accmenu" id="accMenu">
+    <a onclick="location.href='pro.html'">내 프로필</a>
+    <a onclick="location.href='index.html'">로그아웃</a>
+  </div>
 </div></header>
 
-<div class="qwrap" id="quoteRoot">
-  <p class="crumb">불러오는 중…</p>
+<div class="qwrap"><div id="quoteRoot"><p class="crumb">불러오는 중…</p></div></div>
+<div class="cf-overlay" id="cfOverlay">
+  <div class="cf-box">
+    <p class="cf-msg" id="cfMsg"></p>
+    <div class="cf-btns">
+      <button class="btn ghost" id="cfNo" type="button">취소</button>
+      <button class="btn" id="cfYes" type="button">확인</button>
+    </div>
+  </div>
 </div>
 <div class="toast" id="toast"></div>
-<script src="js/pro-quote.js?v=e7efad3c"></script>
+<script src="js/pro-quote.js?v=5512c46d"></script>
 </body>
 </html>
