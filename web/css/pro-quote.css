@@ -24,8 +24,8 @@
   .backlink{display:inline-block;font-size:14px;font-weight:800;color:var(--sub);cursor:pointer;margin-bottom:10px}
   .backlink:hover{color:var(--green)}
 
-  /* 상세(마스터→디테일) — 사이드바 없이 집중형 중앙 컬럼 */
-  .qwrap{max-width:760px;margin:0 auto;padding:30px 28px 90px}
+  /* 상세(마스터→디테일) — 2단: 좌 요청서+견적작성 / 우 고객 체형(아바타) */
+  .qwrap{max-width:1160px;margin:0 auto;padding:30px 28px 90px}
   .crumb{font-size:12.5px;color:var(--sub2,#8a857b);font-weight:700}
   h1{font-size:25px;font-weight:800;letter-spacing:-.04em;margin:6px 0 4px}
   .htags{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
@@ -69,10 +69,21 @@
   .obtns{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
   .num{font-family:var(--num,inherit);font-weight:800}
 
-  /* 2단: 좌(primary) 요청서→체형 · 우(sticky) 제안 */
-  /* 한 컬럼 스택 — 요청서 → 체형 → 제안(맨 아래) */
-  .qgrid2{display:block;margin-top:22px}
+  /* 2단: 좌(1fr) 요청서 → 견적작성 · 우(500px) 고객 체형(아바타) · 좁아지면 1단 스택 */
+  .qgrid2{display:grid;grid-template-columns:minmax(0,1fr) 500px;gap:24px;align-items:start;margin-top:22px}
+  @media(max-width:980px){.qgrid2{grid-template-columns:1fr}}
   .offer-card{margin-top:2px}
+
+  /* 파라메트릭 실루엣 아바타 — 부위 백분위로 폭 반응(pro-quote.js bodySilhouette) */
+  .bodymap2{--fig-fill:#D6E3DB;--fig-fill-hi:#E7F0EA;--fig-line:#2E4A3B;--guide:#C7C4BC;--pill-bg:#EEF3F0;
+    margin-top:16px;display:flex;flex-direction:column;align-items:center}
+  .bodymap2 svg{width:100%;max-width:380px;height:auto;display:block}
+  .bodymap2 .g-name{font-size:12.5px;font-weight:800;fill:var(--ink,#16140F)}
+  .bodymap2 .g-tag{font-size:12.5px;font-weight:800}
+  .bodymap2 .cap-svg{font-size:10.5px;font-weight:600;fill:var(--sub2,#A6A29A)}
+  .av-pref{display:flex;align-items:center;gap:9px;margin-top:4px}
+  .av-pref span{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--sub2)}
+  .av-pref b{font-size:12.5px;font-weight:800;color:#fff;background:var(--green);padding:5px 12px;border-radius:20px}
 
   /* [프로토타입] 쇼퍼용 사이즈 인사이트 — 기준 옷 · 브랜드 추천 · 스타일링 힌트 */
   .cx-sec{margin-top:16px;padding-top:15px;border-top:1px solid var(--line,#E6E5E1)}

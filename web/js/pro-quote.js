@@ -243,19 +243,58 @@
   /* ── 고객 체형 = 스타일리스트용 '결과 카드 값' 먼저, 측정값은 가독성 좋게 '자세히 보기' ── */
   function segIdx(pct){ return Math.max(0, Math.min(4, Math.floor((pct==null?50:pct)/20))); }
   function zoneLabel(i, L, R){ return i===0?L:(i===1?L+' 편':(i===2?'표준':(i===3?R+' 편':R))); }
-  /* 결과 카드 캐릭터(card.js .fig) 재사용 — 실루엣 clip-path로 체형 모양 + 성별 + 유형색. 옆에 측정 라벨 */
+  /* 부위 백분위(측정 기반)로 폭이 반응하는 파라메트릭 실루엣 아바타.
+     좌: 슬림/표준/볼륨 태그(zoneLabel) · 우: 부위명 · 아래: 핏취향 칩. cm은 ④ 예상치수에 별도 표기.
+     Catmull-Rom으로 몸통·다리 외곽선을 만들고, 팔은 스트로크. 세로 비율은 표준 템플릿 고정. */
   function bodySilhouette(m, bt, gender){
-    gender=(gender==='male'||gender==='female')?gender:'female';
-    var sil=(bt&&bt.silhouette)||'straight', pt=(bt&&bt.point)||'#2E4A3B';
-    var head='<div class="head '+gender+'">'+(gender==='female'?'<span class="longhair"></span>':'')
-      +'<span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div>';
-    var fig='<div class="fig">'+head+'<div class="body '+esc(sil)+'" style="background-color:'+esc(pt)+'; height:150px"></div></div>';
-    function zone(v,L,R){ return zoneLabel(segIdx(v),L,R); }
-    var rows=[['어깨',zone(m.top.shoulder,'좁은','넓은')],['가슴',zone(m.top.chestFull,'슬림','볼륨')],
-      ['허리',zone(m.bottom.waist,'슬림','볼륨')],['엉덩이',zone(m.bottom.hip,'슬림','볼륨')],
-      ['핏 취향',zone(m.prefTop,'타이트','여유')]];
-    var list=rows.map(function(x){ return '<div class="bm-row"><span class="bp">'+esc(x[0])+'</span><span class="bz">'+esc(x[1])+'</span></div>'; }).join('');
-    return '<div class="bodymap"><div class="bm-fig">'+fig+'</div><div class="bm-list">'+list+'</div></div>';
+    var cx=150, headCY=48, headRx=27, headRy=31, neckHalf=12;
+    var neckY=88, shoulderY=110, chestY=172, waistY=240, hipY=300, crotchY=330, kneeY=422, ankleY=498;
+    /* 백분위 50=표준 반폭, 0~100 → ±28%. shoulder=너비 / 나머지=둘레지만 시각 폭으로 통일 근사 */
+    var BASE={shoulder:42, chest:34, waist:27, hip:33};
+    function hw(part,p){ p=(p==null?50:p); return BASE[part]*(0.72+p/100*0.56); }
+    var sh=hw('shoulder',m.top.shoulder), ch=hw('chest',m.top.chestFull),
+        wa=hw('waist',m.bottom.waist), hi=hw('hip',m.bottom.hip);
+    function cr(pts){ var n=pts.length, P=function(i){return pts[(i%n+n)%n];};
+      var d='M '+pts[0][0].toFixed(1)+' '+pts[0][1].toFixed(1);
+      for(var i=0;i<n;i++){ var a=P(i-1),b=P(i),c=P(i+1),e=P(i+2);
+        d+=' C '+(b[0]+(c[0]-a[0])/6).toFixed(1)+' '+(b[1]+(c[1]-a[1])/6).toFixed(1)+', '
+          +(c[0]-(e[0]-b[0])/6).toFixed(1)+' '+(c[1]-(e[1]-b[1])/6).toFixed(1)+', '
+          +c[0].toFixed(1)+' '+c[1].toFixed(1); } return d+' Z'; }
+    function arm(s){ return 'M '+(cx+s*(sh-7)).toFixed(1)+' '+(shoulderY+6)
+      +' C '+(cx+s*(sh+13)).toFixed(1)+' '+(chestY-14)+', '+(cx+s*(sh+11)).toFixed(1)+' '+(chestY+34)
+      +', '+(cx+s*(sh-2)).toFixed(1)+' '+(hipY-6); }
+    var body=[[cx+neckHalf,neckY],[cx+sh,shoulderY],[cx+ch,chestY],[cx+wa,waistY],[cx+hi,hipY],
+      [cx+hi*0.9,crotchY+16],[cx+22,kneeY],[cx+18,ankleY],[cx+8,ankleY],[cx+9,kneeY],[cx+3,crotchY+24],
+      [cx,crotchY+6],[cx-3,crotchY+24],[cx-9,kneeY],[cx-8,ankleY],[cx-18,ankleY],[cx-22,kneeY],
+      [cx-hi*0.9,crotchY+16],[cx-hi,hipY],[cx-wa,waistY],[cx-ch,chestY],[cx-sh,shoulderY],[cx-neckHalf,neckY]];
+    var LV=[['어깨',m.top.shoulder,'좁은','넓은',sh,shoulderY],['가슴',m.top.chestFull,'슬림','볼륨',ch,chestY],
+      ['허리',m.bottom.waist,'슬림','볼륨',wa,waistY],['엉덩이',m.bottom.hip,'슬림','볼륨',hi,hipY]];
+    var guides='';
+    LV.forEach(function(x){ var i=segIdx(x[1]), tag=zoneLabel(i,x[2],x[3]), col=(i===2?'var(--green)':'var(--green-mid)');
+      var half=x[4], y=x[5], re=cx+half, le=cx-half, vx=286;
+      guides+='<circle cx="'+re.toFixed(1)+'" cy="'+y+'" r="2.6" fill="var(--fig-line)"/>'
+        +'<line x1="'+(re+4).toFixed(1)+'" y1="'+y+'" x2="'+(vx-6)+'" y2="'+y+'" stroke="var(--guide)" stroke-width="1.2" stroke-dasharray="2 3"/>'
+        +'<text class="g-name" x="'+vx+'" y="'+(y+4)+'">'+esc(x[0])+'</text>';
+      var tw=tag.length*13+26, pe=le-9, ps=pe-tw;
+      guides+='<circle cx="'+le.toFixed(1)+'" cy="'+y+'" r="2.6" fill="var(--fig-line)"/>'
+        +'<line x1="'+(le-4).toFixed(1)+'" y1="'+y+'" x2="'+(pe+1).toFixed(1)+'" y2="'+y+'" stroke="var(--guide)" stroke-width="1.2"/>'
+        +'<rect x="'+ps.toFixed(1)+'" y="'+(y-12)+'" width="'+tw+'" height="24" rx="12" fill="var(--pill-bg)" stroke="'+col+'" stroke-opacity=".5"/>'
+        +'<circle cx="'+(ps+13).toFixed(1)+'" cy="'+y+'" r="3" fill="'+col+'"/>'
+        +'<text class="g-tag" x="'+(ps+22).toFixed(1)+'" y="'+(y+4)+'" fill="'+col+'">'+esc(tag)+'</text>'; });
+    var svg='<svg viewBox="0 0 360 544" role="img" aria-label="고객 체형 실루엣">'
+      +'<ellipse cx="'+cx+'" cy="514" rx="52" ry="9" fill="var(--fig-line)" opacity=".10"/>'
+      +'<path d="'+arm(1)+'" fill="none" stroke="var(--fig-line)" stroke-width="13.5" stroke-linecap="round" opacity=".92"/>'
+      +'<path d="'+arm(-1)+'" fill="none" stroke="var(--fig-line)" stroke-width="13.5" stroke-linecap="round" opacity=".92"/>'
+      +'<path d="'+arm(1)+'" fill="none" stroke="var(--fig-fill)" stroke-width="9.5" stroke-linecap="round"/>'
+      +'<path d="'+arm(-1)+'" fill="none" stroke="var(--fig-fill)" stroke-width="9.5" stroke-linecap="round"/>'
+      +'<rect x="'+(cx-neckHalf)+'" y="70" width="'+(neckHalf*2)+'" height="34" rx="9" fill="var(--fig-fill)" stroke="var(--fig-line)" stroke-width="2"/>'
+      +'<path d="'+cr(body)+'" fill="var(--fig-fill)" stroke="var(--fig-line)" stroke-width="2" stroke-linejoin="round"/>'
+      +'<ellipse cx="'+cx+'" cy="'+headCY+'" rx="'+headRx+'" ry="'+headRy+'" fill="var(--fig-fill)" stroke="var(--fig-line)" stroke-width="2"/>'
+      +'<line x1="'+cx+'" y1="'+(shoulderY+6)+'" x2="'+cx+'" y2="'+(hipY-6)+'" stroke="var(--fig-line)" stroke-width="1" stroke-dasharray="1 5" opacity=".28"/>'
+      +guides
+      +'<text class="cap-svg" x="'+cx+'" y="536" text-anchor="middle">폭 = 측정 백분위 반영 · 세로 = 표준 비율</text></svg>';
+    var pref=zoneLabel(segIdx(m.prefTop),'타이트','여유');
+    return '<div class="bodymap2">'+svg+'<div class="av-pref"><span>핏 취향</span><b>'+esc(pref)+'</b></div></div>';
   }
 
   /* 스타일리스트용 체형 설명 한 줄(8유형) — 고객 체형을 '~체형이에요!'로 설명 */
@@ -400,10 +439,10 @@
       '<h1>'+esc(r.cust)+' 님'+(r.occ?' · '+esc(r.occ):'')+'</h1>'+
       '<div class="htags">'+svcBadge(r.service)+'<span class="st '+stClass(r.status)+'">'+esc(r.status)+'</span></div>'+
       '<div class="qgrid2">'+
-        '<div class="qleft">'+ requestReceipt(r, attached) + bodyCard +'</div>'+
-        '<div class="qright">'+
+        '<div class="qleft">'+ requestReceipt(r, attached) +
           '<div class="card offer-card"><div class="subhead">'+(r.status==='견적작성'?'견적 작성':(out?'제안 현황':(r.status==='신규'?'요청을 수락하시겠습니까?':'진행 상태')))+'</div>'+ actionHTML(r) +'</div>'+
         '</div>'+
+        '<div class="qright">'+ bodyCard +'</div>'+
       '</div>';
   }
 
