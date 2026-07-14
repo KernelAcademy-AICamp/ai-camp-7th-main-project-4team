@@ -244,10 +244,10 @@
   function segIdx(pct){ return Math.max(0, Math.min(4, Math.floor((pct==null?50:pct)/20))); }
   function zoneLabel(i, L, R){ return i===0?L:(i===1?L+' 편':(i===2?'표준':(i===3?R+' 편':R))); }
   /* 부위 백분위(측정 기반)로 폭이 반응하는 파라메트릭 실루엣 아바타.
-     좌: 슬림/표준/볼륨 태그(zoneLabel) · 우: 부위명 · 아래: 핏취향 칩. cm은 ④ 예상치수에 별도 표기.
-     Catmull-Rom으로 몸통·다리 외곽선을 만들고, 팔은 스트로크. 세로 비율은 표준 템플릿 고정. */
-  function bodySilhouette(m, bt, gender){
-    var cx=150, headCY=48, headRx=27, headRy=31, neckHalf=12;
+     좌: 슬림/표준/볼륨 태그(zoneLabel) · 우: 부위명 + 예상 cm(est) · 아래: 핏취향 칩.
+     Catmull-Rom으로 몸통·다리 외곽선을 만들고, 팔은 스트로크. 세로 비율은 표준 템플릿 고정. cx=180 가운데정렬. */
+  function bodySilhouette(m, bt, gender, est, conf){
+    var cx=180, headCY=48, headRx=27, headRy=31, neckHalf=12;
     var neckY=88, shoulderY=110, chestY=172, waistY=240, hipY=300, crotchY=330, kneeY=422, ankleY=498;
     /* 백분위 50=표준 반폭, 0~100 → ±28%. shoulder=너비 / 나머지=둘레지만 시각 폭으로 통일 근사 */
     var BASE={shoulder:42, chest:34, waist:27, hip:33};
@@ -267,21 +267,28 @@
       [cx+hi*0.9,crotchY+16],[cx+22,kneeY],[cx+18,ankleY],[cx+8,ankleY],[cx+9,kneeY],[cx+3,crotchY+24],
       [cx,crotchY+6],[cx-3,crotchY+24],[cx-9,kneeY],[cx-8,ankleY],[cx-18,ankleY],[cx-22,kneeY],
       [cx-hi*0.9,crotchY+16],[cx-hi,hipY],[cx-wa,waistY],[cx-ch,chestY],[cx-sh,shoulderY],[cx-neckHalf,neckY]];
-    var LV=[['어깨',m.top.shoulder,'좁은','넓은',sh,shoulderY],['가슴',m.top.chestFull,'슬림','볼륨',ch,chestY],
-      ['허리',m.bottom.waist,'슬림','볼륨',wa,waistY],['엉덩이',m.bottom.hip,'슬림','볼륨',hi,hipY]];
-    var guides='';
-    LV.forEach(function(x){ var i=segIdx(x[1]), tag=zoneLabel(i,x[2],x[3]), col=(i===2?'var(--green)':'var(--green-mid)');
-      var half=x[4], y=x[5], re=cx+half, le=cx-half, vx=286;
+    var LV=[
+      {name:'어깨',   key:'어깨너비',  pct:m.top.shoulder,   lo:'좁은',hi:'넓은',half:sh,y:shoulderY},
+      {name:'가슴',   key:'가슴둘레',  pct:m.top.chestFull,  lo:'슬림',hi:'볼륨',half:ch,y:chestY},
+      {name:'허리',   key:'허리둘레',  pct:m.bottom.waist,   lo:'슬림',hi:'볼륨',half:wa,y:waistY},
+      {name:'엉덩이', key:'엉덩이둘레', pct:m.bottom.hip,     lo:'슬림',hi:'볼륨',half:hi,y:hipY}];
+    var estMap={}; (est||[]).forEach(function(e){ estMap[e.label]={val:e.val, pm:e.pm}; });
+    var vx=240, guides='';
+    LV.forEach(function(x){ var i=segIdx(x.pct), tag=zoneLabel(i,x.lo,x.hi), col=(i===2?'var(--green)':'var(--green-mid)');
+      var half=x.half, y=x.y, re=cx+half, le=cx-half, e=estMap[x.key];
+      // 우: 부위명(+ 예상 cm을 바로 옆에). cm 있으면 이름은 위·수치 아래로.
       guides+='<circle cx="'+re.toFixed(1)+'" cy="'+y+'" r="2.6" fill="var(--fig-line)"/>'
         +'<line x1="'+(re+4).toFixed(1)+'" y1="'+y+'" x2="'+(vx-6)+'" y2="'+y+'" stroke="var(--guide)" stroke-width="1.2" stroke-dasharray="2 3"/>'
-        +'<text class="g-name" x="'+vx+'" y="'+(y+4)+'">'+esc(x[0])+'</text>';
+        +'<text class="g-name" x="'+vx+'" y="'+(e?(y-5):(y+4))+'">'+esc(x.name)+'</text>';
+      if(e) guides+='<text class="g-val" x="'+vx+'" y="'+(y+13)+'">약 '+e.val+'<tspan class="g-unit" dx="1">cm</tspan> <tspan class="g-pm">±'+e.pm+'</tspan></text>';
+      // 좌: 슬림/표준/볼륨 태그 pill
       var tw=tag.length*13+26, pe=le-9, ps=pe-tw;
       guides+='<circle cx="'+le.toFixed(1)+'" cy="'+y+'" r="2.6" fill="var(--fig-line)"/>'
         +'<line x1="'+(le-4).toFixed(1)+'" y1="'+y+'" x2="'+(pe+1).toFixed(1)+'" y2="'+y+'" stroke="var(--guide)" stroke-width="1.2"/>'
         +'<rect x="'+ps.toFixed(1)+'" y="'+(y-12)+'" width="'+tw+'" height="24" rx="12" fill="var(--pill-bg)" stroke="'+col+'" stroke-opacity=".5"/>'
         +'<circle cx="'+(ps+13).toFixed(1)+'" cy="'+y+'" r="3" fill="'+col+'"/>'
         +'<text class="g-tag" x="'+(ps+22).toFixed(1)+'" y="'+(y+4)+'" fill="'+col+'">'+esc(tag)+'</text>'; });
-    var svg='<svg viewBox="0 0 360 544" role="img" aria-label="고객 체형 실루엣">'
+    var svg='<svg viewBox="0 0 360 520" role="img" aria-label="고객 체형 실루엣">'
       +'<ellipse cx="'+cx+'" cy="514" rx="52" ry="9" fill="var(--fig-line)" opacity=".10"/>'
       +'<path d="'+arm(1)+'" fill="none" stroke="var(--fig-line)" stroke-width="13.5" stroke-linecap="round" opacity=".92"/>'
       +'<path d="'+arm(-1)+'" fill="none" stroke="var(--fig-line)" stroke-width="13.5" stroke-linecap="round" opacity=".92"/>'
@@ -291,10 +298,14 @@
       +'<path d="'+cr(body)+'" fill="var(--fig-fill)" stroke="var(--fig-line)" stroke-width="2" stroke-linejoin="round"/>'
       +'<ellipse cx="'+cx+'" cy="'+headCY+'" rx="'+headRx+'" ry="'+headRy+'" fill="var(--fig-fill)" stroke="var(--fig-line)" stroke-width="2"/>'
       +'<line x1="'+cx+'" y1="'+(shoulderY+6)+'" x2="'+cx+'" y2="'+(hipY-6)+'" stroke="var(--fig-line)" stroke-width="1" stroke-dasharray="1 5" opacity=".28"/>'
-      +guides
-      +'<text class="cap-svg" x="'+cx+'" y="536" text-anchor="middle">폭 = 측정 백분위 반영 · 세로 = 표준 비율</text></svg>';
+      +guides+'</svg>';
     var pref=zoneLabel(segIdx(m.prefTop),'타이트','여유');
-    return '<div class="bodymap2">'+svg+'<div class="av-pref"><span>핏 취향</span><b>'+esc(pref)+'</b></div></div>';
+    var note=(est&&est.length)
+      ? '예상 치수 · 신뢰도 '+esc(conf||'—')+' · 폭=측정 반영, 세로=표준 비율'
+      : '폭 = 측정 백분위 반영 · 세로 = 표준 비율';
+    return '<div class="bodymap2">'+svg
+      +'<div class="av-pref"><span>핏 취향</span><b>'+esc(pref)+'</b></div>'
+      +'<div class="av-cap">'+note+'</div></div>';
   }
 
   /* 스타일리스트용 체형 설명 한 줄(8유형) — 고객 체형을 '~체형이에요!'로 설명 */
@@ -329,10 +340,14 @@
       return {label:p[1], val:Math.round(val), pm:Math.max(1,Math.round(d.sd*band))};
     }).filter(Boolean);
   }
+  /* 신뢰도 라벨 — 착용경험 수로. 아바타 캡션·예상치수 공용 */
+  function estConf(r){
+    var n=(r.wearExp||[]).length;
+    return n>=2?'정확 (착용경험 2벌+)' : (n===1?'보통 (착용경험 1벌)' : '낮음 (키·몸무게만)');
+  }
   function estSection(r){
     var es=estBody(r); if(!es||!es.length) return '';
-    var n=(r.wearExp||[]).length;
-    var conf = n>=2?'정확 (착용경험 2벌+)' : (n===1?'보통 (착용경험 1벌)' : '낮음 (키·몸무게만)');
+    var conf = estConf(r);
     return '<div class="cx-sec"><div class="cx-h">예상 신체 치수 <span class="cx-ex">추정</span></div>'+
       '<table class="cx-tbl"><tbody>'+
       es.map(function(x){return '<tr><td>'+esc(x.label)+'</td><td style="text-align:right">약 <b>'+x.val+'</b>cm <span style="color:var(--sub2);font-weight:700">± '+x.pm+'</span></td></tr>';}).join('')+
@@ -372,9 +387,8 @@
         (guide?'<div class="guide-line" style="background:'+pt+'1f;border-left:3px solid '+pt+'">'+esc(guide)+'</div>':'')+
       '</div>'+
       /* ③ 캐릭터 + 어깨·가슴·허리·엉덩이·핏취향(같이) */
-      bodySilhouette(m, bt, r.gender)+
-      /* ④ 예상 신체 치수(회귀 추정 + ± 편차) */
-      estSection(r)+
+      /* ③ 아바타 + 부위별 슬림/표준/볼륨 + 예상 cm(라벨에 바로) */
+      bodySilhouette(m, bt, r.gender, estBody(r), estConf(r))+
       /* ⑤ [프로토타입] 기준 옷 · 브랜드별 추천 사이즈 · 스타일링 힌트 */
       refAndRecs(m, bt, r)+
     '</div>';
