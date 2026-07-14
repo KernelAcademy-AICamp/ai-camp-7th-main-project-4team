@@ -42,6 +42,7 @@
       <a data-p="profile" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg></span> 내 프로필</a>
       <a data-p="reviews" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 L14.1 9.6 20.1 9.9 15.4 13.6 17 19.4 12 16.1 7 19.4 8.6 13.6 3.9 9.9 9.9 9.6Z"/></svg></span> 받은 후기</a>
       <a data-p="settle" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M3 10.5h18"/><path d="M15.5 14.5h2.5"/></svg></span> 정산</a>
+      <a data-p="support" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 16 0"/><rect x="2.5" y="12" width="4" height="7" rx="1.6"/><rect x="17.5" y="12" width="4" height="7" rx="1.6"/><path d="M20 19a3 3 0 0 1-3 3h-2"/></svg></span> 지원·문의 <span class="cnt" id="supCnt" style="display:none">0</span></a>
     </nav>
   </aside>
 
@@ -177,6 +178,29 @@
       <div class="card"><div class="subhead">정산 내역</div><div id="settleList"></div></div>
     </section>
 
+    <!-- 지원·문의 (전문가 CS · IA 2.x) — 스타일리스트가 플랫폼 운영에 1:1 문의 -->
+    <section class="panel" id="support">
+      <div class="crumb">스타일리스트 지원 · 지원·문의</div>
+      <h1>지원·문의</h1>
+      <p class="lead">정산·거래·심사 등 운영에 궁금하거나 문제가 있으면 <b style="color:var(--ink)">1:1로 문의</b>하세요 · 보통 1영업일 안에 답변드려요</p>
+      <div class="card">
+        <div class="subhead">새 문의</div>
+        <label class="efl">문의 유형</label>
+        <select class="efin" id="supType">
+          <option value="정산·지급">정산·지급</option>
+          <option value="거래·고객">거래·고객 관련</option>
+          <option value="계정·프로필">계정·프로필</option>
+          <option value="심사·자격">심사·자격</option>
+          <option value="기술 문제">기술 문제</option>
+          <option value="기타">기타</option>
+        </select>
+        <label class="efl">내용</label>
+        <textarea class="efin" id="supText" rows="4" placeholder="문의 내용을 적어주세요 · 거래 관련이면 고객명·일자를 함께 적으면 빨라요"></textarea>
+        <div style="padding-top:12px"><button class="tinybtn" onclick="submitProSupport()">문의 접수</button></div>
+      </div>
+      <div class="card" style="margin-top:16px"><div class="subhead">내 문의 내역</div><div id="supList"></div></div>
+    </section>
+
   </main>
 </div></div>
 
@@ -188,6 +212,6 @@
 <div class="avlightbox" id="avLightbox" onclick="closeAvatar()"><img id="avLightboxImg" src="" alt="프로필 사진"></div>
 <div class="toast" id="toast"></div>
 
-<script src="js/pro.js?v=e7ef0743"></script>
+<script src="js/pro.js?v=14ecf37b"></script>
 </body>
 </html>

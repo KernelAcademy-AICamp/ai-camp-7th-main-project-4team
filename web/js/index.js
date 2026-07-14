@@ -1,5 +1,6 @@
   /* ===== 탭 전환 (셸) ===== */
   function go(id, el){
+    if(id==='my' && !loggedIn()){ openLogin('마이페이지', function(){ go('my'); }); return; }   // 비로그인 My 접근 차단(로그인 게이트)
     document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on', p.id===id));
     document.querySelectorAll('.menu a').forEach(a=>a.classList.toggle('on', a.dataset.t===id));
     if(id==='shop') showOnly('listView');   // 스타일리스트찾기는 항상 목록부터
@@ -22,8 +23,25 @@
 
   /* ===== 로그인/가입 시트 ===== */
   function openLogin(ctx, onDone){ window._loginCb=onDone||null; document.getElementById('loginTitle').textContent=(ctx?ctx+' — ':'')+'로그인하고 이어가기'; document.getElementById('sheet').classList.add('on'); scrim(true); }
-  function loginDone(){ saveLS('auth', true); closeAll(); var cb=window._loginCb; window._loginCb=null; if(cb){ toast('로그인했어요 · 이어서 진행할게요'); cb(); } else toast('로그인했어요 · 결과가 계정에 저장됐어요'); }
+  function loginDone(){ saveLS('auth', true); closeAll(); applyAuthUI(); var cb=window._loginCb; window._loginCb=null; if(cb){ toast('로그인했어요 · 이어서 진행할게요'); cb(); } else toast('로그인했어요 · 결과가 계정에 저장됐어요'); }
   function loggedIn(){ return loadLS('auth', true)!==false; }   // 기본 '로그인됨' 가정 (명시적 로그아웃 시에만 false)
+  /* 헤더 auth 상태 반영 — 로그인=프로필·알림벨 / 비로그인=로그인·회원가입 버튼(메인화면 게이트) */
+  function applyAuthUI(){
+    var inA=loggedIn();
+    var a=document.getElementById('navAuth'), u=document.getElementById('navUser'), b=document.getElementById('navBell'), bd=document.getElementById('navBellDiv'), my=document.getElementById('navMy');
+    if(a) a.style.display=inA?'none':'inline-flex';
+    if(u) u.style.display=inA?'inline-flex':'none';
+    if(b) b.style.display=inA?'inline-flex':'none';
+    if(bd) bd.style.display=inA?'inline-block':'none';
+    if(my) my.style.display=inA?'':'none';   // 비로그인 시 My(개인 데이터·진단·요청) 숨김
+  }
+  function doLogout(){ if(!confirm('로그아웃할까요? 둘러보기는 로그인 없이 이어갈 수 있어요.')) return;
+    saveLS('auth', false); applyAuthUI(); go('home'); toast('로그아웃했어요'); }
+  function doQuit(){ if(!confirm('정말 회원 탈퇴할까요? 진단·요청·저장 데이터가 모두 삭제돼요.')) return;
+    ['user','reqs','favs','support','notis'].forEach(function(k){ try{ localStorage.removeItem('fitting.'+k); }catch(e){} });
+    try{ sessionStorage.clear(); }catch(e){}
+    saveLS('auth', false);   // 기본값이 true라 '제거'가 아닌 false 저장해야 탈퇴 후 비로그인 유지
+    applyAuthUI(); toast('회원 탈퇴가 완료됐어요'); setTimeout(function(){ location.reload(); }, 900); }
 
   /* ===== 마이페이지 사이드 네비 ===== */
   function myNav(el){
@@ -306,8 +324,6 @@
     var el=document.getElementById('profCard'); if(!el) return; var U=USER;
     if(!_profEdit){
       el.innerHTML='<div class="mcard">'+
-        '<div class="msub"><div class="subhead">이름 <span class="pr half">◐ MVP</span></div>'+
-          '<div class="field"><span>이름</span><span class="v">'+U.name+'</span></div></div>'+
         '<div class="msub"><div class="subhead">신체 정보 <span class="pr half">◐ MVP</span></div>'+
           '<div class="field"><span>성별 · 나이</span><span class="v">'+(U.gender==='female'?'여성':'남성')+' · <span class="num">'+U.age+'</span>세</span></div>'+
           '<div class="field"><span>키 · 몸무게</span><span class="v"><span class="num">'+U.height+'</span>cm · <span class="num">'+U.weight+'</span>kg</span></div>'+
@@ -317,8 +333,6 @@
         '</div><div class="prof-actions"><button class="btn" onclick="editProfile()">수정하기</button></div>';
     } else {
       el.innerHTML='<div class="mcard">'+
-        '<div class="msub"><div class="subhead">이름</div>'+
-          '<div class="field"><span>이름</span><span class="v">'+U.name+'</span></div></div>'+
         '<div class="msub"><div class="subhead">신체 정보</div>'+
           '<div class="pedit"><label>성별</label><div class="seg" id="pGender">'+['male','female'].map(function(g){return '<span class="o'+(U.gender===g?' on':'')+'" data-g="'+g+'" onclick="pPick(this)">'+(g==='male'?'남성':'여성')+'</span>';}).join('')+'</div></div>'+
           '<div class="pedit inrow3"><div><label>나이</label><input class="inp" id="pAge" type="number" value="'+U.age+'"></div><div><label>키(cm)</label><input class="inp" id="pHeight" type="number" value="'+U.height+'"></div><div><label>몸무게(kg)</label><input class="inp" id="pWeight" type="number" value="'+U.weight+'"></div></div>'+
@@ -327,6 +341,7 @@
           '<div class="pedit"><label>핏 취향</label><div class="seg" id="pFit">'+FIT_OPTS.map(function(f){return '<span class="o'+(U.fit===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div></div>'+
         '</div><div class="prof-actions"><button class="btn ghost" onclick="cancelProfile()">취소</button><button class="btn" onclick="saveProfile()">저장하기</button></div>';
     }
+    var an=document.getElementById('acctName'); if(an) an.textContent=U.name;   // 이름은 계정 섹션에 표시(신원)
   }
   function editProfile(){ _profEdit=true; renderProfile(); }
   function cancelProfile(){ _profEdit=false; renderProfile(); }
@@ -1027,7 +1042,7 @@
   /* 외부 화면에서 #home·#shop·#my 로 돌아오면 해당 탭 열기 */
   (function(){ var h=(location.hash||'').replace('#',''); if(['home','shop','my'].indexOf(h)>=0) go(h); })();
 
-  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagCard(); renderMyInsight(); renderSupport(); renderNotis(); renderPrivacy();
+  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagCard(); renderMyInsight(); renderSupport(); renderNotis(); renderPrivacy(); applyAuthUI();
 
   /* 친구 초대 링크로 유입(card 공유 → index.html?from=CODE) — 홈 상단 배너로 맞이 */
   (function(){ try{ var from=new URLSearchParams(location.search).get('from'); if(!from) return;

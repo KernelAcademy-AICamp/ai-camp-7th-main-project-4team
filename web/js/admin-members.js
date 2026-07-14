@@ -199,6 +199,7 @@
 
   // ── 분쟁·환불·신고 (3.B.4) — 에스크로 중재 큐 + 상세 중재(신고·소명 확인 후 판정) ──
   function loadProReqs(){ try{ var v=JSON.parse(localStorage.getItem('fitting.pro.reqs')||'[]'); return Array.isArray(v)?v:[]; }catch(e){ return []; } }
+  function loadReports(){ try{ var v=JSON.parse(localStorage.getItem('fitting.reports')||'[]'); return Array.isArray(v)?v:[]; }catch(e){ return []; } }
   function saveReqs(a){ try{ localStorage.setItem('fitting.reqs',JSON.stringify(a)); }catch(e){} }
   function saveProReqs(a){ try{ localStorage.setItem('fitting.pro.reqs',JSON.stringify(a)); }catch(e){} }
   function admToast(m){ var el=$('admToast'); if(!el){ el=document.createElement('div'); el.id='admToast'; el.style.cssText='position:fixed;left:50%;bottom:32px;transform:translateX(-50%);background:var(--ink,#1c1a17);color:#fff;padding:11px 18px;border-radius:10px;font-size:14px;font-weight:700;z-index:400;opacity:0;transition:opacity .2s;pointer-events:none'; document.body.appendChild(el); } el.textContent=m; el.style.opacity='1'; clearTimeout(window._at); window._at=setTimeout(function(){ el.style.opacity='0'; },1900); }
@@ -222,12 +223,20 @@
   function renderDisputes(){
     _disputes = collectDisputes().concat(DISPUTE_SAMPLE);
     var pending=_disputes.filter(function(d){return d.state==='중재 대기';}).length;
-    $('dKpis').innerHTML=[kpi(pending,'분쟁 대기','중재 필요'),kpi(_disputes.length,'환불 요청',''),kpi(REPORT_SAMPLE.length,'신고','어뷰징·노쇼'),kpi('1.8일','평균 처리','')].join('');
+    var _reports=loadReports();
+    $('dKpis').innerHTML=[kpi(pending,'분쟁 대기','중재 필요'),kpi(_disputes.length,'환불 요청',''),kpi(_reports.length+REPORT_SAMPLE.length,'신고','어뷰징·노쇼'),kpi('1.8일','평균 처리','')].join('');
     var rows=_disputes.map(function(d,i){
       return '<tr><td>'+esc(d.id)+'</td><td>'+esc(d.cust)+' ↔ '+esc(d.shopper)+' 스타일리스트</td><td>'+esc(d.reason)+'</td><td class="num">'+d.amount.toLocaleString()+' <span class="muted">보관</span></td><td>'+dtag(d.state)+'</td><td><a class="pill" style="cursor:pointer" onclick="__dispOpen('+i+')">중재 →</a></td></tr>';
     }).join('');
     $('disputeTable').innerHTML='<thead><tr><th>거래</th><th>당사자</th><th>유형</th><th>에스크로</th><th>상태</th><th>조치</th></tr></thead><tbody>'+(rows||'<tr><td class="muted" colspan="6">분쟁 없음 — 진행중 거래에서 문제 신고 시 여기로</td></tr>')+'</tbody>';
-    var rr=REPORT_SAMPLE.map(function(r){ return '<tr><td>'+esc(r.id)+'</td><td>'+esc(r.target)+'</td><td>'+esc(r.type)+'</td><td>'+dtag(r.state)+'</td><td><span class="muted">샘플</span></td></tr>'; }).join('');
+    // 라이브 신고(공유 fitting.reports — 전문가/고객 양방향) + 정적 샘플
+    var liveRep=_reports.map(function(r,i){
+      var by=(r.by==='pro')?'스타일리스트':'고객';
+      var who=esc(r.target||'—')+' <span class="muted">'+esc(r.targetRole||'')+'</span>';
+      var act=(r.state==='처리완료')?'<span class="muted">완료</span>':'<a class="pill" style="cursor:pointer" onclick="__reportAct('+i+')">제재 검토 →</a>';
+      return '<tr><td>'+esc(r.id||('#'+i))+' <span class="muted">'+by+' 신고</span></td><td>'+who+'</td><td>'+esc(r.type||'—')+(r.detail?'<br><span class="muted" style="font-size:12px">'+esc(String(r.detail).slice(0,40))+'</span>':'')+'</td><td>'+dtag(r.state==='접수'?'검토 대기':r.state)+'</td><td>'+act+'</td></tr>';
+    }).join('');
+    var rr=liveRep+REPORT_SAMPLE.map(function(r){ return '<tr><td>'+esc(r.id)+'</td><td>'+esc(r.target)+'</td><td>'+esc(r.type)+'</td><td>'+dtag(r.state)+'</td><td><span class="muted">샘플</span></td></tr>'; }).join('');
     $('reportTable').innerHTML='<thead><tr><th>신고</th><th>대상</th><th>유형</th><th>상태</th><th>조치</th></tr></thead><tbody>'+rr+'</tbody>';
   }
   /* 상세 중재 모달 — 신고 내용·증빙·스타일리스트 소명 확인 후 판정 */
@@ -308,6 +317,8 @@
     $('reviewTable').innerHTML='<thead><tr><th>대상</th><th>별점</th><th>후기</th><th>상태</th><th>조치</th></tr></thead><tbody>'+rr+'</tbody>';
   }
   window.__mon=function(action){ var M={remind:'미응답 스타일리스트에게 리마인드를 보냈어요',rescue:'유찰 임박 건을 다른 스타일리스트에게 재노출했어요',settle:'에스크로 정산을 집행했어요 · 수수료 차감(데모)',hide:'신고된 후기를 숨김 처리했어요'}; admToast(M[action]||'처리했어요'); };
+  // 라이브 신고 처리(양방향) — 회원 제재(3.B.2) 연계, fitting.reports에 상태 되씀
+  window.__reportAct=function(i){ var reps=loadReports(); if(!reps[i]) return; reps[i].state='처리완료'; try{ localStorage.setItem('fitting.reports',JSON.stringify(reps)); }catch(e){} admToast('신고를 제재 검토 처리했어요 · 회원 제재(3.B.2) 연계(데모)'); renderDisputes(); };
 
   // ── 고객 문의(CS) 처리 (3.B.7) — 고객센터(fitting.support) 티켓 관리 ──
   function loadSupport(){ try{ var v=JSON.parse(localStorage.getItem('fitting.support')||'[]'); return Array.isArray(v)?v:[]; }catch(e){ return []; } }

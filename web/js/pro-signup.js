@@ -39,6 +39,39 @@
 
   /* ===== 검증 ===== */
   function isEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+  function isPhone(v){ return /^01[016789][-\s]?\d{3,4}[-\s]?\d{4}$/.test((v||'').trim()); }
+
+  /* ===== 계정 인증(이메일·휴대폰) — 가입 필수. 데모: 인증번호를 화면에 표기(실서비스는 이메일/문자 발송) ===== */
+  var verified={email:false, phone:false};
+  var sentCode={email:null, phone:null};
+  function contactValid(kind){ return kind==='email' ? isEmail($('email').value.trim()) : isPhone($('phone').value.trim()); }
+  function sendCode(kind){
+    if(!contactValid(kind)){ toast(kind==='email'?'이메일 형식을 확인해주세요':'휴대폰 번호를 확인해주세요 (예: 010-1234-5678)'); return; }
+    var code=''+(Math.floor(Math.random()*900000)+100000);
+    sentCode[kind]=code;
+    $(kind+'Vbox').style.display='flex';
+    $(kind+'Ok').style.display='none';
+    $(kind+'Code').value=''; $(kind+'Code').disabled=false;
+    $(kind+'Send').textContent='재전송';
+    $(kind+'Hint').textContent='데모 인증번호: '+code+' · 실서비스는 '+(kind==='email'?'이메일':'문자')+'로 발송돼요';
+    var ci=$(kind+'Code'); if(ci) ci.focus();
+    validate();
+  }
+  function checkCode(kind){
+    var v=($(kind+'Code').value||'').trim();
+    if(v && v===sentCode[kind]){
+      verified[kind]=true; $(kind+'Ok').style.display='inline';
+      $(kind+'Code').disabled=true; $(kind+'Hint').textContent='';
+      toast((kind==='email'?'이메일':'휴대폰')+' 인증이 완료됐어요');
+    } else { verified[kind]=false; toast('인증번호가 일치하지 않아요'); }
+    validate();
+  }
+  function onContact(kind){   // 연락처를 수정하면 재인증 필요
+    verified[kind]=false; sentCode[kind]=null;
+    $(kind+'Vbox').style.display='none';
+    $(kind+'Send').textContent='인증';
+    validate();
+  }
   var SIGNUP_SERVICES=[
     {type:'online',   label:'온라인 스타일링', row:'svcOnline',   on:'svcOnlineOn',   price:'priceOnline'},
     {type:'shopping', label:'동행 쇼핑',       row:'svcShopping', on:'svcShoppingOn', price:'priceShopping'},
@@ -50,7 +83,7 @@
     return s;
   }
   function stepValid(step){
-    if(step===1){ return isEmail($('email').value.trim()) && $('agreeReq').checked; }
+    if(step===1){ return isEmail($('email').value.trim()) && isPhone($('phone').value.trim()) && verified.email && verified.phone && $('agreeReq').checked; }
     if(step===2){ var svc=enabledServices(); return $('name').value.trim().length>0 && svc.length>0 && svc.every(function(s){return s.price>0;}); }
     if(step===3){ return $('tagline').value.trim().length>0 && selectedTags.length>0; }
     return true;
@@ -123,6 +156,7 @@
       registered:true,
       email:$('email').value.trim(),
       phone:$('phone').value.trim(),
+      emailVerified:verified.email, phoneVerified:verified.phone,
       agreeMkt:$('agreeMkt').checked,
       name:$('name').value.trim()||'스타일리스트',
       services:svc,
