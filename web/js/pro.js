@@ -155,48 +155,31 @@
     var dc=document.getElementById('inboxDoneCard');
     if(closed.length){ dc.style.display=''; document.getElementById('inboxDoneList').innerHTML=closed.map(function(r){ return reqTop(r,true); }).join(''); }
     else { dc.style.display='none'; }
-    document.getElementById('inboxOutList').innerHTML = out.length ? out.map(function(r){ return reqTop(r,true); }).join('') : '<p class="note" style="padding:14px 0">아직 보낸 제안이 없어요</p>';
+    document.getElementById('inboxOutList').innerHTML = out.length ? out.map(function(r){ return reqTop(r,true); }).join('') : '<p class="note" style="padding:14px 0">아직 보낸 견적이 없어요</p>';
   }
   function renderRecent(){ document.getElementById('dashRecent').innerHTML=reqs.filter(function(r){return r.dir!=='out';}).sort(byDateDesc).slice(0,3).map(function(r){ return reqTop(r,true); }).join(''); }
-  /* 역방향 제안: '제안받기' 설정한 고객(데모 · 고객 영역은 미구현) → 쇼퍼가 먼저 제안 */
+  /* 견적 보내기(역방향): '견적받기' 설정한 고객(데모 · 고객 영역은 미구현) → 쇼퍼가 먼저 견적 발송 */
   var CANDIDATES = [
     {cust:'이수민', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:165, kg:53, occ:'결혼식 하객', budget:'10~15만', service:'shopping', note:'하객룩 단정하게, 과하지 않게'},
     {cust:'박준영', type:'INV', bodytype:'모던 V라인',   gender:'male',   cm:178, kg:74, occ:'면접·발표',   budget:'15만+',   service:'image',  note:'첫인상 신뢰감 있게'},
     {cust:'최지아', type:'TRI', bodytype:'소프트 A라인', gender:'female', cm:160, kg:50, occ:'데일리',       budget:'~5만',    service:'online',   note:'출근룩 위주 데일리하게'}
   ];
-  var openCandIdx=-1;
+  saveLS('pro.candidates', CANDIDATES);   // 견적서(pro-quote)가 ?cand=i로 읽을 수 있게 공유
   function renderCandidates(){
     var el=document.getElementById('dashCand'); if(!el) return;
     var proposed=loadLS('pro.proposed',[]);
     var list=CANDIDATES.map(function(c,i){return {c:c,i:i};}).filter(function(x){return proposed.indexOf(x.c.cust)<0;});
     var card=document.getElementById('dashCandCard');
-    if(!list.length){ el.innerHTML='<p class="note" style="padding:12px 0">지금은 제안받기를 원하는 고객이 없어요</p>'; return; }
+    if(!list.length){ el.innerHTML='<p class="note" style="padding:12px 0">지금은 견적받기를 원하는 고객이 없어요</p>'; return; }
     if(card) card.style.display='';
     el.innerHTML=list.map(function(x){ var c=x.c, i=x.i;
-      var form=(openCandIdx===i)
-        ? '<div class="ef" style="width:100%;margin-top:10px">'+
-            '<label class="efl">제안 금액</label><input class="efin" id="candPrice" type="number" value="'+MY_PRICE+'">'+
-            '<label class="efl">한 줄 메시지</label><textarea class="efin" id="candMsg" placeholder="예: '+c.occ+' 룩 맞춤 제안 드려요"></textarea>'+
-            '<div class="efbtns"><button class="tinybtn ghost" onclick="cancelCand()">취소</button><button class="tinybtn" onclick="sendCand('+i+')">제안 보내기</button></div>'+
-          '</div>'
-        : '';
-      return '<div class="ureq" style="flex-wrap:wrap">'+
+      // 요청 내역처럼 클릭 시 견적서(고객 상세) 페이지로 이동 → 거기서 견적 발송
+      return '<div class="ureq rowbtn" onclick="location.href=\'pro-quote.html?cand='+i+'\'">'+
         '<span class="ureq-ic">'+svcSvg(c.service)+'</span>'+
         '<div class="ureq-l"><div class="ureq-title">'+c.occ+' · '+svcLabel(c.service)+'</div><div class="ureq-meta">'+c.cust+' 님 · <b>예산 '+c.budget+'</b> · "'+c.note+'"</div></div>'+
-        '<div class="ureq-r">'+(openCandIdx===i?'':'<button class="tinybtn" onclick="proposeCand('+i+')">제안하기</button>')+'</div>'+
-        form+'</div>';
+        '<div class="ureq-r"><button class="tinybtn" onclick="event.stopPropagation();location.href=\'pro-quote.html?cand='+i+'\'">견적 보내기</button><span class="chev">›</span></div>'+
+      '</div>';
     }).join('');
-  }
-  function proposeCand(i){ openCandIdx=i; renderCandidates(); }
-  function cancelCand(){ openCandIdx=-1; renderCandidates(); }
-  function sendCand(i){
-    var c=CANDIDATES[i];
-    var pe=document.getElementById('candPrice'), me=document.getElementById('candMsg');
-    var price=pe?parseInt(pe.value,10)||MY_PRICE:MY_PRICE, msg=me?me.value.trim():'';
-    reqs.unshift({ cust:c.cust, occ:c.occ, service:c.service, type:c.type, bodytype:c.bodytype, gender:c.gender, cm:c.cm, kg:c.kg,
-      dir:'out', status:'제안발송', offer:{price:price, msg:msg||(c.occ+' 룩 맞춤 제안 드려요')}, budget:c.budget, date:'방금' });
-    var proposed=loadLS('pro.proposed',[]); proposed.push(c.cust); saveLS('pro.proposed',proposed);
-    saveLS('pro.reqs',reqs); openCandIdx=-1; renderAll(); toast(c.cust+' 님에게 제안을 보냈어요');
   }
   var replyIdx=-1;
   function renderReviews(){

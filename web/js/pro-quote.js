@@ -7,8 +7,13 @@
   function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2000); }
 
   var idx = parseInt(new URLSearchParams(location.search).get('req'),10);
+  var candIdx = parseInt(new URLSearchParams(location.search).get('cand'),10);
   var reqs = loadLS('pro.reqs', []);
   var profile = loadLS('pro.profile', null);
+  var cands = loadLS('pro.candidates', []);
+  var isCand = !isNaN(candIdx) && !!cands[candIdx];   // 견적 보내기(먼저 견적) 진입
+  /* 후보 → 유사 요청 레코드(dir:out, 상태 '견적작성'). 실제 발송 전까지 reqs에 넣지 않음 */
+  function candRecord(){ var c=cands[candIdx]; return { cust:c.cust, occ:c.occ, service:c.service, type:c.type, bodytype:c.bodytype, gender:c.gender, cm:c.cm, kg:c.kg, budget:c.budget, note:c.note, date:'—', dir:'out', status:'견적작성' }; }
   var MY_PRICE = (profile && profile.services && profile.services[0]) ? profile.services[0].price : 120000;
   var BTMAP = {};
   var offering = false;
@@ -65,7 +70,28 @@
     }
     if(r.status==='거절'){ return '<div class="note-quote muted">거절한 요청이에요'+(r.reason?' · "'+esc(r.reason)+'"':'')+'</div><button class="btn ghost" style="margin-top:10px" onclick="undoReject()">되돌리기</button>'; }
     if(r.status==='취소'){ return '<div class="note-quote muted">취소된 요청이에요'+(r.reason?' · "'+esc(r.reason)+'"':'')+'</div><button class="btn ghost" style="margin-top:10px" onclick="undoCancel()">되돌리기</button>'; }
+    if(r.status==='견적작성'){   // 먼저 견적 보내기 — 금액·메시지 입력 후 발송
+      return '<div class="offerform">'+
+        '<label style="display:block;font-size:12.5px;font-weight:800;color:var(--sub);margin:0 0 6px">견적 금액</label>'+
+        '<input id="qPrice" type="number" value="'+svcPrice(r.service)+'">'+
+        '<label style="display:block;font-size:12.5px;font-weight:800;color:var(--sub);margin:14px 0 6px">한 줄 메시지</label>'+
+        '<textarea id="qMsg" placeholder="예: '+esc(r.occ||'')+' 룩 맞춤 견적 드려요"></textarea>'+
+        '<button class="btn" style="margin-top:14px" onclick="sendQuote()">견적 보내기</button>'+
+      '</div>';
+    }
     return '';
+  }
+  function sendQuote(){
+    var c=cands[candIdx]; if(!c) return;
+    var pe=$('qPrice'), me=$('qMsg');
+    var price=pe?(parseInt(pe.value,10)||svcPrice(c.service)):svcPrice(c.service);
+    var msg=me?me.value.trim():'';
+    reqs.unshift({ cust:c.cust, occ:c.occ, service:c.service, type:c.type, bodytype:c.bodytype, gender:c.gender, cm:c.cm, kg:c.kg,
+      dir:'out', status:'제안발송', offer:{price:price, msg:msg||(c.occ+' 룩 맞춤 견적 드려요')}, budget:c.budget, date:'방금' });
+    saveLS('pro.reqs',reqs);
+    var proposed=loadLS('pro.proposed',[]); proposed.push(c.cust); saveLS('pro.proposed',proposed);
+    toast(c.cust+' 님에게 견적을 보냈어요');
+    setTimeout(function(){ location.href='pro.html'; }, 700);
   }
   function svcPrice(service){ if(profile&&profile.services){ var f=profile.services.filter(function(s){return s.type===service;})[0]; if(f) return f.price; } return MY_PRICE; }
   function accept(){ if(!reqs[idx].offer) reqs[idx].offer={price:svcPrice(reqs[idx].service)}; reqs[idx].status='수락됨'; saveLS('pro.reqs',reqs); render(); toast('요청을 수락했어요'); }
@@ -181,7 +207,7 @@
       profile:c.profile, fitOk:c.fitOk, fitNo:c.fitNo, insight:c.insight, match:c.match, signature:c.signature };
   }
   function render(){
-    var r = reqs[idx];
+    var r = isCand ? candRecord() : reqs[idx];
     if(!r){ $('quoteRoot').innerHTML='<p class="crumb">요청을 찾을 수 없어요.</p><p style="margin-top:10px"><a class="tinybtn" onclick="location.href=\'pro.html\'">요청 내역으로</a></p>'; return; }
     var out = r.dir==='out';
     var bt = btResolve(BTMAP[r.type], r.gender) || {};   // 고객 성별로 콘텐츠 해석
@@ -193,14 +219,14 @@
 
     // 좌(primary): ① 요청서 먼저 → ② 체형 참고 나중  /  우(sticky): ③ 제안
     $('quoteRoot').innerHTML =
-      '<a class="backlink" onclick="location.href=\'pro.html\'">← 요청 내역으로</a>'+
-      '<p class="crumb">쇼퍼 지원 · '+(out?'보낸 제안':'받은 요청')+'</p>'+
+      '<a class="backlink" onclick="location.href=\'pro.html\'">← '+(r.status==='견적작성'?'견적 보내기로':'요청 내역으로')+'</a>'+
+      '<p class="crumb">쇼퍼 지원 · '+(r.status==='견적작성'?'견적 보내기':(out?'보낸 제안':'받은 요청'))+'</p>'+
       '<h1>'+esc(r.cust)+' 님'+(r.occ?' · '+esc(r.occ):'')+'</h1>'+
       '<div class="htags">'+svcBadge(r.service)+'<span class="st '+stClass(r.status)+'">'+esc(r.status)+'</span></div>'+
       '<div class="qgrid2">'+
         '<div class="qleft">'+ requestReceipt(r, attached) + bodyCard +'</div>'+
         '<div class="qright">'+
-          '<div class="card offer-card"><div class="subhead">'+(out?'제안 현황':(r.status==='신규'?'요청을 수락하시겠습니까?':'진행 상태'))+'</div>'+ actionHTML(r) +'</div>'+
+          '<div class="card offer-card"><div class="subhead">'+(r.status==='견적작성'?'견적 작성':(out?'제안 현황':(r.status==='신규'?'요청을 수락하시겠습니까?':'진행 상태')))+'</div>'+ actionHTML(r) +'</div>'+
         '</div>'+
       '</div>';
   }

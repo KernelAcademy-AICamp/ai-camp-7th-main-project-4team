@@ -38,7 +38,7 @@
     <nav class="smenu" id="smenu">
       <a class="on" data-p="dash" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg></span> 대시보드</a>
       <a data-p="inbox" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h5"/></svg></span> 요청 내역 <span class="cnt" id="newCnt">0</span></a>
-      <a data-p="propose" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4L3 11l7 2.5L12.5 21 21 4z"/><path d="M10 13.5L21 4"/></svg></span> 먼저 제안</a>
+      <a data-p="propose" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4L3 11l7 2.5L12.5 21 21 4z"/><path d="M10 13.5L21 4"/></svg></span> 견적 보내기</a>
       <a data-p="profile" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg></span> 내 프로필</a>
       <a data-p="reviews" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 L14.1 9.6 20.1 9.9 15.4 13.6 17 19.4 12 16.1 7 19.4 8.6 13.6 3.9 9.9 9.9 9.6Z"/></svg></span> 받은 후기</a>
       <a data-p="settle" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M3 10.5h18"/><path d="M15.5 14.5h2.5"/></svg></span> 정산</a>
@@ -75,13 +75,13 @@
       </div>
     </section>
 
-    <!-- 먼저 제안 -->
+    <!-- 견적 보내기 -->
     <section class="panel" id="propose">
-      <div class="crumb">쇼퍼 지원 · 먼저 제안</div>
-      <h1>먼저 제안</h1>
-      <p class="lead">제안받기를 원하는 고객에게 <b style="color:var(--ink)">내가 먼저 제안</b>하고, 보낸 제안을 관리해요</p>
-      <div class="card" id="dashCandCard"><div class="subhead">제안받기를 원하는 고객 <small style="font-weight:600;color:var(--sub2)">· 먼저 제안해보세요</small></div><div id="dashCand"></div></div>
-      <div class="card" id="inboxOutCard" style="margin-top:16px"><div class="subhead">내가 보낸 제안</div><div id="inboxOutList"></div></div>
+      <div class="crumb">쇼퍼 지원 · 견적 보내기</div>
+      <h1>견적 보내기</h1>
+      <p class="lead">견적받기를 원하는 고객에게 <b style="color:var(--ink)">내가 먼저 견적을 보내고</b>, 보낸 견적을 관리해요</p>
+      <div class="card" id="dashCandCard"><div class="subhead">견적받기를 원하는 고객 <small style="font-weight:600;color:var(--sub2)">· 먼저 견적을 보내보세요</small></div><div id="dashCand"></div></div>
+      <div class="card" id="inboxOutCard" style="margin-top:16px"><div class="subhead">내가 보낸 견적</div><div id="inboxOutList"></div></div>
     </section>
 
     <!-- 내 프로필 -->
@@ -188,6 +188,6 @@
 <div class="avlightbox" id="avLightbox" onclick="closeAvatar()"><img id="avLightboxImg" src="" alt="프로필 사진"></div>
 <div class="toast" id="toast"></div>
 
-<script src="js/pro.js?v=d0b35ee7"></script>
+<script src="js/pro.js?v=711e08ea"></script>
 </body>
 </html>
