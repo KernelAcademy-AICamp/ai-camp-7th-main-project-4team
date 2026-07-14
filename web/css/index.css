@@ -603,7 +603,7 @@
   #my .req .ic{width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,var(--green),var(--green-mid)); flex:none;}
   #my .req .info{flex:1;} #my .req .info b{font-size:15px;} #my .req .info small{display:block; font-size:13px; color:var(--sub); margin-top:2px;}
   #my .st{font-size:13px; font-weight:800; padding:5px 11px; border-radius:20px;}
-  #my .st.wait{background:var(--soft); color:var(--sub);} #my .st.prog{background:var(--green-soft); color:var(--green);} #my .st.done{background:var(--soft); color:var(--ink);}
+  #my .st.wait{background:var(--soft); color:var(--sub);} #my .st.prog{background:var(--green-soft); color:var(--green);} #my .st.done{background:var(--soft); color:var(--ink);} #my .st.warn{background:var(--warn); color:#fff;}
   #my .fav{display:grid; grid-template-columns:repeat(2,1fr); gap:22px;}   /* 쇼퍼찾기 카드와 동일 크기 */
   #my .fcard{background:#fff; border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 6px 18px rgba(20,18,16,.08); cursor:pointer; transition:.18s;}
   #my .fcard:hover{transform:translateY(-3px); box-shadow:0 16px 36px rgba(20,18,16,.12);}
@@ -941,5 +941,5 @@
   .bids-overlay .reviewform .rtext:focus{outline:none; border-color:var(--green);}
   .bids-overlay .reviewform .rbtns{display:flex; gap:8px; justify-content:flex-end; margin-top:10px;}
   .bids-overlay .st{font-size:13px; font-weight:800; padding:5px 11px; border-radius:20px;}
-  .bids-overlay .st.wait{background:var(--soft); color:var(--sub);} .bids-overlay .st.prog{background:var(--green-soft); color:var(--green);} .bids-overlay .st.done{background:var(--soft); color:var(--ink);} .bids-overlay .st.offer{background:var(--green); color:#fff;} .bids-overlay .st.cancel{background:var(--warn-soft); color:var(--warn);}
+  .bids-overlay .st.wait{background:var(--soft); color:var(--sub);} .bids-overlay .st.prog{background:var(--green-soft); color:var(--green);} .bids-overlay .st.done{background:var(--soft); color:var(--ink);} .bids-overlay .st.offer{background:var(--green); color:#fff;} .bids-overlay .st.cancel{background:var(--warn-soft); color:var(--warn);} .bids-overlay .st.warn{background:var(--warn); color:#fff;}
   @media(max-width:560px){ .bids-inner{padding:24px 18px 70px;} .qcard{flex-direction:column; gap:14px;} .qcard .q-r{flex-direction:row; width:100%;} }

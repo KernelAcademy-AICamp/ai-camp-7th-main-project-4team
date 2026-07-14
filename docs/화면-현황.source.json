@@ -3,7 +3,7 @@
   "_status_enum": "시안 → 구현 → 실연결 → 완료 · 보류",
   "_kind_enum": "app(진단/허브) · pro(공급자) · admin(운영) · info(정보/정책, JS 없어도 정상) · util(플래그 제외)",
 
-  "index":        { "name": "홈·허브(탭 홈/쇼퍼찾기/마이)", "kind": "app",  "status": "구현",   "note": "단일 페이지에 탭 3섹션(#home/#shop/#my). 쇼퍼찾기=페이크도어. 마이 좌측메뉴에 고객센터(1.9·1:1문의, mp-support)·알림(G.6·mp-noti) 서브탭 + 상단 벨(미읽음 점). 계정 하위에 개인정보·데이터 관리(1.4E/G.4·mp-privacy, 내려받기·삭제·엔진개선 동의철회)." },
+  "index":        { "name": "홈·허브(탭 홈/쇼퍼찾기/마이)", "kind": "app",  "status": "구현",   "note": "단일 페이지에 탭 3섹션(#home/#shop/#my). 쇼퍼찾기=페이크도어. 마이 좌측메뉴에 고객센터(1.9·1:1문의, mp-support)·알림(G.6·mp-noti) 서브탭 + 상단 벨(미읽음 점). 계정 하위에 개인정보·데이터 관리(1.4E/G.4·mp-privacy, 내려받기·삭제·엔진개선 동의철회). 거래=낙찰/수락→결제(에스크로·1.8, 주문요약·수단·에스크로)→진행중 게이트. 진행중 상세=대화(메시지)·받은 결과물(코디3안·구매링크)·받았어요완료확인·고객센터게이트(1.6/1.7). 완료/후기=에스크로 정산 릴리스 안내+영수증(1.6/1.8). 진행중→문제 신고·환불(1.9)=사유·상세·증빙→분쟁(릴리스 보류)→철회/환불 중재." },
   "admin-login":  { "name": "관리자 로그인(구글+이메일2FA)", "kind": "admin", "status": "시안", "note": "프로토타입 — 인증은 목업(실제 아님). 승격 시 Supabase Auth(구글)+이메일 OTP." },
   "admin":        { "name": "관리자 · 사이즈/데이터(3.A)",   "kind": "admin", "status": "구현", "note": "브랜드 실측(garments.json)+신체 사이즈(body-*) 실파일 브라우징. 커버리지·필터. 데이터는 실제, 로그인만 목업." },
   "admin-garments": { "name": "관리자 · 브랜드·제품 실측표(3.A.1)", "kind": "admin", "status": "구현", "note": "garments.json을 사이즈표(사이즈×부위 cm) 형태로 제품별 드릴다운. 생성물 뷰어(수정은 CSV+빌더)." },
@@ -20,7 +20,7 @@
   "diag-loading": { "name": "진단 로딩",                  "kind": "app",  "status": "구현",   "note": "역산+매칭 계산 대기 → result로 이동." },
   "result":       { "name": "진단 결과",                  "kind": "app",  "status": "실연결", "note": "상의만 실계산, 파생 카테고리는 선호핏 폴백/게이트." },
   "card":         { "name": "결과 공유 카드",             "kind": "app",  "status": "시안",   "note": "OG 공유 카드(소유자 아티팩트). card.js가 초대링크 index.html?from=CODE 생성 → 초대받은 사람은 홈으로 전환. 단 card 페이지 자체엔 뷰어용 '나도 진단' CTA 버튼은 없음." },
-  "pro":          { "name": "쇼퍼 지원(공급자)",          "kind": "pro",  "status": "구현",   "note": "공급자 진입." },
+  "pro":          { "name": "쇼퍼 지원(공급자) 포털",       "kind": "pro",  "status": "구현",   "note": "포털 전체(대시보드·요청 인박스·먼저 제안·내 프로필·받은 후기·정산). 수락됨(진행중) 상세에 결과물 작성·전달(2.1.2, online 한정)=브랜드·상품명·사이즈·가격·구매링크 n개 제출 → 고객 수령(1.6/1.7)과 대칭. pro.reqs 로컬 시드(고객측 fitting.reqs와 분리)." },
   "pro-signup":   { "name": "쇼퍼 가입",                 "kind": "pro",  "status": "구현",   "note": "" },
   "pro-quote":    { "name": "견적 요청",                 "kind": "pro",  "status": "구현",   "note": "#17에서 개편. 수요자 인라인 견적(index #shop)과 표면 관계 정리 필요." },
   "about":        { "name": "서비스 소개·작동원리",        "kind": "info", "status": "구현",   "note": "소개→diag-basic 전환 CTA 있음." },
