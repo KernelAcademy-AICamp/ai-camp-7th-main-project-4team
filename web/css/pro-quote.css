@@ -91,7 +91,15 @@
   .pstep.done .pl{color:var(--green)} .pstep.done::before{background:var(--green)}
   .pstep.now .pn{background:var(--surface);color:var(--green);border-color:var(--green);box-shadow:0 0 0 4px var(--green-soft)}
   .pstep.now .pl{color:var(--green);font-weight:800} .pstep.now::before{background:var(--green)}
-  .pstep-cap{text-align:center;font-size:12.5px;color:var(--green-mid);font-weight:700;padding:10px 0 2px;border-top:1px solid var(--line);margin-top:8px}
+  .pstep.exc .pn{background:var(--warn);color:#fff;border-color:var(--warn)}
+  .pstep.exc .pl{color:var(--warn);font-weight:800} .pstep.exc::before{background:var(--green)}
+  /* 스테퍼 아래 상태 바 — 모든 상태에서 함께 (현재 상태 + 할 일) */
+  .statbar{display:flex;align-items:center;gap:9px;margin-top:12px;padding:11px 14px;border-radius:12px;font-size:13.5px;flex-wrap:wrap}
+  .statbar .sb-dot{width:8px;height:8px;border-radius:50%;flex:none}
+  .statbar b{font-weight:800} .statbar .sb-sep{opacity:.55}
+  .statbar.go{background:var(--green-soft)} .statbar.go .sb-dot{background:var(--green)} .statbar.go b{color:var(--green)} .statbar.go .sb-d,.statbar.go .sb-sep{color:var(--green-mid)}
+  .statbar.wait{background:var(--soft)} .statbar.wait .sb-dot{background:var(--sub)} .statbar.wait b{color:var(--ink)} .statbar.wait .sb-d,.statbar.wait .sb-sep{color:var(--sub)}
+  .statbar.no{background:var(--warn-soft)} .statbar.no .sb-dot{background:var(--warn)} .statbar.no b{color:var(--warn)} .statbar.no .sb-d,.statbar.no .sb-sep{color:var(--warn)}
   .offer-card{margin-top:2px}
 
   /* 진행 상태 배너(.statban) — 고객 화면(index)과 동일 컴포넌트로 통일 */
@@ -120,14 +128,14 @@
 
   /* [프로토타입] 쇼퍼용 사이즈 인사이트 — 기준 옷 · 브랜드 추천 · 스타일링 힌트 */
   .cx-sec{margin-top:16px;padding-top:15px;border-top:1px solid var(--line,#E6E5E1)}
-  .cx-h{font-size:13px;font-weight:800;color:var(--ink,#16140F);margin-bottom:10px;display:flex;align-items:center;gap:7px}
-  .cx-ex{font-size:10px;font-weight:800;color:var(--sub2,#A6A29A);background:var(--soft,#EDEDEA);border-radius:20px;padding:2px 8px;letter-spacing:.02em}
+  .cx-h{font-size:14px;font-weight:800;color:var(--ink,#16140F);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+  .cx-ex{font-size:11px;font-weight:800;color:var(--sub2,#A6A29A);background:var(--soft,#EDEDEA);border-radius:20px;padding:3px 9px;letter-spacing:.02em}
   .cx-tags{display:flex;flex-wrap:wrap;gap:8px}
-  .cx-tag{font-size:12.5px;color:var(--ink-soft,#3A382F);background:var(--green-soft,#E7EFEA);border-radius:9px;padding:7px 11px}
+  .cx-tag{font-size:13.5px;color:var(--ink-soft,#3A382F);background:var(--green-soft,#E7EFEA);border-radius:9px;padding:8px 12px}
   .cx-tag b{color:var(--green,#2E4A3B);font-weight:800}
-  .cx-note{font-size:12.5px;color:var(--sub,#6E6B63);margin-top:9px;line-height:1.55}
-  .cx-tbl{width:100%;border-collapse:collapse;font-size:13px}
-  .cx-tbl th{font-size:11px;font-weight:800;color:var(--sub2,#A6A29A);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line,#E6E5E1)}
+  .cx-note{font-size:13px;color:var(--sub,#6E6B63);margin-top:9px;line-height:1.55}
+  .cx-tbl{width:100%;border-collapse:collapse;font-size:14px}
+  .cx-tbl th{font-size:12px;font-weight:800;color:var(--sub2,#A6A29A);text-align:left;padding:7px 8px;border-bottom:1px solid var(--line,#E6E5E1)}
   .cx-tbl td{padding:9px 8px;border-bottom:1px solid var(--line,#E6E5E1)}
   .cx-tbl td b{color:var(--green,#2E4A3B);font-family:var(--num,'SUIT Variable')}
   .cx-tbl tbody tr:last-child td{border-bottom:none}
