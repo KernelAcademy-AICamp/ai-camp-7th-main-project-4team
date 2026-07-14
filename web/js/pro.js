@@ -36,15 +36,19 @@
   var STYLE_PRESETS = ['캐주얼','미니멀','시크','클래식','스트리트','빈티지','스포티','걸리시'];
   var REGION_PRESETS = ['서울','경기','인천','부산','대구','대전','광주'];
 
-  var reqs = loadLS('pro.reqs', [
+  var REQS_VER = 3;   // 데모 버전 — 올리면 다음 로드에서 데모를 새로 시드(테스트로 다 수락됨된 상태 초기화)
+  var DEMO_REQS = [
+    {cust:'한서준', type:'TUB', bodytype:'슬릭 라인',     gender:'male',   cm:180, kg:68, occ:'데일리',     budget:'5~10만',  date:'2026.07.14', service:'online', note:'심플하게, 근데 밋밋하지 않게 입고 싶어요', status:'신규'},
     {cust:'김도현', type:'STR', bodytype:'시크 스트레이트', gender:'male',   cm:172, kg:65, occ:'소개팅',     budget:'5~10만',  date:'2026.07.02', service:'online', note:'과하지 않게 깔끔한 첫인상 원해요', status:'신규'},
     {cust:'정예린', type:'INV', bodytype:'모던 V라인',     gender:'female', cm:167, kg:58, occ:'일상 코디',   budget:'~5만',    date:'2026.07.01', service:'shopping', note:'출근룩 위주로 데일리하게 입고 싶어요', status:'신규'},
     {cust:'이서연', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:163, kg:52, occ:'면접·발표',   budget:'10~15만', date:'2026.06.30', service:'image', note:'신뢰감 있는 오피스룩', status:'제안발송', offer:{price:95000, msg:'면접관 시선까지 고려해 첫인상 깔끔하게 잡아드릴게요'}},
     {cust:'박지우', type:'TRI', bodytype:'소프트 A라인',   gender:'female', cm:160, kg:54, occ:'결혼식 하객', budget:'10~15만', date:'2026.06.27', service:'shopping', note:'', status:'수락됨', offer:{price:120000, msg:'하객룩 단정하게 코디해드릴게요'}},
     {cust:'최민준', type:'BAL', bodytype:'이지 밸런스',    gender:'male',   cm:175, kg:70, occ:'데일리',     budget:'~5만',    date:'2026.06.18', service:'online', status:'완료', offer:{price:60000, msg:''}, review:{rating:5, text:'취향 저격이었어요! 반품 없이 한 번에 성공'}}
-  ]);
+  ];
+  var reqs = loadLS('pro.reqs', null);
+  if(!reqs || loadLS('pro.reqsVer',0)!==REQS_VER){ reqs = DEMO_REQS; saveLS('pro.reqsVer', REQS_VER); }
   /* 서비스 유형 3종 보정 — 옛 캐시('visit' 등)도 요청자별로 강제 재매핑 */
-  var SVC_BY_CUST = {'김도현':'online','정예린':'shopping','이서연':'image','박지우':'shopping','최민준':'online'};
+  var SVC_BY_CUST = {'한서준':'online','김도현':'online','정예린':'shopping','이서연':'image','박지우':'shopping','최민준':'online'};
   reqs.forEach(function(r){ r.service = SVC_BY_CUST[r.cust] || r.service || 'online'; });
   saveLS('pro.reqs', reqs);   // 견적서 페이지(pro-quote)가 같은 데이터를 읽도록 항상 저장
 
@@ -494,3 +498,5 @@
   renderTagsView();
   renderPortfolio();
   renderAll();
+  /* 견적서(pro-quote) 사이드 내비에서 ?panel=inbox 등으로 돌아올 때 해당 패널 열기 */
+  var _pp=new URLSearchParams(location.search).get('panel'); if(_pp) goPanel(_pp);
