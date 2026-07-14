@@ -33,8 +33,9 @@
   .svcbadge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;border-radius:20px;padding:4px 11px;background:var(--soft,#f0efeb);color:var(--ink-soft,#3a382f)}
   .svcbadge svg{width:13px;height:13px}
   .svcbadge.online,.svcbadge.shopping,.svcbadge.image{background:var(--soft,#f0efeb);color:var(--ink-soft,#3a382f)}
-  /* 아이콘 전용 칩(글자 뺌) — 정사각 */
-  .svcbadge.icon-only{gap:0;padding:0;width:28px;height:28px;justify-content:center}
+  /* 아이콘 전용 칩(글자 뺌) — 연한 그린 원 배경 + 그린 아이콘 */
+  .svcbadge.icon-only{gap:0;padding:0;width:28px;height:28px;border-radius:50%;justify-content:center;
+    background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B)}
   .svcbadge.icon-only svg{width:15px;height:15px}
   .st{font-size:12px;font-weight:800;padding:4px 11px;border-radius:20px}
   .st.nw{background:var(--ink,#1c1a17);color:#fff} .st.sent{background:var(--soft,#eee);color:var(--sub,#777)}
