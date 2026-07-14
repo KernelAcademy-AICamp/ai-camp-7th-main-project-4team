@@ -36,16 +36,16 @@
   var STYLE_PRESETS = ['캐주얼','미니멀','시크','클래식','스트리트','빈티지','스포티','걸리시'];
   var REGION_PRESETS = ['서울','경기','인천','부산','대구','대전','광주'];
 
-  var REQS_VER = 6;   // 데모 버전 — 결과물·분쟁 샘플(#36) + wearExp(착용경험) 추가로 재시드
+  var REQS_VER = 7;   // 데모 버전 — 결과물·분쟁 샘플(#36) + wearExp + 대화 스레드(msgs) 시드
   /* wearExp = 고객 진단 착용경험(상품명 없이 브랜드·카테고리·핏·사이즈·부위느낌). 없으면 미첨부(견적서에서 '없음' 표기) */
   var DEMO_REQS = [
     {cust:'한서준', type:'TUB', bodytype:'슬릭 라인',     gender:'male',   cm:180, kg:68, occ:'데일리',     budget:'5~10만',  date:'2026.07.14', service:'online', note:'심플하게, 근데 밋밋하지 않게 입고 싶어요', status:'신규'},
     {cust:'김도현', type:'STR', bodytype:'시크 스트레이트', gender:'male',   cm:172, kg:65, occ:'소개팅',     budget:'5~10만',  date:'2026.07.02', service:'online', note:'과하지 않게 깔끔한 첫인상 원해요', status:'신규', wearExp:[{brand:'유니클로',cat:'상의',fit:'레귤러핏',size:'M',feel:'딱맞음'},{brand:'무신사 스탠다드',cat:'하의',fit:'스트레이트',size:'32',feel:'딱맞음'}]},
     {cust:'정예린', type:'INV', bodytype:'모던 V라인',     gender:'female', cm:167, kg:58, occ:'일상 코디',   budget:'~5만',    date:'2026.07.01', service:'shopping', note:'출근룩 위주로 데일리하게 입고 싶어요', status:'신규', wearExp:[{brand:'ZARA',cat:'상의',fit:'슬림핏',size:'S',feel:'딱맞음'}]},
     {cust:'이서연', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:163, kg:52, occ:'면접·발표',   budget:'10~15만', date:'2026.06.30', service:'image', note:'신뢰감 있는 오피스룩', dir:'out', status:'제안발송', offer:{price:95000, msg:'면접관 시선까지 고려해 첫인상 깔끔하게 잡아드릴게요'}},
-    {cust:'박지우', type:'TRI', bodytype:'소프트 A라인',   gender:'female', cm:160, kg:54, occ:'결혼식 하객', budget:'10~15만', date:'2026.06.27', service:'online', note:'', status:'수락됨', offer:{price:120000, msg:'하객룩 단정하게 코디해드릴게요'}},
+    {cust:'박지우', type:'TRI', bodytype:'소프트 A라인',   gender:'female', cm:160, kg:54, occ:'결혼식 하객', budget:'10~15만', date:'2026.06.27', service:'online', note:'', status:'수락됨', offer:{price:120000, msg:'하객룩 단정하게 코디해드릴게요'}, msgs:[{from:'cust', text:'안녕하세요! 결혼식이 다음 주 토요일이에요 🙂'},{from:'pro', text:'네 반가워요! 하객룩은 튀지 않게 단정하게 잡아드릴게요. 혹시 원하는 색 계열 있으세요?'},{from:'cust', text:'차분한 톤이 좋아요. 잘 부탁드려요!'}]},
     {cust:'최민준', type:'BAL', bodytype:'이지 밸런스',    gender:'male',   cm:175, kg:70, occ:'데일리',     budget:'~5만',    date:'2026.06.18', service:'online', status:'완료', offer:{price:60000, msg:''}, review:{rating:5, text:'취향 저격이었어요! 반품 없이 한 번에 성공'}},
-    {cust:'한지민', type:'STR', bodytype:'시크 스트레이트', gender:'female', cm:164, kg:52, occ:'소개팅',     budget:'5~10만',  date:'2026.06.29', service:'online', note:'', status:'분쟁', offer:{price:90000, msg:'소개팅룩 깔끔하게 잡아드릴게요'}, dispute:{reason:'미이행', detail:'결과물을 받지 못했어요', at:'2026.07.02'}}
+    {cust:'한지민', type:'STR', bodytype:'시크 스트레이트', gender:'female', cm:164, kg:52, occ:'소개팅',     budget:'5~10만',  date:'2026.06.29', service:'online', note:'', status:'분쟁', offer:{price:90000, msg:'소개팅룩 깔끔하게 잡아드릴게요'}, dispute:{reason:'미이행', detail:'결과물을 받지 못했어요', at:'2026.07.02'}, msgs:[{from:'cust', text:'결과물 언제 받을 수 있을까요?'},{from:'pro', text:'죄송해요, 어제 코디 3안 링크 전달드렸는데 혹시 확인 안 되셨을까요? 다시 보내드릴게요.'}]}
   ];
   var reqs = loadLS('pro.reqs', null);
   if(!reqs || loadLS('pro.reqsVer',0)!==REQS_VER){ reqs = DEMO_REQS; saveLS('pro.reqsVer', REQS_VER); }
@@ -280,10 +280,44 @@
         '<span class="amt">'+won(reqPrice(r))+'</span><span class="stag wait">정산 대기</span></div>';
     }).join('') : '<p class="note" style="padding:14px 0">아직 완료된 정산 내역이 없어요</p>';
   }
+
+  /* ===== 지원·문의 (전문가 CS · IA 2.x) — 소비자 고객센터(mp-support)의 공급자 대칭. 스토어: fitting.pro.support ===== */
+  var SUP_SEED_VER=1;
+  var SUP_SEED=[
+    {id:'S1', type:'정산·지급', text:'6월 완료 건 정산일이 언제인지 궁금해요.', at:'2026.06.28', status:'답변완료',
+      reply:'완료 확정일 기준 익월 10일에 일괄 정산돼요. 6월 완료 건은 7/10 지급 예정이에요.'},
+    {id:'S2', type:'거래·고객', text:'노쇼 고객은 어떻게 처리되나요?', at:'2026.07.03', status:'접수'}
+  ];
+  var proSup = loadLS('pro.support', null);
+  if(!proSup || loadLS('pro.supportVer',0)!==SUP_SEED_VER){ proSup=SUP_SEED.slice(); saveLS('pro.support',proSup); saveLS('pro.supportVer',SUP_SEED_VER); }
+  function supTag(s){ return s==='답변완료'
+    ? '<span class="stag" style="background:var(--green-soft,#e7efea);color:var(--green,#2E4A3B)">답변완료</span>'
+    : '<span class="stag wait">접수</span>'; }
+  function renderProSupport(){
+    var el=document.getElementById('supList'); if(!el) return;
+    el.innerHTML = proSup.length ? proSup.map(function(t){
+      return '<div class="setrow" style="align-items:flex-start;flex-wrap:wrap">'+
+        '<div class="si" style="flex:1;min-width:0"><b>'+t.type+'</b><small>'+(t.at||'')+'</small>'+
+          '<div style="font-size:13.5px;color:var(--ink-soft,#4a4842);margin-top:6px;line-height:1.55">'+esc(t.text)+'</div>'+
+          (t.reply?'<div class="note-quote" style="margin-top:8px;font-size:13px"><b style="color:var(--green,#2E4A3B)">운영팀 답변</b><br>'+esc(t.reply)+'</div>':'')+
+        '</div>'+supTag(t.status)+'</div>';
+    }).join('') : '<p class="note" style="padding:14px 0">아직 접수한 문의가 없어요</p>';
+    var open=proSup.filter(function(t){return t.status!=='답변완료';}).length;
+    var c=document.getElementById('supCnt'); if(c){ if(open>0){ c.style.display='inline-block'; c.textContent=open; } else c.style.display='none'; }
+  }
+  function submitProSupport(){
+    var ty=document.getElementById('supType'), tx=document.getElementById('supText');
+    var text=tx?tx.value.trim():''; if(!text){ toast('문의 내용을 입력해주세요'); return; }
+    proSup.unshift({ id:'S'+Date.now().toString(36), type:ty?ty.value:'기타', text:text,
+      at:new Date().toISOString().slice(0,10).replace(/-/g,'.'), status:'접수' });
+    saveLS('pro.support',proSup); if(tx) tx.value=''; renderProSupport(); toast('문의가 접수됐어요 · 보통 1영업일 안에 답변드려요');
+  }
+  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
   /* ===== 헤더: 알림·계정 ===== */
   function goPanel(p){ var a=document.querySelector('#smenu a[data-p="'+p+'"]'); if(a) nav(a); var m=document.getElementById('accMenu'); if(m) m.classList.remove('on'); }
   function toggleAccMenu(e){ if(e) e.stopPropagation(); document.getElementById('accMenu').classList.toggle('on'); }
-  function logout(){ if(confirm('로그아웃할까요? 고객 화면으로 이동해요.')) location.href='index.html'; }
+  function logout(){ if(confirm('로그아웃할까요?')) location.href='pro-login.html'; }
   document.addEventListener('click', function(e){ var m=document.getElementById('accMenu'); if(!m||!m.classList.contains('on')) return; var me=document.querySelector('.navr .me'); if(!m.contains(e.target) && !(me&&me.contains(e.target))) m.classList.remove('on'); });
   /* 최신순 정렬용 날짜 파싱('방금'=최신) */
   function dateVal(d){ if(!d) return 0; if(d==='방금') return 9e15; var t=Date.parse(String(d).replace(/\./g,'-')); return isNaN(t)?0:t; }
@@ -297,7 +331,7 @@
     el.innerHTML='<div class="subhead">지금 응답이 필요해요 <span class="ucount">'+news.length+'건</span></div>'+
       news.map(function(r){ return reqTop(r, true); }).join('');
   }
-  function renderAll(){ renderStats(); renderUrgent(); renderCandidates(); renderRecent(); renderInbox(); renderReviews(); renderSettle(); }
+  function renderAll(){ renderStats(); renderUrgent(); renderCandidates(); renderRecent(); renderInbox(); renderReviews(); renderSettle(); renderProSupport(); }
   /* 요청 클릭 → 견적서 페이지로 이동(사이드 드로어 대신) */
   function goQuote(i){ location.href='pro-quote.html?req='+i; }
 

@@ -31,6 +31,9 @@
     <div class="t on" data-tab="members" onclick="__mtab('members')">회원 <span class="muted">3.B.2</span></div>
     <div class="t" data-tab="pros" onclick="__mtab('pros')">전문가 심사 <span class="muted">3.B.1</span></div>
     <div class="t" data-tab="signals" onclick="__mtab('signals')">매칭 수요 신호 <span class="muted">3.B.3</span></div>
+    <div class="t" data-tab="disputes" onclick="__mtab('disputes')">분쟁·환불·신고 <span class="muted">3.B.4</span></div>
+    <div class="t" data-tab="monitor" onclick="__mtab('monitor')">매칭·정산·리뷰 <span class="muted">3.B.5·6</span></div>
+    <div class="t" data-tab="cs" onclick="__mtab('cs')">고객 문의 CS <span class="muted">3.B.7</span></div>
   </div>
 
   <!-- 3.B.2 회원 -->
@@ -67,9 +70,40 @@
     <div class="sec-h">요청 로그 <span class="muted" style="font-weight:400">— 최신순. 오픈=역경매·지명=특정스타일리스트·알림=오픈알림 신청(순수 수요)</span></div>
     <div class="tablewrap"><table class="dt" id="reqTable"></table></div>
   </div>
+
+  <!-- 3.B.4 분쟁·환불·신고 -->
+  <div class="apanel" id="panel-disputes">
+    <p class="subnote"><b>에스크로 보관금 기준 중재 큐</b>. 소비자 신고(<code>fitting.reqs</code>)·전문가 소명(<code>fitting.pro.reqs</code>)의 <b>분쟁</b> 건을 모아 릴리스/환불을 판정 · 신고(어뷰징)는 별도 큐. 실 에스크로·PG 연동은 v2 — 조치 시 해당 거래 상태를 되써요(데모).</p>
+    <div class="kpis" id="dKpis"></div>
+    <div class="sec-h">분쟁 큐 <span class="muted" style="font-weight:400">— 에스크로 보관금 기준 중재(환불 승인/기각)</span></div>
+    <div class="tablewrap"><table class="dt" id="disputeTable"></table></div>
+    <div class="sec-h">신고 큐 <span class="muted" style="font-weight:400">— 어뷰징·부적절 콘텐츠·노쇼 → 회원 제재(3.B.2) 연계</span></div>
+    <div class="tablewrap"><table class="dt" id="reportTable"></table></div>
+  </div>
+
+  <!-- 3.B.5·6 매칭 모니터링 · 정산 · 리뷰 -->
+  <div class="apanel" id="panel-monitor">
+    <p class="subnote"><b>거래 진행 모니터링</b> — 미응답·유찰 개입, 완료 거래 <b>에스크로 정산 집행</b>, 신고 후기 모더레이션. 실매칭·정산 집행은 v2 · 조치는 데모. 소스: <code>fitting.reqs</code>·<code>fitting.pro.reqs</code>(+샘플).</p>
+    <div class="sec-h">매칭 모니터링·개입 <span class="muted" style="font-weight:400">— 미응답·유찰·어뷰징(3.B.3)</span></div>
+    <div class="tablewrap"><table class="dt" id="matchTable"></table></div>
+    <div class="sec-h">정산 집행 <span class="muted" style="font-weight:400">— 완료 거래 에스크로 릴리스·수수료(3.B.5)</span></div>
+    <div class="tablewrap"><table class="dt" id="settleTable"></table></div>
+    <div class="sec-h">리뷰 모더레이션 <span class="muted" style="font-weight:400">— 신고·부적절 후기 숨김(3.B.6)</span></div>
+    <div class="tablewrap"><table class="dt" id="reviewTable"></table></div>
+  </div>
+
+  <!-- 3.B.7 고객 문의(CS) 처리 -->
+  <div class="apanel" id="panel-cs">
+    <p class="subnote"><b>고객 문의(1:1) 처리</b> — 소비자 고객센터(<code>fitting.support</code>) 티켓을 유형·상태로 관리, 답변 전송 + 거래 문의는 분쟁 큐(3.B.4) 전환. 반복 문의는 FAQ(G.2) 승격. 실 티켓·SLA는 v2.</p>
+    <div class="kpis" id="csKpis"></div>
+    <div class="sec-h">문의 티켓 큐 <span class="muted" style="font-weight:400">— 유형·상태 · 답변/분쟁 전환</span></div>
+    <div class="tablewrap"><table class="dt" id="csTable"></table></div>
+    <div class="sec-h">FAQ 관리 <span class="muted" style="font-weight:400">— 반복 문의를 도움말로 승격(자가해결율↑)</span></div>
+    <div class="tablewrap"><table class="dt" id="faqMgmtTable"></table></div>
+  </div>
 </div>
 
 <script src="js/admin-common.js?v=b64f60d3"></script>
-<script src="js/admin-members.js?v=b5f3348f"></script>
+<script src="js/admin-members.js?v=be58ca5f"></script>
 </body>
 </html>

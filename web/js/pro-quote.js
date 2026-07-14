@@ -75,8 +75,43 @@
     return '<div class="statban '+b[0]+'"><span class="sb-ic">'+stIcon(b[1])+'</span>'+
       '<div class="sb-tx"><b>'+esc(b[2])+'</b><p>'+esc(b[3]).replace(/ · /g,'<br>')+'</p></div></div>';
   }
+  /* 진행 스테퍼 — 정상 흐름(요청/제안→수락→진행→완료). 예외(거절/취소/분쟁/견적작성)는 null → 배너 폴백 */
+  function progressStepper(r){
+    var out = r.dir==='out';
+    var labels = out ? ['제안','수락','진행','완료'] : ['요청','수락','진행','완료'];
+    var FLOW = out ? {'제안발송':0,'수락됨':2,'완료':3} : {'신규':0,'수락됨':2,'완료':3};
+    /* 예외 — 흐름에서 멈춘 단계에 경고 표시 (거절=수락 단계 / 취소·분쟁=진행 단계) */
+    var EXC = {'거절':{at:1,lb:'거절'},'취소':{at:2,lb:'취소'},'분쟁':{at:2,lb:'분쟁'}};
+    var cur, exAt=-1;
+    if(r.status in FLOW){ cur=FLOW[r.status]; }
+    else if(r.status in EXC){ var e=EXC[r.status]; exAt=e.at; cur=e.at; labels=labels.slice(); labels[e.at]=e.lb; }
+    else return null;   // 견적작성 등 → 스테퍼 없음
+    var h='';
+    labels.forEach(function(lab,i){
+      var cls = i===exAt?'exc':(i<cur?'done':(i===cur?'now':''));
+      var mark = i===exAt?'✕':(i<cur?'✓':(i+1));
+      h+='<div class="pstep '+cls+'"><span class="pn">'+mark+'</span><span class="pl">'+esc(lab)+'</span></div>';
+    });
+    return '<div class="stepper">'+h+'</div>';
+  }
+  /* 상태 표시 — 스테퍼(진행 위치) + 상태 바(현재 상태·할 일)를 모든 상태에서 함께 */
+  function statusBlock(r){
+    var step=progressStepper(r), b=ST_BAN_PRO[r.status];
+    var bar = b ? '<div class="statbar '+b[0]+'"><span class="sb-dot"></span><b>'+esc(b[2])+'</b>'
+      +'<span class="sb-sep">·</span><span class="sb-d">'+esc(b[3])+'</span></div>' : '';
+    if(!step && !bar) return '';
+    return '<div class="card statcard">'+(step||'')+bar+'</div>';
+  }
 
-  /* ── 액션(상태별) ── 버튼/입력만. 상태 배너는 render에서 진행상태 바 위에 별도로 붙임 ── */
+  /* 요청서 아래 액션 박스 제목 — '진행 상태'(스테퍼가 대신) 대신 지금 할 일 중심 */
+  function actionTitle(r){
+    if(r.status==='견적작성') return '견적 작성';
+    if(r.status==='제안발송') return '제안 현황';
+    var T={'신규':'요청 수락','수락됨':'결과물 전달','완료':'완료','거절':'거절한 요청','취소':'취소한 요청','분쟁':'분쟁 대응'};
+    return T[r.status]||'진행 관리';
+  }
+
+  /* ── 액션(상태별) ── 버튼/입력만. 상태 표시는 render에서 statusBlock으로 별도 ── */
   function actionHTML(r){
     var banner='';
     if(r.status==='신규'){
@@ -438,8 +473,10 @@
       /* ③ 캐릭터 + 어깨·가슴·허리·엉덩이·핏취향(같이) */
       /* ③ 아바타 + 부위별 슬림/표준/볼륨 + 예상 cm(라벨에 바로) */
       bodySilhouette(m, bt, r.gender, estBody(r), estConf(r))+
-      /* ⑤ [프로토타입] 기준 옷 · 브랜드별 추천 사이즈 · 스타일링 힌트 */
+      /* ⑤ [프로토타입] 기준 옷 · 브랜드별 추천 사이즈 — 더보기로 접음 */
+      '<details class="meas-more"><summary>기준 옷 · 브랜드별 추천 사이즈 자세히 보기</summary>'+
       refAndRecs(m, bt, r)+
+      '</details>'+
     '</div>';
   }
 
@@ -475,6 +512,71 @@
     '</div>';
   }
 
+  /* ===== 고객과의 대화(상담) — IA 2.x, 소비자측 index.js sendReqMsg와 대칭 =====
+     pro.reqs는 소비자 fitting.reqs와 분리된 데모 스토어 → 스레드는 r.msgs에 보관({from:'pro'|'cust'}) */
+  function proMsgs(r){ return r.msgs || [{from:'cust', text:'안녕하세요 스타일리스트님! 잘 부탁드려요 🙂'}]; }
+  function msgCardHTML(r){
+    var bubbles=proMsgs(r).map(function(mm){
+      var mine=(mm.from==='pro'||mm.from==='me');
+      return '<div class="pm-row '+(mine?'me':'cust')+'"><div class="pm-b">'+esc(mm.text)+'</div></div>';
+    }).join('');
+    return '<div class="card pm-card"><div class="subhead">고객과의 대화</div>'+
+      '<div class="pm-thread" id="pmThread">'+bubbles+'</div>'+
+      '<div class="pm-compose"><input id="pmIn" placeholder="메시지를 입력하세요" onkeydown="if(event.key===\'Enter\')sendProMsg()"><button class="btn ghost" onclick="sendProMsg()">보내기</button></div>'+
+    '</div>';
+  }
+  function sendProMsg(){ var inp=$('pmIn'); if(!inp) return; var t=(inp.value||'').trim(); if(!t) return;
+    var r=reqs[idx]; if(!r) return; r.msgs=proMsgs(r).slice(); r.msgs.push({from:'pro', text:t}); saveLS('pro.reqs',reqs); render();
+    setTimeout(function(){ var th=$('pmThread'); if(th) th.scrollTop=th.scrollHeight; var i2=$('pmIn'); if(i2) i2.focus(); },0); }
+
+  /* ===== 고객 신고(양방향) — IA 2.x. 소비자→스타일리스트는 분쟁/후기, 스타일리스트→고객은 여기.
+     공유 스토어 fitting.reports에 적재 → 관리자 신고 큐(3.B.4)가 병합해서 처리 =====*/
+  var REPORT_REASONS=['노쇼(약속 불이행)','부적절한 언행·요구','허위·악의성 요청','플랫폼 외 거래 유도','결제 회피','기타'];
+  function hasReport(r){ return !!(r && r.reported); }
+  function openReportModal(){ ensureProStyle(); var m=$('reportModal'); if(!m){ m=document.createElement('div'); m.id='reportModal'; m.className='dlv-modal'; document.body.appendChild(m); } renderReportModal(); m.style.display='flex'; }
+  function closeReportModal(){ var m=$('reportModal'); if(m) m.style.display='none'; }
+  function renderReportModal(){ var r=reqs[idx], m=$('reportModal'); if(!m||!r) return;
+    m.innerHTML='<div class="dlv-bd" onclick="closeReportModal()"></div><div class="dlv-pan">'+
+      '<div class="dlv-h"><div><b>고객 신고</b> <span>'+esc(r.cust)+' 님</span></div><button class="dlv-x" onclick="closeReportModal()">✕</button></div>'+
+      '<div class="dlv-b">'+
+        '<p style="font-size:12.5px;color:var(--sub2,#8a857b);margin:0 0 12px">부적절한 요청·언행·노쇼 등을 신고하면 관리자가 검토해 회원 제재로 이어질 수 있어요. 허위 신고는 제재 대상이에요.</p>'+
+        '<div class="rpt-reasons" id="rptReasons">'+REPORT_REASONS.map(function(rs,k){ return '<label class="rpt-r"><input type="radio" name="rptReason" value="'+esc(rs)+'"'+(k===0?' checked':'')+'> '+esc(rs)+'</label>'; }).join('')+'</div>'+
+        '<div class="offerform" style="margin-top:12px"><label>상세 내용</label><textarea id="rptDetail" placeholder="상황을 구체적으로 적어주세요 (일시·대화·정황 등)"></textarea></div>'+
+      '</div>'+
+      '<div class="dlv-f"><button class="btn" onclick="submitProReport()">신고 접수</button></div></div>';
+  }
+  function submitProReport(){ var r=reqs[idx]; if(!r) return;
+    var sel=document.querySelector('input[name="rptReason"]:checked'); var reason=sel?sel.value:REPORT_REASONS[0];
+    var detail=($('rptDetail')&&$('rptDetail').value.trim())||'';
+    var reports=loadLS('reports', []);
+    reports.unshift({ id:'R'+Date.now().toString(36), by:'pro', reporter:(profile&&profile.name)||'소희 스타일리스트',
+      target:r.cust, targetRole:'고객', type:reason, detail:detail, state:'접수', at:new Date().toISOString().slice(0,10) });
+    saveLS('reports', reports);
+    r.reported={ type:reason, at:new Date().toISOString().slice(0,10) }; saveLS('pro.reqs',reqs);
+    closeReportModal(); render(); toast('신고가 접수됐어요 · 관리자가 검토해요');
+  }
+  function reportBoxHTML(r){
+    if(hasReport(r)) return '<div class="rpt-done">🚩 신고 접수됨 · <b>'+esc(r.reported.type)+'</b><br><span style="font-size:12px;color:var(--sub2,#8a857b)">관리자 검토 중이에요</span></div>';
+    return '<button class="rpt-link" onclick="openReportModal()">🚩 고객 신고 (노쇼·부적절 언행 등)</button>';
+  }
+
+  function ensureProStyle(){ if($('proXStyle')) return; ensureDlvStyle(); var s=document.createElement('style'); s.id='proXStyle';
+    s.textContent='.pm-card .subhead{margin-bottom:10px}'+
+      '.pm-thread{display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;padding:4px 2px 10px}'+
+      '.pm-row{display:flex}.pm-row.me{justify-content:flex-end}'+
+      '.pm-b{max-width:78%;padding:9px 13px;border-radius:14px;font-size:13.5px;line-height:1.5;white-space:pre-wrap;word-break:break-word}'+
+      '.pm-row.cust .pm-b{background:var(--soft,#f5f3ee);color:var(--ink,#1c1a17);border-bottom-left-radius:4px}'+
+      '.pm-row.me .pm-b{background:var(--green,#2E4A3B);color:#fff;border-bottom-right-radius:4px}'+
+      '.pm-compose{display:flex;gap:8px;margin-top:4px;border-top:1px solid var(--line,#ece9e3);padding-top:12px}'+
+      '.pm-compose input{flex:1;padding:10px 13px;border:1.5px solid var(--line2,#d8d4cc);border-radius:10px;font-size:14px;font-family:inherit}'+
+      '.pm-compose input:focus{outline:none;border-color:var(--green,#2E4A3B)}'+
+      '.rpt-reasons{display:flex;flex-direction:column;gap:2px}'+
+      '.rpt-r{display:flex;align-items:center;gap:8px;padding:9px 4px;font-size:14px;cursor:pointer;border-bottom:1px solid var(--line,#ece9e3)}.rpt-r:last-child{border:none}'+
+      '.rpt-link{display:block;width:100%;margin-top:10px;padding:11px;background:none;border:1px solid var(--line2,#d8d4cc);border-radius:11px;color:var(--sub,#6b6a67);font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}'+
+      '.rpt-link:hover{border-color:#c0392b;color:#c0392b}'+
+      '.rpt-done{margin-top:10px;padding:12px 14px;background:#fbf3f3;border:1px solid #e6b8b8;border-radius:11px;font-size:13px;color:#c0392b;line-height:1.5}';
+    document.head.appendChild(s); }
+
   /* ── 전체 렌더 ── */
   // 8유형 성별 축: 구조필드(공유)+gender.{male,female} 콘텐츠 병합. 구 포맷은 raw 폴백.
   function btResolve(t, g){
@@ -488,6 +590,10 @@
     var r = isCand ? candRecord() : reqs[idx];
     if(!r){ $('quoteRoot').innerHTML='<p class="crumb">요청을 찾을 수 없어요.</p><p style="margin-top:10px"><a class="tinybtn" onclick="location.href=\'pro.html\'">요청 내역으로</a></p>'; return; }
     var out = r.dir==='out';
+    // 대화=제안 발송~진행~완료·분쟁(견적작성 전/거절·취소 제외) · 신고=실제 진행된 고객만
+    var showMsg = !isCand && ['제안발송','수락됨','완료','분쟁'].indexOf(r.status)>=0;
+    var showReport = !isCand && ['수락됨','완료','분쟁'].indexOf(r.status)>=0;
+    if(showMsg||showReport) ensureProStyle();
     var bt = btResolve(BTMAP[r.type], r.gender) || {};   // 고객 성별로 콘텐츠 해석
     var m = MEASURE_BY_CUST[r.cust] || MEASURE_DEFAULT;
     // 체형 진단 결과 첨부 여부 — 첨부 O: 캐릭터·측정 / 첨부 X: 성별·키·몸무게만
@@ -501,11 +607,14 @@
       '<p class="crumb">스타일리스트 지원 · '+(r.status==='견적작성'?'견적 보내기':(out?'보낸 제안':'받은 요청'))+'</p>'+
       '<h1>'+esc(r.cust)+' 님'+(r.occ?' · '+esc(r.occ):'')+'</h1>'+
       '<div class="qgrid2">'+
-        '<div class="qleft">'+ statusBanner(r) + requestReceipt(r, attached) +
-          '<div class="card offer-card"><div class="subhead">'+(r.status==='견적작성'?'견적 작성':(out?'제안 현황':(r.status==='신규'?'요청을 수락하시겠습니까?':'진행 상태')))+'</div>'+ actionHTML(r) +'</div>'+
+        '<div class="qleft">'+ statusBlock(r) + requestReceipt(r, attached) +
+          '<div class="card offer-card"><div class="subhead">'+esc(actionTitle(r))+'</div>'+ actionHTML(r) +
+            (showReport?reportBoxHTML(r):'')+'</div>'+
+          (showMsg?msgCardHTML(r):'')+
         '</div>'+
         '<div class="qright">'+ bodyCard +'</div>'+
       '</div>';
+    if(showMsg){ var th=$('pmThread'); if(th) th.scrollTop=th.scrollHeight; }
   }
 
   /* 상단바(앱 바) — 프로필 이름·아바타·알림 뱃지 채우기 + 계정 메뉴 */
