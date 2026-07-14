@@ -12,6 +12,7 @@
   .cacts button:disabled{opacity:.5; cursor:default;}
   .cacts button svg{width:16px; height:16px; display:block;}
   .clogo{font-size:18px; font-weight:800; letter-spacing:-.05em;}
+  .clogo .sq{display:inline-block; width:5px; height:5px; background:currentColor; margin-left:2px; vertical-align:baseline;}
   .fig{position:relative; width:120px; height:184px; margin:8px 0 4px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; animation:bob 3.4s ease-in-out infinite;}
   @keyframes bob{0%,100%{transform:translateY(0) scale(.85)} 50%{transform:translateY(-6px) scale(.85)}}
   .fig .head{width:32px; height:36px; margin-bottom:-3px; z-index:2; position:relative;}
