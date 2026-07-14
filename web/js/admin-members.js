@@ -12,13 +12,16 @@
   function d(s){return esc((s||'').replace('T',' ').slice(0,16));}
 
   window.__mtab=function(t){
-    ['members','pros','signals'].forEach(function(k){
+    ['members','pros','signals','disputes','monitor','cs'].forEach(function(k){
       var p=$('panel-'+k); if(p) p.classList.toggle('on',k===t);
     });
     Array.prototype.forEach.call(document.querySelectorAll('#atabs .t'),function(el){
       el.classList.toggle('on', el.getAttribute('data-tab')===t);
     });
     if(t==='signals') renderSignals();
+    if(t==='disputes') renderDisputes();
+    if(t==='monitor') renderMonitor();
+    if(t==='cs') renderCS();
   };
 
   // ── 샘플 ─────────────────────────────────────────────
@@ -193,6 +196,171 @@
     }).join('');
     $('reqTable').innerHTML='<thead><tr><th>날짜</th><th>유형</th><th>서비스</th><th>상황</th><th>예산/가격</th><th>견적수</th><th>상태</th></tr></thead><tbody>'+(rows||'<tr><td class="muted">요청 없음</td></tr>')+'</tbody>';
   }
+
+  // ── 분쟁·환불·신고 (3.B.4) — 에스크로 중재 큐 + 상세 중재(신고·소명 확인 후 판정) ──
+  function loadProReqs(){ try{ var v=JSON.parse(localStorage.getItem('fitting.pro.reqs')||'[]'); return Array.isArray(v)?v:[]; }catch(e){ return []; } }
+  function saveReqs(a){ try{ localStorage.setItem('fitting.reqs',JSON.stringify(a)); }catch(e){} }
+  function saveProReqs(a){ try{ localStorage.setItem('fitting.pro.reqs',JSON.stringify(a)); }catch(e){} }
+  function admToast(m){ var el=$('admToast'); if(!el){ el=document.createElement('div'); el.id='admToast'; el.style.cssText='position:fixed;left:50%;bottom:32px;transform:translateX(-50%);background:var(--ink,#1c1a17);color:#fff;padding:11px 18px;border-radius:10px;font-size:14px;font-weight:700;z-index:400;opacity:0;transition:opacity .2s;pointer-events:none'; document.body.appendChild(el); } el.textContent=m; el.style.opacity='1'; clearTimeout(window._at); window._at=setTimeout(function(){ el.style.opacity='0'; },1900); }
+  var DISPUTE_SAMPLE=[
+    {id:'#1024', cust:'지민', shopper:'소희', reason:'미이행', detail:'약속한 날짜에 결과물을 받지 못했어요', reply:null, evidence:true, amount:90000, state:'중재 대기'},
+    {id:'#1019', cust:'수현', shopper:'건형', reason:'품질 불만', detail:'추천받은 코디가 요청 무드와 많이 달랐어요', reply:'요청하신 3안 모두 전달드렸고 수정 요청도 반영했습니다', evidence:false, amount:120000, state:'소명 완료'}
+  ];
+  var REPORT_SAMPLE=[
+    {id:'#N301', target:'회원 m0997', type:'부적절 언행', state:'검토 대기'},
+    {id:'#N298', target:'쇼퍼 p205', type:'노쇼 신고', state:'제재 검토'}
+  ];
+  var DSTAG={'중재 대기':'color:#8a6d1f;background:#f5ecd0','소명 완료':'color:#3a5a8a;background:#dde6f5','환불':'color:#7a1f1f;background:#f5d6d6','기각':'color:#1f6a4a;background:var(--green-soft)'};
+  function dtag(s){ return '<span class="pill" style="'+(DSTAG[s]||'')+'">'+esc(s)+'</span>'; }
+  var _disputes=[], _curDisp=null;
+  function collectDisputes(){
+    var out=[];
+    loadReqs().forEach(function(r,i){ if(r.status==='분쟁'&&r.dispute){ out.push({src:'reqs',idx:i,id:'#R'+(1000+i),cust:'고객(나)',shopper:r.nm||'쇼퍼',reason:r.dispute.reason||'기타',detail:r.dispute.detail||'',reply:null,evidence:false,amount:(r.awarded&&r.awarded.price)||r.price||0,state:'중재 대기',live:true}); } });
+    loadProReqs().forEach(function(r,i){ if(r.status==='분쟁'&&r.dispute){ out.push({src:'pro',idx:i,id:'#P'+(1000+i),cust:r.cust||'고객',shopper:'소희',reason:r.dispute.reason||'기타',detail:r.dispute.detail||'',reply:r.dispute.reply||null,evidence:false,amount:(r.offer&&r.offer.price)||0,state:r.dispute.reply?'소명 완료':'중재 대기',live:true}); } });
+    return out;
+  }
+  function renderDisputes(){
+    _disputes = collectDisputes().concat(DISPUTE_SAMPLE);
+    var pending=_disputes.filter(function(d){return d.state==='중재 대기';}).length;
+    $('dKpis').innerHTML=[kpi(pending,'분쟁 대기','중재 필요'),kpi(_disputes.length,'환불 요청',''),kpi(REPORT_SAMPLE.length,'신고','어뷰징·노쇼'),kpi('1.8일','평균 처리','')].join('');
+    var rows=_disputes.map(function(d,i){
+      return '<tr><td>'+esc(d.id)+'</td><td>'+esc(d.cust)+' ↔ '+esc(d.shopper)+' 쇼퍼</td><td>'+esc(d.reason)+'</td><td class="num">'+d.amount.toLocaleString()+' <span class="muted">보관</span></td><td>'+dtag(d.state)+'</td><td><a class="pill" style="cursor:pointer" onclick="__dispOpen('+i+')">중재 →</a></td></tr>';
+    }).join('');
+    $('disputeTable').innerHTML='<thead><tr><th>거래</th><th>당사자</th><th>유형</th><th>에스크로</th><th>상태</th><th>조치</th></tr></thead><tbody>'+(rows||'<tr><td class="muted" colspan="6">분쟁 없음 — 진행중 거래에서 문제 신고 시 여기로</td></tr>')+'</tbody>';
+    var rr=REPORT_SAMPLE.map(function(r){ return '<tr><td>'+esc(r.id)+'</td><td>'+esc(r.target)+'</td><td>'+esc(r.type)+'</td><td>'+dtag(r.state)+'</td><td><span class="muted">샘플</span></td></tr>'; }).join('');
+    $('reportTable').innerHTML='<thead><tr><th>신고</th><th>대상</th><th>유형</th><th>상태</th><th>조치</th></tr></thead><tbody>'+rr+'</tbody>';
+  }
+  /* 상세 중재 모달 — 신고 내용·증빙·쇼퍼 소명 확인 후 판정 */
+  function ensureAdmStyle(){ if($('admDispStyle')) return; var s=document.createElement('style'); s.id='admDispStyle';
+    s.textContent='.adm-modal{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center}'+
+      '.adm-bd{position:absolute;inset:0;background:rgba(20,18,16,.5)}'+
+      '.adm-pan{position:relative;background:#fff;border-radius:16px;width:min(540px,94vw);max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}'+
+      '.adm-h{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--line,#eae7e1)}.adm-h b{font-size:16px;font-weight:800}'+
+      '.adm-x{background:none;border:none;font-size:20px;line-height:1;cursor:pointer;color:var(--sub,#888)}'+
+      '.adm-b{padding:16px 20px;overflow-y:auto}.adm-f{padding:13px 20px;border-top:1px solid var(--line,#eae7e1);display:flex;gap:8px;flex-wrap:wrap;align-items:center}'+
+      '.adm-sec{font-size:11.5px;font-weight:800;color:var(--sub,#888);margin:16px 0 7px;letter-spacing:.03em}.adm-b .adm-sec:first-child{margin-top:0}'+
+      '.adm-kv{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line,#eae7e1);font-size:14px}'+
+      '.adm-quote{background:var(--soft,#f5f3ee);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.6;margin-top:2px}';
+    document.head.appendChild(s); }
+  function mbtn(label,action,kind){
+    var s='padding:9px 15px;border-radius:9px;font-size:13.5px;font-weight:800;cursor:pointer;border:1px solid var(--line,#e0ddd6)';
+    s += kind==='warn' ? ';background:var(--warn,#c0392b);color:#fff;border-color:var(--warn,#c0392b)'
+       : kind==='primary' ? ';background:var(--green,#2E4A3B);color:#fff;border-color:var(--green,#2E4A3B)'
+       : ';background:#fff;color:var(--ink,#1c1a17)';
+    return '<button onclick="__dispAct(\''+action+'\')" style="'+s+'">'+label+'</button>';
+  }
+  function renderDispModal(){ var d=_curDisp, m=$('dispModal'); if(!m||!d) return;
+    var body='<div class="adm-sec">대상 거래</div>'+
+      '<div class="adm-kv"><span>거래</span><b>'+esc(d.id)+'</b></div>'+
+      '<div class="adm-kv"><span>당사자</span><b>'+esc(d.cust)+' ↔ '+esc(d.shopper)+' 쇼퍼</b></div>'+
+      '<div class="adm-kv"><span>에스크로 보관금</span><b class="num">'+d.amount.toLocaleString()+'원</b></div>'+
+      '<div class="adm-sec">고객 신고 · '+esc(d.reason)+'</div>'+
+      '<div class="adm-quote">"'+esc(d.detail||'상세 없음')+'"'+(d.evidence?'<div style="margin-top:6px;color:var(--sub,#777);font-size:12.5px">📎 증빙(대화·스크린샷) 첨부됨</div>':'')+'</div>'+
+      '<div class="adm-sec">쇼퍼 소명</div>'+
+      (d.reply ? '<div class="adm-quote">"'+esc(d.reply)+'"</div>' : '<div class="adm-quote" style="color:var(--sub,#777)">아직 소명이 제출되지 않았어요 · 소명 요청 가능</div>');
+    var foot = d.live
+      ? mbtn('전액 환불','refund','warn')+mbtn('부분 환불','partial','plain')+mbtn('기각','reject','primary')+(d.reply?'':mbtn('소명 요청','reqReply','plain'))
+      : '<span class="muted" style="align-self:center">샘플 — 조치 데모 없음</span>';
+    m.innerHTML='<div class="adm-bd" onclick="__dispClose()"></div><div class="adm-pan">'+
+      '<div class="adm-h"><b>분쟁 중재 · '+esc(d.id)+'</b><button class="adm-x" onclick="__dispClose()">✕</button></div>'+
+      '<div class="adm-b">'+body+'</div>'+
+      '<div class="adm-f">'+foot+'<button onclick="__dispClose()" style="margin-left:auto;background:none;border:none;color:var(--sub,#777);font-weight:700;cursor:pointer">닫기</button></div></div>';
+  }
+  window.__dispOpen=function(i){ _curDisp=_disputes[i]; if(!_curDisp) return; ensureAdmStyle(); var m=$('dispModal'); if(!m){ m=document.createElement('div'); m.id='dispModal'; m.className='adm-modal'; document.body.appendChild(m); } renderDispModal(); m.style.display='flex'; };
+  window.__dispClose=function(){ var m=$('dispModal'); if(m) m.style.display='none'; };
+  window.__dispAct=function(action){ var d=_curDisp; if(!d||!d.live){ __dispClose(); return; }
+    if(action==='reqReply'){ admToast('쇼퍼에게 소명을 요청했어요'); __dispClose(); return; }
+    var refund=(action==='refund'||action==='partial');
+    if(d.src==='reqs'){ var a=loadReqs(); if(a[d.idx]) a[d.idx].status=(refund?'환불':'진행중'); saveReqs(a); }
+    else if(d.src==='pro'){ var p=loadProReqs(); if(p[d.idx]) p[d.idx].status=(refund?'완료':'수락됨'); saveProReqs(p); }
+    admToast(action==='refund'?'전액 환불로 종결했어요':action==='partial'?'부분 환불로 종결했어요':'분쟁을 기각했어요');
+    __dispClose(); renderDisputes();
+  };
+
+  // ── 매칭 모니터링 · 정산 집행 · 리뷰 모더레이션 (3.B.5·6) ──
+  function mtag(s){ var C={'정산 대기':'color:#8a6d1f;background:#f5ecd0','정산 완료':'color:#1f6a4a;background:var(--green-soft)','정상':'color:#1f6a4a;background:var(--green-soft)','신고 접수':'color:#7a1f1f;background:#f5d6d6','유찰 위험':'color:#8a6d1f;background:#f5ecd0','미응답':'color:#8a6d1f;background:#f5ecd0'}; return '<span class="pill" style="'+(C[s]||'')+'">'+esc(s)+'</span>'; }
+  var MON_SAMPLE=[
+    {id:'#1031', kind:'오픈 견적중 · 입찰 0', elapsed:'36h 경과', flag:'유찰 위험', act:'유찰 구제', key:'rescue'},
+    {id:'#1028', kind:'지명 대기 · 미응답', elapsed:'28h 경과', flag:'미응답', act:'리마인드', key:'remind'}
+  ];
+  var SETTLE_SAMPLE=[{id:'#1020', who:'소희', amt:90000}];
+  var REVIEW_SAMPLE=[{who:'익명 요청', rating:1, text:'후기에 욕설·비방 포함 (신고 접수)', flagged:true}];
+  function renderMonitor(){
+    // 1) 매칭 모니터링·개입 — 진행 중 매칭 + 미응답/유찰 개입
+    var active=loadReqs().filter(function(r){ return ['견적중','대기','결제대기','진행중'].indexOf(r.status)>=0; });
+    var m1=active.map(function(r){
+      var flag = (r.status==='견적중'&&!(r.bids||[]).length)?'유찰 위험':(r.status==='대기'?'미응답':'정상');
+      var act = flag==='유찰 위험'?'<a class="pill" style="cursor:pointer" onclick="__mon(\'rescue\')">유찰 구제</a>':(flag==='미응답'?'<a class="pill" style="cursor:pointer" onclick="__mon(\'remind\')">리마인드</a>':'<span class="muted">·</span>');
+      return '<tr><td>'+esc((r.open?'오픈 견적':(r.nm||'지명'))+' · '+r.status)+'</td><td class="muted">'+esc(r.date||'')+'</td><td>'+mtag(flag)+'</td><td>'+act+'</td></tr>';
+    });
+    var m2=MON_SAMPLE.map(function(m){ return '<tr><td>'+esc(m.id+' · '+m.kind)+'</td><td class="muted">'+esc(m.elapsed)+'</td><td>'+mtag(m.flag)+'</td><td><a class="pill" style="cursor:pointer" onclick="__mon(\''+m.key+'\')">'+esc(m.act)+'</a></td></tr>'; });
+    $('matchTable').innerHTML='<thead><tr><th>거래</th><th>일자/경과</th><th>플래그</th><th>개입</th></tr></thead><tbody>'+(m1.concat(m2).join('')||'<tr><td class="muted" colspan="4">진행 중 매칭 없음</td></tr>')+'</tbody>';
+    // 2) 정산 집행 — 완료 거래 에스크로 릴리스
+    var done=loadReqs().filter(function(r){ return (r.status==='완료'||r.status==='후기완료') && !r._settled; });
+    var s1=done.map(function(r){ var amt=(r.awarded&&r.awarded.price)||r.price||0; return '<tr><td>'+esc((r.nm||'거래')+' 쇼퍼')+'</td><td class="num">'+amt.toLocaleString()+'원</td><td>'+mtag('정산 대기')+'</td><td><a class="pill" style="color:var(--green);background:var(--green-soft);cursor:pointer" onclick="__mon(\'settle\')">정산 집행</a></td></tr>'; });
+    var s2=SETTLE_SAMPLE.map(function(x){ return '<tr><td>'+esc(x.id+' · '+x.who+' 쇼퍼')+'</td><td class="num">'+x.amt.toLocaleString()+'원</td><td>'+mtag('정산 대기')+'</td><td><a class="pill" style="color:var(--green);background:var(--green-soft);cursor:pointer" onclick="__mon(\'settle\')">정산 집행</a></td></tr>'; });
+    $('settleTable').innerHTML='<thead><tr><th>거래(쇼퍼)</th><th>금액</th><th>상태</th><th>조치</th></tr></thead><tbody>'+(s1.concat(s2).join('')||'<tr><td class="muted" colspan="4">정산 대상 없음</td></tr>')+'</tbody>';
+    // 3) 리뷰 모더레이션 — 신고·부적절 후기
+    var revs=loadReqs().filter(function(r){ return r.status==='후기완료'&&r.review; }).map(function(r){ return {who:(r.nm||'')+' 쇼퍼', rating:r.review.rating||5, text:r.review.text||'', flagged:false}; });
+    var rr=revs.concat(REVIEW_SAMPLE).map(function(v){
+      return '<tr><td>'+esc(v.who)+'</td><td style="color:#e8a13a">'+('★'.repeat(v.rating)||'—')+'</td><td>'+esc((v.text||'').slice(0,34))+'</td><td>'+mtag(v.flagged?'신고 접수':'정상')+'</td><td>'+(v.flagged?'<a class="pill" style="color:#7a1f1f;background:#f5d6d6;cursor:pointer" onclick="__mon(\'hide\')">숨김</a>':'<span class="muted">·</span>')+'</td></tr>';
+    }).join('');
+    $('reviewTable').innerHTML='<thead><tr><th>대상</th><th>별점</th><th>후기</th><th>상태</th><th>조치</th></tr></thead><tbody>'+rr+'</tbody>';
+  }
+  window.__mon=function(action){ var M={remind:'미응답 쇼퍼에게 리마인드를 보냈어요',rescue:'유찰 임박 건을 다른 쇼퍼에게 재노출했어요',settle:'에스크로 정산을 집행했어요 · 수수료 차감(데모)',hide:'신고된 후기를 숨김 처리했어요'}; admToast(M[action]||'처리했어요'); };
+
+  // ── 고객 문의(CS) 처리 (3.B.7) — 고객센터(fitting.support) 티켓 관리 ──
+  function loadSupport(){ try{ var v=JSON.parse(localStorage.getItem('fitting.support')||'[]'); return Array.isArray(v)?v:[]; }catch(e){ return []; } }
+  function saveSupport(a){ try{ localStorage.setItem('fitting.support',JSON.stringify(a)); }catch(e){} }
+  function cstag(s){ var C={'미처리':'color:#8a6d1f;background:#f5ecd0','처리중':'color:#3a5a8a;background:#dde6f5','답변완료':'color:#1f6a4a;background:var(--green-soft)'}; return '<span class="pill" style="'+(C[s]||'')+'">'+esc(s)+'</span>'; }
+  var CS_SAMPLE=[
+    {cust:'수현', type:'진단·엔진', body:'추천받은 사이즈가 실제 착용과 좀 달랐어요', date:'2026.07.04', status:'처리중'},
+    {cust:'예린', type:'계정·기타', body:'카카오 로그인 연동이 안 돼요', date:'2026.07.03', status:'미처리'}
+  ];
+  var FAQ_MGMT=[
+    {q:'환불 규정이 궁금해요', count:8, promoted:true},
+    {q:'유니클로 M이면 자라는 몇인가요?', count:12, promoted:true},
+    {q:'쇼퍼가 응답이 없어요', count:5, promoted:false}
+  ];
+  var _tickets=[], _curT=null;
+  function isTrade(type){ return !!type && (type.indexOf('결제')>=0 || type.indexOf('매칭')>=0); }
+  function renderCS(){
+    var live=loadSupport().map(function(s,i){ return {src:'support',idx:i,cust:'나',type:s.type,body:s.body,date:s.date,status:(s.status==='답변완료'?'답변완료':'미처리'),reply:s.reply,live:true}; });
+    _tickets = live.concat(CS_SAMPLE.map(function(t){ var o={live:false}; for(var k in t) o[k]=t[k]; return o; }));
+    var pending=_tickets.filter(function(t){return t.status!=='답변완료';}).length;
+    $('csKpis').innerHTML=[kpi(pending,'미처리 문의','응답 필요'),kpi('4.2h','평균 응답',''),kpi(2,'SLA 임박','24h 내'),kpi('86%','자가해결','FAQ')].join('');
+    var rows=_tickets.map(function(t,i){
+      var act='<a class="pill" style="cursor:pointer" onclick="__csOpen('+i+')">답변</a>'+(isTrade(t.type)&&t.status!=='답변완료'?' <a class="pill" style="cursor:pointer" onclick="__csOpen('+i+')">분쟁 전환</a>':'');
+      return '<tr><td>#T'+(500+i)+'</td><td>'+esc(t.cust||'고객')+'</td><td>'+esc(t.type||'')+'</td><td>'+esc((t.body||'').slice(0,22))+'</td><td>'+cstag(t.status)+'</td><td>'+act+'</td></tr>';
+    }).join('');
+    $('csTable').innerHTML='<thead><tr><th>티켓</th><th>고객</th><th>유형</th><th>내용</th><th>상태</th><th>조치</th></tr></thead><tbody>'+(rows||'<tr><td class="muted" colspan="6">문의 없음</td></tr>')+'</tbody>';
+    var fr=FAQ_MGMT.map(function(f){ return '<tr><td>'+esc(f.q)+'</td><td class="num">'+f.count+'회</td><td>'+(f.promoted?cstag('답변완료').replace('답변완료','FAQ 등록'):'<span class="muted">미등록</span>')+'</td><td>'+(f.promoted?'<span class="muted">·</span>':'<a class="pill" style="cursor:pointer" onclick="__csFaq()">FAQ 승격</a>')+'</td></tr>'; }).join('');
+    $('faqMgmtTable').innerHTML='<thead><tr><th>반복 문의</th><th>건수</th><th>FAQ</th><th>조치</th></tr></thead><tbody>'+fr+'</tbody>';
+  }
+  function renderCSModal(){ var t=_curT, m=$('dispModal'); if(!m||!t) return;
+    var trade=isTrade(t.type);
+    var BTN_P='padding:9px 15px;border-radius:9px;font-size:13.5px;font-weight:800;cursor:pointer;border:1px solid var(--green,#2E4A3B);background:var(--green,#2E4A3B);color:#fff';
+    var BTN_G='padding:9px 15px;border-radius:9px;font-size:13.5px;font-weight:800;cursor:pointer;border:1px solid var(--line,#e0ddd6);background:#fff;color:var(--ink,#1c1a17)';
+    var body='<div class="adm-sec">문의 · '+esc(t.type||'')+'</div>'+
+      '<div class="adm-kv"><span>고객</span><b>'+esc(t.cust||'고객')+'</b></div>'+
+      '<div class="adm-kv"><span>접수일</span><b>'+esc(t.date||'—')+'</b></div>'+
+      '<div class="adm-sec">문의 내용</div><div class="adm-quote">"'+esc(t.body||'')+'"</div>'+
+      (t.reply?'<div class="adm-sec">기존 답변</div><div class="adm-quote">"'+esc(t.reply)+'"</div>':'')+
+      '<div class="adm-sec">답변 작성</div><textarea id="csReplyIn" style="width:100%;border:1px solid var(--line,#e0ddd6);border-radius:10px;padding:11px 13px;font-family:inherit;font-size:14px;min-height:82px;resize:vertical" placeholder="답변을 작성하면 고객 알림으로 전달돼요">'+esc(t.reply||'')+'</textarea>';
+    var foot = t.live
+      ? '<button onclick="__csReply()" style="'+BTN_P+'">답변 전송</button>'+(trade?'<button onclick="__csToDispute()" style="'+BTN_G+'">분쟁 큐로 전환</button>':'')
+      : '<span class="muted" style="align-self:center">샘플 — 조치 데모 없음</span>';
+    m.innerHTML='<div class="adm-bd" onclick="__dispClose()"></div><div class="adm-pan">'+
+      '<div class="adm-h"><b>문의 답변 · '+esc(t.type||'')+'</b><button class="adm-x" onclick="__dispClose()">✕</button></div>'+
+      '<div class="adm-b">'+body+'</div>'+
+      '<div class="adm-f">'+foot+'<button onclick="__dispClose()" style="margin-left:auto;background:none;border:none;color:var(--sub,#777);font-weight:700;cursor:pointer">닫기</button></div></div>';
+  }
+  window.__csOpen=function(i){ _curT=_tickets[i]; if(!_curT) return; ensureAdmStyle(); var m=$('dispModal'); if(!m){ m=document.createElement('div'); m.id='dispModal'; m.className='adm-modal'; document.body.appendChild(m); } renderCSModal(); m.style.display='flex'; };
+  window.__csReply=function(){ var t=_curT; if(!t||!t.live){ __dispClose(); return; } var el=$('csReplyIn'); var v=el?el.value.trim():''; if(!v){ admToast('답변을 입력해주세요'); return; }
+    var a=loadSupport(); if(a[t.idx]){ a[t.idx].status='답변완료'; a[t.idx].reply=v; saveSupport(a); }
+    admToast('답변을 전송했어요 · 고객 알림으로 전달'); __dispClose(); renderCS(); };
+  window.__csToDispute=function(){ admToast('거래 문의를 분쟁 큐(3.B.4)로 전환했어요'); __dispClose(); };
+  window.__csFaq=function(){ admToast('반복 문의를 FAQ(도움말)로 승격했어요'); };
 
   renderMembers(); renderPros();
 })();

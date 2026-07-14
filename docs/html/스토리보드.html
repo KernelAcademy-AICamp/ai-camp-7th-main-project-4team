@@ -1757,16 +1757,16 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
     </div>
   </div></div>
   <div class="spec">
-    <div class="sp-head"><span class="id">3.B.4</span><span class="nm">분쟁 · 환불 · 신고</span><span class="pri">○ v2 · 🔒</span>
+    <div class="sp-head"><span class="id">3.B.4</span><span class="nm">분쟁 · 환불 · 신고</span><span class="pri">◐ 데모 · 🔒</span>
       <div class="io"><b>짝</b> 결제·에스크로(1.8)·완료(1.6) · <b>연계</b> 정산(3.B.5)·고객센터(1.9)</div></div>
     <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">분쟁 큐</div>
       <div class="sp-l d"><span class="lb">설명</span>거래·당사자·유형(미이행/품질/노쇼/환불)·에스크로 보관금·상태.</div>
       <div class="sp-l i"><span class="lb">의도</span>에스크로에 <b>보관된 결제금</b>이 있으니 중재로 릴리스/환불 결정 — 마켓 신뢰의 핵심.</div>
-      <div class="sp-l c"><span class="lb">제약</span>v2(실 에스크로·PG 연동 후) · 현재 MVP엔 분쟁 대상 거래 자체가 없음.</div></div></div>
+      <div class="sp-l c"><span class="lb">제약</span>구현(데모) — 소비자(fitting.reqs)·전문가(fitting.pro.reqs) 분쟁 집계 큐(admin-members 4번째 탭) · 실 에스크로·PG는 v2.</div></div></div>
     <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">조치(중재·환불·기각)</div>
       <div class="sp-l d"><span class="lb">설명</span>전액/부분 환불 승인·기각·쇼퍼 소명 요청.</div>
       <div class="sp-l i"><span class="lb">의도</span>보관금을 어느 쪽에 릴리스할지 판정(에스크로 종결).</div>
-      <div class="sp-l c"><span class="lb">제약</span>환불 규칙·정산 차감은 정책/법률 검토 필요(IA §1.8).</div></div></div>
+      <div class="sp-l c"><span class="lb">제약</span>[중재] 상세에서 신고·증빙·소명 확인 후 전액/부분 환불·기각·소명 요청 판정 구현(데모, 거래 상태 되씀) · 환불 규칙·정산 차감은 정책/법률 검토(IA §1.8).</div></div></div>
     <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">신고 처리</div>
       <div class="sp-l d"><span class="lb">설명</span>어뷰징·부적절 콘텐츠·노쇼 신고 큐.</div>
       <div class="sp-l i"><span class="lb">의도</span>양측 어뷰징 차단 — 회원 제재(3.B.2)와 연계.</div>
@@ -1792,7 +1792,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
     </div>
   </div></div>
   <div class="spec">
-    <div class="sp-head"><span class="id">3.B.3/5/6</span><span class="nm">매칭 모니터링 · 정산 · 리뷰</span><span class="pri">○ v2 · 🔒</span>
+    <div class="sp-head"><span class="id">3.B.3/5/6</span><span class="nm">매칭 모니터링 · 정산 · 리뷰</span><span class="pri">◐ 데모 · 🔒</span>
       <div class="io"><b>짝</b> 낙찰/지명(1.3)·완료·정산(1.8·2.6)·후기(2.4)</div></div>
     <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">매칭 모니터링·개입(3.B.3)</div>
       <div class="sp-l d"><span class="lb">설명</span>진행 중 매칭 상태 + 미응답·유찰·어뷰징 개입.</div>
@@ -1824,7 +1824,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
     </div>
   </div></div>
   <div class="spec">
-    <div class="sp-head"><span class="id">3.B.7</span><span class="nm">고객 문의(CS) 처리</span><span class="pri">○ v2 · 🔒</span>
+    <div class="sp-head"><span class="id">3.B.7</span><span class="nm">고객 문의(CS) 처리</span><span class="pri">◐ 데모 · 🔒</span>
       <div class="io"><b>짝</b> 사용자 고객센터(1.9) · <b>연계</b> 분쟁(3.B.4)·진단정확도(3.C.2)</div></div>
     <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">문의 티켓 큐</div>
       <div class="sp-l d"><span class="lb">설명</span>인입 1:1 문의를 유형·상태·SLA·우선순위로 관리.</div>
