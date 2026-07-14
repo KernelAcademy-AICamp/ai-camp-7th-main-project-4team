@@ -757,6 +757,23 @@
   #my .reqrow-r{display:flex; align-items:center; gap:5px; flex:none; font-size:15px; font-weight:700; color:var(--sub);}
   #my .reqrow-r b{color:var(--ink); font-weight:800;}
   #my .reqrow-r .chev{font-size:22px; color:var(--sub2); font-weight:400; line-height:1;}
+  /* 통일 리스트 행(.ureq) — 쇼퍼 화면과 동일 언어: 2줄 + 모노 아이콘, 색은 상태에만 */
+  #my .ureq{display:flex; align-items:center; gap:13px; padding:16px 4px; border-bottom:1px solid var(--line); cursor:pointer; border-radius:10px; transition:background .15s;}
+  #my .ureq:last-child{border-bottom:none;}
+  #my .ureq:hover{background:var(--soft);}
+  /* 진행 중(active) 표시 — 왼쪽 선 대신 아이콘 타일을 연한 초록으로 활성화 */
+  #my .ureq.active .ureq-ic{background:var(--green-soft); color:var(--green); border-color:var(--green-light);}
+  #my .ureq.active .ureq-title{color:var(--green);}
+  #my .ureq.past{opacity:.5;}
+  #my .ureq-ic{width:40px; height:40px; border-radius:11px; background:var(--soft); color:var(--ink-soft); display:flex; align-items:center; justify-content:center; flex:none; border:1px solid var(--line);}
+  #my .ureq-ic svg{width:20px; height:20px;}
+  #my .ureq-l{flex:1; min-width:0;}
+  #my .ureq-title{font-size:16px; font-weight:800; letter-spacing:-.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  #my .ureq-meta{font-size:13px; color:var(--sub); font-weight:600; margin-top:4px;}
+  #my .ureq-meta b{color:var(--sub); font-weight:700;}
+  #my .ureq-r{display:flex; align-items:center; gap:8px; flex:none;}
+  #my .ureq-r .cnt{color:var(--ink); font-weight:800; font-size:14px;}   /* '견적 N개' — 딥그린 아닌 굵은 텍스트(원래 톤) */
+  #my .ureq-r .chev{font-size:22px; color:var(--sub2); font-weight:400; line-height:1;}
   /* 진행/지난 상태 구분 — 진행 중은 딥그린 강조, 지난 요청은 흐리게 */
   #my .substat{font-size:13px; font-weight:800; letter-spacing:.04em; padding:16px 4px 6px; display:flex; align-items:center; gap:7px;}
   #my .substat.active{color:var(--green);}
