@@ -9,17 +9,18 @@
 <link rel="stylesheet" href="css/tokens.css?v=10fb5117">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/pro.css?v=56a29349">
+<link rel="stylesheet" href="css/pro.css?v=1a29d24e">
 </head>
 <body>
 
 <header><div class="nav">
-  <span class="logo" style="cursor:pointer" onclick="location.href='index.html'">Fitting<i></i></span>
-  <span class="pill-role">스타일리스트 지원</span>
+  <span class="logo" style="cursor:pointer" onclick="location.href='index.html'">Fitting<i class="sq"></i></span>
   <div class="navr">
     <span class="cust" onclick="location.href='index.html'">← 고객 화면</span>
-    <span class="bell" onclick="goPanel('inbox')" title="새 요청 알림"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 1 0-12 0c0 6-2.5 7.5-2.5 7.5h17S18 14.5 18 8.5z"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg><span class="bell-badge" id="bellBadge" style="display:none">0</span></span>
-    <span class="me" onclick="toggleAccMenu(event)"><img id="hdrAvatar" src="photos/p1.jpg" alt="프로필 사진" onerror="this.style.visibility='hidden'"><span id="hdrName">소희 스타일리스트</span> <span class="caret">▾</span></span>
+    <span class="navdiv"></span>
+    <span class="bell" onclick="goPanel('inbox')" title="알림" aria-label="알림"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 4.6-1.9 6-1.9 6h15.8s-1.9-1.4-1.9-6z"/><path d="M10.2 18.5a2 2 0 0 0 3.6 0"/></svg><span class="bell-badge" id="bellBadge" style="display:none">0</span></span>
+    <span class="navdiv"></span>
+    <span class="me" onclick="toggleAccMenu(event)"><span class="navav"><img id="hdrAvatar" src="photos/p1.jpg" alt="프로필 사진" onerror="this.style.visibility='hidden'"></span><span id="hdrName">소희 스타일리스트</span></span>
   </div>
   <div class="accmenu" id="accMenu">
     <a onclick="goPanel('profile')">내 프로필</a>
