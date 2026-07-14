@@ -33,7 +33,13 @@ http
     const file = path.join(ROOT, path.normalize(p));
     if (!file.startsWith(ROOT)) { res.writeHead(403); return res.end("forbidden"); }
     fs.readFile(file, (err, data) => {
-      if (err) { res.writeHead(404); return res.end("not found: " + p); }
+      if (err) {
+        // 없는 경로 → 오류 페이지(G.7) 서빙 (Vercel의 404.html 컨벤션과 동일)
+        return fs.readFile(path.join(ROOT, "404.html"), (e2, page) => {
+          res.writeHead(404, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-cache, no-store, must-revalidate" });
+          res.end(page || ("not found: " + p));
+        });
+      }
       res.writeHead(200, {
         "Content-Type": TYPES[path.extname(file)] || "application/octet-stream",
         // 개발 서버는 항상 최신 파일을 주도록 캐시 무효화 — HTML엔 ?v=가 없어 옛 문서가 캐시되면 옛 ?v(옛 JS/CSS)를 물어옴.

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>페이지를 찾을 수 없어요 — 핏팅</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+<link rel="stylesheet" href="css/fitting.css?v=8ad71bfe">
+<style>
+/* 오류·빈 상태 (개발 1차 — 색·폰트는 fitting.css 변수만 참조) */
+.err-wrap{text-align:center;padding-top:36px}
+.err-emoji{font-size:60px;line-height:1;margin-bottom:10px}
+.err-wrap .sub{margin-left:auto;margin-right:auto}
+.err-wrap .btn-row{justify-content:center;gap:12px;margin-top:8px}
+.err-hint{margin-top:22px;font-size:13px;color:var(--muted)}
+.err-hint a{color:var(--accent);font-weight:700;text-decoration:none}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <nav class="top">
+    <a href="index.html" class="logo">Fitting<i></i></a>
+    <div class="nav-r"><a href="index.html?my=mp-support" class="nav-login">문의하기</a></div>
+  </nav>
+
+  <section class="block err-wrap" style="border-bottom:none">
+    <div class="err-emoji">😥</div>
+    <span class="kicker" id="errCode">Error 404</span>
+    <h1 class="head" id="errTitle">페이지를 찾을 수 없어요</h1>
+    <p class="sub" id="errDesc">주소가 바뀌었거나 삭제된 페이지일 수 있어요. 홈에서 다시 시작해보세요.</p>
+    <div class="btn-row">
+      <a href="index.html" class="btn-primary">홈으로</a>
+      <a href="diag-basic.html" class="btn-ghost" id="errAlt" onclick="try{['fitting.dx','fitting.basic','fitting.consent'].forEach(function(k){sessionStorage.removeItem(k)})}catch(e){}">내 사이즈 진단하기</a>
+    </div>
+    <div class="err-hint">문제가 계속되면 <a href="index.html?my=mp-support" id="errContact">1:1 문의</a>를 남겨주세요 · 빠르게 도와드릴게요</div>
+  </section>
+
+  <footer class="foot">
+    <a href="about.html">서비스 소개</a>
+    <a href="terms.html">이용약관</a>
+    <a href="privacy.html">개인정보 처리방침</a>
+    <a href="index.html">홈</a>
+  </footer>
+</div>
+
+<script>
+  /* 오류 유형별 카피 (?e=notfound|expired|network) · 404·링크만료·네트워크 공통 패턴 */
+  (function(){
+    var map={
+      notfound:['Error 404','페이지를 찾을 수 없어요','주소가 바뀌었거나 삭제된 페이지일 수 있어요. 홈에서 다시 시작해보세요.'],
+      expired :['Link expired','공유 링크가 만료됐어요','초대·결과 공유 링크는 일정 시간이 지나면 만료돼요. 직접 진단해 내 결과를 받아보세요.'],
+      network :['Network','연결이 불안정해요','네트워크 상태를 확인하고 잠시 후 다시 시도해주세요.']
+    };
+    try{
+      var q=new URLSearchParams(location.search);
+      var e=(q.get('e')||'notfound').toLowerCase(); var m=map[e]||map.notfound;
+      document.getElementById('errCode').textContent=m[0];
+      document.getElementById('errTitle').textContent=m[1];
+      document.getElementById('errDesc').textContent=m[2];
+      /* 오류 컨텍스트(유형·직전 경로)를 문의 진입에 자동 첨부 → 고객센터에서 프리필 */
+      var ctx=encodeURIComponent(e+' · '+(location.pathname||'/'));
+      document.getElementById('errContact').href='index.html?my=mp-support&ctx='+ctx;
+      var nav=document.querySelector('.nav-login'); if(nav) nav.href='index.html?my=mp-support&ctx='+ctx;
+    }catch(err){}
+  })();
+</script>
+</body>
+</html>

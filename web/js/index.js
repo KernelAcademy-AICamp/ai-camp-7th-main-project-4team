@@ -165,6 +165,98 @@
   var USER={ name:'김도현', initial:'김', gender:'male', age:33, height:172, weight:68, fit:'슬림', type:'STR' };   // type:null = 진단 전
   // 결과 페이지에서 '결과 저장' 시 기록한 진단 프로필(fitting.user)을 병합 → 마이가 실제 진단 결과를 보여줌.
   (function(){ try{ var s=JSON.parse(localStorage.getItem('fitting.user')||'null'); if(s&&typeof s==='object') Object.assign(USER, s); }catch(e){} })();
+  /* ===== 고객센터 · 1:1 문의 (1.9 / G.2) ===== */
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  var support = loadLS('support', [
+    {type:'결제·환불', body:'환불 요청했는데 아직 입금이 안 됐어요', date:'2026.07.05', status:'답변완료'}
+  ]);
+  /* 세그(단일 선택) — 유형·관련거래 공용 */
+  function supPick(el){ var seg=el.parentNode; [].forEach.call(seg.children, function(c){ c.classList.remove('on'); }); el.classList.add('on'); }
+  function supSel(id){ var o=document.querySelector('#'+id+' .o.on'); return o?o.textContent:''; }
+  function renderSupport(){
+    var el=document.getElementById('supList'); if(!el) return;
+    if(!support.length){ el.innerHTML='<div class="note">아직 접수한 문의가 없어요</div>'; return; }
+    el.innerHTML=support.map(function(s){
+      var done=s.status==='답변완료'; var body=esc(s.body); if(body.length>24) body=body.slice(0,24)+'…';
+      return '<div class="field"><span>['+esc(s.type)+'] '+body+' <span class="note" style="margin-left:4px">'+s.date+'</span></span>'+
+             '<span class="v" style="color:'+(done?'var(--green)':'var(--sub2)')+'">'+s.status+'</span></div>';
+    }).join('');
+  }
+  function submitSupport(){
+    if(!loggedIn()){ openLogin('1:1 문의', submitSupport); return; }
+    var ta=document.getElementById('supBody'); var body=(ta.value||'').trim();
+    if(!body){ toast('문의 내용을 입력해주세요'); ta.focus(); return; }
+    support.unshift({ type:supSel('supType')||'계정·기타', body:body, date:todayStr().replace(/-/g,'.'), status:'접수됨' });
+    saveLS('support', support); ta.value=''; renderSupport();
+    toast('문의를 접수했어요 · 답변은 알림으로 회신해요');
+  }
+  /* 거래 분쟁·환불은 에스크로(v2) 오픈 후 — 지금은 안내만 */
+  function supDispute(){ toast('거래 분쟁·환불은 실매칭(결제·에스크로) 오픈 후 지원해요'); }
+
+  /* ===== 알림 센터 (G.6) — 매칭·문의 답변·소식 회신 ===== */
+  var notis = loadLS('notis', [
+    {ic:'💬', msg:'소희 쇼퍼가 견적을 보냈어요', time:'10분 전', read:false, go:'mp-req'},
+    {ic:'📩', msg:'1:1 문의 답변이 등록됐어요', time:'1시간 전', read:false, go:'mp-support'},
+    {ic:'📢', msg:'새 쇼퍼가 합류했어요 · 매칭도를 확인해보세요', time:'어제', read:true, go:'shop'}
+  ]);
+  function notiUnread(){ return notis.filter(function(n){ return !n.read; }).length; }
+  function updateNotiDot(){ var d=document.getElementById('notiDot'); if(d) d.style.display=notiUnread()?'block':'none'; }
+  function renderNotis(){
+    var el=document.getElementById('notiList'); if(!el){ updateNotiDot(); return; }
+    if(!notis.length){ el.innerHTML='<div class="note">새 알림이 없어요</div>'; updateNotiDot(); return; }
+    el.innerHTML=notis.map(function(n,i){
+      var dot=n.read?'':'<i style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--warn);margin-right:7px;vertical-align:middle"></i>';
+      return '<a onclick="notiOpen('+i+')"><span'+(n.read?' style="color:var(--sub)"':'')+'>'+dot+n.ic+' '+esc(n.msg)+' <span class="note">'+n.time+'</span></span><span class="arr">›</span></a>';
+    }).join('');
+    updateNotiDot();
+  }
+  function notiOpen(i){ var n=notis[i]; if(!n) return; n.read=true; saveLS('notis',notis); renderNotis();
+    if(n.go==='shop') go('shop'); else if(n.go && document.querySelector('#smenu a[data-p="'+n.go+'"]')) goMy(n.go); }
+  function markAllNoti(){ notis.forEach(function(n){ n.read=true; }); saveLS('notis',notis); renderNotis(); toast('모든 알림을 읽음 처리했어요'); }
+
+  /* ===== 개인정보·데이터 관리 (1.4E / G.4) — 계정 하위 서브패널 ===== */
+  /* smenu 항목 없는 패널 전환(메뉴 하이라이트 없이 계정에서 진입 · 뒤로가기로 복귀) */
+  function openMyPanel(pid){ go('my');
+    [].forEach.call(document.querySelectorAll('#smenu a'), function(a){ a.classList.remove('on'); });
+    [].forEach.call(document.querySelectorAll('#my .mpanel'), function(p){ p.classList.remove('on'); });
+    var t=document.getElementById(pid); if(t) t.classList.add('on'); window.scrollTo(0,0);
+  }
+  function ssGet(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } }
+  function safeParse(s){ try{ return s?JSON.parse(s):null; }catch(e){ return s; } }
+  /* 엔진개선 동의 = 진단 결과화면(result.js)과 동일 키·포맷(sessionStorage fitting.consent) */
+  function engineConsent(){ try{ return JSON.parse(ssGet('fitting.consent')||'{}').engineImprove===true; }catch(e){ return false; } }
+  function renderPrivacy(){
+    var t=document.getElementById('privConsent'); if(t) t.classList.toggle('on', engineConsent());
+    var d=document.getElementById('privData'); if(!d) return;
+    var basic=ssGet('fitting.basic'), dx=ssGet('fitting.dx');
+    d.innerHTML = (basic||dx)
+      ? '<div class="field"><span>기본 정보(성별·키·몸무게)</span><span class="v">'+(basic?'저장됨':'없음')+'</span></div>'+
+        '<div class="field"><span>착용 경험·진단 입력</span><span class="v">'+(dx?'저장됨':'없음')+'</span></div>'
+      : '<div class="note">아직 저장된 진단 데이터가 없어요 · 진단을 완료하면 여기 표시돼요</div>';
+  }
+  function toggleEngineConsent(){
+    var on=!engineConsent();
+    try{ sessionStorage.setItem('fitting.consent', JSON.stringify({ engineImprove:on, ageAttested:on, at:new Date().toISOString() })); }catch(e){}
+    renderPrivacy(); toast(on?'엔진 개선 활용에 동의했어요':'엔진 개선 활용 동의를 철회했어요');
+  }
+  function downloadMyData(){
+    var data={ basic:safeParse(ssGet('fitting.basic')), dx:safeParse(ssGet('fitting.dx')), consent:safeParse(ssGet('fitting.consent')), exportedAt:new Date().toISOString() };
+    if(!data.basic && !data.dx){ toast('내려받을 진단 데이터가 없어요'); return; }
+    try{
+      var blob=new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+      var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='fitting-my-data.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
+      toast('내 데이터를 내려받았어요');
+    }catch(e){ toast('내려받기에 실패했어요'); }
+  }
+  function deleteMyData(){
+    askConfirm('<b>진단 데이터를 삭제</b>할까요?<div class="cf-sub">신체·착용경험·결과·개선 이력이 모두 삭제돼요 · 되돌릴 수 없어요</div>', '삭제하기', function(){
+      try{ ['fitting.dx','fitting.basic','fitting.consent'].forEach(function(k){ sessionStorage.removeItem(k); }); }catch(e){}
+      try{ localStorage.removeItem('fitting.feedback'); }catch(e){}
+      renderPrivacy(); toast('진단 데이터를 삭제했어요');
+    });
+  }
+
   var _btCache=null;
   function avatarFaceHTML(){ return '<div class="head '+USER.gender+'">'+(USER.gender==='female'?'<span class="longhair"></span>':'')+'<span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div>'; }
   function renderMyAvatar(){
@@ -800,7 +892,7 @@
   /* 외부 화면에서 #home·#shop·#my 로 돌아오면 해당 탭 열기 */
   (function(){ var h=(location.hash||'').replace('#',''); if(['home','shop','my'].indexOf(h)>=0) go(h); })();
 
-  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagCard(); renderMyInsight();
+  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagCard(); renderMyInsight(); renderSupport(); renderNotis(); renderPrivacy();
 
   /* 친구 초대 링크로 유입(card 공유 → index.html?from=CODE) — 홈 상단 배너로 맞이 */
   (function(){ try{ var from=new URLSearchParams(location.search).get('from'); if(!from) return;
@@ -814,8 +906,10 @@
   }catch(e){} })();
 
   /* 결과 저장 후 '마이에서 보기'(index.html?my=mp-diag) — 마이의 해당 서브패널(내 진단결과)로 바로 이동 */
-  (function(){ try{ var mp=new URLSearchParams(location.search).get('my');
+  (function(){ try{ var q=new URLSearchParams(location.search); var mp=q.get('my');
     if(mp && document.querySelector('#smenu a[data-p="'+mp+'"]')) goMy(mp);
+    /* 오류 페이지(G.7)에서 넘어온 오류 컨텍스트를 1:1 문의에 프리필 */
+    var ctx=q.get('ctx'); if(mp==='mp-support' && ctx){ var ta=document.getElementById('supBody'); if(ta && !ta.value) ta.value='[오류 문의] '+ctx; }
   }catch(e){} })();
 
   /* ================= 홈 (줄자 리디자인) 인터랙션 — _home2 이식 ================= */
