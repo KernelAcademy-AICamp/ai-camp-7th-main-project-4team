@@ -254,10 +254,23 @@
     var a=p(hex), b=p(to), o=a.map(function(v,i){ return Math.round(v+(b[i]-v)*t); });
     return '#'+o.map(function(x){ return ('0'+Math.max(0,Math.min(255,x)).toString(16)).slice(-2); }).join('');
   }
+  /* 태그 pill 배경 — 유형색 농도로. seg 0(가장 슬림)=가장 연하게 … 4(가장 볼륨)=가장 진하게 */
+  function tagBg(tc, seg){
+    if(seg<=0) return mixHex(tc,'#FFFFFF',0.78);   // 가장 슬림·좁은
+    if(seg===1) return mixHex(tc,'#FFFFFF',0.56);  // 슬림 편
+    if(seg===2) return mixHex(tc,'#FFFFFF',0.28);  // 표준(표준색)
+    if(seg===3) return mixHex(tc,'#2A2823',0.18);  // 볼륨 편
+    return mixHex(tc,'#2A2823',0.40);              // 가장 볼륨·넓은
+  }
+  /* 배경 명도로 글자색(흰/검정) 자동 */
+  function textOn(hex){ var h=hex.replace('#','');
+    var r=parseInt(h.substr(0,2),16), g=parseInt(h.substr(2,2),16), b=parseInt(h.substr(4,2),16);
+    return (0.299*r+0.587*g+0.114*b) > 150 ? '#2A2823' : '#FFFFFF'; }
   /* 부위 백분위(측정 기반)로 폭이 반응하는 파라메트릭 실루엣 아바타.
      좌: 슬림/표준/볼륨 태그(zoneLabel) · 우: 부위명 + 예상 cm(est) · 아래: 핏취향 칩.
      Catmull-Rom으로 몸통·다리 외곽선을 만들고, 팔은 스트로크. 세로 비율은 표준 템플릿 고정. cx=180 가운데정렬. */
   function bodySilhouette(m, bt, gender, est, conf){
+    var tc=TYPE_COLOR[(bt&&bt.code)||''] || '#57544C';   // 이 카드 유형색(태그 농도·라인 공용)
     var cx=180, headCY=48, headRx=27, headRy=31, neckHalf=12;
     var neckY=88, shoulderY=110, chestY=172, waistY=240, hipY=300, crotchY=330, kneeY=422, ankleY=498;
     /* 백분위 50=표준 반폭, 0~100 → ±28%. shoulder=너비 / 나머지=둘레지만 시각 폭으로 통일 근사 */
@@ -285,20 +298,19 @@
       {name:'엉덩이', key:'엉덩이둘레', pct:m.bottom.hip,     lo:'슬림',hi:'볼륨',half:hi,y:hipY}];
     var estMap={}; (est||[]).forEach(function(e){ estMap[e.label]={val:e.val, pm:e.pm}; });
     var vx=240, guides='';
-    LV.forEach(function(x){ var i=segIdx(x.pct), tag=zoneLabel(i,x.lo,x.hi), col=(i===2?'var(--green)':'var(--green-mid)');
+    LV.forEach(function(x){ var i=segIdx(x.pct), tag=zoneLabel(i,x.lo,x.hi), bg=tagBg(tc,i), txt=textOn(bg);
       var half=x.half, y=x.y, re=cx+half, le=cx-half, e=estMap[x.key];
       // 우: 부위명(+ 예상 cm을 바로 옆에). cm 있으면 이름은 위·수치 아래로.
       guides+='<circle cx="'+re.toFixed(1)+'" cy="'+y+'" r="2.6" fill="var(--fig-line)"/>'
         +'<line x1="'+(re+4).toFixed(1)+'" y1="'+y+'" x2="'+(vx-6)+'" y2="'+y+'" stroke="var(--guide)" stroke-width="1.2" stroke-dasharray="2 3"/>'
         +'<text class="g-name" x="'+vx+'" y="'+(e?(y-5):(y+4))+'">'+esc(x.name)+'</text>';
       if(e) guides+='<text class="g-val" x="'+vx+'" y="'+(y+13)+'">약 '+e.val+'<tspan class="g-unit" dx="1">cm</tspan> <tspan class="g-pm">±'+e.pm+'</tspan></text>';
-      // 좌: 슬림/표준/볼륨 태그 pill
-      var tw=tag.length*13+26, pe=le-9, ps=pe-tw;
+      // 좌: 슬림/표준/볼륨 태그 — 유형색 농도(볼륨 진하게·슬림 연하게), 글자색 자동
+      var tw=tag.length*13.5+22, pe=le-9, ps=pe-tw;
       guides+='<circle cx="'+le.toFixed(1)+'" cy="'+y+'" r="2.6" fill="var(--fig-line)"/>'
         +'<line x1="'+(le-4).toFixed(1)+'" y1="'+y+'" x2="'+(pe+1).toFixed(1)+'" y2="'+y+'" stroke="var(--guide)" stroke-width="1.2"/>'
-        +'<rect x="'+ps.toFixed(1)+'" y="'+(y-12)+'" width="'+tw+'" height="24" rx="12" fill="var(--pill-bg)" stroke="'+col+'" stroke-opacity=".5"/>'
-        +'<circle cx="'+(ps+13).toFixed(1)+'" cy="'+y+'" r="3" fill="'+col+'"/>'
-        +'<text class="g-tag" x="'+(ps+22).toFixed(1)+'" y="'+(y+4)+'" fill="'+col+'">'+esc(tag)+'</text>'; });
+        +'<rect x="'+ps.toFixed(1)+'" y="'+(y-12)+'" width="'+tw.toFixed(1)+'" height="24" rx="12" fill="'+bg+'"/>'
+        +'<text class="g-tag" x="'+(ps+tw/2).toFixed(1)+'" y="'+(y+4)+'" text-anchor="middle" fill="'+txt+'">'+esc(tag)+'</text>'; });
     var svg='<svg viewBox="0 0 360 520" role="img" aria-label="고객 체형 실루엣">'
       +'<ellipse cx="'+cx+'" cy="514" rx="52" ry="9" fill="var(--fig-line)" opacity=".10"/>'
       +'<path d="'+arm(1)+'" fill="none" stroke="var(--fig-line)" stroke-width="13.5" stroke-linecap="round" opacity=".92"/>'
@@ -315,7 +327,6 @@
       ? '예상 치수 · 신뢰도 '+esc(conf||'—')+' · 폭=측정 반영, 세로=표준 비율'
       : '폭 = 측정 백분위 반영 · 세로 = 표준 비율';
     /* 라인만 스타일 — 유형색을 라인(80%+다크)으로, 채움은 아주 옅은 틴트(12%) */
-    var tc=TYPE_COLOR[(bt&&bt.code)||''] || '#57544C';
     var figLine=mixHex(tc,'#2A2823',0.20), figFill=mixHex(tc,'#FFFFFF',0.88);
     return '<div class="bodymap2" style="--fig-fill:'+figFill+';--fig-line:'+figLine+'">'+svg
       +'<div class="av-pref"><span>핏 취향</span><b>'+esc(pref)+'</b></div>'
