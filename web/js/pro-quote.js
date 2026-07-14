@@ -75,6 +75,22 @@
     return '<div class="statban '+b[0]+'"><span class="sb-ic">'+stIcon(b[1])+'</span>'+
       '<div class="sb-tx"><b>'+esc(b[2])+'</b><p>'+esc(b[3]).replace(/ · /g,'<br>')+'</p></div></div>';
   }
+  /* 진행 스테퍼 — 정상 흐름(요청/제안→수락→진행→완료). 예외(거절/취소/분쟁/견적작성)는 null → 배너 폴백 */
+  function progressStepper(r){
+    var out = r.dir==='out';
+    var flow = out ? {'제안발송':0,'수락됨':2,'완료':3} : {'신규':0,'수락됨':2,'완료':3};
+    if(!(r.status in flow)) return null;
+    var cur=flow[r.status];
+    var labels = out ? ['제안','수락','진행','완료'] : ['요청','수락','진행','완료'];
+    var caps={'신규':'새로운 요청을 확인해 주세요','제안발송':'고객의 응답을 기다리고 있어요',
+      '수락됨':'결과물을 작성해 전달해 주세요','완료':'고객의 후기를 기다리고 있어요'};
+    var h='';
+    labels.forEach(function(lab,i){ var cls=i<cur?'done':(i===cur?'now':'');
+      h+='<div class="pstep '+cls+'"><span class="pn">'+(i<cur?'✓':(i+1))+'</span><span class="pl">'+esc(lab)+'</span></div>'; });
+    return '<div class="card statcard"><div class="stepper">'+h+'</div><div class="pstep-cap">'+esc(caps[r.status]||'')+'</div></div>';
+  }
+  /* 상태 표시 — 정상흐름=스테퍼 / 예외=배너 */
+  function statusBlock(r){ var s=progressStepper(r); return s!==null?s:statusBanner(r); }
 
   /* ── 액션(상태별) ── 버튼/입력만. 상태 배너는 render에서 진행상태 바 위에 별도로 붙임 ── */
   function actionHTML(r){
@@ -438,8 +454,10 @@
       /* ③ 캐릭터 + 어깨·가슴·허리·엉덩이·핏취향(같이) */
       /* ③ 아바타 + 부위별 슬림/표준/볼륨 + 예상 cm(라벨에 바로) */
       bodySilhouette(m, bt, r.gender, estBody(r), estConf(r))+
-      /* ⑤ [프로토타입] 기준 옷 · 브랜드별 추천 사이즈 · 스타일링 힌트 */
+      /* ⑤ [프로토타입] 기준 옷 · 브랜드별 추천 사이즈 — 더보기로 접음 */
+      '<details class="meas-more"><summary>기준 옷 · 브랜드별 추천 사이즈 자세히 보기</summary>'+
       refAndRecs(m, bt, r)+
+      '</details>'+
     '</div>';
   }
 
@@ -501,7 +519,7 @@
       '<p class="crumb">스타일리스트 지원 · '+(r.status==='견적작성'?'견적 보내기':(out?'보낸 제안':'받은 요청'))+'</p>'+
       '<h1>'+esc(r.cust)+' 님'+(r.occ?' · '+esc(r.occ):'')+'</h1>'+
       '<div class="qgrid2">'+
-        '<div class="qleft">'+ statusBanner(r) + requestReceipt(r, attached) +
+        '<div class="qleft">'+ statusBlock(r) + requestReceipt(r, attached) +
           '<div class="card offer-card"><div class="subhead">'+(r.status==='견적작성'?'견적 작성':(out?'제안 현황':(r.status==='신규'?'요청을 수락하시겠습니까?':'진행 상태')))+'</div>'+ actionHTML(r) +'</div>'+
         '</div>'+
         '<div class="qright">'+ bodyCard +'</div>'+
