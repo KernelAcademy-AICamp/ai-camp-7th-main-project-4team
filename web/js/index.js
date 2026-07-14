@@ -136,11 +136,13 @@
   }
 
   /* 데모 시드 버전 — 상태 모델이 바뀌었으니 옛 요청 데이터를 1회 자동 초기화(콘솔 리셋 불필요) */
-  if(loadLS('reqsVer',0) < 10){ try{ localStorage.removeItem('fitting.reqs'); }catch(e){} saveLS('reqsVer',10); }
+  if(loadLS('reqsVer',0) < 12){ try{ localStorage.removeItem('fitting.reqs'); }catch(e){} saveLS('reqsVer',12); }
   var reqs = loadLS('reqs', [
+    {nm:'지현', svc:'online',   occ:['소개팅·데이트'], price:98000,  date:'2026.07.03', status:'결제대기'},
     {nm:'상민', svc:'shopping', occ:['결혼식 하객'], price:150000, date:'2026.06.30', status:'대기'},
     {open:true, svc:'online', occ:['소개팅·데이트'], budget:'5~10만', date:'2026.07.02', status:'견적중', bids:makeBids('online',['소개팅·데이트'])},
     {nm:'건형', svc:'image',    occ:['면접·발표'],   price:190000,   date:'2026.06.25', status:'진행중'},
+    {nm:'세라', svc:'image',    occ:['면접·발표'],   price:175000,   date:'2026.06.28', status:'분쟁', payMethod:'카드', paidAt:'2026-06-28T10:00:00Z', _prevStatus:'진행중', dispute:{reason:'미이행', detail:'약속한 날짜에 결과물을 받지 못했어요', at:'2026-07-01T09:00:00Z'}},
     {nm:'소희', svc:'online',   occ:['소개팅·데이트'], price:90000,  date:'2026.06.20', status:'거절'}
   ]);
   /* 옛 상태 정리 — 지명 요청은 대기 → 수락/거절 뿐. 이전 데이터의 취소·제안도착·라이프사이클을 보정. */
@@ -361,8 +363,8 @@
     go('shop'); openDetail(idx); _detailBack=function(){ goMy('mp-fav'); };
   }
   /* 마이페이지 · 코디 요청 내역 렌더 (라이프사이클) */
-  function stClass(s){ return (s==='완료'||s==='후기완료')?'done':(s==='진행중'||s==='수락'?'prog':(s==='견적중'?'offer':(s==='거절'||s==='취소함'?'cancel':'wait'))); }
-  function statusLabel(s){ return s==='견적중'?'견적 받는 중':(s==='후기완료'?'후기 완료':(s==='수락'?'수락됨':(s==='거절'?'거절됨':(s==='대기'?'응답 대기':s)))); }
+  function stClass(s){ return (s==='완료'||s==='후기완료')?'done':(s==='진행중'||s==='수락'?'prog':(s==='견적중'?'offer':(s==='분쟁'?'warn':(s==='거절'||s==='취소함'||s==='환불'?'cancel':'wait')))); }
+  function statusLabel(s){ return s==='견적중'?'견적 받는 중':(s==='결제대기'?'결제 대기':(s==='분쟁'?'분쟁 처리 중':(s==='환불'?'환불 완료':(s==='후기완료'?'후기 완료':(s==='수락'?'수락됨':(s==='거절'?'거절됨':(s==='대기'?'응답 대기':s))))))); }
   function starsRO(n){ var s=''; for(var k=1;k<=5;k++) s+='<span style="color:'+(k<=n?'var(--green)':'var(--line2)')+'">'+starSVG()+'</span>'; return s; }
   /* 통통하고 둥근 별 (귀여운 모양) — round join으로 뾰족함 없이 */
   function starSVG(){ return '<svg class="cutestar" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M12 4 L14.1 9.6 20.1 9.9 15.4 13.6 17 19.4 12 16.1 7 19.4 8.6 13.6 3.9 9.9 9.9 9.6Z"/></svg>'; }
@@ -387,6 +389,7 @@
       '<div class="reqact" style="background:none; padding:10px 2px 0"><span class="muted" style="font-size:12px">데모 · 스타일리스트 응답 시뮬레이션</span><div class="obtns" style="margin-left:auto"><button class="tinybtn ghost" onclick="reqReject('+i+')">거절</button><button class="tinybtn" onclick="reqAccept('+i+')">수락</button></div></div>';
     if(s==='취소함') return '<div class="reqact"><span class="muted">요청을 취소했어요</span></div>';
     if(s==='수락') return '<div class="reqact"><span><b style="color:var(--green)">요청 수락되었어요!</b> 이제 스타일리스트와 코디를 진행해요</span></div>';
+    if(s==='결제대기') return '<div class="reqact"><div class="offerbox"><b>결제하고 시작하기</b><div class="omsg">'+(r.nm||'')+' 스타일리스트로 매칭됐어요 · 에스크로 결제 후 코디를 시작해요</div></div><button class="tinybtn" style="margin-left:auto" onclick="openPay('+i+')">결제하기 →</button></div>';
     if(s==='진행중') return matchedBannerHTML(r)+
       '<div class="reqact" style="background:none; padding:10px 2px 0"><span class="muted" style="font-size:12px">데모 · 서비스 완료 시뮬레이션</span><button class="tinybtn ghost" style="margin-left:auto" onclick="reqComplete('+i+')">완료 처리</button></div>';
     if(s==='완료'){ if(r._reviewing) return matchedBannerHTML(r)+reviewForm(r,i);
@@ -440,7 +443,7 @@
     var el=document.getElementById('reqList'); if(!el) return;
     var open=[], named=[], notify=[];
     reqs.forEach(function(r,i){ if(r.kind==='notify') notify.push(i); else if(r.open) open.push(i); else named.push(i); });
-    function isActive(s){ return s==='견적중'||s==='대기'||s==='진행중'||s==='수락'; }
+    function isActive(s){ return s==='견적중'||s==='대기'||s==='진행중'||s==='수락'||s==='결제대기'||s==='분쟁'; }
     function group(ids, cls, icon, label, cardFn, desc, emptyLink, splitActive){
       var act=[], past=[];
       ids.forEach(function(i){ (isActive(reqs[i].status)?act:past).push(i); });
@@ -474,7 +477,7 @@
     el.innerHTML = html;
   }
   /* 요청 라이프사이클 액션 (목업) — 지명 요청: 대기 → 수락(진행중→완료→후기) / 거절 */
-  function reqAccept(i){ reqs[i].status='진행중'; saveLS('reqs',reqs); syncReqViews(); toast((reqs[i].nm||'')+' 스타일리스트와 코디를 시작해요'); }
+  function reqAccept(i){ reqs[i].status='결제대기'; saveLS('reqs',reqs); renderReqs(); openPay(i); toast((reqs[i].nm||'')+' 스타일리스트가 수락했어요 · 결제 후 시작해요'); }
   function reqReject(i){ reqs[i].status='거절'; saveLS('reqs',reqs); syncReqViews(); toast('아쉽게도 요청이 거절되었어요!'); }
   function reqCancel(i){ reqs[i].status='취소함'; saveLS('reqs',reqs); syncReqViews(); toast('요청을 취소했어요'); }
   function reqComplete(i){ reqs[i].status='완료'; saveLS('reqs',reqs); syncReqViews(); toast('서비스가 완료됐어요 · 후기를 남겨보세요'); }
@@ -495,7 +498,7 @@
   function openReqDetail(i){ _bidReq=i; _ovMode='req'; renderReqDetail(); showOverlay(); }     // 보낸 요청 상세(지명)
   function closeBids(){ _ovMode=null; document.getElementById('bidsOverlay').classList.remove('on'); lockScroll(false); }
   /* 요청 상태가 바뀌면 목록 + (열려있으면) 오버레이를 함께 갱신 */
-  function syncReqViews(){ renderReqs(); if(_ovMode && document.getElementById('bidsOverlay').classList.contains('on')){ _ovMode==='req'?renderReqDetail():renderBids(); } }
+  function syncReqViews(){ renderReqs(); if(_ovMode && document.getElementById('bidsOverlay').classList.contains('on')){ _ovMode==='req'?renderReqDetail():(_ovMode==='pay'?renderPay():(_ovMode==='dispute'?renderDispute():renderBids())); } }
   /* 내가 보낸 요청 내용 요약(오픈: 토글 · 지명: 상세에 상시 노출) */
   function reqSummaryHTML(r){
     // 헤더 강조형 — '무엇을 보냈나'(서비스 유형)를 제목처럼 크게, 상황·예산은 요약 한 줄, 나머지는 라인
@@ -517,18 +520,23 @@
       clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
       flag:'<path d="M5 21V4h13l-2.6 4L18 12H5"/>',
       star:'<path d="M12 3l2.7 5.5 6 .9-4.35 4.2 1.03 6L12 17l-5.38 2.6 1.03-6L3.3 9.4l6-.9z"/>',
-      x:'<path d="M18 6L6 18M6 6l12 12"/>' };
+      x:'<path d="M18 6L6 18M6 6l12 12"/>',
+      card:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10.5h18"/>',
+      lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>' };
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'+(P[k]||'')+'</svg>';
   }
   /* 상태 → [배너색, 아이콘, 제목, 설명] */
   var ST_BAN={
     '대기':    ['wait','clock','응답 대기 중','스타일리스트가 요청을 검토하고 있어요'],
     '수락':    ['go','check','요청 수락됨','스타일리스트가 요청을 수락했어요 · 곧 코디를 시작해요'],
+    '결제대기':['wait','card','결제 대기','에스크로 결제를 하면 코디를 시작해요'],
     '진행중':  ['go','check','진행 중','스타일리스트와 코디를 진행하고 있어요 · 완료되면 후기를 남겨주세요'],
     '완료':    ['go','flag','서비스 완료','코디가 완료됐어요 · 후기를 남겨보세요'],
     '후기완료':['go','star','후기 작성 완료','소중한 후기 고마워요'],
     '거절':    ['no','x','요청 거절됨','아쉽게도 요청이 거절되었어요 · 다른 스타일리스트를 찾아보세요'],
-    '취소함':  ['wait','x','요청 취소됨','요청을 취소했어요']
+    '취소함':  ['wait','x','요청 취소됨','요청을 취소했어요'],
+    '분쟁':    ['no','x','분쟁 처리 중','문제 신고가 접수돼 정산이 보류됐어요 · 관리자 중재 중'],
+    '환불':    ['no','x','환불 완료','분쟁 중재로 환불 처리됐어요']
   };
   function reqStatusBlock(status){
     var b=ST_BAN[status]||['wait','clock',statusLabel(status),''];
@@ -539,12 +547,90 @@
   function reqActions(r,i){ var s=r.status;
     if(s==='대기') return '<div class="rq-btns"><button class="tinybtn ghost" onclick="confirmCancel('+i+')">요청 취소</button>'+
       '<button class="tinybtn ghost" onclick="reqReject('+i+')">거절 · 데모</button><button class="tinybtn" onclick="reqAccept('+i+')">수락 · 데모</button></div>';
-    if(s==='진행중') return '<div class="rq-btns"><button class="tinybtn ghost" onclick="reqComplete('+i+')">완료 처리 · 데모</button></div>';
+    if(s==='결제대기') return '<div class="rq-btns"><button class="tinybtn" onclick="openPay('+i+')">결제하고 시작 →</button></div>';
+    if(s==='진행중') return '';   // 진행 액션(완료 확인)은 progressSectionsHTML(대화·결과물 하단)에서 처리
     if(s==='완료'){ if(r._reviewing) return reviewForm(r,i); return '<div class="rq-btns"><button class="tinybtn" onclick="openReviewForm('+i+')">후기 작성하기</button></div>'; }
     if(s==='후기완료'){ var rv=r.review||{}; return '<div class="reqact"><div class="revshow"><span class="starsRO">'+starsRO(rv.rating||5)+'</span> <span class="rtx">"'+(rv.text||'')+'"</span></div></div>'; }
+    if(s==='분쟁') return '';   // 분쟁 상세·중재 버튼은 disputeSectionHTML에서
+    if(s==='환불') return '<div class="rq-btns"><button class="tinybtn ghost" onclick="closeBids();go(\'shop\')">다른 스타일리스트 찾기</button></div>';
     if(s==='거절') return '<div class="rq-btns"><button class="tinybtn ghost" onclick="closeBids();go(\'shop\')">다른 스타일리스트 찾기</button></div>';
     return '';
   }
+  /* ===== 진행·결과물 수령 (IA 1.6/1.7) — 진행중 상세: 대화 + 받은 결과물 + 완료 확인 ===== */
+  var DELIVER=[{src:'photos/folio1.jpg',label:'코디 1'},{src:'photos/folio2.jpg',label:'코디 2'},{src:'photos/folio3.jpg',label:'코디 3'}];
+  var DELIVER_LINKS=[{brand:'유니클로', name:'라운드 니트', size:'M', price:39900},{brand:'무신사 스탠다드', name:'테이퍼드 슬랙스', size:'30', price:35900},{brand:'자라', name:'싱글 코트', size:'M', price:129000},{brand:'나이키', name:'레더 스니커즈', size:'270', price:119000},{brand:'스파오', name:'미니멀 벨트', size:'FREE', price:19900}];
+  function reqMsgs(r){ return r.msgs || [{from:'shopper', text:'요청 주신 무드로 코디 3안 보내드려요 🙂 구매 링크도 함께 넣었어요!'}]; }
+  function sendReqMsg(i){ var inp=document.getElementById('reqMsgIn'); if(!inp) return; var t=(inp.value||'').trim(); if(!t) return;
+    var r=reqs[i]; r.msgs=reqMsgs(r).slice(); r.msgs.push({from:'me', text:t}); saveLS('reqs',reqs); renderReqDetail(); }
+  function progressSectionsHTML(r, i){
+    var e=EX.filter(function(x){ return x.nm===r.nm; })[0];
+    var av = e ? '<img src="'+img(e)+'" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex:none" onerror="'+FB+'">' : '';
+    var thread=reqMsgs(r).map(function(m){
+      if(m.from==='me') return '<div style="display:flex;justify-content:flex-end;margin:6px 0"><div style="max-width:76%;background:var(--green);color:#fff;padding:9px 13px;border-radius:14px 14px 3px 14px;font-size:14px;line-height:1.5">'+esc(m.text)+'</div></div>';
+      return '<div style="display:flex;gap:8px;align-items:flex-end;margin:6px 0">'+av+'<div style="max-width:76%;background:var(--soft);color:var(--ink);padding:9px 13px;border-radius:14px 14px 14px 3px;font-size:14px;line-height:1.5">'+esc(m.text)+'</div></div>';
+    }).join('');
+    var chat='<div class="rq-sec"><div class="rq-h">대화</div>'+
+      '<div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;max-height:220px;overflow-y:auto">'+thread+'</div>'+
+      (r.status==='진행중' ? '<div style="display:flex;gap:8px;margin-top:9px"><input id="reqMsgIn" class="inp" placeholder="메시지를 입력하세요" onkeydown="if(event.key===\'Enter\')sendReqMsg('+i+')" style="flex:1"><button class="tinybtn" onclick="sendReqMsg('+i+')">보내기</button></div>' : '')+
+      '</div>';
+    var gal=DELIVER.map(function(d){ return '<div style="background-image:url(\''+d.src+'\')"><span class="pspec">'+d.label+'</span></div>'; }).join('');
+    var deliver='<div class="rq-sec"><div class="rq-h">받은 결과물</div><div class="dgal">'+gal+'</div>'+
+      '<div class="rq-h" style="margin:16px 0 9px">🛍 구매 링크 <span class="num">'+DELIVER_LINKS.length+'</span></div>'+
+      '<div class="rs-lines">'+DELIVER_LINKS.map(function(l){ return '<div class="rs-row"><span><b style="color:var(--ink)">'+l.brand+'</b> '+l.name+' · '+l.size+' · <span class="num">'+l.price.toLocaleString()+'</span>원</span><a onclick="toast(\'데모 · 실제 구매 링크는 스타일리스트가 코디와 함께 작성해요\')" style="color:var(--green);font-weight:700;cursor:pointer;white-space:nowrap">보러가기 ›</a></div>'; }).join('')+'</div>'+
+      (r.status==='진행중'
+        ? '<button class="btn" style="width:100%;margin-top:14px" onclick="reqComplete('+i+')">받았어요 · 완료 확인</button>'+
+          '<p style="text-align:center;margin:9px 0 0;color:var(--sub2);font-size:12px">완료 확인 시 에스크로 결제금이 스타일리스트에게 정산돼요</p>'+
+          '<div style="margin-top:15px;border-top:1px solid var(--line);padding-top:14px;font-size:13px"><a onclick="openDispute('+i+')" style="color:var(--warn);font-weight:700;cursor:pointer">문제 신고·환불 요청 →</a><span style="color:var(--sub2)"> · </span><a onclick="closeBids();goMy(\'mp-support\')" style="color:var(--green);font-weight:700;cursor:pointer">고객센터 문의 →</a></div>'
+        : '')+
+      '</div>';
+    return chat + deliver;
+  }
+  /* 완료·후기 — 에스크로 정산 릴리스 안내 + 영수증(IA 1.6/1.8) */
+  function settlementSectionHTML(r){
+    var price=reqPayPrice(r), method=r.payMethod||'카드';
+    var paidDate=r.paidAt ? r.paidAt.slice(0,10).replace(/-/g,'.') : (r.date||'—');
+    return '<div class="rq-sec"><div class="rq-h">정산 · 영수증</div>'+
+      '<div class="statban go"><span class="sb-ic">'+stIcon('lock')+'</span><div class="sb-tx"><b>에스크로 정산 릴리스</b><p>보관된 결제금 '+price.toLocaleString()+'원이 '+(r.nm||'스타일리스트')+' 스타일리스트에게 지급돼요</p></div></div>'+
+      '<div class="rs-lines" style="margin-top:10px">'+
+        '<div class="rs-row"><span>결제 금액</span><b class="num">'+price.toLocaleString()+'원</b></div>'+
+        '<div class="rs-row"><span>결제 수단</span><b>'+esc(method)+'</b></div>'+
+        '<div class="rs-row"><span>결제일</span><b>'+paidDate+'</b></div>'+
+        '<div class="rs-row"><span>정산 상태</span><b style="color:var(--green)">지급 완료</b></div>'+
+      '</div>'+
+      '<div class="note" style="margin-top:8px">실 결제·정산 연동은 후속 · 데모 영수증</div></div>';
+  }
+  /* ===== 문제 신고·환불(분쟁) · IA 1.9 — 진행중 거래 → 신고 → 에스크로 릴리스 보류 → 관리자 중재(3.B.4) ===== */
+  var DISPUTE_REASONS=['미이행','품질 불만','노쇼','기타'];
+  function openDispute(i){ _bidReq=i; _ovMode='dispute'; renderDispute(); showOverlay(); }
+  function disPick(el){ var seg=el.parentNode; [].forEach.call(seg.children, function(c){ c.classList.remove('on'); }); el.classList.add('on'); }
+  function renderDispute(){
+    var r=reqs[_bidReq]; if(!r){ closeBids(); return; }
+    var e=EX.filter(function(x){ return x.nm===r.nm; })[0]; var price=reqPayPrice(r);
+    var head='<div class="bids-head"><button class="xbtn" onclick="closeBids()">✕</button><button class="bids-back" onclick="openReqDetail('+_bidReq+')">‹ 뒤로</button><h2>문제 신고 · 환불 요청</h2><p>에스크로 보관금이 있는 거래만 신고할 수 있어요</p></div>';
+    var target = e ? '<div class="rq-sec"><div class="rq-h">대상 거래</div><div class="req-summary-in"><div class="rs-head"><span class="rs-ic"><img src="'+img(e)+'" style="width:34px;height:34px;border-radius:50%;object-fit:cover" onerror="'+FB+'"></span><div class="rs-htx"><b class="rs-title">'+e.nm+' 스타일리스트</b><span class="rs-sum">'+svcLabel(r.svc)+' · 에스크로 보관 '+price.toLocaleString()+'원</span></div></div></div></div>' : '';
+    var reasons='<div class="rq-sec"><div class="rq-h">신고 사유</div><div class="seg" id="disReason">'+DISPUTE_REASONS.map(function(rs,k){ return '<span class="o'+(k===0?' on':'')+'" onclick="disPick(this)">'+rs+'</span>'; }).join('')+'</div></div>';
+    var detail='<div class="rq-sec"><div class="rq-h">상세 · 증빙</div><textarea class="inp" id="disDetail" rows="3" placeholder="어떤 문제가 있었는지 자세히 적어주세요 (예: 결과물을 받지 못했어요)"></textarea><div class="attach" style="margin-top:10px"><div class="at"><b>증빙 첨부</b><div>대화·스크린샷 (선택)</div></div><div class="toggle" onclick="this.classList.toggle(\'on\')"></div></div></div>';
+    var warn='<div class="rq-sec"><div class="statban no"><span class="sb-ic">'+stIcon('lock')+'</span><div class="sb-tx"><b>접수 시 정산 릴리스 보류</b><p>결제금이 묶이고, 스타일리스트 소명 후 관리자가 중재해요</p></div></div></div>';
+    var submit='<div class="rq-sec" style="border:none;padding-top:2px"><button class="btn" style="width:100%;background:var(--warn)" onclick="submitDispute()">환불 요청 제출</button><p style="text-align:center;margin:9px 0 0;color:var(--sub2);font-size:12px">데모 · 실제 분쟁 처리는 관리자 큐(3.B.4)</p></div>';
+    document.getElementById('bidsBody').innerHTML=head+target+reasons+detail+warn+submit; window.scrollTo({top:0});
+  }
+  function submitDispute(){ var r=reqs[_bidReq]; if(!r) return;
+    var reasonEl=document.querySelector('#disReason .o.on'); var reason=reasonEl?reasonEl.textContent:'기타';
+    var detail=(document.getElementById('disDetail').value||'').trim();
+    if(!detail){ toast('문제 내용을 입력해주세요'); return; }
+    r._prevStatus=r.status; r.dispute={reason:reason, detail:detail, at:new Date().toISOString()}; r.status='분쟁';
+    saveLS('reqs',reqs); renderReqs(); openReqDetail(_bidReq); toast('문제 신고가 접수됐어요 · 정산이 보류돼요');
+  }
+  function disputeSectionHTML(r){ var d=r.dispute||{};
+    return '<div class="rq-sec"><div class="rq-h">분쟁 · 중재</div>'+
+      '<div class="statban no"><span class="sb-ic">'+stIcon('x')+'</span><div class="sb-tx"><b>정산 릴리스 보류</b><p>문제 신고가 접수돼 결제금이 묶였어요 · 관리자가 중재 중이에요</p></div></div>'+
+      '<div class="rs-lines" style="margin-top:10px"><div class="rs-row"><span>신고 사유</span><b>'+esc(d.reason||'—')+'</b></div>'+
+        '<div class="rs-row"><span>상세</span><b style="max-width:70%;text-align:right">'+esc(d.detail||'—')+'</b></div></div>'+
+      '<div class="rq-btns" style="margin-top:12px"><button class="tinybtn ghost" onclick="withdrawDispute('+_bidReq+')">신고 철회</button><button class="tinybtn" onclick="refundDispute('+_bidReq+')">환불 완료 · 데모</button></div>'+
+      '<div class="note" style="margin-top:8px">관리자 분쟁 큐(3.B.4)와 연계 · 스타일리스트 소명 후 중재</div></div>';
+  }
+  function withdrawDispute(i){ reqs[i].status=reqs[i]._prevStatus||'진행중'; delete reqs[i].dispute; delete reqs[i]._prevStatus; saveLS('reqs',reqs); renderReqs(); openReqDetail(i); toast('신고를 철회했어요 · 거래를 이어가요'); }
+  function refundDispute(i){ reqs[i].status='환불'; saveLS('reqs',reqs); renderReqs(); openReqDetail(i); toast('중재로 환불 처리됐어요'); }
   /* 지명 요청 상세 — 진행 상태(스테퍼+배너) + 액션 + 스타일리스트 + 요청 내용 */
   function renderReqDetail(){
     var r=reqs[_bidReq]; if(!r){ closeBids(); return; }
@@ -560,8 +646,11 @@
     // 받은 견적 출신(매칭됨)이면 '지난 견적'으로 비교 화면 다시 볼 수 있게
     var pastBids = (r.open && r.awarded && (r.bids||[]).length) ?
       '<div class="rq-sec"><div class="rq-h">지난 견적</div><button class="req-toggle" onclick="openBids('+_bidReq+')">받은 견적 '+r.bids.length+'개 다시 보기 <span class="tg">›</span></button></div>' : '';
+    var progress = (r.status==='진행중'||r.status==='완료'||r.status==='후기완료') ? progressSectionsHTML(r,_bidReq) : '';
+    var settle = (r.status==='완료'||r.status==='후기완료') ? settlementSectionHTML(r) : '';
+    var dispute = (r.status==='분쟁') ? disputeSectionHTML(r) : '';
     document.getElementById('bidsBody').innerHTML = head + reqStatusBlock(r.status) +
-      (actions?'<div class="rq-actions">'+actions+'</div>':'') + shopper +
+      (actions?'<div class="rq-actions">'+actions+'</div>':'') + shopper + progress + settle + dispute +
       '<div class="rq-sec"><div class="rq-h">요청 내용</div>'+reqSummaryHTML(r)+'</div>' + pastBids;
   }
   function renderBids(){
@@ -600,11 +689,39 @@
   }
   /* 스타일리스트 선택은 되돌릴 수 없으므로 확인 모달 후 확정 */
   function confirmAward(idx){ var e=EX[idx];
-    askConfirm('<b>'+e.nm+' 스타일리스트</b>로 선택할까요?<div class="cf-sub">선택하면 바로 스타일리스트와 매칭돼 코디를 시작해요</div>', '선택하기', function(){ awardBid(idx); }); }
+    askConfirm('<b>'+e.nm+' 스타일리스트</b>로 선택할까요?<div class="cf-sub">선택 후 에스크로 결제를 하면 코디를 시작해요</div>', '선택하기', function(){ awardBid(idx); }); }
   function awardBid(idx){ var r=reqs[_bidReq]; if(!r) return; var e=EX[idx];
     var win=(r.bids||[]).filter(function(b){return b.idx===idx;})[0];
-    var so=svcOf(e, r.svc); r.nm=e.nm; r.status='진행중'; r.awarded={idx:idx, price:win?win.price:(so?so.price:svcMinPrice(e))};
-    saveLS('reqs',reqs); renderReqs(); openReqDetail(_bidReq); toast(e.nm+' 스타일리스트로 진행해요 · 코디를 시작할게요');
+    var so=svcOf(e, r.svc); r.nm=e.nm; r.status='결제대기'; r.awarded={idx:idx, price:win?win.price:(so?so.price:svcMinPrice(e))};
+    saveLS('reqs',reqs); renderReqs(); openPay(_bidReq); toast(e.nm+' 스타일리스트 선택 완료 · 결제 후 시작해요');
+  }
+
+  /* ===== 결제 (에스크로) · IA 1.8 — 낙찰/수락 → 결제 → 진행중 ===== */
+  var FEE_RATE=0.15;   // 수수료율(포함가 표기, 정책은 v2 확정)
+  function reqPayPrice(r){ return (r.awarded&&r.awarded.price)||r.price||svcMinPrice(EX.filter(function(x){return x.nm===r.nm;})[0]||{})||0; }
+  function openPay(i){ _bidReq=i; _ovMode='pay'; renderPay(); showOverlay(); }
+  function payPick(el){ var seg=el.parentNode; [].forEach.call(seg.children, function(c){ c.classList.remove('on'); }); el.classList.add('on'); }
+  function renderPay(){
+    var r=reqs[_bidReq]; if(!r){ closeBids(); return; }
+    var e=EX.filter(function(x){ return x.nm===r.nm; })[0];
+    var price=reqPayPrice(r), fee=Math.round(price*FEE_RATE);
+    var head='<div class="bids-head"><button class="xbtn" onclick="closeBids()">✕</button><span class="reqtype open">에스크로</span><h2>결제</h2><p>안전결제 후 코디를 시작해요</p></div>';
+    var shopperHead = e ? '<div class="rs-head"><span class="rs-ic"><img src="'+img(e)+'" style="width:34px;height:34px;border-radius:50%;object-fit:cover" onerror="'+FB+'"></span><div class="rs-htx"><b class="rs-title">'+e.nm+' 스타일리스트</b><span class="rs-sum">'+svcLabel(r.svc)+(r.occ&&r.occ.length?' · '+r.occ.join('·'):'')+'</span></div></div>' : '';
+    var order='<div class="rq-sec"><div class="rq-h">주문 요약</div><div class="req-summary-in">'+shopperHead+
+      '<div class="rs-lines">'+
+        '<div class="rs-row"><span>서비스 금액</span><b class="num">'+price.toLocaleString()+'원</b></div>'+
+        '<div class="rs-row"><span>수수료 (15% 포함)</span><b class="num" style="color:var(--sub)">'+fee.toLocaleString()+'원</b></div>'+
+        '<div class="rs-row" style="border-top:1px solid var(--line);margin-top:2px;padding-top:11px"><span style="font-weight:800;color:var(--ink)">결제 금액</span><b class="num" style="color:var(--green);font-size:17px">'+price.toLocaleString()+'원</b></div>'+
+      '</div></div></div>';
+    var method='<div class="rq-sec"><div class="rq-h">결제 수단</div><div class="seg" id="payMethod"><span class="o on" onclick="payPick(this)">카드</span><span class="o" onclick="payPick(this)">카카오페이</span><span class="o" onclick="payPick(this)">계좌이체</span></div></div>';
+    var escrow='<div class="rq-sec"><div class="statban wait"><span class="sb-ic">'+stIcon('lock')+'</span><div class="sb-tx"><b>에스크로 안전결제</b><p>결제금은 안전 보관되고, 완료 확인 후 스타일리스트에게 정산돼요</p></div></div></div>';
+    var pay='<div class="rq-sec" style="border:none;padding-top:2px"><button class="btn" style="width:100%" onclick="payConfirm()">'+price.toLocaleString()+'원 결제하고 시작</button><p style="text-align:center;margin-top:9px;color:var(--sub2);font-size:12px">데모 · 실제 결제(PG) 연동은 후속</p></div>';
+    document.getElementById('bidsBody').innerHTML=head+order+method+escrow+pay;
+    window.scrollTo({top:0});
+  }
+  function payConfirm(){ var r=reqs[_bidReq]; if(!r) return;
+    r.status='진행중'; r.payMethod=((document.querySelector('#payMethod .o.on')||{}).textContent)||'카드'; r.paidAt=new Date().toISOString();
+    saveLS('reqs',reqs); renderReqs(); openReqDetail(_bidReq); toast('결제 완료 · '+(r.nm||'')+' 스타일리스트와 코디를 시작해요');
   }
   /* 공용 확인 모달 */
   function askConfirm(msg, yesLabel, onYes, noLabel){

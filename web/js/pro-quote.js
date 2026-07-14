@@ -39,7 +39,7 @@
   }
   function svcLabel(s){ return svcMeta(s).label; }
   function svcBadge(s){ var m=svcMeta(s); return '<span class="svcbadge '+m.cls+'">'+m.icon+' '+m.label+'</span>'; }
-  function stClass(s){ return s==='신규'?'nw':(s==='제안발송'?'sent':(s==='수락됨'?'prog':(s==='완료'?'done':'sent'))); }
+  function stClass(s){ return s==='신규'?'nw':(s==='제안발송'?'sent':(s==='수락됨'?'prog':(s==='분쟁'?'warn':(s==='완료'?'done':'sent')))); }
   function starsRO(n){ var s=''; for(var k=1;k<=5;k++) s+='<span style="color:'+(k<=n?'#e8a13a':'#ddd')+'">★</span>'; return s; }
 
   /* ── 액션(상태별) ── 받은 요청: 수락/거절 · 진행 중: 완료/취소 · 보낸 제안: 응답 대기 ── */
@@ -55,9 +55,21 @@
         '<button class="btn ghost" style="margin-top:10px" onclick="simAccept()">고객 수락 · 데모</button>';
     }
     if(r.status==='수락됨'){
-      return '<div class="note-quote"><b style="color:var(--green)">수락됨 · 진행 중</b>'+((r.offer&&r.offer.price)?' · <span class="num">'+r.offer.price.toLocaleString()+'</span>원':'')+'</div>'+
-        '<button class="btn" style="margin-top:10px" onclick="confirmComplete()">완료 처리</button>'+
-        '<button class="btn ghost" style="margin-top:8px" onclick="confirmCancel()">취소 처리</button>';
+      var hd='<div class="note-quote"><b style="color:var(--green,#2E4A3B)">수락됨 · 진행 중</b>'+((r.offer&&r.offer.price)?' · <span class="num">'+r.offer.price.toLocaleString()+'</span>원':'')+'</div>';
+      var cancel='<button class="btn ghost" style="margin-top:8px" onclick="confirmCancel()">취소 처리</button>';
+      // 제출 후에도 완료 전까지는 수정 가능. 결과물=사진·내용(전 서비스 공통) + 구매 상품·예산(온라인 추가)
+      if(r.deliver) return hd + deliverSummary(r) +
+        '<button class="btn ghost" style="margin-top:10px" onclick="editDeliver()">결과물 수정</button>'+
+        '<button class="btn" style="margin-top:8px" onclick="confirmComplete()">완료 처리</button>' + cancel;
+      var hasDraft=((r._draft||[]).length || (r._photos||[]).length || (r._dmsg||'').trim());
+      return hd + '<button class="btn" style="margin-top:10px" onclick="openDeliverModal()">결과물 작성'+(hasDraft?' (임시저장)':'')+' →</button>' + cancel;
+    }
+    if(r.status==='분쟁'){ var dp=r.dispute||{};
+      return '<div class="note-quote" style="border-color:#e6b8b8;background:#fbf3f3"><b style="color:#c0392b">⚠ 분쟁 접수 · 정산 보류</b><br><span style="font-size:13px">사유: '+esc(dp.reason||'—')+'<br>"'+esc(dp.detail||'')+'"</span></div>'+
+        (dp.reply
+          ? '<div class="note-quote" style="margin-top:10px"><b style="color:var(--green,#2E4A3B)">내 소명 제출됨</b><br><span style="font-size:13px;color:var(--sub,#6b6a67)">"'+esc(dp.reply)+'"</span><br><span style="font-size:12px;color:var(--sub2,#8a857b)">관리자 중재를 기다리는 중이에요</span></div>'
+          : '<div class="offerform" style="margin-top:10px"><label>소명 · 반박</label><textarea id="dispReply" placeholder="결과물 전달 내역·대화 등 상황을 설명해주세요"></textarea><button class="btn" style="margin-top:10px" onclick="submitDisputeReply()">소명 제출</button></div>')+
+        '<p class="note-quote muted" style="margin-top:10px">관리자 중재(3.B.4)로 환불·정산이 결정돼요</p>';
     }
     if(r.status==='완료'){
       if(r.review) return '<div class="seclabel">고객 후기</div><div class="note-quote"><span style="letter-spacing:1px">'+starsRO(r.review.rating)+'</span><br>"'+esc(r.review.text)+'"</div>';
@@ -75,6 +87,117 @@
   function completeReq(){ reqs[idx].status='완료'; saveLS('pro.reqs',reqs); render(); toast('완료 처리했어요'); }
   function cancelReq(){ reqs[idx].reason=''; reqs[idx].status='취소'; saveLS('pro.reqs',reqs); render(); toast('진행을 취소했어요'); }
   function undoCancel(){ reqs[idx].status='수락됨'; reqs[idx].reason=''; saveLS('pro.reqs',reqs); render(); toast('취소를 되돌렸어요'); }
+  /* 분쟁 소명(2.x/3.B.4) — 스타일리스트 반박 제출 → 관리자 중재 대기 */
+  function submitDisputeReply(){ var el=$('dispReply'); var v=el?el.value.trim():''; if(!v){ toast('소명 내용을 입력해주세요'); return; }
+    if(!reqs[idx].dispute) reqs[idx].dispute={}; reqs[idx].dispute.reply=v; saveLS('pro.reqs',reqs); render(); toast('소명을 제출했어요 · 관리자 중재를 기다려요'); }
+
+  /* ===== 결과물 작성·전달 (IA 2.1.2) — 온라인: 브랜드·상품명·사이즈·가격·구매링크 n개 + 합계·예산 검증 → 제출 → 고객 수령(1.6/1.7) ===== */
+  function pval(id){ var el=$(id); return el?el.value.trim():''; }
+  function itemLine(it){ return '<b style="color:var(--ink,#1c1a17)">'+esc(it.brand)+'</b> '+esc(it.name)+' · '+esc(it.size)+' · <span class="num">'+(it.price?Number(it.price).toLocaleString():'—')+'</span>원'+(it.url?' 🔗':''); }
+  function itemsTotal(items){ return (items||[]).reduce(function(a,it){ return a+(parseInt(it.price,10)||0); },0); }
+  /* "10~15만"·"~5만"·"15만+" → {min,max} (원) */
+  function budgetRange(b){ b=(b||'').replace(/\s/g,''); if(!b) return null;
+    var nums=(b.match(/\d+/g)||[]).map(function(n){ return parseInt(n,10)*10000; }); if(!nums.length) return null;
+    if(b.charAt(0)==='~') return {min:0, max:nums[0]};
+    if(/\+$/.test(b)) return {min:nums[0], max:Infinity};
+    if(nums.length>=2) return {min:nums[0], max:nums[1]};
+    return {min:0, max:nums[0]}; }
+  function budgetText(range, raw){ if(!range) return raw||'—'; if(range.max===Infinity) return (range.min/10000)+'만원 이상'; return (range.min?(range.min/10000)+'~':'~')+(range.max/10000)+'만원'; }
+  function budgetStatus(total, range){ if(!range) return {label:'예산 미설정', color:'var(--sub2,#8a857b)'};
+    if(total < range.min) return {label:'예산보다 낮아요', color:'#b8862b'};
+    if(range.max===Infinity || total <= range.max) return {label:'예산 내 ✓', color:'var(--green,#2E4A3B)'};
+    return {label:'예산 '+(total-range.max).toLocaleString()+'원 초과', color:'#c0392b'}; }
+  /* 합계·예산 서머리 (모달 + 제출요약 공용) */
+  function budgetSummaryHTML(items, req, compact){
+    var total=itemsTotal(items), range=budgetRange(req.budget), st=budgetStatus(total, range);
+    var pct = range ? (range.max&&range.max!==Infinity ? Math.min(100, total/range.max*100) : (total>=range.min?100:(range.min?total/range.min*100:0))) : 0;
+    var bar = compact ? '' : '<div class="dlv-bar"><i style="width:'+pct.toFixed(0)+'%;background:'+st.color+'"></i></div>';
+    return '<div class="dlv-bud"><div class="r"><span>추천 상품 '+(items||[]).length+'개 · 합계</span><b class="num" style="color:'+st.color+'">'+total.toLocaleString()+'원</b></div>'+
+      '<div class="r"><span>고객 예산</span><span>'+budgetText(range, req.budget)+'</span></div>'+bar+
+      '<div style="text-align:right;font-size:12.5px;font-weight:800;color:'+st.color+';margin-top:'+(compact?'2':'7')+'px">'+st.label+'</div></div>'; }
+  function ensureDlvStyle(){ if($('dlvStyle')) return; var s=document.createElement('style'); s.id='dlvStyle';
+    s.textContent='.dlv-modal{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center}'+
+      '.dlv-bd{position:absolute;inset:0;background:rgba(20,18,16,.45)}'+
+      '.dlv-pan{position:relative;background:#fff;border-radius:18px;width:min(520px,93vw);max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.28)}'+
+      '.dlv-h{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line,#ece9e3)}'+
+      '.dlv-h b{font-size:16px;font-weight:800}.dlv-h span{font-size:12.5px;color:var(--sub,#6b6a67)}'+
+      '.dlv-x{background:none;border:none;font-size:20px;line-height:1;cursor:pointer;color:var(--sub2,#8a857b)}'+
+      '.dlv-b{padding:16px 20px;overflow-y:auto}.dlv-f{padding:13px 20px;border-top:1px solid var(--line,#ece9e3)}'+
+      '.dlv-bud{background:var(--soft,#f5f3ee);border-radius:12px;padding:13px 15px;margin-bottom:14px}'+
+      '.dlv-bud .r{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;margin-bottom:4px}.dlv-bud .r span{color:var(--sub,#6b6a67)}'+
+      '.dlv-bar{height:8px;border-radius:5px;background:#e3e0d8;overflow:hidden;margin-top:9px}.dlv-bar>i{display:block;height:100%;border-radius:5px;transition:width .2s}'+
+      '.dlv-it{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line,#ece9e3);font-size:13.5px}.dlv-it:last-child{border:none}'+
+      '.dlv-sec{font-size:13px;font-weight:800;color:var(--ink,#1c1a17);margin:16px 0 8px}'+
+      '.dlv-thumbs{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 10px}'+
+      '.dlv-th{position:relative;width:74px;height:74px;border-radius:10px;background:#eee center/cover;background-size:cover}'+
+      '.dlv-th button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:none;background:rgba(20,18,16,.72);color:#fff;font-size:11px;line-height:1;cursor:pointer}'+
+      '.dlv-up{display:inline-flex;align-items:center;gap:6px;padding:10px 14px;border:1.5px dashed var(--line2,#d8d4cc);border-radius:10px;font-size:13.5px;font-weight:700;color:var(--sub,#6b6a67);cursor:pointer}';
+    document.head.appendChild(s); }
+  function openDeliverModal(){ ensureDlvStyle(); var m=$('deliverModal'); if(!m){ m=document.createElement('div'); m.id='deliverModal'; m.className='dlv-modal'; document.body.appendChild(m); } renderDeliverModal(); m.style.display='flex'; }
+  function saveDlvMsg(){ var el=$('dvMsg'); if(el&&reqs[idx]) reqs[idx]._dmsg=el.value; }
+  function closeDeliverModal(){ saveDlvMsg(); if(reqs[idx]) saveLS('pro.reqs',reqs); var m=$('deliverModal'); if(m) m.style.display='none'; render(); }
+  var MAX_PHOTOS=6, MAX_PHOTO_BYTES=800000;
+  function photoThumbsHTML(photos, editable){ if(!(photos||[]).length) return '';
+    return '<div class="dlv-thumbs">'+photos.map(function(p,k){ return '<div class="dlv-th" style="background-image:url(\''+p.data+'\')">'+(editable?'<button onclick="delPhoto('+k+')">✕</button>':'')+'</div>'; }).join('')+'</div>'; }
+  /* 구매 상품 블록 (온라인 한정) — 합계·예산 미터 + 상품 리스트 + 추가 폼 */
+  function productBlockHTML(r){ var draft=r._draft||[];
+    var list=draft.length ? draft.map(function(it,k){ return '<div class="dlv-it"><span>'+itemLine(it)+'</span><button onclick="delDeliverItem('+k+')" style="background:none;border:none;color:var(--sub2,#8a857b);font-size:12px;font-weight:700;cursor:pointer;flex:none">삭제</button></div>'; }).join('') : '<p class="note-quote muted">아직 담은 상품이 없어요 · 아래에서 추가해보세요</p>';
+    return budgetSummaryHTML(draft, r, false)+
+      '<div class="dlv-sec">추천 상품 · 구매 링크</div>'+list+
+      '<div class="offerform" style="margin-top:12px">'+
+        '<label>브랜드</label><input id="dvBrand" placeholder="예: 유니클로">'+
+        '<label>상품명</label><input id="dvName" placeholder="예: 라운드 니트">'+
+        '<div style="display:flex;gap:8px"><div style="flex:1"><label>사이즈</label><input id="dvSize" placeholder="M / 30 / 270"></div><div style="flex:1"><label>가격(원)</label><input id="dvPrice" type="number" placeholder="39900"></div></div>'+
+        '<label>구매 링크 URL</label><input id="dvUrl" placeholder="https://...">'+
+        '<button class="btn ghost" style="margin-top:12px" onclick="addDeliverItem()">+ 상품 추가</button></div>'; }
+  /* 사진 블록 (전 서비스 공통) */
+  function photoBlockHTML(r){ var photos=r._photos||[];
+    return '<div class="dlv-sec">사진 첨부'+(photos.length?' ('+photos.length+')':'')+'</div>'+
+      photoThumbsHTML(photos, true)+
+      '<label class="dlv-up">📷 사진 추가<input type="file" accept="image/*" multiple onchange="attachPhoto(this)" style="display:none"></label>'+
+      '<div style="font-size:11.5px;color:var(--sub2,#8a857b);margin-top:6px">현장 코디·착용 사진 등 · 장당 800KB 이하, 최대 '+MAX_PHOTOS+'장(데모)</div>'; }
+  /* 내용/코디 노트 (전 서비스 공통) */
+  function contentBlockHTML(r){ return '<div class="offerform" style="margin-top:16px"><label>내용 · 코디 노트</label><textarea id="dvMsg" placeholder="코디 설명·착용 팁·현장 메모 등을 적어주세요">'+esc(r._dmsg||'')+'</textarea></div>'; }
+  function renderDeliverModal(){ var r=reqs[idx], m=$('deliverModal'); if(!m||!r) return;
+    var online=(r.service==='online'), draft=r._draft||[];
+    var submit='결과물 '+(r.deliver?'다시 제출':'제출')+(online&&draft.length ? ' ('+draft.length+'개 · '+itemsTotal(draft).toLocaleString()+'원)' : '');
+    m.innerHTML='<div class="dlv-bd" onclick="closeDeliverModal()"></div><div class="dlv-pan">'+
+      '<div class="dlv-h"><div><b>'+(r.deliver?'결과물 수정':'결과물 작성')+'</b> <span>'+esc(r.cust)+' 님 · '+svcLabel(r.service)+'</span></div><button class="dlv-x" onclick="closeDeliverModal()">✕</button></div>'+
+      '<div class="dlv-b">'+(online?productBlockHTML(r):'')+photoBlockHTML(r)+contentBlockHTML(r)+'</div>'+
+      '<div class="dlv-f"><button class="btn" onclick="sendDeliver()">'+submit+'</button></div></div>';
+  }
+  function deliverSummary(r){ ensureDlvStyle(); var d=r.deliver||{}, items=d.items||[], photos=d.photos||[];
+    var out='<div class="seclabel" style="margin-top:16px">제출한 결과물</div>';
+    if(items.length) out+=budgetSummaryHTML(items, r, true);
+    out+='<div class="note-quote" style="margin-top:10px"><b style="color:var(--green,#2E4A3B)">✓ 제출 완료</b>';
+    if(items.length) out+='<br>'+items.map(function(it){ return '<span style="font-size:13px;color:var(--sub,#6b6a67)">· '+itemLine(it)+'</span>'; }).join('<br>');
+    if(photos.length) out+='<br><span style="font-size:12.5px;color:var(--sub2,#8a857b)">📷 사진 '+photos.length+'장</span>';
+    if(d.msg) out+='<br><span style="font-size:12.5px;color:var(--sub2,#8a857b)">"'+esc(d.msg)+'"</span>';
+    out+='</div>'+photoThumbsHTML(photos, false);
+    return out;
+  }
+  function addDeliverItem(){ var br=pval('dvBrand'), nm=pval('dvName'); if(!br||!nm){ toast('브랜드와 상품명을 입력해주세요'); return; }
+    saveDlvMsg(); reqs[idx]._draft=(reqs[idx]._draft||[]).concat([{ brand:br, name:nm, size:pval('dvSize')||'—', price:pval('dvPrice')||'', url:pval('dvUrl') }]);
+    saveLS('pro.reqs',reqs); renderDeliverModal(); }
+  function delDeliverItem(k){ if(reqs[idx]._draft) reqs[idx]._draft.splice(k,1); saveDlvMsg(); saveLS('pro.reqs',reqs); renderDeliverModal(); }
+  function attachPhoto(input){ var files=input.files; if(!files||!files.length) return; var r=reqs[idx]; r._photos=r._photos||[]; saveDlvMsg();
+    [].forEach.call(files, function(f){
+      if(!/^image\//.test(f.type)) return;
+      if(r._photos.length>=MAX_PHOTOS){ toast('사진은 최대 '+MAX_PHOTOS+'장까지예요'); return; }
+      if(f.size>MAX_PHOTO_BYTES){ toast(f.name+' — 800KB 이하만 첨부돼요(데모)'); return; }
+      var rd=new FileReader(); rd.onload=function(){ if(r._photos.length>=MAX_PHOTOS) return; r._photos.push({ name:f.name, data:rd.result }); saveLS('pro.reqs',reqs); renderDeliverModal(); }; rd.readAsDataURL(f);
+    });
+    input.value=''; }
+  function delPhoto(k){ if(reqs[idx]._photos) reqs[idx]._photos.splice(k,1); saveDlvMsg(); saveLS('pro.reqs',reqs); renderDeliverModal(); }
+  /* 완료 전 수정 — 제출본을 초안으로 되돌려 모달 열기 */
+  function editDeliver(){ var r=reqs[idx]; if(!r||!r.deliver) return;
+    r._draft=(r.deliver.items||[]).slice(); r._photos=(r.deliver.photos||[]).slice(); r._dmsg=r.deliver.msg||'';
+    openDeliverModal(); }
+  function sendDeliver(){ saveDlvMsg(); var r=reqs[idx];
+    var items=r._draft||[], photos=r._photos||[], msg=(r._dmsg||'').trim();
+    if(!items.length && !photos.length && !msg){ toast('상품·사진·내용 중 하나 이상 추가해주세요'); return; }
+    r.deliver={ items:items, photos:photos, msg:r._dmsg||'', sentAt:new Date().toISOString() }; delete r._draft; delete r._photos; delete r._dmsg;
+    saveLS('pro.reqs',reqs); var m=$('deliverModal'); if(m) m.style.display='none'; render(); toast(r.cust+' 님에게 결과물을 제출했어요'); }
 
   /* 결정 버튼 확인 팝업 — 수락/거절/완료/취소 */
   function askConfirm(msg, onYes, yesLabel){

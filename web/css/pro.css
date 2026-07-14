@@ -80,7 +80,7 @@
   .req .av{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--green),var(--green-mid));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}
   .req .info{flex:1;min-width:0} .req .info b{font-size:14.5px} .req .info small{display:block;font-size:12.5px;color:var(--sub);margin-top:2px}
   .st{font-size:12px;font-weight:800;padding:5px 11px;border-radius:20px;white-space:nowrap}
-  .st.nw{background:var(--ink);color:#fff} .st.sent{background:var(--soft);color:var(--sub)} .st.prog{background:var(--green-soft);color:var(--green)} .st.done{background:var(--green-soft);color:var(--green)}
+  .st.nw{background:var(--ink);color:#fff} .st.sent{background:var(--soft);color:var(--sub)} .st.prog{background:var(--green-soft);color:var(--green)} .st.done{background:var(--green-soft);color:var(--green)} .st.warn{background:var(--warn,#c0392b);color:#fff}
   /* 통일 리스트 행(.ureq) — 고객 화면과 동일 언어. 2줄 + 모노 아이콘, 색은 상태에만 */
   .ureq{display:flex;align-items:center;gap:13px;padding:14px 0;border-bottom:1px solid var(--line)} .ureq:last-child{border:none}
   .ureq-ic{width:42px;height:42px;border-radius:13px;background:var(--soft);color:var(--ink-soft);display:flex;align-items:center;justify-content:center;flex:none;border:1px solid var(--line)}
