@@ -9,7 +9,7 @@
   .logo{font-size:22px;font-weight:800;letter-spacing:-.05em;color:var(--green,#2E4A3B)}
   .logo i{display:inline-block;width:6px;height:6px;background:var(--green,#2E4A3B);margin-left:2px}
   .pill-role{font-size:11.5px;font-weight:800;color:var(--green);background:var(--green-soft);padding:5px 11px;border-radius:20px;letter-spacing:.02em}
-  /* 앱 상단바(pro.html과 동일) — 로고·쇼퍼지원·고객화면·알림·프로필 */
+  /* 앱 상단바(pro.html과 동일) — 로고·스타일리스트지원·고객화면·알림·프로필 */
   .navr{margin-left:auto;display:flex;align-items:center;gap:16px;font-size:14px;color:var(--sub)}
   .navr .cust{cursor:pointer} .navr .me{font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px;cursor:pointer}
   .navr .me img{width:28px;height:28px;border-radius:50%;object-fit:cover;filter:saturate(.6)}
@@ -74,6 +74,25 @@
   .qgrid2{display:block;margin-top:22px}
   .offer-card{margin-top:2px}
 
+  /* [프로토타입] 쇼퍼용 사이즈 인사이트 — 기준 옷 · 브랜드 추천 · 스타일링 힌트 */
+  .cx-sec{margin-top:16px;padding-top:15px;border-top:1px solid var(--line,#E6E5E1)}
+  .cx-h{font-size:13px;font-weight:800;color:var(--ink,#16140F);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+  .cx-ex{font-size:10px;font-weight:800;color:var(--sub2,#A6A29A);background:var(--soft,#EDEDEA);border-radius:20px;padding:2px 8px;letter-spacing:.02em}
+  .cx-tags{display:flex;flex-wrap:wrap;gap:8px}
+  .cx-tag{font-size:12.5px;color:var(--ink-soft,#3A382F);background:var(--green-soft,#E7EFEA);border-radius:9px;padding:7px 11px}
+  .cx-tag b{color:var(--green,#2E4A3B);font-weight:800}
+  .cx-note{font-size:12.5px;color:var(--sub,#6E6B63);margin-top:9px;line-height:1.55}
+  .cx-tbl{width:100%;border-collapse:collapse;font-size:13px}
+  .cx-tbl th{font-size:11px;font-weight:800;color:var(--sub2,#A6A29A);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line,#E6E5E1)}
+  .cx-tbl td{padding:9px 8px;border-bottom:1px solid var(--line,#E6E5E1)}
+  .cx-tbl td b{color:var(--green,#2E4A3B);font-family:var(--num,'SUIT Variable')}
+  .cx-tbl tbody tr:last-child td{border-bottom:none}
+  .cx-chips{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:9px}
+  .cx-lbl{font-size:11.5px;font-weight:800;color:var(--sub2,#A6A29A);margin-right:3px}
+  .cx-chip{font-size:12px;font-weight:700;border-radius:20px;padding:4px 11px}
+  .cx-chip.ok{background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B)}
+  .cx-chip.no{background:var(--warn-soft,#F7ECE8);color:var(--warn,#B0553F)}
+
   /* 요청서 영수증 — 고객 화면 요청서(index.css .cf-a)와 통일된 톤 */
   .reqreceipt .rr-ic{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:13px;background:var(--green-soft);color:var(--green);margin-bottom:14px}
   .reqreceipt .rr-ic svg{width:24px;height:24px}
@@ -89,7 +108,7 @@
   .rr-chip{display:inline-flex;align-items:center;gap:7px;margin-top:16px;font-size:13px;font-weight:700;color:var(--green);background:var(--green-soft);padding:9px 13px;border-radius:11px}
   .rr-chip svg{width:15px;height:15px;flex:none}
   .rr-chip.off{color:var(--sub);background:var(--soft)}
-  /* 고객 체형 = 쇼퍼용 결과 카드 값(먼저) + 측정값 자세히(펼치기) */
+  /* 고객 체형 = 스타일리스트용 결과 카드 값(먼저) + 측정값 자세히(펼치기) */
   .bodycard2 .rr-eye{margin-bottom:12px}
   .brc-name{font-size:15px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:8px;color:var(--green)}
   .brc-name i{width:10px;height:10px;border-radius:50%;flex:none}

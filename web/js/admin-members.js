@@ -37,7 +37,7 @@
   var PROS=[
     {id:'p221',appliedAt:'2026-07-12T09:30:00',nick:'핏잡는언니',region:'서울 성수',basis:'스타일리스트 3년 · 자체 룩북',status:'대기'},
     {id:'p219',appliedAt:'2026-07-11T15:10:00',nick:'무신사덕후',region:'온라인',basis:'리뷰 실적 · 브랜드 착용경험 다수',status:'대기'},
-    {id:'p214',appliedAt:'2026-07-10T11:02:00',nick:'대구쇼퍼K',region:'대구 동성로',basis:'편집샵 근무',status:'승인'},
+    {id:'p214',appliedAt:'2026-07-10T11:02:00',nick:'대구스타일리스트K',region:'대구 동성로',basis:'편집샵 근무',status:'승인'},
     {id:'p205',appliedAt:'2026-07-08T20:44:00',nick:'사이즈요정',region:'온라인',basis:'자격 근거 불충분',status:'반려'}
   ];
 
@@ -208,14 +208,14 @@
   ];
   var REPORT_SAMPLE=[
     {id:'#N301', target:'회원 m0997', type:'부적절 언행', state:'검토 대기'},
-    {id:'#N298', target:'쇼퍼 p205', type:'노쇼 신고', state:'제재 검토'}
+    {id:'#N298', target:'스타일리스트 p205', type:'노쇼 신고', state:'제재 검토'}
   ];
   var DSTAG={'중재 대기':'color:#8a6d1f;background:#f5ecd0','소명 완료':'color:#3a5a8a;background:#dde6f5','환불':'color:#7a1f1f;background:#f5d6d6','기각':'color:#1f6a4a;background:var(--green-soft)'};
   function dtag(s){ return '<span class="pill" style="'+(DSTAG[s]||'')+'">'+esc(s)+'</span>'; }
   var _disputes=[], _curDisp=null;
   function collectDisputes(){
     var out=[];
-    loadReqs().forEach(function(r,i){ if(r.status==='분쟁'&&r.dispute){ out.push({src:'reqs',idx:i,id:'#R'+(1000+i),cust:'고객(나)',shopper:r.nm||'쇼퍼',reason:r.dispute.reason||'기타',detail:r.dispute.detail||'',reply:null,evidence:false,amount:(r.awarded&&r.awarded.price)||r.price||0,state:'중재 대기',live:true}); } });
+    loadReqs().forEach(function(r,i){ if(r.status==='분쟁'&&r.dispute){ out.push({src:'reqs',idx:i,id:'#R'+(1000+i),cust:'고객(나)',shopper:r.nm||'스타일리스트',reason:r.dispute.reason||'기타',detail:r.dispute.detail||'',reply:null,evidence:false,amount:(r.awarded&&r.awarded.price)||r.price||0,state:'중재 대기',live:true}); } });
     loadProReqs().forEach(function(r,i){ if(r.status==='분쟁'&&r.dispute){ out.push({src:'pro',idx:i,id:'#P'+(1000+i),cust:r.cust||'고객',shopper:'소희',reason:r.dispute.reason||'기타',detail:r.dispute.detail||'',reply:r.dispute.reply||null,evidence:false,amount:(r.offer&&r.offer.price)||0,state:r.dispute.reply?'소명 완료':'중재 대기',live:true}); } });
     return out;
   }
@@ -224,13 +224,13 @@
     var pending=_disputes.filter(function(d){return d.state==='중재 대기';}).length;
     $('dKpis').innerHTML=[kpi(pending,'분쟁 대기','중재 필요'),kpi(_disputes.length,'환불 요청',''),kpi(REPORT_SAMPLE.length,'신고','어뷰징·노쇼'),kpi('1.8일','평균 처리','')].join('');
     var rows=_disputes.map(function(d,i){
-      return '<tr><td>'+esc(d.id)+'</td><td>'+esc(d.cust)+' ↔ '+esc(d.shopper)+' 쇼퍼</td><td>'+esc(d.reason)+'</td><td class="num">'+d.amount.toLocaleString()+' <span class="muted">보관</span></td><td>'+dtag(d.state)+'</td><td><a class="pill" style="cursor:pointer" onclick="__dispOpen('+i+')">중재 →</a></td></tr>';
+      return '<tr><td>'+esc(d.id)+'</td><td>'+esc(d.cust)+' ↔ '+esc(d.shopper)+' 스타일리스트</td><td>'+esc(d.reason)+'</td><td class="num">'+d.amount.toLocaleString()+' <span class="muted">보관</span></td><td>'+dtag(d.state)+'</td><td><a class="pill" style="cursor:pointer" onclick="__dispOpen('+i+')">중재 →</a></td></tr>';
     }).join('');
     $('disputeTable').innerHTML='<thead><tr><th>거래</th><th>당사자</th><th>유형</th><th>에스크로</th><th>상태</th><th>조치</th></tr></thead><tbody>'+(rows||'<tr><td class="muted" colspan="6">분쟁 없음 — 진행중 거래에서 문제 신고 시 여기로</td></tr>')+'</tbody>';
     var rr=REPORT_SAMPLE.map(function(r){ return '<tr><td>'+esc(r.id)+'</td><td>'+esc(r.target)+'</td><td>'+esc(r.type)+'</td><td>'+dtag(r.state)+'</td><td><span class="muted">샘플</span></td></tr>'; }).join('');
     $('reportTable').innerHTML='<thead><tr><th>신고</th><th>대상</th><th>유형</th><th>상태</th><th>조치</th></tr></thead><tbody>'+rr+'</tbody>';
   }
-  /* 상세 중재 모달 — 신고 내용·증빙·쇼퍼 소명 확인 후 판정 */
+  /* 상세 중재 모달 — 신고 내용·증빙·스타일리스트 소명 확인 후 판정 */
   function ensureAdmStyle(){ if($('admDispStyle')) return; var s=document.createElement('style'); s.id='admDispStyle';
     s.textContent='.adm-modal{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center}'+
       '.adm-bd{position:absolute;inset:0;background:rgba(20,18,16,.5)}'+
@@ -252,11 +252,11 @@
   function renderDispModal(){ var d=_curDisp, m=$('dispModal'); if(!m||!d) return;
     var body='<div class="adm-sec">대상 거래</div>'+
       '<div class="adm-kv"><span>거래</span><b>'+esc(d.id)+'</b></div>'+
-      '<div class="adm-kv"><span>당사자</span><b>'+esc(d.cust)+' ↔ '+esc(d.shopper)+' 쇼퍼</b></div>'+
+      '<div class="adm-kv"><span>당사자</span><b>'+esc(d.cust)+' ↔ '+esc(d.shopper)+' 스타일리스트</b></div>'+
       '<div class="adm-kv"><span>에스크로 보관금</span><b class="num">'+d.amount.toLocaleString()+'원</b></div>'+
       '<div class="adm-sec">고객 신고 · '+esc(d.reason)+'</div>'+
       '<div class="adm-quote">"'+esc(d.detail||'상세 없음')+'"'+(d.evidence?'<div style="margin-top:6px;color:var(--sub,#777);font-size:12.5px">📎 증빙(대화·스크린샷) 첨부됨</div>':'')+'</div>'+
-      '<div class="adm-sec">쇼퍼 소명</div>'+
+      '<div class="adm-sec">스타일리스트 소명</div>'+
       (d.reply ? '<div class="adm-quote">"'+esc(d.reply)+'"</div>' : '<div class="adm-quote" style="color:var(--sub,#777)">아직 소명이 제출되지 않았어요 · 소명 요청 가능</div>');
     var foot = d.live
       ? mbtn('전액 환불','refund','warn')+mbtn('부분 환불','partial','plain')+mbtn('기각','reject','primary')+(d.reply?'':mbtn('소명 요청','reqReply','plain'))
@@ -269,7 +269,7 @@
   window.__dispOpen=function(i){ _curDisp=_disputes[i]; if(!_curDisp) return; ensureAdmStyle(); var m=$('dispModal'); if(!m){ m=document.createElement('div'); m.id='dispModal'; m.className='adm-modal'; document.body.appendChild(m); } renderDispModal(); m.style.display='flex'; };
   window.__dispClose=function(){ var m=$('dispModal'); if(m) m.style.display='none'; };
   window.__dispAct=function(action){ var d=_curDisp; if(!d||!d.live){ __dispClose(); return; }
-    if(action==='reqReply'){ admToast('쇼퍼에게 소명을 요청했어요'); __dispClose(); return; }
+    if(action==='reqReply'){ admToast('스타일리스트에게 소명을 요청했어요'); __dispClose(); return; }
     var refund=(action==='refund'||action==='partial');
     if(d.src==='reqs'){ var a=loadReqs(); if(a[d.idx]) a[d.idx].status=(refund?'환불':'진행중'); saveReqs(a); }
     else if(d.src==='pro'){ var p=loadProReqs(); if(p[d.idx]) p[d.idx].status=(refund?'완료':'수락됨'); saveProReqs(p); }
@@ -297,17 +297,17 @@
     $('matchTable').innerHTML='<thead><tr><th>거래</th><th>일자/경과</th><th>플래그</th><th>개입</th></tr></thead><tbody>'+(m1.concat(m2).join('')||'<tr><td class="muted" colspan="4">진행 중 매칭 없음</td></tr>')+'</tbody>';
     // 2) 정산 집행 — 완료 거래 에스크로 릴리스
     var done=loadReqs().filter(function(r){ return (r.status==='완료'||r.status==='후기완료') && !r._settled; });
-    var s1=done.map(function(r){ var amt=(r.awarded&&r.awarded.price)||r.price||0; return '<tr><td>'+esc((r.nm||'거래')+' 쇼퍼')+'</td><td class="num">'+amt.toLocaleString()+'원</td><td>'+mtag('정산 대기')+'</td><td><a class="pill" style="color:var(--green);background:var(--green-soft);cursor:pointer" onclick="__mon(\'settle\')">정산 집행</a></td></tr>'; });
-    var s2=SETTLE_SAMPLE.map(function(x){ return '<tr><td>'+esc(x.id+' · '+x.who+' 쇼퍼')+'</td><td class="num">'+x.amt.toLocaleString()+'원</td><td>'+mtag('정산 대기')+'</td><td><a class="pill" style="color:var(--green);background:var(--green-soft);cursor:pointer" onclick="__mon(\'settle\')">정산 집행</a></td></tr>'; });
-    $('settleTable').innerHTML='<thead><tr><th>거래(쇼퍼)</th><th>금액</th><th>상태</th><th>조치</th></tr></thead><tbody>'+(s1.concat(s2).join('')||'<tr><td class="muted" colspan="4">정산 대상 없음</td></tr>')+'</tbody>';
+    var s1=done.map(function(r){ var amt=(r.awarded&&r.awarded.price)||r.price||0; return '<tr><td>'+esc((r.nm||'거래')+' 스타일리스트')+'</td><td class="num">'+amt.toLocaleString()+'원</td><td>'+mtag('정산 대기')+'</td><td><a class="pill" style="color:var(--green);background:var(--green-soft);cursor:pointer" onclick="__mon(\'settle\')">정산 집행</a></td></tr>'; });
+    var s2=SETTLE_SAMPLE.map(function(x){ return '<tr><td>'+esc(x.id+' · '+x.who+' 스타일리스트')+'</td><td class="num">'+x.amt.toLocaleString()+'원</td><td>'+mtag('정산 대기')+'</td><td><a class="pill" style="color:var(--green);background:var(--green-soft);cursor:pointer" onclick="__mon(\'settle\')">정산 집행</a></td></tr>'; });
+    $('settleTable').innerHTML='<thead><tr><th>거래(스타일리스트)</th><th>금액</th><th>상태</th><th>조치</th></tr></thead><tbody>'+(s1.concat(s2).join('')||'<tr><td class="muted" colspan="4">정산 대상 없음</td></tr>')+'</tbody>';
     // 3) 리뷰 모더레이션 — 신고·부적절 후기
-    var revs=loadReqs().filter(function(r){ return r.status==='후기완료'&&r.review; }).map(function(r){ return {who:(r.nm||'')+' 쇼퍼', rating:r.review.rating||5, text:r.review.text||'', flagged:false}; });
+    var revs=loadReqs().filter(function(r){ return r.status==='후기완료'&&r.review; }).map(function(r){ return {who:(r.nm||'')+' 스타일리스트', rating:r.review.rating||5, text:r.review.text||'', flagged:false}; });
     var rr=revs.concat(REVIEW_SAMPLE).map(function(v){
       return '<tr><td>'+esc(v.who)+'</td><td style="color:#e8a13a">'+('★'.repeat(v.rating)||'—')+'</td><td>'+esc((v.text||'').slice(0,34))+'</td><td>'+mtag(v.flagged?'신고 접수':'정상')+'</td><td>'+(v.flagged?'<a class="pill" style="color:#7a1f1f;background:#f5d6d6;cursor:pointer" onclick="__mon(\'hide\')">숨김</a>':'<span class="muted">·</span>')+'</td></tr>';
     }).join('');
     $('reviewTable').innerHTML='<thead><tr><th>대상</th><th>별점</th><th>후기</th><th>상태</th><th>조치</th></tr></thead><tbody>'+rr+'</tbody>';
   }
-  window.__mon=function(action){ var M={remind:'미응답 쇼퍼에게 리마인드를 보냈어요',rescue:'유찰 임박 건을 다른 쇼퍼에게 재노출했어요',settle:'에스크로 정산을 집행했어요 · 수수료 차감(데모)',hide:'신고된 후기를 숨김 처리했어요'}; admToast(M[action]||'처리했어요'); };
+  window.__mon=function(action){ var M={remind:'미응답 스타일리스트에게 리마인드를 보냈어요',rescue:'유찰 임박 건을 다른 스타일리스트에게 재노출했어요',settle:'에스크로 정산을 집행했어요 · 수수료 차감(데모)',hide:'신고된 후기를 숨김 처리했어요'}; admToast(M[action]||'처리했어요'); };
 
   // ── 고객 문의(CS) 처리 (3.B.7) — 고객센터(fitting.support) 티켓 관리 ──
   function loadSupport(){ try{ var v=JSON.parse(localStorage.getItem('fitting.support')||'[]'); return Array.isArray(v)?v:[]; }catch(e){ return []; } }
@@ -320,7 +320,7 @@
   var FAQ_MGMT=[
     {q:'환불 규정이 궁금해요', count:8, promoted:true},
     {q:'유니클로 M이면 자라는 몇인가요?', count:12, promoted:true},
-    {q:'쇼퍼가 응답이 없어요', count:5, promoted:false}
+    {q:'스타일리스트가 응답이 없어요', count:5, promoted:false}
   ];
   var _tickets=[], _curT=null;
   function isTrade(type){ return !!type && (type.indexOf('결제')>=0 || type.indexOf('매칭')>=0); }

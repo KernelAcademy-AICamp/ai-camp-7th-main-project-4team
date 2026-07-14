@@ -7,10 +7,16 @@
   function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2000); }
 
   var idx = parseInt(new URLSearchParams(location.search).get('req'),10);
+  var candIdx = parseInt(new URLSearchParams(location.search).get('cand'),10);
   var reqs = loadLS('pro.reqs', []);
   var profile = loadLS('pro.profile', null);
+  var cands = loadLS('pro.candidates', []);
+  var isCand = !isNaN(candIdx) && !!cands[candIdx];   // 견적 보내기(먼저 견적) 진입
+  /* 후보 → 유사 요청 레코드(dir:out, 상태 '견적작성'). 실제 발송 전까지 reqs에 넣지 않음 */
+  function candRecord(){ var c=cands[candIdx]; return { cust:c.cust, occ:c.occ, service:c.service, type:c.type, bodytype:c.bodytype, gender:c.gender, cm:c.cm, kg:c.kg, budget:c.budget, note:c.note, date:'—', dir:'out', status:'견적작성' }; }
   var MY_PRICE = (profile && profile.services && profile.services[0]) ? profile.services[0].price : 120000;
   var BTMAP = {};
+  var BMODEL=null, BDIST=null;   // 예상 치수용 회귀모델·분포(사이즈코리아)
   var offering = false;
 
   /* 요청자별 임의(데모) 측정치 + 선호핏 */
@@ -77,7 +83,28 @@
     }
     if(r.status==='거절'){ return '<div class="note-quote muted">거절한 요청이에요'+(r.reason?' · "'+esc(r.reason)+'"':'')+'</div><button class="btn ghost" style="margin-top:10px" onclick="undoReject()">되돌리기</button>'; }
     if(r.status==='취소'){ return '<div class="note-quote muted">취소된 요청이에요'+(r.reason?' · "'+esc(r.reason)+'"':'')+'</div><button class="btn ghost" style="margin-top:10px" onclick="undoCancel()">되돌리기</button>'; }
+    if(r.status==='견적작성'){   // 먼저 견적 보내기 — 금액·메시지 입력 후 발송
+      return '<div class="offerform">'+
+        '<label style="display:block;font-size:12.5px;font-weight:800;color:var(--sub);margin:0 0 6px">견적 금액</label>'+
+        '<input id="qPrice" type="number" value="'+svcPrice(r.service)+'">'+
+        '<label style="display:block;font-size:12.5px;font-weight:800;color:var(--sub);margin:14px 0 6px">한 줄 메시지</label>'+
+        '<textarea id="qMsg" placeholder="예: '+esc(r.occ||'')+' 룩 맞춤 견적 드려요"></textarea>'+
+        '<button class="btn" style="margin-top:14px" onclick="sendQuote()">견적 보내기</button>'+
+      '</div>';
+    }
     return '';
+  }
+  function sendQuote(){
+    var c=cands[candIdx]; if(!c) return;
+    var pe=$('qPrice'), me=$('qMsg');
+    var price=pe?(parseInt(pe.value,10)||svcPrice(c.service)):svcPrice(c.service);
+    var msg=me?me.value.trim():'';
+    reqs.unshift({ cust:c.cust, occ:c.occ, service:c.service, type:c.type, bodytype:c.bodytype, gender:c.gender, cm:c.cm, kg:c.kg,
+      dir:'out', status:'제안발송', offer:{price:price, msg:msg||(c.occ+' 룩 맞춤 견적 드려요')}, budget:c.budget, date:'방금' });
+    saveLS('pro.reqs',reqs);
+    var proposed=loadLS('pro.proposed',[]); proposed.push(c.cust); saveLS('pro.proposed',proposed);
+    toast(c.cust+' 님에게 견적을 보냈어요');
+    setTimeout(function(){ location.href='pro.html'; }, 700);
   }
   function svcPrice(service){ if(profile&&profile.services){ var f=profile.services.filter(function(s){return s.type===service;})[0]; if(f) return f.price; } return MY_PRICE; }
   function accept(){ if(!reqs[idx].offer) reqs[idx].offer={price:svcPrice(reqs[idx].service)}; reqs[idx].status='수락됨'; saveLS('pro.reqs',reqs); render(); toast('요청을 수락했어요'); }
@@ -87,7 +114,7 @@
   function completeReq(){ reqs[idx].status='완료'; saveLS('pro.reqs',reqs); render(); toast('완료 처리했어요'); }
   function cancelReq(){ reqs[idx].reason=''; reqs[idx].status='취소'; saveLS('pro.reqs',reqs); render(); toast('진행을 취소했어요'); }
   function undoCancel(){ reqs[idx].status='수락됨'; reqs[idx].reason=''; saveLS('pro.reqs',reqs); render(); toast('취소를 되돌렸어요'); }
-  /* 분쟁 소명(2.x/3.B.4) — 쇼퍼 반박 제출 → 관리자 중재 대기 */
+  /* 분쟁 소명(2.x/3.B.4) — 스타일리스트 반박 제출 → 관리자 중재 대기 */
   function submitDisputeReply(){ var el=$('dispReply'); var v=el?el.value.trim():''; if(!v){ toast('소명 내용을 입력해주세요'); return; }
     if(!reqs[idx].dispute) reqs[idx].dispute={}; reqs[idx].dispute.reply=v; saveLS('pro.reqs',reqs); render(); toast('소명을 제출했어요 · 관리자 중재를 기다려요'); }
 
@@ -213,7 +240,7 @@
   function confirmComplete(){ askConfirm('완료 처리할까요? 고객 후기를 받을 수 있어요', completeReq, '완료 처리'); }
   function confirmCancel(){ askConfirm('진행을 취소할까요?', cancelReq, '취소하기'); }
 
-  /* ── 고객 체형 = 쇼퍼용 '결과 카드 값' 먼저, 측정값은 가독성 좋게 '자세히 보기' ── */
+  /* ── 고객 체형 = 스타일리스트용 '결과 카드 값' 먼저, 측정값은 가독성 좋게 '자세히 보기' ── */
   function segIdx(pct){ return Math.max(0, Math.min(4, Math.floor((pct==null?50:pct)/20))); }
   function zoneLabel(i, L, R){ return i===0?L:(i===1?L+' 편':(i===2?'표준':(i===3?R+' 편':R))); }
   /* 결과 카드 캐릭터(card.js .fig) 재사용 — 실루엣 clip-path로 체형 모양 + 성별 + 유형색. 옆에 측정 라벨 */
@@ -231,7 +258,7 @@
     return '<div class="bodymap"><div class="bm-fig">'+fig+'</div><div class="bm-list">'+list+'</div></div>';
   }
 
-  /* 쇼퍼용 체형 설명 한 줄(8유형) — 고객 체형을 '~체형이에요!'로 설명 */
+  /* 스타일리스트용 체형 설명 한 줄(8유형) — 고객 체형을 '~체형이에요!'로 설명 */
   var SHOPPER_DESC={
     STR:'벨트로 허리에 곡선을 더하면 직선 라인이 한층 살아나는 체형이에요!',
     TRI:'상체에 포인트를 주고 시선을 위로 올리면 균형이 살아나는 체형이에요!',
@@ -242,6 +269,54 @@
     RND:'세로 라인과 여유 핏으로 길게 떨어뜨리면 산뜻해지는 체형이에요!',
     TUB:'레이어와 디테일로 입체감을 더하면 멋이 살아나는 체형이에요!'
   };
+
+  /* [프로토타입] A 기준 옷 · B 브랜드별 추천 사이즈 — 데모값(실데이터는 고객 착용경험·엔진 출력에서 와야 함) */
+  var DEMO_BRANDREC = {
+    female:[['무신사 스탠다드','M','27'],['H&M','M','S'],['COS','36','38'],['스파오','M','M']],
+    male:[['무신사 스탠다드','L','32'],['H&M','L','M'],['COS','50','48'],['스파오','L','L']]
+  };
+  /* 예상 신체 치수 — body-base-model(회귀: a·키+b·몸무게+c·나이+intercept) + body-distribution(sd). 착용경험 수로 ± 폭 조정 */
+  function estBody(r){
+    if(!BMODEL||!BDIST) return null;
+    var g=(r.gender==='male')?'male':'female';
+    var h=parseFloat(r.cm)||0, w=parseFloat(r.kg)||0, age=parseFloat(r.age)||30;
+    if(!h||!w||!BMODEL[g]||!BDIST[g]) return null;
+    var n=(r.wearExp||[]).length;
+    var band = n>=2?0.25 : (n===1?0.4 : 0.6);   // 착용경험 많을수록 ± 좁힘
+    var parts=[['shoulder','어깨너비'],['chestUpper','가슴둘레'],['waist','허리둘레'],['hip','엉덩이둘레']];
+    return parts.map(function(p){
+      var c=BMODEL[g][p[0]], d=BDIST[g][p[0]]; if(!c||!d) return null;
+      var val=c.a_height*h + c.b_weight*w + (c.c_age||0)*age + c.intercept;
+      return {label:p[1], val:Math.round(val), pm:Math.max(1,Math.round(d.sd*band))};
+    }).filter(Boolean);
+  }
+  function estSection(r){
+    var es=estBody(r); if(!es||!es.length) return '';
+    var n=(r.wearExp||[]).length;
+    var conf = n>=2?'정확 (착용경험 2벌+)' : (n===1?'보통 (착용경험 1벌)' : '낮음 (키·몸무게만)');
+    return '<div class="cx-sec"><div class="cx-h">예상 신체 치수 <span class="cx-ex">추정</span></div>'+
+      '<table class="cx-tbl"><tbody>'+
+      es.map(function(x){return '<tr><td>'+esc(x.label)+'</td><td style="text-align:right">약 <b>'+x.val+'</b>cm <span style="color:var(--sub2);font-weight:700">± '+x.pm+'</span></td></tr>';}).join('')+
+      '</tbody></table>'+
+      '<div class="cx-note">키·몸무게 기반 통계 추정(사이즈코리아 인체치수) · 신뢰도 '+esc(conf)+' — 착용경험이 많을수록 오차가 줄어요</div></div>';
+  }
+
+  function refAndRecs(m, bt, r){
+    var g=(r.gender==='male')?'male':'female';
+    var ex='<span class="cx-ex">예시</span>';
+    // A. 잘 맞는 기준 옷 — 고객 착용경험(딱맞음)에서. 진단엔 상품명이 없어 브랜드·카테고리·핏·사이즈만 표기
+    var fits=(r.wearExp||[]).filter(function(e){return e.feel==='딱맞음';});
+    var a='<div class="cx-sec"><div class="cx-h">잘 맞는 기준 옷</div>'+
+      (fits.length
+        ? '<div class="cx-tags">'+fits.map(function(e){return '<span class="cx-tag"><b>'+esc(e.brand)+'</b> · '+esc(e.cat)+' '+esc(e.fit)+' · <b>'+esc(e.size)+'</b></span>';}).join('')+'</div>'
+        : '<div class="cx-note">진단 때 착용경험을 입력하지 않았어요 · 기준 옷 정보 없음</div>')+
+    '</div>';
+    var b='<div class="cx-sec"><div class="cx-h">브랜드별 추천 사이즈 '+ex+'</div>'+
+      '<table class="cx-tbl"><thead><tr><th>브랜드</th><th>상의</th><th>하의</th></tr></thead><tbody>'+
+      DEMO_BRANDREC[g].map(function(x){return '<tr><td>'+esc(x[0])+'</td><td><b>'+esc(x[1])+'</b></td><td><b>'+esc(x[2])+'</b></td></tr>';}).join('')+
+      '</tbody></table></div>';
+    return a+b;
+  }
 
   /* 고객 체형 — 결과 카드(유형명) 없이: 기본정보 + 8유형색 설명 한 줄 + 웃긴 바디맵 */
   function measureCard(m, bt, r){
@@ -259,6 +334,10 @@
       '</div>'+
       /* ③ 캐릭터 + 어깨·가슴·허리·엉덩이·핏취향(같이) */
       bodySilhouette(m, bt, r.gender)+
+      /* ④ 예상 신체 치수(회귀 추정 + ± 편차) */
+      estSection(r)+
+      /* ⑤ [프로토타입] 기준 옷 · 브랜드별 추천 사이즈 · 스타일링 힌트 */
+      refAndRecs(m, bt, r)+
     '</div>';
   }
 
@@ -277,7 +356,7 @@
   var IC_PIN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11l-8.5 8.5a4.5 4.5 0 0 1-6.4-6.4l8.5-8.5a3 3 0 0 1 4.3 4.3l-8.6 8.5a1.5 1.5 0 0 1-2.1-2.1l7.9-7.9"/></svg>';
   function requestReceipt(r, att){
     var out = r.dir==='out';
-    // 지명(받은 요청)=이 쇼퍼 한 명에게 → 명확한 예상 가격 / 오픈(보낸 제안)=여러 쇼퍼에 뿌린 요청 → 고객 예산 범위
+    // 지명(받은 요청)=이 스타일리스트 한 명에게 → 명확한 예상 가격 / 오픈(보낸 제안)=여러 스타일리스트에 뿌린 요청 → 고객 예산 범위
     var money = out
       ? ['고객 예산', esc(r.budget||'—')]
       : ['예상 가격', '<span class="num">'+svcPrice(r.service).toLocaleString()+'</span>원'];
@@ -304,7 +383,7 @@
       profile:c.profile, fitOk:c.fitOk, fitNo:c.fitNo, insight:c.insight, match:c.match, signature:c.signature };
   }
   function render(){
-    var r = reqs[idx];
+    var r = isCand ? candRecord() : reqs[idx];
     if(!r){ $('quoteRoot').innerHTML='<p class="crumb">요청을 찾을 수 없어요.</p><p style="margin-top:10px"><a class="tinybtn" onclick="location.href=\'pro.html\'">요청 내역으로</a></p>'; return; }
     var out = r.dir==='out';
     var bt = btResolve(BTMAP[r.type], r.gender) || {};   // 고객 성별로 콘텐츠 해석
@@ -316,14 +395,14 @@
 
     // 좌(primary): ① 요청서 먼저 → ② 체형 참고 나중  /  우(sticky): ③ 제안
     $('quoteRoot').innerHTML =
-      '<a class="backlink" onclick="location.href=\'pro.html\'">← 요청 내역으로</a>'+
-      '<p class="crumb">쇼퍼 지원 · '+(out?'보낸 제안':'받은 요청')+'</p>'+
+      '<a class="backlink" onclick="location.href=\'pro.html\'">← '+(r.status==='견적작성'?'견적 보내기로':'요청 내역으로')+'</a>'+
+      '<p class="crumb">스타일리스트 지원 · '+(r.status==='견적작성'?'견적 보내기':(out?'보낸 제안':'받은 요청'))+'</p>'+
       '<h1>'+esc(r.cust)+' 님'+(r.occ?' · '+esc(r.occ):'')+'</h1>'+
       '<div class="htags">'+svcBadge(r.service)+'<span class="st '+stClass(r.status)+'">'+esc(r.status)+'</span></div>'+
       '<div class="qgrid2">'+
         '<div class="qleft">'+ requestReceipt(r, attached) + bodyCard +'</div>'+
         '<div class="qright">'+
-          '<div class="card offer-card"><div class="subhead">'+(out?'제안 현황':(r.status==='신규'?'요청을 수락하시겠습니까?':'진행 상태'))+'</div>'+ actionHTML(r) +'</div>'+
+          '<div class="card offer-card"><div class="subhead">'+(r.status==='견적작성'?'견적 작성':(out?'제안 현황':(r.status==='신규'?'요청을 수락하시겠습니까?':'진행 상태')))+'</div>'+ actionHTML(r) +'</div>'+
         '</div>'+
       '</div>';
   }
@@ -334,7 +413,7 @@
   function setTxt(id,v){ var e=$(id); if(e&&v!=null) e.textContent=v; }
   function setSrc(id,v){ var e=$(id); if(e&&v) e.src=v; }
   function initHeader(){
-    var nm=(profile&&profile.name)||'소희 쇼퍼';
+    var nm=(profile&&profile.name)||'소희 스타일리스트';
     var av=(profile&&profile.avatar)||'photos/p1.jpg';
     var role=(profile&&profile.services&&profile.services[0]&&profile.services[0].label)||'온라인 스타일링';
     setTxt('hdrName',nm); setTxt('sideName',nm);
@@ -348,6 +427,12 @@
   window.toggleAccMenu=toggleAccMenu;
   initHeader();
 
-  fetch('data/bodytypes.json').then(function(r){return r.json();}).then(function(j){
-    (j.types||[]).forEach(function(t){ BTMAP[t.code]=t; }); render();
+  Promise.all([
+    fetch('data/bodytypes.json').then(function(r){return r.json();}).catch(function(){return {};}),
+    fetch('data/body-base-model.json').then(function(r){return r.json();}).catch(function(){return null;}),
+    fetch('data/body-distribution.json').then(function(r){return r.json();}).catch(function(){return null;})
+  ]).then(function(res){
+    ((res[0]&&res[0].types)||[]).forEach(function(t){ BTMAP[t.code]=t; });
+    BMODEL=res[1]; BDIST=res[2];
+    render();
   }).catch(function(){ render(); });

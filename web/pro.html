@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>fitting · 쇼퍼 지원 (공급자)</title>
-<!-- 쇼퍼(공급자) 포털 시작 구조(스캐폴딩). 페르소나: 소희 쇼퍼.
+<title>fitting · 스타일리스트 지원 (공급자)</title>
+<!-- 스타일리스트(공급자) 포털 시작 구조(스캐폴딩). 페르소나: 소희 스타일리스트.
      고객 측(index.html)의 요청 라이프사이클과 대칭 — 실제 연동은 v2에서 같은 요청 레코드 공유. -->
 <link rel="stylesheet" href="css/tokens.css?v=dc9975ef">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
@@ -15,11 +15,11 @@
 
 <header><div class="nav">
   <span class="logo" style="cursor:pointer" onclick="location.href='index.html'">Fitting<i></i></span>
-  <span class="pill-role">쇼퍼 지원</span>
+  <span class="pill-role">스타일리스트 지원</span>
   <div class="navr">
     <span class="cust" onclick="location.href='index.html'">← 고객 화면</span>
     <span class="bell" onclick="goPanel('inbox')" title="새 요청 알림"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 1 0-12 0c0 6-2.5 7.5-2.5 7.5h17S18 14.5 18 8.5z"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg><span class="bell-badge" id="bellBadge" style="display:none">0</span></span>
-    <span class="me" onclick="toggleAccMenu(event)"><img id="hdrAvatar" src="photos/p1.jpg" alt="프로필 사진" onerror="this.style.visibility='hidden'"><span id="hdrName">소희 쇼퍼</span> <span class="caret">▾</span></span>
+    <span class="me" onclick="toggleAccMenu(event)"><img id="hdrAvatar" src="photos/p1.jpg" alt="프로필 사진" onerror="this.style.visibility='hidden'"><span id="hdrName">소희 스타일리스트</span> <span class="caret">▾</span></span>
   </div>
   <div class="accmenu" id="accMenu">
     <a onclick="goPanel('profile')">내 프로필</a>
@@ -31,14 +31,14 @@
   <aside class="side">
     <div class="pcard">
       <img id="sideAvatar" src="photos/p1.jpg" alt="프로필 사진" onclick="openAvatar()" onerror="this.style.visibility='hidden'">
-      <div class="nm" id="sideName">소희 쇼퍼</div>
+      <div class="nm" id="sideName">소희 스타일리스트</div>
       <div class="role" id="sideRole">온라인 스타일링</div>
       <div class="rate">★ <span class="num" id="pRate">—</span> · 후기 <span class="num" id="pRev">0</span></div>
     </div>
     <nav class="smenu" id="smenu">
       <a class="on" data-p="dash" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg></span> 대시보드</a>
       <a data-p="inbox" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h5"/></svg></span> 요청 내역 <span class="cnt" id="newCnt">0</span></a>
-      <a data-p="propose" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4L3 11l7 2.5L12.5 21 21 4z"/><path d="M10 13.5L21 4"/></svg></span> 먼저 제안</a>
+      <a data-p="propose" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4L3 11l7 2.5L12.5 21 21 4z"/><path d="M10 13.5L21 4"/></svg></span> 견적 보내기</a>
       <a data-p="profile" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg></span> 내 프로필</a>
       <a data-p="reviews" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 L14.1 9.6 20.1 9.9 15.4 13.6 17 19.4 12 16.1 7 19.4 8.6 13.6 3.9 9.9 9.9 9.6Z"/></svg></span> 받은 후기</a>
       <a data-p="settle" onclick="nav(this)"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M3 10.5h18"/><path d="M15.5 14.5h2.5"/></svg></span> 정산</a>
@@ -48,8 +48,8 @@
   <main>
     <!-- 대시보드 -->
     <section class="panel on" id="dash">
-      <div class="crumb">쇼퍼 지원 · 대시보드</div>
-      <h1 id="dashHello">안녕하세요, 소희 쇼퍼님</h1>
+      <div class="crumb">스타일리스트 지원 · 대시보드</div>
+      <h1 id="dashHello">안녕하세요, 소희 스타일리스트님</h1>
       <p class="lead">오늘의 요청과 진행 현황이에요</p>
       <div class="stats" id="dashStats"></div>
       <div class="card urgent" id="dashUrgent"></div>
@@ -58,7 +58,7 @@
 
     <!-- 요청함 -->
     <section class="panel" id="inbox">
-      <div class="crumb">쇼퍼 지원 · 요청 내역</div>
+      <div class="crumb">스타일리스트 지원 · 요청 내역</div>
       <h1>요청 내역</h1>
       <p class="lead">고객이 보낸 견적 요청을 검토하고 제안을 보내세요</p>
       <div class="card">
@@ -75,24 +75,24 @@
       </div>
     </section>
 
-    <!-- 먼저 제안 -->
+    <!-- 견적 보내기 -->
     <section class="panel" id="propose">
-      <div class="crumb">쇼퍼 지원 · 먼저 제안</div>
-      <h1>먼저 제안</h1>
-      <p class="lead">제안받기를 원하는 고객에게 <b style="color:var(--ink)">내가 먼저 제안</b>하고, 보낸 제안을 관리해요</p>
-      <div class="card" id="dashCandCard"><div class="subhead">제안받기를 원하는 고객 <small style="font-weight:600;color:var(--sub2)">· 먼저 제안해보세요</small></div><div id="dashCand"></div></div>
-      <div class="card" id="inboxOutCard" style="margin-top:16px"><div class="subhead">내가 보낸 제안</div><div id="inboxOutList"></div></div>
+      <div class="crumb">스타일리스트 지원 · 견적 보내기</div>
+      <h1>견적 보내기</h1>
+      <p class="lead">견적받기를 원하는 고객에게 <b style="color:var(--ink)">내가 먼저 견적을 보내고</b>, 보낸 견적을 관리해요</p>
+      <div class="card" id="dashCandCard"><div class="subhead">견적받기를 원하는 고객 <small style="font-weight:600;color:var(--sub2)">· 먼저 견적을 보내보세요</small></div><div id="dashCand"></div></div>
+      <div class="card" id="inboxOutCard" style="margin-top:16px"><div class="subhead">내가 보낸 견적</div><div id="inboxOutList"></div></div>
     </section>
 
     <!-- 내 프로필 -->
     <section class="panel" id="profile">
-      <div class="crumb">쇼퍼 지원 · 내 프로필</div>
+      <div class="crumb">스타일리스트 지원 · 내 프로필</div>
       <h1>내 프로필</h1>
       <p class="lead">고객에게 보이는 프로필이에요 · <b style="color:var(--ink)">프로필이 곧 첫인상</b>이에요</p>
       <!-- 보기 모드 -->
       <div class="card" id="profileView">
         <div class="subhead">기본 정보</div>
-        <div class="field"><span>이름</span><span class="v" id="pfName">소희 쇼퍼</span></div>
+        <div class="field"><span>이름</span><span class="v" id="pfName">소희 스타일리스트</span></div>
         <div class="field" style="align-items:flex-start"><span>전문 분야</span><span class="v" id="pfFields"></span></div>
         <div class="field" style="align-items:flex-start"><span>전문 스타일</span><span class="v" id="pfStyles"></span></div>
         <div class="subhead">서비스·가격</div>
@@ -117,7 +117,7 @@
           <input type="file" id="edAvatarFile" accept="image/*" style="display:none" onchange="edOnAvatar(event)">
         </div>
         <label class="efl">활동명 (고객에게 보여요)</label>
-        <input class="efin" id="edName" type="text" placeholder="예: 소희 쇼퍼">
+        <input class="efin" id="edName" type="text" placeholder="예: 소희 스타일리스트">
 
         <label class="efl">서비스 유형별 가격 (제공할 유형을 켜고 가격 입력)</label>
         <div class="esvc" id="edSvcOnline">
@@ -162,7 +162,7 @@
 
     <!-- 받은 후기 -->
     <section class="panel" id="reviews">
-      <div class="crumb">쇼퍼 지원 · 받은 후기</div>
+      <div class="crumb">스타일리스트 지원 · 받은 후기</div>
       <h1>받은 후기</h1>
       <p class="lead">완료된 코디에 고객이 남긴 후기예요</p>
       <div class="card"><div class="subhead">후기</div><div id="reviewList"></div></div>
@@ -170,7 +170,7 @@
 
     <!-- 정산 -->
     <section class="panel" id="settle">
-      <div class="crumb">쇼퍼 지원 · 정산</div>
+      <div class="crumb">스타일리스트 지원 · 정산</div>
       <h1>정산</h1>
       <p class="lead">완료된 서비스의 수익과 정산 내역이에요</p>
       <div class="stats" id="settleStats" style="grid-template-columns:repeat(3,1fr)"></div>
@@ -180,7 +180,7 @@
   </main>
 </div></div>
 
-<footer><div class="in"><span class="brand">Fitting</span><span>쇼퍼 지원 포털 (시작 구조)</span><span style="margin-left:auto;color:var(--sub2)">© 2026 Fitting</span></div></footer>
+<footer><div class="in"><span class="brand">Fitting</span><span>스타일리스트 지원 포털 (시작 구조)</span><span style="margin-left:auto;color:var(--sub2)">© 2026 Fitting</span></div></footer>
 
 <!-- 요청 상세 드로어 -->
 <div class="scrim" id="scrim" onclick="closeDrawer()"></div>
@@ -188,6 +188,6 @@
 <div class="avlightbox" id="avLightbox" onclick="closeAvatar()"><img id="avLightboxImg" src="" alt="프로필 사진"></div>
 <div class="toast" id="toast"></div>
 
-<script src="js/pro.js?v=fbda435f"></script>
+<script src="js/pro.js?v=e7ef0743"></script>
 </body>
 </html>

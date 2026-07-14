@@ -1,8 +1,8 @@
-  /* 쇼퍼(공급자) 포털 — 시작 구조. 페르소나: 소희 쇼퍼.
+  /* 스타일리스트(공급자) 포털 — 시작 구조. 페르소나: 소희 스타일리스트.
      고객 측 요청 라이프사이클의 대칭 뷰. 요청 클릭 → 상세 드로어(체형·사이즈 첨부 + 요청 내용)에서 제안. */
   function loadLS(k, def){ try{ var v=localStorage.getItem('fitting.'+k); return v?JSON.parse(v):def; }catch(e){ return def; } }
   function saveLS(k, v){ try{ localStorage.setItem('fitting.'+k, JSON.stringify(v)); }catch(e){} }
-  /* 가입(온보딩)에서 저장한 프로필. 데이터 계약: docs/쇼퍼가입-화면정의서.md §5 */
+  /* 가입(온보딩)에서 저장한 프로필. 데이터 계약: docs/스타일리스트가입-화면정의서.md §5 */
   var PROFILE = loadLS('pro.profile', null);
   var MY_PRICE = (PROFILE && PROFILE.services && PROFILE.services[0]) ? PROFILE.services[0].price : 120000;
   /* 가입 전(직접 pro.html 진입) 편집 시 시드로 쓸 기본 프로필 = 화면의 데모값과 동일 */
@@ -18,7 +18,7 @@
     {src:'photos/folio2.jpg', height:174, weight:66}
   ];
   var DEFAULT_PROFILE = {
-    registered:false, name:'소희 쇼퍼',
+    registered:false, name:'소희 스타일리스트',
     services:[
       {type:'online',label:'온라인 스타일링',price:35000,mode:'비대면'},
       {type:'shopping',label:'동행 쇼핑',price:120000,mode:'대면',regions:['서울 강남','서울 마포']},
@@ -27,7 +27,7 @@
     bio:'데일리·소개팅룩 전문 스타일리스트 · 비대면 큐레이션이 강점이에요',
     occ:['date','daily'], tags:['미니멀','시크'], portfolio:DEMO_PORTFOLIO
   };
-  /* 전문분야(=쇼퍼찾기 상황) 7가지 · 코드↔라벨 (데이터 계약) */
+  /* 전문분야(=스타일리스트찾기 상황) 7가지 · 코드↔라벨 (데이터 계약) */
   var FIELD_OPTS = [
     {code:'date',label:'소개팅·데이트'},{code:'interview',label:'면접·발표'},{code:'wedding',label:'결혼식 하객'},
     {code:'travel',label:'여행'},{code:'daily',label:'데일리 스타일링'},{code:'personal',label:'퍼스널 스타일링'},{code:'bodycover',label:'체형 커버 스타일링'}
@@ -36,11 +36,12 @@
   var STYLE_PRESETS = ['캐주얼','미니멀','시크','클래식','스트리트','빈티지','스포티','걸리시'];
   var REGION_PRESETS = ['서울','경기','인천','부산','대구','대전','광주'];
 
-  var REQS_VER = 5;   // 데모 버전 — 결과물 작성·전달(2.1.2) + 분쟁 샘플 추가로 재시드
+  var REQS_VER = 6;   // 데모 버전 — 결과물·분쟁 샘플(#36) + wearExp(착용경험) 추가로 재시드
+  /* wearExp = 고객 진단 착용경험(상품명 없이 브랜드·카테고리·핏·사이즈·부위느낌). 없으면 미첨부(견적서에서 '없음' 표기) */
   var DEMO_REQS = [
     {cust:'한서준', type:'TUB', bodytype:'슬릭 라인',     gender:'male',   cm:180, kg:68, occ:'데일리',     budget:'5~10만',  date:'2026.07.14', service:'online', note:'심플하게, 근데 밋밋하지 않게 입고 싶어요', status:'신규'},
-    {cust:'김도현', type:'STR', bodytype:'시크 스트레이트', gender:'male',   cm:172, kg:65, occ:'소개팅',     budget:'5~10만',  date:'2026.07.02', service:'online', note:'과하지 않게 깔끔한 첫인상 원해요', status:'신규'},
-    {cust:'정예린', type:'INV', bodytype:'모던 V라인',     gender:'female', cm:167, kg:58, occ:'일상 코디',   budget:'~5만',    date:'2026.07.01', service:'shopping', note:'출근룩 위주로 데일리하게 입고 싶어요', status:'신규'},
+    {cust:'김도현', type:'STR', bodytype:'시크 스트레이트', gender:'male',   cm:172, kg:65, occ:'소개팅',     budget:'5~10만',  date:'2026.07.02', service:'online', note:'과하지 않게 깔끔한 첫인상 원해요', status:'신규', wearExp:[{brand:'유니클로',cat:'상의',fit:'레귤러핏',size:'M',feel:'딱맞음'},{brand:'무신사 스탠다드',cat:'하의',fit:'스트레이트',size:'32',feel:'딱맞음'}]},
+    {cust:'정예린', type:'INV', bodytype:'모던 V라인',     gender:'female', cm:167, kg:58, occ:'일상 코디',   budget:'~5만',    date:'2026.07.01', service:'shopping', note:'출근룩 위주로 데일리하게 입고 싶어요', status:'신규', wearExp:[{brand:'ZARA',cat:'상의',fit:'슬림핏',size:'S',feel:'딱맞음'}]},
     {cust:'이서연', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:163, kg:52, occ:'면접·발표',   budget:'10~15만', date:'2026.06.30', service:'image', note:'신뢰감 있는 오피스룩', dir:'out', status:'제안발송', offer:{price:95000, msg:'면접관 시선까지 고려해 첫인상 깔끔하게 잡아드릴게요'}},
     {cust:'박지우', type:'TRI', bodytype:'소프트 A라인',   gender:'female', cm:160, kg:54, occ:'결혼식 하객', budget:'10~15만', date:'2026.06.27', service:'online', note:'', status:'수락됨', offer:{price:120000, msg:'하객룩 단정하게 코디해드릴게요'}},
     {cust:'최민준', type:'BAL', bodytype:'이지 밸런스',    gender:'male',   cm:175, kg:70, occ:'데일리',     budget:'~5만',    date:'2026.06.18', service:'online', status:'완료', offer:{price:60000, msg:''}, review:{rating:5, text:'취향 저격이었어요! 반품 없이 한 번에 성공'}},
@@ -200,48 +201,31 @@
     var dc=document.getElementById('inboxDoneCard');
     if(closed.length){ dc.style.display=''; document.getElementById('inboxDoneList').innerHTML=closed.map(function(r){ return reqTop(r,true); }).join(''); }
     else { dc.style.display='none'; }
-    document.getElementById('inboxOutList').innerHTML = out.length ? out.map(function(r){ return reqTop(r,true); }).join('') : '<p class="note" style="padding:14px 0">아직 보낸 제안이 없어요</p>';
+    document.getElementById('inboxOutList').innerHTML = out.length ? out.map(function(r){ return reqTop(r,true); }).join('') : '<p class="note" style="padding:14px 0">아직 보낸 견적이 없어요</p>';
   }
   function renderRecent(){ document.getElementById('dashRecent').innerHTML=reqs.filter(function(r){return r.dir!=='out';}).sort(byDateDesc).slice(0,3).map(function(r){ return reqTop(r,true); }).join(''); }
-  /* 역방향 제안: '제안받기' 설정한 고객(데모 · 고객 영역은 미구현) → 쇼퍼가 먼저 제안 */
+  /* 견적 보내기(역방향): '견적받기' 설정한 고객(데모 · 고객 영역은 미구현) → 스타일리스트가 먼저 견적 발송 */
   var CANDIDATES = [
     {cust:'이수민', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:165, kg:53, occ:'결혼식 하객', budget:'10~15만', service:'shopping', note:'하객룩 단정하게, 과하지 않게'},
     {cust:'박준영', type:'INV', bodytype:'모던 V라인',   gender:'male',   cm:178, kg:74, occ:'면접·발표',   budget:'15만+',   service:'image',  note:'첫인상 신뢰감 있게'},
     {cust:'최지아', type:'TRI', bodytype:'소프트 A라인', gender:'female', cm:160, kg:50, occ:'데일리',       budget:'~5만',    service:'online',   note:'출근룩 위주 데일리하게'}
   ];
-  var openCandIdx=-1;
+  saveLS('pro.candidates', CANDIDATES);   // 견적서(pro-quote)가 ?cand=i로 읽을 수 있게 공유
   function renderCandidates(){
     var el=document.getElementById('dashCand'); if(!el) return;
     var proposed=loadLS('pro.proposed',[]);
     var list=CANDIDATES.map(function(c,i){return {c:c,i:i};}).filter(function(x){return proposed.indexOf(x.c.cust)<0;});
     var card=document.getElementById('dashCandCard');
-    if(!list.length){ el.innerHTML='<p class="note" style="padding:12px 0">지금은 제안받기를 원하는 고객이 없어요</p>'; return; }
+    if(!list.length){ el.innerHTML='<p class="note" style="padding:12px 0">지금은 견적받기를 원하는 고객이 없어요</p>'; return; }
     if(card) card.style.display='';
     el.innerHTML=list.map(function(x){ var c=x.c, i=x.i;
-      var form=(openCandIdx===i)
-        ? '<div class="ef" style="width:100%;margin-top:10px">'+
-            '<label class="efl">제안 금액</label><input class="efin" id="candPrice" type="number" value="'+MY_PRICE+'">'+
-            '<label class="efl">한 줄 메시지</label><textarea class="efin" id="candMsg" placeholder="예: '+c.occ+' 룩 맞춤 제안 드려요"></textarea>'+
-            '<div class="efbtns"><button class="tinybtn ghost" onclick="cancelCand()">취소</button><button class="tinybtn" onclick="sendCand('+i+')">제안 보내기</button></div>'+
-          '</div>'
-        : '';
-      return '<div class="ureq" style="flex-wrap:wrap">'+
+      // 요청 내역처럼 클릭 시 견적서(고객 상세) 페이지로 이동 → 거기서 견적 발송
+      return '<div class="ureq rowbtn" onclick="location.href=\'pro-quote.html?cand='+i+'\'">'+
         '<span class="ureq-ic">'+svcSvg(c.service)+'</span>'+
         '<div class="ureq-l"><div class="ureq-title">'+c.occ+' · '+svcLabel(c.service)+'</div><div class="ureq-meta">'+c.cust+' 님 · <b>예산 '+c.budget+'</b> · "'+c.note+'"</div></div>'+
-        '<div class="ureq-r">'+(openCandIdx===i?'':'<button class="tinybtn" onclick="proposeCand('+i+')">제안하기</button>')+'</div>'+
-        form+'</div>';
+        '<div class="ureq-r"><button class="tinybtn" onclick="event.stopPropagation();location.href=\'pro-quote.html?cand='+i+'\'">견적 보내기</button><span class="chev">›</span></div>'+
+      '</div>';
     }).join('');
-  }
-  function proposeCand(i){ openCandIdx=i; renderCandidates(); }
-  function cancelCand(){ openCandIdx=-1; renderCandidates(); }
-  function sendCand(i){
-    var c=CANDIDATES[i];
-    var pe=document.getElementById('candPrice'), me=document.getElementById('candMsg');
-    var price=pe?parseInt(pe.value,10)||MY_PRICE:MY_PRICE, msg=me?me.value.trim():'';
-    reqs.unshift({ cust:c.cust, occ:c.occ, service:c.service, type:c.type, bodytype:c.bodytype, gender:c.gender, cm:c.cm, kg:c.kg,
-      dir:'out', status:'제안발송', offer:{price:price, msg:msg||(c.occ+' 룩 맞춤 제안 드려요')}, budget:c.budget, date:'방금' });
-    var proposed=loadLS('pro.proposed',[]); proposed.push(c.cust); saveLS('pro.proposed',proposed);
-    saveLS('pro.reqs',reqs); openCandIdx=-1; renderAll(); toast(c.cust+' 님에게 제안을 보냈어요');
   }
   var replyIdx=-1;
   function renderReviews(){
@@ -249,7 +233,7 @@
     var rv=reqs.filter(function(r){return r.review;});
     el.innerHTML = rv.length ? rv.map(function(r){ var i=reqs.indexOf(r);
       var replyBlock = r.reply
-        ? '<div class="rvreply"><b>쇼퍼 답글</b><br>'+r.reply+'</div>'
+        ? '<div class="rvreply"><b>스타일리스트 답글</b><br>'+r.reply+'</div>'
         : (replyIdx===i
             ? '<div class="rvreplyform"><textarea id="rvReplyInput" placeholder="후기에 답글을 남겨보세요"></textarea><div class="rb"><button class="tinybtn ghost" onclick="cancelReply()">취소</button><button class="tinybtn" onclick="saveReply('+i+')">답글 등록</button></div></div>'
             : '<div style="margin-top:10px"><button class="tinybtn ghost" onclick="openReply('+i+')">답글 달기</button></div>');
@@ -375,7 +359,7 @@
   }
 
   /* ===== 프로필 편집 ===== */
-  /* 쇼퍼 찾기(index.js)와 동일한 SVG 캐릭터 아바타 — 기본 프로필 사진 */
+  /* 스타일리스트 찾기(index.js)와 동일한 SVG 캐릭터 아바타 — 기본 프로필 사진 */
   function suitPhoto(seed){
     var bgs=['#E7EFEA','#ECEAE3','#E6EDF2','#F0EAE4','#E9EEEA','#EEEAF0'];
     var suits=['#2E4A3B','#39404B','#4B5563','#5A4632','#33475A','#3A3550'];
@@ -464,12 +448,12 @@
     next.registered = true;
     next.avatar = edAvatar;
     next.name = name;
-    delete next.height; delete next.weight;   // 쇼퍼 본인 신체정보 제거(계약 미포함)
+    delete next.height; delete next.weight;   // 스타일리스트 본인 신체정보 제거(계약 미포함)
     next.services = svc;                                           // 활동지역은 services[].regions 안에 포함
     next.bio = document.getElementById('edTagline').value.trim();  // 소개 = bio 하나로 통일(경력소개 제거)
     delete next.tagline; delete next.regions;                      // 구 필드 정리
-    next.occ = edFields.slice();   // 전문분야=상황(코드) → 쇼퍼찾기 occ[]
-    next.tags = edStyles.slice();  // 스타일 태그 → 쇼퍼찾기 tags[]
+    next.occ = edFields.slice();   // 전문분야=상황(코드) → 스타일리스트찾기 occ[]
+    next.tags = edStyles.slice();  // 스타일 태그 → 스타일리스트찾기 tags[]
     delete next.fields; delete next.styles; delete next.specialties;
     next.portfolio = edPhotos.slice();
     PROFILE = next; MY_PRICE = svc[0].price;
