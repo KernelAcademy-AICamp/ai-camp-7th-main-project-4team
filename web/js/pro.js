@@ -36,15 +36,19 @@
   var STYLE_PRESETS = ['캐주얼','미니멀','시크','클래식','스트리트','빈티지','스포티','걸리시'];
   var REGION_PRESETS = ['서울','경기','인천','부산','대구','대전','광주'];
 
-  var reqs = loadLS('pro.reqs', [
+  var REQS_VER = 4;   // 데모 버전 — 올리면 다음 로드에서 데모를 새로 시드(테스트로 다 수락됨된 상태 초기화)
+  var DEMO_REQS = [
+    {cust:'한서준', type:'TUB', bodytype:'슬릭 라인',     gender:'male',   cm:180, kg:68, occ:'데일리',     budget:'5~10만',  date:'2026.07.14', service:'online', note:'심플하게, 근데 밋밋하지 않게 입고 싶어요', status:'신규'},
     {cust:'김도현', type:'STR', bodytype:'시크 스트레이트', gender:'male',   cm:172, kg:65, occ:'소개팅',     budget:'5~10만',  date:'2026.07.02', service:'online', note:'과하지 않게 깔끔한 첫인상 원해요', status:'신규'},
     {cust:'정예린', type:'INV', bodytype:'모던 V라인',     gender:'female', cm:167, kg:58, occ:'일상 코디',   budget:'~5만',    date:'2026.07.01', service:'shopping', note:'출근룩 위주로 데일리하게 입고 싶어요', status:'신규'},
-    {cust:'이서연', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:163, kg:52, occ:'면접·발표',   budget:'10~15만', date:'2026.06.30', service:'image', note:'신뢰감 있는 오피스룩', status:'제안발송', offer:{price:95000, msg:'면접관 시선까지 고려해 첫인상 깔끔하게 잡아드릴게요'}},
+    {cust:'이서연', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:163, kg:52, occ:'면접·발표',   budget:'10~15만', date:'2026.06.30', service:'image', note:'신뢰감 있는 오피스룩', dir:'out', status:'제안발송', offer:{price:95000, msg:'면접관 시선까지 고려해 첫인상 깔끔하게 잡아드릴게요'}},
     {cust:'박지우', type:'TRI', bodytype:'소프트 A라인',   gender:'female', cm:160, kg:54, occ:'결혼식 하객', budget:'10~15만', date:'2026.06.27', service:'shopping', note:'', status:'수락됨', offer:{price:120000, msg:'하객룩 단정하게 코디해드릴게요'}},
     {cust:'최민준', type:'BAL', bodytype:'이지 밸런스',    gender:'male',   cm:175, kg:70, occ:'데일리',     budget:'~5만',    date:'2026.06.18', service:'online', status:'완료', offer:{price:60000, msg:''}, review:{rating:5, text:'취향 저격이었어요! 반품 없이 한 번에 성공'}}
-  ]);
+  ];
+  var reqs = loadLS('pro.reqs', null);
+  if(!reqs || loadLS('pro.reqsVer',0)!==REQS_VER){ reqs = DEMO_REQS; saveLS('pro.reqsVer', REQS_VER); }
   /* 서비스 유형 3종 보정 — 옛 캐시('visit' 등)도 요청자별로 강제 재매핑 */
-  var SVC_BY_CUST = {'김도현':'online','정예린':'shopping','이서연':'image','박지우':'shopping','최민준':'online'};
+  var SVC_BY_CUST = {'한서준':'online','김도현':'online','정예린':'shopping','이서연':'image','박지우':'shopping','최민준':'online'};
   reqs.forEach(function(r){ r.service = SVC_BY_CUST[r.cust] || r.service || 'online'; });
   saveLS('pro.reqs', reqs);   // 견적서 페이지(pro-quote)가 같은 데이터를 읽도록 항상 저장
 
@@ -57,11 +61,11 @@
   }
   function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2000); }
   function stClass(s){ return s==='신규'?'nw':(s==='제안발송'?'sent':(s==='수락됨'?'prog':(s==='완료'?'done':'sent'))); }
-  /* 서비스 유형 선(line) 아이콘 — 마이페이지 SVG 스타일 */
+  /* 서비스 유형 선(line) 아이콘 — 고객 화면(index.js SVCI_SVG)과 동일: 온라인=모니터·동행=쇼핑백·이미지=반짝임 */
   var SVC_SVG = {
-    online:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M8 20h8M12 16.5v3.5"/></svg>',
-    shopping:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7V6a3 3 0 0 1 6 0v1"/></svg>',
-    image:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.3"/><path d="M8.5 7l1.3-2h4.4l1.3 2"/></svg>'
+    online:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="11" rx="1.6"/><path d="M8.5 20h7"/><path d="M12 16v4"/></svg>',
+    shopping:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7.5h12l-1 12.5H7L6 7.5z"/><path d="M9.3 7.5V6a2.7 2.7 0 0 1 5.4 0v1.5"/></svg>',
+    image:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6l1.6 4.5 4.5 1.6-4.5 1.6L12 15.8l-1.6-4.5L5.9 9.7l4.5-1.6L12 3.6z"/><path d="M18.6 13.8v2.2M19.7 14.9h-2.2"/></svg>'
   };
   function svcSvg(t){ return SVC_SVG[t]||SVC_SVG.online; }
   function svcMeta(s){
@@ -74,11 +78,19 @@
   function starsRO(n){ var s=''; for(var k=1;k<=5;k++) s+='<span style="color:'+(k<=n?'var(--ink)':'var(--line2)')+'">★</span>'; return s; }
 
   /* ===== 요청 행(요약, 클릭 시 상세) ===== */
+  /* 날짜 6글자 — 2026.07.12 → 26.07.12 */
+  function shortDate(d){ return (typeof d==='string' && /^\d{4}\./.test(d)) ? d.slice(2) : (d||''); }
+  /* 통일 리스트 행(.ureq) — 1줄: 상황·서비스 / 2줄: 이름·날짜·예산. 서비스는 모노 아이콘, 색은 상태에만 */
   function reqTop(r, clickable){ var i=reqs.indexOf(r);
-    return '<div class="req'+(clickable?' rowbtn" onclick="goQuote('+i+')':'')+'">'+
-      '<div class="reqtop"><div class="av">'+(r.cust?r.cust.charAt(0):'?')+'</div>'+
-      '<div class="info"><b>'+r.cust+' 님 · '+r.occ+'</b>'+svcBadge(r.service)+'<small>'+r.bodytype+' · 예산 '+r.budget+' · '+r.date+'</small></div>'+
-      '<span class="st '+stClass(r.status)+'">'+r.status+'</span>'+(clickable?'<span class="chev">›</span>':'')+'</div></div>';
+    var s=r.status;
+    var xc=(s==='수락됨')?'active':((s==='완료'||s==='거절'||s==='취소')?'past':'');   // 진행중=활성 / 완료·취소·거절=지난
+    var title=(r.occ?r.occ+' · ':'')+svcLabel(r.service);
+    var meta=(r.cust?r.cust+' 님 · ':'')+shortDate(r.date)+(r.budget?' · <b>예산 '+r.budget+'</b>':'');
+    return '<div class="ureq'+(xc?' '+xc:'')+(clickable?' rowbtn" onclick="goQuote('+i+')':'')+'">'+
+      '<span class="ureq-ic">'+svcSvg(r.service)+'</span>'+
+      '<div class="ureq-l"><div class="ureq-title">'+title+'</div><div class="ureq-meta">'+meta+'</div></div>'+
+      '<div class="ureq-r"><span class="st '+stClass(r.status)+'">'+r.status+'</span>'+(clickable?'<span class="chev">›</span>':'')+'</div>'+
+    '</div>';
   }
 
   /* ===== 상세 드로어 ===== */
@@ -168,9 +180,11 @@
             '<div class="efbtns"><button class="tinybtn ghost" onclick="cancelCand()">취소</button><button class="tinybtn" onclick="sendCand('+i+')">제안 보내기</button></div>'+
           '</div>'
         : '';
-      return '<div class="urow" style="flex-wrap:wrap"><div class="uinfo"><b>'+c.cust+' 님 · '+c.occ+'</b>'+svcBadge(c.service)+
-        '<small>'+c.bodytype+' · 예산 '+c.budget+' · "'+c.note+'"</small></div>'+
-        (openCandIdx===i?'':'<button class="tinybtn" onclick="proposeCand('+i+')">제안하기</button>')+form+'</div>';
+      return '<div class="ureq" style="flex-wrap:wrap">'+
+        '<span class="ureq-ic">'+svcSvg(c.service)+'</span>'+
+        '<div class="ureq-l"><div class="ureq-title">'+c.occ+' · '+svcLabel(c.service)+'</div><div class="ureq-meta">'+c.cust+' 님 · <b>예산 '+c.budget+'</b> · "'+c.note+'"</div></div>'+
+        '<div class="ureq-r">'+(openCandIdx===i?'':'<button class="tinybtn" onclick="proposeCand('+i+')">제안하기</button>')+'</div>'+
+        form+'</div>';
     }).join('');
   }
   function proposeCand(i){ openCandIdx=i; renderCandidates(); }
@@ -252,11 +266,7 @@
     if(!news.length){ el.style.display='none'; return; }
     el.style.display='block';
     el.innerHTML='<div class="subhead">지금 응답이 필요해요 <span class="ucount">'+news.length+'건</span></div>'+
-      news.map(function(r,k){ var i=reqs.indexOf(r);
-        return '<div class="urow"><div class="uinfo"><b>'+r.cust+' 님 · '+r.occ+'</b>'+
-          '<small>'+r.bodytype+' · 예산 '+r.budget+' · '+DEMO_AGO[k%DEMO_AGO.length]+'</small></div>'+
-          '<button class="tinybtn" onclick="goQuote('+i+')">상세 보기</button></div>';
-      }).join('');
+      news.map(function(r){ return reqTop(r, true); }).join('');
   }
   function renderAll(){ renderStats(); renderUrgent(); renderCandidates(); renderRecent(); renderInbox(); renderReviews(); renderSettle(); }
   /* 요청 클릭 → 견적서 페이지로 이동(사이드 드로어 대신) */
@@ -494,3 +504,5 @@
   renderTagsView();
   renderPortfolio();
   renderAll();
+  /* 견적서(pro-quote) 사이드 내비에서 ?panel=inbox 등으로 돌아올 때 해당 패널 열기 */
+  var _pp=new URLSearchParams(location.search).get('panel'); if(_pp) goPanel(_pp);

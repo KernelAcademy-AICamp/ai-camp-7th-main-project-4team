@@ -398,23 +398,29 @@
 
   /* '받은 견적' 컴팩트 카드 (숨고형) — 요약(날짜·상황·서비스) + 견적 건수 클릭 → 받은 견적 오버레이.
      진행 상태·후기는 카드에 붙이지 않고 오버레이 안에서 처리(카드는 깔끔하게 유지). */
+  /* 날짜 6글자 — 2026.07.12 → 26.07.12 */
+  function shortDate(d){ return (typeof d==='string' && /^\d{4}\./.test(d)) ? d.slice(2) : (d||''); }
+  /* 통일 리스트 행(.ureq) — 1줄: 상황·서비스 / 2줄: 이름·날짜·예산. 서비스는 모노 아이콘, 색은 상태에만 */
   function reqCardOpen(r,i,xc){
     if(r.awarded) return reqCardNamed(r,i,xc);   // 매칭 완료 → 지명 요청과 동일하게(진행중 쇼퍼 · 진행 상세로)
     var n=(r.bids||[]).length;
-    var top = statusLabel(r.status) + (r.date?' · '+r.date+' 요청':'');
     var title = [(r.occ&&r.occ.length?r.occ.join('·'):''), svcLabel(r.svc)].filter(Boolean).join(' · ') || '코디 요청';
-    return '<div class="reqrow open'+(xc?' '+xc:'')+'" onclick="openBids('+i+')">'+
-        '<div class="reqrow-l"><div class="reqrow-top">'+top+'</div><div class="reqrow-title">'+title+'</div></div>'+
-        '<div class="reqrow-r"><b>견적 <span class="num">'+n+'</span>개</b><span class="chev">›</span></div>'+
+    var money = r.budget?' · <b>예산 '+r.budget+'</b>':'';
+    var pill = (r.status==='견적중')?'<b class="cnt">견적 '+n+'개</b>':'<span class="st '+stClass(r.status)+'">'+statusLabel(r.status)+'</span>';
+    return '<div class="ureq'+(xc?' '+xc:'')+'" onclick="openBids('+i+')">'+
+        '<span class="ureq-ic">'+svcIcon(r.svc)+'</span>'+
+        '<div class="ureq-l"><div class="ureq-title">'+title+'</div><div class="ureq-meta">여러 쇼퍼 · '+shortDate(r.date)+money+'</div></div>'+
+        '<div class="ureq-r">'+pill+'<span class="chev">›</span></div>'+
       '</div>';
   }
-  /* '내가 보낸 fit 요청'(지명) 컴팩트 카드 — 쇼퍼·서비스·상황·날짜 + 화살표 → 상세 */
+  /* '내가 보낸 fit 요청'(지명) — 지명은 예상 가격(확정) */
   function reqCardNamed(r,i,xc){
-    var top = (r.date?r.date+' 요청':'요청');
-    var title = [(r.nm?r.nm+' 쇼퍼':'쇼퍼'), svcLabel(r.svc), (r.occ&&r.occ.length?r.occ.join('·'):'')].filter(Boolean).join(' · ');
-    return '<div class="reqrow named'+(xc?' '+xc:'')+'" onclick="openReqDetail('+i+')">'+
-        '<div class="reqrow-l"><div class="reqrow-top">'+top+'</div><div class="reqrow-title">'+title+'</div></div>'+
-        '<div class="reqrow-r"><span class="st '+stClass(r.status)+'">'+statusLabel(r.status)+'</span><span class="chev">›</span></div>'+
+    var title = [(r.occ&&r.occ.length?r.occ.join('·'):''), svcLabel(r.svc)].filter(Boolean).join(' · ') || '코디 요청';
+    var money = r.budget?' · <b>예산 '+r.budget+'</b>':(r.price?' · <b>예상 '+r.price.toLocaleString()+'원</b>':'');
+    return '<div class="ureq'+(xc?' '+xc:'')+'" onclick="openReqDetail('+i+')">'+
+        '<span class="ureq-ic">'+svcIcon(r.svc)+'</span>'+
+        '<div class="ureq-l"><div class="ureq-title">'+title+'</div><div class="ureq-meta">'+(r.nm?r.nm+' 쇼퍼 · ':'')+shortDate(r.date)+money+'</div></div>'+
+        '<div class="ureq-r"><span class="st '+stClass(r.status)+'">'+statusLabel(r.status)+'</span><span class="chev">›</span></div>'+
       '</div>';
   }
   /* 받은 견적(오픈) vs 지명 요청을 그룹으로 갈라 렌더 */
@@ -431,8 +437,8 @@
       else if(splitActive){   // 받은 견적: '견적 비교 중'(아직 고르는 중) / '진행 중'(선택 완료)으로 소분리
         var comparing=act.filter(function(i){ return reqs[i].status==='견적중'; });
         var going=act.filter(function(i){ return reqs[i].status!=='견적중'; });
-        if(comparing.length) body+='<div class="substat active">견적 비교 중</div>'+comparing.map(function(i){ return cardFn(reqs[i],i,'active'); }).join('');
-        if(going.length) body+='<div class="substat active">진행 중</div>'+going.map(function(i){ return cardFn(reqs[i],i,'active'); }).join('');
+        if(comparing.length) body+='<div class="substat">견적 비교 중</div>'+comparing.map(function(i){ return cardFn(reqs[i],i,''); }).join('');   // 견적 비교 중 = 회색(활성 아님)
+        if(going.length) body+='<div class="substat active">진행 중</div>'+going.map(function(i){ return cardFn(reqs[i],i,'active'); }).join('');   // 진행 중만 연한 초록
         if(past.length) body+='<div class="substat past">지난 요청</div>'+past.map(function(i){ return cardFn(reqs[i],i,'past'); }).join('');
       }
       else {   // 진행 중(초록 강조) / 지난 요청(흐리게)으로 분리
