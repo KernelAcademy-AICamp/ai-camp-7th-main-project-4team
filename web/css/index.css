@@ -883,7 +883,7 @@
   .cf-receipt .cfr-note{display:flex; align-items:center; gap:8px; font-size:15px; color:var(--green); font-weight:700; background:var(--green-soft); padding:14px 22px;}
   .cf-receipt .cfr-ni{width:17px; height:17px; flex:none;}
   .cf-receipt .cfr-note.off{color:var(--sub); background:var(--soft);}
-  .rs-note.off{color:var(--sub2);}
+  .rs-note.off{background:var(--soft); color:var(--sub2);}
   .confirm-box:has(.cf-receipt) .confirm-btns button{padding:15px; font-size:16px;}
   .confirm-btns{display:flex; gap:9px; margin-top:20px;}
   .confirm-btns button{flex:1; padding:13px; border-radius:12px; font-size:15px; font-weight:800; font-family:inherit; cursor:pointer; border:none;}
@@ -923,7 +923,7 @@
   .req-toggle .tg{font-size:13px;}
   .req-summary{display:none; margin-top:14px;}
   .req-summary.on{display:block;}
-  .req-summary-in{background:var(--soft); border-radius:14px; padding:6px 16px;}
+  .req-summary-in{background:#fff; border:1px solid var(--line); border-radius:14px; padding:6px 16px;}
   .rs-head{display:flex; align-items:center; gap:12px; padding:14px 2px 13px; border-bottom:1px solid var(--line);}
   .rs-ic{flex:none; width:38px; height:38px; border-radius:11px; background:var(--green-soft); color:var(--green); display:flex; align-items:center; justify-content:center;}
   .rs-ic svg{width:21px; height:21px;}
@@ -933,7 +933,7 @@
   .rs-row{display:flex; justify-content:space-between; align-items:center; gap:16px; padding:11px 0; border-bottom:1px solid var(--line); font-size:14px;}
   .rs-row:last-of-type{border-bottom:none;}
   .rs-row span{color:var(--sub); flex:none;} .rs-row b{color:var(--ink); font-weight:700; text-align:right;}
-  .rs-note{font-size:13px; color:var(--green); font-weight:700; padding:12px 0 4px;}
+  .rs-note{display:inline-flex; align-items:center; gap:6px; margin:14px 0 4px; padding:9px 13px; background:var(--green-soft); color:var(--green); font-weight:700; font-size:13px; border-radius:10px; line-height:1.3;}
   /* 지명 요청 상세 — 섹션 */
   .rq-sec{margin-top:24px;}
   .rq-sec .rq-h{font-size:15px; font-weight:800; letter-spacing:-.02em; margin-bottom:11px;}
