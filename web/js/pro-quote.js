@@ -76,9 +76,9 @@
       '<div class="sb-tx"><b>'+esc(b[2])+'</b><p>'+esc(b[3]).replace(/ · /g,'<br>')+'</p></div></div>';
   }
 
-  /* ── 액션(상태별) ── 진행 상태 배너 + 상태별 버튼/입력 ── */
+  /* ── 액션(상태별) ── 버튼/입력만. 상태 배너는 render에서 진행상태 바 위에 별도로 붙임 ── */
   function actionHTML(r){
-    var banner=statusBanner(r);
+    var banner='';
     if(r.status==='신규'){
       return banner+'<div class="act-row"><button class="btn ghost" onclick="confirmReject()">거절하기</button>'+
              '<button class="btn" onclick="confirmAccept()">수락하기</button></div>';
@@ -333,12 +333,13 @@
         +'<line x1="'+(re+4).toFixed(1)+'" y1="'+y+'" x2="'+(vx-6)+'" y2="'+y+'" stroke="var(--guide)" stroke-width="1.2" stroke-dasharray="2 3"/>'
         +'<text class="g-name" x="'+vx+'" y="'+(e?(y-5):(y+4))+'">'+esc(x.name)+'</text>';
       if(e) guides+='<text class="g-val" x="'+vx+'" y="'+(y+13)+'">약 '+e.val+'<tspan class="g-unit" dx="1">cm</tspan> <tspan class="g-pm">±'+e.pm+'</tspan></text>';
-      // 좌: 슬림/표준/볼륨 태그 — 유형색 농도(볼륨 진하게·슬림 연하게), 글자색 자동
-      var tw=tag.length*13.5+22, pe=le-9, ps=pe-tw;
+      // 좌: 슬림/표준/볼륨 태그 — 유형색 농도 + 작은 점 + 외곽선, 글자색 자동
+      var tw=tag.length*13+30, pe=le-9, ps=pe-tw, edge=mixHex(tc,'#2A2823',0.30);
       guides+='<circle cx="'+le.toFixed(1)+'" cy="'+y+'" r="2.6" fill="var(--fig-line)"/>'
         +'<line x1="'+(le-4).toFixed(1)+'" y1="'+y+'" x2="'+(pe+1).toFixed(1)+'" y2="'+y+'" stroke="var(--guide)" stroke-width="1.2"/>'
-        +'<rect x="'+ps.toFixed(1)+'" y="'+(y-12)+'" width="'+tw.toFixed(1)+'" height="24" rx="12" fill="'+bg+'"/>'
-        +'<text class="g-tag" x="'+(ps+tw/2).toFixed(1)+'" y="'+(y+4)+'" text-anchor="middle" fill="'+txt+'">'+esc(tag)+'</text>'; });
+        +'<rect x="'+ps.toFixed(1)+'" y="'+(y-12)+'" width="'+tw.toFixed(1)+'" height="24" rx="12" fill="'+bg+'" stroke="'+edge+'" stroke-opacity=".55"/>'
+        +'<circle cx="'+(ps+13).toFixed(1)+'" cy="'+y+'" r="3.2" fill="'+txt+'"/>'
+        +'<text class="g-tag" x="'+(ps+24).toFixed(1)+'" y="'+(y+4)+'" fill="'+txt+'">'+esc(tag)+'</text>'; });
     var svg='<svg viewBox="0 0 360 520" role="img" aria-label="고객 체형 실루엣">'
       +'<ellipse cx="'+cx+'" cy="514" rx="52" ry="9" fill="var(--fig-line)" opacity=".10"/>'
       +'<path d="'+arm(1)+'" fill="none" stroke="var(--fig-line)" stroke-width="13.5" stroke-linecap="round" opacity=".92"/>'
@@ -507,7 +508,7 @@
       '<div class="htags"><span class="st '+stClass(r.status)+'">'+esc(r.status)+'</span>'+svcBadgeIcon(r.service)+'</div>'+
       '<div class="qgrid2">'+
         '<div class="qleft">'+ requestReceipt(r, attached) +
-          '<div class="card offer-card"><div class="subhead">'+(r.status==='견적작성'?'견적 작성':(out?'제안 현황':(r.status==='신규'?'요청을 수락하시겠습니까?':'진행 상태')))+'</div>'+ actionHTML(r) +'</div>'+
+          '<div class="card offer-card">'+ statusBanner(r) +'<div class="subhead">'+(r.status==='견적작성'?'견적 작성':(out?'제안 현황':(r.status==='신규'?'요청을 수락하시겠습니까?':'진행 상태')))+'</div>'+ actionHTML(r) +'</div>'+
         '</div>'+
         '<div class="qright">'+ bodyCard +'</div>'+
       '</div>';
