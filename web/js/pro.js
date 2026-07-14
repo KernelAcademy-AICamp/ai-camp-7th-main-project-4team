@@ -1,8 +1,8 @@
-  /* 쇼퍼(공급자) 포털 — 시작 구조. 페르소나: 소희 쇼퍼.
+  /* 스타일리스트(공급자) 포털 — 시작 구조. 페르소나: 소희 스타일리스트.
      고객 측 요청 라이프사이클의 대칭 뷰. 요청 클릭 → 상세 드로어(체형·사이즈 첨부 + 요청 내용)에서 제안. */
   function loadLS(k, def){ try{ var v=localStorage.getItem('fitting.'+k); return v?JSON.parse(v):def; }catch(e){ return def; } }
   function saveLS(k, v){ try{ localStorage.setItem('fitting.'+k, JSON.stringify(v)); }catch(e){} }
-  /* 가입(온보딩)에서 저장한 프로필. 데이터 계약: docs/쇼퍼가입-화면정의서.md §5 */
+  /* 가입(온보딩)에서 저장한 프로필. 데이터 계약: docs/스타일리스트가입-화면정의서.md §5 */
   var PROFILE = loadLS('pro.profile', null);
   var MY_PRICE = (PROFILE && PROFILE.services && PROFILE.services[0]) ? PROFILE.services[0].price : 120000;
   /* 가입 전(직접 pro.html 진입) 편집 시 시드로 쓸 기본 프로필 = 화면의 데모값과 동일 */
@@ -18,7 +18,7 @@
     {src:'photos/folio2.jpg', height:174, weight:66}
   ];
   var DEFAULT_PROFILE = {
-    registered:false, name:'소희 쇼퍼',
+    registered:false, name:'소희 스타일리스트',
     services:[
       {type:'online',label:'온라인 스타일링',price:35000,mode:'비대면'},
       {type:'shopping',label:'동행 쇼핑',price:120000,mode:'대면',regions:['서울 강남','서울 마포']},
@@ -27,7 +27,7 @@
     bio:'데일리·소개팅룩 전문 스타일리스트 · 비대면 큐레이션이 강점이에요',
     occ:['date','daily'], tags:['미니멀','시크'], portfolio:DEMO_PORTFOLIO
   };
-  /* 전문분야(=쇼퍼찾기 상황) 7가지 · 코드↔라벨 (데이터 계약) */
+  /* 전문분야(=스타일리스트찾기 상황) 7가지 · 코드↔라벨 (데이터 계약) */
   var FIELD_OPTS = [
     {code:'date',label:'소개팅·데이트'},{code:'interview',label:'면접·발표'},{code:'wedding',label:'결혼식 하객'},
     {code:'travel',label:'여행'},{code:'daily',label:'데일리 스타일링'},{code:'personal',label:'퍼스널 스타일링'},{code:'bodycover',label:'체형 커버 스타일링'}
@@ -36,20 +36,21 @@
   var STYLE_PRESETS = ['캐주얼','미니멀','시크','클래식','스트리트','빈티지','스포티','걸리시'];
   var REGION_PRESETS = ['서울','경기','인천','부산','대구','대전','광주'];
 
-  var REQS_VER = 5;   // 데모 버전 — 올리면 다음 로드에서 데모를 새로 시드(테스트로 다 수락됨된 상태 초기화)
+  var REQS_VER = 6;   // 데모 버전 — 결과물·분쟁 샘플(#36) + wearExp(착용경험) 추가로 재시드
   /* wearExp = 고객 진단 착용경험(상품명 없이 브랜드·카테고리·핏·사이즈·부위느낌). 없으면 미첨부(견적서에서 '없음' 표기) */
   var DEMO_REQS = [
     {cust:'한서준', type:'TUB', bodytype:'슬릭 라인',     gender:'male',   cm:180, kg:68, occ:'데일리',     budget:'5~10만',  date:'2026.07.14', service:'online', note:'심플하게, 근데 밋밋하지 않게 입고 싶어요', status:'신규'},
     {cust:'김도현', type:'STR', bodytype:'시크 스트레이트', gender:'male',   cm:172, kg:65, occ:'소개팅',     budget:'5~10만',  date:'2026.07.02', service:'online', note:'과하지 않게 깔끔한 첫인상 원해요', status:'신규', wearExp:[{brand:'유니클로',cat:'상의',fit:'레귤러핏',size:'M',feel:'딱맞음'},{brand:'무신사 스탠다드',cat:'하의',fit:'스트레이트',size:'32',feel:'딱맞음'}]},
     {cust:'정예린', type:'INV', bodytype:'모던 V라인',     gender:'female', cm:167, kg:58, occ:'일상 코디',   budget:'~5만',    date:'2026.07.01', service:'shopping', note:'출근룩 위주로 데일리하게 입고 싶어요', status:'신규', wearExp:[{brand:'ZARA',cat:'상의',fit:'슬림핏',size:'S',feel:'딱맞음'}]},
     {cust:'이서연', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:163, kg:52, occ:'면접·발표',   budget:'10~15만', date:'2026.06.30', service:'image', note:'신뢰감 있는 오피스룩', dir:'out', status:'제안발송', offer:{price:95000, msg:'면접관 시선까지 고려해 첫인상 깔끔하게 잡아드릴게요'}},
-    {cust:'박지우', type:'TRI', bodytype:'소프트 A라인',   gender:'female', cm:160, kg:54, occ:'결혼식 하객', budget:'10~15만', date:'2026.06.27', service:'shopping', note:'', status:'수락됨', offer:{price:120000, msg:'하객룩 단정하게 코디해드릴게요'}},
-    {cust:'최민준', type:'BAL', bodytype:'이지 밸런스',    gender:'male',   cm:175, kg:70, occ:'데일리',     budget:'~5만',    date:'2026.06.18', service:'online', status:'완료', offer:{price:60000, msg:''}, review:{rating:5, text:'취향 저격이었어요! 반품 없이 한 번에 성공'}}
+    {cust:'박지우', type:'TRI', bodytype:'소프트 A라인',   gender:'female', cm:160, kg:54, occ:'결혼식 하객', budget:'10~15만', date:'2026.06.27', service:'online', note:'', status:'수락됨', offer:{price:120000, msg:'하객룩 단정하게 코디해드릴게요'}},
+    {cust:'최민준', type:'BAL', bodytype:'이지 밸런스',    gender:'male',   cm:175, kg:70, occ:'데일리',     budget:'~5만',    date:'2026.06.18', service:'online', status:'완료', offer:{price:60000, msg:''}, review:{rating:5, text:'취향 저격이었어요! 반품 없이 한 번에 성공'}},
+    {cust:'한지민', type:'STR', bodytype:'시크 스트레이트', gender:'female', cm:164, kg:52, occ:'소개팅',     budget:'5~10만',  date:'2026.06.29', service:'online', note:'', status:'분쟁', offer:{price:90000, msg:'소개팅룩 깔끔하게 잡아드릴게요'}, dispute:{reason:'미이행', detail:'결과물을 받지 못했어요', at:'2026.07.02'}}
   ];
   var reqs = loadLS('pro.reqs', null);
   if(!reqs || loadLS('pro.reqsVer',0)!==REQS_VER){ reqs = DEMO_REQS; saveLS('pro.reqsVer', REQS_VER); }
-  /* 서비스 유형 3종 보정 — 옛 캐시('visit' 등)도 요청자별로 강제 재매핑 */
-  var SVC_BY_CUST = {'한서준':'online','김도현':'online','정예린':'shopping','이서연':'image','박지우':'shopping','최민준':'online'};
+  /* 서비스 유형 3종 보정 — 옛 캐시('visit' 등)도 요청자별로 강제 재매핑. 박지우=online(온라인 결과물 테스트) */
+  var SVC_BY_CUST = {'한서준':'online','김도현':'online','정예린':'shopping','이서연':'image','박지우':'online','최민준':'online','한지민':'online'};
   reqs.forEach(function(r){ r.service = SVC_BY_CUST[r.cust] || r.service || 'online'; });
   saveLS('pro.reqs', reqs);   // 견적서 페이지(pro-quote)가 같은 데이터를 읽도록 항상 저장
 
@@ -61,7 +62,7 @@
     window.scrollTo({top:0, behavior:'smooth'});
   }
   function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2000); }
-  function stClass(s){ return s==='신규'?'nw':(s==='제안발송'?'sent':(s==='수락됨'?'prog':(s==='완료'?'done':'sent'))); }
+  function stClass(s){ return s==='신규'?'nw':(s==='제안발송'?'sent':(s==='수락됨'?'prog':(s==='분쟁'?'warn':(s==='완료'?'done':'sent')))); }
   /* 서비스 유형 선(line) 아이콘 — 고객 화면(index.js SVCI_SVG)과 동일: 온라인=모니터·동행=쇼핑백·이미지=반짝임 */
   var SVC_SVG = {
     online:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="11" rx="1.6"/><path d="M8.5 20h7"/><path d="M12 16v4"/></svg>',
@@ -98,7 +99,13 @@
   function drawerAction(r,i){ var s=r.status;
     if(s==='신규'){ if(r._offering) return offerForm(r,i); return '<button class="btn full" onclick="openOffer('+i+')">제안 보내기</button>'; }
     if(s==='제안발송'){ var o=r.offer||{}; return '<div class="note-quote"><b style="color:var(--green)">제안 발송됨</b> · <span style="font-family:var(--num);font-weight:800">'+(o.price?o.price.toLocaleString():'—')+'</span>원<br><span style="font-size:13px;color:var(--sub)">"'+(o.msg||'')+'"</span><br><span style="font-size:12.5px;color:var(--sub2)">고객 응답을 기다리는 중이에요</span></div><button class="btn ghost full" style="margin-top:10px" onclick="simAccept('+i+')">고객 수락 · 데모</button>'; }
-    if(s==='수락됨'){ var o2=r.offer||{}; return '<div class="note-quote"><b style="color:var(--green)">수락됨 · 진행 중</b> · <span style="font-family:var(--num);font-weight:800">'+(o2.price?o2.price.toLocaleString():'—')+'</span>원</div><button class="btn full" style="margin-top:10px" onclick="completeReq('+i+')">완료 처리</button>'; }
+    if(s==='수락됨'){ var o2=r.offer||{};
+      var hd='<div class="note-quote"><b style="color:var(--green)">수락됨 · 진행 중</b> · <span style="font-family:var(--num);font-weight:800">'+(o2.price?o2.price.toLocaleString():'—')+'</span>원</div>';
+      if(r.service==='online'){   // 온라인 스타일링 = 코디·구매 링크 결과물 작성 → 고객 수령(1.6/1.7)
+        if(r.deliver) return hd + deliverSummary(r) + '<button class="btn full" style="margin-top:10px" onclick="completeReq('+i+')">완료 처리</button>';
+        return hd + deliverForm(r,i);
+      }
+      return hd + '<p class="note-quote muted" style="margin-top:10px">대면 서비스는 현장에서 진행돼요 · 완료 후 처리해주세요</p><button class="btn full" style="margin-top:10px" onclick="completeReq('+i+')">완료 처리</button>'; }
     if(s==='완료'){ if(r.review) return '<div class="dsec-label">고객 후기</div><div class="note-quote"><span style="letter-spacing:1px">'+starsRO(r.review.rating)+'</span><br>"'+r.review.text+'"</div>'; return '<div class="note-quote muted">완료 · 고객 후기를 기다리는 중이에요</div>'; }
     return '';
   }
@@ -109,6 +116,44 @@
       '<div class="obtns"><button class="tinybtn ghost" onclick="cancelOffer('+i+')">취소</button><button class="tinybtn" onclick="sendOffer('+i+')">제안 발송</button></div>'+
     '</div>';
   }
+  /* ===== 결과물 작성·전달 (IA 2.1.2) — 온라인 스타일링: 코디·구매 링크 작성 → 고객 수령(1.6/1.7) ===== */
+  function pval(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
+  function itemLine(it){ return '<b style="color:var(--ink)">'+it.brand+'</b> '+it.name+' · '+it.size+' · <span class="num">'+(it.price?Number(it.price).toLocaleString():'—')+'</span>원'+(it.url?' 🔗':''); }
+  function deliverForm(r,i){
+    var draft=r._draft||[];
+    var list = draft.length
+      ? draft.map(function(it,k){ return '<div class="kv"><span>'+itemLine(it)+'</span><button class="tinybtn ghost" onclick="delDeliverItem('+i+','+k+')">삭제</button></div>'; }).join('')
+      : '<p class="note-quote muted">추가한 상품이 없어요 · 코디에 쓸 상품을 담아주세요</p>';
+    return '<div class="dsec-label">결과물 · 추천 상품</div>'+
+      '<div>'+list+'</div>'+
+      '<div class="offerform" style="margin-top:10px">'+
+        '<div class="row"><input id="dvBrand'+i+'" placeholder="브랜드"><input id="dvName'+i+'" placeholder="상품명"></div>'+
+        '<div class="row"><input id="dvSize'+i+'" placeholder="사이즈" style="width:90px"><input id="dvPrice'+i+'" type="number" placeholder="가격" style="width:120px"><span style="color:var(--sub);font-size:13px;align-self:center">원</span></div>'+
+        '<div class="row"><input id="dvUrl'+i+'" placeholder="구매 링크 URL" style="width:100%;flex:1"></div>'+
+        '<button class="btn ghost full" style="margin-top:8px" onclick="addDeliverItem('+i+')">+ 상품 추가</button>'+
+        '<textarea id="dvMsg'+i+'" placeholder="고객에게 전할 코디 설명">'+(r._dmsg||'')+'</textarea>'+
+      '</div>'+
+      '<button class="btn full" style="margin-top:10px" onclick="sendDeliver('+i+')">결과물 제출'+(draft.length?' ('+draft.length+'개 상품)':'')+'</button>';
+  }
+  function deliverSummary(r){ var d=r.deliver||{}, items=d.items||[];
+    return '<div class="dsec-label">제출한 결과물</div>'+
+      '<div class="note-quote"><b style="color:var(--green)">✓ 결과물 제출 완료</b> · 추천 상품 '+items.length+'개<br>'+
+      items.map(function(it){ return '<span style="font-size:13px;color:var(--sub)">· '+itemLine(it)+'</span>'; }).join('<br>')+
+      (d.msg?'<br><span style="font-size:12.5px;color:var(--sub2)">"'+d.msg+'"</span>':'')+'</div>';
+  }
+  function saveDraftMsg(i){ var m=document.getElementById('dvMsg'+i); if(m) reqs[i]._dmsg=m.value; }
+  function addDeliverItem(i){ var br=pval('dvBrand'+i), nm=pval('dvName'+i);
+    if(!br||!nm){ toast('브랜드와 상품명을 입력해주세요'); return; }
+    saveDraftMsg(i);
+    reqs[i]._draft=(reqs[i]._draft||[]).concat([{ brand:br, name:nm, size:pval('dvSize'+i)||'—', price:pval('dvPrice'+i)||'', url:pval('dvUrl'+i) }]);
+    openReqDetail(i); }
+  function delDeliverItem(i,k){ if(reqs[i]._draft) reqs[i]._draft.splice(k,1); saveDraftMsg(i); openReqDetail(i); }
+  function sendDeliver(i){ saveDraftMsg(i); var draft=reqs[i]._draft||[];
+    if(!draft.length){ toast('구매 링크를 하나 이상 추가해주세요'); return; }
+    reqs[i].deliver={ items:draft, msg:reqs[i]._dmsg||'', sentAt:new Date().toISOString() };
+    delete reqs[i]._draft; delete reqs[i]._dmsg;
+    saveLS('pro.reqs',reqs); refresh(i); toast(reqs[i].cust+' 님에게 결과물을 전달했어요 · 고객 완료 확인을 기다려요'); }
+
   function openReqDetail(i){ var r=reqs[i]; var tp=r.type||'STR', g=r.gender||'female';
     document.getElementById('drawerBody').innerHTML=
       '<div class="dh"><div class="dcrumb">고객 요청 상세</div><h2>'+r.cust+' 님 · '+r.occ+'</h2></div>'+
@@ -146,7 +191,7 @@
     var incoming=reqs.filter(function(r){return r.dir!=='out';});
     var out=reqs.filter(function(r){return r.dir==='out';});
     var news=incoming.filter(function(r){return r.status==='신규';}).sort(byDateDesc);
-    var prog=incoming.filter(function(r){return r.status==='수락됨';}).sort(byDateDesc);
+    var prog=incoming.filter(function(r){return r.status==='수락됨'||r.status==='분쟁';}).sort(byDateDesc);
     var closed=incoming.filter(function(r){return r.status==='완료'||r.status==='거절'||r.status==='취소';}).sort(byDateDesc);
     out=out.sort(byDateDesc);
     function setCnt(id,n){ var e=document.getElementById(id); if(e) e.textContent=n; }
@@ -159,7 +204,7 @@
     document.getElementById('inboxOutList').innerHTML = out.length ? out.map(function(r){ return reqTop(r,true); }).join('') : '<p class="note" style="padding:14px 0">아직 보낸 견적이 없어요</p>';
   }
   function renderRecent(){ document.getElementById('dashRecent').innerHTML=reqs.filter(function(r){return r.dir!=='out';}).sort(byDateDesc).slice(0,3).map(function(r){ return reqTop(r,true); }).join(''); }
-  /* 견적 보내기(역방향): '견적받기' 설정한 고객(데모 · 고객 영역은 미구현) → 쇼퍼가 먼저 견적 발송 */
+  /* 견적 보내기(역방향): '견적받기' 설정한 고객(데모 · 고객 영역은 미구현) → 스타일리스트가 먼저 견적 발송 */
   var CANDIDATES = [
     {cust:'이수민', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:165, kg:53, occ:'결혼식 하객', budget:'10~15만', service:'shopping', note:'하객룩 단정하게, 과하지 않게'},
     {cust:'박준영', type:'INV', bodytype:'모던 V라인',   gender:'male',   cm:178, kg:74, occ:'면접·발표',   budget:'15만+',   service:'image',  note:'첫인상 신뢰감 있게'},
@@ -188,7 +233,7 @@
     var rv=reqs.filter(function(r){return r.review;});
     el.innerHTML = rv.length ? rv.map(function(r){ var i=reqs.indexOf(r);
       var replyBlock = r.reply
-        ? '<div class="rvreply"><b>쇼퍼 답글</b><br>'+r.reply+'</div>'
+        ? '<div class="rvreply"><b>스타일리스트 답글</b><br>'+r.reply+'</div>'
         : (replyIdx===i
             ? '<div class="rvreplyform"><textarea id="rvReplyInput" placeholder="후기에 답글을 남겨보세요"></textarea><div class="rb"><button class="tinybtn ghost" onclick="cancelReply()">취소</button><button class="tinybtn" onclick="saveReply('+i+')">답글 등록</button></div></div>'
             : '<div style="margin-top:10px"><button class="tinybtn ghost" onclick="openReply('+i+')">답글 달기</button></div>');
@@ -314,7 +359,7 @@
   }
 
   /* ===== 프로필 편집 ===== */
-  /* 쇼퍼 찾기(index.js)와 동일한 SVG 캐릭터 아바타 — 기본 프로필 사진 */
+  /* 스타일리스트 찾기(index.js)와 동일한 SVG 캐릭터 아바타 — 기본 프로필 사진 */
   function suitPhoto(seed){
     var bgs=['#E7EFEA','#ECEAE3','#E6EDF2','#F0EAE4','#E9EEEA','#EEEAF0'];
     var suits=['#2E4A3B','#39404B','#4B5563','#5A4632','#33475A','#3A3550'];
@@ -403,12 +448,12 @@
     next.registered = true;
     next.avatar = edAvatar;
     next.name = name;
-    delete next.height; delete next.weight;   // 쇼퍼 본인 신체정보 제거(계약 미포함)
+    delete next.height; delete next.weight;   // 스타일리스트 본인 신체정보 제거(계약 미포함)
     next.services = svc;                                           // 활동지역은 services[].regions 안에 포함
     next.bio = document.getElementById('edTagline').value.trim();  // 소개 = bio 하나로 통일(경력소개 제거)
     delete next.tagline; delete next.regions;                      // 구 필드 정리
-    next.occ = edFields.slice();   // 전문분야=상황(코드) → 쇼퍼찾기 occ[]
-    next.tags = edStyles.slice();  // 스타일 태그 → 쇼퍼찾기 tags[]
+    next.occ = edFields.slice();   // 전문분야=상황(코드) → 스타일리스트찾기 occ[]
+    next.tags = edStyles.slice();  // 스타일 태그 → 스타일리스트찾기 tags[]
     delete next.fields; delete next.styles; delete next.specialties;
     next.portfolio = edPhotos.slice();
     PROFILE = next; MY_PRICE = svc[0].price;
