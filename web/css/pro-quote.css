@@ -20,7 +20,7 @@
   .svcbadge.image{background:#efeafb;color:#7a5bb0}
   .st{font-size:12px;font-weight:800;padding:4px 11px;border-radius:20px}
   .st.nw{background:var(--green,#2E4A3B);color:#fff} .st.sent{background:var(--soft,#eee);color:var(--sub,#777)}
-  .st.prog{background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B)} .st.done{background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B)}
+  .st.prog{background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B)} .st.done{background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B)} .st.warn{background:var(--warn,#c0392b);color:#fff}
 
   .qgrid{display:grid;grid-template-columns:360px 1fr;gap:28px;align-items:start;margin-top:24px}
   @media(max-width:820px){.qgrid{grid-template-columns:1fr}}

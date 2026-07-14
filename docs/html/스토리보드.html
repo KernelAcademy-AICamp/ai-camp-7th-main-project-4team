@@ -515,7 +515,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
     <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">수락됨 → 결제</div>
       <div class="sp-l d"><span class="lb">설명</span>쇼퍼 수락 시 [결제하고 시작].</div>
       <div class="sp-l i"><span class="lb">의도</span>지명·오픈 두 경로가 <b>결제(1.8)에서 수렴</b> — 이후 진행·완료 동일.</div>
-      <div class="sp-l c"><span class="lb">제약</span>데모는 수락→진행 직행(결제 단계 v2).</div></div></div>
+      <div class="sp-l c"><span class="lb">제약</span>데모는 수락→결제대기→결제 후 진행(결제 게이트 구현).</div></div></div>
     <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">거절됨 → 다른 쇼퍼</div>
       <div class="sp-l d"><span class="lb">설명</span>쇼퍼 거절 시 목록으로 안내.</div>
       <div class="sp-l i"><span class="lb">의도</span>막다른 길 방지 — 재탐색/오픈 전환 유도.</div>
@@ -575,7 +575,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
     </div>
   </div></div>
   <div class="spec">
-    <div class="sp-head"><span class="id">1.8</span><span class="nm">결제 (에스크로)</span><span class="pri">○ v2 · 🔒</span>
+    <div class="sp-head"><span class="id">1.8</span><span class="nm">결제 (에스크로)</span><span class="pri">◐ 데모 · 🔒</span>
       <div class="io"><b>진입</b> 입찰 낙찰(1.3.8) · <b>이탈</b> 진행중(1.6) · <b>짝</b> 쇼퍼 포털 정산(2.6)</div></div>
     <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">주문 요약</div>
       <div class="sp-l d"><span class="lb">설명</span>낙찰된 쇼퍼·서비스·금액·수수료.</div>
@@ -592,7 +592,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
     <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">결제하고 시작</div>
       <div class="sp-l d"><span class="lb">설명</span>결제 완료 → 요청 상태 진행중.</div>
       <div class="sp-l i"><span class="lb">의도</span>낙찰→작업 시작의 게이트(무단 진행 방지).</div>
-      <div class="sp-l c"><span class="lb">제약</span>현행 MVP는 페이크도어라 이 단계 없이 낙찰→진행중 직행.</div></div></div>
+      <div class="sp-l c"><span class="lb">제약</span>구현(데모) — 낙찰/수락→결제대기→결제(수단·에스크로 안내)→진행중 게이트 · 실 PG 연동은 v2.</div></div></div>
   </div>
 </section>
 
@@ -612,7 +612,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
     </div>
   </div></div>
   <div class="spec">
-    <div class="sp-head"><span class="id">1.6 / 1.7</span><span class="nm">진행 · 결과물 수령 (대화)</span><span class="pri">○ v2 · 🔒</span>
+    <div class="sp-head"><span class="id">1.6 / 1.7</span><span class="nm">진행 · 결과물 수령 (대화)</span><span class="pri">◐ 데모 · 🔒</span>
       <div class="io"><b>진입</b> 결제 완료(1.8) · <b>이탈</b> 완료·후기 · <b>짝</b> 쇼퍼 결과물 작성(2.1.2.2)</div></div>
     <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">매칭 히어로 배너</div>
       <div class="sp-l d"><span class="lb">설명</span>"○○ 쇼퍼로 매칭" + 진행 상태.</div>
@@ -664,7 +664,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
     <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">에스크로 정산 릴리스</div>
       <div class="sp-l d"><span class="lb">설명</span>보관 결제금 → 쇼퍼 정산 지급.</div>
       <div class="sp-l i"><span class="lb">의도</span>완료 확인=릴리스 트리거 · 쇼퍼 포털 정산(2.6)과 짝.</div>
-      <div class="sp-l c"><span class="lb">제약</span>실 정산·수수료 차감은 v2(§1.8).</div></div></div>
+      <div class="sp-l c"><span class="lb">제약</span>완료 시 릴리스 안내 배너 구현(데모) · 실 정산·수수료 차감은 v2(§1.8).</div></div></div>
     <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">후기(별점·텍스트)</div>
       <div class="sp-l d"><span class="lb">설명</span>거래 후 평가 작성.</div>
       <div class="sp-l i"><span class="lb">의도</span>평판이 다음 매칭의 매칭도·전환을 좌우.</div>
@@ -672,7 +672,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
     <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">후기 등록 · 영수증</div>
       <div class="sp-l d"><span class="lb">설명</span>후기 저장 + 결제 영수증 열람.</div>
       <div class="sp-l i"><span class="lb">의도</span>거래 종결·기록 · 재요청/공유로 재유입.</div>
-      <div class="sp-l c"><span class="lb">제약</span>영수증은 v2(결제 연동 후).</div></div></div>
+      <div class="sp-l c"><span class="lb">제약</span>데모 영수증(금액·수단·결제일·정산상태) 구현 · 실 결제 연동 영수증은 v2.</div></div></div>
   </div>
 </section>
 
@@ -694,7 +694,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
     </div>
   </div></div>
   <div class="spec">
-    <div class="sp-head"><span class="id">1.9</span><span class="nm">문제 신고 · 환불 요청 (분쟁)</span><span class="pri">○ v2 · 🔒</span>
+    <div class="sp-head"><span class="id">1.9</span><span class="nm">문제 신고 · 환불 요청 (분쟁)</span><span class="pri">◐ 데모 · 🔒</span>
       <div class="io"><b>진입</b> 진행·완료 대기(1.6) · <b>이탈</b> 관리자 분쟁 큐(3.B.4) · <b>연계</b> 고객센터(1.9)</div></div>
     <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">대상 거래</div>
       <div class="sp-l d"><span class="lb">설명</span>쇼퍼·서비스·에스크로 보관금 확인.</div>
@@ -711,7 +711,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
     <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">제출 → 릴리스 보류</div>
       <div class="sp-l d"><span class="lb">설명</span>접수 시 에스크로 정산 릴리스 보류.</div>
       <div class="sp-l i"><span class="lb">의도</span>보관금을 묶어 양측 보호 · 쇼퍼 소명→관리자 중재로 종결.</div>
-      <div class="sp-l c"><span class="lb">제약</span>v2 · 남용 방지(횟수·기간) 정책 필요.</div></div></div>
+      <div class="sp-l c"><span class="lb">제약</span>구현(데모) — 사유·상세→status 분쟁(릴리스 보류)·철회/환불 중재 시뮬 · 실 중재·남용 방지 정책은 v2.</div></div></div>
   </div>
 </section>
 
@@ -884,7 +884,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
     </div>
   </div></div>
   <div class="spec">
-    <div class="sp-head"><span class="id">1.9</span><span class="nm">고객센터 · 1:1 문의</span><span class="pri">○ v2 · 🔒</span>
+    <div class="sp-head"><span class="id">1.9</span><span class="nm">고객센터 · 1:1 문의</span><span class="pri">◐ 구현 · 🔒</span>
       <div class="io"><b>진입 게이트</b> 마이 좌측 메뉴 → 고객센터 (+ 거래화면·오류화면 "문의하기") · <b>짝</b> 관리자 CS(3.B.7)</div></div>
     <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">진입 게이트 = 마이 좌측 메뉴</div>
       <div class="sp-l d"><span class="lb">설명</span>마이의 좌측 사이드 메뉴(프로필·…·계정·<b>고객센터</b>) 하위 패널.</div>
@@ -919,7 +919,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
     </div>
   </div></div>
   <div class="spec">
-    <div class="sp-head"><span class="id">1.4E / G.4</span><span class="nm">개인정보 · 데이터 관리</span><span class="pri">○ v2(법적 필수) · 🔒</span>
+    <div class="sp-head"><span class="id">1.4E / G.4</span><span class="nm">개인정보 · 데이터 관리</span><span class="pri">◐ 구현(법적 필수) · 🔒</span>
       <div class="io"><b>진입</b> 마이 계정 · <b>연계</b> 개인정보처리방침(G.4)·동의(consent)</div></div>
     <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">데이터 열람·삭제 요청</div>
       <div class="sp-l d"><span class="lb">설명</span>진단 데이터(신체·착용경험·결과) 내려받기·삭제.</div>
@@ -946,7 +946,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
     </div>
   </div></div>
   <div class="spec">
-    <div class="sp-head"><span class="id">G.6</span><span class="nm">알림</span><span class="pri">○ v2 · 🔒</span>
+    <div class="sp-head"><span class="id">G.6</span><span class="nm">알림</span><span class="pri">◐ 구현 · 🔒</span>
       <div class="io"><b>트리거</b> 견적·매칭·분쟁 결과·문의 답변 · <b>MVP</b> 이메일/알림톡(인앱 센터 v2)</div></div>
     <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">알림 목록</div>
       <div class="sp-l d"><span class="lb">설명</span>매칭·분쟁·문의 답변 등 이벤트 회신.</div>
@@ -974,7 +974,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
     </div>
   </div></div>
   <div class="spec">
-    <div class="sp-head"><span class="id">G.7</span><span class="nm">오류 · 빈 상태 & 문의 진입</span><span class="pri">◐ 폴백 존재 · 🔒</span>
+    <div class="sp-head"><span class="id">G.7</span><span class="nm">오류 · 빈 상태 & 문의 진입</span><span class="pri">◐ 구현(404·유형별) · 🔒</span>
       <div class="io"><b>대상</b> 진단 실패(renderLoadError/NoData)·404·링크만료·네트워크</div></div>
     <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">쉬운 말 오류 카피</div>
       <div class="sp-l d"><span class="lb">설명</span>"사이즈를 못 찾았어요 · 옷 하나 더" 등 해결 유도.</div>
@@ -1001,7 +1001,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
     </div>
   </div></div>
   <div class="spec">
-    <div class="sp-head"><span class="id">G.2</span><span class="nm">FAQ · 도움말</span><span class="pri">○ v2 · 🔍 색인</span>
+    <div class="sp-head"><span class="id">G.2</span><span class="nm">FAQ · 도움말</span><span class="pri">◐ 구현 · 🔍 색인</span>
       <div class="io"><b>공개</b> 검색 유입 · <b>연계</b> 고객센터(1.9)·콘텐츠 SEO(5장)</div></div>
     <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">검색·카테고리</div>
       <div class="sp-l d"><span class="lb">설명</span>진단·매칭·결제·계정·전문가별 자주 묻는 질문.</div>
@@ -1401,14 +1401,14 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
         <div class="card" style="background:var(--green-soft);border-color:var(--green)"><span class="mk">1</span> <b>지민님 · 소개팅 · 진행 중</b> · 기한 07/20 · 결제완료(에스크로)</div>
         <div class="split l">
           <div class="card"><div class="note" style="font-weight:700;color:var(--ink)"><span class="mk">2</span> 고객 상담</div><div class="box" style="min-height:60px;text-align:left;align-items:flex-start">지민: 밝은 톤 선호해요<br>나: 넵, 3안 준비할게요</div><div class="field">답장…</div></div>
-          <div class="card"><div class="note" style="font-weight:700;color:var(--ink)"><span class="mk">3</span> 결과물 작성</div><div class="cols c3"><div class="box">＋사진</div><div class="box">🖼</div><div class="box">🖼</div></div><div class="field">코디 설명 · 구매 링크</div><div class="btn">고객에게 전송</div></div>
+          <div class="card"><div class="note" style="font-weight:700;color:var(--ink)"><span class="mk">3</span> 결과물 작성 모달 · 추천 상품</div><div class="card note" style="text-align:left;margin:4px 0"><b>유니클로</b> 니트·M·39,900원<br><b>자라</b> 코트·M·129,000원</div><div class="field">＋ 브랜드·상품명·사이즈·가격·링크</div><div class="card" style="background:var(--green-soft);border-color:var(--green)">합계 <b>168,900원</b> / 예산 10~15만 · 예산 초과</div><div class="btn">결과물 제출</div></div>
         </div>
         <div class="btn ghost"><span class="mk">4</span> 완료 처리 → 정산 대기</div>
       </div>
     </div>
   </div></div>
   <div class="spec">
-    <div class="sp-head"><span class="id">2.1.2</span><span class="nm">포털 · 진행·결과물 전달</span><span class="pri">○ v2 · 🔒</span>
+    <div class="sp-head"><span class="id">2.1.2</span><span class="nm">포털 · 진행·결과물 전달</span><span class="pri">◐ 데모 · 🔒</span>
       <div class="io"><b>짝</b> 사용자 진행·결과물 수령(1.6/1.7) · <b>이탈</b> 완료→정산(2.6) · <b>I/O</b> <span class="w">RW</span> pro.reqs</div></div>
     <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">진행 상태 배너</div>
       <div class="sp-l d"><span class="lb">설명</span>고객·서비스·기한·결제(에스크로) 확인.</div>
@@ -1419,9 +1419,9 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
       <div class="sp-l i"><span class="lb">의도</span>사용자 대화(1.7)의 공급자 측 짝.</div>
       <div class="sp-l c"><span class="lb">제약</span>데모엔 saveReply(단순 답장)만 · 실 채팅 v2.</div></div></div>
     <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">결과물 작성·전송</div>
-      <div class="sp-l d"><span class="lb">설명</span>코디 이미지·설명·구매 링크 작성 → 전송(2.1.2.2).</div>
-      <div class="sp-l i"><span class="lb">의도</span>쇼퍼의 실제 산출물 — 사용자 "결과물 수령"의 원천.</div>
-      <div class="sp-l c"><span class="lb">제약</span>현재 빠져 있던 핵심 화면 · v2 신규.</div></div></div>
+      <div class="sp-l d"><span class="lb">설명</span>추천 상품 n개(브랜드·상품명·사이즈·가격·구매링크)를 모달에서 작성 → 제출(2.1.2.2).</div>
+      <div class="sp-l i"><span class="lb">의도</span>쇼퍼의 실제 산출물 — 사용자 "결과물 수령"의 원천 · 합계로 예산 적합 확인.</div>
+      <div class="sp-l c"><span class="lb">제약</span>구현(데모·pro-quote) — 사진·내용은 전 서비스 공통, 온라인은 상품·합계/예산 미터 추가 · 완료 전 수정 가능 → deliver 저장.</div></div></div>
     <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">완료 처리 → 정산 대기</div>
       <div class="sp-l d"><span class="lb">설명</span>작업 종료 표시 → 고객 완료 확인 대기.</div>
       <div class="sp-l i"><span class="lb">의도</span>고객 완료 확인 시 에스크로 정산 릴리스(2.6).</div>

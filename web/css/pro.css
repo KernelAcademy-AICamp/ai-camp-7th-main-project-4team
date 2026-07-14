@@ -79,7 +79,7 @@
   .req .av{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--green),var(--green-mid));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}
   .req .info{flex:1;min-width:0} .req .info b{font-size:14.5px} .req .info small{display:block;font-size:12.5px;color:var(--sub);margin-top:2px}
   .st{font-size:12px;font-weight:800;padding:5px 11px;border-radius:20px;white-space:nowrap}
-  .st.nw{background:var(--green);color:#fff} .st.sent{background:var(--soft);color:var(--sub)} .st.prog{background:var(--green-soft);color:var(--green)} .st.done{background:var(--green-soft);color:var(--green)}
+  .st.nw{background:var(--green);color:#fff} .st.sent{background:var(--soft);color:var(--sub)} .st.prog{background:var(--green-soft);color:var(--green)} .st.done{background:var(--green-soft);color:var(--green)} .st.warn{background:var(--warn,#c0392b);color:#fff}
   /* 서비스 유형 배지(온라인 스타일링·동행 쇼핑·이미지 컨설팅) */
   .svcbadge{display:inline-block;font-size:11px;font-weight:800;border-radius:20px;padding:2px 9px;margin-left:8px;vertical-align:middle;white-space:nowrap}
   .svcbadge svg{width:13px;height:13px;vertical-align:-2px;margin-right:2px}
