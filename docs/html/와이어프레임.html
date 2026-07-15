@@ -631,7 +631,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
 </div>
 
 <!-- ══ 3 ══ -->
-<div class="sec-h" id="admin"><h2>3 · 운영 어드민 — MVP 실배선</h2><span>Google OAuth · Supabase RLS · MVP 4메뉴(사이즈·데이터/진단·정확도/엔진 강화/전문가 수요) · v2 섹션은 숨김·미배포</span></div>
+<div class="sec-h" id="admin"><h2>3 · 운영 어드민 (3.A~3.E)</h2><span>목업 로그인 · 실파일/샘플 · 검색차단</span></div>
 <div class="gallery">
 
   <div class="cell">
@@ -767,35 +767,13 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 
   <div class="cell">
-    <div class="cap"><span class="id">3.C.2</span><span class="nm">진단·정확도(킬메트릭)</span><span class="pri">★ 🔒 MVP</span></div>
-    <div class="cap-l">정확도×신뢰도 캘리브레이션 + 8유형/브랜드/페인 + <b>정확도 추세</b>(날짜·엔진버전별 맞음율).</div>
-    <div class="cap-i"><span class="lb">의도</span>정확도 동의율=킬 메트릭 · <b>추세로 엔진이 강해지는지 확인</b> · 높은신뢰 틀림=튜닝 1순위. 실 DB(feedback·RLS).</div>
+    <div class="cap"><span class="id">3.C.2</span><span class="nm">진단 응답·정확도</span><span class="pri">★ 🔒</span></div>
+    <div class="cap-l">정확도×신뢰도 캘리브레이션 히트맵 + 8유형/브랜드/페인.</div>
+    <div class="cap-i"><span class="lb">의도</span>정확도 동의율=킬 메트릭 · 높은신뢰 틀림(빨강)=튜닝 1순위.</div>
     <div class="stage"><div class="browser">
       <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/diagnostics</div></div>
-      <div class="topnav"><span class="logo">fitting</span><div class="menu"><span>사이즈·데이터</span><span class="on">진단·정확도</span><span>엔진 강화</span><span>전문가 수요</span></div><div class="act">👤</div></div>
-      <div class="pg"><div class="kpis"><div class="kpi"><div class="kn">68%</div><div class="kl">맞음율</div></div><div class="kpi"><div class="kn">96</div><div class="kl">응답</div></div><div class="kpi"><div class="kn">18%</div><div class="kl">애매</div></div><div class="kpi"><div class="kn">14%</div><div class="kl">틀림</div></div></div><div class="note">정확도 추세(맞음율)</div><div class="tbl"><div class="tr hd"><span>날짜/버전</span><span class="r">맞음율</span></div><div class="tr"><span>7/14</span><span class="r">62%</span></div><div class="tr"><span>7/16 (server-1)</span><span class="r">68% ↑</span></div></div></div>
-    </div></div>
-  </div>
-
-  <div class="cell">
-    <div class="cap"><span class="id">3.C.3</span><span class="nm">전문가 수요(페이크도어)</span><span class="pri">★ 🔒 MVP</span></div>
-    <div class="cap-l">웨이트리스트 오픈알림(이메일)·견적요청 수요 + 진단→수요 전환(session 조인).</div>
-    <div class="cap-i"><span class="lb">의도</span>측정 2축의 하나 — "매칭을 얼마나 원하나". 진단 후 전환이 강한 신호. lead 테이블(RLS).</div>
-    <div class="stage"><div class="browser">
-      <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/leads</div></div>
-      <div class="topnav"><span class="logo">fitting</span><div class="menu"><span>사이즈·데이터</span><span>진단·정확도</span><span>엔진 강화</span><span class="on">전문가 수요</span></div><div class="act">👤</div></div>
-      <div class="pg"><div class="kpis"><div class="kpi"><div class="kn">37</div><div class="kl">총 수요</div></div><div class="kpi"><div class="kn">29</div><div class="kl">오픈알림</div></div><div class="kpi"><div class="kn">24</div><div class="kl">이메일</div></div><div class="kpi"><div class="kn">31%</div><div class="kl">전환율</div></div></div><div class="tbl"><div class="tr hd"><span>시각</span><span>이메일</span><span class="r">유입</span></div><div class="tr"><span>7/16 14:2</span><span>a**@…</span><span class="r"><span class="tag">진단 후</span></span></div><div class="tr"><span>7/16 11:0</span><span>b**@…</span><span class="r">직접</span></div></div></div>
-    </div></div>
-  </div>
-
-  <div class="cell">
-    <div class="cap"><span class="id">3.C.4</span><span class="nm">엔진 강화(성장구조)</span><span class="pri">★ 🔒 MVP</span></div>
-    <div class="cap-l">진단 로그(미표기∩페인·자유서술)→개선 작업목록. 각 행이 실측표·수집으로 연결.</div>
-    <div class="cap-i"><span class="lb">의도</span>docs/6 §1.1 성장구조 배선 — 자동학습 아님, 사람 액션 우선순위(A축 역산·페인 승격·튜닝·수집).</div>
-    <div class="stage"><div class="browser">
-      <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/improve</div></div>
-      <div class="topnav"><span class="logo">fitting</span><div class="menu"><span>사이즈·데이터</span><span>진단·정확도</span><span class="on">엔진 강화</span><span>전문가 수요</span></div><div class="act">👤</div></div>
-      <div class="pg"><div class="note">① 미표기∩페인 → A축 역산 보정</div><div class="tbl"><div class="tr hd"><span>브랜드</span><span>부위</span><span class="r">끼임</span></div><div class="tr"><span>유니클로</span><span>팔(소매통)</span><span class="r">7</span></div><div class="tr"><span>자라</span><span>목</span><span class="r">4</span></div></div><div class="note">② 새 페인(자유서술)→승격 · ③ 확신 틀림→튜닝 · ④ 데이터 부족→수집</div></div>
+      <div class="topnav"><span class="logo">fitting</span><div class="menu"><span>사이즈·데이터</span><span>회원·거래</span><span class="on">사업</span><span>API</span><span>운영</span></div><div class="act">👤</div></div>
+      <div class="pg"><div class="tabs"><span class="tab">운영 대시보드</span><span class="tab on">진단 응답·정확도</span></div><div class="kpis"><div class="kpi"><div class="kn">68%</div><div class="kl">동의율</div></div><div class="kpi"><div class="kn">96</div><div class="kl">응답</div></div><div class="kpi"><div class="kn">18%</div><div class="kl">애매</div></div><div class="kpi"><div class="kn">14%</div><div class="kl">틀림</div></div></div><div class="heat"><span class="hh"></span><span class="hh">낮음</span><span class="hh">중간</span><span class="hh">높음</span><span class="rl">맞음</span><b>4</b><b>18</b><b>23</b><span class="rl">애매</span><b>6</b><b>9</b><b class="z">2</b><span class="rl">틀림</span><b>7</b><b>5</b><b class="d">2</b></div></div>
     </div></div>
   </div>
 
