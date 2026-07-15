@@ -36,7 +36,7 @@
   var STYLE_PRESETS = ['캐주얼','미니멀','시크','클래식','스트리트','빈티지','스포티','걸리시'];
   var REGION_PRESETS = ['서울','경기','인천','부산','대구','대전','광주'];
 
-  var REQS_VER = 7;   // 데모 버전 — 결과물·분쟁 샘플(#36) + wearExp + 대화 스레드(msgs) 시드
+  var REQS_VER = 8;   // 데모 버전 — 결과물·분쟁 샘플(#36) + wearExp + 대화 스레드(msgs) + 결제대기(5단계) 시드
   /* wearExp = 고객 진단 착용경험(상품명 없이 브랜드·카테고리·핏·사이즈·부위느낌). 없으면 미첨부(견적서에서 '없음' 표기) */
   var DEMO_REQS = [
     {cust:'한서준', type:'TUB', bodytype:'슬릭 라인',     gender:'male',   cm:180, kg:68, occ:'데일리',     budget:'5~10만',  date:'2026.07.14', service:'online', note:'심플하게, 근데 밋밋하지 않게 입고 싶어요', status:'신규'},
@@ -45,12 +45,13 @@
     {cust:'이서연', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:163, kg:52, occ:'면접·발표',   budget:'10~15만', date:'2026.06.30', service:'image', note:'신뢰감 있는 오피스룩', dir:'out', status:'제안발송', offer:{price:95000, msg:'면접관 시선까지 고려해 첫인상 깔끔하게 잡아드릴게요'}},
     {cust:'박지우', type:'TRI', bodytype:'소프트 A라인',   gender:'female', cm:160, kg:54, occ:'결혼식 하객', budget:'10~15만', date:'2026.06.27', service:'online', note:'', status:'수락됨', offer:{price:120000, msg:'하객룩 단정하게 코디해드릴게요'}, msgs:[{from:'cust', text:'안녕하세요! 결혼식이 다음 주 토요일이에요 🙂'},{from:'pro', text:'네 반가워요! 하객룩은 튀지 않게 단정하게 잡아드릴게요. 혹시 원하는 색 계열 있으세요?'},{from:'cust', text:'차분한 톤이 좋아요. 잘 부탁드려요!'}]},
     {cust:'최민준', type:'BAL', bodytype:'이지 밸런스',    gender:'male',   cm:175, kg:70, occ:'데일리',     budget:'~5만',    date:'2026.06.18', service:'online', status:'완료', offer:{price:60000, msg:''}, review:{rating:5, text:'취향 저격이었어요! 반품 없이 한 번에 성공'}},
-    {cust:'한지민', type:'STR', bodytype:'시크 스트레이트', gender:'female', cm:164, kg:52, occ:'소개팅',     budget:'5~10만',  date:'2026.06.29', service:'online', note:'', status:'분쟁', offer:{price:90000, msg:'소개팅룩 깔끔하게 잡아드릴게요'}, dispute:{reason:'미이행', detail:'결과물을 받지 못했어요', at:'2026.07.02'}, msgs:[{from:'cust', text:'결과물 언제 받을 수 있을까요?'},{from:'pro', text:'죄송해요, 어제 코디 3안 링크 전달드렸는데 혹시 확인 안 되셨을까요? 다시 보내드릴게요.'}]}
+    {cust:'한지민', type:'STR', bodytype:'시크 스트레이트', gender:'female', cm:164, kg:52, occ:'소개팅',     budget:'5~10만',  date:'2026.06.29', service:'online', note:'', status:'분쟁', offer:{price:90000, msg:'소개팅룩 깔끔하게 잡아드릴게요'}, dispute:{reason:'미이행', detail:'결과물을 받지 못했어요', at:'2026.07.02'}, msgs:[{from:'cust', text:'결과물 언제 받을 수 있을까요?'},{from:'pro', text:'죄송해요, 어제 코디 3안 링크 전달드렸는데 혹시 확인 안 되셨을까요? 다시 보내드릴게요.'}]},
+    {cust:'윤채원', type:'BAL', bodytype:'이지 밸런스',    gender:'female', cm:165, kg:53, occ:'데이트룩',   budget:'5~10만',  date:'2026.07.13', service:'online', note:'봄 데이트룩 화사하게', status:'결제대기', offer:{price:88000, msg:'화사한 데이트룩으로 잡아드릴게요'}, wearExp:[{brand:'마인드브릿지',cat:'상의',fit:'레귤러',size:'M',feel:'딱맞음'}], msgs:[{from:'cust', text:'견적 감사해요! 방금 입금했어요 :)'}]}
   ];
   var reqs = loadLS('pro.reqs', null);
   if(!reqs || loadLS('pro.reqsVer',0)!==REQS_VER){ reqs = DEMO_REQS; saveLS('pro.reqsVer', REQS_VER); }
   /* 서비스 유형 3종 보정 — 옛 캐시('visit' 등)도 요청자별로 강제 재매핑. 박지우=online(온라인 결과물 테스트) */
-  var SVC_BY_CUST = {'한서준':'online','김도현':'online','정예린':'shopping','이서연':'image','박지우':'online','최민준':'online','한지민':'online'};
+  var SVC_BY_CUST = {'한서준':'online','김도현':'online','정예린':'shopping','이서연':'image','박지우':'online','최민준':'online','한지민':'online','윤채원':'online'};
   reqs.forEach(function(r){ r.service = SVC_BY_CUST[r.cust] || r.service || 'online'; });
   saveLS('pro.reqs', reqs);   // 견적서 페이지(pro-quote)가 같은 데이터를 읽도록 항상 저장
 
@@ -62,7 +63,7 @@
     window.scrollTo({top:0, behavior:'smooth'});
   }
   function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2000); }
-  function stClass(s){ return s==='신규'?'nw':(s==='제안발송'?'sent':(s==='수락됨'?'prog':(s==='분쟁'?'warn':(s==='완료'?'done':'sent')))); }
+  function stClass(s){ return s==='신규'?'nw':(s==='제안발송'?'sent':((s==='수락됨'||s==='결제대기')?'prog':(s==='분쟁'?'warn':(s==='완료'?'done':'sent')))); }
   /* 서비스 유형 선(line) 아이콘 — 고객 화면(index.js SVCI_SVG)과 동일: 온라인=모니터·동행=쇼핑백·이미지=반짝임 */
   var SVC_SVG = {
     online:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="11" rx="1.6"/><path d="M8.5 20h7"/><path d="M12 16v4"/></svg>',
@@ -85,7 +86,7 @@
   /* 통일 리스트 행(.ureq) — 1줄: 상황·서비스 / 2줄: 이름·날짜·예산. 서비스는 모노 아이콘, 색은 상태에만 */
   function reqTop(r, clickable){ var i=reqs.indexOf(r);
     var s=r.status;
-    var xc=(s==='수락됨')?'active':((s==='완료'||s==='거절'||s==='취소')?'past':'');   // 진행중=활성 / 완료·취소·거절=지난
+    var xc=(s==='수락됨'||s==='결제대기')?'active':((s==='완료'||s==='거절'||s==='취소')?'past':'');   // 진행중=활성 / 완료·취소·거절=지난
     var title=(r.occ?r.occ+' · ':'')+svcLabel(r.service);
     var meta=(r.cust?r.cust+' 님 · ':'')+shortDate(r.date)+(r.budget?' · <b>예산 '+r.budget+'</b>':'');
     return '<div class="ureq'+(xc?' '+xc:'')+(clickable?' rowbtn" onclick="goQuote('+i+')':'')+'">'+
@@ -99,6 +100,7 @@
   function drawerAction(r,i){ var s=r.status;
     if(s==='신규'){ if(r._offering) return offerForm(r,i); return '<button class="btn full" onclick="openOffer('+i+')">제안 보내기</button>'; }
     if(s==='제안발송'){ var o=r.offer||{}; return '<div class="note-quote"><b style="color:var(--green)">제안 발송됨</b> · <span style="font-family:var(--num);font-weight:800">'+(o.price?o.price.toLocaleString():'—')+'</span>원<br><span style="font-size:13px;color:var(--sub)">"'+(o.msg||'')+'"</span><br><span style="font-size:12.5px;color:var(--sub2)">고객 응답을 기다리는 중이에요</span></div><button class="btn ghost full" style="margin-top:10px" onclick="simAccept('+i+')">고객 수락 · 데모</button>'; }
+    if(s==='결제대기'){ var op=r.offer||{}; return '<div class="note-quote"><b style="color:#8A5F16">입금 대기</b> · <span style="font-family:var(--num);font-weight:800">'+(op.price?op.price.toLocaleString():'—')+'</span>원<br><span style="font-size:12.5px;color:var(--sub2)">고객 입금을 기다리는 중이에요 · 상세에서 확인</span></div>'; }
     if(s==='수락됨'){ var o2=r.offer||{};
       var hd='<div class="note-quote"><b style="color:var(--green)">수락됨 · 진행 중</b> · <span style="font-family:var(--num);font-weight:800">'+(o2.price?o2.price.toLocaleString():'—')+'</span>원</div>';
       if(r.service==='online'){   // 온라인 스타일링 = 코디·구매 링크 결과물 작성 → 고객 수령(1.6/1.7)
@@ -191,7 +193,7 @@
     var incoming=reqs.filter(function(r){return r.dir!=='out';});
     var out=reqs.filter(function(r){return r.dir==='out';});
     var news=incoming.filter(function(r){return r.status==='신규';}).sort(byDateDesc);
-    var prog=incoming.filter(function(r){return r.status==='수락됨'||r.status==='분쟁';}).sort(byDateDesc);
+    var prog=incoming.filter(function(r){return r.status==='수락됨'||r.status==='결제대기'||r.status==='분쟁';}).sort(byDateDesc);
     var closed=incoming.filter(function(r){return r.status==='완료'||r.status==='거절'||r.status==='취소';}).sort(byDateDesc);
     out=out.sort(byDateDesc);
     function setCnt(id,n){ var e=document.getElementById(id); if(e) e.textContent=n; }
@@ -254,7 +256,7 @@
 
   function renderStats(){
     var nw=reqs.filter(function(r){return r.status==='신규'&&r.dir!=='out';}).length;
-    var prog=reqs.filter(function(r){return r.status==='수락됨';}).length;
+    var prog=reqs.filter(function(r){return r.status==='수락됨'||r.status==='결제대기';}).length;
     var rating=avgRating(), rt=(rating!=null)?rating.toFixed(1):'—';
     document.getElementById('dashStats').innerHTML=
       '<div class="stat"><b>'+won(monthRevenue())+'</b><small>이번 달 수익</small></div>'+
