@@ -4,7 +4,8 @@
    env(Vercel): SUPABASE_URL · SUPABASE_SECRET_KEY(서버 전용, RLS 우회). */
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'method not allowed' });
-  var URL = process.env.SUPABASE_URL, KEY = process.env.SUPABASE_SECRET_KEY;
+  // 서버 키: 수동(SECRET_KEY) 또는 Vercel↔Supabase 연동 자동주입(SERVICE_ROLE_KEY) 둘 다 허용
+  var URL = process.env.SUPABASE_URL, KEY = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!URL || !KEY) return res.status(500).json({ error: 'missing supabase env' });
 
   var b = req.body || {};
