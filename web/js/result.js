@@ -335,12 +335,12 @@
     [].forEach.call(el.parentElement.children,function(c){c.classList.remove('on');}); el.classList.add('on');
     var consent={}; try{ consent=JSON.parse(sessionStorage.getItem('fitting.consent')||'{}'); }catch(e){}
     var rec={ ts:new Date().toISOString(), bodyType:cardType, verdict:verdict, confidenceTier:confidenceTier, engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true };
-    try{ var k='fitting.feedback', arr=JSON.parse(localStorage.getItem(k)||'[]'); arr.push(rec); localStorage.setItem(k,JSON.stringify(arr)); }catch(e){}
+    FDATA.saveFeedback(rec);   // 어댑터(seam): proto=localStorage / api=POST /api/feedback
   }
   // 진단 초기화 — 누적된 입력(dx·기본정보·동의·피드백)을 지우고 처음부터. (목업 테스트용)
   function resetDiag(){
     try{ ['fitting.dx','fitting.basic','fitting.consent'].forEach(function(k){ sessionStorage.removeItem(k); }); }catch(e){}
-    try{ localStorage.removeItem('fitting.feedback'); }catch(e){}
+    FDATA.clearFeedback();
     location.href='diag-basic.html';
   }
 
@@ -349,7 +349,7 @@
   //  · 비로그인: 저장·전문가 모두 로그인 유도 모달
   //  · 공유(카드 🔗)는 로그인 무관(card.js shareInvite) — 여기서 다루지 않음
   // 로그인 상태: index.js loggedIn()과 동일(localStorage fitting.auth, 명시적 로그아웃 시에만 false).
-  function isAuthed(){ try{ return localStorage.getItem('fitting.auth')!=='false'; }catch(e){ return true; } }
+  function isAuthed(){ return FDATA.isAuthed(); }   // 어댑터(seam)
   // 진단 유형·기본정보를 마이(#my)가 읽는 프로필로 저장 → 마이가 이 결과를 보여줌.
   function persistResultToProfile(){
     try{
@@ -362,7 +362,7 @@
       var prefKo={skinny:'스키니',slim:'슬림',regular:'레귤러',loose:'루즈',oversize:'오버'};
       var pf=(payload.prefs&&(payload.prefs.TOP||payload.prefs.BOTTOM));
       if(pf&&prefKo[pf]) u.fit=prefKo[pf];
-      localStorage.setItem('fitting.user', JSON.stringify(u));
+      FDATA.saveUser(u);   // 어댑터(seam)
     }catch(e){}
   }
   function saveResult(){
