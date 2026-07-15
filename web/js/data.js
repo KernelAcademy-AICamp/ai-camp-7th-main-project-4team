@@ -37,12 +37,14 @@
     isAuthed: function () { try { return localStorage.getItem('fitting.auth') !== 'false'; } catch (e) { return true; } },
     saveUser: function (u) { lsSet('fitting.user', u); },
 
-    /* ── 진단 실행 (엔진 경계 = /api/diagnose) ────────────────
-       proto: result.js가 클라이언트 엔진(BodyModel/FitEngine)으로 직접 계산(현행).
-       api:   서버 위임. ※ 엔진 파이프라인 추출은 다음 증분 — 지금은 인터페이스만. */
-    diagnose: function (payload) {
-      if (MODE === 'api') return postJSON('/api/diagnose', payload).then(function (r) { return r.json(); });
-      return Promise.reject(new Error('proto: result.js가 클라이언트 엔진으로 직접 계산'));
+    /* ── 진단 기록(store) = /api/diagnose ────────────────────
+       클라이언트 계산 결과({session_id,category,input,result,engine_version})를 서버에
+       저장하고 diagnosis id 반환(→ 이후 saveFeedback의 diagnosis_id).
+       proto: 서버 미기록(클라 계산만) → null.
+       ※ 엔진을 서버에서 '계산'까지 하는 건 단계 D(이 함수 안으로 흡수). */
+    recordDiagnosis: function (d) {
+      if (MODE === 'api') return postJSON('/api/diagnose', d).then(function (r) { return r.json(); }).then(function (j) { return j && j.id; });
+      return Promise.resolve(null);
     }
   };
 
