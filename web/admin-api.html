@@ -35,9 +35,17 @@
 
   <div class="sec-h">엔드포인트 사용량 <span class="muted" style="font-weight:400">— 이번달 호출 분포. 어떤 추론을 많이 쓰나</span></div>
   <div class="tablewrap"><table class="dt" id="epTable"></table></div>
+
+  <!-- 3.D.5 고객사 기술지원 -->
+  <div class="sec-h">고객사 기술지원 (3.D.5) <span class="muted" style="font-weight:400">— 연동 오류·에러·한도·SLA 문의 처리. 상태변경·답변은 프로토타입</span></div>
+  <p class="subnote" style="margin-top:2px"><b>유입 경로</b> — 개발자 포털 문의폼 · <code>support@fitting.dev</code>(SLA 이메일) · 상태페이지 인시던트 구독. <span class="muted">고객 대면 개발자 포털·티켓 접수 폼은 v3 — 지금은 유입 채널을 티켓에 표기하고 관리자 처리 큐(샘플)만 구현.</span></p>
+  <div id="apiStatus"></div>
+  <div class="kpis" id="tsKpis"></div>
+  <div class="filters" id="tsFilters"></div>
+  <div class="tablewrap"><table class="dt" id="tsTable"></table></div>
 </div>
 
 <script src="js/admin-common.js?v=b64f60d3"></script>
-<script src="js/admin-api.js?v=7b1b15c0"></script>
+<script src="js/admin-api.js?v=cf18b5fc"></script>
 </body>
 </html>
