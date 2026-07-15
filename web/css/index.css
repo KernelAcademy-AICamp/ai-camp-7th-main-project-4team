@@ -155,7 +155,7 @@
   #home .shopper .matchbadge{position:absolute;top:-12px;left:20px;background:var(--green);color:#fff;font-size:13px;font-weight:800;padding:4px 11px;border-radius:20px;box-shadow:0 5px 14px rgba(46,74,59,.4);opacity:0;transform:scale(.5);transition:.28s cubic-bezier(.2,1.5,.4,1)}
   #home .shopper.matched .matchbadge{opacity:1;transform:scale(1)}
   #home .shopper .ph{width:54px;height:54px;border-radius:50%;object-fit:cover;flex:none;filter:saturate(.6)}
-  #home .shopper .snm{font-size:17px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}   /* '건형 스타일리스트' 한 줄 고정 */
+  #home .shopper .snm{font-size:15px;font-weight:800;letter-spacing:-.03em;white-space:nowrap}   /* 스타일리스트명 한 줄 고정 */
   #home .shopper .spec{font-size:13px;color:var(--sub);margin-top:3px}
   #home .shopper .svcpill{display:inline-block;margin-top:6px;font-size:13px;font-weight:800;color:var(--green);background:var(--green-soft);padding:3px 9px;border-radius:11px}
   #home .shopper .mt{margin-left:auto;text-align:right;flex:none;padding-left:10px}
@@ -323,12 +323,17 @@
   /* 스타일리스트 상세 본문 — 오버레이 안쪽은 900px 고정 / 스타일리스트찾기 페이지만 목록 폭에 가깝게 넓혀 점프 완화 */
   .detailbody{max-width:900px; margin:0 auto;}
   #detailView .detailbody{max-width:1040px; margin:0 auto;}
-  .dhero{display:grid; grid-template-columns:380px 1fr; gap:38px; align-items:stretch;}
-  .dhero-img{position:relative; border-radius:20px; overflow:hidden; height:440px; background:#EDE8E0; box-shadow:0 12px 32px rgba(20,18,16,.12);}
+  .dhero{display:grid; grid-template-columns:280px 1fr; gap:38px; align-items:stretch;}
+  .dhero-img{position:relative; border-radius:20px; overflow:hidden; align-self:stretch; min-height:0; background:#EDE8E0; box-shadow:0 12px 32px rgba(20,18,16,.12);}
   .dhero-img img{width:100%; height:100%; object-fit:cover; filter:saturate(.55) brightness(1.03) contrast(.98);}
   .dsvc{display:inline-block; font-size:16px; font-weight:800; color:var(--green); background:var(--green-soft); padding:8px 16px; border-radius:24px; letter-spacing:-.02em;}
   .dhero-info h1{font-size:36px; font-weight:800; letter-spacing:-.045em; margin-top:16px;}
-  .dmeta{font-size:16px; color:var(--sub); font-weight:700;} .dmeta b{color:var(--green);}
+  .dmeta{font-size:16px; color:var(--sub); font-weight:700; display:inline-flex; align-items:center; gap:5px;} .dmeta b{color:var(--green);}
+  .rvstar-gold{color:#f5a623 !important;} .rvstar-gold .cutestar{width:17px; height:17px;}
+  .dhero-info .dmeta{font-size:19px; gap:7px;} .dhero-info .rvstar-gold .cutestar{width:22px; height:22px;}
+  .dmeta-rate{font-size:23px; font-weight:800; color:var(--ink);}
+  .dmeta-rev{color:var(--green); font-weight:800; cursor:pointer; text-underline-offset:3px;}
+  .dmeta-rev:hover{text-decoration:underline;}
   .dnamerow{display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-top:14px;} .dnamerow h1{margin-top:0;} .dnamerow .dmeta{margin-top:0;}
   .dbio{font-size:16px; color:var(--ink-soft); line-height:1.7; margin-top:20px; max-width:520px;}
   /* 정보 열을 사진 높이만큼 늘려, 버튼을 사진 하단에 맞춰 정렬 */
@@ -477,12 +482,12 @@
   .pgal{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
   .pgal div{height:82px; border-radius:10px; background-size:cover; background-position:center; background-color:var(--soft); filter:saturate(.6);}
   /* 후기 — 상단 평점 요약 */
-  .revsum{display:flex; align-items:center; gap:18px; padding:0 0 16px; margin-bottom:6px; border-bottom:1px solid var(--line);}
-  .revsum-n{font-size:42px; font-weight:800; line-height:1;}
-  .revsum-r{display:flex; flex-direction:column; gap:5px;}
+  .revsum{display:flex; align-items:center; gap:20px; padding:18px 22px; margin-bottom:14px; background:var(--green-soft); border-radius:16px;}
+  .revsum-n{font-size:48px; font-weight:800; line-height:1; color:var(--green);}
+  .revsum-r{display:flex; flex-direction:column; gap:6px;}
   .revsum-c{font-size:14px; color:var(--sub); font-weight:700;}
-  .revsum .revstars{display:inline-flex; gap:2px;}
-  .revsum .revstars .cutestar{width:20px; height:20px; vertical-align:0;}
+  .revsum .revstars{display:inline-flex; gap:3px;}
+  .revsum .revstars .cutestar{width:22px; height:22px; vertical-align:0;}
   /* 후기 항목 — 사람 아이콘 + 본문 */
   .rev{display:flex; gap:13px; align-items:center; padding:15px 0; border-bottom:1px solid var(--line);}
   .rev .rev-av{flex:none; width:36px; height:36px; border-radius:50%; background:var(--green-soft); color:var(--green); display:flex; align-items:center; justify-content:center;}
