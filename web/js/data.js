@@ -28,6 +28,11 @@
     loadFeedback: function () { return MODE === 'api' ? [] /*TODO async*/ : lsGet('fitting.feedback', []); },
     clearFeedback: function () { if (MODE !== 'api') { try { localStorage.removeItem('fitting.feedback'); } catch (e) {} } },
 
+    /* ── 동의(진단 개선 opt-in) ──────────────────────────────
+       transient 입력 — 양 모드 sessionStorage. 값은 피드백 rec에 포함돼 서버로 감. */
+    readConsent: function () { try { return JSON.parse(sessionStorage.getItem('fitting.consent') || '{}'); } catch (e) { return {}; } },
+    saveConsent: function (c) { try { sessionStorage.setItem('fitting.consent', JSON.stringify(c)); } catch (e) {} },
+
     /* ── 결과 저장 · 인증 게이트 ─────────────────────────────── */
     isAuthed: function () { try { return localStorage.getItem('fitting.auth') !== 'false'; } catch (e) { return true; } },
     saveUser: function (u) { lsSet('fitting.user', u); },
