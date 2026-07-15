@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="css/tokens.css?v=10fb5117">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/index.css?v=2b42119f">
+<link rel="stylesheet" href="css/index.css?v=62cc43bf">
 </head>
 <body>
 
@@ -91,9 +91,9 @@
       <div class="how">
         <div class="vtape"><div class="vfill" id="hVfill"></div><div class="vhead" id="hVhead"></div></div>
         <div class="steps">
-          <div class="step reveal"><div class="ic">📝</div><div><div class="no">STEP 01</div><h3>착용 경험 입력</h3><p>평소 입는 옷의 브랜드·핏·부위별 느낌을 알려주세요. 치수 대신 '경험'으로 시작해요</p><div class="big"><span class="hcount" data-to="2">0</span>분이면 충분</div></div></div>
-          <div class="step reveal"><div class="ic">🧬</div><div><div class="no">STEP 02</div><h3>AI 체형 진단</h3><p>8가지 체형 유형 중 내 유형을 판정하고, 공유용 캐릭터 카드로 보여드려요</p><div class="big"><span class="hcount" data-to="8">0</span>체형으로 정밀 분류</div></div></div>
-          <div class="step reveal"><div class="ic">📐</div><div><div class="no">STEP 03</div><h3>브랜드별 사이즈 번역</h3><p>안 입어본 브랜드도 내 몸 기준으로 사이즈를 환산해, 반품 없이 한 번에 맞춰요</p><div class="big">반품 <span class="hcount" data-to="0">9</span>회를 목표로</div></div></div>
+          <div class="step reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></div><div><div class="no">STEP 01</div><h3>착용 경험 입력</h3><p>평소 입는 옷의 브랜드·핏·부위별 느낌을 알려주세요. 치수 대신 '경험'으로 시작해요</p><div class="big"><span class="hcount" data-to="2">0</span>분이면 충분</div></div></div>
+          <div class="step reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8L12 3z"/><path d="M19 14.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6.6-1.6z"/></svg></div><div><div class="no">STEP 02</div><h3>AI 체형 진단</h3><p>8가지 체형 유형 중 내 유형을 판정하고, 공유용 캐릭터 카드로 보여드려요</p><div class="big"><span class="hcount" data-to="8">0</span>체형으로 정밀 분류</div></div></div>
+          <div class="step reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15.6 2.3l6.1 6.1a1 1 0 0 1 0 1.4L9.8 21.7a1 1 0 0 1-1.4 0l-6.1-6.1a1 1 0 0 1 0-1.4L14.2 2.3a1 1 0 0 1 1.4 0z"/><path d="M14 5l2 2M11 8l2 2M8 11l2 2M5 14l2 2"/></svg></div><div><div class="no">STEP 03</div><h3>브랜드별 사이즈 번역</h3><p>안 입어본 브랜드도 내 몸 기준으로 사이즈를 환산해, 반품 없이 한 번에 맞춰요</p><div class="big">반품 <span class="hcount" data-to="0">9</span>회를 목표로</div></div></div>
         </div>
       </div>
     </div></section>
@@ -149,7 +149,7 @@
     <!-- 프로모 -->
     <section class="blk" style="padding-top:0"><div class="hrow reveal">
       <div class="promo">
-        <div><b>실패 없는 쇼핑, 전문가와 함께</b></div>
+        <div><b>실패 없는 쇼핑, 스타일리스트와 함께</b><p>진단 결과 그대로, 검증된 스타일리스트가 딱 맞는 코디를 찾아드려요</p></div>
         <span class="pin" onclick="go('shop')">스타일리스트 찾기</span>
       </div>
     </div></section>
@@ -208,10 +208,10 @@
           <button class="ddbtn" onclick="toggleDD(event,'ddBud')">예산<span class="lab"></span> <span class="ar">▾</span></button>
           <div class="ddmenu">
             <div class="ddopt on" data-bud="all" onclick="setBud(this)">전체</div>
-            <div class="ddopt" data-bud="b1" onclick="setBud(this)">~5만원</div>
-            <div class="ddopt" data-bud="b2" onclick="setBud(this)">5~10만원</div>
-            <div class="ddopt" data-bud="b3" onclick="setBud(this)">10~15만원</div>
-            <div class="ddopt" data-bud="b4" onclick="setBud(this)">15만원 이상</div>
+            <div class="ddopt" data-bud="b1" onclick="setBud(this)">~5만</div>
+            <div class="ddopt" data-bud="b2" onclick="setBud(this)">5~10만</div>
+            <div class="ddopt" data-bud="b3" onclick="setBud(this)">10~15만</div>
+            <div class="ddopt" data-bud="b4" onclick="setBud(this)">15만+</div>
           </div>
         </div>
         <div class="dd" id="ddStyle">
