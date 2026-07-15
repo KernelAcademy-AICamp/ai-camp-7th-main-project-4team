@@ -329,21 +329,19 @@
     var el=document.getElementById('profCard'); if(!el) return; var U=USER;
     if(!_profEdit){
       el.innerHTML='<div class="mcard">'+
-        '<div class="msub"><div class="subhead">신체 정보 <span class="pr half">◐ MVP</span></div>'+
+        '<div class="msub"><div class="subhead">신체 · 선호 정보 <span class="pr half">◐ MVP</span></div>'+
           '<div class="field"><span>성별 · 나이</span><span class="v">'+(U.gender==='female'?'여성':'남성')+' · <span class="num">'+U.age+'</span>세</span></div>'+
           '<div class="field"><span>키 · 몸무게</span><span class="v"><span class="num">'+U.height+'</span>cm · <span class="num">'+U.weight+'</span>kg</span></div>'+
+          '<div class="field"><span>핏 취향</span><span class="v">'+U.fit+'</span></div>'+
           '<div class="note">🔒 민감정보 · 편집 시 재진단을 추천해요</div></div>'+
-        '<div class="msub"><div class="subhead">선호 핏 <span class="pr half">◐ MVP</span></div>'+
-          '<div class="field"><span>핏 취향</span><span class="v">'+U.fit+'</span></div></div>'+
         '</div><div class="prof-actions"><button class="btn" onclick="editProfile()">수정하기</button></div>';
     } else {
       el.innerHTML='<div class="mcard">'+
-        '<div class="msub"><div class="subhead">신체 정보</div>'+
+        '<div class="msub"><div class="subhead">신체 · 선호 정보</div>'+
           '<div class="pedit"><label>성별</label><div class="seg" id="pGender">'+['male','female'].map(function(g){return '<span class="o'+(U.gender===g?' on':'')+'" data-g="'+g+'" onclick="pPick(this)">'+(g==='male'?'남성':'여성')+'</span>';}).join('')+'</div></div>'+
           '<div class="pedit inrow3"><div><label>나이</label><input class="inp" id="pAge" type="number" value="'+U.age+'"></div><div><label>키(cm)</label><input class="inp" id="pHeight" type="number" value="'+U.height+'"></div><div><label>몸무게(kg)</label><input class="inp" id="pWeight" type="number" value="'+U.weight+'"></div></div>'+
+          '<div class="pedit"><label>핏 취향</label><div class="seg" id="pFit">'+FIT_OPTS.map(function(f){return '<span class="o'+(U.fit===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div>'+
           '<div class="note" style="color:var(--warn)">⚠️ 신체정보를 바꾸면 재진단을 추천해요</div></div>'+
-        '<div class="msub"><div class="subhead">선호 핏</div>'+
-          '<div class="pedit"><label>핏 취향</label><div class="seg" id="pFit">'+FIT_OPTS.map(function(f){return '<span class="o'+(U.fit===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div></div>'+
         '</div><div class="prof-actions"><button class="btn ghost" onclick="cancelProfile()">취소</button><button class="btn" onclick="saveProfile()">저장하기</button></div>';
     }
     var an=document.getElementById('acctName'); if(an) an.textContent=U.name;   // 이름은 계정 섹션에 표시(신원)

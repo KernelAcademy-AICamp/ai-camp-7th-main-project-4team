@@ -317,7 +317,8 @@
   .back{display:inline-flex; align-items:center; gap:6px; font-size:15px; font-weight:700; color:var(--sub); cursor:pointer; margin-bottom:22px;}
   .back:hover{color:var(--ink);}
   /* 스타일리스트찾기 내부 전환(목록↔상세↔요청)에도 탭 전환과 동일한 페이드 — 딱 끊기는 느낌 제거 */
-  #shop #listView, #shop #detailView, #shop #requestView{max-width:1040px; margin:0 auto; animation:viewIn .28s ease;}
+  #shop #listView{margin:0 auto; animation:viewIn .28s ease;}   /* 목록 = 전체폭(마이와 좌우 통일) */
+  #shop #detailView, #shop #requestView{max-width:1040px; margin:0 auto; animation:viewIn .28s ease;}
   /* 스타일리스트 상세 본문 — 오버레이 안쪽은 900px 고정 / 스타일리스트찾기 페이지만 목록 폭에 가깝게 넓혀 점프 완화 */
   .detailbody{max-width:900px; margin:0 auto;}
   #detailView .detailbody{max-width:1040px; margin:0 auto;}
@@ -542,7 +543,7 @@
   .social .email{background:var(--ink); color:#fff;}
 
   /* ===== 마이페이지 (좌측 사이드 네비) ===== */
-  #my .mwrap{display:grid; grid-template-columns:268px 1fr; gap:30px; align-items:start; margin-top:14px;}
+  #my .mwrap{display:grid; grid-template-columns:268px 1fr; gap:30px; align-items:start; margin-top:14px;}   /* 전체폭 — 스타일리스트 목록과 좌우 통일 */
   #my .side{position:sticky; top:88px;}
   #my .pcard{background:#fff; border:1px solid var(--line); border-radius:20px; padding:24px; text-align:center; margin-bottom:14px; box-shadow:0 6px 18px rgba(20,18,16,.05);}
   #my .pcard .av{width:66px; height:66px; border-radius:50%; margin:0 auto 12px; background:var(--ink); color:#fff; display:flex; align-items:center; justify-content:center; font-size:25px; font-weight:800; overflow:hidden;}
