@@ -1,6 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "outputDirectory": "web",
+  "buildCommand": "npm run gen-app",
+  "outputDirectory": "app",
   "rewrites": [
     { "source": "/og-image-v2.png", "destination": "/img/og-image-v2.png" },
     { "source": "/og-image.png", "destination": "/img/og-image.png" }

@@ -7,6 +7,8 @@
     "test": "node engine/test.js",
     "serve": "node scripts/serve.js",
     "dev:api": "set -a && . ./.env.local && set +a && vercel dev",
+    "gen-catalog": "node scripts/gen-catalog.js",
+    "gen-app": "node scripts/gen-app.js",
     "screens": "python3 scripts/gen-screens.py",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

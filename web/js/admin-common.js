@@ -9,7 +9,14 @@
     var who=document.getElementById('adminWho'); if(who) who.textContent=s.email||'admin';
   });
   window.adminLogout=function(){
-    try{ sessionStorage.removeItem('fitting.admin'); }catch(e){}
-    location.replace('admin-login.html');
+    try{ sessionStorage.removeItem('fitting.admin'); }catch(e){}   // 목업/브릿지 세션 정리
+    var go=function(){ location.replace('admin-login.html'); };
+    // 실 세션(api·Supabase 로그인)까지 종료. ADMINAUTH 있으면 signOut(서버 폐기),
+    // 없는 페이지(대부분 admin*)는 로컬 sb-* 토큰을 직접 제거해 재로그인 강제.
+    if(window.ADMINAUTH && ADMINAUTH.ready && ADMINAUTH.ready()){
+      try{ Promise.resolve(ADMINAUTH.signOut()).then(go, go); return; }catch(e){}
+    }
+    try{ Object.keys(localStorage).forEach(function(k){ if(k.indexOf('sb-')===0) localStorage.removeItem(k); }); }catch(e){}
+    go();
   };
 })();
