@@ -18,10 +18,26 @@
   var FDATA = {
     mode: MODE,
 
-    /* ── 피드백 (킬 메트릭 원천) ─────────────────────────────── */
-    // proto: 동기 localStorage push(현행과 동일) / api: POST /api/feedback (fire-and-forget)
+    /* 익명 세션 id(진단 기록용) — get-or-create, localStorage 유지 */
+    sessionId: function () {
+      var k = 'fitting.session', v = null;
+      try { v = localStorage.getItem(k); } catch (e) {}
+      if (!v) { v = 's-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8); try { localStorage.setItem(k, v); } catch (e) {} }
+      return v;
+    },
+
+    /* ── 피드백 (킬 메트릭 원천) ───────────────────────────────
+       rec(canonical): {verdict, engineImprove, ageAttested, diagnosisId, bodyType, confidenceTier, ts}
+       proto: 동기 localStorage push / api: /api/feedback 로 매핑 POST(diagnosis_id 필수) */
     saveFeedback: function (rec) {
-      if (MODE === 'api') { postJSON('/api/feedback', rec); return; }
+      if (MODE === 'api') {
+        if (!rec.diagnosisId) return;   // 진단 미기록 시 스킵(안전)
+        postJSON('/api/feedback', {
+          diagnosis_id: rec.diagnosisId, verdict: rec.verdict, aware_brand: true,
+          engine_improve_consent: !!rec.engineImprove, age_attested: !!rec.ageAttested
+        });
+        return;
+      }
       var arr = lsGet('fitting.feedback', []); arr.push(rec); lsSet('fitting.feedback', arr);
     },
     // admin-diagnostics 읽기. proto: 동기 배열 / api: 다음 증분에서 async 배선(GET /api/admin/feedback)

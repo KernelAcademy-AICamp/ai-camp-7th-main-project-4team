@@ -81,6 +81,7 @@
     var _ifr=slot.querySelector('iframe'); if(_ifr) _ifr.addEventListener('load', function(){ _cardPainted=true; maybeHideLoading(); });
   }
   var cardType=null;   // 실엔진(FitBodyType.classify)이 채움 — 초기 null이라 가짜 유형 안 뜸
+  var _diagId=null;    // api 모드: recordDiagnosis 후 diagnosis id 저장(피드백 FK)
   // 유형 정체성 / 잘맞·피할 FIT / 한 끗 — 마이 '내 진단결과' 디자인 통일 (8유형 동적)
   (function(){
     var okC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
@@ -299,6 +300,12 @@
         }
       }
       _contentReady=true; maybeHideLoading();
+      // api 모드: 진단 결과를 서버에 기록(store)하고 id 확보 → 이후 피드백 FK. proto는 no-op.
+      if(FDATA.mode==='api'){
+        FDATA.recordDiagnosis({ session_id:FDATA.sessionId(), category:curCat,
+          input:payload, result:{ card:cardType, confidenceTier:confidenceTier }, engine_version:'web' })
+          .then(function(id){ _diagId=id; }).catch(function(){});
+      }
     });
   }).catch(function(){ renderLoadError(); hideRloading(); }); }
   else { renderLoadError(); hideRloading(); }   // BodyModel 스크립트 로드 실패
@@ -334,8 +341,8 @@
   function fb(el,verdict){
     [].forEach.call(el.parentElement.children,function(c){c.classList.remove('on');}); el.classList.add('on');
     var consent=FDATA.readConsent();   // 어댑터(seam)
-    var rec={ ts:new Date().toISOString(), bodyType:cardType, verdict:verdict, confidenceTier:confidenceTier, engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true };
-    FDATA.saveFeedback(rec);   // 어댑터(seam): proto=localStorage / api=POST /api/feedback
+    var rec={ ts:new Date().toISOString(), bodyType:cardType, verdict:verdict, confidenceTier:confidenceTier, engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId };
+    FDATA.saveFeedback(rec);   // 어댑터(seam): proto=localStorage / api=POST /api/feedback(diagnosis_id 포함)
   }
   // 진단 초기화 — 누적된 입력(dx·기본정보·동의·피드백)을 지우고 처음부터. (목업 테스트용)
   function resetDiag(){
