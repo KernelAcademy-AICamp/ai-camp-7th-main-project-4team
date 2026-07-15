@@ -6,6 +6,7 @@
   "scripts": {
     "test": "node engine/test.js",
     "serve": "node scripts/serve.js",
+    "dev:api": "set -a && . ./.env.local && set +a && vercel dev",
     "screens": "python3 scripts/gen-screens.py",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
