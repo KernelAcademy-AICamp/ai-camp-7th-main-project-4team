@@ -329,21 +329,19 @@
     var el=document.getElementById('profCard'); if(!el) return; var U=USER;
     if(!_profEdit){
       el.innerHTML='<div class="mcard">'+
-        '<div class="msub"><div class="subhead">신체 정보 <span class="pr half">◐ MVP</span></div>'+
+        '<div class="msub"><div class="subhead">신체 · 선호 정보 <span class="pr half">◐ MVP</span></div>'+
           '<div class="field"><span>성별 · 나이</span><span class="v">'+(U.gender==='female'?'여성':'남성')+' · <span class="num">'+U.age+'</span>세</span></div>'+
           '<div class="field"><span>키 · 몸무게</span><span class="v"><span class="num">'+U.height+'</span>cm · <span class="num">'+U.weight+'</span>kg</span></div>'+
+          '<div class="field"><span>핏 취향</span><span class="v">'+U.fit+'</span></div>'+
           '<div class="note">🔒 민감정보 · 편집 시 재진단을 추천해요</div></div>'+
-        '<div class="msub"><div class="subhead">선호 핏 <span class="pr half">◐ MVP</span></div>'+
-          '<div class="field"><span>핏 취향</span><span class="v">'+U.fit+'</span></div></div>'+
         '</div><div class="prof-actions"><button class="btn" onclick="editProfile()">수정하기</button></div>';
     } else {
       el.innerHTML='<div class="mcard">'+
-        '<div class="msub"><div class="subhead">신체 정보</div>'+
+        '<div class="msub"><div class="subhead">신체 · 선호 정보</div>'+
           '<div class="pedit"><label>성별</label><div class="seg" id="pGender">'+['male','female'].map(function(g){return '<span class="o'+(U.gender===g?' on':'')+'" data-g="'+g+'" onclick="pPick(this)">'+(g==='male'?'남성':'여성')+'</span>';}).join('')+'</div></div>'+
           '<div class="pedit inrow3"><div><label>나이</label><input class="inp" id="pAge" type="number" value="'+U.age+'"></div><div><label>키(cm)</label><input class="inp" id="pHeight" type="number" value="'+U.height+'"></div><div><label>몸무게(kg)</label><input class="inp" id="pWeight" type="number" value="'+U.weight+'"></div></div>'+
+          '<div class="pedit"><label>핏 취향</label><div class="seg" id="pFit">'+FIT_OPTS.map(function(f){return '<span class="o'+(U.fit===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div>'+
           '<div class="note" style="color:var(--warn)">⚠️ 신체정보를 바꾸면 재진단을 추천해요</div></div>'+
-        '<div class="msub"><div class="subhead">선호 핏</div>'+
-          '<div class="pedit"><label>핏 취향</label><div class="seg" id="pFit">'+FIT_OPTS.map(function(f){return '<span class="o'+(U.fit===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div></div>'+
         '</div><div class="prof-actions"><button class="btn ghost" onclick="cancelProfile()">취소</button><button class="btn" onclick="saveProfile()">저장하기</button></div>';
     }
     var an=document.getElementById('acctName'); if(an) an.textContent=U.name;   // 이름은 계정 섹션에 표시(신원)
@@ -863,13 +861,23 @@
     var cond = list.length+'명 · '+(favOnly?'즐겨찾기 · ':'')+(curSvc==='all'?'전체 유형':SVC[curSvc])+(curOcc==='all'?'':' · '+OCC[curOcc])+(curBudget==='all'?'':' · 예산 '+BUD[curBudget])+(curStyles.length?' · '+styleLabel():'')+(q?' · "'+q+'"':'');
     var active = curSvc!=='all'||curOcc!=='all'||curBudget!=='all'||curStyles.length||q||favOnly;
     document.getElementById('count').innerHTML = cond + (active?'  ·  <a onclick="browseAll()">초기화하기</a>':'');
-    var g=document.getElementById('grid');
+    _gridList=list; gridPage=1;   // 필터·정렬 바뀌면 항상 1페이지부터
+    paintGrid();
+  }
+  /* 목록 페이지네이션 — 3×3=9개/페이지. 지금은 8명이라 1페이지지만, 스타일리스트가 늘면
+     페이지로 나눠 노출(향후 확장 대비). goPage는 필터 재계산 없이 페이지만 다시 그린다. */
+  var GRID_PAGE=9, gridPage=1, _gridList=[];
+  function paintGrid(){
+    var list=_gridList, g=document.getElementById('grid'); if(!g) return;
     if(!list.length){
       g.innerHTML = favOnly
         ? '<div class="empty"><b>아직 즐겨찾기한 스타일리스트가 없어요</b><p>스타일리스트 카드의 <span style="color:var(--green)">북마크</span>를 눌러 담아보세요 · <a onclick="browseAll()">전체 보기</a></p></div>'
         : '<div class="empty"><b>조건에 맞는 스타일리스트가 아직 없어요</b><p>초기라 스타일리스트를 모으는 중이에요 · <a onclick="notifySignup()">오픈 알림 신청하기</a> 또는 <a onclick="browseAll()">전체 보기</a></p></div>';
-      return; }
-    g.innerHTML=list.map(function(e){ var idx=EX.indexOf(e);
+      renderPager(0); return; }
+    var pages=Math.ceil(list.length/GRID_PAGE);
+    if(gridPage>pages) gridPage=pages; if(gridPage<1) gridPage=1;
+    var start=(gridPage-1)*GRID_PAGE, pageList=list.slice(start, start+GRID_PAGE);
+    g.innerHTML=pageList.map(function(e){ var idx=EX.indexOf(e);
       var rt=e.rating>0?'<span class="star"><span class="rvstar">'+starSVG()+'</span> '+e.rating+' <small class="rv">('+e.review+')</small></span>':'<span class="star new">신규</span>';
       var svcico='<span class="svcico">'+e.services.map(function(sv){return '<span class="b" title="'+SVC[sv.type]+'">'+svcIcon(sv.type)+'</span>';}).join('')+'</span>';
       return '<div class="ecard" onclick="openDetail('+idx+')"><div class="cover"><img src="'+img(e)+'" alt="" onerror="'+FB+'"><span class="match">매칭도 '+e.match+'%</span>'+
@@ -879,6 +887,21 @@
         '<div class="cardmid">'+svcico+'<span class="cardprice"><span class="num">'+svcMinPrice(e).toLocaleString()+'</span>원~</span></div>'+
         '</div></div>';
     }).join('');
+    renderPager(pages);
+  }
+  // 번호 페이저(‹ 1 2 3 ›) — 1페이지 이하면 숨김. 인라인 onclick(goPage)은 전역 함수 참조.
+  function renderPager(pages){
+    var el=document.getElementById('pager'); if(!el) return;
+    if(pages<=1){ el.innerHTML=''; el.classList.remove('on'); return; }
+    el.classList.add('on');
+    var h='<button class="pg nav" '+(gridPage<=1?'disabled':'')+' onclick="goPage('+(gridPage-1)+')" aria-label="이전 페이지">‹</button>';
+    for(var p=1;p<=pages;p++){ h+='<button class="pg'+(p===gridPage?' on':'')+'" onclick="goPage('+p+')" aria-current="'+(p===gridPage?'page':'false')+'">'+p+'</button>'; }
+    h+='<button class="pg nav" '+(gridPage>=pages?'disabled':'')+' onclick="goPage('+(gridPage+1)+')" aria-label="다음 페이지">›</button>';
+    el.innerHTML=h;
+  }
+  function goPage(n){
+    gridPage=n; paintGrid();
+    var c=document.getElementById('count'); if(c) c.scrollIntoView({behavior:'smooth', block:'start'});   // 페이지 바뀌면 목록 상단으로
   }
 
 

@@ -435,6 +435,26 @@
     var prefs=(prev.prefs&&typeof prev.prefs==='object')?prev.prefs:{}; prefs[cat]=fitLine;
     try{ sessionStorage.setItem('fitting.dx', JSON.stringify({ basic:basic, prefs:prefs, experiences:prev.experiences||[] })); }catch(e){}
   }
+  // '찾는 브랜드가 없어요' — 앵커 밖 브랜드는 garment 실측 역산이 불가. 곧바로 결과로 튀면
+  //  맥락이 끊기니 '기본 정보만으로도 진단할 수 있어요'(0벌) 인터스티셜을 띄워 기대치
+  //  (저신뢰·정확도 사다리)를 먼저 세팅한다. 확인 → 기본진단(skip=1) / '이전·브랜드 고르기' → 옷 정보 복귀.
+  //  주의: 선호핏(prefs)을 저장하면 result.js가 그 카테고리를 '부분 완료'로 봐 8유형 카드 대신
+  //  잠금 화면을 띄우므로(카드=상+하 완료 or 0벌만 노출), 이 경로는 prefs를 남기지 않는다.
+  // 상단 1·2·3 스텝퍼(.dstepc)는 유지해 일반 스텝과 레이아웃을 통일하고, 위저드 본문(현재 스텝)과
+  //  하단 내비만 감춘 뒤 패널을 띄운다(hideBaseWizard는 스텝퍼까지 지워 derived 전용).
+  var BASIC_HIDE='.flow > .wstep, .flow > .wnav, #wnote';
+  function skipToBasic(){
+    document.querySelectorAll(BASIC_HIDE).forEach(function(e){ e.classList.add('hidden'); });
+    var p=document.getElementById('basic-check'); if(p) p.classList.remove('hidden');
+    window.scrollTo(0,0);
+  }
+  // 인터스티셜 → 옷 정보 단계로 복귀(입력 그대로 유지). '기본 정보로 진단하기'는 패널 버튼이 직접 skip=1로 간다.
+  function exitBasicCheck(){
+    var p=document.getElementById('basic-check'); if(p) p.classList.add('hidden');
+    document.querySelectorAll(BASIC_HIDE).forEach(function(e){ e.classList.remove('hidden'); });
+    render();
+    window.scrollTo(0,0);
+  }
 
   /* 결과 화면의 "이어서 진단"으로 들어온 경우:
      ?cat= 으로 대상 카테고리를 미리 선택, ?reuse=1 이면 기본 정보(03)를 재사용했음을 알린다.
