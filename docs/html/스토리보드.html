@@ -386,6 +386,10 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   <div class="spec">
     <div class="sp-head"><span class="id">탭3</span><span class="nm">👔 쇼퍼찾기 (목록)</span><span class="pri">★ 페이크도어 · 🔍</span>
       <div class="io"><b>서브뷰</b> 목록→상세→요청→입찰 · <b>I/O</b> <span class="w">RW</span> reqs·favs / R auth</div></div>
+    <div class="sp-item"><span class="mk">★</span><div><div class="sp-nm">MVP(api·프로덕션): 웨이트리스트로 대체</div>
+      <div class="sp-l d"><span class="lb">설명</span>아래 목록/상세/요청/입찰(proto 데모)은 <b>api 모드에서 미노출</b> — 진입 시 "스타일리스트 매칭, 곧 만나요 · <b>이메일 입력→오픈 알림 신청</b>" 웨이트리스트만.</div>
+      <div class="sp-l i"><span class="lb">의도</span>목업 노출 0 + 수요만 측정(saveLead notify·contact 이메일→lead 테이블). 진단→수요 전환은 session 조인(admin 전문가 수요 3.C.3).</div>
+      <div class="sp-l c"><span class="lb">제약</span>로그인 불필요. 실매칭 전주기(입찰·결제·진행)는 proto 데모에만.</div></div></div>
     <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">서비스 탭</div>
       <div class="sp-l d"><span class="lb">설명</span>온라인/동행/이미지 유형 전환.</div>
       <div class="sp-l i"><span class="lb">의도</span>어떤 서비스에 수요가 몰리는지 신호로 수집(3.B.3 축과 동일).</div>
@@ -1873,9 +1877,9 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/diagnostics</div></div>
     <div class="vp">
-      <div class="topnav"><span class="logo">fitting</span><div class="menu"><span>사이즈·데이터</span><span>회원·거래</span><span class="on">사업</span><span>API</span><span>운영</span></div><div class="act">👤</div></div>
+      <div class="topnav"><span class="logo">fitting</span><div class="menu"><span>사이즈·데이터</span><span class="on">진단·정확도</span><span>엔진 강화</span><span>전문가 수요</span></div><div class="act">👤</div></div>
       <div class="pg">
-        <div class="tabs"><span class="tab">운영 대시보드</span><span class="tab on">진단 응답·정확도</span></div><div class="kpis"><div class="kpi"><div class="kn">68%</div><div class="kl">정확도 동의율</div></div><div class="kpi"><div class="kn">96</div><div class="kl">응답</div></div><div class="kpi"><div class="kn">18%</div><div class="kl">애매</div></div><div class="kpi"><div class="kn">14%</div><div class="kl">틀림</div></div></div>
+        <div class="note"><span class="mk">0</span> 정확도 추세 — 맞음율 62%(7/14) → 68%(7/16·server-1) ↑ · 목표 ≥65%</div><div class="kpis"><div class="kpi"><div class="kn">68%</div><div class="kl">맞음율(킬)</div></div><div class="kpi"><div class="kn">96</div><div class="kl">응답</div></div><div class="kpi"><div class="kn">18%</div><div class="kl">애매</div></div><div class="kpi"><div class="kn">14%</div><div class="kl">틀림</div></div></div>
         <div class="split"><div><div class="note"><span class="mk">1</span> 정확도 × 신뢰도</div>
           <div class="heat"><span class="hh"></span><span class="hh">낮음</span><span class="hh">중간</span><span class="hh">높음</span><span class="rl">맞음</span><b>4</b><b>18</b><b>23</b><span class="rl">애매</span><b>6</b><b>9</b><b class="z">2</b><span class="rl">틀림</span><b>7</b><b>5</b><b class="d">2</b></div></div>
           <div><div class="note"><span class="mk">2</span> 8유형 / 브랜드 / 페인</div>
@@ -1884,8 +1888,11 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
     </div>
   </div></div>
   <div class="spec">
-    <div class="sp-head"><span class="id">3.C.2</span><span class="nm">진단 응답 · 정확도</span><span class="pri">★ · 🔒</span>
-      <div class="io"><b>I/O</b> R fitting.feedback ↔ 샘플</div></div>
+    <div class="sp-head"><span class="id">3.C.2</span><span class="nm">진단 응답 · 정확도 (MVP)</span><span class="pri">★ · 🔒</span>
+      <div class="io"><b>I/O</b> R Supabase feedback+diagnosis(RLS admin) · <b>정확도 추세</b>(날짜·엔진버전별)</div></div>
+    <div class="sp-item"><span class="mk">＋</span><div><div class="sp-nm">MVP admin 4메뉴 — 형제 화면</div>
+      <div class="sp-l d"><span class="lb">구성</span>사이즈·데이터 / <b>진단·정확도</b>(이 화면) / <b>엔진 강화</b>(3.C.4·진단로그→개선작업목록) / <b>전문가 수요</b>(3.C.3·lead 웨이트리스트).</div>
+      <div class="sp-l i"><span class="lb">의도</span>측정 2축(정확도·수요) + 강화 루프를 admin에서 본다. v2(회원·거래·사업·API·운영)는 숨김·미배포.</div></div></div>
     <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">정확도×신뢰도 히트맵</div>
       <div class="sp-l d"><span class="lb">설명</span>verdict×confidenceTier 교차, 빨강=확신했는데 틀림.</div>
       <div class="sp-l i"><span class="lb">의도</span>캘리브레이션 붕괴 지점을 짚어 튜닝 1순위 지목.</div>
