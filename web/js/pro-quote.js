@@ -176,13 +176,13 @@
     setTimeout(function(){ location.href='pro.html'; }, 700);
   }
   function svcPrice(service){ if(profile&&profile.services){ var f=profile.services.filter(function(s){return s.type===service;})[0]; if(f) return f.price; } return MY_PRICE; }
-  function accept(){ if(!reqs[idx].offer) reqs[idx].offer={price:svcPrice(reqs[idx].service)}; reqs[idx].status='결제대기'; saveLS('pro.reqs',reqs); render(); toast('요청을 수락했어요 · 고객 입금을 기다려요'); }
+  function accept(){ if(!reqs[idx].offer) reqs[idx].offer={price:svcPrice(reqs[idx].service)}; reqs[idx].status='결제대기'; pushSysMsg(reqs[idx],'요청을 수락했어요 · 결제를 안내했어요'); saveLS('pro.reqs',reqs); render(); toast('요청을 수락했어요 · 고객 입금을 기다려요'); }
   /* 입금 확인(데모) — 결제대기 → 수락됨(결과물 작성 열림) */
-  function markPaid(){ var r=reqs[idx]; if(!r) return; r.status='수락됨'; r.paidAt=new Date().toISOString(); saveLS('pro.reqs',reqs); render(); toast('입금이 확인됐어요 · 결과물을 작성해 주세요'); }
+  function markPaid(){ var r=reqs[idx]; if(!r) return; r.status='수락됨'; r.paidAt=new Date().toISOString(); pushSysMsg(r,'입금을 확인했어요 · 결과물을 준비할게요'); saveLS('pro.reqs',reqs); render(); toast('입금이 확인됐어요 · 결과물을 작성해 주세요'); }
   function confirmPayment(){ askConfirm(reqs[idx].cust+' 님의 입금을 확인 처리할까요?', markPaid, '입금 확인'); }
   function reject(){ reqs[idx].reason=''; reqs[idx].status='거절'; saveLS('pro.reqs',reqs); render(); toast('요청을 거절했어요'); }
   function undoReject(){ reqs[idx].status='신규'; reqs[idx].reason=''; saveLS('pro.reqs',reqs); render(); toast('거절을 되돌렸어요'); }
-  function simAccept(){ reqs[idx].status='결제대기'; saveLS('pro.reqs',reqs); render(); toast(reqs[idx].cust+' 님이 제안을 수락했어요 · 입금을 기다려요'); }
+  function simAccept(){ reqs[idx].status='결제대기'; pushSysMsg(reqs[idx],'고객이 제안을 수락했어요'); saveLS('pro.reqs',reqs); render(); toast(reqs[idx].cust+' 님이 제안을 수락했어요 · 입금을 기다려요'); }
   function completeReq(){ reqs[idx].status='완료'; saveLS('pro.reqs',reqs); render(); toast('완료 처리했어요'); }
   function cancelReq(){ reqs[idx].reason=''; reqs[idx].status='취소'; saveLS('pro.reqs',reqs); render(); toast('진행을 취소했어요'); }
   function undoCancel(){ reqs[idx].status='수락됨'; reqs[idx].reason=''; saveLS('pro.reqs',reqs); render(); toast('취소를 되돌렸어요'); }
@@ -332,6 +332,7 @@
     if(!items.length && !photos.length && !msg){ toast('상품·사진·내용 중 하나 이상 추가해주세요'); return; }
     r.deliver={ items:items, photos:photos, msg:r._dmsg||'', sentAt:new Date().toISOString() }; delete r._draft; delete r._photos; delete r._dmsg;
     r.status='완료';   // 제출 = 최종. 수정 불가 · 바로 고객에게 · 완료로 이동
+    pushSysMsg(r,'결과물을 전달했어요 · 서비스가 완료됐어요');
     saveLS('pro.reqs',reqs); editDlv=false; addFormOpen=false; var m=$('deliverModal'); if(m) m.style.display='none'; render(); toast(r.cust+' 님에게 결과물을 전달했어요 · 완료로 넘어갔어요'); }
   /* 제출 재확인 — 수정 불가·바로 고객에게 경고 */
   function confirmSubmitDeliver(){ askConfirm('제출하면 수정할 수 없고 바로 고객에게 전달돼요. 제출할까요?', sendDeliver, '제출하기'); }
@@ -807,17 +808,25 @@
     var unread=unreadFromCust(r);
     return '<button class="chat-open" onclick="toggleChat()" aria-label="고객과의 대화">'+ICON_CHAT+'<span>대화</span>'+(unread?'<span class="co-dot" title="새 메시지"></span>':'')+'</button>';
   }
+  var IC_SEND='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
+  var IC_FLAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4m0 0h11l-2 4 2 4H5"/></svg>';
+  /* 신고 = 헤더 작은 깃발 아이콘(자주 안 쓰니 눈에 안 띄게). 접수됐으면 경고색 */
+  function reportIconBtn(r){ var done=hasReport(r);
+    return '<button class="cd-flag'+(done?' on':'')+'" onclick="openReportModal()" title="'+(done?'신고 접수됨':'고객 신고')+'" aria-label="고객 신고">'+IC_FLAG+'</button>'; }
   function chatDrawerHTML(r, showReport){
-    var bubbles=proMsgs(r).map(function(mm){ var mine=(mm.from==='pro'||mm.from==='me');
+    var bubbles=proMsgs(r).map(function(mm){
+      if(mm.from==='sys') return '<div class="pm-sys">'+esc(mm.text)+'</div>';
+      var mine=(mm.from==='pro'||mm.from==='me');
       return '<div class="pm-row '+(mine?'me':'cust')+'"><div class="pm-b">'+esc(mm.text)+'</div></div>'; }).join('');
     return '<div class="cd-scrim'+(chatOpen?' on':'')+'" id="cdScrim" onclick="toggleChat()"></div>'+
       '<aside class="chatdrawer'+(chatOpen?' open':'')+'" id="chatDrawer" aria-label="고객과의 대화">'+
-        '<div class="cd-head"><b>고객과의 대화</b><span class="cd-sub">'+esc(r.cust)+' 님</span><button class="cd-x" onclick="toggleChat()" aria-label="닫기">✕</button></div>'+
+        '<div class="cd-head"><div class="cd-ti"><span class="cd-eye">고객과의 대화</span><b>'+esc(r.cust)+' 님</b></div>'+(showReport?reportIconBtn(r):'')+'<button class="cd-x" onclick="toggleChat()" aria-label="닫기">'+IC_X+'</button></div>'+
         '<div class="pm-thread" id="pmThread">'+bubbles+'</div>'+
-        '<div class="pm-compose"><input id="pmIn" placeholder="메시지를 입력하세요" onkeydown="if(event.key===\'Enter\')sendProMsg()"><button class="btn ghost" onclick="sendProMsg()">보내기</button></div>'+
-        (showReport?'<div class="cd-report">'+reportBoxHTML(r)+'</div>':'')+
+        '<div class="pm-compose"><input id="pmIn" placeholder="메시지를 입력하세요" onkeydown="if(event.key===\'Enter\')sendProMsg()"><button class="pm-send" onclick="sendProMsg()" aria-label="보내기">'+IC_SEND+'</button></div>'+
       '</aside>';
   }
+  /* 상태 변화(수락·입금확인·결과물 전달 등)를 대화에 시스템 메시지로 로그 */
+  function pushSysMsg(r, text){ if(!r) return; r.msgs = proMsgs(r).slice(); r.msgs.push({from:'sys', text:text}); }
   function toggleChat(){ chatOpen=!chatOpen; ensureProStyle();
     var d=$('chatDrawer'), s=$('cdScrim'); if(d) d.classList.toggle('open',chatOpen); if(s) s.classList.toggle('on',chatOpen);
     if(chatOpen) setTimeout(function(){ var t=$('pmThread'); if(t) t.scrollTop=t.scrollHeight; var i=$('pmIn'); if(i) i.focus(); },30); }
