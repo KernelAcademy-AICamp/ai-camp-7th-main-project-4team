@@ -231,6 +231,14 @@
   .filters{display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:22px;}
   .filters .lbl{font-size:14px; color:var(--sub2); font-weight:700;}
   .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+  /* 목록 페이저(‹ 1 2 3 ›) — 9개 초과 시 JS(renderPager)가 .on 부여해 노출. 활성=잉크블랙(초록 채움 지양) */
+  .pager{display:none; justify-content:center; align-items:center; gap:8px; margin-top:34px;}
+  .pager.on{display:flex; flex-wrap:wrap;}
+  .pager .pg{min-width:42px; height:42px; padding:0 13px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--line); background:#fff; border-radius:12px; font-size:15px; font-weight:700; color:var(--sub); cursor:pointer; font-family:inherit; transition:.15s;}
+  .pager .pg:hover:not(:disabled){border-color:var(--ink); color:var(--ink);}
+  .pager .pg.on{background:var(--ink); border-color:var(--ink); color:#fff;}
+  .pager .pg:disabled{opacity:.38; cursor:default;}
+  .pager .pg.nav{font-size:19px; line-height:1;}
   .ecard{background:#fff; border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 6px 18px rgba(20,18,16,.08); cursor:pointer; transition:.18s;}
   .ecard:hover{transform:translateY(-3px); box-shadow:0 16px 36px rgba(20,18,16,.12);}
   .ecard .cover{height:188px; position:relative; overflow:hidden; background:#EDE8E0;}

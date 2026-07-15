@@ -863,13 +863,23 @@
     var cond = list.length+'명 · '+(favOnly?'즐겨찾기 · ':'')+(curSvc==='all'?'전체 유형':SVC[curSvc])+(curOcc==='all'?'':' · '+OCC[curOcc])+(curBudget==='all'?'':' · 예산 '+BUD[curBudget])+(curStyles.length?' · '+styleLabel():'')+(q?' · "'+q+'"':'');
     var active = curSvc!=='all'||curOcc!=='all'||curBudget!=='all'||curStyles.length||q||favOnly;
     document.getElementById('count').innerHTML = cond + (active?'  ·  <a onclick="browseAll()">초기화하기</a>':'');
-    var g=document.getElementById('grid');
+    _gridList=list; gridPage=1;   // 필터·정렬 바뀌면 항상 1페이지부터
+    paintGrid();
+  }
+  /* 목록 페이지네이션 — 3×3=9개/페이지. 지금은 8명이라 1페이지지만, 스타일리스트가 늘면
+     페이지로 나눠 노출(향후 확장 대비). goPage는 필터 재계산 없이 페이지만 다시 그린다. */
+  var GRID_PAGE=9, gridPage=1, _gridList=[];
+  function paintGrid(){
+    var list=_gridList, g=document.getElementById('grid'); if(!g) return;
     if(!list.length){
       g.innerHTML = favOnly
         ? '<div class="empty"><b>아직 즐겨찾기한 스타일리스트가 없어요</b><p>스타일리스트 카드의 <span style="color:var(--green)">북마크</span>를 눌러 담아보세요 · <a onclick="browseAll()">전체 보기</a></p></div>'
         : '<div class="empty"><b>조건에 맞는 스타일리스트가 아직 없어요</b><p>초기라 스타일리스트를 모으는 중이에요 · <a onclick="notifySignup()">오픈 알림 신청하기</a> 또는 <a onclick="browseAll()">전체 보기</a></p></div>';
-      return; }
-    g.innerHTML=list.map(function(e){ var idx=EX.indexOf(e);
+      renderPager(0); return; }
+    var pages=Math.ceil(list.length/GRID_PAGE);
+    if(gridPage>pages) gridPage=pages; if(gridPage<1) gridPage=1;
+    var start=(gridPage-1)*GRID_PAGE, pageList=list.slice(start, start+GRID_PAGE);
+    g.innerHTML=pageList.map(function(e){ var idx=EX.indexOf(e);
       var rt=e.rating>0?'<span class="star"><span class="rvstar">'+starSVG()+'</span> '+e.rating+' <small class="rv">('+e.review+')</small></span>':'<span class="star new">신규</span>';
       var svcico='<span class="svcico">'+e.services.map(function(sv){return '<span class="b" title="'+SVC[sv.type]+'">'+svcIcon(sv.type)+'</span>';}).join('')+'</span>';
       return '<div class="ecard" onclick="openDetail('+idx+')"><div class="cover"><img src="'+img(e)+'" alt="" onerror="'+FB+'"><span class="match">매칭도 '+e.match+'%</span>'+
@@ -879,6 +889,21 @@
         '<div class="cardmid">'+svcico+'<span class="cardprice"><span class="num">'+svcMinPrice(e).toLocaleString()+'</span>원~</span></div>'+
         '</div></div>';
     }).join('');
+    renderPager(pages);
+  }
+  // 번호 페이저(‹ 1 2 3 ›) — 1페이지 이하면 숨김. 인라인 onclick(goPage)은 전역 함수 참조.
+  function renderPager(pages){
+    var el=document.getElementById('pager'); if(!el) return;
+    if(pages<=1){ el.innerHTML=''; el.classList.remove('on'); return; }
+    el.classList.add('on');
+    var h='<button class="pg nav" '+(gridPage<=1?'disabled':'')+' onclick="goPage('+(gridPage-1)+')" aria-label="이전 페이지">‹</button>';
+    for(var p=1;p<=pages;p++){ h+='<button class="pg'+(p===gridPage?' on':'')+'" onclick="goPage('+p+')" aria-current="'+(p===gridPage?'page':'false')+'">'+p+'</button>'; }
+    h+='<button class="pg nav" '+(gridPage>=pages?'disabled':'')+' onclick="goPage('+(gridPage+1)+')" aria-label="다음 페이지">›</button>';
+    el.innerHTML=h;
+  }
+  function goPage(n){
+    gridPage=n; paintGrid();
+    var c=document.getElementById('count'); if(c) c.scrollIntoView({behavior:'smooth', block:'start'});   // 페이지 바뀌면 목록 상단으로
   }
 
 
