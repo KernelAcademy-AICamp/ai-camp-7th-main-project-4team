@@ -194,10 +194,9 @@
   function pval(id){ var el=$(id); return el?el.value.trim():''; }
   function itemLine(it){ return (it.cat?'<span class="dlv-cat">'+esc(it.cat)+'</span> ':'')+'<b style="color:var(--ink,#1c1a17)">'+esc(it.brand)+'</b> '+esc(it.name)+' · '+esc(it.size)+' · <span class="num">'+(it.price?Number(it.price).toLocaleString():'—')+'</span>원'+(it.url?' 🔗':''); }
   /* 예산 요약(간단) — 합계 한 줄 + 예산 상태 칩. 위 초록 밴드와 구분되게 중립색 */
-  /* 옷값 합계만 — 서비스비(고객 예산)와는 다른 돈이라 예산 비교는 하지 않음 */
+  /* 옷값 합계 — C안: 구분선 없이 작게 오른쪽에 '총 N원'(참고용) */
   function budgetLiteHTML(items){
-    return '<div class="budget-lite"><span class="k">추천 상품 합계</span>'+
-      '<span class="v num">'+itemsTotal(items).toLocaleString()+'원</span></div>';
+    return '<div class="budget-lite">총 <b class="num">'+itemsTotal(items).toLocaleString()+'원</b></div>';
   }
   /* 카테고리 칩 선택(추가 폼) — 리렌더 없이 클래스만 토글 */
   function pickCat(el, cat){ dlvCat=cat; var p=el.parentNode; if(p){ [].forEach.call(p.querySelectorAll('.catchip'), function(c){ c.classList.toggle('on', c===el); }); } }
@@ -251,14 +250,25 @@
   var MAX_PHOTOS=6, MAX_PHOTO_BYTES=800000;
   function photoThumbsHTML(photos, editable){ if(!(photos||[]).length) return '';
     return '<div class="dlv-thumbs">'+photos.map(function(p,k){ return '<div class="dlv-th" style="background-image:url(\''+p.data+'\')">'+(editable?'<button onclick="delPhoto('+k+')">✕</button>':'')+'</div>'; }).join('')+'</div>'; }
-  /* 구매 상품 블록 (온라인 한정) — 합계·예산 미터 + 상품 리스트 + 추가 폼 */
+  var IC_LINK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 14.5l5-5"/><path d="M11.5 6.5l1-1a3.5 3.5 0 0 1 5 5l-2 2"/><path d="M12.5 17.5l-1 1a3.5 3.5 0 0 1-5-5l2-2"/></svg>';
+  var IC_X='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+  /* 상품 카드 1개 — editable=작성폼(삭제 O) / false=제출요약(삭제 X). 2줄: [카테고리] 브랜드 상품 / 사이즈·가격·링크 */
+  function pcardHTML(it, k, editable){
+    var price=(it.price?Number(it.price).toLocaleString():'—');
+    return '<div class="pcard'+(editable?'':' ro')+'">'+
+      (editable?'<button class="pdel" onclick="delDeliverItem('+k+')" aria-label="삭제">'+IC_X+'</button>':'')+
+      (it.cat?'<span class="pcat">'+esc(it.cat)+'</span>':'')+
+      '<div class="pbody">'+
+        '<div class="pr1"><b class="pbrand">'+esc(it.brand)+'</b><span class="pbar">|</span>'+esc(it.name)+' <b class="psz">'+esc(it.size)+'</b></div>'+
+        '<div class="pr2"><b class="num">'+price+'원</b>'+
+          (it.url?'<span class="pbar">|</span><span class="plk" title="구매 링크">'+IC_LINK+'</span>':'')+'</div>'+
+      '</div>'+
+    '</div>';
+  }
+  /* 구매 상품 블록 (온라인 한정) — 상품 리스트 + 추가 폼 + 합계 */
   function productBlockHTML(r){ var draft=r._draft||[];
     // A 카드형 — 상품 1개 = 카드 1개(카테고리·상품명 강조)
-    var list=draft.map(function(it,k){ return '<div class="pcard">'+
-        '<button class="pdel" onclick="delDeliverItem('+k+')" aria-label="삭제">✕</button>'+
-        '<div class="pnm">'+(it.cat?'<span class="pcat">'+esc(it.cat)+'</span>':'')+'<span class="pbrand">'+esc(it.brand)+'</span> '+esc(it.name)+'</div>'+
-        '<div class="pmeta"><span class="psz">'+esc(it.size)+'</span><span class="pdot">·</span><span class="ppr num">'+(it.price?Number(it.price).toLocaleString():'—')+'원</span>'+
-          (it.url?'<span class="pdot">·</span><span class="plk">🔗 구매 링크</span>':'')+'</div></div>'; }).join('');
+    var list=draft.map(function(it,k){ return pcardHTML(it,k,true); }).join('');
     var CATS=['상의','하의','아우터','신발','기타'];
     var addUI = addFormOpen
       ? '<div class="pform">'+
@@ -289,14 +299,13 @@
       '<div class="dlv-b">'+(online?productBlockHTML(r):'')+photoBlockHTML(r)+contentBlockHTML(r)+'</div>'+
       '<div class="dlv-f"><button class="btn" onclick="sendDeliver()">'+submit+'</button></div></div>';
   }
+  /* 제출한 결과물 요약 — 회색박스 없이 담은 상품 카드(읽기전용)·사진·노트, 합계는 맨 밑 */
   function deliverSummary(r){ ensureDlvStyle(); var d=r.deliver||{}, items=d.items||[], photos=d.photos||[];
-    var out='<div class="seclabel" style="margin-top:16px">제출한 결과물</div>';
-    if(items.length) out+=budgetLiteHTML(items);
-    out+='<div class="note-quote" style="margin-top:10px"><b style="color:var(--green,#2E4A3B)">✓ 제출 완료</b>';
-    if(items.length) out+='<br>'+items.map(function(it){ return '<span style="font-size:13px;color:var(--sub,#6b6a67)">· '+itemLine(it)+'</span>'; }).join('<br>');
-    if(photos.length) out+='<br><span style="font-size:12.5px;color:var(--sub2,#8a857b)">📷 사진 '+photos.length+'장</span>';
-    if(d.msg) out+='<br><span style="font-size:12.5px;color:var(--sub2,#8a857b)">"'+esc(d.msg)+'"</span>';
-    out+='</div>'+photoThumbsHTML(photos, false);
+    var out='';
+    if(items.length) out+=items.map(function(it,k){ return pcardHTML(it,k,false); }).join('');
+    if(photos.length) out+='<div style="margin-top:8px">'+photoThumbsHTML(photos, false)+'</div>';
+    if(d.msg) out+='<div class="dlv-note-ro">'+esc(d.msg)+'</div>';
+    if(items.length) out+=budgetLiteHTML(items);   // 가격 합계는 맨 밑
     return out;
   }
   function addDeliverItem(){ var br=pval('dvBrand'), nm=pval('dvName'); if(!br||!nm){ toast('브랜드와 상품명을 입력해주세요'); return; }
@@ -322,7 +331,10 @@
     var items=r._draft||[], photos=r._photos||[], msg=(r._dmsg||'').trim();
     if(!items.length && !photos.length && !msg){ toast('상품·사진·내용 중 하나 이상 추가해주세요'); return; }
     r.deliver={ items:items, photos:photos, msg:r._dmsg||'', sentAt:new Date().toISOString() }; delete r._draft; delete r._photos; delete r._dmsg;
-    saveLS('pro.reqs',reqs); editDlv=false; addFormOpen=false; var m=$('deliverModal'); if(m) m.style.display='none'; render(); toast(r.cust+' 님에게 결과물을 제출했어요'); }
+    r.status='완료';   // 제출 = 최종. 수정 불가 · 바로 고객에게 · 완료로 이동
+    saveLS('pro.reqs',reqs); editDlv=false; addFormOpen=false; var m=$('deliverModal'); if(m) m.style.display='none'; render(); toast(r.cust+' 님에게 결과물을 전달했어요 · 완료로 넘어갔어요'); }
+  /* 제출 재확인 — 수정 불가·바로 고객에게 경고 */
+  function confirmSubmitDeliver(){ askConfirm('제출하면 수정할 수 없고 바로 고객에게 전달돼요. 제출할까요?', sendDeliver, '제출하기'); }
   /* '상품 추가' 폼 펼치기/접기 */
   function toggleAddForm(){ saveDlvMsg(); addFormOpen=!addFormOpen; refreshDlv(); }
 
@@ -637,7 +649,9 @@
   /* 타임라인 노드 마커 */
   function tlNode(state, i){
     if(state==='done') return '<span class="tl-node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>';
-    if(state==='now')  return '<span class="tl-node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="4" fill="currentColor"/></svg></span>';
+    if(state==='now')  return '<span class="tl-node">'+(i===4
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>')+'</span>';
     if(state==='exc')  return '<span class="tl-node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></span>';
     return '<span class="tl-node">'+(i+1)+'</span>';
   }
@@ -680,11 +694,9 @@
   /* 결과물 인라인 작성 폼(현재=수락됨, 미제출·편집중) — 모달 내부와 같은 블록 재사용 */
   function deliverInlineBody(r){
     var online=(r.service==='online'), draft=r._draft||[];
-    // 개수·가격 없이 간단히. 추천 상품(필수) 1개 이상이면 제출 버튼 활성 · 수정 취소는 없앰
-    var submit='결과물 '+(r.deliver?'다시 제출':'제출');
-    var canSubmit = online ? draft.length>0 : true;
+    var canSubmit = online ? draft.length>0 : true;   // 추천 상품(필수) 1개 이상이면 제출 활성
     return (online?productBlockHTML(r)+'<div class="dlv-div"></div>':'') + photoBlockHTML(r) + contentBlockHTML(r) +
-      '<button class="btn" style="margin-top:16px"'+(canSubmit?'':' disabled')+' onclick="sendDeliver()">'+submit+'</button>';
+      '<button class="btn" style="margin-top:16px"'+(canSubmit?'':' disabled')+' onclick="confirmSubmitDeliver()">결과물 제출</button>';
   }
   /* 결과물 제출 완료 요약(현재=수락됨, 제출됨) — 수정/완료/취소 */
   function deliverDoneBody(r){
@@ -744,14 +756,10 @@
       }
     } else if(i===3){                            // 진행 / 결과물
       if(state==='now'){
-        var delivered=(r.deliver && !editDlv);
-        var db=delivered ? deliverDoneBody(r) : deliverInlineBody(r);
-        var dhint=delivered ? '제출한 결과물을 확인하고 완료 처리할 수 있어요'
-          : '추천 상품·사진·코디 노트를 작성해보세요';
-        inner=nowCard('결과물 전달','지금 할 일', dhint, db);
+        inner=nowCard('결과물 전달','지금 할 일','추천 상품·사진·코디 노트를 작성해보세요', deliverInlineBody(r));
       } else if(state==='done'){
         var its=(r.deliver&&r.deliver.items)||[];
-        var sum2='결과물 전달함'+(its.length?' · '+its.length+'개 · <span class="money">'+itemsTotal(its).toLocaleString()+'원</span>':'');
+        var sum2='결과물 전달함'+(its.length?' · '+its.length+'개':'');
         inner=tlReceipt('진행', sum2, deliverSummary(r), false);
       } else if(state==='exc'){
         inner=nowCardWarn('진행 취소됨','취소', '진행을 취소했어요',
@@ -793,11 +801,13 @@
 
   /* ── 고객과의 대화 = 오른쪽 위 아이콘 → 우측 드로어(별도 관리) ── */
   var ICON_CHAT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-11.7 7.7L4 20.5l1.3-4.9A8.4 8.4 0 1 1 21 11.5z"/></svg>';
+  /* 고객이 마지막에 보낸(내가 아직 답 안 한) 메시지 수 = 새 메시지 알림 */
+  function unreadFromCust(r){ var ms=proMsgs(r), n=0; for(var i=ms.length-1;i>=0;i--){ if(ms[i].from==='cust') n++; else break; } return n; }
   function chatOpenBtn(r){
-    var n=(r.msgs?r.msgs.length:1);
-    return '<button class="chat-open" onclick="toggleChat()" aria-label="고객과의 대화">'+ICON_CHAT+'<span>대화</span>'+(n?'<span class="co-badge">'+n+'</span>':'')+'</button>';
+    var unread=unreadFromCust(r);
+    return '<button class="chat-open" onclick="toggleChat()" aria-label="고객과의 대화">'+ICON_CHAT+'<span>대화</span>'+(unread?'<span class="co-dot" title="새 메시지"></span>':'')+'</button>';
   }
-  function chatDrawerHTML(r){
+  function chatDrawerHTML(r, showReport){
     var bubbles=proMsgs(r).map(function(mm){ var mine=(mm.from==='pro'||mm.from==='me');
       return '<div class="pm-row '+(mine?'me':'cust')+'"><div class="pm-b">'+esc(mm.text)+'</div></div>'; }).join('');
     return '<div class="cd-scrim'+(chatOpen?' on':'')+'" id="cdScrim" onclick="toggleChat()"></div>'+
@@ -805,6 +815,7 @@
         '<div class="cd-head"><b>고객과의 대화</b><span class="cd-sub">'+esc(r.cust)+' 님</span><button class="cd-x" onclick="toggleChat()" aria-label="닫기">✕</button></div>'+
         '<div class="pm-thread" id="pmThread">'+bubbles+'</div>'+
         '<div class="pm-compose"><input id="pmIn" placeholder="메시지를 입력하세요" onkeydown="if(event.key===\'Enter\')sendProMsg()"><button class="btn ghost" onclick="sendProMsg()">보내기</button></div>'+
+        (showReport?'<div class="cd-report">'+reportBoxHTML(r)+'</div>':'')+
       '</aside>';
   }
   function toggleChat(){ chatOpen=!chatOpen; ensureProStyle();
@@ -837,11 +848,11 @@
 
     // 좌: 방향 A 타임라인 작업대(정상 흐름) / 예외 상태는 기존 레이아웃 폴백  ·  우(sticky): 체형
     var tl = timelineHTML(r, attached);
+    // 신고는 왼쪽에서 빼고 대화 드로어 안으로 이동
     var qleft = tl
-      ? ( tl + (showReport?'<div class="card rpt-card">'+reportBoxHTML(r)+'</div>':'') )
+      ? tl
       : ( statusBlock(r) + requestReceipt(r, attached) +
-          '<div class="card offer-card"><div class="subhead">'+esc(actionTitle(r))+'</div>'+ actionHTML(r) +
-            (showReport?reportBoxHTML(r):'')+'</div>' );
+          '<div class="card offer-card"><div class="subhead">'+esc(actionTitle(r))+'</div>'+ actionHTML(r) +'</div>' );
     // 대화는 상단 오른쪽 아이콘 → 우측 드로어(별도 관리)
     $('quoteRoot').innerHTML =
       '<div class="qtop"><div class="qtop-l">'+
@@ -850,7 +861,7 @@
         '<h1>'+esc(r.cust)+' 님 · '+esc(svcLabel(r.service))+'</h1>'+
       '</div>'+(showMsg?chatOpenBtn(r):'')+'</div>'+
       '<div class="qgrid2"><div class="qleft">'+qleft+'</div><div class="qright'+(r.status==='수락됨'?' ref-on':'')+'">'+ bodyCard +'</div></div>'+
-      (showMsg?chatDrawerHTML(r):'');
+      (showMsg?chatDrawerHTML(r, showReport):'');
   }
 
   /* 상단바(앱 바) — 프로필 이름·아바타·알림 뱃지 채우기 + 계정 메뉴 */

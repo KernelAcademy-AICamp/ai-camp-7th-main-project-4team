@@ -110,6 +110,7 @@
   #home .steps{display:flex;flex-direction:column;gap:34px}
   #home .step{background:#fff;border:1px solid var(--line);border-radius:22px;padding:32px 36px;box-shadow:0 10px 28px rgba(20,22,28,.05);display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center}
   #home .step .ic{width:66px;height:66px;border-radius:18px;background:var(--green-soft);display:flex;align-items:center;justify-content:center;font-size:29px}
+  #home .step .ic svg{width:30px;height:30px;color:var(--green)}   /* 스텝 아이콘 = 사이트 SVG 톤(딥그린 stroke) */
   #home .step .no{font-size:13px;font-weight:800;color:var(--green);letter-spacing:.1em}
   #home .step h3{font-size:22px;font-weight:800;letter-spacing:-.03em;margin:6px 0 8px}
   #home .step p{font-size:16px;color:var(--sub);line-height:1.65}
@@ -140,8 +141,8 @@
   #home .occtokens{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
   #home .occtokens .oc{font-size:14px;font-weight:700;color:var(--sub);background:#fff;border:1.5px solid var(--line2);padding:9px 15px;border-radius:20px;transition:.3s}
   #home .occtokens .oc.on{background:var(--green);color:#fff;border-color:var(--green)}
-  #home .connect{display:flex;align-items:center;gap:0;margin:32px 0 0;max-width:940px}
-  #home .node{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px 22px;box-shadow:0 10px 28px rgba(20,22,28,.06);display:flex;align-items:center;gap:14px;flex:none;width:300px}
+  #home .connect{display:flex;align-items:center;gap:0;margin:32px 0 0;max-width:1000px}
+  #home .node{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px 22px;box-shadow:0 10px 28px rgba(20,22,28,.06);display:flex;align-items:center;gap:14px;flex:none;width:360px}
   #home .node .nm{font-size:17px;font-weight:800;letter-spacing:-.02em;word-break:keep-all}
   #home .node .sub2{font-size:13px;color:var(--sub);margin-top:3px}
   #home .me .av{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#3a382f,var(--ink));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;flex:none}
@@ -154,7 +155,7 @@
   #home .shopper .matchbadge{position:absolute;top:-12px;left:20px;background:var(--green);color:#fff;font-size:13px;font-weight:800;padding:4px 11px;border-radius:20px;box-shadow:0 5px 14px rgba(46,74,59,.4);opacity:0;transform:scale(.5);transition:.28s cubic-bezier(.2,1.5,.4,1)}
   #home .shopper.matched .matchbadge{opacity:1;transform:scale(1)}
   #home .shopper .ph{width:54px;height:54px;border-radius:50%;object-fit:cover;flex:none;filter:saturate(.6)}
-  #home .shopper .snm{font-size:17px;font-weight:800;letter-spacing:-.02em;word-break:keep-all}
+  #home .shopper .snm{font-size:17px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}   /* '건형 스타일리스트' 한 줄 고정 */
   #home .shopper .spec{font-size:13px;color:var(--sub);margin-top:3px}
   #home .shopper .svcpill{display:inline-block;margin-top:6px;font-size:13px;font-weight:800;color:var(--green);background:var(--green-soft);padding:3px 9px;border-radius:11px}
   #home .shopper .mt{margin-left:auto;text-align:right;flex:none;padding-left:10px}
