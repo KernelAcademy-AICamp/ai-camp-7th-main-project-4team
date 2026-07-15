@@ -49,10 +49,26 @@
     });
   }
 
-  var SOURCE='sample', DATA=[];
+  var SOURCE='sample', DATA=[], LIVE=[];
+  var MODE=(window.FDATA&&FDATA.mode)||'proto';
+  var LIVEON = MODE==='api' && window.ADMINAUTH && ADMINAUTH.ready();
+
+  // Supabase feedback(+diagnosis 임베드) → 렌더 레코드 형태로 정규화. RLS로 관리자만 데이터 받음.
+  function normLive(rows){ return (rows||[]).map(function(r,i){
+    var d=r.diagnosis||{}, res=d.result||{};
+    return { id:r.id||('l'+i), ts:r.created_at, gender:null,
+      bodyType:res.card||'?', category:d.category||'TOP', verdict:r.verdict,
+      confidenceTier:res.confidenceTier||'mid', engineImprove:!!r.engine_improve_consent,
+      anchors:[], painFlags:{} };
+  }); }
+  async function loadLive(){ if(!LIVEON) return []; try{ return normLive(await ADMINAUTH.feedbackJoin(500)); }catch(e){ return []; } }
+
   fetch('data/bodytypes.json').then(function(r){return r.json();}).then(function(j){
     (j.types||j||[]).forEach(function(t){ if(t&&t.code) TYPES[t.code]=t.name; });
-  }).catch(function(){}).then(pickSource);
+  }).catch(function(){}).then(function(){
+    if(LIVEON){ loadLive().then(function(rows){ LIVE=rows; SOURCE='live'; buildSrcBar(realCount()); apply(); }); }
+    else pickSource();
+  });
 
   function realCount(){ return loadReal().length; }
   function pickSource(){
@@ -62,6 +78,7 @@
   }
   function buildSrcBar(rc){
     $('srcBar').innerHTML=
+      (LIVEON?'<label class="numin"><input type="radio" name="src" value="live" '+(SOURCE==='live'?'checked':'')+' onchange="__src(\'live\')"><span>실 DB (Supabase · '+LIVE.length+')</span></label>':'')+
       '<label class="numin"><input type="radio" name="src" value="real" '+(SOURCE==='real'?'checked':'')+' onchange="__src(\'real\')"><span>이 브라우저 로그 ('+rc+')</span></label>'+
       '<label class="numin"><input type="radio" name="src" value="sample" '+(SOURCE==='sample'?'checked':'')+' onchange="__src(\'sample\')"><span>샘플 데이터 ('+SAMPLE.length+')</span></label>'+
       '<span class="cnt muted" id="srcNote"></span>';
@@ -69,9 +86,10 @@
   window.__src=function(s){ SOURCE=s; apply(); };
 
   function apply(){
-    DATA = SOURCE==='sample' ? SAMPLE.slice() : loadReal();
+    DATA = SOURCE==='sample' ? SAMPLE.slice() : (SOURCE==='live' ? LIVE.slice() : loadReal());
     var note=$('srcNote');
     if(SOURCE==='sample') note.innerHTML='· <b>샘플</b>(대표 16건) — 화면 확인용, 실응답 아님';
+    else if(SOURCE==='live') note.innerHTML='· <b>실 DB</b>(Supabase feedback · RLS 관리자 전용) — 킬 메트릭 실측';
     else note.innerHTML = DATA.length? '· 이 브라우저에 쌓인 실피드백(브랜드·페인 breakdown은 dx-log 배선 후)' : '· 로그 없음 — 진단→결과에서 정확도 응답 시 쌓임';
     renderKpis(); renderCalib(); renderTypes(); renderBrands(); renderPain(); renderLog();
   }

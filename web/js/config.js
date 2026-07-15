@@ -6,7 +6,7 @@
    기본 proto. 서버(Vercel env SUPABASE_SECRET_KEY) 준비되면 'api'로 스위치. */
 (function (w) {
   w.SUPABASE_URL = 'https://mprdnzlzkmljblxracsj.supabase.co';
-  w.SUPABASE_PUBLISHABLE_KEY = '';   // sb_publishable_... 채우기(공개 키 — admin 대시보드 클라이언트용)
+  w.SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_dzmb3dYgDwZYWDoKt84uyA_J1MPfscJ';   // 공개 키(커밋 OK) — admin 클라이언트/RLS
 
   // 모드 스위치: 기본 proto. 배포에서 측정 켤 때 'api'로.
   // (?mode=api 쿼리로 임시 강제 가능 — 예: 배포 후 스모크 테스트)
