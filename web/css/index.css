@@ -329,7 +329,8 @@
   .dhero-info h1{font-size:36px; font-weight:800; letter-spacing:-.045em; margin-top:16px;}
   .dmeta{font-size:16px; color:var(--sub); font-weight:700; display:inline-flex; align-items:center; gap:5px;} .dmeta b{color:var(--green);}
   .rvstar-gold{color:#f5a623 !important;} .rvstar-gold .cutestar{width:17px; height:17px;}
-  .dmeta-rate{font-size:18px; font-weight:800; color:var(--ink);}
+  .dhero-info .dmeta{font-size:19px; gap:7px;} .dhero-info .rvstar-gold .cutestar{width:22px; height:22px;}
+  .dmeta-rate{font-size:23px; font-weight:800; color:var(--ink);}
   .dmeta-rev{color:var(--green); font-weight:800; cursor:pointer; text-underline-offset:3px;}
   .dmeta-rev:hover{text-decoration:underline;}
   .dnamerow{display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-top:14px;} .dnamerow h1{margin-top:0;} .dnamerow .dmeta{margin-top:0;}
