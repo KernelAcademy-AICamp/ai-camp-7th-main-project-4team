@@ -7,7 +7,7 @@
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=f6422608">
-<link rel="stylesheet" href="css/diag.css?v=88e90f1e">
+<link rel="stylesheet" href="css/diag.css?v=37649e04">
 </head>
 <body>
 
@@ -86,7 +86,7 @@
       <div class="field"><label>입었던 사이즈</label>
         <div class="seg compact" id="size1"></div>
       </div>
-      <p class="small"><a href="#" style="color:var(--ink);font-weight:700" onclick="alert('프로토타입: 직접 입력 / 해당 없음 분기');return false">찾는 브랜드가 없어요</a> — 직접 입력하거나 건너뛸 수 있어요</p>
+      <p class="small"><a href="#" style="color:var(--ink);font-weight:700" onclick="skipToBasic();return false">찾는 브랜드가 없어요</a> — 기본 정보만으로도 진단할 수 있어요</p>
     </div>
   </div>
 
@@ -209,8 +209,28 @@
       <a href="#" class="btn-primary" id="blocked-go">하의 먼저 진단</a>
     </div>
   </div>
+
+  <!-- ===== 브랜드 없음 · 기본 정보만 (0벌 빠른 경로) — '찾는 브랜드가 없어요'에서 진입 ===== -->
+  <div id="basic-check" class="hidden">
+    <div class="qtarget"><b class="catword">상의</b> 진단</div>
+    <h2 class="qhead">기본 정보만으로도<br>진단할 수 있어요</h2>
+    <p class="qhelp">브랜드 없이 키·몸무게로 체형을 추정해요. 입어본 옷을 넣으면 더 정확해져요</p>
+    <div class="card-soft mb-16">
+      <div class="acc">
+        <div class="acc-row now"><span class="l">0벌 · 지금<span class="cur">현재</span></span><span class="r">기본 추정</span></div>
+        <div class="acc-row"><span class="l">1벌</span><span class="r">보통 — 추천 가능</span></div>
+        <div class="acc-row"><span class="l">2~3벌</span><span class="r">정확 — 권장</span></div>
+      </div>
+    </div>
+    <button class="add-garment" onclick="exitBasicCheck()">+ 브랜드 골라서 더 정확하게</button>
+    <div class="wnav">
+      <button class="btn-line" onclick="exitBasicCheck()">이전</button>
+      <span class="spacer" style="flex:1"></span>
+      <a href="diag-loading.html?skip=1" class="btn-primary">진단하기</a>
+    </div>
+  </div>
 </div>
 
-<script src="js/diag-fit.js?v=4fdeb487"></script>
+<script src="js/diag-fit.js?v=3bc224e5"></script>
 </body>
 </html>
