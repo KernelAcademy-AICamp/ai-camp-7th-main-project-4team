@@ -12,13 +12,20 @@
   // 선택 완료 여부 — 첫 진입엔 미선택이라 '다음'을 비활성으로 둔다.
   function selDone(){
     if(cur===0) return !!document.querySelector('.wstep.active .seg .opt.on');   // 성별 고름
-    if(cur===1) return !!document.getElementById('age').value && validNum('height',100,250) && validNum('weight',20,300);
+    if(cur===1) return !!document.getElementById('age').value && validNum('height',140,200) && validNum('weight',30,130);
     return true;
   }
   // 자연수 검증 — 키·몸무게가 정수이고 사람 범위 안일 때만 '다음' 활성
   function validNum(id,min,max){ var v=document.getElementById(id).value; return /^\d+$/.test(v) && +v>=min && +v<=max; }
   // 숫자만 남김(소수점·문자·음수 차단) — 키·몸무게 입력 oninput
-  function numOnly(el){ el.value=el.value.replace(/[^0-9]/g,'').slice(0,3); updateNext(); }
+  var RANGES={height:[140,200,'cm'], weight:[30,130,'kg']};
+  function numOnly(el){ el.value=el.value.replace(/[^0-9]/g,'').slice(0,3);
+    var r=RANGES[el.id];
+    if(r){ var hint=document.getElementById('hint'+el.id.charAt(0).toUpperCase()+el.id.slice(1));
+      var v=el.value, bad = v!=='' && (!/^\d+$/.test(v) || +v<r[0] || +v>r[1]);
+      el.classList.toggle('input-err', bad);
+      if(hint){ hint.classList.toggle('err', bad); hint.textContent = bad ? (r[0]+'~'+r[1]+r[2]+' 사이로 입력해주세요') : (r[0]+'~'+r[1]+r[2]); } }
+    updateNext(); }
   function updateNext(){ document.getElementById('nextbtn').disabled = !selDone(); }
   function saveBasic(){
     // 진단 스냅샷 기본값 — 다음 화면(착용경험)·결과에서 재사용
