@@ -40,7 +40,7 @@
 
   // 로컬 로그(fitting.feedback)를 정본 레코드로 정규화. 브랜드/페인은 아직 미배선 → 빈값.
   function loadReal(){
-    var raw; try{ raw=JSON.parse(localStorage.getItem('fitting.feedback')||'[]'); }catch(e){ raw=[]; }
+    var raw=FDATA.loadFeedback();   // 어댑터(seam): proto=localStorage / api=서버(다음 증분 async)
     if(!Array.isArray(raw)) raw=[];
     return raw.map(function(r,i){ return {
       id:'r'+i, ts:r.ts, gender:r.gender||null, bodyType:r.bodyType||'?', category:r.category||'TOP',

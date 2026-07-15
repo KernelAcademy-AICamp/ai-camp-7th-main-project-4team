@@ -322,10 +322,10 @@
   // ── 옷장 · 이어서 진단 게이트: 노출 불필요로 제거(2026-07 디자인 결정) ──
 
   // ── 엔진 개선 활용: 선택 동의(opt-in). 진단 이용엔 영향 없음(서비스 제공 근거로 수집·처리). ──
-  function engineConsented(){ try{ return JSON.parse(sessionStorage.getItem('fitting.consent')||'{}').engineImprove===true; }catch(e){ return false; } }
+  function engineConsented(){ return FDATA.readConsent().engineImprove===true; }   // 어댑터(seam)
   // 체크 = 엔진 개선 동의 + 만14세 이상/법정대리인 동의 확인(자기확인). 동의 지점에서만 나이 확인.
   function setEngineConsent(on){
-    try{ sessionStorage.setItem('fitting.consent', JSON.stringify({ engineImprove:!!on, ageAttested:!!on, at:new Date().toISOString() })); }catch(e){}
+    FDATA.saveConsent({ engineImprove:!!on, ageAttested:!!on, at:new Date().toISOString() });   // 어댑터(seam)
   }
   // 저장된 동의 상태를 체크박스에 반영(재방문·재렌더 시)
   (function(){ var el=document.getElementById('eiConsent'); if(el) el.checked=engineConsented(); })();
@@ -333,7 +333,7 @@
   // ── 피드백 로깅(킬 메트릭 원천). 엔진 개선 활용은 동의(engineImprove)한 경우로 표기 ──
   function fb(el,verdict){
     [].forEach.call(el.parentElement.children,function(c){c.classList.remove('on');}); el.classList.add('on');
-    var consent={}; try{ consent=JSON.parse(sessionStorage.getItem('fitting.consent')||'{}'); }catch(e){}
+    var consent=FDATA.readConsent();   // 어댑터(seam)
     var rec={ ts:new Date().toISOString(), bodyType:cardType, verdict:verdict, confidenceTier:confidenceTier, engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true };
     FDATA.saveFeedback(rec);   // 어댑터(seam): proto=localStorage / api=POST /api/feedback
   }
