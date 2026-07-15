@@ -263,6 +263,7 @@
   .cf-overlay.on{display:flex}
   .cf-box{background:#fff;border-radius:18px;padding:26px 24px 20px;max-width:340px;width:100%;box-shadow:0 24px 60px rgba(10,11,14,.28)}
   .cf-msg{font-size:16.5px;font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1.45;margin:0 0 20px;text-align:center}
+  .cf-msg .cf-sub{display:block;font-size:13px;font-weight:600;color:var(--sub);letter-spacing:-.01em;line-height:1.45;margin-top:8px}
   .cf-btns{display:flex;gap:10px}
   .cf-btns .btn{flex:1}
   .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(16px);background:var(--ink,#1c1a17);color:#fff;padding:12px 20px;border-radius:30px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:60}
@@ -429,7 +430,7 @@
   .chatdrawer .pm-row.cust .pm-b{background:var(--soft);color:var(--ink-soft)}
   .chatdrawer .pm-row.me .pm-b{background:var(--ink);color:#fff}
   /* 시스템(결정 로그) — 가운데 연초록 알림 */
-  .chatdrawer .pm-sys{align-self:center;text-align:center;font-size:12.5px;font-weight:700;color:var(--green);background:var(--green-soft);border-radius:20px;padding:6px 14px;margin:3px 0}
+  .chatdrawer .pm-sys{align-self:center;text-align:center;font-size:12.5px;font-weight:700;color:var(--green);background:var(--green-soft);border-radius:20px;padding:6px 14px;margin:13px 0}
   /* 입력 — 둥근 인풋 + 원형 보내기(SVG) */
   .chatdrawer .pm-compose{display:flex;align-items:center;gap:9px;margin:0;padding:12px 18px 14px;border-top:1px solid var(--line)}
   .chatdrawer .pm-compose input{flex:1;font-size:15.5px;padding:12px 16px;border:1.5px solid var(--line2);border-radius:22px}

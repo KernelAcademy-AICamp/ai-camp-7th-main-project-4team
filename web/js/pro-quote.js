@@ -172,17 +172,17 @@
       dir:'out', status:'제안발송', offer:{price:price, msg:msg||(c.occ+' 룩 맞춤 견적 드려요')}, budget:c.budget, date:'방금' });
     saveLS('pro.reqs',reqs);
     var proposed=loadLS('pro.proposed',[]); proposed.push(c.cust); saveLS('pro.proposed',proposed);
-    toast(c.cust+' 님에게 견적을 보냈어요');
+    toast(c.cust+'님에게 견적을 보냈어요');
     setTimeout(function(){ location.href='pro.html'; }, 700);
   }
   function svcPrice(service){ if(profile&&profile.services){ var f=profile.services.filter(function(s){return s.type===service;})[0]; if(f) return f.price; } return MY_PRICE; }
   function accept(){ if(!reqs[idx].offer) reqs[idx].offer={price:svcPrice(reqs[idx].service)}; reqs[idx].status='결제대기'; pushSysMsg(reqs[idx],'요청을 수락했어요 · 결제를 안내했어요'); saveLS('pro.reqs',reqs); render(); toast('요청을 수락했어요 · 고객 입금을 기다려요'); }
   /* 입금 확인(데모) — 결제대기 → 수락됨(결과물 작성 열림) */
   function markPaid(){ var r=reqs[idx]; if(!r) return; r.status='수락됨'; r.paidAt=new Date().toISOString(); pushSysMsg(r,'입금을 확인했어요 · 결과물을 준비할게요'); saveLS('pro.reqs',reqs); render(); toast('입금이 확인됐어요 · 결과물을 작성해 주세요'); }
-  function confirmPayment(){ askConfirm(reqs[idx].cust+' 님의 입금을 확인 처리할까요?', markPaid, '입금 확인'); }
+  function confirmPayment(){ askConfirm(reqs[idx].cust+'님의 입금을 확인할까요?', markPaid, '확인하기', '확인하면 코디를 진행할 수 있어요'); }
   function reject(){ reqs[idx].reason=''; reqs[idx].status='거절'; saveLS('pro.reqs',reqs); render(); toast('요청을 거절했어요'); }
   function undoReject(){ reqs[idx].status='신규'; reqs[idx].reason=''; saveLS('pro.reqs',reqs); render(); toast('거절을 되돌렸어요'); }
-  function simAccept(){ reqs[idx].status='결제대기'; pushSysMsg(reqs[idx],'고객이 제안을 수락했어요'); saveLS('pro.reqs',reqs); render(); toast(reqs[idx].cust+' 님이 제안을 수락했어요 · 입금을 기다려요'); }
+  function simAccept(){ reqs[idx].status='결제대기'; pushSysMsg(reqs[idx],'고객이 제안을 수락했어요'); saveLS('pro.reqs',reqs); render(); toast(reqs[idx].cust+'님이 제안을 수락했어요 · 입금을 기다려요'); }
   function completeReq(){ reqs[idx].status='완료'; saveLS('pro.reqs',reqs); render(); toast('완료 처리했어요'); }
   function cancelReq(){ reqs[idx].reason=''; reqs[idx].status='취소'; saveLS('pro.reqs',reqs); render(); toast('진행을 취소했어요'); }
   function undoCancel(){ reqs[idx].status='수락됨'; reqs[idx].reason=''; saveLS('pro.reqs',reqs); render(); toast('취소를 되돌렸어요'); }
@@ -295,7 +295,7 @@
     var online=(r.service==='online'), draft=r._draft||[];
     var submit='결과물 '+(r.deliver?'다시 제출':'제출')+(online&&draft.length ? ' ('+draft.length+'개 · '+itemsTotal(draft).toLocaleString()+'원)' : '');
     m.innerHTML='<div class="dlv-bd" onclick="closeDeliverModal()"></div><div class="dlv-pan">'+
-      '<div class="dlv-h"><div><b>'+(r.deliver?'결과물 수정':'결과물 작성')+'</b> <span>'+esc(r.cust)+' 님 · '+svcLabel(r.service)+'</span></div><button class="dlv-x" onclick="closeDeliverModal()">✕</button></div>'+
+      '<div class="dlv-h"><div><b>'+(r.deliver?'결과물 수정':'결과물 작성')+'</b> <span>'+esc(r.cust)+'님 · '+svcLabel(r.service)+'</span></div><button class="dlv-x" onclick="closeDeliverModal()">✕</button></div>'+
       '<div class="dlv-b">'+(online?productBlockHTML(r):'')+photoBlockHTML(r)+contentBlockHTML(r)+'</div>'+
       '<div class="dlv-f"><button class="btn" onclick="sendDeliver()">'+submit+'</button></div></div>';
   }
@@ -333,26 +333,26 @@
     r.deliver={ items:items, photos:photos, msg:r._dmsg||'', sentAt:new Date().toISOString() }; delete r._draft; delete r._photos; delete r._dmsg;
     r.status='완료';   // 제출 = 최종. 수정 불가 · 바로 고객에게 · 완료로 이동
     pushSysMsg(r,'결과물을 전달했어요 · 서비스가 완료됐어요');
-    saveLS('pro.reqs',reqs); editDlv=false; addFormOpen=false; var m=$('deliverModal'); if(m) m.style.display='none'; render(); toast(r.cust+' 님에게 결과물을 전달했어요 · 완료로 넘어갔어요'); }
+    saveLS('pro.reqs',reqs); editDlv=false; addFormOpen=false; var m=$('deliverModal'); if(m) m.style.display='none'; render(); toast(r.cust+'님에게 결과물을 전달했어요 · 완료로 넘어갔어요'); }
   /* 제출 재확인 — 수정 불가·바로 고객에게 경고 */
-  function confirmSubmitDeliver(){ askConfirm('제출하면 수정할 수 없고 바로 고객에게 전달돼요. 제출할까요?', sendDeliver, '제출하기'); }
+  function confirmSubmitDeliver(){ askConfirm(reqs[idx].cust+'님에게 결과물을 보낼까요?', sendDeliver, '보내기', '보내면 수정할 수 없어요'); }
   /* '상품 추가' 폼 펼치기/접기 */
   function toggleAddForm(){ saveDlvMsg(); addFormOpen=!addFormOpen; refreshDlv(); }
 
   /* 결정 버튼 확인 팝업 — 수락/거절/완료/취소 */
-  function askConfirm(msg, onYes, yesLabel){
-    var ov=$('cfOverlay'); $('cfMsg').textContent=msg; $('cfYes').textContent=yesLabel||'확인';
+  function askConfirm(msg, onYes, yesLabel, sub){
+    var ov=$('cfOverlay'); $('cfMsg').innerHTML=esc(msg)+(sub?'<span class="cf-sub">'+esc(sub)+'</span>':''); $('cfYes').textContent=yesLabel||'확인';
     ov.classList.add('on');
     function close(){ ov.classList.remove('on'); }
     $('cfYes').onclick=function(){ close(); if(onYes) onYes(); };
     $('cfNo').onclick=close;
     ov.onclick=function(e){ if(e.target===ov) close(); };
   }
-  function confirmAccept(){ askConfirm(reqs[idx].cust+' 님의 요청을 수락할까요?', accept, '수락하기'); }
-  function confirmReject(){ askConfirm(reqs[idx].cust+' 님의 요청을 거절할까요?', reject, '거절하기'); }
-  function confirmComplete(){ askConfirm('완료 처리할까요? 고객 후기를 받을 수 있어요', completeReq, '완료 처리'); }
-  function confirmCancel(){ var s=reqs[idx]&&reqs[idx].status;
-    askConfirm((s==='결제대기')?'거래를 취소할까요?':'진행을 취소할까요?', cancelReq, '취소하기'); }
+  function confirmAccept(){ askConfirm(reqs[idx].cust+'님의 요청을 수락할까요?', accept, '수락하기', '수락하면 코디를 시작할 수 있어요'); }
+  function confirmReject(){ askConfirm(reqs[idx].cust+'님의 요청을 거절할까요?', reject, '거절하기', '거절하면 요청이 종료돼요'); }
+  function confirmComplete(){ askConfirm('완료 처리할까요?', completeReq, '완료 처리', '고객 후기를 받을 수 있어요'); }
+  function confirmCancel(){ var s=reqs[idx]&&reqs[idx].status; var pay=(s==='결제대기');
+    askConfirm(pay?'거래를 취소할까요?':'진행을 취소할까요?', cancelReq, '취소하기', pay?'취소하면 요청이 종료돼요':'취소하면 진행 중인 코디가 종료돼요'); }
 
   /* ── 고객 체형 = 스타일리스트용 '결과 카드 값' 먼저, 측정값은 가독성 좋게 '자세히 보기' ── */
   function segIdx(pct){ return Math.max(0, Math.min(4, Math.floor((pct==null?50:pct)/20))); }
@@ -586,7 +586,7 @@
   function closeReportModal(){ var m=$('reportModal'); if(m) m.style.display='none'; }
   function renderReportModal(){ var r=reqs[idx], m=$('reportModal'); if(!m||!r) return;
     m.innerHTML='<div class="dlv-bd" onclick="closeReportModal()"></div><div class="dlv-pan">'+
-      '<div class="dlv-h"><div><b>고객 신고</b> <span>'+esc(r.cust)+' 님</span></div><button class="dlv-x" onclick="closeReportModal()">✕</button></div>'+
+      '<div class="dlv-h"><div><b>고객 신고</b> <span>'+esc(r.cust)+'님</span></div><button class="dlv-x" onclick="closeReportModal()">✕</button></div>'+
       '<div class="dlv-b">'+
         '<p style="font-size:12.5px;color:var(--sub2,#8a857b);margin:0 0 12px">부적절한 요청·언행·노쇼 등을 신고하면 관리자가 검토해 회원 제재로 이어질 수 있어요. 허위 신고는 제재 대상이에요.</p>'+
         '<div class="rpt-reasons" id="rptReasons">'+REPORT_REASONS.map(function(rs,k){ return '<label class="rpt-r"><input type="radio" name="rptReason" value="'+esc(rs)+'"'+(k===0?' checked':'')+'> '+esc(rs)+'</label>'; }).join('')+'</div>'+
@@ -697,14 +697,14 @@
     var online=(r.service==='online'), draft=r._draft||[];
     var canSubmit = online ? draft.length>0 : true;   // 추천 상품(필수) 1개 이상이면 제출 활성
     return (online?productBlockHTML(r)+'<div class="dlv-div"></div>':'') + photoBlockHTML(r) + contentBlockHTML(r) +
-      '<button class="btn" style="margin-top:16px"'+(canSubmit?'':' disabled')+' onclick="confirmSubmitDeliver()">결과물 제출</button>';
+      '<button class="btn" style="margin-top:16px"'+(canSubmit?'':' disabled')+' onclick="confirmSubmitDeliver()">결과물 보내기</button>';
   }
   /* 결과물 제출 완료 요약(현재=수락됨, 제출됨) — 수정/완료/취소 */
   function deliverDoneBody(r){
     return deliverSummary(r) +
       '<button class="btn ghost" style="margin-top:12px" onclick="editDeliver()">결과물 수정</button>'+
       '<button class="btn" style="margin-top:8px" onclick="confirmComplete()">완료 처리</button>'+
-      '<div class="quiet"><a onclick="confirmCancel()">진행 취소</a></div>';
+      '<div class="quiet"><a onclick="confirmCancel()">취소하기</a></div>';
   }
   /* 단계별 카드 HTML */
   function tlStepHTML(i, state, r, attached, out){
@@ -747,7 +747,7 @@
       if(state==='now'){                          // 결제대기
         inner=nowCardPay('결제 · 입금 대기','입금 대기','고객 입금을 확인하면 결과물 작성이 열려요',
           '<div class="pay-amt"><span>결제 금액</span><b class="num">'+pp+'원</b></div>'+
-          '<div class="act-row" style="margin-top:14px"><button class="btn ghost" onclick="confirmCancel()">거래 취소</button><button class="btn" onclick="confirmPayment()">입금 확인</button></div>');
+          '<div class="act-row" style="margin-top:14px"><button class="btn ghost" onclick="confirmCancel()">취소하기</button><button class="btn" onclick="confirmPayment()">입금 확인하기</button></div>');
       } else if(state==='done'){                   // 입금 완료
         inner=tlReceipt('결제', '입금 완료 · <span class="money">'+pp+'원</span>',
           '<div class="rrow"><span class="k">결제 금액</span><span class="v"><span class="money">'+pp+'원</span></span></div>'+
@@ -820,7 +820,7 @@
       return '<div class="pm-row '+(mine?'me':'cust')+'"><div class="pm-b">'+esc(mm.text)+'</div></div>'; }).join('');
     return '<div class="cd-scrim'+(chatOpen?' on':'')+'" id="cdScrim" onclick="toggleChat()"></div>'+
       '<aside class="chatdrawer'+(chatOpen?' open':'')+'" id="chatDrawer" aria-label="고객과의 대화">'+
-        '<div class="cd-head"><div class="cd-ti"><span class="cd-eye">고객과의 대화</span><b>'+esc(r.cust)+' 님</b></div>'+(showReport?reportIconBtn(r):'')+'<button class="cd-x" onclick="toggleChat()" aria-label="닫기">'+IC_X+'</button></div>'+
+        '<div class="cd-head"><div class="cd-ti"><span class="cd-eye">고객과의 대화</span><b>'+esc(r.cust)+'님</b></div>'+(showReport?reportIconBtn(r):'')+'<button class="cd-x" onclick="toggleChat()" aria-label="닫기">'+IC_X+'</button></div>'+
         '<div class="pm-thread" id="pmThread">'+bubbles+'</div>'+
         '<div class="pm-compose"><input id="pmIn" placeholder="메시지를 입력하세요" onkeydown="if(event.key===\'Enter\')sendProMsg()"><button class="pm-send" onclick="sendProMsg()" aria-label="보내기">'+IC_SEND+'</button></div>'+
       '</aside>';
@@ -867,7 +867,7 @@
       '<div class="qtop"><div class="qtop-l">'+
         '<a class="backlink" onclick="location.href=\'pro.html\'">← '+(r.status==='견적작성'?'견적 보내기로':'요청 내역으로')+'</a>'+
         '<p class="crumb">스타일리스트 지원 · '+(r.status==='견적작성'?'견적 보내기':(out?'보낸 제안':'받은 요청'))+'</p>'+
-        '<h1>'+esc(r.cust)+' 님 · '+esc(svcLabel(r.service))+'</h1>'+
+        '<h1>'+esc(r.cust)+'님 · '+esc(svcLabel(r.service))+'</h1>'+
       '</div>'+(showMsg?chatOpenBtn(r):'')+'</div>'+
       '<div class="qgrid2"><div class="qleft">'+qleft+'</div><div class="qright'+(r.status==='수락됨'?' ref-on':'')+'">'+ bodyCard +'</div></div>'+
       (showMsg?chatDrawerHTML(r, showReport):'');
