@@ -393,7 +393,7 @@
       body='<b>'+missKo+'</b>도 진단하면 8체형 결과가 완성돼요';
       primaryLabel=missKo+' 진단하기'; primaryHref='diag-fit.html?cat='+missCat+'&reuse=1&have='+haveCat;
     } else {
-      title='로그인이 필요해요'; body='결과 저장·전문가 매칭은 로그인 후 이용할 수 있어요';
+      title='로그인이 필요해요'; body='결과 저장·스타일리스트 매칭은 로그인 후 이용할 수 있어요';
       primaryLabel='로그인하기'; primaryHref='index.html?login=1&next='+(next||'my');
     }
     var wrap=document.createElement('div'); wrap.id='rmodal';

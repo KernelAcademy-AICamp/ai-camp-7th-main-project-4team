@@ -15,9 +15,9 @@
 .protobar{ display:none !important; }
 
 /* 화면 전환: 부드러운 슬라이드업 + 페이드 — 단계 이동이 스무스하게 넘어가는 느낌 */
-.wstep.active{ animation:wfade .45s cubic-bezier(.16,.7,.28,1); }
+.wstep.active, #basic-check:not(.hidden){ animation:wfade .45s cubic-bezier(.16,.7,.28,1); }   /* 인터스티셜도 스텝과 동일한 전환 */
 @keyframes wfade{ from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none} }
-@media (prefers-reduced-motion:reduce){ .wstep.active{ animation:none; } }
+@media (prefers-reduced-motion:reduce){ .wstep.active, #basic-check:not(.hidden){ animation:none; } }
 
 /* 버튼(주요) = 잉크블랙 (딥그린 원칙 2 — 초록 버튼 금지) */
 .btn-primary{ background:var(--ink); color:#fff; }
@@ -125,7 +125,7 @@
   border-radius:50%; background:var(--field); border:2px solid var(--line); transition:background .3s, box-shadow .3s; }
 .acc-row.done::before{ background:var(--green); border-color:var(--green); }
 .acc-row.now::before{ background:var(--green); border-color:var(--green); box-shadow:0 0 0 4px var(--green-soft); }
-.acc-row .l{ font-size:15px; font-weight:700; color:var(--faint); }
+.acc-row .l{ font-size:15px; font-weight:700; color:var(--faint); display:inline-flex; align-items:center; }   /* '현재' 배지를 텍스트와 세로 가운데 정렬 */
 .acc-row.done .l{ color:var(--muted); }
 .acc-row.now .l{ color:var(--ink); }
 .acc-row .r{ font-size:13.5px; color:var(--faint); }
