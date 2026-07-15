@@ -18,10 +18,26 @@
   var FDATA = {
     mode: MODE,
 
-    /* ── 피드백 (킬 메트릭 원천) ─────────────────────────────── */
-    // proto: 동기 localStorage push(현행과 동일) / api: POST /api/feedback (fire-and-forget)
+    /* 익명 세션 id(진단 기록용) — get-or-create, localStorage 유지 */
+    sessionId: function () {
+      var k = 'fitting.session', v = null;
+      try { v = localStorage.getItem(k); } catch (e) {}
+      if (!v) { v = 's-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8); try { localStorage.setItem(k, v); } catch (e) {} }
+      return v;
+    },
+
+    /* ── 피드백 (킬 메트릭 원천) ───────────────────────────────
+       rec(canonical): {verdict, engineImprove, ageAttested, diagnosisId, bodyType, confidenceTier, ts}
+       proto: 동기 localStorage push / api: /api/feedback 로 매핑 POST(diagnosis_id 필수) */
     saveFeedback: function (rec) {
-      if (MODE === 'api') { postJSON('/api/feedback', rec); return; }
+      if (MODE === 'api') {
+        if (!rec.diagnosisId) return;   // 진단 미기록 시 스킵(안전)
+        postJSON('/api/feedback', {
+          diagnosis_id: rec.diagnosisId, verdict: rec.verdict, aware_brand: true,
+          engine_improve_consent: !!rec.engineImprove, age_attested: !!rec.ageAttested
+        });
+        return;
+      }
       var arr = lsGet('fitting.feedback', []); arr.push(rec); lsSet('fitting.feedback', arr);
     },
     // admin-diagnostics 읽기. proto: 동기 배열 / api: 다음 증분에서 async 배선(GET /api/admin/feedback)
@@ -37,12 +53,14 @@
     isAuthed: function () { try { return localStorage.getItem('fitting.auth') !== 'false'; } catch (e) { return true; } },
     saveUser: function (u) { lsSet('fitting.user', u); },
 
-    /* ── 진단 실행 (엔진 경계 = /api/diagnose) ────────────────
-       proto: result.js가 클라이언트 엔진(BodyModel/FitEngine)으로 직접 계산(현행).
-       api:   서버 위임. ※ 엔진 파이프라인 추출은 다음 증분 — 지금은 인터페이스만. */
-    diagnose: function (payload) {
-      if (MODE === 'api') return postJSON('/api/diagnose', payload).then(function (r) { return r.json(); });
-      return Promise.reject(new Error('proto: result.js가 클라이언트 엔진으로 직접 계산'));
+    /* ── 진단 기록(store) = /api/diagnose ────────────────────
+       클라이언트 계산 결과({session_id,category,input,result,engine_version})를 서버에
+       저장하고 diagnosis id 반환(→ 이후 saveFeedback의 diagnosis_id).
+       proto: 서버 미기록(클라 계산만) → null.
+       ※ 엔진을 서버에서 '계산'까지 하는 건 단계 D(이 함수 안으로 흡수). */
+    recordDiagnosis: function (d) {
+      if (MODE === 'api') return postJSON('/api/diagnose', d).then(function (r) { return r.json(); }).then(function (j) { return j && j.id; });
+      return Promise.resolve(null);
     }
   };
 

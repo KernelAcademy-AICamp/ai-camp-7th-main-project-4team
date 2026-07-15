@@ -1,42 +1,55 @@
-/* admin-login.js — 관리자 로그인(목업). ⚠️ 실제 인증 아님(프로토타입).
-   실서비스 승격 시: startGoogle → supabase.auth.signInWithOAuth({provider:'google'}),
-   verifyOtp → 서버(Edge Function)가 발송·검증하는 이메일 OTP. 지금은 UX/플로우 목업. */
-(function(){
+/* admin-login.js — 관리자 로그인.
+   실배선: ADMINAUTH(Supabase Google OAuth) 준비되면 실 인증.
+   폴백: supabase-js/config 미로드 시 기존 목업(2FA) 흐름 유지(로컬·오프라인).
+   ※ 진짜 방어는 DB RLS. 로그인은 세션 JWT 확보(대시보드 읽기용) + UX 게이트. */
+(function () {
   "use strict";
-  // 이미 로그인(목업 세션)돼 있으면 콘솔로
-  try{ if(JSON.parse(sessionStorage.getItem('fitting.admin')||'null')){ location.replace('admin.html'); return; } }catch(e){}
+  var A = window.ADMINAUTH, real = A && A.ready();
 
-  var DEMO_EMAIL='admin@fitting.kr';   // 목업 계정(구글 로그인 자리)
+  function bridge(email) { try { sessionStorage.setItem('fitting.admin', JSON.stringify({ email: email, method: real ? 'supabase-google' : 'mock', at: new Date().toISOString() })); } catch (e) {} }
+  function hint(msg, err) { var h = document.querySelector('#step-google .ahint'); if (h) { h.textContent = msg; if (err) h.style.color = 'var(--warn, #b0553f)'; } }
 
-  window.startGoogle=function(){
-    // 실제로는 여기서 Google OAuth 리다이렉트. 목업은 바로 2FA 단계로.
-    document.getElementById('step-google').classList.remove('on');
-    document.getElementById('step-otp').classList.add('on');
-    document.getElementById('otpEmail').textContent=DEMO_EMAIL;
-    var el=document.getElementById('otp'); el.value=''; el.focus();
-  };
-  window.backToGoogle=function(){
-    document.getElementById('step-otp').classList.remove('on');
-    document.getElementById('step-google').classList.add('on');
-    document.getElementById('otpErr').textContent='';
-  };
+  if (real) {
+    // OAuth 복귀/기존 세션 처리
+    (async function () {
+      var s = await A.getSession();
+      if (!s) return;                       // 세션 없음 → 버튼 대기
+      var ok = await A.isAdmin();
+      if (ok) { bridge(s.user.email); location.replace('admin.html'); return; }
+      // 로그인은 됐으나 관리자 아님 → 안내 + 로그아웃
+      hint('이 계정(' + (s.user.email || '') + ')은 관리자 권한이 없어요. 관리자 계정으로 로그인하거나, admin_user에 등록이 필요해요.', true);
+      await A.signOut();
+    })();
 
-  var otp=document.getElementById('otp'), btn=document.getElementById('verifyBtn');
-  if(otp){
-    otp.addEventListener('input',function(){
-      otp.value=otp.value.replace(/\D/g,'').slice(0,6);          // 숫자 6자리만
-      btn.disabled=otp.value.length!==6;
-      document.getElementById('otpErr').textContent='';
-    });
-    otp.addEventListener('keydown',function(e){ if(e.key==='Enter'&&otp.value.length===6) verifyOtp(); });
+    window.startGoogle = function () { A.signInGoogle(location.href); };   // 실 OAuth 리다이렉트
+    window.backToGoogle = function () {};
+    window.verifyOtp = function () {};
+    return;
   }
 
-  window.verifyOtp=function(){
-    var code=(document.getElementById('otp').value||'').trim();
-    if(code.length!==6){ document.getElementById('otpErr').textContent='6자리를 입력해 주세요.'; return; }
-    // 목업 검증: 데모 코드 000000 또는 아무 6자리 허용(프로토타입). 실서비스는 서버 검증.
-    var session={ email:DEMO_EMAIL, method:'google+email-otp(mock)', at:new Date().toISOString() };
-    try{ sessionStorage.setItem('fitting.admin', JSON.stringify(session)); }catch(e){}
+  // ── 폴백: 목업(프로토타입) 흐름 ─────────────────────────────
+  try { if (JSON.parse(sessionStorage.getItem('fitting.admin') || 'null')) { location.replace('admin.html'); return; } } catch (e) {}
+  var DEMO_EMAIL = 'admin@fitting.kr';
+  window.startGoogle = function () {
+    document.getElementById('step-google').classList.remove('on');
+    document.getElementById('step-otp').classList.add('on');
+    var em = document.getElementById('otpEmail'); if (em) em.textContent = DEMO_EMAIL;
+    var el = document.getElementById('otp'); if (el) { el.value = ''; el.focus(); }
+  };
+  window.backToGoogle = function () {
+    document.getElementById('step-otp').classList.remove('on');
+    document.getElementById('step-google').classList.add('on');
+    var e = document.getElementById('otpErr'); if (e) e.textContent = '';
+  };
+  var otp = document.getElementById('otp'), btn = document.getElementById('verifyBtn');
+  if (otp) {
+    otp.addEventListener('input', function () { otp.value = otp.value.replace(/\D/g, '').slice(0, 6); btn.disabled = otp.value.length !== 6; document.getElementById('otpErr').textContent = ''; });
+    otp.addEventListener('keydown', function (e) { if (e.key === 'Enter' && otp.value.length === 6) verifyOtp(); });
+  }
+  window.verifyOtp = function () {
+    var code = (document.getElementById('otp').value || '').trim();
+    if (code.length !== 6) { document.getElementById('otpErr').textContent = '6자리를 입력해 주세요.'; return; }
+    try { sessionStorage.setItem('fitting.admin', JSON.stringify({ email: DEMO_EMAIL, method: 'google+email-otp(mock)', at: new Date().toISOString() })); } catch (e) {}
     location.replace('admin.html');
   };
 })();
