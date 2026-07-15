@@ -137,11 +137,20 @@
       '<div class="dtl-note" style="margin-top:8px">몸에 <b style="color:var(--ink)">가장 잘 맞을 순</b>으로 · <b style="color:var(--ink)">핏 지수</b> = 예상 적합도</div>';
   }
   function recsNotice(msg){ return '<div class="rgnotice" style="margin-top:12px">'+msg+'</div>'; }
-  // 추천 목록(s2row 막대) — 핏 지수 상위. real(엔진 실계산)이면 60%+ 중 상위 3(없으면 상위 3).
+  // 추천 목록(s2row 막대). real(엔진 실계산): fit≥60 자격을 거른 뒤 브랜드 노출 순서(order · admin/DB)로 정렬(동점=fit).
+  //   → '잘 맞는 브랜드 안에서 실착 접근성 순'. order 없으면(proto/미지정) fit 순으로 폴백.
   function recsListHTML(recs, real){
-    var ranked=(recs||[]).slice().sort(function(a,b){ return (b.fitScore||0)-(a.fitScore||0); });
-    if(real){ var good=ranked.filter(function(r){ return (r.fitScore||0)>=60; }); ranked=(good.length?good:ranked).slice(0,3); }
-    else ranked=ranked.slice(0,3);
+    function ord(r){ return (r.order==null?9999:r.order); }
+    var ranked=(recs||[]).slice();
+    if(real){
+      var good=ranked.filter(function(r){ return (r.fitScore||0)>=60; });
+      var base=good.length?good:ranked;
+      base.sort(function(a,b){ return (ord(a)-ord(b)) || ((b.fitScore||0)-(a.fitScore||0)); });
+      ranked=base.slice(0,3);
+    } else {
+      ranked.sort(function(a,b){ return (b.fitScore||0)-(a.fitScore||0); });
+      ranked=ranked.slice(0,3);
+    }
     return '<div class="s2list">'+ranked.map(function(r){
       var note=(FLK[r.fitLine]||'')+' · '+r.bottleneck+' 기준'+(r.variance?' · '+r.variance:'');
       var pct=(r.fitScore!=null)?r.fitScore:0;

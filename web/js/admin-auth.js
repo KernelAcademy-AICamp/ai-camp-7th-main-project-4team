@@ -34,6 +34,104 @@
           .order('created_at', { ascending: false }).limit(limit || 500);
         return r.data || [];
       } catch (e) { return []; }
+    },
+
+    // ── 브랜드 실측표(해자) 읽기 = garment/garment_meta [db/03] ──
+    // 로그인 세션 JWT로 RLS(admin-only) 통과. garments.json과 동일 shape({specs, $meta}) 반환.
+    // Supabase 기본 1000행 캡 대응 페이지네이션. DB 실패/미로그인 시 로컬 garments.json 폴백(프로토/로컬 dev용 —
+    // 프로덕션 app/엔 파일 부재라 폴백=빈값 → admin 로그인 필수).
+    garments: async function () {
+      try {
+        if (client) {
+          var specs = [], from = 0, PAGE = 1000;
+          while (true) {
+            var r = await client.from('garment').select('spec').range(from, from + PAGE - 1);
+            if (r.error || !r.data || !r.data.length) break;
+            for (var i = 0; i < r.data.length; i++) specs.push(r.data[i].spec);
+            if (r.data.length < PAGE) break;
+            from += PAGE;
+          }
+          if (specs.length) {
+            var m = await client.from('garment_meta').select('meta').eq('id', 1).maybeSingle();
+            return { specs: specs, $meta: (m && m.data && m.data.meta) || {} };
+          }
+        }
+      } catch (e) {}
+      try { var f = await fetch('data/garments.json'); return await f.json(); } catch (e) { return { specs: [], $meta: {} }; }
+    },
+
+    // ── 브랜드 노출 순서(진단 추천 정렬) = brand 테이블 [db/04] ──
+    // 읽기: {brand_id: {brand_id, brand_name, display_order, active}} · 쓰기: upsert(onConflict brand_id). RLS admin.
+    brandOrder: async function () {
+      try {
+        var r = await client.from('brand').select('brand_id,brand_name,display_order,active').order('display_order', { ascending: true });
+        var m = {}; (r.data || []).forEach(function (x) { m[x.brand_id] = x; }); return m;
+      } catch (e) { return {}; }
+    },
+    saveBrand: async function (rows) {
+      try { var r = await client.from('brand').upsert(rows, { onConflict: 'brand_id' }); return !r.error; }
+      catch (e) { return false; }
+    },
+
+    // ── 실측표 CRUD(garment 테이블) [db/05] — admin RLS 쓰기. 변경 시 rev 자동 증가(트리거)→진단 즉시 반영. ──
+    // 저장 전략: 현재 뷰 행을 insert(무 id, identity 생성) 후 기존 id 삭제 → GENERATED ALWAYS upsert 충돌 회피.
+    // rows: [{brand_id, category, spec}] (id 없음).
+    insertGarment: async function (rows) {
+      try { var r = await client.from('garment').insert(rows); return { ok: !r.error, error: r.error && r.error.message }; }
+      catch (e) { return { ok: false, error: String(e) }; }
+    },
+    deleteGarment: async function (ids) {
+      try { var r = await client.from('garment').delete().in('id', ids); return !r.error; }
+      catch (e) { return false; }
+    },
+    // CRUD용: id 포함 전체 행(수정/삭제 대상 식별). 1000행 캡 페이지네이션.
+    garmentRows: async function () {
+      try {
+        var rows = [], from = 0, PAGE = 1000;
+        while (true) {
+          var r = await client.from('garment').select('id,brand_id,category,spec').range(from, from + PAGE - 1);
+          if (r.error || !r.data || !r.data.length) break;
+          for (var i = 0; i < r.data.length; i++) rows.push(r.data[i]);
+          if (r.data.length < PAGE) break;
+          from += PAGE;
+        }
+        return rows;
+      } catch (e) { return []; }
+    },
+    garmentMeta: async function () {
+      try { var r = await client.from('garment_meta').select('meta').eq('id', 1).maybeSingle(); return (r.data && r.data.meta) || {}; }
+      catch (e) { return {}; }
+    },
+
+    // ── 전문가 수요(lead) 읽기 [db/02] — 웨이트리스트/견적요청 수요 + 진단 후 전환 측정 ──
+    leads: async function (limit) {
+      try {
+        var r = await client.from('lead').select('id,created_at,session_id,kind,service,occasion,budget,note,stylist,contact')
+          .order('created_at', { ascending: false }).limit(limit || 500);
+        return r.data || [];
+      } catch (e) { return []; }
+    },
+    // 진단 로그(input 포함) — 엔진 강화 분석용(painFlags·openNote·anchors). RLS admin.
+    diagnoses: async function (limit) {
+      try {
+        var r = await client.from('diagnosis').select('id,created_at,session_id,category,input,result,engine_version')
+          .order('created_at', { ascending: false }).limit(limit || 1000);
+        return r.data || [];
+      } catch (e) { return []; }
+    },
+    // 진단 세션 id(전환 분모/조인용) — distinct는 클라 dedupe. 1000행 캡 페이지네이션.
+    diagnosisSessions: async function () {
+      try {
+        var seen = {}, from = 0, PAGE = 1000;
+        while (true) {
+          var r = await client.from('diagnosis').select('session_id').range(from, from + PAGE - 1);
+          if (r.error || !r.data || !r.data.length) break;
+          for (var i = 0; i < r.data.length; i++) if (r.data[i].session_id) seen[r.data[i].session_id] = 1;
+          if (r.data.length < PAGE) break;
+          from += PAGE;
+        }
+        return Object.keys(seen);
+      } catch (e) { return []; }
     }
   };
 

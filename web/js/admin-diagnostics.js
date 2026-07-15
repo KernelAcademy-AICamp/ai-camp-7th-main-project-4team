@@ -59,7 +59,7 @@
     return { id:r.id||('l'+i), ts:r.created_at, gender:null,
       bodyType:res.card||'?', category:d.category||'TOP', verdict:r.verdict,
       confidenceTier:res.confidenceTier||'mid', engineImprove:!!r.engine_improve_consent,
-      anchors:[], painFlags:{} };
+      engineVersion:d.engine_version||'?', anchors:[], painFlags:{} };
   }); }
   async function loadLive(){ if(!LIVEON) return []; try{ return normLive(await ADMINAUTH.feedbackJoin(500)); }catch(e){ return []; } }
 
@@ -91,7 +91,29 @@
     if(SOURCE==='sample') note.innerHTML='· <b>샘플</b>(대표 16건) — 화면 확인용, 실응답 아님';
     else if(SOURCE==='live') note.innerHTML='· <b>실 DB</b>(Supabase feedback · RLS 관리자 전용) — 킬 메트릭 실측';
     else note.innerHTML = DATA.length? '· 이 브라우저에 쌓인 실피드백(브랜드·페인 breakdown은 dx-log 배선 후)' : '· 로그 없음 — 진단→결과에서 정확도 응답 시 쌓임';
-    renderKpis(); renderCalib(); renderTypes(); renderBrands(); renderPain(); renderLog();
+    renderKpis(); renderTrend(); renderCalib(); renderTypes(); renderBrands(); renderPain(); renderLog();
+  }
+
+  // 정확도 추세 — 킬메트릭(맞음율)이 시간·엔진버전에 따라 오르는지. "강해지고 있나"를 눈으로.
+  function renderTrend(){
+    if(!$('trendDayTable')) return;
+    function okRate(g){ return g.n?Math.round(g.ok/g.n*100):0; }
+    // 날짜(일)별
+    var byDay={};
+    DATA.forEach(function(r){ var d=(r.ts||'').slice(0,10); if(!d) return; var g=byDay[d]=byDay[d]||{n:0,ok:0}; g.n++; if(r.verdict==='맞음') g.ok++; });
+    var days=Object.keys(byDay).sort();
+    var dayRows=days.map(function(d){ var g=byDay[d]; return '<tr><td>'+d+'</td><td class="num">'+g.n+'</td><td>'+bar(okRate(g))+'</td></tr>'; }).join('');
+    $('trendDayTable').innerHTML='<thead><tr><th>날짜</th><th>응답</th><th>맞음율(킬메트릭)</th></tr></thead><tbody>'+(dayRows||'<tr><td class="muted" colspan="3">데이터 없음</td></tr>')+'</tbody>';
+    // 엔진버전별 (튜닝 before/after)
+    var byVer={};
+    DATA.forEach(function(r){ var v=r.engineVersion||'?'; var g=byVer[v]=byVer[v]||{n:0,ok:0}; g.n++; if(r.verdict==='맞음') g.ok++; });
+    var vers=Object.keys(byVer).sort();
+    var verRows=vers.map(function(v){ var g=byVer[v]; return '<tr><td><b>'+esc(v)+'</b></td><td class="num">'+g.n+'</td><td>'+bar(okRate(g))+'</td></tr>'; }).join('');
+    $('trendVerTable').innerHTML='<thead><tr><th>엔진 버전</th><th>응답</th><th>맞음율</th></tr></thead><tbody>'+(verRows||'<tr><td class="muted" colspan="3">데이터 없음</td></tr>')+'</tbody>';
+    var note=$('trendNote'); if(note){
+      var first=days.length?okRate(byDay[days[0]]):null, last=days.length?okRate(byDay[days[days.length-1]]):null;
+      note.innerHTML = (days.length>=2)? ('기간 맞음율 '+first+'% → '+last+'% ('+(last-first>=0?'+':'')+(last-first)+'p) · 목표 ≥65%') : '추세를 보려면 여러 날짜의 응답이 필요해요. 엔진 버전을 올리며(engine_version) 맞음율 변화를 비교하세요.';
+    }
   }
 
   function renderKpis(){

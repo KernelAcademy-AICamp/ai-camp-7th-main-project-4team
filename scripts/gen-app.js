@@ -17,11 +17,13 @@ var OUT = path.join(ROOT, 'app');
 var PAGES = [
   'index.html', 'diag-basic.html', 'diag-fit.html', 'diag-loading.html', 'result.html', 'card.html',
   'about.html', 'faq.html', 'terms.html', 'privacy.html', 'body-type-guide.html', '404.html',
-  'admin-login.html', 'admin.html', 'admin-diagnostics.html', 'admin-brands.html', 'admin-business.html',
-  'admin-collect.html', 'admin-engine.html', 'admin-garments.html', 'admin-members.html', 'admin-ops.html', 'admin-api.html'
+  // MVP 범위: 사이즈·데이터(+하위) + 진단·정확도(킬메트릭) + 엔진 강화 + 전문가 수요(lead). 나머지 admin 섹션은 v2라 미배포.
+  'admin-login.html', 'admin.html', 'admin-diagnostics.html', 'admin-improve.html', 'admin-leads.html', 'admin-brands.html',
+  'admin-collect.html', 'admin-engine.html', 'admin-garments.html'
 ];
-// ── 제외(목업 전용): 스타일리스트 포털 pro*, 개발 유틸 _reset ──
-var HIDDEN = ['pro.html', 'pro-login.html', 'pro-signup.html', 'pro-quote.html', '_reset.html'];
+// ── 제외: 스타일리스트 포털 pro*, 개발 유틸 _reset, 비MVP admin 섹션(회원·거래·사업현황·B2B API·내부운영) ──
+var HIDDEN = ['pro.html', 'pro-login.html', 'pro-signup.html', 'pro-quote.html', '_reset.html',
+  'admin-members.html', 'admin-business.html', 'admin-api.html', 'admin-ops.html'];
 
 // data/: garments.json(실측표=해자)만 제외 · js/: pro*.js(목업 포털 스크립트)만 제외
 var DATA_SKIP = ['garments.json'];
