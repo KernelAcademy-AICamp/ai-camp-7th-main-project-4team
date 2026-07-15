@@ -9,10 +9,22 @@
   function kpi(n,l,s){ return '<div class="kpi"><div class="n">'+(typeof n==='number'?n.toLocaleString():n)+'</div><div class="l">'+l+'</div>'+(s?'<div class="s">'+s+'</div>':'')+'</div>'; }
   function fmt(ts){ try{ var d=new Date(ts); return (d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }catch(e){ return ts||''; } }
 
-  Promise.all([ADMINAUTH.leads(1000), ADMINAUTH.diagnosisSessions()]).then(function(res){
-    var leads=res[0]||[], diagSet={}; (res[1]||[]).forEach(function(sid){ diagSet[sid]=1; });
-    render(leads, diagSet, (res[1]||[]).length);
-  }).catch(function(){ $('ldKpis').innerHTML='<div class="kpi"><div class="l">수요 데이터 로드 실패 · admin 로그인 필요</div></div>'; });
+  function load(){
+    return Promise.all([ADMINAUTH.leads(1000), ADMINAUTH.diagnosisSessions()]).then(function(res){
+      var leads=res[0]||[], diagSet={}; (res[1]||[]).forEach(function(sid){ diagSet[sid]=1; });
+      render(leads, diagSet, (res[1]||[]).length);
+    }).catch(function(){ $('ldKpis').innerHTML='<div class="kpi"><div class="l">수요 데이터 로드 실패 · admin 로그인 필요</div></div>'; });
+  }
+  load();
+
+  // 테스트 수요 로그 초기화 — lead 전체 삭제(admin RLS). 되돌릴 수 없음. [db/06]
+  window.__resetLeads=async function(){
+    if(!(window.ADMINAUTH&&ADMINAUTH.ready())){ alert('실 DB(api·admin 로그인) 상태에서만 초기화할 수 있어요.'); return; }
+    if(!confirm('수요(lead) 로그를 전부 삭제할까요?\n웨이트리스트 이메일·수요가 모두 지워지고 되돌릴 수 없어요. (테스트 데이터 정리용)')) return;
+    var r=await ADMINAUTH.resetLeadLogs();
+    if(r.ok){ alert('초기화됐어요.'); load(); }
+    else alert('초기화 실패: '+(r.error||'admin 권한 확인'));
+  };
 
   function render(leads, diagSet, diagCount){
     var notify=leads.filter(function(l){return l.kind==='notify';});

@@ -103,6 +103,22 @@
       catch (e) { return {}; }
     },
 
+    // ── 테스트 로그 초기화 [db/06] — admin RLS delete. 되돌릴 수 없음. (created_at 필터=전체 행) ──
+    resetDiagnosisLogs: async function () {  // 진단+피드백 (FK: feedback→diagnosis, feedback 먼저)
+      if (!client) return { ok: false, error: 'no client' };
+      try {
+        var f = await client.from('feedback').delete().gte('created_at', '1900-01-01');
+        if (f.error) return { ok: false, error: f.error.message };
+        var d = await client.from('diagnosis').delete().gte('created_at', '1900-01-01');
+        return { ok: !d.error, error: d.error && d.error.message };
+      } catch (e) { return { ok: false, error: String(e) }; }
+    },
+    resetLeadLogs: async function () {
+      if (!client) return { ok: false, error: 'no client' };
+      try { var r = await client.from('lead').delete().gte('created_at', '1900-01-01'); return { ok: !r.error, error: r.error && r.error.message }; }
+      catch (e) { return { ok: false, error: String(e) }; }
+    },
+
     // ── 전문가 수요(lead) 읽기 [db/02] — 웨이트리스트/견적요청 수요 + 진단 후 전환 측정 ──
     leads: async function (limit) {
       try {

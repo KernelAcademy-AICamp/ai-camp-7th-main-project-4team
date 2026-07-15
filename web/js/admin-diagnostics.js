@@ -81,9 +81,18 @@
       (LIVEON?'<label class="numin"><input type="radio" name="src" value="live" '+(SOURCE==='live'?'checked':'')+' onchange="__src(\'live\')"><span>실 DB (Supabase · '+LIVE.length+')</span></label>':'')+
       '<label class="numin"><input type="radio" name="src" value="real" '+(SOURCE==='real'?'checked':'')+' onchange="__src(\'real\')"><span>이 브라우저 로그 ('+rc+')</span></label>'+
       '<label class="numin"><input type="radio" name="src" value="sample" '+(SOURCE==='sample'?'checked':'')+' onchange="__src(\'sample\')"><span>샘플 데이터 ('+SAMPLE.length+')</span></label>'+
+      (LIVEON?'<button class="abtn ghost" style="margin-left:auto;color:var(--warn)" onclick="__resetDx()">🗑 진단·피드백 로그 초기화</button>':'')+
       '<span class="cnt muted" id="srcNote"></span>';
   }
   window.__src=function(s){ SOURCE=s; apply(); };
+  // 테스트 로그 초기화 — 진단+피드백(실 DB) 전체 삭제(admin RLS). 되돌릴 수 없음. [db/06]
+  window.__resetDx=async function(){
+    if(!(window.ADMINAUTH&&ADMINAUTH.ready())){ alert('실 DB(api·admin 로그인) 상태에서만 초기화할 수 있어요.'); return; }
+    if(!confirm('진단·피드백 로그를 전부 삭제할까요?\n킬 메트릭 데이터가 모두 지워지고 되돌릴 수 없어요. (테스트 데이터 정리용)')) return;
+    var r=await ADMINAUTH.resetDiagnosisLogs();
+    if(r.ok){ alert('초기화됐어요.'); LIVE=await loadLive(); SOURCE='live'; buildSrcBar(realCount()); apply(); }
+    else alert('초기화 실패: '+(r.error||'admin 권한 확인'));
+  };
 
   function apply(){
     DATA = SOURCE==='sample' ? SAMPLE.slice() : (SOURCE==='live' ? LIVE.slice() : loadReal());
