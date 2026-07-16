@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="css/tokens.css?v=10fb5117">
-<link rel="stylesheet" href="css/admin.css?v=abb2e899">
+<link rel="stylesheet" href="css/admin.css?v=867c1b7a">
 </head>
 <body>
 <div class="anav"><div class="anav-in">
@@ -40,12 +40,18 @@
 
   <div class="sec-h">④ 데이터 확장 우선 <span class="muted" style="font-weight:400">— 사용자가 실제 입은 브랜드(수요) 대비 실측 보유 — 부족하면 수집</span></div>
   <div class="tablewrap"><table class="dt" id="covTable"></table></div>
+
+  <div class="sec-h">⑤ 역산 미사용 착용감 → 엔진 배선 후보 <span class="muted" style="font-weight:400">— "더 자세한 착용감"으로 모으는 배·소매·총장 등. 지금은 수집만 되고 역산(engine.js CAT_PARTS)에 안 씀. 응답이 쏠리면 역산 부위로 승격 검토</span></div>
+  <div class="tablewrap"><table class="dt" id="detailFitTable"></table></div>
+
+  <div class="sec-h">⑥ 기장 선호(lengthPrefs) 분포 <span class="muted" style="font-weight:400">— 사용자가 고른 기장 느낌(짧음/딱좋음/긺). 추천 기장 힌트로 승격 후보</span></div>
+  <div class="tablewrap"><table class="dt" id="lenPrefTable"></table></div>
 </div>
 
 <script src="js/admin-common.js?v=191eba48"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/config.js?v=66a385e1"></script>
-<script src="js/admin-auth.js?v=0c868540"></script>
-<script src="js/admin-improve.js?v=72b9f742"></script>
+<script src="js/admin-auth.js?v=a66338fd"></script>
+<script src="js/admin-improve.js?v=8b0a8b0f"></script>
 </body>
 </html>

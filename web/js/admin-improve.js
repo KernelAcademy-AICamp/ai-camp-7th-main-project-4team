@@ -6,6 +6,9 @@
   var $=function(id){return document.getElementById(id);};
   var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
   function kpi(n,l,s){return '<div class="kpi"><div class="n">'+(typeof n==='number'?n.toLocaleString():n)+'</div><div class="l">'+l+'</div>'+(s?'<div class="s">'+s+'</div>':'')+'</div>';}
+  var PARTLBL={chest:'가슴',shoulder:'어깨',belly:'배',sleeve:'소매',length:'총장',waist:'허리',hip:'엉덩이',thigh:'허벅지',arm:'팔',neck:'목',rise:'밑위',hem:'밑단'};
+  // 엔진 역산(engine.js CAT_PARTS)이 실제 소비하는 부위 — 이 밖의 fits는 수집만 되고 미사용(⑤에서 배선 후보로).
+  var CORE={chest:1,shoulder:1,waist:1,hip:1,thigh:1};
 
   Promise.all([ADMINAUTH.diagnoses(1000), ADMINAUTH.feedbackJoin(1000), ADMINAUTH.garments()]).then(function(res){
     render(res[0]||[], res[1]||[], res[2]||{});
@@ -49,6 +52,20 @@
     var covRows=Object.keys(wornByBrand).map(function(b){ return {brand:b, worn:wornByBrand[b], have:haveByBrand[b]||0}; })
       .sort(function(a,b){ return (a.have-b.have)||(b.worn-a.worn); });
 
+    // ⑤ 역산 미사용 착용감: CAT_PARTS 밖 부위(배·소매·총장 등)의 fit 분포 → engine.js 역산 부위 승격 후보
+    var dfit={}, dfitTotal=0;
+    exps.forEach(function(e){ var f=e.fits||{}; Object.keys(f).forEach(function(part){ if(CORE[part]) return;
+      var g=dfit[part]=dfit[part]||{part:part,n:0,TIGHT:0,SNUG:0,RELAXED:0,BIG:0};
+      g.n++; dfitTotal++; if(g[f[part]]!=null) g[f[part]]++; }); });
+    var dfitRows=Object.keys(dfit).map(function(k){return dfit[k];}).sort(function(a,b){return b.n-a.n;});
+
+    // ⑥ 기장 선호(lengthPrefs): 부위별 짧음/딱좋음/긺 → 추천 기장 힌트 승격 후보
+    var lp={}, lpTotal=0;
+    exps.forEach(function(e){ var p=e.lengthPrefs||{}; Object.keys(p).forEach(function(part){
+      var g=lp[part]=lp[part]||{part:part,n:0,SHORT:0,GOOD:0,LONG:0};
+      g.n++; lpTotal++; if(g[p[part]]!=null) g[p[part]]++; }); });
+    var lpRows=Object.keys(lp).map(function(k){return lp[k];}).sort(function(a,b){return b.n-a.n;});
+
     $('impKpis').innerHTML=[
       kpi(diags.length,'진단 로그','분석 대상'),
       kpi(painTotal,'페인 신호','병목부위 끼임'),
@@ -74,5 +91,20 @@
         return '<tr'+(lack?' style="background:var(--warn-soft)"':'')+'><td><b>'+esc(c.brand)+'</b></td><td class="num">'+c.worn+'</td><td class="num">'+(c.have||'<span class="muted">없음</span>')+'</td>'+
           '<td><a class="pill" style="text-decoration:none" href="admin-collect.html?brand='+encodeURIComponent(c.brand)+'">수집 →</a></td></tr>';
       }).join(''):'<tr><td class="muted" colspan="4">데이터 없음</td></tr>')+'</tbody>';
+
+    // ⑤ 역산 미사용 착용감 → 엔진 배선 후보
+    if($('detailFitTable')) $('detailFitTable').innerHTML='<thead><tr><th>부위</th><th>응답</th><th>끼임</th><th>딱맞음</th><th>여유</th><th>큼</th></tr></thead><tbody>'+
+      (dfitRows.length?dfitRows.map(function(g){
+        return '<tr><td><b>'+esc(PARTLBL[g.part]||g.part)+'</b> <span class="muted">역산 미사용</span></td><td class="num">'+g.n+'</td>'+
+          '<td class="num">'+(g.TIGHT||'<span class="muted">·</span>')+'</td><td class="num">'+(g.SNUG||'<span class="muted">·</span>')+'</td>'+
+          '<td class="num">'+(g.RELAXED||'<span class="muted">·</span>')+'</td><td class="num">'+(g.BIG||'<span class="muted">·</span>')+'</td></tr>';
+      }).join(''):'<tr><td class="muted" colspan="6">역산에 안 쓰는 부위(배·소매·총장) 착용감이 아직 없어요 · "더 자세한 착용감" 입력이 쌓이면 배선 후보로 모여요</td></tr>')+'</tbody>';
+
+    // ⑥ 기장 선호(lengthPrefs) 분포
+    if($('lenPrefTable')) $('lenPrefTable').innerHTML='<thead><tr><th>부위</th><th>응답</th><th>짧음</th><th>딱 좋음</th><th>긺</th></tr></thead><tbody>'+
+      (lpRows.length?lpRows.map(function(g){
+        return '<tr><td><b>'+esc(PARTLBL[g.part]||g.part)+'</b></td><td class="num">'+g.n+'</td>'+
+          '<td class="num">'+(g.SHORT||'<span class="muted">·</span>')+'</td><td class="num">'+(g.GOOD||'<span class="muted">·</span>')+'</td><td class="num">'+(g.LONG||'<span class="muted">·</span>')+'</td></tr>';
+      }).join(''):'<tr><td class="muted" colspan="5">기장 선호 응답이 아직 없어요 · "기장" 입력이 쌓이면 추천 기장 힌트 후보로 모여요</td></tr>')+'</tbody>';
   }
 })();
