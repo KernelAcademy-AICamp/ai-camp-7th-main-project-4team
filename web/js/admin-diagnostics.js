@@ -35,7 +35,33 @@
     {id:'s16',ts:'2026-07-10T16:05:00',gender:'female',bodyType:'D',category:'TOP',verdict:'맞음',confidenceTier:'mid', engineImprove:false,anchors:[{brandName:'무신사 스탠다드',fitLine:'regular',sizeLabel:'M'}],painFlags:{arm:'OK'}}
   ];
 
-  var PARTLBL={arm:'팔(소매)',neck:'목',thigh:'허벅지',hip:'엉덩이',waist:'허리',shoulder:'어깨',chest:'가슴'};
+  var PARTLBL={arm:'팔(소매)',neck:'목',thigh:'허벅지',hip:'엉덩이',waist:'허리',shoulder:'어깨',chest:'가슴',
+    belly:'배',sleeve:'소매',length:'총장',rise:'밑위',hem:'밑단'};
+  // 착용감/불편/기장 원값 → 한글. (fits: 4지 · painFlags: 2지 · lengthPrefs: 3지)
+  var FEELKO={TIGHT:'끼임',SNUG:'딱맞음',RELAXED:'여유',BIG:'큼',OK:'괜찮음',SHORT:'짧음',GOOD:'딱 좋음',LONG:'긺'};
+  function feelKo(v){ return FEELKO[v]||v; }
+  function kvLine(label,obj){
+    var ks=Object.keys(obj||{}); if(!ks.length) return '';
+    return '<div><span class="muted">'+label+':</span> '+ks.map(function(k){ return esc(PARTLBL[k]||k)+' <b>'+esc(feelKo(obj[k]))+'</b>'; }).join(', ')+'</div>';
+  }
+  // 로그 행 펼침 = 그 진단에 수집된 원본 입력 전체(기본·앵커·모든 부위 착용감·불편·기장·밴딩·자유의견).
+  function expDetail(raw){
+    if(!raw || !Array.isArray(raw.experiences) || !raw.experiences.length){
+      return '<span class="muted">상세 입력 없음 (샘플·이 브라우저 로그 또는 0벌 진단)</span>';
+    }
+    var b=raw.basic||{}, GEN={male:'남성',female:'여성'};
+    var head='<div class="muted" style="margin-bottom:4px">기본 · '+esc([GEN[b.gender]||b.gender,b.age,(b.height?b.height+'cm':''),(b.weight?b.weight+'kg':'')].filter(Boolean).join(' / '))+'</div>';
+    return head + raw.experiences.map(function(e){
+      var meta=[esc(e.brandName||e.brandId||'?'), e.sizeLabel?esc(e.sizeLabel):'', e.fitLine?esc(e.fitLine):'', e.silhouette?esc(e.silhouette):'', e.category?esc(e.category):''].filter(Boolean).join(' · ');
+      var wb=e.waistband==='banded'?'밴딩 있음':(e.waistband==='none'?'밴딩 없음':'');
+      return '<div style="padding:6px 0;border-top:1px solid var(--line,#eee)">'+
+        '<b>'+meta+'</b>'+(wb?' <span class="muted">('+wb+')</span>':'')+
+        kvLine('착용감',e.fits)+kvLine('불편',e.painFlags)+kvLine('기장',e.lengthPrefs)+
+        ((e.openNote||'').trim()?'<div><span class="muted">자유의견:</span> '+esc(e.openNote)+'</div>':'')+
+        '</div>';
+    }).join('');
+  }
+  window.__dxToggle=function(id){ var el=document.getElementById(id); if(el) el.style.display=(el.style.display==='none'?'':'none'); };
   var TYPES={};  // code→name (bodytypes.json)
 
   // 로컬 로그(fitting.feedback)를 정본 레코드로 정규화. 브랜드/페인은 아직 미배선 → 빈값.
@@ -55,11 +81,17 @@
 
   // Supabase feedback(+diagnosis 임베드) → 렌더 레코드 형태로 정규화. RLS로 관리자만 데이터 받음.
   function normLive(rows){ return (rows||[]).map(function(r,i){
-    var d=r.diagnosis||{}, res=d.result||{};
-    return { id:r.id||('l'+i), ts:r.created_at, gender:null,
+    var d=r.diagnosis||{}, res=d.result||{}, inp=d.input||{};
+    var exps=Array.isArray(inp.experiences)?inp.experiences:[];
+    // 앵커 = 착용경험(브랜드·핏라인·사이즈). 페인 = 경험별 painFlags 합집합.
+    var pain={};
+    exps.forEach(function(e){ var pf=e&&e.painFlags||{}; Object.keys(pf).forEach(function(p){ if(pf[p]) pain[p]=pf[p]; }); });
+    return { id:r.id||('l'+i), ts:r.created_at, gender:(inp.basic&&inp.basic.gender)||null,
       bodyType:res.card||'?', category:d.category||'TOP', verdict:r.verdict,
       confidenceTier:res.confidenceTier||'mid', engineImprove:!!r.engine_improve_consent,
-      engineVersion:d.engine_version||'?', anchors:[], painFlags:{} };
+      engineVersion:d.engine_version||'?',
+      anchors:exps.map(function(e){ return {brandName:e.brandName,fitLine:e.fitLine,sizeLabel:e.sizeLabel}; }),
+      painFlags:pain, _raw:{basic:inp.basic||null, prefs:inp.prefs||null, experiences:exps} };
   }); }
   async function loadLive(){ if(!LIVEON) return []; try{ return normLive(await ADMINAUTH.feedbackJoin(500)); }catch(e){ return []; } }
 
@@ -195,9 +227,12 @@
   function renderLog(){
     var list=DATA.slice().sort(function(a,b){return (b.ts||'').localeCompare(a.ts||'');});
     if(!list.length){ $('logTable').innerHTML='<tbody><tr><td class="muted">응답 없음</td></tr></tbody>'; return; }
-    var rows=list.map(function(r){
+    var rows=list.map(function(r,i){
       var anch=(r.anchors||[]).map(function(a){return esc(a.brandName)+(a.sizeLabel?' '+esc(a.sizeLabel):'');}).join(', ')||'<span class="muted">—</span>';
-      return '<tr><td class="muted">'+esc((r.ts||'').replace('T',' ').slice(0,16))+'</td>'+
+      var did='dxd'+i, hasRaw=!!(r._raw&&r._raw.experiences&&r._raw.experiences.length);
+      // 행 클릭 → 수집 원본 전체 펼침(작업2). 원본 없으면(샘플·브라우저로그) 토글 비활성.
+      var main='<tr'+(hasRaw?' style="cursor:pointer" onclick="__dxToggle(\''+did+'\')"':'')+'>'+
+        '<td class="muted">'+(hasRaw?'▸ ':'')+esc((r.ts||'').replace('T',' ').slice(0,16))+'</td>'+
         '<td>'+(r.gender?GENLBL[r.gender]||r.gender:'<span class="muted">—</span>')+'</td>'+
         '<td><b>'+esc(r.bodyType)+'</b> '+esc(TYPES[r.bodyType]||'')+'</td>'+
         '<td>'+esc(r.category)+'</td>'+
@@ -205,6 +240,8 @@
         '<td><span class="pill" style="'+(VBADGE[r.verdict]||'')+'">'+esc(r.verdict)+'</span></td>'+
         '<td class="muted">'+(TIERLBL[r.confidenceTier]||r.confidenceTier)+'</td>'+
         '<td>'+(r.engineImprove?'✓':'<span class="muted">·</span>')+'</td></tr>';
+      var detail='<tr id="'+did+'" style="display:none"><td colspan="8" style="background:rgba(31,106,74,.04);font-size:.92em;line-height:1.55">'+expDetail(r._raw)+'</td></tr>';
+      return main+detail;
     }).join('');
     $('logTable').innerHTML='<thead><tr><th>시각</th><th>성별</th><th>8유형</th><th>카테고리</th><th>앵커</th><th>정확도</th><th>신뢰도</th><th>동의</th></tr></thead><tbody>'+rows+'</tbody>';
   }
