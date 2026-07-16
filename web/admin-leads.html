@@ -25,7 +25,7 @@
 
 <div class="awrap">
   <div class="crumb"><b>전문가 수요 (페이크도어)</b></div>
-  <p class="subnote"><b>스타일리스트 매칭 수요를 집계.</b> 진단 후 노출되는 "준비 중 · 오픈 알림" 웨이트리스트에서 받은 <b>오픈 알림 신청(이메일)</b>·견적 요청이 원천(<code>lead</code> 테이블). 실매칭은 v2 — 여기선 <b>"얼마나 원하나"</b>와 <b>진단→수요 전환</b>을 본다.</p>
+  <p class="subnote"><b>스타일리스트 매칭 수요를 집계.</b> 진단 결과·상단 탭·홈에서 진입하는 "준비 중 · 오픈 알림" 웨이트리스트가 원천(<code>lead</code> 테이블 · kind=notify · 이메일). 실매칭은 v2 — 여기선 <b>"얼마나 원하나"</b>와 <b>진단→수요 전환</b>, 오픈 시 연락할 <b>이메일 명단</b>을 본다.</p>
 
   <div class="filters"><button class="abtn ghost" style="color:var(--warn)" onclick="__resetLeads()">🗑 테스트 수요 로그 초기화</button></div>
 
@@ -34,10 +34,19 @@
   <div class="sec-h">진단 → 수요 전환 <span class="muted" style="font-weight:400">— 진단한 세션 중 매칭 수요로 이어진 비율(같은 브라우저 세션 기준)</span></div>
   <div class="tablewrap"><table class="dt" id="funnelTable"></table></div>
 
-  <div class="sec-h">서비스·상황별 수요 <span class="muted" style="font-weight:400">— 어떤 서비스/상황을 원하나</span></div>
+  <div class="sec-h">일자별 신청 추세 <span class="muted" style="font-weight:400">— 웨이트리스트가 쌓이는 속도(모멘텀) · 막대=진단 후 유입 비율</span></div>
+  <div class="tablewrap"><table class="dt" id="trendTable"></table></div>
+
+  <div class="sec-h">유입 게이트 · 서비스 <span class="muted" style="font-weight:400">— 어디서 신청했나 / 어떤 서비스를 원하나</span></div>
   <div class="tablewrap"><table class="dt" id="segTable"></table></div>
 
-  <div class="sec-h">수요 목록 <span class="muted" style="font-weight:400">— 최신순 · 이메일은 오픈 알림용</span></div>
+  <div class="sec-h">이메일 명단 <span class="muted" style="font-weight:400">— 오픈 시 연락할 고유 이메일</span>
+    <button class="abtn ghost" style="margin-left:10px;font-size:12px;padding:4px 10px" onclick="__copyEmails()">📋 복사</button>
+    <button class="abtn ghost" style="font-size:12px;padding:4px 10px" onclick="__csvEmails()">⬇ CSV</button>
+  </div>
+  <div class="tablewrap"><table class="dt" id="emailTable"></table></div>
+
+  <div class="sec-h">수요 목록 <span class="muted" style="font-weight:400">— 최신순</span></div>
   <div class="tablewrap"><table class="dt" id="ldTable"></table></div>
 </div>
 
@@ -45,6 +54,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/config.js?v=66a385e1"></script>
 <script src="js/admin-auth.js?v=0c868540"></script>
-<script src="js/admin-leads.js?v=6d90a384"></script>
+<script src="js/admin-leads.js?v=bd48ae3b"></script>
 </body>
 </html>
