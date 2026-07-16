@@ -8,6 +8,15 @@
 
   var idx = parseInt(new URLSearchParams(location.search).get('req'),10);
   var candIdx = parseInt(new URLSearchParams(location.search).get('cand'),10);
+  /* 어느 패널에서 들어왔는지 — 뒤로가기가 대시보드가 아니라 그 화면으로 돌아가게. 없으면 진입 종류로 추정 */
+  var PANEL_LABEL = {dash:'대시보드로', inbox:'요청 내역으로', propose:'견적 보내기로', profile:'내 프로필로', reviews:'받은 후기로', settle:'정산으로'};
+  var fromPanel = (function(){
+    var f=new URLSearchParams(location.search).get('from');
+    if(f && PANEL_LABEL[f]) return f;
+    return isNaN(candIdx) ? 'inbox' : 'propose';   // 구 링크(from 없음) 폴백
+  })();
+  function backHref(){ return 'pro.html?panel='+fromPanel; }
+  function goBackToPro(){ location.href=backHref(); }
   var reqs = loadLS('pro.reqs', []);
   var profile = loadLS('pro.profile', null);
   var cands = loadLS('pro.candidates', []);
@@ -21,6 +30,7 @@
   var editDlv = false;   // 방향 A: 제출한 결과물을 인라인으로 다시 편집 중인지
   var addFormOpen = false;   // 결과물 '상품 추가' 폼 펼침 여부(기본 접힘)
   var chatOpen = false;      // 고객과의 대화 드로어 열림 여부
+  var chatAnim = false;      // 자동 열림 직후 1프레임 — 닫힌 채로 그려야 오른쪽에서 밀려 들어오는 전환이 걸림
   var dlvCat = '상의';       // 추천 상품 추가 폼의 선택된 카테고리
 
   /* 요청자별 임의(데모) 측정치 + 선호핏 */
@@ -48,6 +58,17 @@
     return {cls:'online', label:'온라인 스타일링', icon:SVC_SVG.online};
   }
   function svcLabel(s){ return svcMeta(s).label; }
+  /* 대면 여부 — 프로필의 mode가 정본(온라인만 비대면). 대면은 약속(일정·장소)이 있어야 결제를 요청할 수 있다 */
+  function isOffline(s){
+    var f=(profile&&profile.services||[]).filter(function(x){ return x.type===s; })[0];
+    if(f && f.mode) return f.mode==='대면';       // mode가 없는 구 프로필은 온라인으로 오판하므로 종류로 판정
+    return s==='shopping'||s==='image';
+  }
+  /* 내가 그 서비스로 활동하는 지역 — 약속 장소 입력의 기본 후보 */
+  function svcRegions(s){
+    var f=(profile&&profile.services||[]).filter(function(x){ return x.type===s; })[0];
+    return (f&&f.regions)||[];
+  }
   function svcBadge(s){ var m=svcMeta(s); return '<span class="svcbadge '+m.cls+'">'+m.icon+' '+m.label+'</span>'; }
   /* 서비스 아이콘만(글자 뺌) — 상단 태그줄용. 라벨은 title로 접근성 유지 */
   function svcBadgeIcon(s){ var m=svcMeta(s); return '<span class="svcbadge '+m.cls+' icon-only" title="'+esc(m.label)+'" aria-label="'+esc(m.label)+'">'+m.icon+'</span>'; }
@@ -68,6 +89,7 @@
   var ST_BAN_PRO={
     '신규':    ['wait','clock','새 요청 도착','새로운 요청을 확인해 주세요'],
     '제안발송':['wait','clock','제안 발송됨','고객의 응답을 기다리고 있어요'],
+    '상담중':  ['go','check','요청 수락함','대화로 내용을 맞춰본 뒤 입금을 안내해 주세요'],
     '수락됨':  ['go','check','진행 중','결과물을 작성해 전달해 주세요'],
     '완료':    ['go','flag','서비스 완료','고객의 후기를 기다리고 있어요'],
     '거절':    ['no','x','요청 거절함','요청을 거절했어요'],
@@ -83,7 +105,7 @@
   function progressStepper(r){
     var out = r.dir==='out';
     var labels = out ? ['제안','수락','진행','완료'] : ['요청','수락','진행','완료'];
-    var FLOW = out ? {'제안발송':0,'수락됨':2,'완료':3} : {'신규':0,'수락됨':2,'완료':3};
+    var FLOW = out ? {'제안발송':0,'상담중':1,'수락됨':2,'완료':3} : {'신규':0,'상담중':1,'수락됨':2,'완료':3};
     /* 예외 — 흐름에서 멈춘 단계에 경고 표시 (거절=수락 단계 / 취소·분쟁=진행 단계) */
     var EXC = {'거절':{at:1,lb:'거절'},'취소':{at:2,lb:'취소'},'분쟁':{at:2,lb:'분쟁'}};
     var cur, exAt=-1;
@@ -111,7 +133,7 @@
   function actionTitle(r){
     if(r.status==='견적작성') return '견적 작성';
     if(r.status==='제안발송') return '제안 현황';
-    var T={'신규':'요청 수락','수락됨':'결과물 전달','완료':'완료','거절':'거절한 요청','취소':'취소한 요청','분쟁':'분쟁 대응'};
+    var T={'신규':'요청 수락','상담중':'입금 안내','수락됨':'결과물 전달','완료':'완료','거절':'거절한 요청','취소':'취소한 요청','분쟁':'분쟁 대응'};
     return T[r.status]||'진행 관리';
   }
 
@@ -138,14 +160,7 @@
       var hasDraft=((r._draft||[]).length || (r._photos||[]).length || (r._dmsg||'').trim());
       return banner + price + '<button class="btn" style="margin-top:10px" onclick="openDeliverModal()">결과물 작성'+(hasDraft?' (임시저장)':'')+' →</button>' + cancel;
     }
-    if(r.status==='분쟁'){ var dp=r.dispute||{};
-      return banner+
-        '<div class="note-quote" style="border-color:#e6b8b8;background:#fbf3f3"><span style="font-size:13px">사유: '+esc(dp.reason||'—')+'<br>"'+esc(dp.detail||'')+'"</span></div>'+
-        (dp.reply
-          ? '<div class="note-quote" style="margin-top:10px"><b style="color:var(--green,#2E4A3B)">내 소명 제출됨</b><br><span style="font-size:13px;color:var(--sub,#6b6a67)">"'+esc(dp.reply)+'"</span><br><span style="font-size:12px;color:var(--sub2,#8a857b)">관리자 중재를 기다리는 중이에요</span></div>'
-          : '<div class="offerform" style="margin-top:10px"><label>소명 · 반박</label><textarea id="dispReply" placeholder="결과물 전달 내역·대화 등 상황을 설명해주세요"></textarea><button class="btn" style="margin-top:10px" onclick="submitDisputeReply()">소명 제출</button></div>')+
-        '<p class="note-quote muted" style="margin-top:10px">관리자 중재(3.B.4)로 환불·정산이 결정돼요</p>';
-    }
+    // 분쟁은 타임라인의 막힌 단계 칸이 맡음(disputeStepBody) — 여기(폴백 경로)로는 더 이상 오지 않음
     if(r.status==='완료'){
       if(r.review) return banner+'<div class="seclabel">고객 후기</div><div class="note-quote"><span style="letter-spacing:1px">'+starsRO(r.review.rating)+'</span><br>"'+esc(r.review.text)+'"</div>';
       return banner;
@@ -173,16 +188,41 @@
     saveLS('pro.reqs',reqs);
     var proposed=loadLS('pro.proposed',[]); proposed.push(c.cust); saveLS('pro.proposed',proposed);
     toast(c.cust+'님에게 견적을 보냈어요');
-    setTimeout(function(){ location.href='pro.html'; }, 700);
+    setTimeout(goBackToPro, 700);
   }
   function svcPrice(service){ if(profile&&profile.services){ var f=profile.services.filter(function(s){return s.type===service;})[0]; if(f) return f.price; } return MY_PRICE; }
-  function accept(){ if(!reqs[idx].offer) reqs[idx].offer={price:svcPrice(reqs[idx].service)}; reqs[idx].status='결제대기'; pushSysMsg(reqs[idx],'요청을 수락했어요 · 결제를 안내했어요'); saveLS('pro.reqs',reqs); render(); toast('요청을 수락했어요 · 고객 입금을 기다려요'); }
+  /* 수락 = 대화 시작까지만. 결제 안내는 '입금 요청하기'(askPay)로 분리 — 수락과 동시에 결제대기로 넘기지 않음 */
+  function accept(){ if(!reqs[idx].offer) reqs[idx].offer={price:svcPrice(reqs[idx].service)}; reqs[idx].status='상담중'; pushSysMsg(reqs[idx],'acceptReq'); saveLS('pro.reqs',reqs); render(); toast('요청을 수락했어요 · 대화로 내용을 맞춰보세요'); }
+  /* 입금 요청(명시 액션) — 상담중 → 결제대기 */
+  function askPay(){ var r=reqs[idx]; if(!r) return; r.status='결제대기'; pushSysMsg(r,'askPay'); saveLS('pro.reqs',reqs); render(); toast('서비스 결제를 안내했어요 · 고객 입금을 기다려요'); }
+  function confirmAskPay(){ askConfirm(reqs[idx].cust+'님에게 입금을 요청할까요?', askPay, '입금 요청하기', '요청하면 고객에게 결제가 안내돼요'); }
+  /* 안내할 금액 수정(상담중 — 입금 요청 전까지) */
+  function editConsultPrice(){ reqs[idx]._priceEdit=true; render(); setTimeout(function(){ var i=$('peInput'); if(i){ i.focus(); i.select(); } },30); }
+  function saveConsultPrice(){ var r=reqs[idx], el=$('peInput'); var v=el?parseInt(el.value,10):NaN;
+    if(isNaN(v)||v<=0){ toast('금액을 확인해주세요'); return; }
+    r.offer=r.offer||{}; r.offer.price=v; delete r._priceEdit; saveLS('pro.reqs',reqs); render(); toast('안내할 금액을 '+v.toLocaleString()+'원으로 바꿨어요'); }
+  /* 약속 확정(대면) — 상담중 칸에서. 확정돼야 입금 요청이 열린다 */
+  function pickPlace(el, g){ var i=$('aptPlace'); if(i) i.value=g;
+    var row=el.parentNode.querySelectorAll('.catchip');
+    for(var k=0;k<row.length;k++) row[k].classList.toggle('on', row[k]===el); }
+  function captureAppt(){ var r=reqs[idx]; if(!r) return;
+    r._appt={ date:($('aptDate')||{}).value||'', time:($('aptTime')||{}).value||'', place:(($('aptPlace')||{}).value||'').trim() }; }
+  function setAppt(){ var r=reqs[idx]; captureAppt(); var a=r._appt||{};
+    r.appt={date:a.date, time:a.time, place:a.place}; delete r._appt; delete r._apptEdit;
+    pushSysMsg(r,'appt');                                        // 초록 토글은 "약속을 확정했어요"만(대화 자동 열림도 여기서)
+    r.msgs.push({from:'pro', text:'📅 '+apptSummary(r.appt)});   // 확정 상세는 쇼퍼 말풍선으로 자동 전송
+    saveLS('pro.reqs',reqs); render(); toast('약속을 확정했어요 · '+apptSummary(r.appt)); }
+  function confirmSetAppt(){ captureAppt(); var a=reqs[idx]._appt||{};
+    if(!a.date){ toast('날짜를 선택해주세요'); return; }
+    if(!a.place){ toast('장소를 입력해주세요'); return; }
+    askConfirm(reqs[idx].cust+'님과의 약속을 확정할까요?', setAppt, '확정하기', apptSummary(a)+'으로 안내돼요'); }
+  function editAppt(){ var r=reqs[idx]; r._appt={date:r.appt.date,time:r.appt.time,place:r.appt.place}; r._apptEdit=true; render(); }
   /* 입금 확인(데모) — 결제대기 → 수락됨(결과물 작성 열림) */
-  function markPaid(){ var r=reqs[idx]; if(!r) return; r.status='수락됨'; r.paidAt=new Date().toISOString(); pushSysMsg(r,'입금을 확인했어요 · 결과물을 준비할게요'); saveLS('pro.reqs',reqs); render(); toast('입금이 확인됐어요 · 결과물을 작성해 주세요'); }
+  function markPaid(){ var r=reqs[idx]; if(!r) return; r.status='수락됨'; r.paidAt=new Date().toISOString(); pushSysMsg(r,'paid'); saveLS('pro.reqs',reqs); render(); toast('입금이 확인됐어요 · 결과물을 작성해 주세요'); }
   function confirmPayment(){ askConfirm(reqs[idx].cust+'님의 입금을 확인할까요?', markPaid, '확인하기', '확인하면 코디를 진행할 수 있어요'); }
   function reject(){ reqs[idx].reason=''; reqs[idx].status='거절'; saveLS('pro.reqs',reqs); render(); toast('요청을 거절했어요'); }
   function undoReject(){ reqs[idx].status='신규'; reqs[idx].reason=''; saveLS('pro.reqs',reqs); render(); toast('거절을 되돌렸어요'); }
-  function simAccept(){ reqs[idx].status='결제대기'; pushSysMsg(reqs[idx],'고객이 제안을 수락했어요'); saveLS('pro.reqs',reqs); render(); toast(reqs[idx].cust+'님이 제안을 수락했어요 · 입금을 기다려요'); }
+  function simAccept(){ reqs[idx].status='상담중'; pushSysMsg(reqs[idx],'acceptOffer'); saveLS('pro.reqs',reqs); render(); toast(reqs[idx].cust+'님이 제안을 수락했어요 · 대화로 내용을 맞춰보세요'); }
   function completeReq(){ reqs[idx].status='완료'; saveLS('pro.reqs',reqs); render(); toast('완료 처리했어요'); }
   function cancelReq(){ reqs[idx].reason=''; reqs[idx].status='취소'; saveLS('pro.reqs',reqs); render(); toast('진행을 취소했어요'); }
   function undoCancel(){ reqs[idx].status='수락됨'; reqs[idx].reason=''; saveLS('pro.reqs',reqs); render(); toast('취소를 되돌렸어요'); }
@@ -243,7 +283,21 @@
       '.dlv-up:hover{background:var(--soft,#eee);border-color:var(--green-line,#CBDDD2)}.dlv-up svg{width:22px;height:22px}';
     document.head.appendChild(s); }
   function openDeliverModal(){ ensureDlvStyle(); var m=$('deliverModal'); if(!m){ m=document.createElement('div'); m.id='deliverModal'; m.className='dlv-modal'; document.body.appendChild(m); } renderDeliverModal(); m.style.display='flex'; }
-  function saveDlvMsg(){ var el=$('dvMsg'); if(el&&reqs[idx]) reqs[idx]._dmsg=el.value; }
+  /* 리렌더 전에 입력값을 초안으로 챙김 — 노트 + (이미지 컨설팅)리포트. 안 챙기면 다시 그릴 때 날아간다 */
+  function saveDlvMsg(){ var r=reqs[idx]; if(!r) return;
+    var el=$('dvMsg'); if(el) r._dmsg=el.value;
+    captureReport();
+  }
+  function captureReport(){ var r=reqs[idx]; if(!r||r.service!=='image') return;
+    var s=$('rpSil'), a=$('rpAvoid'), d=$('rpDir');
+    if(!s&&!a&&!d) return;                 // 리포트 폼이 화면에 없으면 건드리지 않음
+    r._report=r._report||{};
+    if(s) r._report.silhouette=s.value;
+    if(a) r._report.avoid=a.value;
+    if(d) r._report.direction=d.value;
+  }
+  function pickColor(el, c){ var r=reqs[idx]; captureReport(); r._report=r._report||{}; r._report.color=c;
+    saveLS('pro.reqs',reqs); refreshDlv(); }
   function closeDeliverModal(){ saveDlvMsg(); if(reqs[idx]) saveLS('pro.reqs',reqs); var m=$('deliverModal'); if(m) m.style.display='none'; render(); }
   /* 결과물 편집 새로고침 — 모달이 열려 있으면 모달, 아니면(방향 A 인라인) 전체 렌더 */
   function refreshDlv(){ var m=$('deliverModal'); if(m && m.style.display==='flex'){ renderDeliverModal(); } else { render(); } }
@@ -252,10 +306,12 @@
     return '<div class="dlv-thumbs">'+photos.map(function(p,k){ return '<div class="dlv-th" style="background-image:url(\''+p.data+'\')">'+(editable?'<button onclick="delPhoto('+k+')">✕</button>':'')+'</div>'; }).join('')+'</div>'; }
   var IC_LINK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 14.5l5-5"/><path d="M11.5 6.5l1-1a3.5 3.5 0 0 1 5 5l-2 2"/><path d="M12.5 17.5l-1 1a3.5 3.5 0 0 1-5-5l2-2"/></svg>';
   var IC_X='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+  var IC_CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5"/></svg>';
   /* 상품 카드 1개 — editable=작성폼(삭제 O) / false=제출요약(삭제 X). 2줄: [카테고리] 브랜드 상품 / 사이즈·가격·링크 */
   function pcardHTML(it, k, editable){
     var price=(it.price?Number(it.price).toLocaleString():'—');
-    return '<div class="pcard'+(editable?'':' ro')+'">'+
+    return '<div class="pcard'+(editable?' picked':' ro')+'">'+
+      (editable?'<span class="pmark" aria-label="담김">'+IC_CHECK+'</span>':'')+
       (editable?'<button class="pdel" onclick="delDeliverItem('+k+')" aria-label="삭제">'+IC_X+'</button>':'')+
       (it.cat?'<span class="pcat">'+esc(it.cat)+'</span>':'')+
       '<div class="pbody">'+
@@ -265,43 +321,89 @@
       '</div>'+
     '</div>';
   }
-  /* 구매 상품 블록 (온라인 한정) — 상품 리스트 + 추가 폼 + 합계 */
-  function productBlockHTML(r){ var draft=r._draft||[];
+  /* ── 서비스별 결과물 카피 ───────────────────────────────────────────
+     세 서비스는 결과물의 성격이 다르다.
+     온라인=사서 입을 추천 목록 / 동행쇼핑=현장에서 함께 산 내역 / 이미지컨설팅=진단 리포트.
+     상품 블록은 온라인·동행쇼핑이 구조가 같아(브랜드·상품·사이즈·가격) 재사용하고 문구만 바꾼다. */
+  var DLV_COPY = {
+    online:  { sec:'추천 상품', listH:'담은 상품', addBtn:'+ 상품 담기', formH:'새 상품 담기',
+               priceLb:'가격(원)', urlLb:'구매 링크', photoSec:'코디 착용 예시',
+               noteSec:'코디 노트', notePh:'착용 팁·코디 포인트를 적어주세요' },
+    shopping:{ sec:'함께 구매한 상품', listH:'구매한 상품', addBtn:'+ 구매 상품 담기', formH:'구매 상품 담기',
+               priceLb:'구매가(원)', urlLb:'상품 링크(선택)', photoSec:'현장 사진',
+               noteSec:'쇼핑 노트', notePh:'현장에서 고른 이유·매치 팁을 적어주세요' },
+    image:   { photoSec:'컨설팅 사진',
+               noteSec:'컨설팅 노트', notePh:'상담에서 나눈 이야기·관리 팁을 적어주세요' }
+  };
+  function dlvCopy(s){ return DLV_COPY[s]||DLV_COPY.online; }
+
+  /* 상품 블록 (온라인·동행쇼핑) — 상품 리스트 + 추가 폼 + 합계 */
+  function productBlockHTML(r){ var draft=r._draft||[], C=dlvCopy(r.service);
     // A 카드형 — 상품 1개 = 카드 1개(카테고리·상품명 강조)
     var list=draft.map(function(it,k){ return pcardHTML(it,k,true); }).join('');
     var CATS=['상의','하의','아우터','신발','기타'];
     var addUI = addFormOpen
       ? '<div class="pform">'+
+          '<div class="pform-h">'+esc(C.formH)+'</div>'+
           '<div class="catrow">'+CATS.map(function(c){ return '<span class="catchip'+(c===dlvCat?' on':'')+'" onclick="pickCat(this,\''+c+'\')">'+c+'</span>'; }).join('')+'</div>'+
           '<div class="offerform">'+
             '<label>브랜드</label><input id="dvBrand" placeholder="예: 유니클로">'+
             '<label>상품 이름</label><input id="dvName" placeholder="예: 라운드 니트">'+
-            '<div style="display:flex;gap:8px"><div style="flex:1"><label>사이즈</label><input id="dvSize" placeholder="M / 30 / 270"></div><div style="flex:1"><label>가격(원)</label><input id="dvPrice" type="number" placeholder="39900"></div></div>'+
-            '<label>구매 링크</label><input id="dvUrl" placeholder="https://...">'+
+            '<div style="display:flex;gap:8px"><div style="flex:1"><label>사이즈</label><input id="dvSize" placeholder="M / 30 / 270"></div><div style="flex:1"><label>'+esc(C.priceLb)+'</label><input id="dvPrice" type="number" placeholder="39900"></div></div>'+
+            '<label>'+esc(C.urlLb)+'</label><input id="dvUrl" placeholder="https://...">'+
           '</div>'+
           '<div class="pform-act"><button class="p-cancel" onclick="toggleAddForm()">취소</button><button class="p-add" onclick="addDeliverItem()">담기</button></div></div>'
-      : '<button class="dlv-addbtn" onclick="toggleAddForm()">+ 상품 담기</button>';
-    return '<div class="dlv-sec">추천 상품 <span class="dlv-req">· 필수</span></div>'+
-      list+addUI+(draft.length?budgetLiteHTML(draft):''); }
-  /* 사진 블록 (전 서비스 공통) */
+      : '<button class="dlv-addbtn" onclick="toggleAddForm()">'+esc(C.addBtn)+'</button>';
+    // 담은 목록 헤더는 담긴 게 있을 때만 — 비어 있으면 '담기' 하나만 보이게
+    var listHead=draft.length ? '<div class="plist-h">'+esc(C.listH)+' <b>'+draft.length+'개</b></div>' : '';
+    return '<div class="dlv-sec">'+esc(C.sec)+' <span class="dlv-req">· 필수</span></div>'+
+      listHead+list+addUI+(draft.length?budgetLiteHTML(draft):''); }
+
+  /* 진단 리포트 블록 (이미지 컨설팅) — 결과물이 '살 것'이 아니라 '진단'이라 상품 목록이 아니다 */
+  var PCOLORS=['봄 웜','여름 쿨','가을 웜','겨울 쿨'];
+  function reportBlockHTML(r){ var rp=r._report||{};
+    return '<div class="dlv-sec">진단 리포트 <span class="dlv-req">· 필수</span></div>'+
+      '<div class="rp-form">'+
+        '<label class="rp-lb">퍼스널 컬러</label>'+
+        '<div class="catrow">'+PCOLORS.map(function(c){
+          return '<span class="catchip'+(rp.color===c?' on':'')+'" onclick="pickColor(this,\''+c+'\')">'+c+'</span>'; }).join('')+'</div>'+
+        '<div class="offerform">'+
+          '<label>어울리는 실루엣·라인</label><input id="rpSil" placeholder="예: 어깨가 좁아 셋인 슬리브·V넥이 잘 맞아요" value="'+esc(rp.silhouette||'')+'">'+
+          '<label>피하면 좋은 것</label><input id="rpAvoid" placeholder="예: 광택 큰 소재·가로 스트라이프" value="'+esc(rp.avoid||'')+'">'+
+          '<label>스타일 방향</label><textarea id="rpDir" style="min-height:72px" placeholder="예: 오피스에서는 뉴트럴 톤 미니멀, 주말은 캐주얼로 폭을 넓혀보세요">'+esc(rp.direction||'')+'</textarea>'+
+        '</div>'+
+      '</div>'; }
+  function reportReady(r){ var rp=r._report||{}; return !!(rp.color && (rp.direction||'').trim()); }
+  /* 제출된 리포트 요약(읽기전용) */
+  function reportSummaryHTML(rp){
+    if(!rp) return '';
+    var row=function(k,v){ return v ? '<div class="rp-row"><span class="k">'+k+'</span><span class="v">'+esc(v)+'</span></div>' : ''; };
+    return '<div class="rp-ro">'+
+      (rp.color?'<span class="rp-chip">'+esc(rp.color)+'</span>':'')+
+      row('어울리는 실루엣', rp.silhouette)+row('피하면 좋은 것', rp.avoid)+row('스타일 방향', rp.direction)+
+    '</div>'; }
+
+  /* 사진 블록 (전 서비스 공통 · 라벨만 서비스별) */
   var IC_CAM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6.5" width="18" height="13" rx="2.5"/><circle cx="12" cy="13" r="3.4"/><path d="M8.5 6.5l1.3-2.2h4.4l1.3 2.2"/></svg>';
-  function photoBlockHTML(r){ var photos=r._photos||[];
+  function photoBlockHTML(r){ var photos=r._photos||[], C=dlvCopy(r.service);
     var thumbs=(photos||[]).map(function(p,k){ return '<div class="dlv-th" style="background-image:url(\''+p.data+'\')"><button onclick="delPhoto('+k+')">✕</button></div>'; }).join('');
-    return '<div class="dlv-sec">코디 착용 예시 <span class="dlv-cap">· 장당 800KB 이하, 최대 '+MAX_PHOTOS+'장</span></div>'+
+    return '<div class="dlv-sec">'+esc(C.photoSec)+' <span class="dlv-cap">· 장당 800KB 이하, 최대 '+MAX_PHOTOS+'장</span></div>'+
       '<div class="dlv-thumbs">'+thumbs+'<label class="dlv-up">'+IC_CAM+'<span>사진 추가</span><input type="file" accept="image/*" multiple onchange="attachPhoto(this)" style="display:none"></label></div>'; }
-  /* 내용/코디 노트 (전 서비스 공통) */
-  function contentBlockHTML(r){ return '<div class="dlv-sec" style="margin-top:16px">코디 노트</div><div class="offerform"><textarea id="dvMsg" style="min-height:104px" placeholder="착용 팁·코디 포인트를 적어주세요">'+esc(r._dmsg||'')+'</textarea></div>'; }
+  /* 노트 (전 서비스 공통 · 라벨만 서비스별) */
+  function contentBlockHTML(r){ var C=dlvCopy(r.service);
+    return '<div class="dlv-sec" style="margin-top:16px">'+esc(C.noteSec)+'</div><div class="offerform"><textarea id="dvMsg" style="min-height:104px" placeholder="'+esc(C.notePh)+'">'+esc(r._dmsg||'')+'</textarea></div>'; }
   function renderDeliverModal(){ var r=reqs[idx], m=$('deliverModal'); if(!m||!r) return;
-    var online=(r.service==='online'), draft=r._draft||[];
-    var submit='결과물 '+(r.deliver?'다시 제출':'제출')+(online&&draft.length ? ' ('+draft.length+'개 · '+itemsTotal(draft).toLocaleString()+'원)' : '');
+    var draft=r._draft||[], hasItems=(r.service!=='image' && draft.length);
+    var submit='결과물 '+(r.deliver?'다시 제출':'제출')+(hasItems ? ' ('+draft.length+'개 · '+itemsTotal(draft).toLocaleString()+'원)' : '');
     m.innerHTML='<div class="dlv-bd" onclick="closeDeliverModal()"></div><div class="dlv-pan">'+
       '<div class="dlv-h"><div><b>'+(r.deliver?'결과물 수정':'결과물 작성')+'</b> <span>'+esc(r.cust)+'님 · '+svcLabel(r.service)+'</span></div><button class="dlv-x" onclick="closeDeliverModal()">✕</button></div>'+
-      '<div class="dlv-b">'+(online?productBlockHTML(r):'')+photoBlockHTML(r)+contentBlockHTML(r)+'</div>'+
-      '<div class="dlv-f"><button class="btn" onclick="sendDeliver()">'+submit+'</button></div></div>';
+      '<div class="dlv-b">'+deliverBlocksHTML(r)+'</div>'+
+      '<div class="dlv-f"><button class="btn"'+(canSubmitDeliver(r)?'':' disabled')+' onclick="sendDeliver()">'+submit+'</button></div></div>';
   }
   /* 제출한 결과물 요약 — 회색박스 없이 담은 상품 카드(읽기전용)·사진·노트, 합계는 맨 밑 */
   function deliverSummary(r){ ensureDlvStyle(); var d=r.deliver||{}, items=d.items||[], photos=d.photos||[];
     var out='';
+    if(d.report) out+=reportSummaryHTML(d.report);
     if(items.length) out+=items.map(function(it,k){ return pcardHTML(it,k,false); }).join('');
     if(photos.length) out+='<div style="margin-top:8px">'+photoThumbsHTML(photos, false)+'</div>';
     if(d.msg) out+='<div class="dlv-note-ro">'+esc(d.msg)+'</div>';
@@ -324,15 +426,26 @@
   /* 완료 전 수정 — 제출본을 초안으로 되돌려 모달 열기 */
   function editDeliver(){ var r=reqs[idx]; if(!r||!r.deliver) return;
     r._draft=(r.deliver.items||[]).slice(); r._photos=(r.deliver.photos||[]).slice(); r._dmsg=r.deliver.msg||'';
+    if(r.deliver.report) r._report={color:r.deliver.report.color, silhouette:r.deliver.report.silhouette, avoid:r.deliver.report.avoid, direction:r.deliver.report.direction};
     editDlv=true; render(); }
   /* 방향 A: 제출본 인라인 편집 취소 — 초안 버리고 제출본 요약으로 복귀 */
-  function cancelEditDeliver(){ var r=reqs[idx]; if(r){ delete r._draft; delete r._photos; delete r._dmsg; } editDlv=false; render(); }
+  function cancelEditDeliver(){ var r=reqs[idx]; if(r){ delete r._draft; delete r._photos; delete r._dmsg; delete r._report; } editDlv=false; render(); }
+  /* 전달한 결과물을 한 줄 요약으로 — 대화창에 쇼퍼 말풍선으로 자동 전송(약속 확정과 같은 방식) */
+  function deliverBubble(r){ var d=r.deliver||{};
+    if(r.service==='image'){ var rp=d.report||{}; return '📋 진단 리포트를 보냈어요'+(rp.color?' · '+esc(rp.color):''); }
+    var n=(d.items||[]).length, ph=(d.photos||[]).length;
+    var head=(r.service==='shopping'?'🛍️ 구매 상품':'🛍️ 추천 상품')+' '+n+'개를 보냈어요';
+    var sum = n ? ' ('+itemsTotal(d.items).toLocaleString()+'원)' : (ph? ' · 사진 '+ph+'장':'');
+    return head+sum; }
   function sendDeliver(){ saveDlvMsg(); var r=reqs[idx];
     var items=r._draft||[], photos=r._photos||[], msg=(r._dmsg||'').trim();
-    if(!items.length && !photos.length && !msg){ toast('상품·사진·내용 중 하나 이상 추가해주세요'); return; }
-    r.deliver={ items:items, photos:photos, msg:r._dmsg||'', sentAt:new Date().toISOString() }; delete r._draft; delete r._photos; delete r._dmsg;
+    if(!canSubmitDeliver(r)){ toast(r.service==='image'?'퍼스널 컬러와 스타일 방향을 채워주세요':'상품을 1개 이상 담아주세요'); return; }
+    if(!items.length && !photos.length && !msg && r.service!=='image'){ toast('상품·사진·내용 중 하나 이상 추가해주세요'); return; }
+    r.deliver={ items:items, photos:photos, msg:r._dmsg||'', report:(r.service==='image'?r._report:null), sentAt:new Date().toISOString() };
+    delete r._draft; delete r._photos; delete r._dmsg; delete r._report;
     r.status='완료';   // 제출 = 최종. 수정 불가 · 바로 고객에게 · 완료로 이동
-    pushSysMsg(r,'결과물을 전달했어요 · 서비스가 완료됐어요');
+    pushSysMsg(r,'deliver');                                    // 초록 토글은 "결과물을 전달했어요 · 후기를 기다려주세요"만
+    r.msgs.push({from:'pro', text:deliverBubble(r)});           // 결과물 요약은 쇼퍼 말풍선으로 자동 전송
     saveLS('pro.reqs',reqs); editDlv=false; addFormOpen=false; var m=$('deliverModal'); if(m) m.style.display='none'; render(); toast(r.cust+'님에게 결과물을 전달했어요 · 완료로 넘어갔어요'); }
   /* 제출 재확인 — 수정 불가·바로 고객에게 경고 */
   function confirmSubmitDeliver(){ askConfirm(reqs[idx].cust+'님에게 결과물을 보낼까요?', sendDeliver, '보내기', '보내면 수정할 수 없어요'); }
@@ -651,6 +764,16 @@
   }
   var IC_ATT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11l-8.5 8.5a4.5 4.5 0 0 1-6.4-6.4l8.5-8.5a3 3 0 0 1 4.3 4.3l-8.6 8.5a1.5 1.5 0 0 1-2.1-2.1l7.9-7.9"/></svg>';
   function attachChip(attached, mt){ return '<span class="rr-chip'+(attached?'':' off')+'" style="margin-top:'+(mt||12)+'px">'+IC_ATT+(attached?'체형·사이즈 측정 결과 첨부됨':'체형·사이즈 측정 미첨부')+'</span>'; }
+  /* 요청 요약 카드 — 서비스 유형=아이콘 헤더 / 상황·예상가격·희망일정·요청사항=줄글 / 체형=칩. 고객 화면과 동일 형태 */
+  function reqCardHTML(r, attached, out){
+    var money = out ? ['고객 예산', esc(r.budget||'—')] : ['예상 가격', svcPrice(r.service).toLocaleString()+'원'];
+    var rows=[['상황', esc(r.occ||'—')], money, ['희망 일정', esc(r.date||'—')]];
+    if(r.styles && r.styles.length) rows.push(['선호 스타일', esc(r.styles.join(' · '))]);
+    rows.push(['요청사항', (r.note&&(''+r.note).trim())?esc(r.note):'—']);
+    return '<div class="rqc-head"><span class="rqc-ic">'+svcMeta(r.service).icon+'</span><b>'+esc(svcLabel(r.service))+'</b></div>'+
+      rows.map(function(x){ return '<div class="rqc-row"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>'; }).join('')+
+      '<span class="rqc-chip'+(attached?'':' off')+'">'+IC_ATT+'체형·사이즈 측정 결과 '+(attached?'첨부됨':'미첨부')+'</span>';
+  }
   /* 타임라인 노드 마커 */
   function tlNode(state, i){
     if(state==='done') return '<span class="tl-node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>';
@@ -698,10 +821,17 @@
   }
   /* 결과물 인라인 작성 폼(현재=수락됨, 미제출·편집중) — 모달 내부와 같은 블록 재사용 */
   function deliverInlineBody(r){
-    var online=(r.service==='online'), draft=r._draft||[];
-    var canSubmit = online ? draft.length>0 : true;   // 추천 상품(필수) 1개 이상이면 제출 활성
-    return (online?productBlockHTML(r)+'<div class="dlv-div"></div>':'') + photoBlockHTML(r) + contentBlockHTML(r) +
-      '<button class="btn" style="margin-top:16px"'+(canSubmit?'':' disabled')+' onclick="confirmSubmitDeliver()">결과물 보내기</button>';
+    return deliverBlocksHTML(r) +
+      '<button class="btn" style="margin-top:16px"'+(canSubmitDeliver(r)?'':' disabled')+' onclick="confirmSubmitDeliver()">결과물 보내기</button>';
+  }
+  /* 결과물 본문 — 서비스별 주 블록 + 사진 + 노트. 인라인 폼과 모달이 같은 조립을 씀 */
+  function deliverBlocksHTML(r){
+    var main = r.service==='image' ? reportBlockHTML(r) : productBlockHTML(r);
+    return main + '<div class="dlv-div"></div>' + photoBlockHTML(r) + contentBlockHTML(r);
+  }
+  /* 제출 조건 — 이미지 컨설팅은 리포트(퍼스널 컬러+스타일 방향), 나머지는 상품 1개 이상 */
+  function canSubmitDeliver(r){
+    return r.service==='image' ? reportReady(r) : (r._draft||[]).length>0;
   }
   /* 결과물 제출 완료 요약(현재=수락됨, 제출됨) — 수정/완료/취소 */
   function deliverDoneBody(r){
@@ -713,6 +843,11 @@
   /* 단계별 카드 HTML */
   function tlStepHTML(i, state, r, attached, out){
     var inner='';
+    /* 분쟁은 어느 칸에서든 막힐 수 있음 — 칸 번호를 따지지 않고 막힌 그 자리에 소명 카드를 띄운다 */
+    if(state==='exc' && r.status==='분쟁'){
+      inner=nowCardWarn('분쟁 처리 중','분쟁', esc(r.cust)+'님이 문제를 신고했어요 · 소명을 제출해 주세요', disputeStepBody(r));
+      return '<div class="tl-step exc'+(i===4?' last':'')+'">'+tlNode(state,i)+inner+'</div>';
+    }
     if(i===0){                                   // 요청 / 제안
       if(state==='now'){
         if(out){ var o=r.offer||{};
@@ -730,7 +865,7 @@
         // 상황(occ)은 상단 h1에 이미 있어 요약에선 뺌 · 날짜는 6자리
         var sum = out ? ('견적 <span class="money">'+price0+'원</span> 보냄'+(r.date?' · '+shortDate(r.date):''))
                       : ('견적 요청 도착'+(r.date?' · '+shortDate(r.date):''));
-        inner=tlReceipt(out?'제안':'요청', sum, reqRowsHTML(r)+attachChip(attached,12), false);
+        inner=tlReceipt(out?'제안':'요청', sum, reqCardHTML(r, attached, out), false);
       }
     } else if(i===1){                            // 수락
       if(state==='done'){
@@ -739,6 +874,8 @@
         var body1='<div class="rrow"><span class="k">확정 금액</span><span class="v"><span class="money">'+price1+'원</span></span></div>'+
           '<span class="undo" onclick="undoAccept()">↩ 수락 되돌리기</span>';
         inner=tlReceipt('수락', sum1, body1, false);
+      } else if(state==='now'){                    // 상담중 — 수락 후, 입금 요청 전
+        inner=consultCardHTML(r);
       } else if(state==='exc'){
         inner=nowCardWarn('요청 거절함','거절', '요청을 거절했어요',
           (r.reason?'<div class="note-quote muted" style="margin-bottom:10px">“'+esc(r.reason)+'”</div>':'')+
@@ -761,7 +898,12 @@
       }
     } else if(i===3){                            // 진행 / 결과물
       if(state==='now'){
-        inner=nowCard('결과물 전달','지금 할 일','추천 상품·사진·코디 노트를 작성해보세요', deliverInlineBody(r));
+        var hintD = r.service==='image'   ? '상담한 진단 결과를 리포트로 정리해주세요'
+                  : r.service==='shopping'? '현장에서 함께 구매한 내역을 정리해주세요'
+                  :                         '추천 상품·사진·코디 노트를 작성해보세요';
+        // 대면은 약속이 지나야 쓸 수 있는 내용이라 확정된 약속을 카드 맨 위에 다시 보여줌
+        inner=nowCard('결과물 전달','지금 할 일', hintD,
+          (isOffline(r.service)&&r.appt ? apptDoneHTML(r) : '') + deliverInlineBody(r));
       } else if(state==='done'){
         var its=(r.deliver&&r.deliver.items)||[];
         var sum2='결과물 전달함'+(its.length?' · '+its.length+'개':'');
@@ -786,17 +928,95 @@
     var pcls=(i===2 && state==='now')?' pay':'';   // 결제(입금 대기) 현재 노드는 노랑
     return '<div class="tl-step '+state+pcls+(i===4?' last':'')+'">'+tlNode(state,i)+inner+'</div>';
   }
-  /* 정상 흐름·거절·취소면 타임라인 HTML, 아니면 null(분쟁·견적작성 → 폴백) */
+  /* ── 상담중 칸 ─────────────────────────────────────────────────────
+     온라인: 대화로 맞춰본 뒤 바로 입금 요청.
+     대면(이미지 컨설팅·동행 쇼핑): 언제·어디서 만날지가 정해져야 결제를 요청할 수 있다.
+     약속을 별도 단계로 빼지 않고 이 칸에서 처리 — 마침 '대화로 맞춰보는' 자리라 결이 같고,
+     단계를 6개로 늘리면 온라인에 빈 칸이 생긴다. */
+  /* "19:00"(24h) → "07:00 PM"(12h) — input[type=time]은 24h로 값을 주므로 표시할 때 변환 */
+  function fmtTime(t){ t=String(t||''); var m=t.match(/^(\d{1,2}):(\d{2})/); if(!m) return t;
+    var h=+m[1], ap=h<12?'AM':'PM', h12=h%12; if(h12===0) h12=12;
+    return ('0'+h12).slice(-2)+':'+m[2]+' '+ap; }
+  function apptSummary(a){
+    return esc(shortDate(a.date))+(a.time?' '+esc(fmtTime(a.time)):'')+(a.place?' · '+esc(a.place):'');
+  }
+  function apptFormHTML(r){
+    var a=r._appt||{}, regions=svcRegions(r.service);
+    var chips = regions.length
+      ? '<div class="catrow apt-regions">'+regions.map(function(g){
+          return '<span class="catchip'+(a.place===g?' on':'')+'" onclick="pickPlace(this,\''+esc(g)+'\')">'+esc(g)+'</span>'; }).join('')+'</div>'
+      : '';
+    return '<div class="apt-form">'+
+      '<div class="offerform">'+
+        '<div style="display:flex;gap:8px">'+
+          '<div style="flex:1.3"><label>날짜</label><input id="aptDate" type="date" value="'+esc(a.date||'')+'"></div>'+
+          '<div style="flex:1"><label>시간</label><input id="aptTime" type="time" value="'+esc(a.time||'')+'"></div>'+
+        '</div>'+
+        '<label>장소</label><input id="aptPlace" placeholder="예: 서울 강남 · 신논현역 3번 출구" value="'+esc(a.place||'')+'">'+
+        chips+
+      '</div>'+
+      '<button class="btn" style="margin-top:12px;width:100%" onclick="confirmSetAppt()">약속 확정하기</button>'+
+    '</div>';
+  }
+  /* editable=상담중 칸(변경 가능) / false=이후 칸에서 참고용으로만 다시 보여줄 때 */
+  function apptDoneHTML(r, editable){
+    var a=r.appt||{};
+    return '<div class="apt-done"><span class="apt-ic">'+stIcon('clock')+'</span>'+
+      '<div class="apt-tx"><b>'+apptSummary(a)+'</b><span>약속 확정됨</span></div>'+
+      (editable?'<button class="apt-edit" onclick="editAppt()">변경</button>':'')+'</div>';
+  }
+  function consultCardHTML(r){
+    var price=(r.offer&&r.offer.price)?r.offer.price.toLocaleString():'—';
+    var undo='<div class="quiet"><a onclick="undoAccept()">수락 되돌리기</a></div>';
+    var payBtn='<button class="btn" style="margin-top:14px;width:100%" onclick="confirmAskPay()">입금 요청하기</button>';
+    // 안내할 금액 — 입금 요청 전까지 대화로 맞춘 뒤 조정 가능(요청하면 잠금)
+    var amt = r._priceEdit
+      ? '<div class="pay-amt pay-edit"><span>안내할 금액</span>'+
+          '<span class="pe-in"><input id="peInput" type="number" value="'+((r.offer&&r.offer.price)||'')+'" placeholder="금액">원'+
+          '<button class="pe-ok" onclick="saveConsultPrice()">확정</button></span></div>'
+      : '<div class="pay-amt"><span>안내할 금액</span><b class="num">'+price+'원 <a class="pe-edit" onclick="editConsultPrice()">수정</a></b></div>';
+    if(!isOffline(r.service)){
+      return nowCard('입금 안내','지금 할 일','대화로 내용을 맞춰본 뒤 입금을 안내해요', amt+payBtn+undo);
+    }
+    // 대면 — 약속이 확정돼야 입금 요청이 열림(날짜도 모르는데 돈부터 받는 일을 막음)
+    if(!r.appt || r._apptEdit){
+      return nowCard('약속 잡기','지금 할 일','희망 일정 '+esc(shortDate(r.date)||'—')+' · 대화 후 일정을 확정해주세요',
+        apptFormHTML(r)+undo);
+    }
+    return nowCard('입금 안내','지금 할 일','약속이 잡혔어요 · 이제 결제를 안내해 주세요',
+      apptDoneHTML(r,true)+amt+payBtn+undo);
+  }
+  /* 분쟁 — 막힌 그 단계 자리에 뜨는 경고 카드(거절=수락 칸, 취소=진행 칸과 같은 규칙).
+     흐름을 끝내는 게 아니라 그 단계에서 멈춰 세우는 것이라, 원래 그 칸에 있던 액션 대신 소명이 주연이 된다. */
+  function disputeStepBody(r){
+    var dp=r.dispute||{};
+    var body = dp.reply
+      ? '<div class="dsp-reply"><b>내 소명 제출됨</b><p>"'+esc(dp.reply)+'"</p><span>관리자 중재를 기다리는 중이에요</span></div>'
+      : '<div class="offerform dsp-form"><label>소명 · 반박</label>'+
+        '<textarea id="dispReply" placeholder="결과물 전달 내역·대화 등 상황을 설명해주세요"></textarea>'+
+        '<button class="btn" style="margin-top:10px;width:100%" onclick="submitDisputeReply()">소명 제출하기</button></div>';
+    return '<div class="dsp-claim"><span class="dsp-rs">'+esc(dp.reason||'기타')+'</span>'+
+        '<p>"'+esc(dp.detail||'')+'"</p></div>'+
+      body+
+      '<p class="dsp-note">관리자 중재로 환불·정산이 결정돼요 · 그동안 정산은 보류돼요</p>';
+  }
+  /* 정상 흐름·거절·취소·분쟁이면 타임라인 HTML, 아니면 null(견적작성 → 폴백) */
   function timelineHTML(r, attached){
     var out=r.dir==='out';
     // 5단계: 요청/제안(0) · 수락(1) · 결제(2) · 진행(3) · 완료(4)
-    var NORMAL = out ? {'제안발송':0,'결제대기':2,'수락됨':3,'완료':4} : {'신규':0,'결제대기':2,'수락됨':3,'완료':4};
-    var EXC = {'거절':1,'취소':3};   // 흐름에서 멈춘 단계(✕)
+    var NORMAL = out ? {'제안발송':0,'상담중':1,'결제대기':2,'수락됨':3,'완료':4} : {'신규':0,'상담중':1,'결제대기':2,'수락됨':3,'완료':4};
+    var EXC = {'거절':1,'취소':3};   // 흐름을 끝내는 예외 — 멈춘 단계에 ✕
     var cur, excAt=-1;
-    if(r.status in NORMAL){ cur=NORMAL[r.status]; }
+    /* 분쟁 = 진행되던 그 단계에서 막힌 것 — _prevStatus가 가리키는 칸에 ✕를 찍고 그 자리에 소명을 띄운다 */
+    if(r.status==='분쟁'){
+      cur=NORMAL[r._prevStatus];
+      if(cur===undefined) cur=3;     // 백업이 없는 구 데이터 — 결제 후 진행 단계에서 막힌 것으로 본다
+      excAt=cur;
+    }
+    else if(r.status in NORMAL){ cur=NORMAL[r.status]; }
     else if(r.status in EXC){ excAt=EXC[r.status]; cur=excAt; }
-    else return null;                // 분쟁·견적작성 등 → 폴백
-    if(r.status==='수락됨') ensureDlvStyle();
+    else return null;                // 견적작성 등 → 폴백
+    if(r.status==='수락됨' || r.deliver) ensureDlvStyle();
     var steps='';
     for(var i=0;i<5;i++){ var state=(i===excAt?'exc':(i<cur?'done':(i===cur?'now':'future'))); steps+=tlStepHTML(i,state,r,attached,out); }
     return '<div class="tl">'+steps+'</div>';
@@ -819,18 +1039,49 @@
     return '<button class="cd-flag'+(done?' on':'')+'" onclick="openReportModal()" title="'+(done?'신고 접수됨':'고객 신고')+'" aria-label="고객 신고">'+IC_FLAG+'</button>'; }
   function chatDrawerHTML(r, showReport){
     var bubbles=proMsgs(r).map(function(mm){
-      if(mm.from==='sys') return '<div class="pm-sys">'+esc(mm.text)+'</div>';
+      // ev=새 사건 기반 / text=예전에 저장된 완성 문장(구 데이터 폴백)
+      if(mm.from==='sys') return '<div class="pm-sys">'+esc(mm.ev?sysText(mm.ev,r,'pro'):(mm.text||''))+'</div>';
       var mine=(mm.from==='pro'||mm.from==='me');
       return '<div class="pm-row '+(mine?'me':'cust')+'"><div class="pm-b">'+esc(mm.text)+'</div></div>'; }).join('');
-    return '<div class="cd-scrim'+(chatOpen?' on':'')+'" id="cdScrim" onclick="toggleChat()"></div>'+
-      '<aside class="chatdrawer'+(chatOpen?' open':'')+'" id="chatDrawer" aria-label="고객과의 대화">'+
+    var shown = chatOpen && !chatAnim;   // 자동 열림이면 닫힌 채로 그리고 다음 프레임에 open을 붙임
+    return '<div class="cd-scrim'+(shown?' on':'')+'" id="cdScrim" onclick="toggleChat()"></div>'+
+      '<aside class="chatdrawer'+(shown?' open':'')+'" id="chatDrawer" aria-label="고객과의 대화">'+
         '<div class="cd-head"><div class="cd-ti"><span class="cd-eye">고객과의 대화</span><b>'+esc(r.cust)+'님</b></div>'+(showReport?reportIconBtn(r):'')+'<button class="cd-x" onclick="toggleChat()" aria-label="닫기">'+IC_X+'</button></div>'+
         '<div class="pm-thread" id="pmThread">'+bubbles+'</div>'+
         '<div class="pm-compose"><input id="pmIn" placeholder="메시지를 입력하세요" onkeydown="if(event.key===\'Enter\')sendProMsg()"><button class="pm-send" onclick="sendProMsg()" aria-label="보내기">'+IC_SEND+'</button></div>'+
       '</aside>';
   }
-  /* 상태 변화(수락·입금확인·결과물 전달 등)를 대화에 시스템 메시지로 로그 */
-  function pushSysMsg(r, text){ if(!r) return; r.msgs = proMsgs(r).slice(); r.msgs.push({from:'sys', text:text}); }
+  /* ── 대화창 시스템 안내 카피 ─────────────────────────────────────────
+     같은 사건이라도 보는 쪽에 따라 문장이 다름 → 완성된 문장이 아니라 '사건(ev)'만 저장하고
+     읽는 쪽에서 문장을 만든다. 고객 화면을 붙일 때도 이 표를 그대로 쓰고 view만 'cust'로 준다.
+     {cust}=고객 이름 · {pro}=스타일리스트 이름 */
+  var SYS_COPY = {
+    acceptReq:   { pro:'요청을 수락했어요 · {cust}님과 대화를 시작해보세요',   cust:'{pro}님이 요청을 수락했어요 · 대화를 시작해보세요' },
+    acceptOffer: { pro:'{cust}님이 제안을 수락했어요 · 대화를 시작해보세요',  cust:'제안을 수락했어요 · 대화를 시작해보세요' },
+    appt:        { pro:'약속을 확정했어요',                                cust:'약속이 확정됐어요' },
+    askPay:      { pro:'서비스 결제를 안내했어요',                          cust:'서비스 결제를 진행해주세요' },
+    paid:        { pro:'입금을 확인했어요 · 결과물을 준비해주세요',           cust:'결제가 완료됐어요 · 결과물을 기다려주세요' },
+    deliver:     { pro:'결과물을 전달했어요 · 후기를 기다려주세요',           cust:'결과물을 받았어요 · 후기를 남겨주세요' },
+    review:      { pro:'후기가 등록됐어요 · 서비스가 완료되었어요!',          cust:'후기를 남겨주셔서 감사해요 · 서비스가 완료되었어요!' }
+  };
+  function sysText(ev, r, view){
+    var c=SYS_COPY[ev]; if(!c) return '';
+    return (c[view||'pro']||'')
+      .replace('{cust}', (r&&r.cust)||'고객')
+      .replace('{pro}', (profile&&profile.name)||'소희 스타일리스트')
+      .replace('{appt}', (r&&r.appt)?apptSummary(r.appt):'—');
+  }
+  /* 상태 변화(수락·입금확인·결과물 전달 등)를 대화에 시스템 메시지로 로그 — ev는 SYS_COPY의 키 */
+  function pushSysMsg(r, ev){ if(!r) return; r.msgs = proMsgs(r).slice(); r.msgs.push({from:'sys', ev:ev});
+    /* 결정이 나면 대화를 함께 연다 — 뒤이어 render가 '닫힘'으로 그리고, 두 프레임 뒤 open을 붙여 오른쪽에서 밀려 들어옴 */
+    chatOpen=true; chatAnim=true;
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      chatAnim=false;
+      var d=$('chatDrawer'), s=$('cdScrim'), t=$('pmThread');
+      if(d) d.classList.add('open');
+      if(s) s.classList.add('on');
+      if(t) t.scrollTop=t.scrollHeight;
+    }); }); }
   function toggleChat(){ chatOpen=!chatOpen; ensureProStyle();
     var d=$('chatDrawer'), s=$('cdScrim'); if(d) d.classList.toggle('open',chatOpen); if(s) s.classList.toggle('on',chatOpen);
     if(chatOpen) setTimeout(function(){ var t=$('pmThread'); if(t) t.scrollTop=t.scrollHeight; var i=$('pmIn'); if(i) i.focus(); },30); }
@@ -846,10 +1097,10 @@
   }
   function render(){
     var r = isCand ? candRecord() : reqs[idx];
-    if(!r){ $('quoteRoot').innerHTML='<p class="crumb">요청을 찾을 수 없어요.</p><p style="margin-top:10px"><a class="tinybtn" onclick="location.href=\'pro.html\'">요청 내역으로</a></p>'; return; }
+    if(!r){ $('quoteRoot').innerHTML='<p class="crumb">요청을 찾을 수 없어요.</p><p style="margin-top:10px"><a class="tinybtn" onclick="goBackToPro()">'+PANEL_LABEL[fromPanel]+'</a></p>'; return; }
     var out = r.dir==='out';
     // 대화=제안 발송~진행~완료·분쟁(견적작성 전/거절·취소 제외) · 신고=실제 진행된 고객만
-    var showMsg = !isCand && ['제안발송','결제대기','수락됨','완료','분쟁'].indexOf(r.status)>=0;
+    var showMsg = !isCand && ['제안발송','상담중','결제대기','수락됨','완료','분쟁'].indexOf(r.status)>=0;
     var showReport = !isCand && ['결제대기','수락됨','완료','분쟁'].indexOf(r.status)>=0;
     if(showMsg||showReport) ensureProStyle();
     var bt = btResolve(BTMAP[r.type], r.gender) || {};   // 고객 성별로 콘텐츠 해석
@@ -869,7 +1120,7 @@
     // 대화는 상단 오른쪽 아이콘 → 우측 드로어(별도 관리)
     $('quoteRoot').innerHTML =
       '<div class="qtop"><div class="qtop-l">'+
-        '<a class="backlink" onclick="location.href=\'pro.html\'">← '+(r.status==='견적작성'?'견적 보내기로':'요청 내역으로')+'</a>'+
+        '<a class="backlink" onclick="goBackToPro()">← '+PANEL_LABEL[fromPanel]+'</a>'+
         '<p class="crumb">스타일리스트 지원 · '+(r.status==='견적작성'?'견적 보내기':(out?'보낸 제안':'받은 요청'))+'</p>'+
         '<h1>'+esc(r.cust)+'님 · '+esc(svcLabel(r.service))+'</h1>'+
       '</div>'+(showMsg?chatOpenBtn(r):'')+'</div>'+

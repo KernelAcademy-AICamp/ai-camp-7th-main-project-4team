@@ -7,7 +7,7 @@
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=f6422608">
-<link rel="stylesheet" href="css/diag.css?v=37649e04">
+<link rel="stylesheet" href="css/diag.css?v=d3eb5b74">
 </head>
 <body>
 
@@ -24,7 +24,7 @@
     <div class="dnode done"><span class="ddot">1</span><span class="dlbl">기본정보</span></div>
     <div class="dconn solid done"></div>
     <div class="dnode now"><span class="ddot">2</span><span class="dlbl">착용경험</span></div>
-    <div class="dconn seg" id="qconn"><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span></div>
+    <div class="dconn seg" id="qconn"><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span></div>
     <div class="dnode"><span class="ddot">3</span><span class="dlbl">진단중</span></div>
   </div>
 
@@ -99,7 +99,17 @@
     </div>
   </div>
 
-  <!-- idx4 · 입력 점검 (1벌) — 한 벌 더 / 이대로 진단 분기 -->
+  <!-- idx4 · 옷1 상세 — 불편·기장(필수) + 의견(선택). 접기에서 독립 스텝으로 분리:
+       painFlags가 admin '엔진 강화'의 A축 역산 보정 재료(브랜드×부위 끼임 빈도)라 수집률이 곧 정확도. -->
+  <div class="wstep">
+    <h2 class="qhead">어느 부분이 불편했나요?</h2>
+    <p class="qhelp">착용감을 알려주시면 더 정확하게 진단해드려요</p>
+    <div class="qbody">
+      <div class="feelbox" id="detail1"></div>
+    </div>
+  </div>
+
+  <!-- idx5 · 입력 점검 (1벌) — 한 벌 더 / 이대로 진단 분기 -->
   <div class="wstep">
     <h2 class="qhead">한 벌만으로도<br>진단할 수 있어요</h2>
     <p class="qhelp">다른 핏의 옷을 추가하면 더 정확해져요</p>
@@ -115,7 +125,7 @@
     </div>
   </div>
 
-  <!-- idx5 · 옷2 정보 -->
+  <!-- idx6 · 옷2 정보 -->
   <div class="wstep">
     <h2 class="qhead">핏이 다른 <span class="catword">상의</span>도<br>추가해볼까요?</h2>
     <p class="qhelp">핏이 다른 옷일수록 체형을 더 정확하게 분석할 수 있어요</p>
@@ -135,7 +145,7 @@
     </div>
   </div>
 
-  <!-- idx6 · 옷2 느낌 -->
+  <!-- idx7 · 옷2 느낌 -->
   <div class="wstep">
     <h2 class="qhead">이 옷은 느낌이 어땠나요?</h2>
     <p class="qhelp">부위별 착용감을 알려주세요</p>
@@ -144,7 +154,16 @@
     </div>
   </div>
 
-  <!-- idx7 · 입력 점검 (2벌) -->
+  <!-- idx8 · 옷2 상세 -->
+  <div class="wstep">
+    <h2 class="qhead">이 옷은 어느 부분이 불편했나요?</h2>
+    <p class="qhelp">착용감을 알려주시면 더 정확하게 진단해드려요</p>
+    <div class="qbody">
+      <div class="feelbox" id="detail2"></div>
+    </div>
+  </div>
+
+  <!-- idx9 · 입력 점검 (2벌) -->
   <div class="wstep">
     <h2 class="qhead"><span class="catword">상의</span> 입력이 완료됐어요!</h2>
     <p class="qhelp">지금도 충분히 정확해요. 더 추가하면 정확도가 높아져요</p>
@@ -231,6 +250,6 @@
   </div>
 </div>
 
-<script src="js/diag-fit.js?v=ca366060"></script>
+<script src="js/diag-fit.js?v=8c570cb1"></script>
 </body>
 </html>

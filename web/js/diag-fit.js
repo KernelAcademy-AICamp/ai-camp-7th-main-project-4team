@@ -34,8 +34,8 @@
   const LONGWORD={top:'긴팔',outer:'긴팔',dress:'긴팔',bottom:'긴바지',skirt:'긴 기장'};
   const sleeveType={1:'long',2:'long'}, legLength={1:'long',2:'long'};
   // facet(소매/기장)은 조회키 → '옷 N · 정보' 단계에 렌더. 바꾸면 정보 하이라이트+느낌 질문을 함께 갱신.
-  function setSleeve(g,v){ sleeveType[g]=v; renderFacet(g); renderFeel(g); }
-  function setLeg(g,v){ legLength[g]=v; renderFacet(g); renderFeel(g); }
+  function setSleeve(g,v){ sleeveType[g]=v; renderFacet(g); renderFeel(g); renderDetail(g); }
+  function setLeg(g,v){ legLength[g]=v; renderFacet(g); renderFeel(g); renderDetail(g); }
   function facetSeg(g,opts,cur,fn){
     return '<div class="seg compact">'+opts.map(([v,lab])=>'<div class="opt'+(v===cur?' on':'')+'" onclick="'+fn+'('+g+',\''+v+'\')">'+lab+'</div>').join('')+'</div>';
   }
@@ -46,8 +46,8 @@
   }
 
   /* 입력 점검(분기) 단계: 여기서 '진단하기'를 누르면 그 시점 벌 수로 진단을 끝낸다. */
-  const DIAGNOSE_AT={4:1, 7:2};   // step idx → 진단 시 입력된 벌 수 (선호핏 단계 추가로 +1 밀림)
-  const FRAC=['대상 선택','선호핏','옷 1 · 정보','옷 1 · 느낌','입력 점검','옷 2 · 정보','옷 2 · 느낌','입력 점검'];
+  const DIAGNOSE_AT={5:1, 9:2};   // step idx(입력 점검) → 진단 시 입력된 벌 수 (선호핏·상세 단계 추가로 밀림)
+  const FRAC=['대상 선택','선호핏','옷 1 · 정보','옷 1 · 느낌','옷 1 · 상세','입력 점검','옷 2 · 정보','옷 2 · 느낌','옷 2 · 상세','입력 점검'];
 
   function feelRow(name,opts,defIdx){
     return '<div class="feel-row"><span class="part">'+name+'</span><div class="feel-opts">'+
@@ -57,39 +57,45 @@
   function feelGroup(title,help,rows){
     return '<div class="feel-group">'+(title?'<h4>'+title+(help?' <span class="ghelp">'+help+'</span>':'')+'</h4>':'')+rows+'</div>';
   }
-  function toggleMore(btn){ btn.parentElement.classList.toggle('open'); }   // '더 자세한 착용감' 부드럽게 펼침
-  function renderFeel(g){
-    const c=CATS[target], box=document.getElementById('feel'+g);
+  /* ②③ 조건화: 반팔·민소매 → 소매 기장 제거 / 민소매 → 팔 flag 제거 / 반바지 → 종아리 flag 제거. ①은 불변.
+     (현재 facet 선택기가 없어 항상 long — 되살아날 때를 대비해 규칙만 유지) */
+  function detailParts(g){
+    const c=CATS[target];
     const hasSleeve=SLEEVE_CATS.includes(target), st=sleeveType[g]||'long';
     const hasLeg=LEG_CATS.includes(target), lg=legLength[g]||'long';
-    // ②③ 조건화: 반팔·민소매 → 소매 기장 제거 / 민소매 → 팔 flag 제거 / 반바지 → 종아리 flag 제거. ①은 불변.
     let flags=(c.flag||[]), prefs=(c.pref||[]);
     if(hasSleeve){
       if(st==='sleeveless') flags=flags.filter(n=>!n.includes('팔'));
       if(st!=='long')       prefs=prefs.filter(n=>!n.includes('소매'));
     }
     if(hasLeg && lg==='short') flags=flags.filter(n=>!n.includes('종아리'));
-    // ① 주부위 — 쪼임→헐렁 4단계(기본 딱맞음)
-    const fit =(c.fit||[]).map(n=>feelRow(n,['끼임','딱맞음','여유','큼'],-1)).join('');
-    // ② 병목 플래그 — 최소 2값(음성 '괜찮음' 기본). 이 신호가 브랜드 치수를 채움.
-    const flag=flags.map(n=>feelRow(n,['끼임','괜찮음'],-1)).join('');   // 기본 선택 없음(선택항목)
-    // ③ 기장 — 취향(선택), 역산 아님
-    const pref=prefs.map(n=>feelRow(n,['짧음','딱 좋음','긺'],-1)).join('');   // 기본 선택 없음(선택항목)
-    // 선택 항목(걸린 곳·기장·그 외)은 접어둠 — 필수인 착용감만 먼저 보여 압도감↓ (값은 접혀도 수집됨)
-    var optional=
-      (flag?feelGroup('불편했던 부분','',flag):'')+
-      (pref?feelGroup('기장','',pref):'')+
-      '<div class="feel-group"><h4>추가 의견</h4>'+
-        '<textarea class="open-note" placeholder="예: 소매 끝이 조였어요 / 밑단이 걸렸어요"></textarea></div>';
-    // 하의: 허리 밴드 토글 — 밴딩이면 허리가 신축이라 허리 역산을 건너뜀(엔진). 기본 '모름'(보수적).
+    return {flags:flags, prefs:prefs};
+  }
+  // ① 주부위(느낌 단계) — 쪼임→헐렁 4단계. 기본 선택 없음.
+  function renderFeel(g){
+    const c=CATS[target], box=document.getElementById('feel'+g);
+    if(!box) return;
+    const fit=(c.fit||[]).map(n=>feelRow(n,['끼임','딱맞음','여유','큼'],-1)).join('');
+    // 하의: 허리 밴드 토글 — 밴딩이면 허리가 신축이라 허리 역산을 건너뜀(엔진). 기본 미선택(보수적).
     var wband=(target==='bottom')?
       '<div class="feel-row"><span class="part">허리밴드</span><div class="feel-opts wband-seg">'+
       ['모름','없음','있음'].map(function(l,i){
         return '<div class="opt" onclick="pick(this)">'+l+'</div>'; }).join('')+'</div></div>':'';
-    box.innerHTML=
-      feelGroup('','',fit+wband)+
-      '<div class="feel-more"><button type="button" class="feel-more-sum" onclick="toggleMore(this)">더 자세한 착용감을 알려주세요</button>'+
-      '<div class="feel-more-body"><div class="feel-more-inner">'+optional+'</div></div></div>';
+    box.innerHTML=feelGroup('','',fit+wband);
+  }
+  /* 상세 단계(느낌 다음) — ② 병목 플래그 + ③ 기장은 필수, 추가 의견만 선택.
+     접기(feel-more)에서 독립 스텝으로 분리: painFlags가 admin-improve의 A축 역산 보정 재료라
+     수집률이 곧 엔진 정확도. 음성('괜찮음')도 명시적으로 받아야 신호가 성립(docs/6_사이즈엔진.md). */
+  function renderDetail(g){
+    const box=document.getElementById('detail'+g); if(!box) return;
+    const p=detailParts(g);
+    // 그룹 소제목 없이 '느낌' 스텝처럼 부위를 나란히 나열(불편=2값 / 기장=3값).
+    const flag=p.flags.map(n=>feelRow(n,['끼임','괜찮음'],-1)).join('');
+    const pref=p.prefs.map(n=>feelRow(n,['짧음','딱 좋음','긺'],-1)).join('');
+    // 추가 의견(선택) — 부위 라벨과 같은 크기·색(.part)으로 맞춤. opt가 없어 게이팅에서 제외됨.
+    const note='<div class="feel-row note-row"><span class="part">추가 의견</span>'+
+      '<textarea class="open-note" placeholder="예: 소매 끝이 조였어요 / 밑단이 걸렸어요"></textarea></div>';
+    box.innerHTML=feelGroup('','',flag+pref+note);
   }
 
   function applyTarget(){
@@ -98,7 +104,8 @@
     renderPrefOpts();   // 선호핏 옵션(하의=실루엣 / 그 외=여유)
     document.querySelectorAll('.catword').forEach(e=>e.textContent=c.label);
     document.querySelectorAll('.longword').forEach(e=>e.textContent=LONGWORD[target]||'긴 옷');
-    renderFacet(1); renderFacet(2); renderFeel(1); renderFeel(2); renderSizes(1); renderSizes(2);
+    renderFacet(1); renderFacet(2); renderFeel(1); renderFeel(2);
+    renderDetail(1); renderDetail(2); renderSizes(1); renderSizes(2);
     // 선호핏 단계(idx1) 안내: 실측 데이터 없는 기반은 착용경험 없이 선호핏만 받는다고 알림
     var pnote=document.getElementById('prefonlynote');
     if(pnote){
@@ -158,14 +165,14 @@
   function pick(el){[...el.parentElement.children].forEach(c=>c.classList.remove('on'));el.classList.add('on');updateNext();}
   // ── 선택 게이팅: 첫 진입엔 미선택 → '다음' 비활성, 화면별 선택이 차야 활성 ──
   function sizeDone(g){ return !!document.querySelector('#size'+g+' .opt.on'); }
+  // 느낌·상세 모두 그 단계의 .feel-row 전부가 선택돼야 통과(추가 의견 textarea는 .feel-row가 아니라 제외됨).
   function feelDone(boxId){
     var box=document.getElementById(boxId); if(!box) return true;
-    // 필수 = 메인 그룹의 착용감 전부(상의=주부위 3 / 하의=주부위 3 + 허리밴드 = 4).
-    // '더 자세한 착용감'(feel-more-body)·접힌(details) 항목만 선택.
-    var rows=[].slice.call(box.querySelectorAll('.feel-row')).filter(function(r){
-      return !r.closest('details') && !r.closest('.feel-more-body');
+    var rows=[].slice.call(box.querySelectorAll('.feel-row'));
+    return rows.every(function(r){
+      var opts=r.querySelector('.feel-opts');
+      return !opts || !!opts.querySelector('.opt.on');   // 옵션 없는 row(추가 의견)는 필수에서 제외
     });
-    return rows.every(function(r){ return !!r.querySelector('.feel-opts .opt.on'); });
   }
   function stepDone(){
     if(isPrefOnlyBase() && cur===1) return !!document.querySelector('#prefseg .opt.on');
@@ -173,10 +180,12 @@
       case 0: return !!document.querySelector('#target .opt.on');   // 진단 대상 고름
       case 1: return !!document.querySelector('#prefseg .opt.on');  // 선호핏 고름
       case 2: return sizeDone(1);                                    // 옷1 사이즈 고름
-      case 3: return feelDone('feel1');                             // 옷1 착용감(부위) 전부
-      case 5: return sizeDone(2);
-      case 6: return feelDone('feel2');
-      default: return true;   // 4·7 입력 점검 등 — 입력 없음
+      case 3: return feelDone('feel1');                             // 옷1 착용감(주부위) 전부
+      case 4: return feelDone('detail1');                           // 옷1 상세(불편·기장) 전부
+      case 6: return sizeDone(2);
+      case 7: return feelDone('feel2');
+      case 8: return feelDone('detail2');
+      default: return true;   // 5·9 입력 점검 등 — 입력 없음
     }
   }
   function updateNext(){ var b=document.getElementById('nextbtn'); if(b) b.disabled=!stepDone(); }
@@ -365,9 +374,10 @@
     var word=sel.textContent.trim().split(' ')[0];
     return target==='bottom' ? (PREF_SIL[word]||'straight') : (FITLINE[word]||'regular');
   }
-  function collectFeel(boxId){
+  // 느낌(#feelN)·상세(#detailN) 두 단계에 나뉜 입력을 한 착용경험으로 합쳐 수집.
+  function collectFeel(g){
     var fits={}, flags={}, prefs={};
-    document.querySelectorAll('#'+boxId+' .feel-row').forEach(function(row){
+    document.querySelectorAll('#feel'+g+' .feel-row, #detail'+g+' .feel-row').forEach(function(row){
       var part=row.querySelector('.part'), sel=row.querySelector('.feel-opts .opt.on');
       if(!part||!sel) return;
       var key=LABELKEY[part.textContent.trim()], lab=sel.textContent.trim();
@@ -377,7 +387,7 @@
       else if(n===2 && FLAGV[lab]) flags[key]=FLAGV[lab];
       else if(n===3 && PREFV[lab]) prefs[key]=PREFV[lab];
     });
-    var note=document.querySelector('#'+boxId+' .open-note');
+    var note=document.querySelector('#detail'+g+' .open-note');
     return { fits:fits, painFlags:flags, lengthPrefs:prefs, openNote:note?note.value:'' };
   }
   // 입은 옷의 핏라인(garments 조회키) — '핏/품목' 선택 라벨에서 파싱. 선호핏과 별개.
@@ -401,7 +411,7 @@
     var cat=CATMAP[target]||'TOP', prefLine=fitLineFromPref();
     var exps=[], n=DIAGNOSE_AT[cur]||1;
     [1,2].slice(0,n).forEach(function(g){
-      var f=collectFeel('feel'+g);
+      var f=collectFeel(g);
       var bsel=document.getElementById('brand'+g), bopt=bsel&&bsel.selectedOptions?bsel.selectedOptions[0]:null;
       var brandTxt=bopt?bopt.textContent.trim():'';   // 표시명(brandName). id는 value.
       var isel=document.getElementById('item'+g), opt=isel&&isel.selectedOptions?isel.selectedOptions[0]:null;
