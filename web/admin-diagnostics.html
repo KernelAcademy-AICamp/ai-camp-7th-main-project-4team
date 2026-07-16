@@ -31,6 +31,13 @@
 
   <div class="kpis" id="dxKpis"></div>
 
+  <div class="sec-h">정확도 추세 <span class="muted" style="font-weight:400">— 킬메트릭(맞음율)이 시간·엔진버전에 따라 오르나. 엔진이 실제로 강해지는지 확인</span></div>
+  <p class="subnote" id="trendNote"></p>
+  <div style="display:flex;gap:18px;flex-wrap:wrap">
+    <div class="tablewrap" style="flex:1;min-width:280px"><table class="dt" id="trendDayTable"></table></div>
+    <div class="tablewrap" style="flex:1;min-width:280px"><table class="dt" id="trendVerTable"></table></div>
+  </div>
+
   <div class="sec-h">정확도 × 신뢰도 <span class="muted" style="font-weight:400">— 엔진이 확신(high)했는데 틀린 응답 = 캘리브레이션 위험(튜닝 1순위)</span></div>
   <div class="tablewrap"><table class="dt" id="calibTable"></table></div>
   <p class="subnote" id="calibNote"></p>
@@ -48,11 +55,11 @@
   <div class="tablewrap"><table class="dt" id="logTable"></table></div>
 </div>
 
-<script src="js/admin-common.js?v=b64f60d3"></script>
+<script src="js/admin-common.js?v=191eba48"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js?v=1a340f43"></script>
-<script src="js/admin-auth.js?v=ffc026b6"></script>
-<script src="js/data.js?v=ecd71fc8"></script>
-<script src="js/admin-diagnostics.js?v=e9a4212a"></script>
+<script src="js/config.js?v=66a385e1"></script>
+<script src="js/admin-auth.js?v=0c868540"></script>
+<script src="js/data.js?v=856deef9"></script>
+<script src="js/admin-diagnostics.js?v=ac7dc24c"></script>
 </body>
 </html>

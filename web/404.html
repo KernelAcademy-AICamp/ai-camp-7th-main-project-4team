@@ -9,61 +9,56 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=f6422608">
 <style>
-/* 오류·빈 상태 (개발 1차 — 색·폰트는 fitting.css 변수만 참조) */
-.err-wrap{text-align:center;padding-top:36px}
-.err-emoji{font-size:60px;line-height:1;margin-bottom:10px}
-.err-wrap .sub{margin-left:auto;margin-right:auto}
-.err-wrap .btn-row{justify-content:center;gap:12px;margin-top:8px}
-.err-hint{margin-top:22px;font-size:13px;color:var(--muted)}
-.err-hint a{color:var(--accent);font-weight:700;text-decoration:none}
+/* 오류·빈 상태 — 헤더/푸터 없는 공용 페이지(사용자·전문가·관리자). 색·폰트는 fitting.css 변수만 참조. */
+body{min-height:100vh;margin:0;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--bg,#faf8f4)}
+.err-wrap{text-align:center;max-width:440px;width:100%}
+.err-wrap .head{white-space:nowrap}   /* 제목 한 줄 유지(개행 방지) */
+.err-emoji{font-size:60px;line-height:1;margin-bottom:12px}
+.err-wrap .sub{margin:8px auto 0;max-width:380px}
+.err-wrap .btn-row{display:flex;justify-content:center;gap:12px;margin-top:22px;flex-wrap:wrap}
+.err-wrap .btn-row .btn-primary,.err-wrap .btn-row .btn-ghost{cursor:pointer;font:inherit}
 </style>
 </head>
 <body>
 
-<div class="container">
-  <nav class="top">
-    <a href="index.html" class="logo">Fitting<i></i></a>
-    <div class="nav-r"><a href="index.html?my=mp-support" class="nav-login">문의하기</a></div>
-  </nav>
-
-  <section class="block err-wrap" style="border-bottom:none">
-    <div class="err-emoji">😥</div>
-    <span class="kicker" id="errCode">Error 404</span>
-    <h1 class="head" id="errTitle">페이지를 찾을 수 없어요</h1>
-    <p class="sub" id="errDesc">주소가 바뀌었거나 삭제된 페이지일 수 있어요. 홈에서 다시 시작해보세요.</p>
-    <div class="btn-row">
-      <a href="index.html" class="btn-primary">홈으로</a>
-      <a href="diag-basic.html" class="btn-ghost" id="errAlt" onclick="try{['fitting.dx','fitting.basic','fitting.consent'].forEach(function(k){sessionStorage.removeItem(k)})}catch(e){}">내 사이즈 진단하기</a>
-    </div>
-    <div class="err-hint">문제가 계속되면 <a href="index.html?my=mp-support" id="errContact">1:1 문의</a>를 남겨주세요 · 빠르게 도와드릴게요</div>
-  </section>
-
-  <footer class="foot">
-    <a href="about.html">서비스 소개</a>
-    <a href="terms.html">이용약관</a>
-    <a href="privacy.html">개인정보 처리방침</a>
-    <a href="index.html">홈</a>
-  </footer>
-</div>
+<section class="err-wrap">
+  <div class="err-emoji">😥</div>
+  <span class="kicker" id="errCode">Error 404</span>
+  <h1 class="head" id="errTitle">페이지를 찾을 수 없어요</h1>
+  <p class="sub" id="errDesc">주소가 바뀌었거나 삭제된 페이지일 수 있어요.</p>
+  <div class="btn-row">
+    <button type="button" class="btn-primary" id="errBack">이전 페이지로</button>
+    <a class="btn-ghost" id="errHome" href="index.html">홈으로</a>
+  </div>
+</section>
 
 <script>
-  /* 오류 유형별 카피 (?e=notfound|expired|network) · 404·링크만료·네트워크 공통 패턴 */
+  /* 공용 오류 페이지 — ①오류 유형별 카피(?e=notfound|expired|network) ②앱 컨텍스트(사용자·전문가·관리자)
+     감지로 '홈으로'를 해당 앱 홈으로. 헤더/푸터 없이 어느 앱에서 도달해도 맞게 동작. */
   (function(){
     var map={
-      notfound:['Error 404','페이지를 찾을 수 없어요','주소가 바뀌었거나 삭제된 페이지일 수 있어요. 홈에서 다시 시작해보세요.'],
-      expired :['Link expired','공유 링크가 만료됐어요','초대·결과 공유 링크는 일정 시간이 지나면 만료돼요. 직접 진단해 내 결과를 받아보세요.'],
+      notfound:['Error 404','페이지를 찾을 수 없어요','주소가 바뀌었거나 삭제된 페이지일 수 있어요.'],
+      expired :['Link expired','공유 링크가 만료됐어요','초대·결과 공유 링크는 일정 시간이 지나면 만료돼요.'],
       network :['Network','연결이 불안정해요','네트워크 상태를 확인하고 잠시 후 다시 시도해주세요.']
     };
+    var q, e='notfound', app='user';
     try{
-      var q=new URLSearchParams(location.search);
-      var e=(q.get('e')||'notfound').toLowerCase(); var m=map[e]||map.notfound;
+      q=new URLSearchParams(location.search);
+      e=(q.get('e')||'notfound').toLowerCase();
+      // 컨텍스트: ?app= 우선, 없으면 referrer 경로로 추정(admin* / pro*)
+      app=(q.get('app')||'').toLowerCase();
+      if(!app){ var ref=document.referrer||''; app=/admin/i.test(ref)?'admin':(/\/pro\b|pro-|pro\.html/i.test(ref)?'pro':'user'); }
+    }catch(err){}
+    var m=map[e]||map.notfound;
+    var HOME={ user:['index.html','홈으로'], pro:['pro.html','전문가 홈으로'], admin:['admin.html','관리자 홈으로'] };
+    var h=HOME[app]||HOME.user;
+    try{
       document.getElementById('errCode').textContent=m[0];
       document.getElementById('errTitle').textContent=m[1];
       document.getElementById('errDesc').textContent=m[2];
-      /* 오류 컨텍스트(유형·직전 경로)를 문의 진입에 자동 첨부 → 고객센터에서 프리필 */
-      var ctx=encodeURIComponent(e+' · '+(location.pathname||'/'));
-      document.getElementById('errContact').href='index.html?my=mp-support&ctx='+ctx;
-      var nav=document.querySelector('.nav-login'); if(nav) nav.href='index.html?my=mp-support&ctx='+ctx;
+      var home=document.getElementById('errHome'); home.setAttribute('href',h[0]); home.textContent=h[1];
+      var back=document.getElementById('errBack');
+      back.onclick=function(){ if(history.length>1) history.back(); else location.href=h[0]; };
     }catch(err){}
   })();
 </script>

@@ -137,11 +137,20 @@
       '<div class="dtl-note" style="margin-top:8px">몸에 <b style="color:var(--ink)">가장 잘 맞을 순</b>으로 · <b style="color:var(--ink)">핏 지수</b> = 예상 적합도</div>';
   }
   function recsNotice(msg){ return '<div class="rgnotice" style="margin-top:12px">'+msg+'</div>'; }
-  // 추천 목록(s2row 막대) — 핏 지수 상위. real(엔진 실계산)이면 60%+ 중 상위 3(없으면 상위 3).
+  // 추천 목록(s2row 막대). real(엔진 실계산): fit≥60 자격을 거른 뒤 브랜드 노출 순서(order · admin/DB)로 정렬(동점=fit).
+  //   → '잘 맞는 브랜드 안에서 실착 접근성 순'. order 없으면(proto/미지정) fit 순으로 폴백.
   function recsListHTML(recs, real){
-    var ranked=(recs||[]).slice().sort(function(a,b){ return (b.fitScore||0)-(a.fitScore||0); });
-    if(real){ var good=ranked.filter(function(r){ return (r.fitScore||0)>=60; }); ranked=(good.length?good:ranked).slice(0,3); }
-    else ranked=ranked.slice(0,3);
+    function ord(r){ return (r.order==null?9999:r.order); }
+    var ranked=(recs||[]).slice();
+    if(real){
+      var good=ranked.filter(function(r){ return (r.fitScore||0)>=60; });
+      var base=good.length?good:ranked;
+      base.sort(function(a,b){ return (ord(a)-ord(b)) || ((b.fitScore||0)-(a.fitScore||0)); });
+      ranked=base.slice(0,3);
+    } else {
+      ranked.sort(function(a,b){ return (b.fitScore||0)-(a.fitScore||0); });
+      ranked=ranked.slice(0,3);
+    }
     return '<div class="s2list">'+ranked.map(function(r){
       var note=(FLK[r.fitLine]||'')+' · '+r.bottleneck+' 기준'+(r.variance?' · '+r.variance:'');
       var pct=(r.fitScore!=null)?r.fitScore:0;
@@ -212,6 +221,29 @@
   // 여유축(상의): skinny..oversize / 형태축(하의 실루엣): slim..wide 슬림도로 근사 배치.
   var FITPCT={skinny:20,slim:32,regular:55,loose:70,oversize:85,
     straight:50,tapered:45,wide:78,bootcut:62};
+
+  // specs(garments) 의존 계산 — proto=클라 로컬(garments.json 직접) / api=서버(/api/diagnose, garments 비노출·해자 보호).
+  // 반환 {eb, topRecs, botRecs, specsMissing, id}. 체형추정·8유형분류·렌더는 호출부(클라)가 공통 처리.
+  function diagnoseSpecs(est, cm, prefsObj){
+    if(FDATA.mode==='api'){
+      return FDATA.diagnose({ session_id:FDATA.sessionId(), category:curCat, sex:est.sex, cm:cm,
+        prefs:prefsObj, experiences:payload.experiences, basic:payload.basic, input:payload,
+        confidenceTier:confidenceTier, engine_version:'server-1' })
+        .then(function(resp){ resp=resp||{}; return { eb:resp.eb||{}, topRecs:resp.topRecs||[], botRecs:resp.botRecs||[], specsMissing:false, id:resp.id }; });
+    }
+    return fetch('data/garments.json').then(function(r){return r.json();}).catch(function(){return null;}).then(function(gj){
+      var specs=gj&&gj.specs;
+      if(!specs) return { eb:{}, topRecs:[], botRecs:[], specsMissing:true };
+      var eb=(window.FitEngine&&FitEngine.bodyFromExperiences)?FitEngine.bodyFromExperiences(payload.experiences, specs):{};
+      var mcm={}; Object.keys(cm).forEach(function(k){ mcm[k]=cm[k]; });
+      var EB={chest:'chestFull',shoulder:'shoulder',waist:'waist',hip:'hip',thigh:'thigh'};
+      Object.keys(EB).forEach(function(k){ if(eb[k]!=null) mcm[EB[k]]=eb[k]; });
+      var topRecs=(mcm.chestFull!=null)?FitEngine.recommend({ chest:mcm.chestFull, shoulder:mcm.shoulder }, prefsObj.TOP||'regular', est.sex, 'long_sleeve', specs):[];
+      var botRecs=(FitEngine.recommendBottom&&mcm.waist!=null)?FitEngine.recommendBottom({ waist:mcm.waist, hip:mcm.hip, thigh:mcm.thigh }, prefsObj.BOTTOM||'regular', est.sex, 'long_pants', specs):[];
+      return { eb:eb, topRecs:topRecs, botRecs:botRecs, specsMissing:false };
+    });
+  }
+
   if(!hasBasic){ renderNoData(); hideRloading(); }
   else if(window.BodyModel){ BodyModel.load().then(function(){
     var est=BodyModel.estimate(payload.basic||{});
@@ -219,19 +251,17 @@
     var pm={}, cm={}; est.parts.forEach(function(p){ pm[p.key]=p.pct; cm[p.key]=p.cm; });
     var pref=(payload.prefs&&payload.prefs[curCat])||'regular';
 
-    // garments 로드 → 착용경험 역산으로 부위별 prior 덮어쓰기(TOP: 가슴·어깨 / BOTTOM: 허리·엉덩이·허벅지) → 측정·추천 반영.
-    return fetch('data/garments.json').then(function(r){return r.json();}).catch(function(){return null;}).then(function(gj){
-      var specs=gj&&gj.specs, expUsed=false;
-      if(specs && window.FitEngine && FitEngine.bodyFromExperiences){
-        var eb=FitEngine.bodyFromExperiences(payload.experiences, specs);
-        var EBMAP={chest:'chestFull',shoulder:'shoulder',waist:'waist',hip:'hip',thigh:'thigh'};
-        Object.keys(EBMAP).forEach(function(k){
-          if(eb[k]==null) return;
-          var key=EBMAP[k]; cm[key]=eb[k];
-          var pc=BodyModel.pctOf(est.sex,key,eb[k]); if(pc!=null)pm[key]=pc;
-          expUsed=true;
-        });
-      }
+    // 역산+추천(specs 의존)은 diagnoseSpecs가 모드별로: proto=클라(garments 로드) / api=서버(/api/diagnose, garments 비노출).
+    return diagnoseSpecs(est, cm, payload.prefs||{}).then(function(D){
+      var expUsed=false, eb=D.eb||{};
+      var EBMAP={chest:'chestFull',shoulder:'shoulder',waist:'waist',hip:'hip',thigh:'thigh'};
+      Object.keys(EBMAP).forEach(function(k){
+        if(eb[k]==null) return;
+        var key=EBMAP[k]; cm[key]=eb[k];
+        var pc=BodyModel.pctOf(est.sex,key,eb[k]); if(pc!=null)pm[key]=pc;
+        expUsed=true;
+      });
+      if(D.id) _diagId=D.id;
 
       // 8유형 판정 — 역산(상의:가슴 / 하의:허리·엉덩이)+회귀 폴백 몸으로 KS드롭 분류(bodytype.js). 스텁(mapToBodyType) 대체.
       if(showCard && window.FitBodyType){
@@ -245,20 +275,21 @@
       // 상·하의 모두 완료(cardReady)면 전신 카드, 아니면 이번 진단 카테고리만.
       var body, lowerCat=(curCat==='BOTTOM'||curCat==='SKIRT');
       if(fullBody){
-        var prefTopKey=(payload.prefs&&payload.prefs.TOP)||pref;
+        // 취향은 상·하의가 다를 수 있어 각 그룹 끝에 따로 표시(상의=여유축, 하의=형태축).
+        var prefTopKey=(payload.prefs&&payload.prefs.TOP)||'regular';
+        var prefBotKey=(payload.prefs&&payload.prefs.BOTTOM)||'straight';
         body='<div class="dtl-grp up" style="margin-top:8px">상체 — 상의 진단</div>'+
              specRow('좁은 어깨',pm.shoulder,'넓은 어깨','어깨',false)+
              specRow('슬림한 가슴',pm.chestFull,'볼륨 있는 가슴','가슴',false)+
+             specRow('타이트',FITPCT[prefTopKey]||55,'여유','핏 취향',false)+
              '<div class="dtl-grp lo">하체 — 하의 진단</div>'+
              specRow('슬림한 허리',pm.waist,'볼륨 있는 허리','허리',true)+
              specRow('슬림한 엉덩이',pm.hip,'볼륨 있는 엉덩이','엉덩이',true)+
-             '<div class="dtl-grp pref">취향</div>'+
-             specRow('타이트',FITPCT[prefTopKey]||55,'여유','핏 취향',false);
+             specRow('슬림',FITPCT[prefBotKey]||50,'와이드','핏 취향',true);
       } else {
         var grpLabel=(curCat==='TOP'?'상체 — 상의 진단':lowerCat?'하체 — '+curLabel+' 진단':'상체 — '+curLabel+' 진단');
         body='<div class="dtl-grp '+(lowerCat?'lo':'up')+'" style="margin-top:8px">'+grpLabel+'</div>'+
              (MEAS[curCat]||MEAS.TOP).map(function(m){ return specRow(m[1],pm[m[0]],m[2],m[3],lowerCat); }).join('')+
-             '<div class="dtl-grp pref">취향</div>'+
              (lowerCat
                ? specRow('슬림',FITPCT[pref]||50,'와이드','핏 취향',true)
                : specRow('타이트',FITPCT[pref]||55,'여유','핏 취향',false));
@@ -276,36 +307,19 @@
         body+
         '<div class="dtl-note">'+measNote+'</div>';
 
-      // 추천 — 상·하의 모두 완료(cardReady)면 상의·하의 함께, 아니면 이번 카테고리만. 역산 반영된 cm. 실패 시 정직한 안내.
-      var prefsObj=payload.prefs||{};
+      // 추천 — proto/api가 계산한 topRecs/botRecs(D)를 렌더. specs 없으면 정직한 안내.
       if(fullBody && (isTop||curCat==='BOTTOM')){
-        if(!specs){ renderRecsError(); }
-        else {
-          var topRecs=(cm.chestFull!=null)?FitEngine.recommend({ chest:cm.chestFull, shoulder:cm.shoulder }, prefsObj.TOP||'regular', est.sex, 'long_sleeve', specs):[];
-          var botRecs=(FitEngine.recommendBottom && cm.waist!=null)?FitEngine.recommendBottom({ waist:cm.waist, hip:cm.hip, thigh:cm.thigh }, prefsObj.BOTTOM||'regular', est.sex, 'long_pants', specs):[];
-          renderRecsBoth(topRecs, botRecs, cardReady?'전신 · 상·하의 완료':'전신 · 기본 추정');
-        }
+        if(D.specsMissing) renderRecsError();
+        else renderRecsBoth(D.topRecs||[], D.botRecs||[], cardReady?'전신 · 상·하의 완료':'전신 · 기본 추정');
       } else if(isTop || curCat==='BOTTOM'){
-        if(!specs){ renderRecsError(); }
+        if(D.specsMissing) renderRecsError();
         else {
-          var out=[];
-          if(isTop && cm.chestFull!=null){
-            out=FitEngine.recommend({ chest:cm.chestFull, shoulder:cm.shoulder }, pref, est.sex, 'long_sleeve', specs);
-          } else if(curCat==='BOTTOM' && FitEngine.recommendBottom && cm.waist!=null){
-            // pref = prefs[BOTTOM] = 선호 실루엣. 허리를 사이즈 게이트로, 엉덩이·허벅지 수용 확인.
-            out=FitEngine.recommendBottom({ waist:cm.waist, hip:cm.hip, thigh:cm.thigh }, pref, est.sex, 'long_pants', specs);
-          }
-          if(out && out.length) renderRecs(out, true);
+          var out=isTop?(D.topRecs||[]):(D.botRecs||[]);
+          if(out.length) renderRecs(out, true);
           else renderRecsError('이 입력만으로는 추천을 만들기 어려워요 — 착용 경험을 넣으면 정밀해져요');
         }
       }
       _contentReady=true; maybeHideLoading();
-      // api 모드: 진단 결과를 서버에 기록(store)하고 id 확보 → 이후 피드백 FK. proto는 no-op.
-      if(FDATA.mode==='api'){
-        FDATA.recordDiagnosis({ session_id:FDATA.sessionId(), category:curCat,
-          input:payload, result:{ card:cardType, confidenceTier:confidenceTier }, engine_version:'web' })
-          .then(function(id){ _diagId=id; }).catch(function(){});
-      }
     });
   }).catch(function(){ renderLoadError(); hideRloading(); }); }
   else { renderLoadError(); hideRloading(); }   // BodyModel 스크립트 로드 실패
@@ -373,6 +387,7 @@
     }catch(e){}
   }
   function saveResult(){
+    if(FDATA.mode==='api'){ openRModal('saved'); return; }   // MVP: 진단은 서버에 이미 기록됨 · 계정 저장/마이 없음
     if(!isAuthed()){ openRModal('login','my'); return; }
     // 상의만/하의만(정확히 한 쪽) = 8유형 미완성 → 유형 저장 안 하고 나머지 진단 유도(대칭).
     if(upperDone!==lowerDone){ openRModal('incomplete'); return; }
@@ -380,19 +395,30 @@
     openRModal('saved');
   }
   function goExpert(){
-    if(!isAuthed()){ openRModal('login','shop'); return; }
+    if(FDATA.mode!=='api' && !isAuthed()){ openRModal('login','shop'); return; }   // api(MVP)는 로그인 없이 바로 스타일리스트찾기(페이크도어)
     location.href='index.html#shop';
   }
   // 결과 카드(iframe, ?host=result)의 🔖 저장 → 부모로 위임해 버튼과 동일 동작
   window.addEventListener('message', function(e){ if(e&&e.data&&e.data.type==='fitting:save') saveResult(); });
+
+  // MVP(api): 계정 저장/로그인 표면 숨김 — '결과 저장하기' 버튼·로그인 안내 문구 감추고 '스타일리스트 찾기'만 남김.
+  if(FDATA.mode==='api'){ try{
+    var _saveBtn=document.querySelector('.rcta .rbtn.p'); if(_saveBtn) _saveBtn.style.display='none';
+    var _ctaNote=document.querySelector('.rcta-note'); if(_ctaNote) _ctaNote.style.display='none';
+  }catch(_e){} }
 
   // 결과 페이지 전용 미니 모달(index 로그인 시트가 없는 페이지라 자체 모달)
   function openRModal(kind, next){
     closeRModal();
     var title, body, primaryLabel, primaryHref;
     if(kind==='saved'){
-      title='결과를 저장했어요'; body='마이 &gt; 내 진단결과에서 언제든 다시 볼 수 있어요';
-      primaryLabel='마이에서 보기'; primaryHref='index.html?my=mp-diag';
+      if(FDATA.mode==='api'){
+        title='결과가 기록됐어요'; body='진단 결과가 안전하게 기록됐어요 · 스타일리스트찾기로 이어가 보세요';
+        primaryLabel='스타일리스트 찾기'; primaryHref='index.html#shop';
+      } else {
+        title='결과를 저장했어요'; body='마이 &gt; 내 진단결과에서 언제든 다시 볼 수 있어요';
+        primaryLabel='마이에서 보기'; primaryHref='index.html?my=mp-diag';
+      }
     } else if(kind==='incomplete'){
       var needTop=!upperDone;   // 지금 한 쪽만 완료 — 나머지 안내
       var missKo=needTop?'상의':'하의', missCat=needTop?'top':'bottom', haveCat=needTop?'bottom':'top';

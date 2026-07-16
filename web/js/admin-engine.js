@@ -20,7 +20,7 @@
   var SPECS=[], BASE=null, DIST=null, curTarget=null;
 
   Promise.all([
-    fetch('data/garments.json').then(function(r){return r.json();}),
+    ADMINAUTH.garments(),
     fetch('data/body-base-model.json').then(function(r){return r.json();}).catch(function(){return null;}),
     fetch('data/body-distribution.json').then(function(r){return r.json();}).catch(function(){return null;})
   ]).then(function(a){ SPECS=a[0].specs||[]; BASE=a[1]; DIST=a[2]; buildInput(); run(); })

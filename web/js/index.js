@@ -4,7 +4,8 @@
     var ov=document.getElementById('bidsOverlay'); if(ov) ov.classList.remove('on');   // 페이지 이동 시 열린 상세 닫기
     document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on', p.id===id));
     document.querySelectorAll('.menu a').forEach(a=>a.classList.toggle('on', a.dataset.t===id));
-    if(id==='shop') showOnly('listView');   // 스타일리스트찾기는 항상 목록부터
+    // 스타일리스트찾기: proto=목록부터 / api(MVP)=준비 중·알림 웨이트리스트(목업 목록 미노출)
+    if(id==='shop') showOnly((window.FDATA&&FDATA.mode==='api')?'stylistWaitlist':'listView');
     window.scrollTo({top:0, behavior:'smooth'});
   }
 
@@ -25,11 +26,18 @@
   /* ===== 로그인/가입 시트 ===== */
   function openLogin(ctx, onDone){ window._loginCb=onDone||null; document.getElementById('loginTitle').textContent=(ctx?ctx+' — ':'')+'로그인하고 이어가기'; document.getElementById('sheet').classList.add('on'); scrim(true); }
   function loginDone(){ saveLS('auth', true); closeAll(); applyAuthUI(); var cb=window._loginCb; window._loginCb=null; if(cb){ toast('로그인했어요 · 이어서 진행할게요'); cb(); } else toast('로그인했어요 · 결과가 계정에 저장됐어요'); }
-  function loggedIn(){ return loadLS('auth', true)!==false; }   // 기본 '로그인됨' 가정 (명시적 로그아웃 시에만 false)
+  // proto(데모)=기본 로그인 가정 / api(프로덕션)=기본 로그아웃(신규 방문자는 비로그인 — My·알림·프로필 숨김)
+  function loggedIn(){ return loadLS('auth', !(window.FDATA&&FDATA.mode==='api'))!==false; }
   /* 헤더 auth 상태 반영 — 로그인=프로필·알림벨 / 비로그인=로그인·회원가입 버튼(메인화면 게이트) */
   function applyAuthUI(){
     var inA=loggedIn();
     var a=document.getElementById('navAuth'), u=document.getElementById('navUser'), b=document.getElementById('navBell'), bd=document.getElementById('navBellDiv'), my=document.getElementById('navMy');
+    // MVP(api): 인증은 측정 대상 아님(진단=킬메트릭·수요=lead) + 소비자 로그인 목업 → 인증 표면 전체 숨김.
+    // 상단은 Home + Stylists만. 진단·수요수집은 로그인 불필요.
+    if(window.FDATA && FDATA.mode==='api'){
+      [a,u,b,bd,my].forEach(function(el){ if(el) el.style.display='none'; });
+      return;   // Stylists 탭은 유지 — 클릭 시 '준비 중 · 알림' 웨이트리스트로(리텐션)
+    }
     if(a) a.style.display=inA?'none':'inline-flex';
     if(u) u.style.display=inA?'inline-flex':'none';
     if(b) b.style.display=inA?'inline-flex':'none';
@@ -177,7 +185,7 @@
   function svcLabel(v){ return SVC[v]||v; }
   function isFav(nm){ return favs.some(function(f){ return f.nm===nm; }); }
   function toggleFav(nm){
-    if(!loggedIn()){ openLogin('즐겨찾기', function(){ toggleFav(nm); }); return; }   // 로그인 후에만 데이터 저장
+    if(!loggedIn() && !(window.FDATA&&FDATA.mode==='api')){ openLogin('즐겨찾기', function(){ toggleFav(nm); }); return; }   // proto: 로그인 후 저장 / api(MVP): 로컬 토글만(로그인 시트 없음)
     var e=EX.filter(function(x){return x.nm===nm;})[0];
     if(isFav(nm)) favs=favs.filter(function(f){return f.nm!==nm;});
     else if(e) favs.unshift({nm:e.nm, svc:svcTypes(e)[0], rating:e.rating, photo:e.photo||img(e)});
@@ -187,7 +195,7 @@
   function addReq(r){ reqs.unshift(r); saveLS('reqs', reqs); renderReqs(); }
 
   /* 마이페이지 · 프로필 아바타 — 진단 전=잉크블랙+이니셜 / 진단 후=결과 카드 캐릭터 얼굴 + 유형 색(bodytypes.json 단일 출처) */
-  var USER={ name:'김도현', initial:'김', gender:'male', age:33, height:172, weight:68, fit:'슬림', type:'STR' };   // type:null = 진단 전
+  var USER={ name:'김도현', initial:'김', gender:'male', age:33, height:172, weight:68, fitTop:'슬림', fitBottom:'와이드', type:'STR' };   // type:null = 진단 전 / 핏취향은 상·하의 별도
   // 결과 페이지에서 '결과 저장' 시 기록한 진단 프로필(fitting.user)을 병합 → 마이가 실제 진단 결과를 보여줌.
   (function(){ try{ var s=JSON.parse(localStorage.getItem('fitting.user')||'null'); if(s&&typeof s==='object') Object.assign(USER, s); }catch(e){} })();
   /* ===== 고객센터 · 1:1 문의 (1.9 / G.2) ===== */
@@ -324,7 +332,9 @@
   }
 
   /* 마이페이지 · 프로필 기본정보 (읽기/편집) */
-  var FIT_OPTS=['스키니','슬림','레귤러','루즈','오버'], _profEdit=false;
+  var FIT_OPTS=['스키니','슬림','레귤러','루즈','오버'];               // 상의(여유축)
+  var FIT_OPTS_BOTTOM=['스키니','슬림','스트레이트','와이드','부츠컷']; // 하의(형태축)
+  var _profEdit=false;
   function renderProfile(){
     var el=document.getElementById('profCard'); if(!el) return; var U=USER;
     if(!_profEdit){
@@ -332,7 +342,8 @@
         '<div class="msub"><div class="subhead">신체 · 선호 정보 <span class="pr half">◐ MVP</span></div>'+
           '<div class="field"><span>성별 · 나이</span><span class="v">'+(U.gender==='female'?'여성':'남성')+' · <span class="num">'+U.age+'</span>세</span></div>'+
           '<div class="field"><span>키 · 몸무게</span><span class="v"><span class="num">'+U.height+'</span>cm · <span class="num">'+U.weight+'</span>kg</span></div>'+
-          '<div class="field"><span>핏 취향</span><span class="v">'+U.fit+'</span></div>'+
+          '<div class="field"><span>상의 핏 취향</span><span class="v">'+U.fitTop+'</span></div>'+
+          '<div class="field"><span>하의 핏 취향</span><span class="v">'+U.fitBottom+'</span></div>'+
           '<div class="note">🔒 민감정보 · 편집 시 재진단을 추천해요</div></div>'+
         '</div><div class="prof-actions"><button class="btn" onclick="editProfile()">수정하기</button></div>';
     } else {
@@ -340,7 +351,8 @@
         '<div class="msub"><div class="subhead">신체 · 선호 정보</div>'+
           '<div class="pedit"><label>성별</label><div class="seg" id="pGender">'+['male','female'].map(function(g){return '<span class="o'+(U.gender===g?' on':'')+'" data-g="'+g+'" onclick="pPick(this)">'+(g==='male'?'남성':'여성')+'</span>';}).join('')+'</div></div>'+
           '<div class="pedit inrow3"><div><label>나이</label><input class="inp" id="pAge" type="number" value="'+U.age+'"></div><div><label>키(cm)</label><input class="inp" id="pHeight" type="number" value="'+U.height+'"></div><div><label>몸무게(kg)</label><input class="inp" id="pWeight" type="number" value="'+U.weight+'"></div></div>'+
-          '<div class="pedit"><label>핏 취향</label><div class="seg" id="pFit">'+FIT_OPTS.map(function(f){return '<span class="o'+(U.fit===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div>'+
+          '<div class="pedit"><label>상의 핏 취향</label><div class="seg" id="pFitTop">'+FIT_OPTS.map(function(f){return '<span class="o'+(U.fitTop===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div>'+
+          '<div class="pedit"><label>하의 핏 취향</label><div class="seg" id="pFitBottom">'+FIT_OPTS_BOTTOM.map(function(f){return '<span class="o'+(U.fitBottom===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div>'+
           '<div class="note" style="color:var(--warn)">⚠️ 신체정보를 바꾸면 재진단을 추천해요</div></div>'+
         '</div><div class="prof-actions"><button class="btn ghost" onclick="cancelProfile()">취소</button><button class="btn" onclick="saveProfile()">저장하기</button></div>';
     }
@@ -353,7 +365,8 @@
     var g=document.querySelector('#pGender .o.on'); if(g) USER.gender=g.dataset.g;
     var a=document.getElementById('pAge'), h=document.getElementById('pHeight'), w=document.getElementById('pWeight');
     if(a&&a.value) USER.age=+a.value; if(h&&h.value) USER.height=+h.value; if(w&&w.value) USER.weight=+w.value;
-    var f=document.querySelector('#pFit .o.on'); if(f) USER.fit=f.dataset.fit;
+    var ft=document.querySelector('#pFitTop .o.on'); if(ft) USER.fitTop=ft.dataset.fit;
+    var fb=document.querySelector('#pFitBottom .o.on'); if(fb) USER.fitBottom=fb.dataset.fit;
     _profEdit=false; renderProfile(); renderMyAvatar(); renderMyDiagCard(); renderMyInsight(); toast('프로필을 저장했어요');
   }
 
@@ -812,7 +825,20 @@
   }
 
   /* 빈 상태 · 오픈 알림 신청 → 로그인 후 요청내역에 대기로 기록 */
-  function notifySignup(){ var done=function(){ addReq({kind:'notify', svc:'image', status:'대기'}); toast('오픈 알림을 신청했어요 · 마이 > 코디 요청 내역에서 확인'); }; if(loggedIn()) done(); else openLogin('오픈 알림 신청', done); }
+  function notifySignup(){ var done=function(){
+    if(window.FDATA && FDATA.mode==='api'){ FDATA.saveLead({kind:'notify', service:'image'}); toast('오픈 알림을 신청했어요 · 오픈되면 가장 먼저 알려드릴게요'); return; }
+    addReq({kind:'notify', svc:'image', status:'대기'}); toast('오픈 알림을 신청했어요 · 마이 > 코디 요청 내역에서 확인'); }; if(loggedIn() || (window.FDATA&&FDATA.mode==='api')) done(); else openLogin('오픈 알림 신청', done); }
+
+  /* 스타일리스트 웨이트리스트(api) — 이메일 수집 → lead.contact 저장. 오픈 시 이 이메일로 알림. */
+  function waitlistNotify(){
+    var inp=document.getElementById('wlEmail'); var email=inp?(inp.value||'').trim():'';
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ if(inp) inp.focus(); toast('이메일 주소를 정확히 입력해 주세요'); return; }
+    FDATA.saveLead({ kind:'notify', service:'stylist', contact:email });
+    var btn=document.getElementById('wlBtn'); if(btn){ btn.disabled=true; btn.textContent='신청 완료 ✓'; }
+    if(inp) inp.disabled=true;
+    var h=document.getElementById('wlHint'); if(h) h.textContent='오픈되면 '+email+' 로 알려드릴게요 · 감사합니다';
+    toast('오픈 알림을 신청했어요 · 오픈되면 이메일로 알려드릴게요');
+  }
 
   var curSvc='all', curOcc='all', curBudget='all', curStyles=[], query='', favOnly=false;
   function toggleClr(){ document.getElementById('clrBtn').style.display=document.getElementById('q').value?'inline':'none'; }
@@ -983,7 +1009,7 @@
   function reopenOverlay(){ _ovMode==='req'?renderReqDetail():renderBids(); window.scrollTo({top:0}); }
   function detailFromReq(idx, reqIdx, mode){ _bidReq=reqIdx; _ovMode=mode; overlayDetail(idx); showOverlay(); }
   function closeDetail(){ showOnly('listView'); }
-  function showOnly(id){ ['listView','detailView','requestView'].forEach(function(v){ var el=document.getElementById(v); if(el) el.style.display=(v===id)?'block':'none'; }); window.scrollTo({top:0}); }
+  function showOnly(id){ ['listView','detailView','requestView','stylistWaitlist'].forEach(function(v){ var el=document.getElementById(v); if(el) el.style.display=(v===id)?'block':'none'; }); window.scrollTo({top:0}); }
 
   /* 오늘(YYYY-MM-DD) — 견적 일정의 최소 선택일 */
   function todayStr(){ var d=new Date(), p=function(n){return (n<10?'0':'')+n;}; return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
@@ -1010,7 +1036,7 @@
 
   /* 특정 스타일리스트에게 견적 요청 (로그인 게이트) */
   function requestFor(idx){
-    if(!loggedIn()){ closeAll(); openLogin(EX[idx].nm+' 스타일리스트 견적 요청', function(){ requestFor(idx); }); return; }
+    if(!loggedIn() && !(window.FDATA&&FDATA.mode==='api')){ closeAll(); openLogin(EX[idx].nm+' 스타일리스트 견적 요청', function(){ requestFor(idx); }); return; }   // 페이크도어(api): 로그인 없이 수요 수집
     var e=EX[idx]; curReq={nm:e.nm, svc:svcPrimary(e).type};
     var SNM={online:'온라인 스타일링', shopping:'동행 쇼핑', image:'이미지 컨설팅'};
     var svc3=e.services.map(function(sv,i){ return '<div class="s '+(i===0?'on':'')+'" data-v="'+sv.type+'" onclick="pickSvc(this)"><div class="i">'+svcIcon(sv.type)+'</div><b>'+SNM[sv.type]+'</b><span class="p num">'+sv.price.toLocaleString()+'</span></div>'; }).join('');
@@ -1036,7 +1062,7 @@
 
   /* 조건으로 견적 요청 (배너 진입, 로그인 게이트) */
   function openMatch(){
-    if(!loggedIn()){ openLogin('견적 요청', openMatch); return; }
+    if(!loggedIn() && !(window.FDATA&&FDATA.mode==='api')){ openLogin('견적 요청', openMatch); return; }   // 페이크도어(api): 로그인 없이 수요 수집
     curReq={nm:null, svc:'online'};
     var SNM={online:'온라인 스타일링',shopping:'동행 쇼핑',image:'이미지 컨설팅'};
     var svc3=['online','shopping','image'].map(function(v){ return '<div class="s '+(v==='online'?'on':'')+'" data-v="'+v+'" onclick="pickSvc(this)"><div class="i">'+svcIcon(v)+'</div><b>'+SNM[v]+'</b></div>'; }).join('');
@@ -1101,6 +1127,18 @@
     var nEl=document.getElementById('reqNote'); var note=nEl?nEl.value:'';
     var styles=[].map.call(document.querySelectorAll('#mStyle .o.on'), function(o){ return o.textContent; });
     var attEl=document.getElementById('reqAttach'); var attach=attEl?attEl.classList.contains('on'):true;
+    // 페이크도어(api·프로덕션): 수요만 저장하고 목업 견적/진행 화면은 열지 않음. [db/02 · /api/lead]
+    if(window.FDATA && FDATA.mode==='api'){
+      FDATA.saveLead({kind:'quote', service:curReq.svc, occasion:occ.join(' · '), budget:budget, note:(note||'').trim()||null, stylist:curReq.nm||null});
+      document.getElementById('confirmMsg').innerHTML=
+        '<div class="cf-done"><div class="cf-done-ic">✓</div>'+
+        '<div class="cf-done-t">견적 요청이 접수됐어요</div>'+
+        '<div class="cf-done-s">스타일리스트 매칭이 <b>오픈되면 가장 먼저</b> 알려드릴게요</div></div>';
+      var noB=document.getElementById('confirmNo'); noB.textContent='확인'; noB.onclick=function(){ closeConfirm(); showOnly('listView'); };
+      document.getElementById('confirmYes').style.display='none';   // 목업 '마이로 이동' 숨김
+      document.getElementById('confirmModal').onclick=null;
+      return;
+    }
     var isOpen = !curReq.nm;   // 지명(스타일리스트 선택) 아니면 오픈 요청(여러 스타일리스트 견적)
     if(isOpen) addReq({open:true, svc:curReq.svc, occ:occ, budget:budget, date:date, note:note, styles:styles, attach:attach, status:'견적중', bids:makeBids(curReq.svc, occ)});
     else { var she=EX.filter(function(x){return x.nm===curReq.nm;})[0]; var sp=she?((svcOf(she,curReq.svc)||{}).price||null):null;
@@ -1120,6 +1158,26 @@
   /* ===== 전역 이벤트 ===== */
   document.addEventListener('click', closeDD);
   document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeConfirm(); closeAll(); closeDD(); closeBids(); } });
+  // MVP(api): 스타일리스트찾기 = '준비 중 · 오픈 알림' 웨이트리스트로 통일(목업 목록/견적 미노출 · 리텐션은 탭 유지+알림).
+  // 진입(상단 탭·홈 CTA·진단 후 결과 게이트) 전부 이 뷰로. 수요 = 알림 신청(saveLead notify).
+  // 진단 후 전환은 lead.session_id ↔ diagnosis.session_id 조인으로 측정(같은 브라우저 세션).
+  // ※ #shop 해시 유입(goExpert)보다 먼저 주입돼야 함 — 아래 hash 핸들러 위에 위치.
+  if(window.FDATA && FDATA.mode==='api'){ try{
+    var shopSec=document.getElementById('shop');
+    if(shopSec && !document.getElementById('stylistWaitlist')){
+      var wl=document.createElement('div'); wl.id='stylistWaitlist'; wl.style.display='none';
+      wl.innerHTML=
+        '<div class="reqpage">'+
+        '<h1>스타일리스트 매칭,<br>곧 만나요</h1>'+
+        '<p class="lead">진단 결과에 딱 맞는 <b style="color:var(--ink)">검증된 스타일리스트</b>가 코디를 골라주는 기능을 준비하고 있어요 · 오픈되면 <b style="color:var(--ink)">이메일로 가장 먼저</b> 알려드릴게요</p>'+
+        '<input type="email" id="wlEmail" class="inp" autocomplete="email" inputmode="email" placeholder="이메일 주소" style="margin-top:22px;width:100%" onkeydown="if(event.key===\'Enter\')waitlistNotify()">'+
+        '<button class="btn full" id="wlBtn" style="margin-top:12px" onclick="waitlistNotify()">오픈 알림 신청</button>'+
+        '<p class="reqhint" id="wlHint">이메일은 오픈 알림에만 사용해요</p>'+
+        '</div>';
+      shopSec.appendChild(wl);
+    }
+  }catch(e){} }
+
   /* 외부 화면에서 #home·#shop·#my 로 돌아오면 해당 탭 열기 */
   (function(){ var h=(location.hash||'').replace('#',''); if(['home','shop','my'].indexOf(h)>=0) go(h); })();
 

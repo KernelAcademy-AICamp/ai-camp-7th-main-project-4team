@@ -61,6 +61,26 @@
     recordDiagnosis: function (d) {
       if (MODE === 'api') return postJSON('/api/diagnose', d).then(function (r) { return r.json(); }).then(function (j) { return j && j.id; });
       return Promise.resolve(null);
+    },
+
+    /* ── 진단 계산+저장(단계 D) = /api/diagnose ───────────────
+       api: 클라 추정 cm+착용경험을 서버로 → 서버가 specs(garments)로 역산·추천 계산.
+            반환 {id, eb, topRecs, botRecs}. garments.json은 서버 전용(클라 미노출).
+       proto: 로컬에서 계산(호출부가 garments.json 직접 로드) → null. */
+    diagnose: function (d) {
+      if (MODE === 'api') return postJSON('/api/diagnose', d).then(function (r) { return r.json(); });
+      return Promise.resolve(null);
+    },
+
+    /* ── 수요 신호(스타일리스트찾기 페이크도어) = /api/lead ──────
+       실매칭 없이 "얼마나 원하나"만 측정. api 모드에서만 서버 저장(목업 downstream 미개방).
+       demand: {kind:'quote'|'notify', service, occasion, budget, note, stylist, contact}
+       proto: 미저장(데모는 기존 목업 흐름 유지) → false. api: /api/lead POST → true. */
+    saveLead: function (demand) {
+      if (MODE !== 'api') return false;
+      var d = demand || {}; d.session_id = this.sessionId();
+      postJSON('/api/lead', d);
+      return true;
     }
   };
 

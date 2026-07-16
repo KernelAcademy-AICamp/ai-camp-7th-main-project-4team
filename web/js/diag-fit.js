@@ -273,15 +273,18 @@
   }
   // 브랜드 드롭다운을 데이터로 생성 — 하드코딩 없음, 신규 앵커 브랜드 자동 포함. 선택값(id) 보존.
   //  데이터 로드 실패(file:// 등)면 정적 HTML 옵션 그대로 둠(폴백).
+  var _brandsInit=false;
   function renderBrands(){
-    var list=anchorBrandList(); if(!list) return;
+    var list=anchorBrandList(); if(!list || !list.length) return;
     [1,2].forEach(function(g){
       var el=document.getElementById('brand'+g); if(!el) return;
-      var prev=el.value;
+      // 초기 로드: 정적 HTML 기본값(자라) 대신 DB 순서 첫 브랜드(접근성 1위=탑텐)를 기본 선택. 이후 렌더는 사용자 선택 보존.
+      var prev=_brandsInit ? el.value : list[0].id;
       var html=list.map(function(b){ return '<option value="'+b.id+'"'+(b.id===prev?' selected':'')+'>'+b.label+'</option>'; }).join('');
       html+='<option value="">'+FALLBACK_BRAND+'</option>';
-      el.innerHTML=html;
+      el.innerHTML=html; el.value=prev;
     });
+    _brandsInit=true;
   }
   /* 품목 드롭다운 = 셀(브랜드×핏라인/실루엣) — 제품명(SKU)이 아니라 재인 가능한 핏/실루엣만 노출.
      엔진(bodyFromExperiences)은 이미 셀 단위(같은 fitLine/silhouette 제품들의 garmentCm 평균)로 역산하므로
@@ -559,8 +562,10 @@
     }
   }
   // A축 사이즈 시드 로드 → 데이터 보유 카테고리(DATA_CATS) 판별 + 브랜드별 사이즈 라벨.
+  // size-catalog.json = cm-free 공개 카탈로그(브랜드·사이즈 라벨만). 실측치(garmentCm)는 서버 전용 — 해자 보호.
+  // 입력 화면은 라벨만 필요하므로 garments.json 원본을 클라에 노출하지 않는다. [scripts/gen-catalog.js]
   // 로드 후 플로우 시작(실패=file:// 등 → 현재 데이터 반영 폴백으로 boot).
-  fetch('data/garments.json').then(function(r){return r.json();})
+  fetch('data/size-catalog.json').then(function(r){return r.json();})
     .then(function(j){ GARMENTS=j.specs; DATA_CATS=categoriesWithData(j.specs);
       ANCHOR_BRANDS=(j.$meta&&j.$meta.anchorBrands)||[]; })
     .catch(function(){})

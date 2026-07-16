@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>와이어프레임 · 쇼퍼 지원 포털</title>
+<style>
+  :root{--line:#9aa0a6;--line2:#c4c8cc;--ink:#3c4043;--muted:#80868b;--sub:#5f6368;--bg:#eceef0;--panel:#fff;--soft:#f4f5f6;--accent:#5b6b60}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,'Segoe UI',Roboto,'Malgun Gothic',sans-serif;background:var(--bg);color:var(--ink)}
+  .topbar{position:sticky;top:0;z-index:10;background:#dfe2e5;border-bottom:1px solid var(--line);padding:11px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .topbar .tag{font-size:11px;font-weight:800;border:1.5px solid var(--ink);border-radius:4px;padding:2px 7px;letter-spacing:.08em}
+  .topbar b{font-size:15px;letter-spacing:-.02em}
+  .topbar .note{margin-left:auto;font-size:12px;color:var(--muted)}
+
+  /* 앱 프레임 */
+  .app{max-width:1120px;margin:22px auto;background:var(--panel);border:1.5px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+  .apphead{height:52px;border-bottom:1px dashed var(--line2);display:flex;align-items:center;gap:12px;padding:0 20px;font-size:13px;color:var(--muted)}
+  .apphead .logo{font-weight:800;color:var(--ink);font-size:16px}
+  .apphead .role{border:1px solid var(--line2);border-radius:20px;padding:2px 9px;font-size:11px}
+  .apphead .r{margin-left:auto;display:flex;align-items:center;gap:14px}
+  .apphead .bell{position:relative}.apphead .bell .b{position:absolute;top:-5px;right:-7px;width:14px;height:14px;background:#c0554d;border-radius:50%;color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center}
+  .body{display:grid;grid-template-columns:210px 1fr;min-height:520px}
+  .side{border-right:1px dashed var(--line2);padding:18px 12px;background:#fafbfc}
+  .pcard{border:1.5px solid var(--line2);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px;background:#fff}
+  .pcard .av{width:64px;height:64px;border-radius:50%;background:repeating-linear-gradient(45deg,#e7ebe8,#e7ebe8 6px,#dde3df 6px,#dde3df 12px);margin:0 auto 8px}
+  .pcard .nm{font-weight:800;font-size:14px}.pcard .sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .menu{display:flex;flex-direction:column;gap:3px}
+  .menu a{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:9px;font-size:13.5px;font-weight:700;color:var(--sub);cursor:pointer;border:1px solid transparent}
+  .menu a .i{width:16px;height:16px;border:1.5px solid currentColor;border-radius:4px;flex:none}
+  .menu a:hover{background:var(--soft)}
+  .menu a.on{background:#e7efe9;color:var(--accent);border-color:#cfe0d5}
+  .menu a .cnt{margin-left:auto;font-size:10px;font-weight:800;background:var(--accent);color:#fff;border-radius:20px;padding:1px 7px}
+  .main{padding:24px 26px}
+
+  .panel{display:none} .panel.on{display:block}
+  .crumb{font-size:11.5px;color:var(--muted);font-weight:700}
+  h2{font-size:20px;margin:5px 0 3px;letter-spacing:-.02em}
+  .lead{font-size:12.5px;color:var(--muted);margin:0 0 16px}
+  .card{border:1.5px solid var(--line2);border-radius:12px;padding:16px 18px;margin-bottom:14px;background:#fff}
+  .card .h{font-size:13px;font-weight:800;margin-bottom:10px}
+  .lbl{font-size:11px;font-weight:800;color:var(--muted);margin:12px 0 6px}
+  .box{border:1.5px solid var(--line2);border-radius:7px;padding:9px 11px;font-size:12.5px;color:var(--muted);background:#fafbfc}
+  .row{display:flex;gap:10px;align-items:center} .row>*{flex:1}
+  .chip{display:inline-block;font-size:11.5px;font-weight:700;border:1.5px solid var(--line2);border-radius:20px;padding:5px 11px;margin:0 5px 6px 0;color:var(--muted)}
+  .chip.on{border-color:var(--accent);color:var(--accent);background:#e7efe9}
+  .btn{display:inline-flex;align-items:center;justify-content:center;padding:9px 14px;border-radius:9px;background:var(--ink);color:#fff;font-size:12.5px;font-weight:800;border:none;cursor:default}
+  .btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line2)}
+  .stat{border:1.5px solid var(--line2);border-radius:12px;padding:16px;text-align:left}
+  .stat b{display:block;font-size:22px;font-weight:800}.stat small{font-size:11px;color:var(--muted);font-weight:700}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .reqhead{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line2);padding-bottom:12px;margin-bottom:6px}
+  .reqhead .ic{width:38px;height:38px;border-radius:11px;background:#e7efe9;flex:none}
+  .reqhead .t b{font-size:14px}.reqhead .t p{font-size:11.5px;color:var(--muted);margin:2px 0 0}
+  .reqhead .c{margin-left:auto;font-size:11px;font-weight:800;color:var(--muted);background:var(--soft);border-radius:20px;padding:4px 10px}
+  .reqrow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--soft)}
+  .reqrow .a{width:36px;height:36px;border-radius:9px;background:#dfe6e1;flex:none}
+  .reqrow .i{flex:1}.reqrow .i b{font-size:13px}.reqrow .i small{display:block;font-size:11px;color:var(--muted)}
+  .badge{font-size:10.5px;font-weight:800;border-radius:20px;padding:2px 8px;background:#e7efe9;color:var(--accent)}
+  .st{font-size:10.5px;font-weight:800;border-radius:20px;padding:3px 9px;background:var(--accent);color:#fff}
+  .seg{display:flex;gap:5px;margin:8px 0 4px}.seg i{flex:1;height:11px;border-radius:3px;background:#e7efe9}.seg i.on{background:var(--accent)}.seg i.near{background:#bcd3c4}
+  .scale{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted)}
+  .grp{font-size:12px;font-weight:800;color:var(--accent);border-bottom:1px solid var(--line2);padding-bottom:6px;margin:14px 0 8px;display:flex;align-items:center;gap:6px}
+  .grp::before{content:"";width:3px;height:12px;background:var(--accent);border-radius:2px}
+  .thumb{aspect-ratio:4/5;border-radius:6px;background:repeating-linear-gradient(45deg,#f0f2f1,#f0f2f1 6px,#e6ebe8 6px,#e6ebe8 12px);position:relative}
+  .thumb span{position:absolute;right:5px;bottom:4px;font-size:10px;font-weight:800;color:#fff;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000}
+  .caption{text-align:center;font-size:11px;color:var(--muted);margin-top:6px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span class="tag">WIREFRAME</span>
+  <b>쇼퍼 지원 포털 — 저해상도 와이어프레임</b>
+  <span class="note">색·폰트 없이 화면 뼈대만 · 세부는 docs/쇼퍼지원-기능정의서.md</span>
+</div>
+
+<div class="app">
+  <div class="apphead">
+    <span class="logo">Fitting▪</span><span class="role">쇼퍼 지원</span>
+    <span class="r"><span>← 고객 화면</span><span class="bell">🔔<span class="b">1</span></span><span>◐ 소희 쇼퍼 ▾</span></span>
+  </div>
+  <div class="body">
+    <aside class="side">
+      <div class="pcard"><div class="av"></div><div class="nm">소희 쇼퍼</div><div class="sub">온라인 스타일링 · ★ 5.0</div></div>
+      <nav class="menu">
+        <a class="on" data-p="dash" onclick="sel(this)"><span class="i"></span> 대시보드</a>
+        <a data-p="inbox" onclick="sel(this)"><span class="i"></span> 요청 내역 <span class="cnt">1</span></a>
+        <a data-p="propose" onclick="sel(this)"><span class="i"></span> 먼저 제안</a>
+        <a data-p="profile" onclick="sel(this)"><span class="i"></span> 내 프로필</a>
+        <a data-p="reviews" onclick="sel(this)"><span class="i"></span> 받은 후기</a>
+        <a data-p="settle" onclick="sel(this)"><span class="i"></span> 정산</a>
+      </nav>
+    </aside>
+    <main class="main">
+
+      <!-- 대시보드 -->
+      <section class="panel on" id="dash">
+        <div class="crumb">쇼퍼 지원 · 대시보드</div><h2>안녕하세요, 소희 쇼퍼님</h2><p class="lead">오늘의 요청과 진행 현황</p>
+        <div class="grid4">
+          <div class="stat"><b>32만원</b><small>이번 달 수익</small></div>
+          <div class="stat"><b>1</b><small>신규 요청</small></div>
+          <div class="stat"><b>3</b><small>진행 중</small></div>
+          <div class="stat"><b>★5.0</b><small>평점</small></div>
+        </div>
+        <div class="card" style="border-color:var(--accent);background:#eef4f0">
+          <div class="h">지금 응답이 필요해요 · 1건</div>
+          <div class="reqrow" style="border:none"><div class="a"></div><div class="i"><b>정예린 님 · 일상 코디</b><small>모던 V라인 · 예산 ~5만 · 2시간 전</small></div><button class="btn">상세 보기</button></div>
+        </div>
+        <div class="card"><div class="h">최근 요청</div>
+          <div class="reqrow"><div class="a"></div><div class="i"><b>김도현 님 · 소개팅</b><small>💻 온라인 · 예산 5~10만</small></div><span class="st">수락됨</span></div>
+          <div class="reqrow" style="border:none"><div class="a"></div><div class="i"><b>이서연 님 · 면접</b><small>✨ 이미지 · 예산 10~15만</small></div><span class="st">수락됨</span></div>
+        </div>
+      </section>
+
+      <!-- 요청 내역 -->
+      <section class="panel" id="inbox">
+        <div class="crumb">쇼퍼 지원 · 요청 내역</div><h2>요청 내역</h2><p class="lead">고객이 보낸 견적 요청을 검토하고 제안을 보내세요</p>
+        <div class="card">
+          <div class="reqhead"><div class="ic"></div><div class="t"><b>새 요청</b><p>고객이 보낸 견적 요청이에요</p></div><span class="c">1건</span></div>
+          <div class="reqrow" style="border:none"><div class="a"></div><div class="i"><b>정예린 님 · 일상 코디 <span class="badge">🛍 동행 쇼핑</span></b><small>모던 V라인 · 예산 ~5만 · 2026.07.01</small></div><span class="st">신규</span></div>
+        </div>
+        <div class="card">
+          <div class="reqhead"><div class="ic"></div><div class="t"><b>진행 중</b><p>수락하고 진행 중인 코디예요</p></div><span class="c">3건</span></div>
+          <div class="reqrow"><div class="a"></div><div class="i"><b>김도현 님 · 소개팅 <span class="badge">💻 온라인</span></b><small>시크 스트레이트 · 예산 5~10만</small></div><span class="st">수락됨</span></div>
+          <div class="reqrow" style="border:none"><div class="a"></div><div class="i"><b>이서연 님 · 면접 <span class="badge">✨ 이미지</span></b><small>엘레강스 X라인 · 예산 10~15만</small></div><span class="st">수락됨</span></div>
+        </div>
+        <div class="card">
+          <div class="reqhead"><div class="ic"></div><div class="t"><b>완료·취소된 요청</b><p>완료·거절·취소된 요청이에요</p></div><span class="c">1건</span></div>
+          <div class="reqrow" style="border:none"><div class="a"></div><div class="i"><b>최민준 님 · 데일리 <span class="badge">💻 온라인</span></b><small>이지 밸런스 · 예산 ~5만</small></div><span class="st" style="background:#c4c8cc;color:#fff">완료</span></div>
+        </div>
+        <div class="caption">요청 클릭 → 견적서 화면(맨 아래)</div>
+      </section>
+
+      <!-- 먼저 제안 -->
+      <section class="panel" id="propose">
+        <div class="crumb">쇼퍼 지원 · 먼저 제안</div><h2>먼저 제안</h2><p class="lead">제안받기를 원하는 고객에게 내가 먼저 제안하고, 보낸 제안을 관리해요</p>
+        <div class="card"><div class="h">🙋 제안받기를 원하는 고객</div>
+          <div class="reqrow"><div class="a"></div><div class="i"><b>이수민 님 · 결혼식 하객 <span class="badge">🛍 동행 쇼핑</span></b><small>엘레강스 X라인 · 예산 10~15만 · "하객룩 단정하게"</small></div><button class="btn">제안하기</button></div>
+          <div class="reqrow" style="border:none"><div class="a"></div><div class="i"><b>박준영 님 · 면접·발표 <span class="badge">✨ 이미지</span></b><small>모던 V라인 · 예산 15만+ · "첫인상 신뢰감 있게"</small></div><button class="btn">제안하기</button></div>
+        </div>
+        <div class="card"><div class="h">📤 내가 보낸 제안</div>
+          <div class="reqrow" style="border:none"><div class="a"></div><div class="i"><b>최지아 님 · 데일리 <span class="badge">💻 온라인</span></b><small>제안 발송됨 · 방금</small></div><span class="st" style="background:#c4c8cc">제안발송</span></div>
+        </div>
+      </section>
+
+      <!-- 내 프로필(편집) -->
+      <section class="panel" id="profile">
+        <div class="crumb">쇼퍼 지원 · 내 프로필</div><h2>프로필 편집</h2><p class="lead">고객에게 보이는 프로필 · 프로필이 곧 첫인상</p>
+        <div class="card">
+          <div class="row" style="margin-bottom:6px"><div style="flex:none;width:56px;height:56px;border-radius:50%;background:#e7ebe8"></div><div style="flex:1"><button class="btn ghost">프로필 사진 변경</button></div></div>
+          <div class="lbl">활동명</div><div class="box">소희 쇼퍼</div>
+          <div class="lbl">서비스 유형별 가격 (켜고 가격 입력)</div>
+          <div class="row"><span>☑ 온라인 스타일링</span><div class="box" style="flex:none;width:110px">35,000 원</div></div>
+          <div class="row" style="margin-top:6px"><span>☑ 동행 쇼핑</span><div class="box" style="flex:none;width:110px">120,000 원</div></div>
+          <div style="margin:6px 0 0 14px;padding-left:12px;border-left:2px solid #cfe0d5"><div class="lbl">활동 지역</div><span class="chip on">서울 강남</span><span class="chip on">서울 마포</span><span class="chip">+ 경기</span></div>
+          <div class="row" style="margin-top:6px"><span>☑ 이미지 컨설팅</span><div class="box" style="flex:none;width:110px">90,000 원</div></div>
+          <div class="lbl">소개</div><div class="box">데일리·소개팅룩 전문, 비대면 큐레이션이 강점이에요</div>
+          <div class="lbl">전문 분야 <b style="color:var(--accent)">2/3</b></div>
+          <span class="chip on">소개팅·데이트</span><span class="chip on">데일리 스타일링</span><span class="chip">면접·발표</span><span class="chip">결혼식 하객</span>
+          <div class="lbl">전문 스타일 <b style="color:var(--accent)">2/3</b></div>
+          <span class="chip on">미니멀</span><span class="chip on">시크</span><span class="chip">캐주얼</span><span class="chip">클래식</span>
+          <div class="lbl">포트폴리오 (사진마다 착용 모델 키·몸무게)</div>
+          <div class="row"><div style="flex:none;width:44px;height:56px;border-radius:8px;background:#e7ebe8"></div><div class="box">키 168 cm</div><div class="box">몸무게 55 kg</div><span>✕</span></div>
+        </div>
+      </section>
+
+      <!-- 받은 후기 -->
+      <section class="panel" id="reviews">
+        <div class="crumb">쇼퍼 지원 · 받은 후기</div><h2>받은 후기</h2><p class="lead">완료된 코디에 고객이 남긴 후기예요</p>
+        <div class="card">
+          <div class="reqrow" style="align-items:flex-start;border:none"><div class="a"></div><div class="i"><b>최민준 님 · 데일리 · ★★★★★</b>
+            <small>"취향 저격이었어요! 반품 없이 한 번에 성공"</small>
+            <div style="margin-top:8px;padding:9px 11px;background:#e7efe9;border-radius:9px;font-size:11.5px;color:var(--accent)"><b>쇼퍼 답글</b> · "감사해요! 다음에도 잘 맞춰드릴게요"</div>
+            <button class="btn ghost" style="margin-top:8px">답글 달기</button></div></div>
+        </div>
+      </section>
+
+      <!-- 정산 -->
+      <section class="panel" id="settle">
+        <div class="crumb">쇼퍼 지원 · 정산</div><h2>정산</h2><p class="lead">완료된 서비스의 수익과 정산 내역</p>
+        <div class="grid3" style="margin-bottom:14px">
+          <div class="stat"><b>60,000원</b><small>이번 달 수익</small></div>
+          <div class="stat"><b>1</b><small>완료 건</small></div>
+          <div class="stat"><b>60,000원</b><small>건당 평균</small></div>
+        </div>
+        <div class="card"><div class="h">정산 내역</div>
+          <div class="reqrow" style="border:none"><div class="i" style="flex:1"><b>최민준 님 · 데일리</b><small>온라인 스타일링 · 2026.06.18</small></div><b style="font-size:14px">60,000원</b><span class="chip" style="margin:0 0 0 10px">정산 대기</span></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- 견적서(부속 화면) -->
+<div class="app" style="margin-top:8px">
+  <div class="apphead"><span class="logo">Fitting▪</span><span class="role">견적서</span><span class="r"><span>← 요청 내역으로</span></span></div>
+  <div class="main" style="padding:24px 26px">
+    <div class="crumb">쇼퍼 지원 · 견적 요청</div><h2>이서연 님 · 면접·발표 <span class="badge" style="font-size:12px">✨ 이미지 컨설팅</span> <span class="st">제안발송</span></h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px">
+      <div class="card">
+        <div class="h">내 체형 측정 <span class="chip" style="margin:0">전신·상하의 완료</span></div>
+        <div class="grp">상체 — 상의 진단</div>
+        <div class="row" style="display:block"><b style="font-size:12.5px">어깨</b> <span style="float:right;font-size:12px;color:var(--accent);font-weight:800">넓은 편</span></div>
+        <div class="seg"><i></i><i></i><i class="near"></i><i class="on"></i><i class="near"></i></div><div class="scale"><span>좁은</span><span>넓은</span></div>
+        <div class="grp">하체 — 하의 진단</div>
+        <div class="row" style="display:block"><b style="font-size:12.5px">허리</b> <span style="float:right;font-size:12px;color:var(--accent);font-weight:800">표준</span></div>
+        <div class="seg"><i></i><i class="near"></i><i class="on"></i><i class="near"></i><i></i></div><div class="scale"><span>슬림한</span><span>볼륨 있는</span></div>
+        <div class="grp">취향</div>
+        <div class="row" style="display:block"><b style="font-size:12.5px">핏 취향</b> <span style="float:right;font-size:12px;color:var(--accent);font-weight:800">타이트</span></div>
+        <div class="seg"><i class="on"></i><i class="near"></i><i></i><i></i><i></i></div><div class="scale"><span>타이트</span><span>여유</span></div>
+      </div>
+      <div>
+        <div class="card"><div class="h">체형진단 결과 상세</div><div class="box">엘레강스 X라인 (HRG) · 모래시계형<br>어깨·힙 균형, 허리 잘록한 X라인</div></div>
+        <div class="card"><div class="h">요청 내용</div>
+          <div class="box" style="border:none;padding:0;background:none;line-height:2">서비스 유형 · <b>이미지 컨설팅</b><br>상황 · 면접·발표<br>예산 · 10~15만<br>한 줄 · "신뢰감 있는 오피스룩"</div></div>
+        <div class="card"><div class="h">제안</div>
+          <div class="box" style="margin-bottom:8px">제안 발송됨 · 95,000원 · 고객 응답 대기</div>
+          <button class="btn ghost">고객 수락 · 데모</button></div>
+      </div>
+    </div>
+    <div class="caption">받은 요청: [수락]/[거절] · 진행 중: [완료 처리]/[취소 처리](사유·되돌리기)</div>
+  </div>
+</div>
+
+<script>
+  function sel(el){
+    var m=el.parentNode.querySelectorAll('a'); for(var i=0;i<m.length;i++) m[i].classList.remove('on'); el.classList.add('on');
+    var ps=document.querySelectorAll('.panel'); for(var j=0;j<ps.length;j++) ps[j].classList.remove('on');
+    document.getElementById(el.dataset.p).classList.add('on');
+  }
+</script>
+</body>
+</html>
