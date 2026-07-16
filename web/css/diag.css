@@ -145,9 +145,12 @@
 /* 폼 라벨·세그·간격 */
 .field{ margin-bottom:20px; }
 .field > label{ font-size:14px; font-weight:700; color:var(--ink); margin-bottom:8px; }
-.fhint{ display:block; font-size:12.5px; color:var(--muted); margin-top:7px; }
-.fhint.err{ color:#c0392b; font-weight:700; }
-.field input.input-err{ border-color:#c0392b; }
+/* 범위 안내는 placeholder(입력칸 안) — 입력을 시작하면 사라진다.
+   이 줄은 벗어났을 때만 뜨는 오류 문구. visibility(=자리 유지)라 떠도 레이아웃이 안 흔들린다.
+   문구는 HTML 고정 — JS는 .err만 토글한다. */
+.fhint{ display:block; font-size:12.5px; font-weight:600; color:var(--warn); margin-top:7px; visibility:hidden; }
+.fhint.err{ visibility:visible; }
+.field input.input-err{ border-color:var(--warn); }
 .seg .opt{ font-size:15px; }
 .seg.stack .opt{ font-size:16px; padding:15px 18px; }
 .feel-row .part{ font-size:15px; font-weight:700; }

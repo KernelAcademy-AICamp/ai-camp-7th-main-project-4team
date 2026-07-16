@@ -18,13 +18,14 @@
   // 자연수 검증 — 키·몸무게가 정수이고 사람 범위 안일 때만 '다음' 활성
   function validNum(id,min,max){ var v=document.getElementById(id).value; return /^\d+$/.test(v) && +v>=min && +v<=max; }
   // 숫자만 남김(소수점·문자·음수 차단) — 키·몸무게 입력 oninput
-  var RANGES={height:[140,200,'cm'], weight:[30,130,'kg']};
+  var RANGES={height:[140,200], weight:[30,130]};
   function numOnly(el){ el.value=el.value.replace(/[^0-9]/g,'').slice(0,3);
     var r=RANGES[el.id];
     if(r){ var hint=document.getElementById('hint'+el.id.charAt(0).toUpperCase()+el.id.slice(1));
       var v=el.value, bad = v!=='' && (!/^\d+$/.test(v) || +v<r[0] || +v>r[1]);
       el.classList.toggle('input-err', bad);
-      if(hint){ hint.classList.toggle('err', bad); hint.textContent = bad ? (r[0]+'~'+r[1]+r[2]+' 사이로 입력해주세요') : (r[0]+'~'+r[1]+r[2]); } }
+      // 문구는 라벨 옆 고정(HTML) — 빨갛게만 바꾼다. 텍스트를 늘리면 좁은 칸에서 줄바꿈돼 라벨 줄이 밀린다.
+      if(hint) hint.classList.toggle('err', bad); }
     updateNext(); }
   function updateNext(){ document.getElementById('nextbtn').disabled = !selDone(); }
   function saveBasic(){
