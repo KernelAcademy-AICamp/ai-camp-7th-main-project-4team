@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="css/tokens.css?v=10fb5117">
-<link rel="stylesheet" href="css/admin.css?v=abb2e899">
+<link rel="stylesheet" href="css/admin.css?v=867c1b7a">
 </head>
 <body>
 <div class="anav"><div class="anav-in">
@@ -15,7 +15,7 @@
   <nav class="asecs">
     <a class="s" href="admin.html">사이즈·데이터</a>
     <a class="s" href="admin-members.html">회원·거래</a>
-    <a class="s" href="admin-business.html">사업현황</a>
+    <a class="s on" href="admin-business.html">사업현황</a>
     <a class="s" href="admin-api.html">B2B API</a>
     <a class="s" href="admin-ops.html">내부운영</a>
   </nav>
@@ -24,10 +24,10 @@
 </div></div>
 
 <div class="awrap">
-  <div class="crumb"><b>전문가 수요 (페이크도어)</b></div>
-  <p class="subnote"><b>스타일리스트 매칭 수요를 집계.</b> 진단 결과·상단 탭·홈에서 진입하는 "준비 중 · 오픈 알림" 웨이트리스트가 원천(<code>lead</code> 테이블 · kind=notify · 이메일). 실매칭은 v2 — 여기선 <b>"얼마나 원하나"</b>와 <b>진단→수요 전환</b>, 오픈 시 연락할 <b>이메일 명단</b>을 본다.</p>
+  <div class="crumb"><a href="admin-business.html">사업현황</a> › <b>전문가 수요 (페이크도어)</b></div>
+  <p class="subnote"><b>스타일리스트 매칭 수요를 집계.</b> 진단 결과·상단 탭·홈에서 진입하는 "준비 중 · 오픈 알림" 웨이트리스트가 원천(<code>lead</code> 테이블 · kind=notify). 오픈 알림을 신청하며 고른 <b>원하는 서비스·상황</b>(선택)까지 모아, <b>"얼마나·무엇을 원하나"</b>와 <b>진단→수요 전환</b>, 오픈 시 연락할 <b>이메일 명단</b>을 본다.</p>
 
-  <div class="filters"><button class="abtn ghost" style="color:var(--warn)" onclick="__resetLeads()">🗑 테스트 수요 로그 초기화</button></div>
+  <div class="filters"><button class="abtn ghost sm" style="color:var(--warn)" onclick="__resetLeads()">🗑 테스트 수요 로그 초기화</button></div>
 
   <div class="kpis" id="ldKpis"></div>
 
@@ -37,12 +37,12 @@
   <div class="sec-h">일자별 신청 추세 <span class="muted" style="font-weight:400">— 웨이트리스트가 쌓이는 속도(모멘텀) · 막대=진단 후 유입 비율</span></div>
   <div class="tablewrap"><table class="dt" id="trendTable"></table></div>
 
-  <div class="sec-h">유입 게이트 · 서비스 <span class="muted" style="font-weight:400">— 어디서 신청했나 / 어떤 서비스를 원하나</span></div>
+  <div class="sec-h">유입 · 원하는 서비스 · 상황 <span class="muted" style="font-weight:400">— 어디서 신청했나 / 어떤 서비스·상황을 원하나(웨이트리스트 선택)</span></div>
   <div class="tablewrap"><table class="dt" id="segTable"></table></div>
 
   <div class="sec-h">이메일 명단 <span class="muted" style="font-weight:400">— 오픈 시 연락할 고유 이메일</span>
-    <button class="abtn ghost" style="margin-left:10px;font-size:12px;padding:4px 10px" onclick="__copyEmails()">📋 복사</button>
-    <button class="abtn ghost" style="font-size:12px;padding:4px 10px" onclick="__csvEmails()">⬇ CSV</button>
+    <button class="abtn ghost sm" style="margin-left:10px" onclick="__copyEmails()">📋 복사</button>
+    <button class="abtn ghost sm" onclick="__csvEmails()">⬇ CSV</button>
   </div>
   <div class="tablewrap"><table class="dt" id="emailTable"></table></div>
 
@@ -54,6 +54,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/config.js?v=66a385e1"></script>
 <script src="js/admin-auth.js?v=a66338fd"></script>
-<script src="js/admin-leads.js?v=bd48ae3b"></script>
+<script src="js/admin-leads.js?v=6b323fcd"></script>
 </body>
 </html>

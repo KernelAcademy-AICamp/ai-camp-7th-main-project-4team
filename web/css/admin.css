@@ -150,6 +150,21 @@ table.dt td:has(.gcell){ padding:5px 6px; }
 .gridbtns .abtn, .exportbar .abtn{ width:auto; padding:11px 18px; }
 .abtn.ghost{ background:#fff; color:var(--ink); border:1px solid var(--line2,#dcdcd8); }
 .abtn.ghost:hover{ background:var(--soft); }
+/* 작은 인라인 버튼(가로바·헤더용) — .abtn을 width:auto로 축소 */
+.abtn.sm{ width:auto; padding:8px 14px; font-size:13px; border-radius:10px; }
+
+/* 텍스트 입력(.filters select·.numin과 통일) — 이메일·검색 등 */
+.inp{ font-family:inherit; font-size:13px; padding:9px 13px; border:1px solid var(--line);
+  border-radius:10px; background:#fff; color:var(--ink); }
+.inp::placeholder{ color:var(--sub2,#a6a29a); }
+.inp:focus{ outline:none; border-color:var(--green); }
+
+/* 표 안의 작은 액션 버튼(취소·해제 등) */
+.tinybtn{ font-family:inherit; font-size:12px; font-weight:700; padding:5px 11px; border-radius:8px;
+  border:1px solid transparent; background:var(--green); color:#fff; cursor:pointer; }
+.tinybtn:hover{ filter:brightness(1.06); }
+.tinybtn.ghost{ background:#fff; color:var(--ink); border-color:var(--line2,#dcdcd8); }
+.tinybtn.ghost:hover{ background:var(--soft); }
 .csvout{ font-family:ui-monospace,Menlo,monospace; font-size:12px; color:var(--ink-soft,var(--ink)); background:var(--bg);
   padding:14px; margin:0; white-space:pre; overflow-x:auto; border-radius:0; }
 .numin input[type=checkbox]{ width:auto; }
