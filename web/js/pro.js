@@ -60,10 +60,14 @@
     var m=document.querySelectorAll('#smenu a'); for(var i=0;i<m.length;i++) m[i].classList.remove('on'); el.classList.add('on');
     var ps=document.querySelectorAll('.panel'); for(var j=0;j<ps.length;j++) ps[j].classList.remove('on');
     document.getElementById(el.dataset.p).classList.add('on');
+    /* 현재 패널을 URL에 남김 — 견적서에 들어갔다 브라우저 뒤로가기로 돌아와도 대시보드로 초기화되지 않게 */
+    try{ history.replaceState(null,'','pro.html?panel='+el.dataset.p); }catch(_){}
     window.scrollTo({top:0, behavior:'smooth'});
   }
+  /* 지금 열려 있는 패널 키 — 견적서로 넘어갈 때 '어디서 왔는지'로 함께 넘김 */
+  function curPanel(){ var a=document.querySelector('#smenu a.on'); return (a&&a.dataset.p)||'dash'; }
   function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2000); }
-  function stClass(s){ return s==='신규'?'nw':(s==='제안발송'?'sent':((s==='수락됨'||s==='결제대기')?'prog':(s==='분쟁'?'warn':(s==='완료'?'done':'sent')))); }
+  function stClass(s){ return s==='신규'?'nw':(s==='제안발송'?'sent':((s==='수락됨'||s==='결제대기'||s==='상담중')?'prog':(s==='분쟁'?'warn':(s==='완료'?'done':'sent')))); }
   /* 서비스 유형 선(line) 아이콘 — 고객 화면(index.js SVCI_SVG)과 동일: 온라인=모니터·동행=쇼핑백·이미지=반짝임 */
   var SVC_SVG = {
     online:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="11" rx="1.6"/><path d="M8.5 20h7"/><path d="M12 16v4"/></svg>',
@@ -86,7 +90,7 @@
   /* 통일 리스트 행(.ureq) — 1줄: 상황·서비스 / 2줄: 이름·날짜·예산. 서비스는 모노 아이콘, 색은 상태에만 */
   function reqTop(r, clickable){ var i=reqs.indexOf(r);
     var s=r.status;
-    var xc=(s==='수락됨'||s==='결제대기')?'active':((s==='완료'||s==='거절'||s==='취소')?'past':'');   // 진행중=활성 / 완료·취소·거절=지난
+    var xc=(s==='수락됨'||s==='결제대기'||s==='상담중')?'active':((s==='완료'||s==='거절'||s==='취소')?'past':'');   // 진행중=활성 / 완료·취소·거절=지난
     var title=(r.occ?r.occ+' · ':'')+svcLabel(r.service);
     var meta=(r.cust?r.cust+' 님 · ':'')+shortDate(r.date)+(r.budget?' · <b>예산 '+r.budget+'</b>':'');
     return '<div class="ureq'+(xc?' '+xc:'')+(clickable?' rowbtn" onclick="goQuote('+i+')':'')+'">'+
@@ -100,6 +104,7 @@
   function drawerAction(r,i){ var s=r.status;
     if(s==='신규'){ if(r._offering) return offerForm(r,i); return '<button class="btn full" onclick="openOffer('+i+')">제안 보내기</button>'; }
     if(s==='제안발송'){ var o=r.offer||{}; return '<div class="note-quote"><b style="color:var(--green)">제안 발송됨</b> · <span style="font-family:var(--num);font-weight:800">'+(o.price?o.price.toLocaleString():'—')+'</span>원<br><span style="font-size:13px;color:var(--sub)">"'+(o.msg||'')+'"</span><br><span style="font-size:12.5px;color:var(--sub2)">고객 응답을 기다리는 중이에요</span></div><button class="btn ghost full" style="margin-top:10px" onclick="simAccept('+i+')">고객 수락 · 데모</button>'; }
+    if(s==='상담중'){ var oc=r.offer||{}; return '<div class="note-quote"><b style="color:var(--green)">수락함 · 대화 중</b> · <span style="font-family:var(--num);font-weight:800">'+(oc.price?oc.price.toLocaleString():'—')+'</span>원<br><span style="font-size:12.5px;color:var(--sub2)">내용을 맞춰본 뒤 상세에서 입금을 요청해요</span></div>'; }
     if(s==='결제대기'){ var op=r.offer||{}; return '<div class="note-quote"><b style="color:#8A5F16">입금 대기</b> · <span style="font-family:var(--num);font-weight:800">'+(op.price?op.price.toLocaleString():'—')+'</span>원<br><span style="font-size:12.5px;color:var(--sub2)">고객 입금을 기다리는 중이에요 · 상세에서 확인</span></div>'; }
     if(s==='수락됨'){ var o2=r.offer||{};
       var hd='<div class="note-quote"><b style="color:var(--green)">수락됨 · 진행 중</b> · <span style="font-family:var(--num);font-weight:800">'+(o2.price?o2.price.toLocaleString():'—')+'</span>원</div>';
@@ -185,7 +190,7 @@
     var price=a?parseInt(a.value,10)||MY_PRICE:MY_PRICE, msg=m?m.value.trim():'';
     reqs[i].offer={price:price, msg:msg||'요청에 맞춰 코디해드릴게요'}; reqs[i].status='제안발송'; reqs[i]._offering=false;
     saveLS('pro.reqs',reqs); refresh(i); toast(reqs[i].cust+' 님에게 제안을 보냈어요'); }
-  function simAccept(i){ reqs[i].status='수락됨'; saveLS('pro.reqs',reqs); refresh(i); toast(reqs[i].cust+' 님이 제안을 수락했어요 · 진행 시작'); }
+  function simAccept(i){ reqs[i].status='상담중'; saveLS('pro.reqs',reqs); refresh(i); toast(reqs[i].cust+' 님이 제안을 수락했어요 · 대화로 내용을 맞춰보세요'); }
   function completeReq(i){ reqs[i].status='완료'; saveLS('pro.reqs',reqs); refresh(i); toast('완료 처리했어요 · 고객 후기를 기다려요'); }
 
   /* ===== 렌더 ===== */
@@ -193,7 +198,7 @@
     var incoming=reqs.filter(function(r){return r.dir!=='out';});
     var out=reqs.filter(function(r){return r.dir==='out';});
     var news=incoming.filter(function(r){return r.status==='신규';}).sort(byDateDesc);
-    var prog=incoming.filter(function(r){return r.status==='수락됨'||r.status==='결제대기'||r.status==='분쟁';}).sort(byDateDesc);
+    var prog=incoming.filter(function(r){return r.status==='수락됨'||r.status==='결제대기'||r.status==='상담중'||r.status==='분쟁';}).sort(byDateDesc);
     var closed=incoming.filter(function(r){return r.status==='완료'||r.status==='거절'||r.status==='취소';}).sort(byDateDesc);
     out=out.sort(byDateDesc);
     function setCnt(id,n){ var e=document.getElementById(id); if(e) e.textContent=n; }
@@ -222,10 +227,10 @@
     if(card) card.style.display='';
     el.innerHTML=list.map(function(x){ var c=x.c, i=x.i;
       // 요청 내역처럼 클릭 시 견적서(고객 상세) 페이지로 이동 → 거기서 견적 발송
-      return '<div class="ureq rowbtn" onclick="location.href=\'pro-quote.html?cand='+i+'\'">'+
+      return '<div class="ureq rowbtn" onclick="location.href=\'pro-quote.html?cand='+i+'&from=propose\'">'+
         '<span class="ureq-ic">'+svcSvg(c.service)+'</span>'+
         '<div class="ureq-l"><div class="ureq-title">'+c.occ+' · '+svcLabel(c.service)+'</div><div class="ureq-meta">'+c.cust+' 님 · <b>예산 '+c.budget+'</b> · "'+c.note+'"</div></div>'+
-        '<div class="ureq-r"><button class="tinybtn" onclick="event.stopPropagation();location.href=\'pro-quote.html?cand='+i+'\'">견적 보내기</button><span class="chev">›</span></div>'+
+        '<div class="ureq-r"><button class="tinybtn" onclick="event.stopPropagation();location.href=\'pro-quote.html?cand='+i+'&from=propose\'">견적 보내기</button><span class="chev">›</span></div>'+
       '</div>';
     }).join('');
   }
@@ -335,7 +340,7 @@
   }
   function renderAll(){ renderStats(); renderUrgent(); renderCandidates(); renderRecent(); renderInbox(); renderReviews(); renderSettle(); renderProSupport(); }
   /* 요청 클릭 → 견적서 페이지로 이동(사이드 드로어 대신) */
-  function goQuote(i){ location.href='pro-quote.html?req='+i; }
+  function goQuote(i){ location.href='pro-quote.html?req='+i+'&from='+curPanel(); }
 
   /* ===== 가입 프로필을 포털 화면에 반영 ===== */
   function setText(id, v){ var el=document.getElementById(id); if(el&&v!=null) el.textContent=v; }

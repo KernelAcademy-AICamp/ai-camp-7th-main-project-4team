@@ -259,13 +259,19 @@
   .n2scale{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);font-weight:600}
   .dtl-note{font-size:12.5px;color:var(--sub);margin-top:16px;line-height:1.55}
   /* 결정 확인 팝업 */
-  .cf-overlay{position:fixed;inset:0;background:rgba(20,18,16,.42);display:none;align-items:center;justify-content:center;z-index:80;padding:24px}
+  /* 스크림을 진하게+블러 — 뒤 [거절하기][수락하기]가 비쳐 모달 버튼과 흰/검 짝이 겹쳐 보이던 문제 */
+  .cf-overlay{position:fixed;inset:0;background:rgba(20,18,16,.72);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:80;padding:24px}
   .cf-overlay.on{display:flex}
-  .cf-box{background:#fff;border-radius:18px;padding:26px 24px 20px;max-width:340px;width:100%;box-shadow:0 24px 60px rgba(10,11,14,.28)}
-  .cf-msg{font-size:16.5px;font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1.45;margin:0 0 20px;text-align:center}
-  .cf-msg .cf-sub{display:block;font-size:13px;font-weight:600;color:var(--sub);letter-spacing:-.01em;line-height:1.45;margin-top:8px}
+  /* 가운데 정렬은 여기 한 곳에서만 — 안쪽(메시지·설명·버튼·돌아가기)은 상속받아 축이 하나로 유지됨 */
+  .cf-box{background:#fff;border-radius:22px;padding:36px 32px 26px;max-width:460px;width:100%;box-shadow:0 24px 60px rgba(10,11,14,.28);text-align:center}
+  .cf-msg{font-size:21px;font-weight:800;letter-spacing:-.03em;color:var(--ink);line-height:1.4;margin:0 0 26px}
+  .cf-msg .cf-sub{display:block;font-size:14.5px;font-weight:600;color:var(--sub);letter-spacing:-.01em;line-height:1.55;margin-top:6px}
   .cf-btns{display:flex;gap:10px}
-  .cf-btns .btn{flex:1}
+  .cf-btns .btn{flex:1;padding:16px;font-size:16px}
+  /* 되돌아가는 길 — 주버튼과 무게를 나란히 두지 않게 조용한 링크로(.quiet과 같은 톤) */
+  .cf-quiet{margin-top:12px}   /* 버튼 아래 — 링크 자체 padding 4px가 더해져 실제 간격은 16px */
+  .cf-quiet button{border:none;background:none;padding:4px 8px;font-family:inherit;font-size:13.5px;font-weight:700;color:var(--sub2);cursor:pointer}
+  .cf-quiet button:hover{color:var(--warn);text-decoration:underline}
   .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(16px);background:var(--ink,#1c1a17);color:#fff;padding:12px 20px;border-radius:30px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:60}
   .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -350,7 +356,7 @@
   .dlv-help{font-size:12px;color:var(--sub);margin:-4px 0 10px;line-height:1.45}
   .dlv-opt{font-size:11px;font-weight:700;color:var(--sub2);background:var(--soft);border-radius:20px;padding:2px 8px;margin-left:2px}
   /* '상품 담기' 접힘 버튼 */
-  .dlv-addbtn{width:100%;margin-top:4px;padding:12px;border:1.5px dashed var(--line2);border-radius:11px;background:#fff;font-family:inherit;font-size:14px;font-weight:800;color:var(--green);cursor:pointer}
+  .dlv-addbtn{width:100%;margin-top:14px;padding:12px;border:1.5px dashed var(--line2);border-radius:11px;background:#fff;font-family:inherit;font-size:14px;font-weight:800;color:var(--green);cursor:pointer}
   .dlv-addbtn:hover{background:var(--green-soft);border-color:var(--green-line)}
   /* 예산 한 줄(중립) — 위 초록 밴드와 구분 */
   /* '· 필수' — 고객 폼(.feat em)처럼 초록 인라인 텍스트 */
@@ -360,9 +366,16 @@
   .catchip{font-size:12px;font-weight:700;border-radius:20px;padding:6px 12px;border:1.5px solid var(--line2);background:#fff;color:var(--sub);cursor:pointer}
   .catchip.on{background:var(--green);border-color:var(--green);color:#fff}
   .dlv-cat{font-size:10.5px;font-weight:800;color:var(--green);background:var(--green-soft);border-radius:7px;padding:2px 7px}
+  /* 담은 목록 헤더 — 아래 흰 카드들이 '담긴 것'임을 알림 */
+  .plist-h{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:var(--sub2);margin:0 0 7px}
+  .plist-h b{color:var(--green);font-weight:800}
   /* 추천 상품 카드 — 칩=왼쪽 칼럼, 오른쪽 본문 2줄(브랜드 | 상품명 / 사이즈 · 가격 · 링크가 브랜드에 정렬) */
-  .pcard{position:relative;display:flex;gap:8px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px 30px 10px 13px;margin-bottom:7px}
+  .pcard{position:relative;display:flex;gap:8px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px 30px 10px 13px;margin-bottom:7px;background:#fff}
   .pcard.ro{padding-right:13px}
+  /* 작성 폼 안의 담긴 카드 — 초록 체크 뱃지로 '담긴 것'임을 명시(아래 회색 입력 트레이와 대비) */
+  .pcard.picked{padding-left:34px;background:#F6F6F5;border-color:#E3E2DE}
+  .pcard .pmark{position:absolute;left:11px;top:12px;width:15px;height:15px;border-radius:50%;background:var(--green);color:#fff;display:inline-flex;align-items:center;justify-content:center}
+  .pcard .pmark svg{width:9px;height:9px}
   .pcard .pcat{flex:none;margin-top:1px;font-size:10.5px;font-weight:800;color:var(--green);background:var(--green-soft);border-radius:6px;padding:3px 7px}
   .pcard .pbody{flex:1;min-width:0}
   .pcard .pr1{font-size:14px;font-weight:800;color:var(--ink);line-height:1.45}
@@ -382,12 +395,15 @@
   /* 합계 — C안: 미니 우측 */
   .budget-lite{text-align:right;margin-top:12px;font-size:13px;color:var(--sub)}
   .budget-lite b{color:var(--ink);font-weight:800;font-size:14.5px}
-  /* 담는 폼 + secondary 담기 버튼 */
-  .pform{border:1.5px solid var(--green-line);border-radius:12px;padding:13px;margin-top:10px;background:#FCFDFC}
+  /* 담는 폼 = 회색 트레이(입력 도구) — 흰 카드(담긴 상품)와 '면'으로 구분. 테두리 강조 대신 톤을 낮춤 */
+  .pform{border-radius:12px;padding:13px;margin-top:14px;background:var(--soft)}
+  .pform-h{font-size:12px;font-weight:800;color:var(--sub);margin:0 0 10px;letter-spacing:.01em}
   .pform .catrow{margin-bottom:10px}
+  .pform .catchip{border-color:#D2D0C9}   /* 회색 면 위에서 칩 테두리가 묻히지 않게 */
   .pform-act{display:flex;gap:8px;margin-top:12px}
   .p-cancel{flex:none;padding:10px 16px;border:1.5px solid var(--line2);border-radius:9px;background:#fff;color:var(--sub);font-family:inherit;font-size:13px;font-weight:800;cursor:pointer}
-  .p-add{flex:1;padding:10px;border:none;border-radius:9px;background:var(--green-soft);color:var(--green);font-family:inherit;font-size:13.5px;font-weight:800;cursor:pointer}
+  /* 회색 트레이 위에선 green-soft 면이 배경과 밝기가 겹쳐 묻힘 → 딥그린 라인으로 경계를 세움(취소 버튼과 높이도 맞음) */
+  .p-add{flex:1;padding:10px;border:1.5px solid var(--green-line);border-radius:9px;background:var(--green-soft);color:var(--green);font-family:inherit;font-size:13.5px;font-weight:800;cursor:pointer}
   .p-add:hover{background:#DCEAE1}
   /* 콜아웃 클릭 시 오른쪽 체형 강조 */
   .cxflash{animation:cxflash 1.4s ease}
@@ -430,7 +446,11 @@
   .chatdrawer .pm-row.cust .pm-b{background:var(--soft);color:var(--ink-soft)}
   .chatdrawer .pm-row.me .pm-b{background:var(--ink);color:#fff}
   /* 시스템(결정 로그) — 가운데 연초록 알림 */
-  .chatdrawer .pm-sys{align-self:center;text-align:center;font-size:12.5px;font-weight:700;color:var(--green);background:var(--green-soft);border-radius:20px;padding:6px 14px;margin:13px 0}
+  /* 안내 칩 — 실제 간격은 .pm-thread의 gap 8px + 아래 margin이 더해진 값. 안내끼리는 붙이고(20px) */
+  .chatdrawer .pm-sys{align-self:center;text-align:center;font-size:12.5px;font-weight:700;color:var(--green);background:var(--green-soft);border-radius:20px;padding:6px 14px;margin:6px 0}
+  /* 말풍선과 맞닿는 쪽만 벌림(20px) — 대화와 안내가 서로 다른 결로 읽히게 */
+  .chatdrawer .pm-row + .pm-sys{margin-top:12px}
+  .chatdrawer .pm-sys + .pm-row{margin-top:12px}
   /* 입력 — 둥근 인풋 + 원형 보내기(SVG) */
   .chatdrawer .pm-compose{display:flex;align-items:center;gap:9px;margin:0;padding:12px 18px 14px;border-top:1px solid var(--line)}
   .chatdrawer .pm-compose input{flex:1;font-size:15.5px;padding:12px 16px;border:1.5px solid var(--line2);border-radius:22px}

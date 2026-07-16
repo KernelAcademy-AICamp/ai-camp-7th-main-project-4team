@@ -8,6 +8,15 @@
 
   var idx = parseInt(new URLSearchParams(location.search).get('req'),10);
   var candIdx = parseInt(new URLSearchParams(location.search).get('cand'),10);
+  /* 어느 패널에서 들어왔는지 — 뒤로가기가 대시보드가 아니라 그 화면으로 돌아가게. 없으면 진입 종류로 추정 */
+  var PANEL_LABEL = {dash:'대시보드로', inbox:'요청 내역으로', propose:'견적 보내기로', profile:'내 프로필로', reviews:'받은 후기로', settle:'정산으로'};
+  var fromPanel = (function(){
+    var f=new URLSearchParams(location.search).get('from');
+    if(f && PANEL_LABEL[f]) return f;
+    return isNaN(candIdx) ? 'inbox' : 'propose';   // 구 링크(from 없음) 폴백
+  })();
+  function backHref(){ return 'pro.html?panel='+fromPanel; }
+  function goBackToPro(){ location.href=backHref(); }
   var reqs = loadLS('pro.reqs', []);
   var profile = loadLS('pro.profile', null);
   var cands = loadLS('pro.candidates', []);
@@ -21,6 +30,7 @@
   var editDlv = false;   // 방향 A: 제출한 결과물을 인라인으로 다시 편집 중인지
   var addFormOpen = false;   // 결과물 '상품 추가' 폼 펼침 여부(기본 접힘)
   var chatOpen = false;      // 고객과의 대화 드로어 열림 여부
+  var chatAnim = false;      // 자동 열림 직후 1프레임 — 닫힌 채로 그려야 오른쪽에서 밀려 들어오는 전환이 걸림
   var dlvCat = '상의';       // 추천 상품 추가 폼의 선택된 카테고리
 
   /* 요청자별 임의(데모) 측정치 + 선호핏 */
@@ -68,6 +78,7 @@
   var ST_BAN_PRO={
     '신규':    ['wait','clock','새 요청 도착','새로운 요청을 확인해 주세요'],
     '제안발송':['wait','clock','제안 발송됨','고객의 응답을 기다리고 있어요'],
+    '상담중':  ['go','check','요청 수락함','대화로 내용을 맞춰본 뒤 입금을 안내해 주세요'],
     '수락됨':  ['go','check','진행 중','결과물을 작성해 전달해 주세요'],
     '완료':    ['go','flag','서비스 완료','고객의 후기를 기다리고 있어요'],
     '거절':    ['no','x','요청 거절함','요청을 거절했어요'],
@@ -83,7 +94,7 @@
   function progressStepper(r){
     var out = r.dir==='out';
     var labels = out ? ['제안','수락','진행','완료'] : ['요청','수락','진행','완료'];
-    var FLOW = out ? {'제안발송':0,'수락됨':2,'완료':3} : {'신규':0,'수락됨':2,'완료':3};
+    var FLOW = out ? {'제안발송':0,'상담중':1,'수락됨':2,'완료':3} : {'신규':0,'상담중':1,'수락됨':2,'완료':3};
     /* 예외 — 흐름에서 멈춘 단계에 경고 표시 (거절=수락 단계 / 취소·분쟁=진행 단계) */
     var EXC = {'거절':{at:1,lb:'거절'},'취소':{at:2,lb:'취소'},'분쟁':{at:2,lb:'분쟁'}};
     var cur, exAt=-1;
@@ -111,7 +122,7 @@
   function actionTitle(r){
     if(r.status==='견적작성') return '견적 작성';
     if(r.status==='제안발송') return '제안 현황';
-    var T={'신규':'요청 수락','수락됨':'결과물 전달','완료':'완료','거절':'거절한 요청','취소':'취소한 요청','분쟁':'분쟁 대응'};
+    var T={'신규':'요청 수락','상담중':'입금 안내','수락됨':'결과물 전달','완료':'완료','거절':'거절한 요청','취소':'취소한 요청','분쟁':'분쟁 대응'};
     return T[r.status]||'진행 관리';
   }
 
@@ -173,16 +184,20 @@
     saveLS('pro.reqs',reqs);
     var proposed=loadLS('pro.proposed',[]); proposed.push(c.cust); saveLS('pro.proposed',proposed);
     toast(c.cust+'님에게 견적을 보냈어요');
-    setTimeout(function(){ location.href='pro.html'; }, 700);
+    setTimeout(goBackToPro, 700);
   }
   function svcPrice(service){ if(profile&&profile.services){ var f=profile.services.filter(function(s){return s.type===service;})[0]; if(f) return f.price; } return MY_PRICE; }
-  function accept(){ if(!reqs[idx].offer) reqs[idx].offer={price:svcPrice(reqs[idx].service)}; reqs[idx].status='결제대기'; pushSysMsg(reqs[idx],'요청을 수락했어요 · 결제를 안내했어요'); saveLS('pro.reqs',reqs); render(); toast('요청을 수락했어요 · 고객 입금을 기다려요'); }
+  /* 수락 = 대화 시작까지만. 결제 안내는 '입금 요청하기'(askPay)로 분리 — 수락과 동시에 결제대기로 넘기지 않음 */
+  function accept(){ if(!reqs[idx].offer) reqs[idx].offer={price:svcPrice(reqs[idx].service)}; reqs[idx].status='상담중'; pushSysMsg(reqs[idx],'acceptReq'); saveLS('pro.reqs',reqs); render(); toast('요청을 수락했어요 · 대화로 내용을 맞춰보세요'); }
+  /* 입금 요청(명시 액션) — 상담중 → 결제대기 */
+  function askPay(){ var r=reqs[idx]; if(!r) return; r.status='결제대기'; pushSysMsg(r,'askPay'); saveLS('pro.reqs',reqs); render(); toast('서비스 결제를 안내했어요 · 고객 입금을 기다려요'); }
+  function confirmAskPay(){ askConfirm(reqs[idx].cust+'님에게 입금을 요청할까요?', askPay, '입금 요청하기', '요청하면 고객에게 결제가 안내돼요'); }
   /* 입금 확인(데모) — 결제대기 → 수락됨(결과물 작성 열림) */
-  function markPaid(){ var r=reqs[idx]; if(!r) return; r.status='수락됨'; r.paidAt=new Date().toISOString(); pushSysMsg(r,'입금을 확인했어요 · 결과물을 준비할게요'); saveLS('pro.reqs',reqs); render(); toast('입금이 확인됐어요 · 결과물을 작성해 주세요'); }
+  function markPaid(){ var r=reqs[idx]; if(!r) return; r.status='수락됨'; r.paidAt=new Date().toISOString(); pushSysMsg(r,'paid'); saveLS('pro.reqs',reqs); render(); toast('입금이 확인됐어요 · 결과물을 작성해 주세요'); }
   function confirmPayment(){ askConfirm(reqs[idx].cust+'님의 입금을 확인할까요?', markPaid, '확인하기', '확인하면 코디를 진행할 수 있어요'); }
   function reject(){ reqs[idx].reason=''; reqs[idx].status='거절'; saveLS('pro.reqs',reqs); render(); toast('요청을 거절했어요'); }
   function undoReject(){ reqs[idx].status='신규'; reqs[idx].reason=''; saveLS('pro.reqs',reqs); render(); toast('거절을 되돌렸어요'); }
-  function simAccept(){ reqs[idx].status='결제대기'; pushSysMsg(reqs[idx],'고객이 제안을 수락했어요'); saveLS('pro.reqs',reqs); render(); toast(reqs[idx].cust+'님이 제안을 수락했어요 · 입금을 기다려요'); }
+  function simAccept(){ reqs[idx].status='상담중'; pushSysMsg(reqs[idx],'acceptOffer'); saveLS('pro.reqs',reqs); render(); toast(reqs[idx].cust+'님이 제안을 수락했어요 · 대화로 내용을 맞춰보세요'); }
   function completeReq(){ reqs[idx].status='완료'; saveLS('pro.reqs',reqs); render(); toast('완료 처리했어요'); }
   function cancelReq(){ reqs[idx].reason=''; reqs[idx].status='취소'; saveLS('pro.reqs',reqs); render(); toast('진행을 취소했어요'); }
   function undoCancel(){ reqs[idx].status='수락됨'; reqs[idx].reason=''; saveLS('pro.reqs',reqs); render(); toast('취소를 되돌렸어요'); }
@@ -252,10 +267,12 @@
     return '<div class="dlv-thumbs">'+photos.map(function(p,k){ return '<div class="dlv-th" style="background-image:url(\''+p.data+'\')">'+(editable?'<button onclick="delPhoto('+k+')">✕</button>':'')+'</div>'; }).join('')+'</div>'; }
   var IC_LINK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 14.5l5-5"/><path d="M11.5 6.5l1-1a3.5 3.5 0 0 1 5 5l-2 2"/><path d="M12.5 17.5l-1 1a3.5 3.5 0 0 1-5-5l2-2"/></svg>';
   var IC_X='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+  var IC_CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5"/></svg>';
   /* 상품 카드 1개 — editable=작성폼(삭제 O) / false=제출요약(삭제 X). 2줄: [카테고리] 브랜드 상품 / 사이즈·가격·링크 */
   function pcardHTML(it, k, editable){
     var price=(it.price?Number(it.price).toLocaleString():'—');
-    return '<div class="pcard'+(editable?'':' ro')+'">'+
+    return '<div class="pcard'+(editable?' picked':' ro')+'">'+
+      (editable?'<span class="pmark" aria-label="담김">'+IC_CHECK+'</span>':'')+
       (editable?'<button class="pdel" onclick="delDeliverItem('+k+')" aria-label="삭제">'+IC_X+'</button>':'')+
       (it.cat?'<span class="pcat">'+esc(it.cat)+'</span>':'')+
       '<div class="pbody">'+
@@ -272,6 +289,7 @@
     var CATS=['상의','하의','아우터','신발','기타'];
     var addUI = addFormOpen
       ? '<div class="pform">'+
+          '<div class="pform-h">새 상품 담기</div>'+
           '<div class="catrow">'+CATS.map(function(c){ return '<span class="catchip'+(c===dlvCat?' on':'')+'" onclick="pickCat(this,\''+c+'\')">'+c+'</span>'; }).join('')+'</div>'+
           '<div class="offerform">'+
             '<label>브랜드</label><input id="dvBrand" placeholder="예: 유니클로">'+
@@ -281,8 +299,10 @@
           '</div>'+
           '<div class="pform-act"><button class="p-cancel" onclick="toggleAddForm()">취소</button><button class="p-add" onclick="addDeliverItem()">담기</button></div></div>'
       : '<button class="dlv-addbtn" onclick="toggleAddForm()">+ 상품 담기</button>';
+    // 담은 목록 헤더는 담긴 게 있을 때만 — 비어 있으면 '담기' 하나만 보이게
+    var listHead=draft.length ? '<div class="plist-h">담은 상품 <b>'+draft.length+'개</b></div>' : '';
     return '<div class="dlv-sec">추천 상품 <span class="dlv-req">· 필수</span></div>'+
-      list+addUI+(draft.length?budgetLiteHTML(draft):''); }
+      listHead+list+addUI+(draft.length?budgetLiteHTML(draft):''); }
   /* 사진 블록 (전 서비스 공통) */
   var IC_CAM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6.5" width="18" height="13" rx="2.5"/><circle cx="12" cy="13" r="3.4"/><path d="M8.5 6.5l1.3-2.2h4.4l1.3 2.2"/></svg>';
   function photoBlockHTML(r){ var photos=r._photos||[];
@@ -332,7 +352,7 @@
     if(!items.length && !photos.length && !msg){ toast('상품·사진·내용 중 하나 이상 추가해주세요'); return; }
     r.deliver={ items:items, photos:photos, msg:r._dmsg||'', sentAt:new Date().toISOString() }; delete r._draft; delete r._photos; delete r._dmsg;
     r.status='완료';   // 제출 = 최종. 수정 불가 · 바로 고객에게 · 완료로 이동
-    pushSysMsg(r,'결과물을 전달했어요 · 서비스가 완료됐어요');
+    pushSysMsg(r,'deliver');
     saveLS('pro.reqs',reqs); editDlv=false; addFormOpen=false; var m=$('deliverModal'); if(m) m.style.display='none'; render(); toast(r.cust+'님에게 결과물을 전달했어요 · 완료로 넘어갔어요'); }
   /* 제출 재확인 — 수정 불가·바로 고객에게 경고 */
   function confirmSubmitDeliver(){ askConfirm(reqs[idx].cust+'님에게 결과물을 보낼까요?', sendDeliver, '보내기', '보내면 수정할 수 없어요'); }
@@ -735,6 +755,12 @@
         var body1='<div class="rrow"><span class="k">확정 금액</span><span class="v"><span class="money">'+price1+'원</span></span></div>'+
           '<span class="undo" onclick="undoAccept()">↩ 수락 되돌리기</span>';
         inner=tlReceipt('수락', sum1, body1, false);
+      } else if(state==='now'){                    // 상담중 — 수락 후, 입금 요청 전
+        var pricec=(r.offer&&r.offer.price)?r.offer.price.toLocaleString():'—';
+        inner=nowCard('입금 안내','지금 할 일','대화로 내용을 맞춰본 뒤 입금을 안내해요',
+          '<div class="pay-amt"><span>안내할 금액</span><b class="num">'+pricec+'원</b></div>'+
+          '<button class="btn" style="margin-top:14px;width:100%" onclick="confirmAskPay()">입금 요청하기</button>'+
+          '<div class="quiet"><a onclick="undoAccept()">수락 되돌리기</a></div>');
       } else if(state==='exc'){
         inner=nowCardWarn('요청 거절함','거절', '요청을 거절했어요',
           (r.reason?'<div class="note-quote muted" style="margin-bottom:10px">“'+esc(r.reason)+'”</div>':'')+
@@ -786,7 +812,7 @@
   function timelineHTML(r, attached){
     var out=r.dir==='out';
     // 5단계: 요청/제안(0) · 수락(1) · 결제(2) · 진행(3) · 완료(4)
-    var NORMAL = out ? {'제안발송':0,'결제대기':2,'수락됨':3,'완료':4} : {'신규':0,'결제대기':2,'수락됨':3,'완료':4};
+    var NORMAL = out ? {'제안발송':0,'상담중':1,'결제대기':2,'수락됨':3,'완료':4} : {'신규':0,'상담중':1,'결제대기':2,'수락됨':3,'완료':4};
     var EXC = {'거절':1,'취소':3};   // 흐름에서 멈춘 단계(✕)
     var cur, excAt=-1;
     if(r.status in NORMAL){ cur=NORMAL[r.status]; }
@@ -815,18 +841,47 @@
     return '<button class="cd-flag'+(done?' on':'')+'" onclick="openReportModal()" title="'+(done?'신고 접수됨':'고객 신고')+'" aria-label="고객 신고">'+IC_FLAG+'</button>'; }
   function chatDrawerHTML(r, showReport){
     var bubbles=proMsgs(r).map(function(mm){
-      if(mm.from==='sys') return '<div class="pm-sys">'+esc(mm.text)+'</div>';
+      // ev=새 사건 기반 / text=예전에 저장된 완성 문장(구 데이터 폴백)
+      if(mm.from==='sys') return '<div class="pm-sys">'+esc(mm.ev?sysText(mm.ev,r,'pro'):(mm.text||''))+'</div>';
       var mine=(mm.from==='pro'||mm.from==='me');
       return '<div class="pm-row '+(mine?'me':'cust')+'"><div class="pm-b">'+esc(mm.text)+'</div></div>'; }).join('');
-    return '<div class="cd-scrim'+(chatOpen?' on':'')+'" id="cdScrim" onclick="toggleChat()"></div>'+
-      '<aside class="chatdrawer'+(chatOpen?' open':'')+'" id="chatDrawer" aria-label="고객과의 대화">'+
+    var shown = chatOpen && !chatAnim;   // 자동 열림이면 닫힌 채로 그리고 다음 프레임에 open을 붙임
+    return '<div class="cd-scrim'+(shown?' on':'')+'" id="cdScrim" onclick="toggleChat()"></div>'+
+      '<aside class="chatdrawer'+(shown?' open':'')+'" id="chatDrawer" aria-label="고객과의 대화">'+
         '<div class="cd-head"><div class="cd-ti"><span class="cd-eye">고객과의 대화</span><b>'+esc(r.cust)+'님</b></div>'+(showReport?reportIconBtn(r):'')+'<button class="cd-x" onclick="toggleChat()" aria-label="닫기">'+IC_X+'</button></div>'+
         '<div class="pm-thread" id="pmThread">'+bubbles+'</div>'+
         '<div class="pm-compose"><input id="pmIn" placeholder="메시지를 입력하세요" onkeydown="if(event.key===\'Enter\')sendProMsg()"><button class="pm-send" onclick="sendProMsg()" aria-label="보내기">'+IC_SEND+'</button></div>'+
       '</aside>';
   }
-  /* 상태 변화(수락·입금확인·결과물 전달 등)를 대화에 시스템 메시지로 로그 */
-  function pushSysMsg(r, text){ if(!r) return; r.msgs = proMsgs(r).slice(); r.msgs.push({from:'sys', text:text}); }
+  /* ── 대화창 시스템 안내 카피 ─────────────────────────────────────────
+     같은 사건이라도 보는 쪽에 따라 문장이 다름 → 완성된 문장이 아니라 '사건(ev)'만 저장하고
+     읽는 쪽에서 문장을 만든다. 고객 화면을 붙일 때도 이 표를 그대로 쓰고 view만 'cust'로 준다.
+     {cust}=고객 이름 · {pro}=스타일리스트 이름 */
+  var SYS_COPY = {
+    acceptReq:   { pro:'요청을 수락했어요 · {cust}님과 대화를 시작해보세요',   cust:'{pro}님이 요청을 수락했어요 · 대화를 시작해보세요' },
+    acceptOffer: { pro:'{cust}님이 제안을 수락했어요 · 대화를 시작해보세요',  cust:'제안을 수락했어요 · 대화를 시작해보세요' },
+    askPay:      { pro:'서비스 결제를 안내했어요',                          cust:'서비스 결제를 진행해주세요' },
+    paid:        { pro:'입금을 확인했어요 · 결과물을 준비해주세요',           cust:'결제가 완료됐어요 · 결과물을 기다려주세요' },
+    deliver:     { pro:'결과물을 전달했어요 · 후기를 기다려주세요',           cust:'결과물을 받았어요 · 후기를 남겨주세요' },
+    review:      { pro:'후기가 등록됐어요 · 서비스가 완료되었어요!',          cust:'후기를 남겨주셔서 감사해요 · 서비스가 완료되었어요!' }
+  };
+  function sysText(ev, r, view){
+    var c=SYS_COPY[ev]; if(!c) return '';
+    return (c[view||'pro']||'')
+      .replace('{cust}', (r&&r.cust)||'고객')
+      .replace('{pro}', (profile&&profile.name)||'소희 스타일리스트');
+  }
+  /* 상태 변화(수락·입금확인·결과물 전달 등)를 대화에 시스템 메시지로 로그 — ev는 SYS_COPY의 키 */
+  function pushSysMsg(r, ev){ if(!r) return; r.msgs = proMsgs(r).slice(); r.msgs.push({from:'sys', ev:ev});
+    /* 결정이 나면 대화를 함께 연다 — 뒤이어 render가 '닫힘'으로 그리고, 두 프레임 뒤 open을 붙여 오른쪽에서 밀려 들어옴 */
+    chatOpen=true; chatAnim=true;
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      chatAnim=false;
+      var d=$('chatDrawer'), s=$('cdScrim'), t=$('pmThread');
+      if(d) d.classList.add('open');
+      if(s) s.classList.add('on');
+      if(t) t.scrollTop=t.scrollHeight;
+    }); }); }
   function toggleChat(){ chatOpen=!chatOpen; ensureProStyle();
     var d=$('chatDrawer'), s=$('cdScrim'); if(d) d.classList.toggle('open',chatOpen); if(s) s.classList.toggle('on',chatOpen);
     if(chatOpen) setTimeout(function(){ var t=$('pmThread'); if(t) t.scrollTop=t.scrollHeight; var i=$('pmIn'); if(i) i.focus(); },30); }
@@ -842,10 +897,10 @@
   }
   function render(){
     var r = isCand ? candRecord() : reqs[idx];
-    if(!r){ $('quoteRoot').innerHTML='<p class="crumb">요청을 찾을 수 없어요.</p><p style="margin-top:10px"><a class="tinybtn" onclick="location.href=\'pro.html\'">요청 내역으로</a></p>'; return; }
+    if(!r){ $('quoteRoot').innerHTML='<p class="crumb">요청을 찾을 수 없어요.</p><p style="margin-top:10px"><a class="tinybtn" onclick="goBackToPro()">'+PANEL_LABEL[fromPanel]+'</a></p>'; return; }
     var out = r.dir==='out';
     // 대화=제안 발송~진행~완료·분쟁(견적작성 전/거절·취소 제외) · 신고=실제 진행된 고객만
-    var showMsg = !isCand && ['제안발송','결제대기','수락됨','완료','분쟁'].indexOf(r.status)>=0;
+    var showMsg = !isCand && ['제안발송','상담중','결제대기','수락됨','완료','분쟁'].indexOf(r.status)>=0;
     var showReport = !isCand && ['결제대기','수락됨','완료','분쟁'].indexOf(r.status)>=0;
     if(showMsg||showReport) ensureProStyle();
     var bt = btResolve(BTMAP[r.type], r.gender) || {};   // 고객 성별로 콘텐츠 해석
@@ -865,7 +920,7 @@
     // 대화는 상단 오른쪽 아이콘 → 우측 드로어(별도 관리)
     $('quoteRoot').innerHTML =
       '<div class="qtop"><div class="qtop-l">'+
-        '<a class="backlink" onclick="location.href=\'pro.html\'">← '+(r.status==='견적작성'?'견적 보내기로':'요청 내역으로')+'</a>'+
+        '<a class="backlink" onclick="goBackToPro()">← '+PANEL_LABEL[fromPanel]+'</a>'+
         '<p class="crumb">스타일리스트 지원 · '+(r.status==='견적작성'?'견적 보내기':(out?'보낸 제안':'받은 요청'))+'</p>'+
         '<h1>'+esc(r.cust)+'님 · '+esc(svcLabel(r.service))+'</h1>'+
       '</div>'+(showMsg?chatOpenBtn(r):'')+'</div>'+
