@@ -11,7 +11,7 @@
   var rows=[{size:'',cells:{},note:''}];
   var urlBrand=(new URLSearchParams(location.search)).get('brand')||'';   // 브랜드 관리에서 ?brand=로 진입 시 프리필
   var BRANDS=[];   // garments.json의 기존 브랜드(선택용). 새 브랜드는 직접 입력(datalist).
-  fetch('data/garments.json').then(function(r){return r.json();}).then(function(j){
+  ADMINAUTH.garments().then(function(j){
     var seen={}; (j.specs||[]).forEach(function(s){ if(s.brandName && !seen[s.brandName]){ seen[s.brandName]=1; BRANDS.push(s.brandName); } });
     BRANDS.sort(); buildMeta();
   }).catch(function(){});

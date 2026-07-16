@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅 관리자 — 전문가 수요</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/tokens.css?v=10fb5117">
+<link rel="stylesheet" href="css/admin.css?v=abb2e899">
+</head>
+<body>
+<div class="anav"><div class="anav-in">
+  <span class="brand">fitting</span><span class="tag">관리자 · 프로토타입</span>
+  <nav class="asecs">
+    <a class="s" href="admin.html">사이즈·데이터</a>
+    <a class="s" href="admin-members.html">회원·거래</a>
+    <a class="s" href="admin-business.html">사업현황</a>
+    <a class="s" href="admin-api.html">B2B API</a>
+    <a class="s" href="admin-ops.html">내부운영</a>
+  </nav>
+  <span class="who">👤 <b id="adminWho">—</b></span>
+  <span class="lo" onclick="adminLogout()">로그아웃</span>
+</div></div>
+
+<div class="awrap">
+  <div class="crumb"><b>전문가 수요 (페이크도어)</b></div>
+  <p class="subnote"><b>스타일리스트 매칭 수요를 집계.</b> 진단 후 노출되는 "준비 중 · 오픈 알림" 웨이트리스트에서 받은 <b>오픈 알림 신청(이메일)</b>·견적 요청이 원천(<code>lead</code> 테이블). 실매칭은 v2 — 여기선 <b>"얼마나 원하나"</b>와 <b>진단→수요 전환</b>을 본다.</p>
+
+  <div class="filters"><button class="abtn ghost" style="color:var(--warn)" onclick="__resetLeads()">🗑 테스트 수요 로그 초기화</button></div>
+
+  <div class="kpis" id="ldKpis"></div>
+
+  <div class="sec-h">진단 → 수요 전환 <span class="muted" style="font-weight:400">— 진단한 세션 중 매칭 수요로 이어진 비율(같은 브라우저 세션 기준)</span></div>
+  <div class="tablewrap"><table class="dt" id="funnelTable"></table></div>
+
+  <div class="sec-h">서비스·상황별 수요 <span class="muted" style="font-weight:400">— 어떤 서비스/상황을 원하나</span></div>
+  <div class="tablewrap"><table class="dt" id="segTable"></table></div>
+
+  <div class="sec-h">수요 목록 <span class="muted" style="font-weight:400">— 최신순 · 이메일은 오픈 알림용</span></div>
+  <div class="tablewrap"><table class="dt" id="ldTable"></table></div>
+</div>
+
+<script src="js/admin-common.js?v=971cedfa"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js?v=66a385e1"></script>
+<script src="js/admin-auth.js?v=941c569c"></script>
+<script src="js/admin-leads.js?v=6d90a384"></script>
+</body>
+</html>

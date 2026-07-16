@@ -12,6 +12,10 @@ node_modules
 out/
 dist/
 
+# app/ = web/에서 gen-app로 생성하는 프로덕션 빌드(생성물). Vercel이 빌드에서 재생성.
+app/
+
 # 대용량 원본(사이즈코리아 XLSX) — clean CSV가 사용본
 data/body/raw/
 demo/
+.env*

@@ -8,8 +8,13 @@
   w.SUPABASE_URL = 'https://mprdnzlzkmljblxracsj.supabase.co';
   w.SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_dzmb3dYgDwZYWDoKt84uyA_J1MPfscJ';   // 공개 키(커밋 OK) — admin 클라이언트/RLS
 
-  // 모드 스위치: 기본 proto. 배포에서 측정 켤 때 'api'로.
-  // (?mode=api 쿼리로 임시 강제 가능 — 예: 배포 후 스모크 테스트)
+  // 모드 스위치: 기본 proto. 배포에서 측정 켤 때 'api'로(gen-app이 이 기본값을 'api'로 주입).
+  // (?mode=api 쿼리로 임시 강제 — 스모크/로컬 테스트. 한 번 지정하면 세션 내 페이지 이동에도 유지)
   var forced = (location.search.match(/[?&]mode=(proto|api)/) || [])[1];
+  try {
+    if (forced) sessionStorage.setItem('fitting.mode', forced);
+    else forced = sessionStorage.getItem('fitting.mode') || undefined;
+  } catch (e) {}
   w.FITTING_MODE = forced || 'proto';
+  try { console.log('[fitting] mode:', w.FITTING_MODE); } catch (e) {}
 })(window);

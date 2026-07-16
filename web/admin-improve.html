@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅 관리자 — 엔진 강화</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/tokens.css?v=10fb5117">
+<link rel="stylesheet" href="css/admin.css?v=abb2e899">
+</head>
+<body>
+<div class="anav"><div class="anav-in">
+  <span class="brand">fitting</span><span class="tag">관리자 · 프로토타입</span>
+  <nav class="asecs">
+    <a class="s" href="admin.html">사이즈·데이터</a>
+    <a class="s" href="admin-members.html">회원·거래</a>
+    <a class="s" href="admin-business.html">사업현황</a>
+    <a class="s" href="admin-api.html">B2B API</a>
+    <a class="s" href="admin-ops.html">내부운영</a>
+  </nav>
+  <span class="who">👤 <b id="adminWho">—</b></span>
+  <span class="lo" onclick="adminLogout()">로그아웃</span>
+</div></div>
+
+<div class="awrap">
+  <div class="crumb"><b>엔진 강화 (진단 로그 → 개선 작업목록)</b></div>
+  <p class="subnote">진단 로그를 <b>엔진 강화 액션</b>으로 되돌린다(<a href="6_사이즈엔진.md">docs/6</a> §1.1 성장 구조). 자동 학습이 아니라 <b>사람이 실행할 우선순위</b>를 뽑는다 — ① <b>미표기∩페인</b>(병목부위 끼임)을 모아 브랜드 실측을 A축 역산 보정, ② 자유서술의 새 페인을 <b>PAIN_FLAGS로 승격</b>, ③ 확신했는데 틀린 응답으로 <b>규칙 튜닝</b>, ④ 수요 대비 데이터 부족 브랜드 <b>수집</b>.</p>
+
+  <div class="kpis" id="impKpis"></div>
+
+  <div class="sec-h">① 미표기 ∩ 페인 → A축 역산 보정 후보 <span class="muted" style="font-weight:400">— 사이즈표에 없는 병목부위인데 자주 "끼임" = 그 브랜드 실측을 거꾸로 보정할 신호</span></div>
+  <div class="tablewrap"><table class="dt" id="painTable"></table></div>
+
+  <div class="sec-h">② 새 페인 후보 (레지스트리 승격) <span class="muted" style="font-weight:400">— 자유서술에서 반복되는 불편 = PAIN_FLAGS 정식 부위로 승격 검토(엔진이 커짐)</span></div>
+  <div class="tablewrap"><table class="dt" id="noteTable"></table></div>
+
+  <div class="sec-h">③ 규칙 튜닝 우선순위 <span class="muted" style="font-weight:400">— 엔진이 확신(high)했는데 틀린 유형 = 캘리브레이션 위험, engine.js 밴드 튜닝 1순위</span></div>
+  <div class="tablewrap"><table class="dt" id="calibTable"></table></div>
+
+  <div class="sec-h">④ 데이터 확장 우선 <span class="muted" style="font-weight:400">— 사용자가 실제 입은 브랜드(수요) 대비 실측 보유 — 부족하면 수집</span></div>
+  <div class="tablewrap"><table class="dt" id="covTable"></table></div>
+</div>
+
+<script src="js/admin-common.js?v=971cedfa"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js?v=66a385e1"></script>
+<script src="js/admin-auth.js?v=941c569c"></script>
+<script src="js/admin-improve.js?v=72b9f742"></script>
+</body>
+</html>

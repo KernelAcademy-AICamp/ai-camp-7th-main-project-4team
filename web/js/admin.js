@@ -15,11 +15,13 @@
   };
 
   // ── 브랜드 실측(garments.json) ──────────────────────────
-  var SPECS=[], ANCHORS=[];
-  fetch('data/garments.json').then(function(r){return r.json();}).then(function(j){
-    SPECS=j.specs||[]; ANCHORS=(j.$meta&&j.$meta.anchorBrands)||[];
+  var SPECS=[], ANCHORS=[], ORD={};
+  function ordOf(brandId){ var o=ORD[brandId]; return o?o.display_order:100; }   // 진단 노출 순서(brand 테이블)
+  Promise.all([ADMINAUTH.garments(), ADMINAUTH.brandOrder()]).then(function(res){
+    var j=res[0]||{}; SPECS=j.specs||[]; ANCHORS=(j.$meta&&j.$meta.anchorBrands)||[];
+    ORD=res[1]||{};
     renderGarments();
-  }).catch(function(){ $('gKpis').innerHTML='<div class="kpi"><div class="l">garments.json 로드 실패</div></div>'; });
+  }).catch(function(){ $('gKpis').innerHTML='<div class="kpi"><div class="l">실측 데이터 로드 실패 · admin 로그인 필요</div></div>'; });
 
   function uniq(arr){ return arr.filter(function(v,i){ return arr.indexOf(v)===i; }); }
 
@@ -40,14 +42,18 @@
       var cat=s.category==='BOTTOM'?'BOTTOM':(s.category==='TOP'?'TOP':null);
       if(cat){ cov[k][cat][s.gender]=(cov[k][cat][s.gender]||0)+1; }
     });
-    var covRows=Object.keys(cov).sort().map(function(b){
-      var c=cov[b], isA=ANCHORS.indexOf(c.brandId)>=0;
+    // 진단 노출 순서(brand 테이블)로 정렬 — 작을수록 위. 동순위는 브랜드명. admin-brands에서 편집.
+    var covRows=Object.keys(cov).sort(function(a,b){
+      return (ordOf(cov[a].brandId)-ordOf(cov[b].brandId)) || a.localeCompare(b);
+    }).map(function(b){
+      var c=cov[b], isA=ANCHORS.indexOf(c.brandId)>=0, od=ordOf(c.brandId);
+      var obadge=od<100?'<span class="pill" title="진단 노출 순서">'+od+'</span> ':'';
       var cell=function(o){ var m=o.male||0,f=o.female||0,u=o.unisex||0; var t=m+f+u;
         return t?('<span class="num">'+t+'</span> <span class="muted">('+(m?'남'+m:'')+(m&&(f||u)?' ':'')+(f?'여'+f:'')+(u?' 공'+u:'')+')</span>'):'<span class="muted">—</span>'; };
-      return '<tr><td><a href="admin-garments.html?brand='+encodeURIComponent(b)+'"><b>'+esc(b)+'</b></a> '+(isA?'<span class="anchor">앵커</span>':'')+'</td>'+
+      return '<tr><td>'+obadge+'<a href="admin-garments.html?brand='+encodeURIComponent(b)+'"><b>'+esc(b)+'</b></a> '+(isA?'<span class="anchor">앵커</span>':'')+'</td>'+
         '<td>'+cell(c.TOP)+'</td><td>'+cell(c.BOTTOM)+'</td></tr>';
     }).join('');
-    $('covTable').innerHTML='<thead><tr><th>브랜드</th><th>상의</th><th>하의</th></tr></thead><tbody>'+covRows+'</tbody>';
+    $('covTable').innerHTML='<thead><tr><th>브랜드 <span class="muted" style="font-weight:400">(진단 노출 순서)</span></th><th>상의</th><th>하의</th></tr></thead><tbody>'+covRows+'</tbody>';
     // 필터
     buildFilters(brands);
     applyFilter();

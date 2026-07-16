@@ -559,8 +559,10 @@
     }
   }
   // A축 사이즈 시드 로드 → 데이터 보유 카테고리(DATA_CATS) 판별 + 브랜드별 사이즈 라벨.
+  // size-catalog.json = cm-free 공개 카탈로그(브랜드·사이즈 라벨만). 실측치(garmentCm)는 서버 전용 — 해자 보호.
+  // 입력 화면은 라벨만 필요하므로 garments.json 원본을 클라에 노출하지 않는다. [scripts/gen-catalog.js]
   // 로드 후 플로우 시작(실패=file:// 등 → 현재 데이터 반영 폴백으로 boot).
-  fetch('data/garments.json').then(function(r){return r.json();})
+  fetch('data/size-catalog.json').then(function(r){return r.json();})
     .then(function(j){ GARMENTS=j.specs; DATA_CATS=categoriesWithData(j.specs);
       ANCHOR_BRANDS=(j.$meta&&j.$meta.anchorBrands)||[]; })
     .catch(function(){})

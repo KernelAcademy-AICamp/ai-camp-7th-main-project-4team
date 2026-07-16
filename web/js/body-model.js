@@ -24,6 +24,9 @@
     ]).then(function (a) { BASE = a[0]; DIST = a[1]; return true; });
   }
 
+  /** 서버(node) 주입 — fetch 없이 시드 JSON을 직접 넣는다. /api에서 require로 로드. */
+  function seed(base, dist) { BASE = base; DIST = dist; return true; }
+
   /** '173cm 이하'·'72kg'·'200cm 이상' → 숫자. 첫 정수/실수만 뽑는다. */
   function num(s) {
     if (typeof s === "number") return s;
@@ -87,5 +90,5 @@
     return pctFromZ((cm - dp.mean) / dp.sd);
   }
 
-  global.BodyModel = { load: load, estimate: estimate, pctOf: pctOf, _num: num, _age: ageYears };
+  global.BodyModel = { load: load, seed: seed, estimate: estimate, pctOf: pctOf, _num: num, _age: ageYears };
 })(typeof window !== "undefined" ? window : this);
