@@ -764,6 +764,16 @@
   }
   var IC_ATT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11l-8.5 8.5a4.5 4.5 0 0 1-6.4-6.4l8.5-8.5a3 3 0 0 1 4.3 4.3l-8.6 8.5a1.5 1.5 0 0 1-2.1-2.1l7.9-7.9"/></svg>';
   function attachChip(attached, mt){ return '<span class="rr-chip'+(attached?'':' off')+'" style="margin-top:'+(mt||12)+'px">'+IC_ATT+(attached?'체형·사이즈 측정 결과 첨부됨':'체형·사이즈 측정 미첨부')+'</span>'; }
+  /* 요청 요약 카드 — 서비스 유형=아이콘 헤더 / 상황·예상가격·희망일정·요청사항=줄글 / 체형=칩. 고객 화면과 동일 형태 */
+  function reqCardHTML(r, attached, out){
+    var money = out ? ['고객 예산', esc(r.budget||'—')] : ['예상 가격', svcPrice(r.service).toLocaleString()+'원'];
+    var rows=[['상황', esc(r.occ||'—')], money, ['희망 일정', esc(r.date||'—')]];
+    if(r.styles && r.styles.length) rows.push(['선호 스타일', esc(r.styles.join(' · '))]);
+    rows.push(['요청사항', (r.note&&(''+r.note).trim())?esc(r.note):'—']);
+    return '<div class="rqc-head"><span class="rqc-ic">'+svcMeta(r.service).icon+'</span><b>'+esc(svcLabel(r.service))+'</b></div>'+
+      rows.map(function(x){ return '<div class="rqc-row"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>'; }).join('')+
+      '<span class="rqc-chip'+(attached?'':' off')+'">'+IC_ATT+'체형·사이즈 측정 결과 '+(attached?'첨부됨':'미첨부')+'</span>';
+  }
   /* 타임라인 노드 마커 */
   function tlNode(state, i){
     if(state==='done') return '<span class="tl-node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>';
@@ -855,7 +865,7 @@
         // 상황(occ)은 상단 h1에 이미 있어 요약에선 뺌 · 날짜는 6자리
         var sum = out ? ('견적 <span class="money">'+price0+'원</span> 보냄'+(r.date?' · '+shortDate(r.date):''))
                       : ('견적 요청 도착'+(r.date?' · '+shortDate(r.date):''));
-        inner=tlReceipt(out?'제안':'요청', sum, reqRowsHTML(r)+attachChip(attached,12), false);
+        inner=tlReceipt(out?'제안':'요청', sum, reqCardHTML(r, attached, out), false);
       }
     } else if(i===1){                            // 수락
       if(state==='done'){

@@ -315,6 +315,18 @@
   .rrow .v .money,.rrow .money{color:var(--ink)}
   .undo{margin-top:11px;font-size:12.5px;font-weight:800;color:var(--sub);cursor:pointer;display:inline-block}
   .undo:hover{color:var(--green)}
+  /* 요청 요약 카드(요청 단계 펼침) — 서비스 유형=아이콘 헤더 / 나머지=줄글 rows / 체형=칩. 고객 화면과 동일(.rqc-*) */
+  .rqc-head{display:flex;align-items:center;gap:11px;padding:2px 0 12px;margin-bottom:4px;border-bottom:1px solid var(--line)}
+  .rqc-ic{flex:none;width:38px;height:38px;border-radius:11px;background:var(--green-soft);color:var(--green);display:flex;align-items:center;justify-content:center}
+  .rqc-ic svg{width:21px;height:21px}
+  .rqc-head b{font-size:17px;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
+  .rqc-row{display:flex;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .rqc-row:last-of-type{border-bottom:none}
+  .rqc-row span{color:var(--sub);font-weight:600;flex:none}
+  .rqc-row b{color:var(--ink);font-weight:700;text-align:right}
+  .rqc-chip{display:inline-flex;align-items:center;gap:7px;margin-top:13px;font-size:13px;font-weight:700;color:var(--green);background:var(--green-soft);padding:9px 13px;border-radius:11px}
+  .rqc-chip svg{width:15px;height:15px;flex:none}
+  .rqc-chip.off{color:var(--sub);background:var(--soft)}
 
   /* 현재 단계 주연 카드 — 초록 헤더 밴드 + 꽉 채운 뱃지로 '지금 할 일'을 강하게 */
   .now-card{background:#fff;border:1.5px solid var(--green);border-radius:16px;box-shadow:0 14px 34px rgba(46,74,59,.13);overflow:hidden}
