@@ -34,11 +34,11 @@
 
     // ── 대시보드 읽기 (RLS admin-only, 세션 JWT) ──
     killMetric: async function () { try { var r = await client.from('kill_metric').select('*').maybeSingle(); return r.data; } catch (e) { return null; } },
-    // feedback + 임베드 diagnosis(result/카테고리/엔진버전) — 8유형·신뢰도 분해용
+    // feedback + 임베드 diagnosis(input/result/카테고리/엔진버전) — 8유형·신뢰도·성별·앵커 분해용
     feedbackJoin: async function (limit) {
       try {
         var r = await client.from('feedback')
-          .select('id,created_at,verdict,actual_size,aware_brand,engine_improve_consent,diagnosis(category,result,engine_version)')
+          .select('id,created_at,verdict,actual_size,aware_brand,engine_improve_consent,diagnosis(category,input,result,engine_version)')
           .order('created_at', { ascending: false }).limit(limit || 500);
         return r.data || [];
       } catch (e) { return []; }
