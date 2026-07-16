@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅 관리자 — 관리자 관리</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/tokens.css?v=10fb5117">
+<link rel="stylesheet" href="css/admin.css?v=abb2e899">
+</head>
+<body>
+<div class="anav"><div class="anav-in">
+  <span class="brand">fitting</span><span class="tag">관리자 · 프로토타입</span>
+  <nav class="asecs">
+    <a class="s" href="admin.html">사이즈·데이터</a>
+    <a class="s" href="admin-members.html">회원·거래</a>
+    <a class="s" href="admin-business.html">사업현황</a>
+    <a class="s" href="admin-api.html">B2B API</a>
+    <a class="s" href="admin-ops.html">내부운영</a>
+  </nav>
+  <span class="who">👤 <b id="adminWho">—</b></span>
+  <span class="lo" onclick="adminLogout()">로그아웃</span>
+</div></div>
+
+<div class="awrap">
+  <div class="crumb"><b>관리자 관리 (초대·권한)</b></div>
+  <p class="subnote"><b>이메일 초대 → 자동 승격.</b> 초대한 이메일이 구글 로그인하면(admin-login) 자동으로 관리자가 돼요(<code>claim_admin</code>·초대 소진). 브라우저는 로그인 계정 목록을 직접 못 봐서 <b>초대(이메일 허용목록)</b> 방식이에요. 초대·해제는 관리자만(RLS).</p>
+
+  <div class="sec-h">관리자 초대</div>
+  <div class="filters">
+    <input type="email" id="invEmail" class="inp" placeholder="초대할 구글 이메일" style="min-width:240px" onkeydown="if(event.key==='Enter')__invite()">
+    <button class="abtn" onclick="__invite()">초대</button>
+    <span class="cnt" id="invMsg"></span>
+  </div>
+
+  <div class="sec-h">초대 대기 <span class="muted" style="font-weight:400">— 아직 로그인 안 한 초대(로그인하면 자동 승격되어 사라짐)</span></div>
+  <div class="tablewrap"><table class="dt" id="invTable"></table></div>
+
+  <div class="sec-h">현재 관리자</div>
+  <div class="tablewrap"><table class="dt" id="admTable"></table></div>
+</div>
+
+<script src="js/admin-common.js?v=191eba48"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js?v=66a385e1"></script>
+<script src="js/admin-auth.js?v=0c868540"></script>
+<script src="js/admin-access.js?v=67bd0273"></script>
+</body>
+</html>

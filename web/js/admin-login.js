@@ -15,9 +15,10 @@
       var s = await A.getSession();
       if (!s) return;                       // 세션 없음 → 버튼 대기
       var ok = await A.isAdmin();
+      if (!ok && A.claimAdmin) { if (await A.claimAdmin()) ok = true; }   // 초대목록에 있으면 자동 승격 [db/07]
       if (ok) { bridge(s.user.email); location.replace('admin.html'); return; }
-      // 로그인은 됐으나 관리자 아님 → 안내 + 로그아웃
-      hint('이 계정(' + (s.user.email || '') + ')은 관리자 권한이 없어요. 관리자 계정으로 로그인하거나, admin_user에 등록이 필요해요.', true);
+      // 로그인은 됐으나 관리자 아님(초대도 없음) → 안내 + 로그아웃
+      hint('이 계정(' + (s.user.email || '') + ')은 관리자 권한이 없어요. 기존 관리자에게 초대를 요청하세요.', true);
       await A.signOut();
     })();
 

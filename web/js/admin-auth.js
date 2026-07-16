@@ -24,6 +24,14 @@
     },
     email: async function () { var s = await A.getSession(); return s && s.user && s.user.email; },
 
+    // ── 관리자 초대·자동승격 [db/07] ──
+    claimAdmin: async function () { try { var r = await client.rpc('claim_admin'); return r.data === true; } catch (e) { return false; } },
+    listInvites: async function () { try { var r = await client.from('admin_invite').select('email,invited_by,invited_at').order('invited_at', { ascending: false }); return r.data || []; } catch (e) { return []; } },
+    inviteAdmin: async function (email, by) { try { var r = await client.from('admin_invite').insert({ email: email, invited_by: by || null }); return { ok: !r.error, error: r.error && r.error.message }; } catch (e) { return { ok: false, error: String(e) }; } },
+    cancelInvite: async function (email) { try { var r = await client.from('admin_invite').delete().eq('email', email); return !r.error; } catch (e) { return false; } },
+    listAdmins: async function () { try { var r = await client.from('admin_user').select('id,email,role,added_at').order('added_at', { ascending: true }); return r.data || []; } catch (e) { return []; } },
+    revokeAdmin: async function (id) { try { var r = await client.from('admin_user').delete().eq('id', id); return !r.error; } catch (e) { return false; } },
+
     // ── 대시보드 읽기 (RLS admin-only, 세션 JWT) ──
     killMetric: async function () { try { var r = await client.from('kill_metric').select('*').maybeSingle(); return r.data; } catch (e) { return null; } },
     // feedback + 임베드 diagnosis(result/카테고리/엔진버전) — 8유형·신뢰도 분해용
