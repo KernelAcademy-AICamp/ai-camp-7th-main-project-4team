@@ -156,17 +156,16 @@
 .feel-row .part{ font-size:15px; font-weight:700; }
 .feel-opts .opt{ font-size:13px; padding:9px 6px; }
 
-/* 느낌 입력: 선택 항목 접기(압도감↓) — 필수 착용감만 먼저 노출 */
-.feel-more{ margin-top:10px; border-top:1px solid var(--line); }
-.feel-more-sum{ display:flex; align-items:center; gap:7px; width:100%; text-align:left; background:none; border:none; cursor:pointer;
-  font:inherit; font-size:14px; font-weight:700; color:var(--green); padding:12px 0 4px; }
-.feel-more-sum::before{ content:"＋"; font-weight:800; }
-.feel-more.open .feel-more-sum::before{ content:"−"; }
-/* 펼침을 높이 애니메이션으로 — content가 즉시 튀지 않고 스르륵 늘어남(레이아웃 안 흔들림) */
-.feel-more-body{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .34s cubic-bezier(.4,0,.2,1); }
-.feel-more.open .feel-more-body{ grid-template-rows:1fr; }
-.feel-more-inner{ overflow:hidden; min-height:0; padding-top:14px; opacity:0; transition:opacity .26s ease .05s; }   /* 버튼 ↔ 첫 항목 간격 + 부드러운 페이드 인 */
-.feel-more.open .feel-more-inner{ opacity:1; }
+/* 상세 입력(불편·기장)은 '느낌' 다음 독립 스텝 — 접기 UI(.feel-more) 제거.
+   부위와 '추가 의견'을 같은 feel-row 리듬으로 나란히. 라벨은 다른 부위와 동일한 .part.
+   note-row만 textarea라 위 정렬로 두고 라벨을 살짝 내려 첫 줄에 맞춘다. */
+.feel-row.note-row{ align-items:start; }
+.feel-row.note-row .part{ padding-top:9px; }
+.feelbox .open-note{ margin:0; }
+/* 상세 스텝: 2값(팔·목)과 3값(기장) 행이 섞여 flex:1이면 버튼 폭이 어긋난다.
+   3열 그리드로 통일 → 2버튼도 3버튼과 같은 폭·정렬(왼쪽부터, 남는 칸은 비움). */
+#detail1 .feel-opts, #detail2 .feel-opts{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+#detail1 .note-row .feel-opts, #detail2 .note-row .feel-opts{ display:block; }
 
 /* ── 진단 중 화면 — 메인 히어로 줄자 이식 · 전부 중앙 정렬 · 위쪽 배치 ── */
 .flow:has(.loading-wrap){ padding-top:56px; }   /* 진단 중 화면만 전체 살짝 아래로 */
@@ -201,7 +200,6 @@
 .dstepc .dconn.fillnow i{ display:block; height:100%; width:0; background:var(--green); animation:dfillnow .7s cubic-bezier(.4,0,.2,1) .3s forwards; }
 @keyframes dfillnow{ to{ width:100%; } }
 @media(prefers-reduced-motion:reduce){ .dstepc .dconn.fillnow i{ animation:none; width:100%; } }
-@media(prefers-reduced-motion:reduce){ .feel-more-body{ transition:none; } .feel-more-inner{ transition:none; } }
 
 /* 결과 사이즈표 — 셸 .szbox 룩(값 18/ink · 태그 딥그린 pill) */
 .size-row .brand{ font-size:15px; font-weight:700; }
