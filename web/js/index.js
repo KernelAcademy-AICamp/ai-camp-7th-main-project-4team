@@ -829,11 +829,20 @@
     if(window.FDATA && FDATA.mode==='api'){ FDATA.saveLead({kind:'notify', service:'image'}); toast('오픈 알림을 신청했어요 · 오픈되면 가장 먼저 알려드릴게요'); return; }
     addReq({kind:'notify', svc:'image', status:'대기'}); toast('오픈 알림을 신청했어요 · 마이 > 코디 요청 내역에서 확인'); }; if(loggedIn() || (window.FDATA&&FDATA.mode==='api')) done(); else openLogin('오픈 알림 신청', done); }
 
-  /* 스타일리스트 웨이트리스트(api) — 이메일 수집 → lead.contact 저장. 오픈 시 이 이메일로 알림. */
+  /* 웨이트리스트 칩 선택(단일·토글) — 서비스/상황 각 그룹에서 하나만. 미선택 허용(비필수). */
+  function wlPick(el){
+    var group=el.parentElement; var was=el.classList.contains('on');
+    [].forEach.call(group.querySelectorAll('.chip'), function(c){ c.classList.remove('on'); });
+    if(!was) el.classList.add('on');
+  }
+  /* 스타일리스트 웨이트리스트(api) — 이메일 + 수요(서비스·상황) 수집 → lead 저장. 오픈 시 이메일로 알림. */
   function waitlistNotify(){
     var inp=document.getElementById('wlEmail'); var email=inp?(inp.value||'').trim():'';
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ if(inp) inp.focus(); toast('이메일 주소를 정확히 입력해 주세요'); return; }
-    FDATA.saveLead({ kind:'notify', service:'stylist', contact:email });
+    var svcEl=document.querySelector('#wlSvc .chip.on'), occEl=document.querySelector('#wlOcc .chip.on');
+    var service=svcEl?svcEl.getAttribute('data-svc'):'stylist';   // 미선택=게이트 기본(stylist, 미지정)
+    var occasion=occEl?occEl.getAttribute('data-occ'):null;
+    FDATA.saveLead({ kind:'notify', service:service, occasion:occasion, contact:email });
     var btn=document.getElementById('wlBtn'); if(btn){ btn.disabled=true; btn.textContent='신청 완료 ✓'; }
     if(inp) inp.disabled=true;
     var h=document.getElementById('wlHint'); if(h) h.textContent='오픈되면 '+email+' 로 알려드릴게요 · 감사합니다';
@@ -1169,10 +1178,25 @@
       wl.innerHTML=
         '<div class="reqpage">'+
         '<h1>스타일리스트 매칭,<br>곧 만나요</h1>'+
-        '<p class="lead">진단 결과에 딱 맞는 <b style="color:var(--ink)">검증된 스타일리스트</b>가 코디를 골라주는 기능을 준비하고 있어요 · 오픈되면 <b style="color:var(--ink)">이메일로 가장 먼저</b> 알려드릴게요</p>'+
-        '<input type="email" id="wlEmail" class="inp" autocomplete="email" inputmode="email" placeholder="이메일 주소" style="margin-top:22px;width:100%" onkeydown="if(event.key===\'Enter\')waitlistNotify()">'+
+        '<p class="lead">진단 결과에 딱 맞는 <b style="color:var(--ink)">검증된 스타일리스트</b>가 코디를 골라주는 기능을 준비하고 있어요 · 오픈 알림을 신청하며 <b style="color:var(--ink)">어떤 도움이 필요한지</b> 살짝만 알려주세요</p>'+
+        '<div style="font-size:13px;font-weight:800;color:var(--ink);margin:22px 0 9px;display:flex;gap:7px;align-items:center">어떤 도움이 필요하세요? <span style="font-size:11px;font-weight:700;color:var(--green);background:var(--green-soft);border-radius:5px;padding:1px 6px">선택</span></div>'+
+        '<div id="wlSvc" style="display:flex;flex-wrap:wrap;gap:7px">'+
+          '<button type="button" class="chip" data-svc="online" onclick="wlPick(this)">온라인 코디 추천</button>'+
+          '<button type="button" class="chip" data-svc="shopping" onclick="wlPick(this)">쇼핑 동행</button>'+
+          '<button type="button" class="chip" data-svc="image" onclick="wlPick(this)">이미지 컨설팅</button>'+
+          '<button type="button" class="chip" data-svc="undecided" onclick="wlPick(this)">아직 모르겠어요</button>'+
+        '</div>'+
+        '<div style="font-size:13px;font-weight:800;color:var(--ink);margin:18px 0 9px;display:flex;gap:7px;align-items:center">어떤 상황이 많나요? <span style="font-size:11px;font-weight:700;color:var(--green);background:var(--green-soft);border-radius:5px;padding:1px 6px">선택</span></div>'+
+        '<div id="wlOcc" style="display:flex;flex-wrap:wrap;gap:7px">'+
+          '<button type="button" class="chip" data-occ="데일리" onclick="wlPick(this)">데일리</button>'+
+          '<button type="button" class="chip" data-occ="출근·면접" onclick="wlPick(this)">출근·면접</button>'+
+          '<button type="button" class="chip" data-occ="소개팅·데이트" onclick="wlPick(this)">소개팅·데이트</button>'+
+          '<button type="button" class="chip" data-occ="행사·하객" onclick="wlPick(this)">행사·하객</button>'+
+          '<button type="button" class="chip" data-occ="여행" onclick="wlPick(this)">여행</button>'+
+        '</div>'+
+        '<input type="email" id="wlEmail" class="inp" autocomplete="email" inputmode="email" placeholder="이메일 주소" style="margin-top:20px;width:100%" onkeydown="if(event.key===\'Enter\')waitlistNotify()">'+
         '<button class="btn full" id="wlBtn" style="margin-top:12px" onclick="waitlistNotify()">오픈 알림 신청</button>'+
-        '<p class="reqhint" id="wlHint">이메일은 오픈 알림에만 사용해요</p>'+
+        '<p class="reqhint" id="wlHint">선택은 건너뛰어도 신청돼요 · 이메일은 오픈 알림에만 사용해요</p>'+
         '</div>';
       shopSec.appendChild(wl);
     }
