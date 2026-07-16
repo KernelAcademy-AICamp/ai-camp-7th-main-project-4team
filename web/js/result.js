@@ -275,20 +275,21 @@
       // 상·하의 모두 완료(cardReady)면 전신 카드, 아니면 이번 진단 카테고리만.
       var body, lowerCat=(curCat==='BOTTOM'||curCat==='SKIRT');
       if(fullBody){
-        var prefTopKey=(payload.prefs&&payload.prefs.TOP)||pref;
+        // 취향은 상·하의가 다를 수 있어 각 그룹 끝에 따로 표시(상의=여유축, 하의=형태축).
+        var prefTopKey=(payload.prefs&&payload.prefs.TOP)||'regular';
+        var prefBotKey=(payload.prefs&&payload.prefs.BOTTOM)||'straight';
         body='<div class="dtl-grp up" style="margin-top:8px">상체 — 상의 진단</div>'+
              specRow('좁은 어깨',pm.shoulder,'넓은 어깨','어깨',false)+
              specRow('슬림한 가슴',pm.chestFull,'볼륨 있는 가슴','가슴',false)+
+             specRow('타이트',FITPCT[prefTopKey]||55,'여유','핏 취향',false)+
              '<div class="dtl-grp lo">하체 — 하의 진단</div>'+
              specRow('슬림한 허리',pm.waist,'볼륨 있는 허리','허리',true)+
              specRow('슬림한 엉덩이',pm.hip,'볼륨 있는 엉덩이','엉덩이',true)+
-             '<div class="dtl-grp pref">취향</div>'+
-             specRow('타이트',FITPCT[prefTopKey]||55,'여유','핏 취향',false);
+             specRow('슬림',FITPCT[prefBotKey]||50,'와이드','핏 취향',true);
       } else {
         var grpLabel=(curCat==='TOP'?'상체 — 상의 진단':lowerCat?'하체 — '+curLabel+' 진단':'상체 — '+curLabel+' 진단');
         body='<div class="dtl-grp '+(lowerCat?'lo':'up')+'" style="margin-top:8px">'+grpLabel+'</div>'+
              (MEAS[curCat]||MEAS.TOP).map(function(m){ return specRow(m[1],pm[m[0]],m[2],m[3],lowerCat); }).join('')+
-             '<div class="dtl-grp pref">취향</div>'+
              (lowerCat
                ? specRow('슬림',FITPCT[pref]||50,'와이드','핏 취향',true)
                : specRow('타이트',FITPCT[pref]||55,'여유','핏 취향',false));
