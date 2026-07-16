@@ -18,7 +18,7 @@ var PAGES = [
   'index.html', 'diag-basic.html', 'diag-fit.html', 'diag-loading.html', 'result.html', 'card.html',
   'about.html', 'faq.html', 'terms.html', 'privacy.html', 'body-type-guide.html', '404.html',
   // MVP 범위: 사이즈·데이터(+하위) + 진단·정확도(킬메트릭) + 엔진 강화 + 전문가 수요(lead). 나머지 admin 섹션은 v2라 미배포.
-  'admin-login.html', 'admin.html', 'admin-diagnostics.html', 'admin-improve.html', 'admin-leads.html', 'admin-brands.html',
+  'admin-login.html', 'admin.html', 'admin-diagnostics.html', 'admin-improve.html', 'admin-leads.html', 'admin-access.html', 'admin-brands.html',
   'admin-collect.html', 'admin-engine.html', 'admin-garments.html'
 ];
 // ── 제외: 스타일리스트 포털 pro*, 개발 유틸 _reset, 비MVP admin 섹션(회원·거래·사업현황·B2B API·내부운영) ──
