@@ -149,14 +149,7 @@
       var hasDraft=((r._draft||[]).length || (r._photos||[]).length || (r._dmsg||'').trim());
       return banner + price + '<button class="btn" style="margin-top:10px" onclick="openDeliverModal()">결과물 작성'+(hasDraft?' (임시저장)':'')+' →</button>' + cancel;
     }
-    if(r.status==='분쟁'){ var dp=r.dispute||{};
-      return banner+
-        '<div class="note-quote" style="border-color:#e6b8b8;background:#fbf3f3"><span style="font-size:13px">사유: '+esc(dp.reason||'—')+'<br>"'+esc(dp.detail||'')+'"</span></div>'+
-        (dp.reply
-          ? '<div class="note-quote" style="margin-top:10px"><b style="color:var(--green,#2E4A3B)">내 소명 제출됨</b><br><span style="font-size:13px;color:var(--sub,#6b6a67)">"'+esc(dp.reply)+'"</span><br><span style="font-size:12px;color:var(--sub2,#8a857b)">관리자 중재를 기다리는 중이에요</span></div>'
-          : '<div class="offerform" style="margin-top:10px"><label>소명 · 반박</label><textarea id="dispReply" placeholder="결과물 전달 내역·대화 등 상황을 설명해주세요"></textarea><button class="btn" style="margin-top:10px" onclick="submitDisputeReply()">소명 제출</button></div>')+
-        '<p class="note-quote muted" style="margin-top:10px">관리자 중재(3.B.4)로 환불·정산이 결정돼요</p>';
-    }
+    // 분쟁은 타임라인의 막힌 단계 칸이 맡음(disputeStepBody) — 여기(폴백 경로)로는 더 이상 오지 않음
     if(r.status==='완료'){
       if(r.review) return banner+'<div class="seclabel">고객 후기</div><div class="note-quote"><span style="letter-spacing:1px">'+starsRO(r.review.rating)+'</span><br>"'+esc(r.review.text)+'"</div>';
       return banner;
@@ -733,6 +726,11 @@
   /* 단계별 카드 HTML */
   function tlStepHTML(i, state, r, attached, out){
     var inner='';
+    /* 분쟁은 어느 칸에서든 막힐 수 있음 — 칸 번호를 따지지 않고 막힌 그 자리에 소명 카드를 띄운다 */
+    if(state==='exc' && r.status==='분쟁'){
+      inner=nowCardWarn('분쟁 처리 중','분쟁', esc(r.cust)+'님이 문제를 신고했어요 · 소명을 제출해 주세요', disputeStepBody(r));
+      return '<div class="tl-step exc'+(i===4?' last':'')+'">'+tlNode(state,i)+inner+'</div>';
+    }
     if(i===0){                                   // 요청 / 제안
       if(state==='now'){
         if(out){ var o=r.offer||{};
@@ -812,17 +810,37 @@
     var pcls=(i===2 && state==='now')?' pay':'';   // 결제(입금 대기) 현재 노드는 노랑
     return '<div class="tl-step '+state+pcls+(i===4?' last':'')+'">'+tlNode(state,i)+inner+'</div>';
   }
-  /* 정상 흐름·거절·취소면 타임라인 HTML, 아니면 null(분쟁·견적작성 → 폴백) */
+  /* 분쟁 — 막힌 그 단계 자리에 뜨는 경고 카드(거절=수락 칸, 취소=진행 칸과 같은 규칙).
+     흐름을 끝내는 게 아니라 그 단계에서 멈춰 세우는 것이라, 원래 그 칸에 있던 액션 대신 소명이 주연이 된다. */
+  function disputeStepBody(r){
+    var dp=r.dispute||{};
+    var body = dp.reply
+      ? '<div class="dsp-reply"><b>내 소명 제출됨</b><p>"'+esc(dp.reply)+'"</p><span>관리자 중재를 기다리는 중이에요</span></div>'
+      : '<div class="offerform dsp-form"><label>소명 · 반박</label>'+
+        '<textarea id="dispReply" placeholder="결과물 전달 내역·대화 등 상황을 설명해주세요"></textarea>'+
+        '<button class="btn" style="margin-top:10px;width:100%" onclick="submitDisputeReply()">소명 제출하기</button></div>';
+    return '<div class="dsp-claim"><span class="dsp-rs">'+esc(dp.reason||'기타')+'</span>'+
+        '<p>"'+esc(dp.detail||'')+'"</p></div>'+
+      body+
+      '<p class="dsp-note">관리자 중재로 환불·정산이 결정돼요 · 그동안 정산은 보류돼요</p>';
+  }
+  /* 정상 흐름·거절·취소·분쟁이면 타임라인 HTML, 아니면 null(견적작성 → 폴백) */
   function timelineHTML(r, attached){
     var out=r.dir==='out';
     // 5단계: 요청/제안(0) · 수락(1) · 결제(2) · 진행(3) · 완료(4)
     var NORMAL = out ? {'제안발송':0,'상담중':1,'결제대기':2,'수락됨':3,'완료':4} : {'신규':0,'상담중':1,'결제대기':2,'수락됨':3,'완료':4};
-    var EXC = {'거절':1,'취소':3};   // 흐름에서 멈춘 단계(✕)
+    var EXC = {'거절':1,'취소':3};   // 흐름을 끝내는 예외 — 멈춘 단계에 ✕
     var cur, excAt=-1;
-    if(r.status in NORMAL){ cur=NORMAL[r.status]; }
+    /* 분쟁 = 진행되던 그 단계에서 막힌 것 — _prevStatus가 가리키는 칸에 ✕를 찍고 그 자리에 소명을 띄운다 */
+    if(r.status==='분쟁'){
+      cur=NORMAL[r._prevStatus];
+      if(cur===undefined) cur=3;     // 백업이 없는 구 데이터 — 결제 후 진행 단계에서 막힌 것으로 본다
+      excAt=cur;
+    }
+    else if(r.status in NORMAL){ cur=NORMAL[r.status]; }
     else if(r.status in EXC){ excAt=EXC[r.status]; cur=excAt; }
-    else return null;                // 분쟁·견적작성 등 → 폴백
-    if(r.status==='수락됨') ensureDlvStyle();
+    else return null;                // 견적작성 등 → 폴백
+    if(r.status==='수락됨' || r.deliver) ensureDlvStyle();
     var steps='';
     for(var i=0;i<5;i++){ var state=(i===excAt?'exc':(i<cur?'done':(i===cur?'now':'future'))); steps+=tlStepHTML(i,state,r,attached,out); }
     return '<div class="tl">'+steps+'</div>';
