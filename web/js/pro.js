@@ -112,7 +112,11 @@
         if(r.deliver) return hd + deliverSummary(r) + '<button class="btn full" style="margin-top:10px" onclick="completeReq('+i+')">완료 처리</button>';
         return hd + deliverForm(r,i);
       }
-      return hd + '<p class="note-quote muted" style="margin-top:10px">대면 서비스는 현장에서 진행돼요 · 완료 후 처리해주세요</p><button class="btn full" style="margin-top:10px" onclick="completeReq('+i+')">완료 처리</button>'; }
+      // 대면(이미지 컨설팅·동행 쇼핑)도 결과물(진단 리포트·구매 내역)을 전달해야 함 — 작성은 상세(견적서)에서
+      if(r.deliver) return hd + deliverSummary(r) + '<button class="btn full" style="margin-top:10px" onclick="completeReq('+i+')">완료 처리</button>';
+      var apt=r.appt ? '<br><span style="font-size:12.5px;color:var(--green-mid);font-weight:700">약속 '+(r.appt.date||'')+(r.appt.time?' '+r.appt.time:'')+(r.appt.place?' · '+r.appt.place:'')+'</span>' : '';
+      return hd + '<p class="note-quote muted" style="margin-top:10px">'+(r.service==='image'?'컨설팅 후 진단 리포트를 전달해요':'동행 후 구매 내역을 정리해 전달해요')+' · 상세에서 작성'+apt+'</p>'+
+        '<button class="btn full" style="margin-top:10px" onclick="goQuote('+i+')">상세에서 결과물 작성 →</button>'; }
     if(s==='완료'){ if(r.review) return '<div class="dsec-label">고객 후기</div><div class="note-quote"><span style="letter-spacing:1px">'+starsRO(r.review.rating)+'</span><br>"'+r.review.text+'"</div>'; return '<div class="note-quote muted">완료 · 고객 후기를 기다리는 중이에요</div>'; }
     return '';
   }

@@ -335,6 +335,14 @@
   .pay-amt{display:flex;justify-content:space-between;align-items:center;font-size:15px;padding:2px 0 4px}
   .pay-amt span{color:var(--sub);font-weight:600}
   .pay-amt b{font-weight:800;color:var(--green)}
+  /* 안내할 금액 수정(상담중) — 평소엔 '수정' 링크, 누르면 인라인 입력 */
+  .pay-amt .pe-edit{font-size:12px;font-weight:700;color:var(--sub2);margin-left:8px;cursor:pointer}
+  .pay-amt .pe-edit:hover{color:var(--green)}
+  .pay-edit .pe-in{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:800;color:var(--green)}
+  .pay-edit .pe-in input{width:96px;padding:7px 9px;border:1.5px solid var(--green-line);border-radius:8px;font-family:var(--num);font-size:14px;font-weight:800;text-align:right;color:var(--ink)}
+  .pay-edit .pe-in input:focus{outline:none;border-color:var(--green)}
+  .pay-edit .pe-ok{padding:7px 12px;border:none;border-radius:8px;background:var(--green-soft);color:var(--green);font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
+  .pay-edit .pe-ok:hover{background:#DCEAE1}
   .now-body .rr-mini{margin-bottom:2px}
   .now-body .rr-mini .rrow{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
   .now-body .rr-mini .rrow:last-child{border-bottom:none}
@@ -351,6 +359,29 @@
   .quiet a{font-size:12.5px;font-weight:700;color:var(--sub2);cursor:pointer}
   .quiet a:hover{color:var(--warn)}
   .rpt-card{margin-top:4px}
+  /* ── 약속 잡기(대면: 이미지 컨설팅·동행 쇼핑) — 상담중 칸. 안내 문구는 nowCard 힌트가 맡음 ── */
+  .apt-form .offerform label:first-child{margin-top:0}
+  .apt-regions{margin-top:9px}
+  /* 확정된 약속 — 날짜가 주정보라 크게, 라벨은 아래 작게 */
+  .apt-done{display:flex;align-items:center;gap:11px;background:var(--green-soft);border-radius:12px;padding:11px 13px;margin-bottom:12px}
+  .apt-ic{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#fff;color:var(--green)}
+  .apt-ic svg{width:15px;height:15px}
+  .apt-tx{flex:1;min-width:0}
+  .apt-tx b{display:block;font-size:14px;font-weight:800;color:var(--ink);letter-spacing:-.02em}
+  .apt-tx span{font-size:11.5px;font-weight:700;color:var(--green-mid)}
+  .apt-edit{flex:none;border:1.5px solid var(--green-line);background:#fff;color:var(--green);border-radius:8px;padding:6px 11px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer}
+  .apt-edit:hover{background:#fff;border-color:var(--green)}
+
+  /* ── 진단 리포트(이미지 컨설팅) — 결과물이 상품이 아니라 진단 ── */
+  .rp-lb{display:block;font-size:12px;font-weight:800;color:var(--sub);margin:0 0 8px}
+  .rp-form .offerform label:first-child{margin-top:12px}
+  /* 제출된 리포트 요약(읽기전용) */
+  .rp-ro{border-left:2px solid var(--green-line);padding-left:12px;margin-bottom:10px}
+  .rp-chip{display:inline-block;font-size:11px;font-weight:800;color:var(--green);background:var(--green-soft);border-radius:6px;padding:3px 9px;margin-bottom:8px}
+  .rp-row{display:flex;gap:10px;padding:5px 0;font-size:13px;line-height:1.55}
+  .rp-row .k{flex:none;width:92px;color:var(--sub);font-weight:700}
+  .rp-row .v{flex:1;min-width:0;color:var(--ink-soft)}
+
   /* 분쟁 — 막힌 단계 칸의 경고 카드(nowCardWarn) 안에 들어가는 내용 */
   /* 고객 주장 — 인용이라 좌측 라인으로(카드 안의 카드가 되지 않게) */
   .dsp-claim{border-left:2px solid #E3C4BB;padding:2px 0 2px 12px;margin-bottom:14px}
@@ -456,9 +487,9 @@
   .cd-head .cd-x:hover{background:var(--line2)}
   .chatdrawer .pm-thread{flex:1;max-height:none;overflow-y:auto;padding:16px 18px}
   .chatdrawer .pm-b{font-size:15.5px;padding:11px 15px;max-width:84%;line-height:1.5}
-  /* 말풍선 — 고객=연한 회색, 쇼퍼(나)=잉크블랙 */
+  /* 말풍선 — 고객=연한 회색, 쇼퍼(나)=웜 차콜(순검정 --ink보다 덜 무겁게) */
   .chatdrawer .pm-row.cust .pm-b{background:var(--soft);color:var(--ink-soft)}
-  .chatdrawer .pm-row.me .pm-b{background:var(--ink);color:#fff}
+  .chatdrawer .pm-row.me .pm-b{background:#2E2A24;color:#fff}
   /* 시스템(결정 로그) — 가운데 연초록 알림 */
   /* 안내 칩 — 실제 간격은 .pm-thread의 gap 8px + 아래 margin이 더해진 값. 안내끼리는 붙이고(20px) */
   .chatdrawer .pm-sys{align-self:center;text-align:center;font-size:12.5px;font-weight:700;color:var(--green);background:var(--green-soft);border-radius:20px;padding:6px 14px;margin:6px 0}
