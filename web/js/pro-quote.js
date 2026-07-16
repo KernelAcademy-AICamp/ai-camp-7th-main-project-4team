@@ -430,14 +430,18 @@
       +'<ellipse cx="'+cx+'" cy="'+headCY+'" rx="'+headRx+'" ry="'+headRy+'" fill="var(--fig-fill)" stroke="var(--fig-line)" stroke-width="2"/>'
       +'<line x1="'+cx+'" y1="'+(shoulderY+6)+'" x2="'+cx+'" y2="'+(hipY-6)+'" stroke="var(--fig-line)" stroke-width="1" stroke-dasharray="1 5" opacity=".28"/>'
       +guides+'</svg>';
-    var pref=zoneLabel(segIdx(m.prefTop),'타이트','여유');
+    // 취향은 상·하의가 다를 수 있어 따로 표시(상의=타이트↔여유, 하의=슬림↔와이드).
+    var prefTop=zoneLabel(segIdx(m.prefTop),'타이트','여유');
+    var prefBot=zoneLabel(segIdx(m.prefBottom),'슬림','와이드');
     var note=(est&&est.length)
       ? '예상 치수 · 신뢰도 '+esc(conf||'—')+' · 폭=측정 반영, 세로=표준 비율'
       : '폭 = 측정 백분위 반영 · 세로 = 표준 비율';
     /* 라인만 스타일 — 유형색을 라인(80%+다크)으로, 채움은 아주 옅은 틴트(12%) */
     var figLine=mixHex(tc,'#2A2823',0.20), figFill=mixHex(tc,'#FFFFFF',0.88);
     return '<div class="bodymap2" style="--fig-fill:'+figFill+';--fig-line:'+figLine+'">'+svg
-      +'<div class="av-pref"><span>핏 취향</span><b>'+esc(pref)+'</b></div>'
+      +'<div class="av-prefs">'
+        +'<div class="av-pref"><span>상의 핏</span><b>'+esc(prefTop)+'</b></div>'
+        +'<div class="av-pref"><span>하의 핏</span><b>'+esc(prefBot)+'</b></div></div>'
       +'<div class="av-cap">'+note+'</div></div>';
   }
 
