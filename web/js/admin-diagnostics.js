@@ -12,6 +12,12 @@
   var VERDICTS=['맞음','애매','틀림'];
   var GENLBL={female:'여성',male:'남성'};
   function pct(n,d){return d?Math.round(n/d*100):0;}
+  // created_at은 UTC 저장 → 브라우저 로컬(KST 등)로 변환해 표시/집계. (raw 슬라이스는 9시간 밀림)
+  function p2(n){ return (n<10?'0':'')+n; }
+  function fmtLocal(ts){ if(!ts) return ''; var d=new Date(ts); if(isNaN(d.getTime())) return String(ts).replace('T',' ').slice(0,16);
+    return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())+' '+p2(d.getHours())+':'+p2(d.getMinutes()); }
+  function localDay(ts){ if(!ts) return ''; var d=new Date(ts); if(isNaN(d.getTime())) return String(ts).slice(0,10);
+    return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate()); }
   function kpi(n,l,s){return '<div class="kpi"><div class="n">'+n+'</div><div class="l">'+l+'</div>'+(s?'<div class="s">'+s+'</div>':'')+'</div>';}
   function bar(p){return '<span class="scorecell"><span class="bar"><span class="s2fill" style="width:'+p+'%"></span></span> '+p+'%</span>';}
 
@@ -79,21 +85,29 @@
   var MODE=(window.FDATA&&FDATA.mode)||'proto';
   var LIVEON = MODE==='api' && window.ADMINAUTH && ADMINAUTH.ready();
 
-  // Supabase feedback(+diagnosis 임베드) → 렌더 레코드 형태로 정규화. RLS로 관리자만 데이터 받음.
+  // Supabase diagnosis(결과 시점 수집) + 임베드 feedback(정확도 응답) → 렌더 레코드로 정규화. RLS로 관리자만.
+  // 로그 행은 진단 저장 즉시 생기고(verdict=null=대기), 정확도 누르면 feedback이 채워짐.
   function normLive(rows){ return (rows||[]).map(function(r,i){
-    var d=r.diagnosis||{}, res=d.result||{}, inp=d.input||{};
-    var exps=Array.isArray(inp.experiences)?inp.experiences:[];
+    var res=r.result||{}, inp=r.input||{}, cat=r.category||'TOP';
+    var allExps=Array.isArray(inp.experiences)?inp.experiences:[];
+    // A) payload는 세션 누적이라 타 카테고리 경험이 섞임 → 이 행(카테고리)에 해당하는 경험만 표시(앵커·상세).
+    var exps=allExps.filter(function(e){ return !e || !e.category || e.category===cat; });
     // 앵커 = 착용경험(브랜드·핏라인·사이즈). 페인 = 경험별 painFlags 합집합.
     var pain={};
     exps.forEach(function(e){ var pf=e&&e.painFlags||{}; Object.keys(pf).forEach(function(p){ if(pf[p]) pain[p]=pf[p]; }); });
+    // feedback = 1:N 임베드 → 최신 1건(보통 1건). 없으면 null(정확도 미응답=대기).
+    var fbs=Array.isArray(r.feedback)?r.feedback:[];
+    var fb=fbs.length?fbs.slice().sort(function(a,b){return (b.created_at||'').localeCompare(a.created_at||'');})[0]:null;
     return { id:r.id||('l'+i), ts:r.created_at, gender:(inp.basic&&inp.basic.gender)||null,
-      bodyType:res.card||'?', category:d.category||'TOP', verdict:r.verdict,
-      confidenceTier:res.confidenceTier||'mid', engineImprove:!!r.engine_improve_consent,
-      engineVersion:d.engine_version||'?',
+      bodyType:res.card||'?', category:cat,
+      verdict: fb?fb.verdict:null,
+      confidenceTier:res.confidenceTier||'mid',
+      engineImprove: fb?!!fb.engine_improve_consent:false,
+      engineVersion:r.engine_version||'?',
       anchors:exps.map(function(e){ return {brandName:e.brandName,fitLine:e.fitLine,sizeLabel:e.sizeLabel}; }),
       painFlags:pain, _raw:{basic:inp.basic||null, prefs:inp.prefs||null, experiences:exps} };
   }); }
-  async function loadLive(){ if(!LIVEON) return []; try{ return normLive(await ADMINAUTH.feedbackJoin(500)); }catch(e){ return []; } }
+  async function loadLive(){ if(!LIVEON) return []; try{ return normLive(await ADMINAUTH.diagnosesJoin(500)); }catch(e){ return []; } }
 
   fetch('data/bodytypes.json').then(function(r){return r.json();}).then(function(j){
     (j.types||j||[]).forEach(function(t){ if(t&&t.code) TYPES[t.code]=t.name; });
@@ -130,7 +144,7 @@
     DATA = SOURCE==='sample' ? SAMPLE.slice() : (SOURCE==='live' ? LIVE.slice() : loadReal());
     var note=$('srcNote');
     if(SOURCE==='sample') note.innerHTML='· <b>샘플</b>(대표 16건) — 화면 확인용, 실응답 아님';
-    else if(SOURCE==='live') note.innerHTML='· <b>실 DB</b>(Supabase feedback · RLS 관리자 전용) — 킬 메트릭 실측';
+    else if(SOURCE==='live') note.innerHTML='· <b>실 DB</b>(Supabase · 진단은 <b>결과 시점 수집</b>, 정확도는 <b>누르면 채워짐</b>=대기) — RLS 관리자 전용';
     else note.innerHTML = DATA.length? '· 이 브라우저에 쌓인 실피드백(브랜드·페인 breakdown은 dx-log 배선 후)' : '· 로그 없음 — 진단→결과에서 정확도 응답 시 쌓임';
     renderKpis(); renderTrend(); renderCalib(); renderTypes(); renderBrands(); renderPain(); renderLog();
   }
@@ -139,15 +153,15 @@
   function renderTrend(){
     if(!$('trendDayTable')) return;
     function okRate(g){ return g.n?Math.round(g.ok/g.n*100):0; }
-    // 날짜(일)별
+    // 날짜(일)별 — 맞음율은 정확도 응답한 진단만(verdict 있는 것). 대기(미응답)는 추세에서 제외.
     var byDay={};
-    DATA.forEach(function(r){ var d=(r.ts||'').slice(0,10); if(!d) return; var g=byDay[d]=byDay[d]||{n:0,ok:0}; g.n++; if(r.verdict==='맞음') g.ok++; });
+    DATA.forEach(function(r){ if(!r.verdict) return; var d=localDay(r.ts); if(!d) return; var g=byDay[d]=byDay[d]||{n:0,ok:0}; g.n++; if(r.verdict==='맞음') g.ok++; });
     var days=Object.keys(byDay).sort();
     var dayRows=days.map(function(d){ var g=byDay[d]; return '<tr><td>'+d+'</td><td class="num">'+g.n+'</td><td>'+bar(okRate(g))+'</td></tr>'; }).join('');
     $('trendDayTable').innerHTML='<thead><tr><th>날짜</th><th>응답</th><th>맞음율(킬메트릭)</th></tr></thead><tbody>'+(dayRows||'<tr><td class="muted" colspan="3">데이터 없음</td></tr>')+'</tbody>';
     // 엔진버전별 (튜닝 before/after)
     var byVer={};
-    DATA.forEach(function(r){ var v=r.engineVersion||'?'; var g=byVer[v]=byVer[v]||{n:0,ok:0}; g.n++; if(r.verdict==='맞음') g.ok++; });
+    DATA.forEach(function(r){ if(!r.verdict) return; var v=r.engineVersion||'?'; var g=byVer[v]=byVer[v]||{n:0,ok:0}; g.n++; if(r.verdict==='맞음') g.ok++; });
     var vers=Object.keys(byVer).sort();
     var verRows=vers.map(function(v){ var g=byVer[v]; return '<tr><td><b>'+esc(v)+'</b></td><td class="num">'+g.n+'</td><td>'+bar(okRate(g))+'</td></tr>'; }).join('');
     $('trendVerTable').innerHTML='<thead><tr><th>엔진 버전</th><th>응답</th><th>맞음율</th></tr></thead><tbody>'+(verRows||'<tr><td class="muted" colspan="3">데이터 없음</td></tr>')+'</tbody>';
@@ -158,15 +172,17 @@
   }
 
   function renderKpis(){
-    var n=DATA.length, byV={};
+    // 총 진단 = 결과 시점 수집(전체). 응답 = 정확도 누른 것. 맞음율(킬메트릭)은 응답분 기준.
+    var n=DATA.length, ans=0, byV={};
     VERDICTS.forEach(function(v){byV[v]=0;});
     var consent=0;
-    DATA.forEach(function(r){ if(byV[r.verdict]!=null)byV[r.verdict]++; if(r.engineImprove)consent++; });
+    DATA.forEach(function(r){ if(r.verdict){ ans++; if(byV[r.verdict]!=null)byV[r.verdict]++; } if(r.engineImprove)consent++; });
     $('dxKpis').innerHTML=[
-      kpi(n,'총 응답',''),
-      kpi(pct(byV['맞음'],n)+'%','정확도 동의율','킬 메트릭 · 맞음 '+byV['맞음']+'/'+n),
-      kpi(pct(byV['애매'],n)+'%','애매','애매 '+byV['애매']),
-      kpi(pct(byV['틀림'],n)+'%','틀림','틀림 '+byV['틀림']),
+      kpi(n,'총 진단','결과 시점 수집'),
+      kpi(pct(ans,n)+'%','정확도 응답률','응답 '+ans+'/'+n),
+      kpi(pct(byV['맞음'],ans)+'%','맞음율(킬메트릭)','맞음 '+byV['맞음']+'/'+ans),
+      kpi(pct(byV['애매'],ans)+'%','애매','애매 '+byV['애매']+'/'+ans),
+      kpi(pct(byV['틀림'],ans)+'%','틀림','틀림 '+byV['틀림']+'/'+ans),
       kpi(pct(consent,n)+'%','엔진개선 동의','opt-in '+consent+'/'+n)
     ].join('');
   }
@@ -196,9 +212,9 @@
 
   function renderTypes(){
     var m={};
-    DATA.forEach(function(r){ var b=m[r.bodyType]||(m[r.bodyType]={n:0,ok:0}); b.n++; if(r.verdict==='맞음')b.ok++; });
+    DATA.forEach(function(r){ if(!r.verdict) return; var b=m[r.bodyType]||(m[r.bodyType]={n:0,ok:0}); b.n++; if(r.verdict==='맞음')b.ok++; });
     var keys=Object.keys(m).sort();
-    if(!keys.length){ $('typeTable').innerHTML='<tbody><tr><td class="muted">응답 없음</td></tr></tbody>'; return; }
+    if(!keys.length){ $('typeTable').innerHTML='<tbody><tr><td class="muted">정확도 응답이 아직 없어요</td></tr></tbody>'; return; }
     var rows=keys.map(function(k){ var b=m[k]; return '<tr><td><b>'+esc(k)+'</b> <span class="muted">'+esc(TYPES[k]||'')+'</span></td>'+
       '<td class="num">'+b.n+'</td><td>'+bar(pct(b.ok,b.n))+'</td>'+
       '<td class="muted">'+(b.n<3?'표본 적음':'')+'</td></tr>'; }).join('');
@@ -206,12 +222,13 @@
   }
 
   function renderBrands(){
+    // 진단 수 = 그 앵커로 진단한 전체(결과 시점). 맞음율은 정확도 응답분 기준(미응답=대기).
     var m={};
-    DATA.forEach(function(r){ (r.anchors||[]).forEach(function(a){ var b=m[a.brandName]||(m[a.brandName]={n:0,ok:0}); b.n++; if(r.verdict==='맞음')b.ok++; }); });
+    DATA.forEach(function(r){ (r.anchors||[]).forEach(function(a){ var b=m[a.brandName]||(m[a.brandName]={n:0,ans:0,ok:0}); b.n++; if(r.verdict){ b.ans++; if(r.verdict==='맞음')b.ok++; } }); });
     var keys=Object.keys(m).sort(function(a,b){return m[b].n-m[a].n;});
-    if(!keys.length){ $('brandTable').innerHTML='<tbody><tr><td class="muted">앵커 브랜드 정보 없음 — dx-log 배선 후 표시</td></tr></tbody>'; return; }
-    var rows=keys.map(function(k){ var b=m[k]; return '<tr><td><b>'+esc(k)+'</b></td><td class="num">'+b.n+'</td><td>'+bar(pct(b.ok,b.n))+'</td></tr>'; }).join('');
-    $('brandTable').innerHTML='<thead><tr><th>앵커 브랜드</th><th>진단 수</th><th>맞음율</th></tr></thead><tbody>'+rows+'</tbody>';
+    if(!keys.length){ $('brandTable').innerHTML='<tbody><tr><td class="muted">앵커 브랜드 정보 없음</td></tr></tbody>'; return; }
+    var rows=keys.map(function(k){ var b=m[k]; return '<tr><td><b>'+esc(k)+'</b></td><td class="num">'+b.n+'</td><td>'+(b.ans?bar(pct(b.ok,b.ans)):'<span class="muted">대기</span>')+'</td></tr>'; }).join('');
+    $('brandTable').innerHTML='<thead><tr><th>앵커 브랜드</th><th>진단 수</th><th>맞음율(응답분)</th></tr></thead><tbody>'+rows+'</tbody>';
   }
 
   function renderPain(){
@@ -226,18 +243,18 @@
   var VBADGE={'맞음':'color:#1f6a4a;background:var(--green-soft)','애매':'color:#8a6d1f;background:#f5ecd0','틀림':'color:#7a1f1f;background:#f5d6d6'};
   function renderLog(){
     var list=DATA.slice().sort(function(a,b){return (b.ts||'').localeCompare(a.ts||'');});
-    if(!list.length){ $('logTable').innerHTML='<tbody><tr><td class="muted">응답 없음</td></tr></tbody>'; return; }
+    if(!list.length){ $('logTable').innerHTML='<tbody><tr><td class="muted">진단 없음</td></tr></tbody>'; return; }
     var rows=list.map(function(r,i){
       var anch=(r.anchors||[]).map(function(a){return esc(a.brandName)+(a.sizeLabel?' '+esc(a.sizeLabel):'');}).join(', ')||'<span class="muted">—</span>';
       var did='dxd'+i, hasRaw=!!(r._raw&&r._raw.experiences&&r._raw.experiences.length);
       // 행 클릭 → 수집 원본 전체 펼침(작업2). 원본 없으면(샘플·브라우저로그) 토글 비활성.
       var main='<tr'+(hasRaw?' style="cursor:pointer" onclick="__dxToggle(\''+did+'\')"':'')+'>'+
-        '<td class="muted">'+(hasRaw?'▸ ':'')+esc((r.ts||'').replace('T',' ').slice(0,16))+'</td>'+
+        '<td class="muted">'+(hasRaw?'▸ ':'')+esc(fmtLocal(r.ts))+'</td>'+
         '<td>'+(r.gender?GENLBL[r.gender]||r.gender:'<span class="muted">—</span>')+'</td>'+
         '<td><b>'+esc(r.bodyType)+'</b> '+esc(TYPES[r.bodyType]||'')+'</td>'+
         '<td>'+esc(r.category)+'</td>'+
         '<td>'+anch+'</td>'+
-        '<td><span class="pill" style="'+(VBADGE[r.verdict]||'')+'">'+esc(r.verdict)+'</span></td>'+
+        '<td>'+(r.verdict?'<span class="pill" style="'+(VBADGE[r.verdict]||'')+'">'+esc(r.verdict)+'</span>':'<span class="pill muted">대기</span>')+'</td>'+
         '<td class="muted">'+(TIERLBL[r.confidenceTier]||r.confidenceTier)+'</td>'+
         '<td>'+(r.engineImprove?'✓':'<span class="muted">·</span>')+'</td></tr>';
       var detail='<tr id="'+did+'" style="display:none"><td colspan="8" style="background:rgba(31,106,74,.04);font-size:.92em;line-height:1.55">'+expDetail(r._raw)+'</td></tr>';

@@ -5,6 +5,7 @@
    ※ 체형 추정·8유형 분류·렌더는 클라 유지(민감치 아님). engine.js는 node 호환(무의존).
    env(Vercel): SUPABASE_URL · SUPABASE_SECRET_KEY(서버 전용, RLS 우회). */
 var FitEngine = require('../web/js/engine.js').FitEngine;
+var FitBodyType = require('../web/js/bodytype.js').FitBodyType;   // 8유형 분류(node 호환) — 저장 시점 카드 채움
 var GARMENTS = require('../web/data/garments.json');
 var SPECS_FILE = GARMENTS && GARMENTS.specs;   // 폴백(garment 테이블 조회 실패 시)
 var _specsCache = null, _specsRev = -1;
@@ -70,6 +71,14 @@ module.exports = async function handler(req, res) {
   Object.keys(srcCm).forEach(function (k) { cm[k] = srcCm[k]; });     // 클라 추정 cm
   Object.keys(EBMAP).forEach(function (k) { if (eb[k] != null) cm[EBMAP[k]] = eb[k]; });  // 역산 덮어쓰기
 
+  // 8유형 분류 = 저장 시점에 서버가 계산(전엔 클라가 POST 이후 계산 → result.card null "?"). 클라와 동일 입력.
+  var card = null;
+  if (FitBodyType && FitBodyType.classify) {
+    card = FitBodyType.classify({ gender: sex,
+      heightCm: (b.basic && b.basic.height), weightKg: (b.basic && b.basic.weight),
+      chestFull: cm.chestFull, chestUpper: cm.chestUpper, waist: cm.waist, hip: cm.hip });
+  }
+
   var topRecs = (cm.chestFull != null)
     ? FitEngine.recommend({ chest: cm.chestFull, shoulder: cm.shoulder }, prefs.TOP || 'regular', sex, 'long_sleeve', SPECS) : [];
   var botRecs = (FitEngine.recommendBottom && cm.waist != null)
@@ -85,7 +94,7 @@ module.exports = async function handler(req, res) {
     session_id: b.session_id || ('anon-' + Date.now().toString(36)),
     category: b.category || 'TOP',
     input: b.input != null ? b.input : { basic: b.basic, prefs: prefs, experiences: exps },
-    result: { card: b.card || null, confidenceTier: b.confidenceTier || null, recs: { top: topRecs, bottom: botRecs } },
+    result: { card: b.card || card || null, confidenceTier: b.confidenceTier || null, recs: { top: topRecs, bottom: botRecs } },
     engine_version: b.engine_version || 'server-1'
   };
   var r = await fetch(URL + '/rest/v1/diagnosis', {
@@ -96,5 +105,5 @@ module.exports = async function handler(req, res) {
   var t = await r.text();
   if (!r.ok) return res.status(502).json({ error: 'supabase insert failed', detail: t });
   var id = null; try { id = JSON.parse(t)[0].id; } catch (e) {}
-  return res.status(201).json({ id: id, eb: eb, topRecs: topRecs, botRecs: botRecs });
+  return res.status(201).json({ id: id, eb: eb, card: card, topRecs: topRecs, botRecs: botRecs });
 };

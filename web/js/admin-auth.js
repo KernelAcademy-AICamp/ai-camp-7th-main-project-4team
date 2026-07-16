@@ -135,6 +135,15 @@
         return r.data || [];
       } catch (e) { return []; }
     },
+    // 진단(결과 시점 수집) + 임베드 feedback(정확도 응답 — 누르면 채워짐, 아니면 대기) — diagnosis 중심 로그.
+    diagnosesJoin: async function (limit) {
+      try {
+        var r = await client.from('diagnosis')
+          .select('id,created_at,session_id,category,input,result,engine_version,feedback(verdict,engine_improve_consent,created_at)')
+          .order('created_at', { ascending: false }).limit(limit || 500);
+        return r.data || [];
+      } catch (e) { return []; }
+    },
     // 진단 로그(input 포함) — 엔진 강화 분석용(painFlags·openNote·anchors). RLS admin.
     diagnoses: async function (limit) {
       try {
