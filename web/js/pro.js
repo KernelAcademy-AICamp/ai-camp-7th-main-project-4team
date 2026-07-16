@@ -104,21 +104,24 @@
   function drawerAction(r,i){ var s=r.status;
     if(s==='신규'){ if(r._offering) return offerForm(r,i); return '<button class="btn full" onclick="openOffer('+i+')">제안 보내기</button>'; }
     if(s==='제안발송'){ var o=r.offer||{}; return '<div class="note-quote"><b style="color:var(--green)">제안 발송됨</b> · <span style="font-family:var(--num);font-weight:800">'+(o.price?o.price.toLocaleString():'—')+'</span>원<br><span style="font-size:13px;color:var(--sub)">"'+(o.msg||'')+'"</span><br><span style="font-size:12.5px;color:var(--sub2)">고객 응답을 기다리는 중이에요</span></div><button class="btn ghost full" style="margin-top:10px" onclick="simAccept('+i+')">고객 수락 · 데모</button>'; }
-    if(s==='상담중'){ var oc=r.offer||{}; return '<div class="note-quote"><b style="color:var(--green)">수락함 · 대화 중</b> · <span style="font-family:var(--num);font-weight:800">'+(oc.price?oc.price.toLocaleString():'—')+'</span>원<br><span style="font-size:12.5px;color:var(--sub2)">내용을 맞춰본 뒤 상세에서 입금을 요청해요</span></div>'; }
-    if(s==='결제대기'){ var op=r.offer||{}; return '<div class="note-quote"><b style="color:#8A5F16">입금 대기</b> · <span style="font-family:var(--num);font-weight:800">'+(op.price?op.price.toLocaleString():'—')+'</span>원<br><span style="font-size:12.5px;color:var(--sub2)">고객 입금을 기다리는 중이에요 · 상세에서 확인</span></div>'; }
+    if(s==='상담중'){ var oc=r.offer||{}; return '<div class="note-quote"><b style="color:var(--green)">수락함 · 대화 중</b> · <span style="font-family:var(--num);font-weight:800">'+(oc.price?oc.price.toLocaleString():'—')+'</span>원<br><span style="font-size:12.5px;color:var(--sub2)">'+(isOfflineSvc(r.service)?'약속을 잡고 입금을 요청해요':'내용을 맞춰본 뒤 입금을 요청해요')+'</span></div>'+
+      '<button class="btn full" style="margin-top:10px" onclick="goQuote('+i+')">상세에서 이어가기 →</button>'; }
+    if(s==='결제대기'){ var op=r.offer||{}; return '<div class="note-quote"><b style="color:#8A5F16">입금 대기</b> · <span style="font-family:var(--num);font-weight:800">'+(op.price?op.price.toLocaleString():'—')+'</span>원<br><span style="font-size:12.5px;color:var(--sub2)">고객 입금을 기다리는 중이에요</span></div>'+
+      '<button class="btn full" style="margin-top:10px" onclick="goQuote('+i+')">상세에서 입금 확인 →</button>'; }
     if(s==='수락됨'){ var o2=r.offer||{};
-      var hd='<div class="note-quote"><b style="color:var(--green)">수락됨 · 진행 중</b> · <span style="font-family:var(--num);font-weight:800">'+(o2.price?o2.price.toLocaleString():'—')+'</span>원</div>';
-      if(r.service==='online'){   // 온라인 스타일링 = 코디·구매 링크 결과물 작성 → 고객 수령(1.6/1.7)
-        if(r.deliver) return hd + deliverSummary(r) + '<button class="btn full" style="margin-top:10px" onclick="completeReq('+i+')">완료 처리</button>';
-        return hd + deliverForm(r,i);
-      }
-      // 대면(이미지 컨설팅·동행 쇼핑)도 결과물(진단 리포트·구매 내역)을 전달해야 함 — 작성은 상세(견적서)에서
+      // 결과물 작성은 상세(견적서) 한 곳으로 통일 — 서비스별 폼·진단 리포트·사진이 거기 있음(옛 인라인 폼 제거)
+      var hd='<div class="note-quote"><b style="color:var(--green)">수락됨 · 진행 중</b> · <span style="font-family:var(--num);font-weight:800">'+(o2.price?o2.price.toLocaleString():'—')+'</span>원'+
+        (r.appt?'<br><span style="font-size:12.5px;color:var(--green-mid);font-weight:700">약속 '+apptText(r.appt)+'</span>':'')+'</div>';
       if(r.deliver) return hd + deliverSummary(r) + '<button class="btn full" style="margin-top:10px" onclick="completeReq('+i+')">완료 처리</button>';
-      var apt=r.appt ? '<br><span style="font-size:12.5px;color:var(--green-mid);font-weight:700">약속 '+(r.appt.date||'')+(r.appt.time?' '+r.appt.time:'')+(r.appt.place?' · '+r.appt.place:'')+'</span>' : '';
-      return hd + '<p class="note-quote muted" style="margin-top:10px">'+(r.service==='image'?'컨설팅 후 진단 리포트를 전달해요':'동행 후 구매 내역을 정리해 전달해요')+' · 상세에서 작성'+apt+'</p>'+
+      var lead = r.service==='image' ? '진단 리포트를 작성해 전달해요' : (r.service==='shopping' ? '구매 내역을 정리해 전달해요' : '추천 상품·코디를 작성해 전달해요');
+      return hd + '<p class="note-quote muted" style="margin-top:10px">'+lead+' · 상세에서 작성</p>'+
         '<button class="btn full" style="margin-top:10px" onclick="goQuote('+i+')">상세에서 결과물 작성 →</button>'; }
+    if(s==='분쟁'){ var dp=r.dispute||{}; return '<div class="note-quote" style="border-left:3px solid var(--warn);padding-left:12px"><b style="color:var(--warn)">분쟁 처리 중</b><br><span style="font-size:12.5px;color:var(--sub2)">'+esc(dp.reason||'기타')+' · '+(dp.reply?'소명 제출됨':'소명 필요')+'</span></div>'+
+      '<button class="btn full" style="margin-top:10px" onclick="goQuote('+i+')">상세에서 대응 →</button>'; }
+    if(s==='거절'||s==='취소'){ return '<div class="note-quote muted">'+(s==='거절'?'거절한 요청이에요':'취소된 건이에요')+'</div>'+
+      '<button class="btn ghost full" style="margin-top:10px" onclick="goQuote('+i+')">상세 보기</button>'; }
     if(s==='완료'){ if(r.review) return '<div class="dsec-label">고객 후기</div><div class="note-quote"><span style="letter-spacing:1px">'+starsRO(r.review.rating)+'</span><br>"'+r.review.text+'"</div>'; return '<div class="note-quote muted">완료 · 고객 후기를 기다리는 중이에요</div>'; }
-    return '';
+    return '<button class="btn ghost full" onclick="goQuote('+i+')">상세 보기</button>';
   }
   function offerForm(r,i){
     return '<div class="offerform">'+
@@ -127,43 +130,28 @@
       '<div class="obtns"><button class="tinybtn ghost" onclick="cancelOffer('+i+')">취소</button><button class="tinybtn" onclick="sendOffer('+i+')">제안 발송</button></div>'+
     '</div>';
   }
-  /* ===== 결과물 작성·전달 (IA 2.1.2) — 온라인 스타일링: 코디·구매 링크 작성 → 고객 수령(1.6/1.7) ===== */
-  function pval(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
-  function itemLine(it){ return '<b style="color:var(--ink)">'+it.brand+'</b> '+it.name+' · '+it.size+' · <span class="num">'+(it.price?Number(it.price).toLocaleString():'—')+'</span>원'+(it.url?' 🔗':''); }
-  function deliverForm(r,i){
-    var draft=r._draft||[];
-    var list = draft.length
-      ? draft.map(function(it,k){ return '<div class="kv"><span>'+itemLine(it)+'</span><button class="tinybtn ghost" onclick="delDeliverItem('+i+','+k+')">삭제</button></div>'; }).join('')
-      : '<p class="note-quote muted">추가한 상품이 없어요 · 코디에 쓸 상품을 담아주세요</p>';
-    return '<div class="dsec-label">결과물 · 추천 상품</div>'+
-      '<div>'+list+'</div>'+
-      '<div class="offerform" style="margin-top:10px">'+
-        '<div class="row"><input id="dvBrand'+i+'" placeholder="브랜드"><input id="dvName'+i+'" placeholder="상품명"></div>'+
-        '<div class="row"><input id="dvSize'+i+'" placeholder="사이즈" style="width:90px"><input id="dvPrice'+i+'" type="number" placeholder="가격" style="width:120px"><span style="color:var(--sub);font-size:13px;align-self:center">원</span></div>'+
-        '<div class="row"><input id="dvUrl'+i+'" placeholder="구매 링크 URL" style="width:100%;flex:1"></div>'+
-        '<button class="btn ghost full" style="margin-top:8px" onclick="addDeliverItem('+i+')">+ 상품 추가</button>'+
-        '<textarea id="dvMsg'+i+'" placeholder="고객에게 전할 코디 설명">'+(r._dmsg||'')+'</textarea>'+
-      '</div>'+
-      '<button class="btn full" style="margin-top:10px" onclick="sendDeliver('+i+')">결과물 제출'+(draft.length?' ('+draft.length+'개 상품)':'')+'</button>';
-  }
-  function deliverSummary(r){ var d=r.deliver||{}, items=d.items||[];
+  /* ===== 결과물 = 상세(견적서)에서 작성. 여기 목록 드로어는 '제출한 결과물 요약'만 읽기전용으로 보여줌 ===== */
+  function itemLine(it){ return (it.cat?'['+it.cat+'] ':'')+'<b style="color:var(--ink)">'+it.brand+'</b> '+it.name+' · '+it.size+' · <span class="num">'+(it.price?Number(it.price).toLocaleString():'—')+'</span>원'+(it.url?' 🔗':''); }
+  /* 대면 여부(pro-quote.js isOffline과 같은 기준) · 약속 표시 형식(상세와 동일: 26.07.20 11:00 AM) */
+  function isOfflineSvc(s){ var f=(PROFILE&&PROFILE.services||[]).filter(function(x){return x.type===s;})[0]; if(f&&f.mode) return f.mode==='대면'; return s==='shopping'||s==='image'; }
+  function shortDateP(d){ d=String(d||''); var p=d.split(/[.\-/]/); return (p.length===3&&p[0].length===4)?(p[0].slice(2)+'.'+('0'+p[1]).slice(-2)+'.'+('0'+p[2]).slice(-2)):d; }
+  function fmtTimeP(t){ t=String(t||''); var m=t.match(/^(\d{1,2}):(\d{2})/); if(!m) return t; var h=+m[1],ap=h<12?'AM':'PM',h12=h%12; if(h12===0)h12=12; return ('0'+h12).slice(-2)+':'+m[2]+' '+ap; }
+  function apptText(a){ a=a||{}; return shortDateP(a.date)+(a.time?' '+fmtTimeP(a.time):'')+(a.place?' · '+a.place:''); }
+  /* 제출한 결과물 요약(읽기전용) — 서비스별: 진단 리포트 / 상품 목록 */
+  function deliverSummary(r){ var d=r.deliver||{}, items=d.items||[], rp=d.report;
+    var head, body='';
+    if(r.service==='image' && rp){
+      head='진단 리포트 전달함';
+      body=(rp.color?'<span style="font-size:13px;color:var(--sub)">· 퍼스널 컬러 '+esc(rp.color)+'</span>':'')+
+        (rp.direction?'<br><span style="font-size:13px;color:var(--sub)">· '+esc(rp.direction)+'</span>':'');
+    } else {
+      head=(r.service==='shopping'?'구매 상품':'추천 상품')+' '+items.length+'개 전달함';
+      body=items.map(function(it){ return '<span style="font-size:13px;color:var(--sub)">· '+itemLine(it)+'</span>'; }).join('<br>');
+    }
     return '<div class="dsec-label">제출한 결과물</div>'+
-      '<div class="note-quote"><b style="color:var(--green)">✓ 결과물 제출 완료</b> · 추천 상품 '+items.length+'개<br>'+
-      items.map(function(it){ return '<span style="font-size:13px;color:var(--sub)">· '+itemLine(it)+'</span>'; }).join('<br>')+
-      (d.msg?'<br><span style="font-size:12.5px;color:var(--sub2)">"'+d.msg+'"</span>':'')+'</div>';
+      '<div class="note-quote"><b style="color:var(--green)">✓ '+head+'</b>'+(body?'<br>'+body:'')+
+      (d.msg?'<br><span style="font-size:12.5px;color:var(--sub2)">"'+esc(d.msg)+'"</span>':'')+'</div>';
   }
-  function saveDraftMsg(i){ var m=document.getElementById('dvMsg'+i); if(m) reqs[i]._dmsg=m.value; }
-  function addDeliverItem(i){ var br=pval('dvBrand'+i), nm=pval('dvName'+i);
-    if(!br||!nm){ toast('브랜드와 상품명을 입력해주세요'); return; }
-    saveDraftMsg(i);
-    reqs[i]._draft=(reqs[i]._draft||[]).concat([{ brand:br, name:nm, size:pval('dvSize'+i)||'—', price:pval('dvPrice'+i)||'', url:pval('dvUrl'+i) }]);
-    openReqDetail(i); }
-  function delDeliverItem(i,k){ if(reqs[i]._draft) reqs[i]._draft.splice(k,1); saveDraftMsg(i); openReqDetail(i); }
-  function sendDeliver(i){ saveDraftMsg(i); var draft=reqs[i]._draft||[];
-    if(!draft.length){ toast('구매 링크를 하나 이상 추가해주세요'); return; }
-    reqs[i].deliver={ items:draft, msg:reqs[i]._dmsg||'', sentAt:new Date().toISOString() };
-    delete reqs[i]._draft; delete reqs[i]._dmsg;
-    saveLS('pro.reqs',reqs); refresh(i); toast(reqs[i].cust+' 님에게 결과물을 전달했어요 · 고객 완료 확인을 기다려요'); }
 
   function openReqDetail(i){ var r=reqs[i]; var tp=r.type||'STR', g=r.gender||'female';
     document.getElementById('drawerBody').innerHTML=
@@ -198,13 +186,16 @@
   function completeReq(i){ reqs[i].status='완료'; saveLS('pro.reqs',reqs); refresh(i); toast('완료 처리했어요 · 고객 후기를 기다려요'); }
 
   /* ===== 렌더 ===== */
+  /* 상태 → 목록 버킷. 거래가 시작되면(진행 중·종료) 출처(들어온/보낸)를 따지지 않고 한 곳으로 모은다. */
+  var ST_ACTIVE=['상담중','결제대기','수락됨','분쟁'];   // 진행 중
+  var ST_CLOSED=['완료','거절','취소'];                   // 종료
   function renderInbox(){
-    var incoming=reqs.filter(function(r){return r.dir!=='out';});
-    var out=reqs.filter(function(r){return r.dir==='out';});
-    var news=incoming.filter(function(r){return r.status==='신규';}).sort(byDateDesc);
-    var prog=incoming.filter(function(r){return r.status==='수락됨'||r.status==='결제대기'||r.status==='상담중'||r.status==='분쟁';}).sort(byDateDesc);
-    var closed=incoming.filter(function(r){return r.status==='완료'||r.status==='거절'||r.status==='취소';}).sort(byDateDesc);
-    out=out.sort(byDateDesc);
+    // 새 요청 = 고객이 방금 보낸(들어온) 신규만. 제안발송(응답 대기)은 견적 보내기 '보낸 견적'으로.
+    var news=reqs.filter(function(r){return r.dir!=='out' && r.status==='신규';}).sort(byDateDesc);
+    var prog=reqs.filter(function(r){return ST_ACTIVE.indexOf(r.status)>=0;}).sort(byDateDesc);   // 출처 무관
+    var closed=reqs.filter(function(r){return ST_CLOSED.indexOf(r.status)>=0;}).sort(byDateDesc); // 출처 무관
+    // 보낸 견적 = 내가 견적을 보내고 고객 응답을 기다리는 건(들어온 요청에 제안한 것 + 공개 요청에 먼저 보낸 것 모두)
+    var sent=reqs.filter(function(r){return r.status==='제안발송';}).sort(byDateDesc);
     function setCnt(id,n){ var e=document.getElementById(id); if(e) e.textContent=n; }
     setCnt('cntNew',news.length); setCnt('cntProg',prog.length); setCnt('cntDone',closed.length);
     document.getElementById('inboxNewList').innerHTML = news.length ? news.map(function(r){ return reqTop(r,true); }).join('') : '<p class="note" style="padding:14px 0">새 요청이 없어요</p>';
@@ -212,7 +203,7 @@
     var dc=document.getElementById('inboxDoneCard');
     if(closed.length){ dc.style.display=''; document.getElementById('inboxDoneList').innerHTML=closed.map(function(r){ return reqTop(r,true); }).join(''); }
     else { dc.style.display='none'; }
-    document.getElementById('inboxOutList').innerHTML = out.length ? out.map(function(r){ return reqTop(r,true); }).join('') : '<p class="note" style="padding:14px 0">아직 보낸 견적이 없어요</p>';
+    document.getElementById('inboxOutList').innerHTML = sent.length ? sent.map(function(r){ return reqTop(r,true); }).join('') : '<p class="note" style="padding:14px 0">아직 응답을 기다리는 견적이 없어요</p>';
   }
   function renderRecent(){ document.getElementById('dashRecent').innerHTML=reqs.filter(function(r){return r.dir!=='out';}).sort(byDateDesc).slice(0,3).map(function(r){ return reqTop(r,true); }).join(''); }
   /* 견적 보내기(역방향): '견적받기' 설정한 고객(데모 · 고객 영역은 미구현) → 스타일리스트가 먼저 견적 발송 */
@@ -265,7 +256,8 @@
 
   function renderStats(){
     var nw=reqs.filter(function(r){return r.status==='신규'&&r.dir!=='out';}).length;
-    var prog=reqs.filter(function(r){return r.status==='수락됨'||r.status==='결제대기';}).length;
+    // 진행 중 = 요청함 '진행 중'과 같은 상태 집합(ST_ACTIVE)이어야 숫자가 일치
+    var prog=reqs.filter(function(r){return ST_ACTIVE.indexOf(r.status)>=0;}).length;
     var rating=avgRating(), rt=(rating!=null)?rating.toFixed(1):'—';
     document.getElementById('dashStats').innerHTML=
       '<div class="stat"><b>'+won(monthRevenue())+'</b><small>이번 달 수익</small></div>'+
