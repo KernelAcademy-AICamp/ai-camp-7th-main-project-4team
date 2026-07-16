@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="css/tokens.css?v=10fb5117">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/pro.css?v=1a29d24e">
+<link rel="stylesheet" href="css/pro.css?v=59920d46">
 </head>
 <body>
 
@@ -72,7 +72,7 @@
         <div id="inboxProgList"></div>
       </div>
       <div class="card" id="inboxDoneCard" style="margin-top:16px">
-        <div class="rghead"><span class="rgicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12a8.5 8.5 0 1 1-3.4-6.8"/><path d="M9 12l2.5 2.5L21 5.5"/></svg></span><div class="rgtx"><b>종료된 요청</b><p>완료된 코디 및 취소된 요청</p></div><span class="rgcount"><span class="num" id="cntDone">0</span>건</span></div>
+        <div class="rghead"><span class="rgicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12a8.5 8.5 0 1 1-3.4-6.8"/><path d="M9 12l2.5 2.5L21 5.5"/></svg></span><div class="rgtx"><b>지난 요청</b><p>완료·취소된 요청</p></div><span class="rgcount"><span class="num" id="cntDone">0</span>건</span></div>
         <div id="inboxDoneList"></div>
       </div>
     </section>
@@ -82,8 +82,14 @@
       <div class="crumb">스타일리스트 지원 · 견적 보내기</div>
       <h1>견적 보내기</h1>
       <p class="lead">고객이 올린 <b style="color:var(--ink)">공개 요청</b>에 내가 먼저 견적을 보내는 곳이에요 · 요청 내역과 반대 방향</p>
-      <div class="card" id="dashCandCard"><div class="subhead">공개 요청 <small style="font-weight:600;color:var(--sub2)">· 고객이 올린 요청이에요 · 클릭해 견적을 보내보세요</small></div><div id="dashCand"></div></div>
-      <div class="card" id="inboxOutCard" style="margin-top:16px"><div class="subhead">보낸 견적 <small style="font-weight:600;color:var(--sub2)">· 고객 응답 대기 중 · 수락되면 요청 내역 '진행 중'으로 넘어가요</small></div><div id="inboxOutList"></div></div>
+      <div class="card" id="dashCandCard">
+        <div class="rghead"><span class="rgicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18z"/></svg></span><div class="rgtx"><b>공개 요청</b><p>내가 먼저 보낼 열린 요청</p></div><span class="rgcount"><span class="num" id="cntCand">0</span>건</span></div>
+        <div id="dashCand"></div>
+      </div>
+      <div class="card" id="inboxOutCard" style="margin-top:16px">
+        <div class="rghead"><span class="rgicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg></span><div class="rgtx"><b>보낸 견적</b><p>응답을 기다리는 견적</p></div><span class="rgcount"><span class="num" id="cntSent">0</span>건</span></div>
+        <div id="inboxOutList"></div>
+      </div>
     </section>
 
     <!-- 내 프로필 -->
@@ -213,6 +219,6 @@
 <div class="avlightbox" id="avLightbox" onclick="closeAvatar()"><img id="avLightboxImg" src="" alt="프로필 사진"></div>
 <div class="toast" id="toast"></div>
 
-<script src="js/pro.js?v=c41fe9c8"></script>
+<script src="js/pro.js?v=1f13e932"></script>
 </body>
 </html>

@@ -88,15 +88,20 @@
   /* 날짜 6글자 — 2026.07.12 → 26.07.12 */
   function shortDate(d){ return (typeof d==='string' && /^\d{4}\./.test(d)) ? d.slice(2) : (d||''); }
   /* 통일 리스트 행(.ureq) — 1줄: 상황·서비스 / 2줄: 이름·날짜·예산. 서비스는 모노 아이콘, 색은 상태에만 */
-  function reqTop(r, clickable){ var i=reqs.indexOf(r);
+  /* 요청 행 카드(요청 내역·보낸 견적·공개 요청 공용). opts로 클릭 대상·뱃지만 갈아끼움.
+     opts.href=지정 링크(공개 요청 ?cand) / opts.badge·badgeClass=상태 대신 표시할 뱃지 */
+  function reqTop(r, opts){ opts=opts||{}; var i=reqs.indexOf(r);
     var s=r.status;
     var xc=(s==='수락됨'||s==='결제대기'||s==='상담중')?'active':((s==='완료'||s==='거절'||s==='취소')?'past':'');   // 진행중=활성 / 완료·취소·거절=지난
     var title=(r.occ?r.occ+' · ':'')+svcLabel(r.service);
-    var meta=(r.cust?r.cust+' 님 · ':'')+shortDate(r.date)+(r.budget?' · <b>예산 '+r.budget+'</b>':'');
-    return '<div class="ureq'+(xc?' '+xc:'')+(clickable?' rowbtn" onclick="goQuote('+i+')':'')+'">'+
+    var parts=[]; if(r.cust) parts.push(r.cust+' 님'); var sd=shortDate(r.date); if(sd) parts.push(sd); if(r.budget) parts.push('<b>예산 '+r.budget+'</b>');
+    var onclick = opts.href ? "location.href='"+opts.href+"'" : 'goQuote('+i+')';
+    var badge = opts.badge!=null ? opts.badge : s;
+    var badgeClass = opts.badgeClass || stClass(s);
+    return '<div class="ureq'+(xc?' '+xc:'')+' rowbtn" onclick="'+onclick+'">'+
       '<span class="ureq-ic">'+svcSvg(r.service)+'</span>'+
-      '<div class="ureq-l"><div class="ureq-title">'+title+'</div><div class="ureq-meta">'+meta+'</div></div>'+
-      '<div class="ureq-r"><span class="st '+stClass(r.status)+'">'+r.status+'</span>'+(clickable?'<span class="chev">›</span>':'')+'</div>'+
+      '<div class="ureq-l"><div class="ureq-title">'+title+'</div><div class="ureq-meta">'+parts.join(' · ')+'</div></div>'+
+      '<div class="ureq-r"><span class="st '+badgeClass+'">'+badge+'</span><span class="chev">›</span></div>'+
     '</div>';
   }
 
@@ -186,9 +191,9 @@
   function completeReq(i){ reqs[i].status='완료'; saveLS('pro.reqs',reqs); refresh(i); toast('완료 처리했어요 · 고객 후기를 기다려요'); }
 
   /* ===== 렌더 ===== */
-  /* 상태 → 목록 버킷. 거래가 시작되면(진행 중·종료) 출처(들어온/보낸)를 따지지 않고 한 곳으로 모은다. */
+  /* 상태 → 목록 버킷. 거래가 시작되면(진행 중·지난) 출처(들어온/보낸)를 따지지 않고 한 곳으로 모은다. */
   var ST_ACTIVE=['상담중','결제대기','수락됨','분쟁'];   // 진행 중
-  var ST_CLOSED=['완료','거절','취소'];                   // 종료
+  var ST_CLOSED=['완료','거절','취소'];                   // 지난 요청(완료·거절·취소)
   function renderInbox(){
     // 새 요청 = 고객이 방금 보낸(들어온) 신규만. 제안발송(응답 대기)은 견적 보내기 '보낸 견적'으로.
     var news=reqs.filter(function(r){return r.dir!=='out' && r.status==='신규';}).sort(byDateDesc);
@@ -197,7 +202,7 @@
     // 보낸 견적 = 내가 견적을 보내고 고객 응답을 기다리는 건(들어온 요청에 제안한 것 + 공개 요청에 먼저 보낸 것 모두)
     var sent=reqs.filter(function(r){return r.status==='제안발송';}).sort(byDateDesc);
     function setCnt(id,n){ var e=document.getElementById(id); if(e) e.textContent=n; }
-    setCnt('cntNew',news.length); setCnt('cntProg',prog.length); setCnt('cntDone',closed.length);
+    setCnt('cntNew',news.length); setCnt('cntProg',prog.length); setCnt('cntDone',closed.length); setCnt('cntSent',sent.length);
     document.getElementById('inboxNewList').innerHTML = news.length ? news.map(function(r){ return reqTop(r,true); }).join('') : '<p class="note" style="padding:14px 0">새 요청이 없어요</p>';
     document.getElementById('inboxProgList').innerHTML = prog.length ? prog.map(function(r){ return reqTop(r,true); }).join('') : '<p class="note" style="padding:14px 0">진행 중인 건이 없어요</p>';
     var dc=document.getElementById('inboxDoneCard');
@@ -217,16 +222,11 @@
     var el=document.getElementById('dashCand'); if(!el) return;
     var proposed=loadLS('pro.proposed',[]);
     var list=CANDIDATES.map(function(c,i){return {c:c,i:i};}).filter(function(x){return proposed.indexOf(x.c.cust)<0;});
-    var card=document.getElementById('dashCandCard');
-    if(!list.length){ el.innerHTML='<p class="note" style="padding:12px 0">지금은 견적받기를 원하는 고객이 없어요</p>'; return; }
-    if(card) card.style.display='';
+    var cc=document.getElementById('cntCand'); if(cc) cc.textContent=list.length;
+    if(!list.length){ el.innerHTML='<p class="note" style="padding:12px 0">지금은 공개 요청이 없어요</p>'; return; }
+    // 요청 내역과 같은 행(reqTop) — 상태 대신 '공개 요청' 뱃지, 클릭 시 ?cand 상세로 이동해 거기서 견적 발송
     el.innerHTML=list.map(function(x){ var c=x.c, i=x.i;
-      // 요청 내역처럼 클릭 시 견적서(고객 상세) 페이지로 이동 → 거기서 견적 발송
-      return '<div class="ureq rowbtn" onclick="location.href=\'pro-quote.html?cand='+i+'&from=propose\'">'+
-        '<span class="ureq-ic">'+svcSvg(c.service)+'</span>'+
-        '<div class="ureq-l"><div class="ureq-title">'+c.occ+' · '+svcLabel(c.service)+'</div><div class="ureq-meta">'+c.cust+' 님 · <b>예산 '+c.budget+'</b> · "'+c.note+'"</div></div>'+
-        '<div class="ureq-r"><button class="tinybtn" onclick="event.stopPropagation();location.href=\'pro-quote.html?cand='+i+'&from=propose\'">견적 보내기</button><span class="chev">›</span></div>'+
-      '</div>';
+      return reqTop(c, { href:'pro-quote.html?cand='+i+'&from=propose', badge:'공개 요청', badgeClass:'nw' });
     }).join('');
   }
   var replyIdx=-1;
