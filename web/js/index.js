@@ -911,7 +911,7 @@
       '</div></div></div>' : '';
     var title=[svcLabel(r.svc), (r.occ&&r.occ.length?r.occ.join('·'):'')].filter(Boolean).join(' · ') || svcLabel(r.svc);
     var dealOn=custDealStarted(r.status);
-    var head='<div class="bids-head" style="display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap">'+
+    var head='<div class="bids-head" style="display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-right:0">'+
       '<div style="min-width:0"><span class="crumb-back" onclick="closeBids()">‹ 요청 내역</span>'+
       '<h2>'+esc(title)+'</h2>'+
       '<p>'+(r.open?'받은 견적':'보낸 요청')+(r.date?' · '+r.date+' 요청':'')+'</p></div>'+
