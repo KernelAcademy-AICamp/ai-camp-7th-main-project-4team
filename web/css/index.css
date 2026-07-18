@@ -454,7 +454,7 @@
   /* 폼 컨트롤 */
   .seg{display:flex; gap:8px; flex-wrap:wrap;}
   .seg .o{padding:12px 18px; border:1.5px solid var(--line2); border-radius:12px; font-size:15px; font-weight:700; color:var(--sub); background:#fff; cursor:pointer;}
-  .seg .o.on{background:var(--green); color:#fff; border-color:var(--green);}
+  .seg .o.on{background:var(--green-soft); color:var(--green); border-color:var(--green);}
   .inrow{display:flex; gap:10px;}
   .inp{width:100%; padding:13px 15px; border:1.5px solid var(--line2); border-radius:12px; font-size:16px; font-family:inherit; background:#fff; color:var(--ink);}
   .inp:focus{outline:none; border-color:var(--green);}
@@ -856,19 +856,19 @@
   .bids-head .reqtype{margin-bottom:8px;}
   .bids-head p{font-size:15px; color:var(--sub); margin-top:0; line-height:1.6;}
   /* 공용 확인 모달 */
-  .confirm-scrim{position:fixed; inset:0; background:rgba(22,20,15,.5); z-index:140; display:none; align-items:center; justify-content:center; padding:24px;}
+  .confirm-scrim{position:fixed; inset:0; background:rgba(20,18,16,.72); backdrop-filter:blur(3px); z-index:140; display:none; align-items:center; justify-content:center; padding:24px;}
   .confirm-scrim.on{display:flex; animation:f .18s ease;}
-  .confirm-box{background:#fff; border-radius:20px; padding:26px 24px 20px; max-width:340px; width:100%; box-shadow:0 24px 60px rgba(10,11,14,.28); text-align:center; transition:max-width .22s ease;}
+  .confirm-box{background:#fff; border-radius:22px; padding:36px 32px 26px; max-width:460px; width:100%; box-shadow:0 24px 60px rgba(10,11,14,.28); text-align:center;}
   /* 요청 완료 — 확인 모달 그 자리에서 성공으로 전환(전체화면 점프 없음) */
-  .confirm-box:has(.cf-done){max-width:400px;}
+  .confirm-box:has(.cf-done){max-width:460px;}
   .cf-done{padding:6px 0 2px;}
   .cf-done-ic{width:60px; height:60px; border-radius:50%; background:var(--green-soft); color:var(--green); font-size:30px; font-weight:800; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; animation:cfpop .32s cubic-bezier(.2,1.4,.4,1);}
   .cf-done-t{font-size:21px; font-weight:800; letter-spacing:-.03em;}
   .cf-done-s{font-size:14px; color:var(--sub); margin-top:5px; line-height:1.55;} .cf-done-s b{color:var(--green); font-weight:800;}
   @keyframes cfpop{from{transform:scale(.5); opacity:0;} to{transform:scale(1); opacity:1;}}
-  .confirm-msg{font-size:17px; font-weight:700; color:var(--ink); line-height:1.55;}
+  .confirm-msg{font-size:21px; font-weight:800; letter-spacing:-.03em; color:var(--ink); line-height:1.4; margin:0 0 26px;}
   .confirm-msg b{font-weight:800; color:var(--green);}
-  .confirm-msg .cf-sub{font-size:13px; color:var(--sub); font-weight:600; margin-top:9px; line-height:1.5;}
+  .confirm-msg .cf-sub{display:block; font-size:14.5px; color:var(--sub); font-weight:600; margin-top:6px; line-height:1.55;}
   /* 견적 보내기 전 '내 요청서' 확인 — 미니멀 명세(A) */
   .confirm-box:has(.cf-a){max-width:460px;}
   .cf-a{text-align:left;}
@@ -901,25 +901,52 @@
   .cf-receipt .cfr-note.off{color:var(--sub); background:var(--soft);}
   .rs-note.off{background:var(--soft); color:var(--sub2);}
   .confirm-box:has(.cf-receipt) .confirm-btns button{padding:15px; font-size:16px;}
-  .confirm-btns{display:flex; gap:9px; margin-top:20px;}
-  .confirm-btns button{flex:1; padding:13px; border-radius:12px; font-size:15px; font-weight:800; font-family:inherit; cursor:pointer; border:none;}
-  .confirm-btns .cf-no{background:var(--soft); color:var(--ink);}
-  .confirm-btns .cf-no:hover{background:var(--line2);}
+  /* 쇼퍼 confirm 모달과 동일 — 주버튼 하나 + 아래 조용한 '돌아가기' 링크(비대칭) */
+  .confirm-btns{display:flex; gap:10px;}
+  .confirm-btns button{flex:1; padding:16px; border-radius:12px; font-size:16px; font-weight:800; font-family:inherit; cursor:pointer; border:none;}
   .confirm-btns .cf-yes{background:var(--ink); color:#fff;}
   .confirm-btns .cf-yes:hover{background:#000;}
+  .cf-quiet{margin-top:12px;}
+  .cf-quiet button{border:none; background:none; padding:4px 8px; font-family:inherit; font-size:13.5px; font-weight:700; color:var(--sub2); cursor:pointer;}
+  .cf-quiet button:hover{color:var(--warn); text-decoration:underline;}
+  /* 결제 모달 — 요청 상세 위에 가운데로 뜨는 다이얼로그(풀스크린 점프 방지) */
+  .pay-scrim{position:fixed; inset:0; background:rgba(22,20,15,.5); z-index:150; display:none; align-items:center; justify-content:center; padding:24px;}
+  .pay-scrim.on{display:flex; animation:f .18s ease;}
+  .pay-box{position:relative; background:#fff; border-radius:20px; padding:24px 22px 20px; max-width:460px; width:100%; max-height:88vh; overflow-y:auto; box-shadow:0 24px 60px rgba(10,11,14,.28);}
+  .pay-x{position:absolute; top:15px; right:15px; width:32px; height:32px; border-radius:50%; border:none; background:var(--soft); color:var(--ink); font-size:14px; cursor:pointer; line-height:1;}
+  .pay-x:hover{background:var(--line2);}
+  .pay-mhead{margin-bottom:16px; padding-right:34px;}
+  .pay-mhead .reqtype{display:inline-block; margin-bottom:8px;}
+  .pay-mhead h3{font-size:22px; font-weight:800; letter-spacing:-.03em; color:var(--ink);}
+  .pay-mhead p{font-size:13.5px; color:var(--sub); margin-top:4px;}
+  .pay-box .btn{width:100%; background:var(--ink); color:#fff; border:none; font-weight:800; cursor:pointer;}
+  .pay-box .btn:hover{background:#000;}
+  /* 신고·환불 모달 — 쇼퍼 신고 모달과 타이포/구성 동일(제목16·부제12.5·사유14·라벨13·본문14·버튼15) */
+  .dsp-head{margin-bottom:14px; padding-right:34px;}
+  .dsp-head h3{font-size:16px; font-weight:800; color:var(--ink); letter-spacing:-.01em;}
+  .dsp-head p{font-size:12.5px; color:var(--sub); margin-top:3px;}
+  .dsp-note{font-size:12.5px; color:var(--sub2); line-height:1.55; margin:0 0 12px;}
+  .dsp-reasons{display:flex; flex-direction:column;}
+  .dsp-r{display:flex; align-items:center; gap:9px; padding:11px 4px; font-size:14px; font-weight:600; color:var(--ink); cursor:pointer; border-bottom:1px solid var(--line);}
+  .dsp-r:last-child{border-bottom:none;}
+  .dsp-r input{accent-color:var(--green); width:16px; height:16px; cursor:pointer; flex:none; margin:0;}
+  .dsp-label{font-size:13px; font-weight:800; color:var(--ink); margin:14px 0 6px;}
+  .pay-box .inp{font-size:14px; padding:11px 13px;}
+  .pay-box .btn{font-size:15px;}
 
   .bids-cancel{text-align:center; margin-top:26px;}
   .bids-cancel button{background:none; border:none; color:var(--sub2); font-size:14px; font-weight:700; text-decoration:underline; text-underline-offset:2px; cursor:pointer; font-family:inherit;}
   .bids-cancel button:hover{color:var(--warn);}
   /* 오버레이 버튼 = 연한초록 채움 + 딥그린 텍스트(딥그린 풀필 지양). 핵심 CTA만 딥그린 테두리(.key) */
-  .bids-overlay .tinybtn{font-weight:800; padding:11px 15px; border-radius:10px; background:var(--green-soft); color:var(--green); border:1.5px solid var(--green-line); cursor:pointer; white-space:nowrap; font-family:inherit;}
-  .bids-overlay .tinybtn:hover{background:#dcebe2; border-color:var(--green-mid);}
-  .bids-overlay .tinybtn.key{border-color:var(--green);}
+  /* 요청 상세 오버레이 버튼 — 쇼퍼와 동일하게 검정(ink) 채움. ghost만 흰 배경+라인 */
+  .bids-overlay .tinybtn{font-weight:800; padding:11px 15px; border-radius:10px; background:var(--ink); color:#fff; border:none; cursor:pointer; white-space:nowrap; font-family:inherit;}
+  .bids-overlay .tinybtn:hover{background:#000;}
+  .bids-overlay .tinybtn.key{background:var(--ink);}
   .bids-overlay .tinybtn.ghost{background:#fff; color:var(--ink); border:1.5px solid var(--line2);}
   .bids-overlay .tinybtn.ghost:hover{background:var(--soft);}
-  .bids-overlay .btn{background:var(--green-soft); color:var(--green); border:1.5px solid var(--green-line);}
-  .bids-overlay .btn:hover{background:#dcebe2; border-color:var(--green-mid);}
-  .bids-overlay .btn.key{border-color:var(--green);}
+  .bids-overlay .btn{background:var(--ink); color:#fff; border:none;}
+  .bids-overlay .btn:hover{background:#000;}
+  .bids-overlay .btn.key{background:var(--ink);}
   .bids-overlay .btn.ghost{background:#fff; color:var(--ink); border:1.5px solid var(--line2);}
   /* 견적 카드 — 숨고형 세로 리스트 */
   .bids-list{display:flex; flex-direction:column; gap:14px; margin-top:18px;}
@@ -999,6 +1026,21 @@
   /* 상세 액션 버튼 행 (배너 아래) */
   .rq-actions{margin-top:16px;}
   .rq-btns{display:flex; gap:9px; flex-wrap:wrap;}
+  /* 확정 약속 컴팩트 칩 — 쇼퍼(.apt-done)와 동일 패턴(고객은 변경 버튼 없음) */
+  .apt-done{display:flex; align-items:center; gap:11px; background:var(--green-soft); border-radius:12px; padding:11px 13px;}
+  .apt-ic{flex:none; width:28px; height:28px; border-radius:50%; display:grid; place-items:center; background:#fff; color:var(--green);}
+  .apt-ic svg{width:15px; height:15px;}
+  .apt-tx{flex:1; min-width:0;}
+  .apt-tx b{display:block; font-size:14px; font-weight:800; color:var(--ink); letter-spacing:-.02em;}
+  .apt-tx span{font-size:11.5px; font-weight:700; color:var(--green-mid);}
+  /* 약속 잡는 중 — 아직 미확정(점선·무채색). 확정(.apt-done 초록)과 구분 */
+  .appt-pending{display:flex; align-items:center; gap:11px; background:#f5f5f3; border:1px dashed var(--line2); border-radius:12px; padding:11px 13px;}
+  .appt-pending .apt-ic{color:var(--sub2);}
+  .appt-pending .apt-tx span{color:var(--sub2);}
+  /* 결제 금액 한 줄 — 쇼퍼(.pay-amt)와 동일 */
+  .pay-amt{display:flex; justify-content:space-between; align-items:center; font-size:15px; padding:2px 0 4px;}
+  .pay-amt span{color:var(--sub); font-weight:600;}
+  .pay-amt b{font-weight:800; color:var(--green);}
   /* 스타일리스트 — 요청 내용과 같은 soft 패널 안 아바타 헤더행 */
   .rs-shopper{display:flex; align-items:center; gap:12px; padding:13px 0;}
   .rs-shopper .av{width:44px; height:44px; border-radius:50%; object-fit:cover; flex:none; background:#fff;}
@@ -1100,11 +1142,21 @@
   .chatdrawer .cd-ti b{font-size:17px;font-weight:800;letter-spacing:-.02em;margin-top:2px}
   .chatdrawer .cd-x{flex:none;width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:none;cursor:pointer;padding:0;background:var(--soft);color:var(--sub);font-size:15px}
   .chatdrawer .cd-x:hover{background:var(--line2)}
+  /* 신고·환불 = 헤더 작은 깃발(자주 안 쓰니 눈에 안 띄게). 분쟁 접수됐으면 경고색 채움 — 쇼퍼(.cd-flag)와 동일 */
+  .chatdrawer .cd-flag{flex:none;width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:none;cursor:pointer;padding:0;background:var(--warn-soft);color:var(--warn)}
+  .chatdrawer .cd-flag svg{width:15px;height:15px}
+  .chatdrawer .cd-flag:hover{background:#F0DBD4}
+  .chatdrawer .cd-flag.on{background:var(--warn);color:#fff}
   .chatdrawer .pm-thread{flex:1;display:flex;flex-direction:column;gap:8px;overflow-y:auto;padding:16px 18px}
   .chatdrawer .pm-row{display:flex} .chatdrawer .pm-row.me{justify-content:flex-end}
   .chatdrawer .pm-b{max-width:84%;padding:11px 15px;border-radius:14px;font-size:15.5px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
   .chatdrawer .pm-row.cust .pm-b{background:var(--soft);color:var(--ink-soft);border-bottom-left-radius:4px}
   .chatdrawer .pm-row.me .pm-b{background:#2E2A24;color:#fff;border-bottom-right-radius:4px}
+  /* 시스템 알림 메시지(상태 변화) — 가운데 초록 알약. 중요(약속 등)는 검정 강조 */
+  .chatdrawer .pm-sys{align-self:center; text-align:center; font-size:12.5px; font-weight:700; color:var(--green); background:var(--green-soft); border-radius:20px; padding:6px 14px; margin:6px 0; max-width:90%;}
+  .chatdrawer .pm-row + .pm-sys{margin-top:12px}
+  .chatdrawer .pm-sys + .pm-row{margin-top:12px}
+  .chatdrawer .pm-sys.key{color:#fff; background:var(--ink);}
   .chatdrawer .pm-compose{display:flex;align-items:center;gap:9px;padding:12px 18px 14px;border-top:1px solid var(--line)}
   .chatdrawer .pm-compose input{flex:1;font-size:15.5px;padding:12px 16px;border:1.5px solid var(--line2);border-radius:22px;font-family:inherit}
   .chatdrawer .pm-compose input:focus{outline:none;border-color:var(--green)}

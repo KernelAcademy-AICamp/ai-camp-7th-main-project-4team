@@ -46,6 +46,12 @@
   .qgrid{display:grid;grid-template-columns:360px 1fr;gap:28px;align-items:start;margin-top:24px}
   @media(max-width:820px){.qgrid{grid-template-columns:1fr}}
   .card{background:#fff;border:1px solid var(--line,#e7e4de);border-radius:18px;box-shadow:0 6px 18px rgba(20,18,16,.05);padding:22px 24px;margin-bottom:18px}
+  /* 왼쪽 참고 컬럼 상단 고객 카드 — 고객 화면의 스타일리스트 프로필 카드와 대칭(간단형) */
+  .cust-card{display:flex;align-items:center;gap:13px;padding:16px 20px}
+  .cust-card .cc-av{flex:none;width:44px;height:44px;border-radius:50%;background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B);display:grid;place-items:center;font-weight:800;font-size:18px}
+  .cust-card .cc-tx{min-width:0}
+  .cust-card .cc-tx b{display:block;font-size:16px;font-weight:800;letter-spacing:-.02em;color:var(--ink,#16140F)}
+  .cust-card .cc-tx span{font-size:13px;color:var(--sub,#6b6a67)}
   .bodycard{background:#16171b;border-radius:20px;overflow:hidden;box-shadow:0 16px 40px rgba(10,11,14,.18);position:sticky;top:84px}
   .bodycard iframe{width:100%;height:628px;border:0;display:block}
   .bodymeta{text-align:center;font-size:13px;color:var(--sub,#6b675f);font-weight:700;margin-top:12px}
@@ -519,7 +525,7 @@
   .chatdrawer .cd-report .rpt-link{margin-top:0}
   @media(prefers-reduced-motion:reduce){.chatdrawer{transition:none}}
 
-  /* 결과물 작성 중(수락됨) = 오른쪽 고객 체형 카드도 '활성' 강조 — 결과물 박스와 짝 */
-  .qright.ref-on .bodycard2{border:1.5px solid var(--green);box-shadow:0 14px 34px rgba(46,74,59,.12)}
-  .qright.ref-on .bodycard2 .rr-eye{background:var(--green-soft);color:var(--green);
+  /* 결과물 작성 중(수락됨) = 왼쪽 고객 체형 카드도 '활성' 강조 — 결과물 박스와 짝 */
+  .qleft.ref-on .bodycard2{border:1.5px solid var(--green);box-shadow:0 14px 34px rgba(46,74,59,.12)}
+  .qleft.ref-on .bodycard2 .rr-eye{background:var(--green-soft);color:var(--green);
     margin:-22px -24px 16px;padding:13px 24px;border-radius:16px 16px 0 0;border-bottom:1px solid var(--green-line);letter-spacing:.06em}

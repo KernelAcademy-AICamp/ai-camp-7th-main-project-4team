@@ -196,11 +196,11 @@
   /* 입금 요청(명시 액션) — 상담중 → 결제대기 */
   function askPay(){ var r=reqs[idx]; if(!r) return; r.status='결제대기'; pushSysMsg(r,'askPay'); saveLS('pro.reqs',reqs); render(); toast('서비스 결제를 안내했어요 · 고객 입금을 기다려요'); }
   function confirmAskPay(){ askConfirm(reqs[idx].cust+'님에게 입금을 요청할까요?', askPay, '입금 요청하기', '요청하면 고객에게 결제가 안내돼요'); }
-  /* 안내할 금액 수정(상담중 — 입금 요청 전까지) */
+  /* 결제 예정 금액 수정(상담중 — 입금 요청 전까지) */
   function editConsultPrice(){ reqs[idx]._priceEdit=true; render(); setTimeout(function(){ var i=$('peInput'); if(i){ i.focus(); i.select(); } },30); }
   function saveConsultPrice(){ var r=reqs[idx], el=$('peInput'); var v=el?parseInt(el.value,10):NaN;
     if(isNaN(v)||v<=0){ toast('금액을 확인해주세요'); return; }
-    r.offer=r.offer||{}; r.offer.price=v; delete r._priceEdit; saveLS('pro.reqs',reqs); render(); toast('안내할 금액을 '+v.toLocaleString()+'원으로 바꿨어요'); }
+    r.offer=r.offer||{}; r.offer.price=v; delete r._priceEdit; saveLS('pro.reqs',reqs); render(); toast('결제 예정 금액을 '+v.toLocaleString()+'원으로 바꿨어요'); }
   /* 약속 확정(대면) — 상담중 칸에서. 확정돼야 입금 요청이 열린다 */
   function pickPlace(el, g){ var i=$('aptPlace'); if(i) i.value=g;
     var row=el.parentNode.querySelectorAll('.catchip');
@@ -259,7 +259,7 @@
     var pct = range ? (range.max&&range.max!==Infinity ? Math.min(100, total/range.max*100) : (total>=range.min?100:(range.min?total/range.min*100:0))) : 0;
     var bar = compact ? '' : '<div class="dlv-bar"><i style="width:'+pct.toFixed(0)+'%;background:'+st.color+'"></i></div>';
     return '<div class="dlv-bud"><div class="r"><span>추천 상품 '+(items||[]).length+'개 · 합계</span><b class="num" style="color:'+st.color+'">'+total.toLocaleString()+'원</b></div>'+
-      '<div class="r"><span>고객 예산</span><span>'+budgetText(range, req.budget)+'</span></div>'+bar+
+      '<div class="r"><span>예산</span><span>'+budgetText(range, req.budget)+'</span></div>'+bar+
       '<div style="text-align:right;font-size:12.5px;font-weight:800;color:'+st.color+';margin-top:'+(compact?'2':'7')+'px">'+st.label+'</div></div>'; }
   function ensureDlvStyle(){ if($('dlvStyle')) return; var s=document.createElement('style'); s.id='dlvStyle';
     s.textContent='.dlv-modal{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center}'+
@@ -661,9 +661,9 @@
   var IC_PIN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11l-8.5 8.5a4.5 4.5 0 0 1-6.4-6.4l8.5-8.5a3 3 0 0 1 4.3 4.3l-8.6 8.5a1.5 1.5 0 0 1-2.1-2.1l7.9-7.9"/></svg>';
   function requestReceipt(r, att){
     var out = r.dir==='out';
-    // 지명(받은 요청)=이 스타일리스트 한 명에게 → 명확한 예상 가격 / 오픈(보낸 제안)=여러 스타일리스트에 뿌린 요청 → 고객 예산 범위
+    // 지명(받은 요청)=이 스타일리스트 한 명에게 → 명확한 예상 가격 / 오픈(보낸 제안)=여러 스타일리스트에 뿌린 요청 → 예산 범위
     var money = out
-      ? ['고객 예산', esc(r.budget||'—')]
+      ? ['예산', esc(r.budget||'—')]
       : ['예상 가격', '<span class="num">'+svcPrice(r.service).toLocaleString()+'</span>원'];
     var rows=[['서비스 유형', esc(svcLabel(r.service))], ['상황', esc(r.occ||'—')], money, ['희망 일정', esc(r.date||'—')]];
     if(r.styles && r.styles.length) rows.push(['선호 스타일', esc(r.styles.join(' · '))]);
@@ -748,7 +748,7 @@
      / 미래 단계=흐림. 결과물 작성은 현재 단계 안 인라인으로 열려 오른쪽 체형을 안 가림.
      정상 흐름(신규/제안발송/수락됨/완료)만. 예외(거절/취소/분쟁/견적작성)는 render에서 기존 레이아웃 폴백. */
   function toggleRcpt(head){ var r=head.closest('.rcpt'); if(r) r.classList.toggle('open'); }
-  function refBody(){ var el=document.querySelector('.qright .bodycard2')||document.querySelector('.qright .card'); if(!el) return;
+  function refBody(){ var el=document.querySelector('.qleft .bodycard2')||document.querySelector('.qleft .card'); if(!el) return;
     el.classList.remove('cxflash'); void el.offsetWidth; el.classList.add('cxflash'); el.scrollIntoView({behavior:'smooth',block:'nearest'}); }
   /* 날짜 6자리(YY.MM.DD)로 축약 — "2026.07.02" → "26.07.02". 형식 다르면 그대로 */
   function shortDate(d){ d=String(d||''); var p=d.split(/[.\-/]/);
@@ -756,7 +756,7 @@
   /* 요청 내용 행들(요청/제안 단계 본문 공용) */
   function reqRowsHTML(r){
     var out=r.dir==='out';
-    var money = out ? ['고객 예산', esc(r.budget||'—')] : ['예상 가격','<span class="num">'+svcPrice(r.service).toLocaleString()+'</span>원'];
+    var money = out ? ['예산', esc(r.budget||'—')] : ['예상 가격','<span class="num">'+svcPrice(r.service).toLocaleString()+'</span>원'];
     var rows=[['서비스 유형', esc(svcLabel(r.service))], ['상황', esc(r.occ||'—')], money, ['희망 일정', esc(r.date||'—')]];
     if(r.styles && r.styles.length) rows.push(['선호 스타일', esc(r.styles.join(' · '))]);
     if(r.note) rows.push(['요청사항', esc(r.note)]);
@@ -766,7 +766,7 @@
   function attachChip(attached, mt){ return '<span class="rr-chip'+(attached?'':' off')+'" style="margin-top:'+(mt||12)+'px">'+IC_ATT+(attached?'체형·사이즈 측정 결과 첨부됨':'체형·사이즈 측정 미첨부')+'</span>'; }
   /* 요청 요약 카드 — 서비스 유형=아이콘 헤더 / 상황·예상가격·희망일정·요청사항=줄글 / 체형=칩. 고객 화면과 동일 형태 */
   function reqCardHTML(r, attached, out){
-    var money = out ? ['고객 예산', esc(r.budget||'—')] : ['예상 가격', svcPrice(r.service).toLocaleString()+'원'];
+    var money = out ? ['예산', esc(r.budget||'—')] : ['예상 가격', svcPrice(r.service).toLocaleString()+'원'];
     var rows=[['상황', esc(r.occ||'—')], money, ['희망 일정', esc(r.date||'—')]];
     if(r.styles && r.styles.length) rows.push(['선호 스타일', esc(r.styles.join(' · '))]);
     rows.push(['요청사항', (r.note&&(''+r.note).trim())?esc(r.note):'—']);
@@ -969,12 +969,12 @@
     var price=(r.offer&&r.offer.price)?r.offer.price.toLocaleString():'—';
     var undo='<div class="quiet"><a onclick="undoAccept()">수락 되돌리기</a></div>';
     var payBtn='<button class="btn" style="margin-top:14px;width:100%" onclick="confirmAskPay()">입금 요청하기</button>';
-    // 안내할 금액 — 입금 요청 전까지 대화로 맞춘 뒤 조정 가능(요청하면 잠금)
+    // 결제 예정 금액 — 입금 요청 전까지 대화로 맞춘 뒤 조정 가능(요청하면 잠금)
     var amt = r._priceEdit
-      ? '<div class="pay-amt pay-edit"><span>안내할 금액</span>'+
+      ? '<div class="pay-amt pay-edit"><span>결제 예정 금액</span>'+
           '<span class="pe-in"><input id="peInput" type="number" value="'+((r.offer&&r.offer.price)||'')+'" placeholder="금액">원'+
           '<button class="pe-ok" onclick="saveConsultPrice()">확정</button></span></div>'
-      : '<div class="pay-amt"><span>안내할 금액</span><b class="num">'+price+'원 <a class="pe-edit" onclick="editConsultPrice()">수정</a></b></div>';
+      : '<div class="pay-amt"><span>결제 예정 금액</span><b class="num">'+price+'원 <a class="pe-edit" onclick="editConsultPrice()">수정</a></b></div>';
     if(!isOffline(r.service)){
       return nowCard('입금 안내','지금 할 일','대화로 내용을 맞춰본 뒤 입금을 안내해요', amt+payBtn+undo);
     }
@@ -1113,10 +1113,13 @@
     // 좌: 방향 A 타임라인 작업대(정상 흐름) / 예외 상태는 기존 레이아웃 폴백  ·  우(sticky): 체형
     var tl = timelineHTML(r, attached);
     // 신고는 왼쪽에서 빼고 대화 드로어 안으로 이동
-    var qleft = tl
+    var qwork = tl
       ? tl
       : ( statusBlock(r) + requestReceipt(r, attached) +
           '<div class="card offer-card"><div class="subhead">'+esc(actionTitle(r))+'</div>'+ actionHTML(r) +'</div>' );
+    // 왼쪽 고정 참고 = 고객 카드 + 체형(고객 화면의 '스타일리스트+요청서'와 대칭) / 오른쪽 = 진행 타임라인(작업대)
+    var custCard = '<div class="card cust-card"><div class="cc-av">'+esc((r.cust||'고').charAt(0))+'</div>'+
+      '<div class="cc-tx"><b>'+esc(r.cust||'고객')+'님</b><span>'+esc(svcLabel(r.service))+(r.occ?' · '+esc(r.occ):'')+'</span></div></div>';
     // 대화는 상단 오른쪽 아이콘 → 우측 드로어(별도 관리)
     $('quoteRoot').innerHTML =
       '<div class="qtop"><div class="qtop-l">'+
@@ -1124,7 +1127,7 @@
         '<p class="crumb">스타일리스트 지원 · '+(r.status==='견적작성'?'견적 보내기':(out?'보낸 제안':'받은 요청'))+'</p>'+
         '<h1>'+esc(r.cust)+'님 · '+esc(svcLabel(r.service))+'</h1>'+
       '</div>'+(showMsg?chatOpenBtn(r):'')+'</div>'+
-      '<div class="qgrid2"><div class="qleft">'+qleft+'</div><div class="qright'+(r.status==='수락됨'?' ref-on':'')+'">'+ bodyCard +'</div></div>'+
+      '<div class="qgrid2"><div class="qleft'+(r.status==='수락됨'?' ref-on':'')+'">'+ custCard + bodyCard +'</div><div class="qright">'+ qwork +'</div></div>'+
       (showMsg?chatDrawerHTML(r, showReport):'');
   }
 
