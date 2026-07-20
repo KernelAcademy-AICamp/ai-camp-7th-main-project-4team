@@ -155,3 +155,57 @@
   .rpanel .dtl-note{ font-size:14px; color:var(--sub); margin-top:16px; line-height:1.55; }
   /* recs 그룹(상의·하의) 헤더 바로 뒤 목록은 붙여서 '내 체형 측정' 그룹 간격과 통일 */
   #recs .dtl-grp + .s2list{ margin-top:0; }
+
+
+  /* 결과 공유(바이럴) — 카드 직후. 카드 iframe 안 🔗은 작아서, 밖에 큰 액션을 한 번 더 둔다. */
+  .rshare{ display:flex; flex-direction:column; align-items:center; gap:8px; margin-top:14px; }
+  .rshare[hidden]{ display:none; }
+  .rsharebtn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px;
+    font-family:inherit; font-size:15.5px; font-weight:800; color:#fff; background:var(--g);
+    border:none; border-radius:12px; padding:13px 22px; cursor:pointer; }
+  .rsharebtn:hover{ filter:brightness(1.07); }
+  .rsharebtn:active{ transform:scale(.98); }
+  .rsharebtn .ricon{ width:18px; height:18px; }
+  .rshare-note{ font-size:13.5px; color:var(--sub2); text-align:center; }
+  .rtoast{ position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(10px);
+    background:rgba(20,18,16,.92); color:#fff; font-size:14px; font-weight:700; padding:12px 20px;
+    border-radius:24px; max-width:82%; text-align:center; opacity:0; transition:opacity .22s, transform .22s;
+    z-index:120; pointer-events:none; }
+  .rtoast.on{ opacity:1; transform:translateX(-50%) translateY(0); }
+  @media(prefers-reduced-motion:reduce){ .rtoast{ transition:opacity .22s; } .rsharebtn:active{ transform:none; } }
+
+  /* ===== 모바일(≤640px) — 시안 B-1: 정보 우선순위 재배치 + CTA 하단 고정 =====
+     · 카드가 '단순 유형정보'로 리뉴얼 예정 → 높이를 --rcard-h 변수로 분리(새 카드 나오면 이 값만 교체).
+     · .rleft/.rcol 래퍼를 display:contents로 투명화해 자식들을 한 흐름으로 재정렬.
+     · 데스크톱(641px↑)은 기존 2단 그리드 그대로. */
+  :root{ --rcard-h:684px; }
+  @media(max-width:640px){
+    .rwrap{ padding:20px 18px calc(86px + env(safe-area-inset-bottom)); }
+    .rgrid{ gap:14px; margin-top:18px; }
+    .rleft, .rcol{ display:contents; }
+
+    /* 순서: 카드 → 브랜드 추천 → 정확도 피드백(킬 메트릭) → 유형 상세 → 측정 → 안내 */
+    #cardslot{ order:1; }
+    #rshare{ order:1; }   /* 카드와 같은 order → DOM 순서대로 카드 바로 뒤 */
+    #recs{ order:2; }
+    #rfb{ order:3; }
+    #rtip{ order:4; }
+    #rtypeid{ order:5; }
+    #rfit{ order:6; }
+    #meas{ order:7; }
+    #means{ order:8; }
+    .rcta-note{ order:9; }
+
+    /* 카드: sticky 해제 + 유동 폭(리뉴얼 대비) */
+    .rcard iframe{ position:static; top:auto; width:100%; max-width:392px;
+      height:var(--rcard-h); margin:0 auto; }
+
+    /* 패널 여백 축소 */
+    .rpanel{ padding:16px 16px; border-radius:14px; }
+
+    /* CTA 하단 고정 — 스타일리스트 찾기·저장 상시 노출 */
+    .rcta{ position:fixed; left:0; right:0; bottom:0; z-index:40; margin:0;
+      display:flex; gap:8px; padding:12px 18px calc(12px + env(safe-area-inset-bottom));
+      background:linear-gradient(180deg, rgba(246,246,245,0), var(--bg) 30%); }
+    .rcta .rbtn{ flex:1; min-height:44px; }
+  }

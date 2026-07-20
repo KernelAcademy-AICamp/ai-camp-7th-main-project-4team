@@ -3,7 +3,7 @@
     if(id==='my' && !loggedIn()){ openLogin('마이페이지', function(){ go('my'); }); return; }   // 비로그인 My 접근 차단(로그인 게이트)
     var ov=document.getElementById('bidsOverlay'); if(ov) ov.classList.remove('on');   // 페이지 이동 시 열린 상세 닫기
     document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on', p.id===id));
-    document.querySelectorAll('.menu a').forEach(a=>a.classList.toggle('on', a.dataset.t===id));
+    document.querySelectorAll('.menu a, .tabbar .tb[data-t]').forEach(a=>a.classList.toggle('on', a.dataset.t===id));   // 상단 메뉴 + 모바일 하단 탭바 동시 동기화
     // 스타일리스트찾기: proto=목록부터 / api(MVP)=준비 중·알림 웨이트리스트(목업 목록 미노출)
     if(id==='shop') showOnly((window.FDATA&&FDATA.mode==='api')?'stylistWaitlist':'listView');
     window.scrollTo({top:0, behavior:'smooth'});
@@ -321,6 +321,34 @@
     var g=(USER.gender==='female'?'female':'male');
     var src='card.html?type='+(USER.type||'STR')+'&g='+g;
     if((f.getAttribute('src')||'')!==src) f.src=src;   // 값이 바뀐 경우에만 리로드
+  }
+  /* 진단 결과 상단 유형 배지 — 카드는 프로필로 옮겼으니 여기선 맥락 한 줄만(+프로필로 이동 링크). */
+  function renderMyTypeBadge(){
+    var el=document.getElementById('myTypeBadge'); if(!el) return;
+    if(!USER.type){ el.innerHTML=''; return; }
+    function paint(t){
+      el.innerHTML='<span class="c">'+USER.type+'</span>'+
+        (t&&t.name?'<span class="n">'+t.name+'</span>':'')+
+        '<a class="go" onclick="goMy(\'mp-profile\')">카드 보기 →</a>';
+    }
+    if(_btCache){ paint(_btCache[USER.type]); return; }
+    fetch('data/bodytypes.json').then(function(r){return r.json();})
+      .then(function(j){ _btCache={}; j.types.forEach(function(x){_btCache[x.code]=x;}); paint(_btCache[USER.type]); })
+      .catch(function(){ paint(null); });
+  }
+  /* 프로필의 체형 카드 공유 — 결과 화면 shareResult()와 동일 규칙(index.html?from=CODE). */
+  function shareMyCard(){
+    var code=USER.type||''; if(!code){ toast('진단을 먼저 완료해 주세요'); return; }
+    var t=_btCache&&_btCache[code], nm=t?t.name:code;
+    var dir=location.pathname.replace(/[^/]*$/, '');
+    var url=location.origin+dir+'index.html?from='+code;
+    var text='너는 어떤 핏이야? 나는 \''+nm+'\' 나왔어 · 착용 경험 3분이면 내 체형·사이즈가 나와 — fitting';
+    if(navigator.share){ navigator.share({title:'fitting — 내 핏 결과', text:text, url:url}).catch(function(){}); return; }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text+'\n'+url)
+        .then(function(){ toast('초대 링크를 복사했어요 · 친구에게 붙여넣기 해보세요'); })
+        .catch(function(){ toast('링크: '+url); });
+    } else { toast('링크: '+url); }
   }
   /* FITTING의 한 끗(#myTip) — 유형별 insight로 채움(카드와 같이 움직이게). 하드코딩 데모 대체. */
   function renderMyInsight(){
@@ -1447,13 +1475,24 @@
   /* 외부 화면에서 #home·#shop·#my 로 돌아오면 해당 탭 열기 */
   (function(){ var h=(location.hash||'').replace('#',''); if(['home','shop','my'].indexOf(h)>=0) go(h); })();
 
-  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagCard(); renderMyInsight(); renderSupport(); renderNotis(); renderPrivacy(); applyAuthUI();
+  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagCard(); renderMyTypeBadge(); renderMyInsight(); renderSupport(); renderNotis(); renderPrivacy(); applyAuthUI();
 
   /* 새로고침 시 보던 화면 복원 — 쿼리 딥링크(?from/?login/?my/?ctx)나 해시가 없을 때만(그건 각각 처리) */
   (function(){ try{ var q=new URLSearchParams(location.search);
     if(q.get('from')||q.get('login')||q.get('my')||q.get('ctx')) return;
     if((location.hash||'').replace('#','')) return;
     restoreNav();
+  }catch(e){} })();
+
+  /* 모바일 마이 기본 패널 = '내 진단 결과'(추천·핏 인사이트).
+     체형 카드는 재미·공유 요소라 진입 즉시 필요한 건 인사이트.
+     ※ saveNav()가 초기 기본값(mp-profile)도 저장해버려서 "사용자가 고른 값"과 구분이 안 됨
+        → 세션당 1회만 적용하고, 그 뒤 사용자가 고른 패널은 그대로 존중한다. */
+  (function(){ try{
+    if(!window.matchMedia || !matchMedia('(max-width:640px)').matches) return;
+    if(sessionStorage.getItem('fitting.myDefault')) return;   // 이번 세션에 이미 적용됨
+    sessionStorage.setItem('fitting.myDefault','1');
+    var a=document.querySelector('#smenu a[data-p="mp-diag"]'); if(a) myNav(a);
   }catch(e){} })();
 
   /* 친구 초대 링크로 유입(card 공유 → index.html?from=CODE) — 홈 상단 배너로 맞이 */

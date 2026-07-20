@@ -58,8 +58,11 @@
   //  · 부분(상의만/하의만): 진행 중 → 잠금(나머지 완성 유도)
   var slot=document.getElementById('cardslot');
   var noneDone=!upperDone && !lowerDone;
-  var showCard=cardReady || noneDone;
-  var fullBody=cardReady || noneDone;   // 0벌(기본 추정)도 회귀로 전신 데이터가 있어 전신 결과로 표시(정확도 '낮음' 배지로 구분)
+  // 카드는 항상 노출 — 부분(상의만/하의만)도 빠진 부위를 회귀로 채워 분류 가능(0벌과 동일 원칙).
+  // 완성도는 신뢰도 배지 + 업그레이드 안내(cardNoteHTML)로 구분.
+  // ※ 전엔 부분만 잠금이라 "0벌보다 정보가 많은데 카드를 못 받는" 모순이 있었음.
+  var showCard=true;
+  var fullBody=cardReady || noneDone;   // 측정 상세는 실제 측정한 범위만 — 부분은 그 카테고리만(정직성 유지)
   // ── 결과 준비 로딩 오버레이: 측정·추천 렌더(_contentReady) + 카드 iframe 로드(_cardPainted)가 실제로 끝나면 한 번에 공개 ──
   var _contentReady=false, _cardPainted=false;
   function hideRloading(){ var el=document.getElementById('rloading'); if(!el) return; el.classList.add('hide'); setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 400); }
@@ -72,6 +75,10 @@
     var msg='';
     if(noneDone){ // 0벌: 실착을 넣으면 정밀해진다는 안내
       msg='<span class="rconf-msg"><a href="diag-fit.html?cat=top">상의</a> · <a href="diag-fit.html?cat=bottom">하의</a> 실착을 넣으면 체형이 또렷해져요</span>';
+    }else if(!cardReady){ // 부분(1/2): 잠금이 아니라 진행률·업그레이드로 유도
+      var needL=upperDone?'하의':'상의';
+      var needH=upperDone?'diag-fit.html?cat=bottom&reuse=1&have=top':'diag-fit.html?cat=top&reuse=1&have=bottom';
+      msg='<span class="rconf-msg"><b>1/2 완료</b> · <a href="'+needH+'">'+needL+'까지 진단</a>하면 체형이 또렷해져요</span>';
     }
     return '<div class="rcardnote"><span class="rconf '+tier+'">정확도 '+tierKo+(tier==='low'?' · 기본 추정':'')+'</span>'+msg+'</div>';
   }
@@ -79,7 +86,31 @@
     if(!type){ slot.innerHTML='<div class="rcard-load">체형 카드를 계산하고 있어요…</div>'; return; }  // 실분류 전 로딩(가짜 유형 X)
     slot.innerHTML='<iframe src="card.html?type='+type+'&g='+gender+'&host=result" scrolling="no" title="내 결과 카드"></iframe>'+cardNoteHTML();
     var _ifr=slot.querySelector('iframe'); if(_ifr) _ifr.addEventListener('load', function(){ _cardPainted=true; maybeHideLoading(); });
+    var _sh=document.getElementById('rshare'); if(_sh) _sh.hidden=false;   // 유형이 정해졌을 때만 공유 노출
   }
+  function rToast(msg){
+    var t=document.getElementById('rtoast');
+    if(!t){ t=document.createElement('div'); t.id='rtoast'; t.className='rtoast'; document.body.appendChild(t); }
+    t.textContent=msg; void t.offsetWidth; t.classList.add('on');
+    clearTimeout(window._rt); window._rt=setTimeout(function(){ t.classList.remove('on'); }, 2400);
+  }
+  // 결과 공유 = 친구 초대 링크(card.js shareInvite와 동일 규칙: index.html?from=CODE).
+  // 카드 iframe 안 🔗은 작아서 잘 안 보임 → 카드 직후에 큰 액션으로 한 번 더.
+  function shareResult(){
+    var code=cardType||'';
+    var t=(window._btList||[]).filter(function(x){ return x.code===code; })[0];
+    var nm=t?t.name:code;
+    var dir=location.pathname.replace(/[^/]*$/, '');
+    var url=location.origin+dir+'index.html?from='+code;
+    var text='너는 어떤 핏이야? 나는 \''+nm+'\' 나왔어 · 착용 경험 3분이면 내 체형·사이즈가 나와 — fitting';
+    if(navigator.share){ navigator.share({title:'fitting — 내 핏 결과', text:text, url:url}).catch(function(){}); return; }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text+'\n'+url)
+        .then(function(){ rToast('초대 링크를 복사했어요 · 친구에게 붙여넣기 해보세요'); })
+        .catch(function(){ rToast('링크: '+url); });
+    } else { rToast('링크: '+url); }
+  }
+  window.shareResult=shareResult;
   var cardType=null;   // 실엔진(FitBodyType.classify)이 채움 — 초기 null이라 가짜 유형 안 뜸
   var _diagId=null;    // api 모드: recordDiagnosis 후 diagnosis id 저장(피드백 FK)
   // 유형 정체성 / 잘맞·피할 FIT / 한 끗 — 마이 '내 진단결과' 디자인 통일 (8유형 동적)
@@ -90,7 +121,7 @@
     window._renderType=function(list){
       // 8유형 체형 상세(dtl-id/fitbox/tip)는 상·하의 모두 완료(cardReady) 시에만 — 미완료면
       // 빈 채로 둬 CSS(.dtl-*:empty{display:none})가 숨김. cardType이 'BAL' 폴백일 때 오노출 방지.
-      if(!fullBody) return;   // 상·하의 완료 또는 0벌(전신 추정)이면 노출
+      if(!showCard) return;   // 카드가 나오면 유형 상세도 함께(부분도 노출 — 완성도는 신뢰도 배지로 구분)
       var t=(list||[]).filter(function(x){ return x.code===cardType; })[0]; if(!t) return;
       var tp=t.point||'#2E4A3B';
       var idEl=document.getElementById('rtypeid');
@@ -112,21 +143,12 @@
       window._renderType(window._btList);
     }).catch(function(){});
   })();
-  if(showCard){
-    slot.className='rcard';
-    renderCard(cardType);
-  }else{
-    // 부분 완료: 아직 안 한 기반으로 유도
-    slot.className='rlock';
-    var needLabel=upperDone?'하의':'상의';
-    var doneLabel=upperDone?'상의':'하의';
-    var doneRegion=upperDone?'상체':'하체';
-    var needHref=upperDone?'diag-fit.html?cat=bottom&reuse=1&have=top':'diag-fit.html?cat=top&reuse=1&have=bottom';
-    document.getElementById('rtitle').textContent=doneRegion+' 부분 진단이 나왔어요';
-    slot.innerHTML='<div class="lk"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><div class="t1">체형 카드는<br>상·하의를 모두 진단하면 나와요</div>'+
-      '<div class="t2">지금은 '+doneLabel+'만 파악됐어요</div>'+
-      '<a class="b" href="'+needHref+'">'+needLabel+' 진단하기</a>';
+  // 부분(1/2)이면 제목으로 상태를 알리되, 카드는 노출한다(신뢰도·업그레이드 안내로 완성도 구분).
+  if(!cardReady && !noneDone){
+    document.getElementById('rtitle').textContent=(upperDone?'상체':'하체')+' 중심으로 진단했어요';
   }
+  slot.className='rcard';
+  renderCard(cardType);
 
   // ── 브랜드별 추천 사이즈 — TOP(가슴·어깨)·BOTTOM(허리·엉덩이+실루엣) 실계산, 파생은 '준비중' ──
   var FLK={slim:'슬림',regular:'레귤러',loose:'루즈',oversize:'오버',skinny:'스키니',
