@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="css/tokens.css?v=10fb5117">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/index.css?v=5e9f2700">
+<link rel="stylesheet" href="css/index.css?v=701e76f0">
 </head>
 <body>
 
@@ -57,7 +57,7 @@
       <button class="ib-x" aria-label="배너 닫기" onclick="document.getElementById('inviteBanner').classList.remove('on')">✕</button>
     </div>
 
-    <!-- 히어로: 8체형 카드덱 온보딩(첫 방문만 풀재생, 재방문은 CTA 카드로 바로) -->
+    <!-- 히어로: 8체형 카드덱 온보딩(로드/새로고침마다 풀재생) -->
     <section class="hhero">
       <div class="stage" id="stage">
         <div class="intro" id="intro">
@@ -82,7 +82,7 @@
       </div>
     </section>
     <script>
-    /* 히어로 온보딩(8체형 카드덱) — _home-full.html 이식. 순수 CSS 키프레임 + 로고이동 FLIP만 JS. 첫 방문만 풀재생. */
+    /* 히어로 온보딩(8체형 카드덱) — _home-full.html 이식. 순수 CSS 키프레임 + 로고이동 FLIP만 JS. 로드마다 풀재생. */
     (function(){
       var stage=document.getElementById('stage'); if(!stage) return;
       var G='female';
@@ -149,8 +149,7 @@
           el.innerHTML=fitHTML(code, map[code]); deck.appendChild(el);
         });
         measureTw();
-        var seen; try{ seen=localStorage.getItem('fitting_ob'); }catch(e){}
-        if(seen){ skip(); } else { try{ localStorage.setItem('fitting_ob','1'); }catch(e){} run(); }   // 첫 방문만 풀재생
+        run();   // 로드(새로고침)마다 온보딩 풀재생
       }).catch(function(){ skip(); });
       if(document.fonts&&document.fonts.ready){ document.fonts.ready.then(measureTw); } else { setTimeout(measureTw,300); }
       measureTw();
@@ -168,7 +167,7 @@
       <div class="how">
         <div class="vtape"><div class="rail"></div><div class="ticks"></div><div class="vfill" id="hVfill"></div><div class="vhead" id="hVhead"></div></div>
         <div class="steps">
-          <div class="step reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></div><div class="mid"><div class="no">STEP 01</div><h3>착용 경험 입력</h3><p>평소 입는 옷의 브랜드·핏·부위별 느낌을 알려주세요. 치수 대신 '경험'으로 시작해요</p></div><div class="big"><b><span class="hcount" data-to="2">0</span></b><span>분이면 충분</span></div></div>
+          <div class="step reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></div><div class="mid"><div class="no">STEP 01</div><h3>착용 경험 입력</h3><p>평소 입는 옷의 브랜드·핏·부위별 느낌을 알려주세요. 치수 대신 '경험'으로 시작해요</p></div><div class="big"><b><span class="hcount" data-to="3">0</span></b><span>분이면 충분</span></div></div>
           <div class="step reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8L12 3z"/><path d="M19 14.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6.6-1.6z"/></svg></div><div class="mid"><div class="no">STEP 02</div><h3>AI 체형 진단</h3><p>8가지 체형 유형 중 내 유형을 판정하고, 공유용 캐릭터 카드로 보여드려요</p></div><div class="big"><b><span class="hcount" data-to="8">0</span></b><span>체형으로 정밀 분류</span></div></div>
           <div class="step reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15.6 2.3l6.1 6.1a1 1 0 0 1 0 1.4L9.8 21.7a1 1 0 0 1-1.4 0l-6.1-6.1a1 1 0 0 1 0-1.4L14.2 2.3a1 1 0 0 1 1.4 0z"/><path d="M14 5l2 2M11 8l2 2M8 11l2 2M5 14l2 2"/></svg></div><div class="mid"><div class="no">STEP 03</div><h3>브랜드별 사이즈 번역</h3><p>안 입어본 브랜드도 내 몸 기준으로 사이즈를 환산해, 반품 없이 한 번에 맞춰요</p></div><div class="big"><b><span class="hcount" data-to="0">9</span></b><span>반품을 목표로</span></div></div>
         </div>
@@ -188,7 +187,7 @@
           <div class="tyname" id="hTyname"><b>시크 스트레이트</b> · 어깨–허리–힙이 일직선인 직선 라인</div>
           <div class="stats">
             <div class="stat"><b><span class="hcount" data-to="8">0</span></b><small>체형 유형</small></div>
-            <div class="stat"><b><span class="hcount" data-to="2">0</span>분</b><small>진단 소요</small></div>
+            <div class="stat"><b><span class="hcount" data-to="3">0</span>분</b><small>진단 소요</small></div>
           </div>
         </div>
         <div class="showcard reveal">
