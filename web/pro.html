@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="css/tokens.css?v=10fb5117">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/pro.css?v=0cba2e52">
+<link rel="stylesheet" href="css/pro.css?v=5e534e18">
 </head>
 <body>
 
@@ -18,13 +18,17 @@
   <div class="navr">
     <span class="cust" onclick="location.href='index.html'">← 고객 화면</span>
     <span class="navdiv"></span>
-    <span class="bell" onclick="goPanel('inbox')" title="알림" aria-label="알림"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 4.6-1.9 6-1.9 6h15.8s-1.9-1.4-1.9-6z"/><path d="M10.2 18.5a2 2 0 0 0 3.6 0"/></svg><span class="bell-badge" id="bellBadge" style="display:none">0</span></span>
+    <span class="bell" onclick="toggleNotiPop(event)" title="알림" aria-label="알림"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 4.6-1.9 6-1.9 6h15.8s-1.9-1.4-1.9-6z"/><path d="M10.2 18.5a2 2 0 0 0 3.6 0"/></svg><span class="bell-badge" id="bellBadge" style="display:none">0</span></span>
     <span class="navdiv"></span>
     <span class="me" onclick="toggleAccMenu(event)"><span class="navav"><img id="hdrAvatar" src="photos/p1.jpg" alt="프로필 사진" onerror="this.style.visibility='hidden'"></span><span id="hdrName">소희 스타일리스트</span></span>
   </div>
   <div class="accmenu" id="accMenu">
     <a onclick="goPanel('profile')">내 프로필</a>
     <a onclick="logout()">로그아웃</a>
+  </div>
+  <div class="notipop" id="notiPop">
+    <div class="notipop-hd">알림 <a id="notiMarkAll" onclick="markAllProNoti()">모두 읽음</a></div>
+    <div class="notipop-list" id="proNotiList"></div>
   </div>
 </div></header>
 
@@ -53,9 +57,9 @@
       <div class="crumb">스타일리스트 지원 · 대시보드</div>
       <h1 id="dashHello">안녕하세요, 소희 스타일리스트님</h1>
       <p class="lead">오늘의 요청과 진행 현황이에요</p>
-      <div class="stats" id="dashStats"></div>
-      <div class="card urgent" id="dashUrgent"></div>
-      <div class="card"><div class="subhead">최근 요청</div><div id="dashRecent"></div></div>
+      <div class="stats2" id="dashStats"></div>
+      <div class="card" id="dashUrgent" style="margin-bottom:16px"></div>
+      <div class="card"><div class="subhead">진행 중인 코디</div><div id="dashRecent"></div></div>
     </section>
 
     <!-- 요청함 -->
@@ -241,7 +245,7 @@
         </select>
         <label class="efl">내용</label>
         <textarea class="efin" id="supText" rows="4" placeholder="문의 내용을 적어주세요 · 거래 관련이면 고객명·일자를 함께 적으면 빨라요"></textarea>
-        <div style="padding-top:12px"><button class="tinybtn" onclick="submitProSupport()">문의 접수</button></div>
+        <div style="padding-top:12px;display:flex;justify-content:flex-end"><button class="tinybtn" onclick="submitProSupport()">문의 접수</button></div>
       </div>
       <div class="card" style="margin-top:16px"><div class="subhead">내 문의 내역</div><div id="supList"></div></div>
     </section>
@@ -257,6 +261,6 @@
 <div class="avlightbox" id="avLightbox" onclick="closeAvatar()"><img id="avLightboxImg" src="" alt="프로필 사진"></div>
 <div class="toast" id="toast"></div>
 
-<script src="js/pro.js?v=789d4ec8"></script>
+<script src="js/pro.js?v=33ecee3b"></script>
 </body>
 </html>

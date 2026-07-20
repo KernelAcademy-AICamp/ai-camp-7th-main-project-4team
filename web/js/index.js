@@ -239,11 +239,14 @@
   };
   var GO_TYPE = { 'mp-req':'quote', 'mp-support':'reply', 'shop':'news' };
   function notiType(n){ return n.type || GO_TYPE[n.go] || 'news'; }
-  var notis = loadLS('notis', [
+  var NOTI_SEED=[
     {type:'quote', msg:'소희 스타일리스트가 견적을 보냈어요', time:'10분 전', read:false, go:'mp-req'},
     {type:'reply', msg:'1:1 문의 답변이 등록됐어요', time:'1시간 전', read:false, go:'mp-support'},
-    {type:'news', msg:'새 스타일리스트가 합류했어요 · 매칭도를 확인해보세요', time:'어제', read:true, go:'shop'}
-  ]);
+    {type:'news', msg:'새 스타일리스트가 합류했어요', time:'어제', read:true, go:'shop'}
+  ];
+  var NOTI_VER=2;   // 문구 바뀌면 올려서 로컬 캐시 재시드
+  var notis = loadLS('notis', null);
+  if(!notis || loadLS('notisVer',0)!==NOTI_VER){ notis=JSON.parse(JSON.stringify(NOTI_SEED)); saveLS('notis',notis); saveLS('notisVer',NOTI_VER); }
   function notiUnread(){ return notis.filter(function(n){ return !n.read; }).length; }
   function updateNotiDot(){ var d=document.getElementById('notiDot'); if(d) d.style.display=notiUnread()?'block':'none'; }
   function renderNotis(){

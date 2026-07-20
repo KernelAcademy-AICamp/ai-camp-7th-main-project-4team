@@ -7,7 +7,7 @@
   function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2000); }
 
   /* 이미 가입한 스타일리스트면 온보딩 건너뛰고 포털로 (재방문 처리, 화면정의서 SP-1) */
-  (function(){ var p=loadLS('pro.profile',null); if(p&&p.registered){ location.replace('pro.html'); } })();
+  (function(){ var p=loadLS('pro.profile',null); if(p&&p.registered && !/[?&]preview/.test(location.search)){ location.replace('pro.html'); } })();
 
   var STEPS=6;               // 0~5
   var cur=0;

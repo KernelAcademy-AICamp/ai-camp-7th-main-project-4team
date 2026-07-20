@@ -212,7 +212,7 @@
     else { dc.style.display='none'; }
     document.getElementById('inboxOutList').innerHTML = sent.length ? sent.map(function(r){ return reqTop(r,true); }).join('') : '<p class="note" style="padding:14px 0">아직 응답을 기다리는 견적이 없어요</p>';
   }
-  function renderRecent(){ document.getElementById('dashRecent').innerHTML=reqs.filter(function(r){return r.dir!=='out';}).sort(byDateDesc).slice(0,3).map(function(r){ return reqTop(r,true); }).join(''); }
+  function renderRecent(){ document.getElementById('dashRecent').innerHTML=reqs.filter(function(r){return ST_ACTIVE.indexOf(r.status)>=0;}).sort(byDateDesc).map(function(r){ return reqTop(r,true); }).join('') || '<p class="note" style="padding:14px 0">진행 중인 코디가 없어요</p>'; }
   /* 견적 보내기(역방향): '견적받기' 설정한 고객(데모 · 고객 영역은 미구현) → 스타일리스트가 먼저 견적 발송 */
   var CANDIDATES = [
     {cust:'이수민', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:165, kg:53, occ:'결혼식 하객', budget:'10~15만', service:'shopping', note:'하객룩 단정하게, 과하지 않게'},
@@ -285,14 +285,13 @@
     var prog=reqs.filter(function(r){return ST_ACTIVE.indexOf(r.status)>=0;}).length;
     var rating=avgRating(), rt=(rating!=null)?rating.toFixed(1):'—';
     document.getElementById('dashStats').innerHTML=
-      '<div class="stat"><b>'+won(monthRevenue())+'</b><small>이번 달 수익</small></div>'+
-      '<div class="stat"><b>'+nw+'</b><small>신규 요청</small></div>'+
-      '<div class="stat"><b>'+prog+'</b><small>진행 중</small></div>'+
-      '<div class="stat"><b>★ '+rt+'</b><small>평점</small></div>';
+      '<div class="kc hero" onclick="goPanel(\'settle\')"><small>이번 달 수익</small><b>'+won(monthRevenue())+'</b><div class="trend">거래 '+completedReqs().length+'건 완료</div></div>'+
+      '<div class="kc" onclick="goPanel(\'inbox\')"><small>신규 요청 ›</small><b>'+nw+'</b></div>'+
+      '<div class="kc" onclick="goPanel(\'inbox\')"><small>진행 중 ›</small><b>'+prog+'</b></div>'+
+      '<div class="kc" onclick="goPanel(\'reviews\')"><small>평점 ›</small><b>★ '+rt+'</b></div>';
     document.getElementById('newCnt').textContent=nw;
     document.getElementById('pRev').textContent=reqs.filter(function(r){return r.review;}).length;
     var pr=document.getElementById('pRate'); if(pr) pr.textContent=rt;
-    var bb=document.getElementById('bellBadge'); if(bb){ if(nw>0){ bb.style.display='flex'; bb.textContent=nw; } else bb.style.display='none'; }
   }
   /* 정산 화면 */
   function renderSettle(){
@@ -324,11 +323,12 @@
   function renderProSupport(){
     var el=document.getElementById('supList'); if(!el) return;
     el.innerHTML = proSup.length ? proSup.map(function(t){
-      return '<div class="setrow" style="align-items:flex-start;flex-wrap:wrap">'+
-        '<div class="si" style="flex:1;min-width:0"><b>'+t.type+'</b><small>'+(t.at||'')+'</small>'+
-          '<div style="font-size:13.5px;color:var(--ink-soft,#4a4842);margin-top:6px;line-height:1.55">'+esc(t.text)+'</div>'+
-          (t.reply?'<div class="note-quote" style="margin-top:8px;font-size:13px"><b style="color:var(--green,#2E4A3B)">운영팀 답변</b><br>'+esc(t.reply)+'</div>':'')+
-        '</div>'+supTag(t.status)+'</div>';
+      return '<div class="tkt">'+
+        '<div class="tkt-top"><span class="tkt-cat">'+esc(t.type)+'</span>'+supTag(t.status)+'</div>'+
+        '<div class="tkt-q">'+esc(t.text)+'</div>'+
+        '<div class="tkt-date">'+esc(t.at||'')+'</div>'+
+        (t.reply?'<div class="tkt-reply"><b>운영팀 답변</b><p>'+esc(t.reply)+'</p></div>':'')+
+      '</div>';
     }).join('') : '<p class="note" style="padding:14px 0">아직 접수한 문의가 없어요</p>';
     var open=proSup.filter(function(t){return t.status!=='답변완료';}).length;
     var c=document.getElementById('supCnt'); if(c){ if(open>0){ c.style.display='inline-block'; c.textContent=open; } else c.style.display='none'; }
@@ -341,6 +341,46 @@
     saveLS('pro.support',proSup); if(tx) tx.value=''; renderProSupport(); toast('문의가 접수됐어요 · 보통 1영업일 안에 답변드려요');
   }
   function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  /* ===== 알림 (고객 화면 알림과 동일 디자인 · 종 클릭 → 모달 팝오버) ===== */
+  var PNS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">';
+  var PRO_NOTI_IC={
+    request: PNS+'<path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/><path d="M8 11l4 4 4-4"/><path d="M12 3v11"/></svg>',
+    pay: PNS+'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10.5h18"/></svg>',
+    review: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4 L14.1 9.6 20.1 9.9 15.4 13.6 17 19.4 12 16.1 7 19.4 8.6 13.6 3.9 9.9 9.9 9.6Z"/></svg>',
+    dispute: PNS+'<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>'
+  };
+  var PRO_NOTI_SEED=[
+    {type:'request', cust:'한서준', msg:'한서준님이 온라인 스타일링을 요청했어요', time:'10분 전', read:false},
+    {type:'pay',     cust:'윤채원', msg:'윤채원님이 결제를 완료했어요',           time:'1시간 전', read:false},
+    {type:'review',  cust:'최민준', msg:'최민준님이 후기를 남겼어요',             time:'어제',    read:false},
+    {type:'dispute', cust:'한지민', msg:'한지민님과의 서비스 분쟁이 접수됐어요',  time:'2일 전',  read:true}
+  ];
+  var PRO_NOTI_VER=2;   // 문구 바뀌면 올려서 로컬 캐시 재시드
+  var proNotis = loadLS('pro.notis', null);
+  if(!proNotis || loadLS('pro.notisVer',0)!==PRO_NOTI_VER){ proNotis=JSON.parse(JSON.stringify(PRO_NOTI_SEED)); saveLS('pro.notis',proNotis); saveLS('pro.notisVer',PRO_NOTI_VER); }
+  function proNotiUnread(){ return proNotis.filter(function(n){return !n.read;}).length; }
+  function renderProNotis(){
+    var el=document.getElementById('proNotiList');
+    if(el){
+      el.innerHTML = proNotis.length ? proNotis.slice(0,5).map(function(n,i){
+        return '<a class="noti'+(n.read?'':' unread')+'" onclick="proNotiOpen('+i+')">'+
+          '<span class="noti-ic">'+(PRO_NOTI_IC[n.type]||PRO_NOTI_IC.request)+'</span>'+
+          '<span class="noti-bd"><span class="noti-msg">'+esc(n.msg)+'</span><span class="noti-time">'+esc(n.time)+'</span></span>'+
+          '<span class="arr">›</span></a>';
+      }).join('') : '<div class="notipop-empty">새 알림이 없어요</div>';
+    }
+    var bb=document.getElementById('bellBadge'), u=proNotiUnread();
+    if(bb){ if(u>0){ bb.style.display='flex'; bb.textContent=u; } else bb.style.display='none'; }
+    var ma=document.getElementById('notiMarkAll'); if(ma) ma.style.display=u?'inline':'none';   // 미읽음 0이면 '모두 읽음' 숨김
+  }
+  function toggleNotiPop(e){ if(e) e.stopPropagation(); var p=document.getElementById('notiPop'); if(p) p.classList.toggle('on'); }
+  function closeNotiPop(){ var p=document.getElementById('notiPop'); if(p) p.classList.remove('on'); }
+  function proNotiOpen(i){ var n=proNotis[i]; if(!n) return; n.read=true; saveLS('pro.notis',proNotis); renderProNotis(); closeNotiPop();
+    var ri = n.cust ? reqs.map(function(r){return r.cust;}).indexOf(n.cust) : -1;   // 알림 → 해당 고객 거래 자세히보기
+    if(ri>=0) goQuote(ri); else goPanel('inbox'); }
+  function markAllProNoti(){ proNotis.forEach(function(n){ n.read=true; }); saveLS('pro.notis',proNotis); renderProNotis(); toast('모든 알림을 읽음 처리했어요'); }
+  document.addEventListener('click', function(e){ var p=document.getElementById('notiPop'); if(!p||!p.classList.contains('on')) return; var bell=document.querySelector('.navr .bell'); if(!p.contains(e.target) && !(bell&&bell.contains(e.target))) p.classList.remove('on'); });
 
   /* ===== 헤더: 알림·계정 ===== */
   function goPanel(p){ var a=document.querySelector('#smenu a[data-p="'+p+'"]'); if(a) nav(a); var m=document.getElementById('accMenu'); if(m) m.classList.remove('on'); }
@@ -359,7 +399,7 @@
     el.innerHTML='<div class="subhead">지금 응답이 필요해요 <span class="ucount">'+news.length+'건</span></div>'+
       news.map(function(r){ return reqTop(r, true); }).join('');
   }
-  function renderAll(){ renderStats(); renderUrgent(); renderCandidates(); renderRecent(); renderInbox(); renderReviews(); renderSettle(); renderProSupport(); }
+  function renderAll(){ renderStats(); renderUrgent(); renderCandidates(); renderRecent(); renderInbox(); renderReviews(); renderSettle(); renderProSupport(); renderProNotis(); }
   /* 요청 클릭 → 견적서 페이지로 이동(사이드 드로어 대신) */
   function goQuote(i){ location.href='pro-quote.html?req='+i+'&from='+curPanel(); }
 
