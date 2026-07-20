@@ -111,25 +111,25 @@
   var SMODE={online:'비대면', shopping:'대면', image:'대면'};   // 제공 방식(타입 고정) · 대면이면 활동지역
   /* 스타일리스트 = 다중 서비스(services[{type,price,dur,regions?}]). 코드 image로 통일 */
   var EX=[
-    {lock:32, nm:'소희', photo:'photos/p1.jpg', occ:['date','daily','personal'], rating:4.9, review:12, match:97, matches:132, tags:['미니멀','캐주얼','시크'],
+    {lock:32, nm:'소희', photo:'photos/p1.jpg', occ:['date','daily','personal'], rating:4.9, review:12, match:97, matches:9, tags:['미니멀','캐주얼','시크'],
       services:[{type:'online',price:90000},{type:'shopping',price:130000,regions:['서울 강남','서울 마포']},{type:'image',price:110000,regions:['서울 강남','서울 마포']}],
       bio:'데일리·소개팅룩 전문 스타일리스트<br>온라인 쇼핑몰 MD 출신으로<br>비대면 큐레이션이 강점이에요', reviews:[['비대면인데도 사이즈까지 딱 맞게 골라주셨어요','30세 · 소개팅룩'],['길게 설명 안 해도 취향을 바로 잡아주셔서 편했어요','27세 · 데일리']]},
-    {lock:47, nm:'건형', photo:'photos/p2.jpg', occ:['interview','bodycover'], rating:4.8, review:9, match:90, matches:88, tags:['클래식','시크','미니멀'],
+    {lock:47, nm:'건형', photo:'photos/p2.jpg', occ:['interview','bodycover'], rating:4.8, review:9, match:90, matches:8, tags:['클래식','시크','미니멀'],
       services:[{type:'image',price:190000,regions:['서울 강남','서울 종로']}],
       bio:'남성 이미지 컨설턴트<br>면접·오피스 첫인상을<br>헤어부터 셔츠 핏까지 정돈해드려요', reviews:[['면접관 시선까지 짚어주셔서 자신감이 생겼어요','29세 · 면접']]},
-    {lock:15, nm:'상민', photo:'photos/p3.jpg', occ:['wedding','interview'], rating:4.7, review:7, match:86, matches:64, tags:['클래식','시크','빈티지'],
+    {lock:15, nm:'상민', photo:'photos/p3.jpg', occ:['wedding','interview'], rating:4.7, review:7, match:86, matches:5, tags:['클래식','시크','빈티지'],
       services:[{type:'shopping',price:150000,regions:['서울 종로','경기 성남']}],
       bio:'포멀·하객룩 동행 쇼핑 전문<br>매장을 함께 돌며 체형에 맞는<br>옷을 현장에서 골라드려요', reviews:[['혼자였으면 못 골랐을 옷을 잘 맞게 찾아주셨어요','34세 · 결혼식']]},
-    {lock:52, nm:'지현', occ:['date','daily'], rating:4.8, review:8, match:93, matches:71, tags:['캐주얼','스포티','미니멀'],
+    {lock:52, nm:'지현', occ:['date','daily'], rating:4.8, review:8, match:93, matches:7, tags:['캐주얼','스포티','미니멀'],
       services:[{type:'online',price:98000},{type:'shopping',price:115000,regions:['서울 강남']}],
       bio:'가성비 데일리룩 큐레이터<br>합리적인 예산 안에서<br>실용적인 코디를 짜드려요', reviews:[['예산을 딱 지켜서 골라주셔서 좋았어요','26세 · 데일리']]},
-    {lock:63, nm:'유나', occ:['date','wedding','personal'], rating:5.0, review:6, match:95, matches:58, tags:['걸리시','시크','빈티지'],
+    {lock:63, nm:'유나', occ:['date','wedding','personal'], rating:5.0, review:6, match:95, matches:4, tags:['걸리시','시크','빈티지'],
       services:[{type:'online',price:145000}],
       bio:'트렌디 여성 스타일링 전문<br>시즌 무드를 반영한<br>감각적인 큐레이션이 강점이에요', reviews:[['유행을 잘 녹여주면서 과하지 않았어요','28세 · 하객룩']]},
-    {lock:71, nm:'세라', occ:['interview','wedding','bodycover'], rating:4.9, review:7, match:92, matches:66, tags:['클래식','시크','미니멀'],
+    {lock:71, nm:'세라', occ:['interview','wedding','bodycover'], rating:4.9, review:7, match:92, matches:6, tags:['클래식','시크','미니멀'],
       services:[{type:'image',price:175000,regions:['서울 강남','서울 용산']}],
       bio:'퍼스널컬러·이미지 컨설턴트<br>색과 실루엣으로 첫인상을<br>목적에 맞게 설계해드려요', reviews:[['퍼스널컬러까지 잡아주셔서 만족했어요','31세 · 면접']]},
-    {lock:84, nm:'태오', occ:['daily','travel'], rating:4.6, review:5, match:88, matches:43, tags:['캐주얼','스포티','스트리트'],
+    {lock:84, nm:'태오', occ:['daily','travel'], rating:4.6, review:5, match:88, matches:3, tags:['캐주얼','스포티','스트리트'],
       services:[{type:'shopping',price:130000,regions:['서울 마포','서울 용산']}],
       bio:'남성 캐주얼 동행 쇼핑 전문<br>매장을 함께 돌며 핏에 맞는<br>데일리 아이템을 골라드려요', reviews:[['혼자 사면 실패했을 옷을 잘 잡아주셨어요','33세 · 데일리']]}
   ];
@@ -239,26 +239,38 @@
   };
   var GO_TYPE = { 'mp-req':'quote', 'mp-support':'reply', 'shop':'news' };
   function notiType(n){ return n.type || GO_TYPE[n.go] || 'news'; }
-  var notis = loadLS('notis', [
-    {type:'quote', msg:'소희 스타일리스트가 견적을 보냈어요', time:'10분 전', read:false, go:'mp-req'},
+  var NOTI_SEED=[
+    {type:'quote', msg:'소희 스타일리스트가 견적을 보냈어요', time:'10분 전', read:false, req:3, ov:'bids'},
     {type:'reply', msg:'1:1 문의 답변이 등록됐어요', time:'1시간 전', read:false, go:'mp-support'},
-    {type:'news', msg:'새 스타일리스트가 합류했어요 · 매칭도를 확인해보세요', time:'어제', read:true, go:'shop'}
-  ]);
+    {type:'news', msg:'새 스타일리스트가 합류했어요', time:'어제', read:true, go:'shop'}
+  ];
+  var NOTI_VER=3;   // 문구 바뀌면 올려서 로컬 캐시 재시드
+  var notis = loadLS('notis', null);
+  if(!notis || loadLS('notisVer',0)!==NOTI_VER){ notis=JSON.parse(JSON.stringify(NOTI_SEED)); saveLS('notis',notis); saveLS('notisVer',NOTI_VER); }
   function notiUnread(){ return notis.filter(function(n){ return !n.read; }).length; }
-  function updateNotiDot(){ var d=document.getElementById('notiDot'); if(d) d.style.display=notiUnread()?'block':'none'; }
+  function updateNotiDot(){ var u=notiUnread();
+    var d=document.getElementById('notiDot'); if(d) d.style.display=u?'block':'none';
+    var ma=document.getElementById('notiMarkAll'); if(ma) ma.style.display=u?'inline':'none';   // 미읽음 0이면 '모두 읽음' 숨김
+  }
+  function notiItemHTML(n,i){ var t=notiType(n);
+    return '<a class="noti'+(n.read?'':' unread')+'" onclick="notiOpen('+i+')">'+
+      '<span class="noti-ic t-'+t+'">'+(NOTI_IC[t]||NOTI_IC.news)+'</span>'+
+      '<span class="noti-bd"><span class="noti-msg">'+esc(n.msg)+'</span><span class="noti-time">'+esc(n.time)+'</span></span>'+
+      '<span class="arr">›</span></a>';
+  }
   function renderNotis(){
-    var el=document.getElementById('notiList'); if(!el){ updateNotiDot(); return; }
-    if(!notis.length){ el.innerHTML='<div class="note">새 알림이 없어요</div>'; updateNotiDot(); return; }
-    el.innerHTML=notis.map(function(n,i){
-      var t=notiType(n);
-      return '<a class="noti'+(n.read?'':' unread')+'" onclick="notiOpen('+i+')">'+
-        '<span class="noti-ic t-'+t+'">'+(NOTI_IC[t]||NOTI_IC.news)+'</span>'+
-        '<span class="noti-bd"><span class="noti-msg">'+esc(n.msg)+'</span><span class="noti-time">'+esc(n.time)+'</span></span>'+
-        '<span class="arr">›</span></a>';
-    }).join('');
+    var el=document.getElementById('notiList');   // 마이 > 알림 페이지(전체)
+    if(el) el.innerHTML = notis.length ? notis.map(notiItemHTML).join('') : '<div class="note">새 알림이 없어요</div>';
+    var pop=document.getElementById('custNotiList');   // 헤더 벨 팝오버(최근 5개)
+    if(pop) pop.innerHTML = notis.length ? notis.slice(0,5).map(notiItemHTML).join('') : '<div class="notipop-empty">새 알림이 없어요</div>';
     updateNotiDot();
   }
-  function notiOpen(i){ var n=notis[i]; if(!n) return; n.read=true; saveLS('notis',notis); renderNotis();
+  function toggleNotiPop(e){ if(e) e.stopPropagation(); var p=document.getElementById('notiPop'); if(p) p.classList.toggle('on'); }
+  function closeNotiPop(){ var p=document.getElementById('notiPop'); if(p) p.classList.remove('on'); }
+  document.addEventListener('click', function(e){ var p=document.getElementById('notiPop'); if(!p||!p.classList.contains('on')) return; var bell=document.getElementById('navBell'); if(!p.contains(e.target) && !(bell&&bell.contains(e.target))) p.classList.remove('on'); });
+  /* 알림 클릭 → 읽음 + 해당 상세로. req 지정이면 받은 견적/요청 상세 오버레이, 아니면 소식·문의 패널 */
+  function notiOpen(i){ var n=notis[i]; if(!n) return; n.read=true; saveLS('notis',notis); renderNotis(); closeNotiPop();
+    if(typeof n.req==='number' && reqs[n.req]){ if(n.ov==='bids') openBids(n.req); else openReqDetail(n.req); return; }
     if(n.go==='shop') go('shop'); else if(n.go && document.querySelector('#smenu a[data-p="'+n.go+'"]')) goMy(n.go); }
   function markAllNoti(){ notis.forEach(function(n){ n.read=true; }); saveLS('notis',notis); renderNotis(); toast('모든 알림을 읽음 처리했어요'); }
 
@@ -371,16 +383,20 @@
     var el=document.getElementById('profCard'); if(!el) return; var U=USER;
     if(!_profEdit){
       el.innerHTML='<div class="mcard">'+
-        '<div class="msub"><div class="subhead">신체 · 선호 정보 <span class="pr half">◐ MVP</span></div>'+
+        '<div class="mcard-hd">프로필 <span>· 매칭·진단 관리</span></div>'+
+        '<div class="msub"><div class="subhead">신체 · 선호 정보</div>'+
+          '<div class="field"><span>이름</span><span class="v">'+esc(U.name)+'</span></div>'+
           '<div class="field"><span>성별 · 나이</span><span class="v">'+(U.gender==='female'?'여성':'남성')+' · <span class="num">'+U.age+'</span>세</span></div>'+
           '<div class="field"><span>키 · 몸무게</span><span class="v"><span class="num">'+U.height+'</span>cm · <span class="num">'+U.weight+'</span>kg</span></div>'+
           '<div class="field"><span>상의 핏 취향</span><span class="v">'+U.fitTop+'</span></div>'+
           '<div class="field"><span>하의 핏 취향</span><span class="v">'+U.fitBottom+'</span></div>'+
           '<div class="note">🔒 민감정보 · 편집 시 재진단을 추천해요</div></div>'+
-        '</div><div class="prof-actions"><button class="btn" onclick="editProfile()">수정하기</button></div>';
+        '</div><div class="prof-actions"><button class="btn" onclick="editProfile()">프로필 수정하기</button></div>';
     } else {
       el.innerHTML='<div class="mcard">'+
+        '<div class="mcard-hd">프로필 <span>· 매칭·진단 관리</span></div>'+
         '<div class="msub"><div class="subhead">신체 · 선호 정보</div>'+
+          '<div class="pedit"><label>이름</label><input class="inp" id="pName" value="'+esc(U.name)+'"></div>'+
           '<div class="pedit"><label>성별</label><div class="seg" id="pGender">'+['male','female'].map(function(g){return '<span class="o'+(U.gender===g?' on':'')+'" data-g="'+g+'" onclick="pPick(this)">'+(g==='male'?'남성':'여성')+'</span>';}).join('')+'</div></div>'+
           '<div class="pedit inrow3"><div><label>나이</label><input class="inp" id="pAge" type="number" value="'+U.age+'"></div><div><label>키(cm)</label><input class="inp" id="pHeight" type="number" value="'+U.height+'"></div><div><label>몸무게(kg)</label><input class="inp" id="pWeight" type="number" value="'+U.weight+'"></div></div>'+
           '<div class="pedit"><label>상의 핏 취향</label><div class="seg" id="pFitTop">'+FIT_OPTS.map(function(f){return '<span class="o'+(U.fitTop===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div>'+
@@ -388,12 +404,12 @@
           '<div class="note" style="color:var(--warn)">⚠️ 신체정보를 바꾸면 재진단을 추천해요</div></div>'+
         '</div><div class="prof-actions"><button class="btn ghost" onclick="cancelProfile()">취소</button><button class="btn" onclick="saveProfile()">저장하기</button></div>';
     }
-    var an=document.getElementById('acctName'); if(an) an.textContent=U.name;   // 이름은 계정 섹션에 표시(신원)
   }
   function editProfile(){ _profEdit=true; renderProfile(); }
   function cancelProfile(){ _profEdit=false; renderProfile(); }
   function pPick(el){ var ch=el.parentNode.children; for(var i=0;i<ch.length;i++) ch[i].classList.remove('on'); el.classList.add('on'); }
   function saveProfile(){
+    var nm=document.getElementById('pName'); if(nm&&nm.value.trim()) USER.name=nm.value.trim();
     var g=document.querySelector('#pGender .o.on'); if(g) USER.gender=g.dataset.g;
     var a=document.getElementById('pAge'), h=document.getElementById('pHeight'), w=document.getElementById('pWeight');
     if(a&&a.value) USER.age=+a.value; if(h&&h.value) USER.height=+h.value; if(w&&w.value) USER.weight=+w.value;
@@ -534,7 +550,7 @@
     }
     var html =
       group(open,'open',ICON_RECV,'받은 견적', reqCardOpen, '여러 스타일리스트가 보낸 견적 · 비교하고 선택',
-        '아직 없어요 · <a onclick="go(\'shop\');openMatch()">견적 요청 보내기</a>', true) +
+        '아직 없어요 · <a onclick="go(\'shop\');openMatch()">견적 요청하기</a>', true) +
       group(named,'named',ICON_SENT,'보낸 요청', reqCardNamed, '내가 지명한 스타일리스트에게 직접 · 진행 확인',
         '아직 없어요 · <a onclick="go(\'shop\')">스타일리스트 찾아 요청하기</a>');
     if(notify.length) html += '<div class="reqgroup"><div class="rghead alert"><span class="rgicon">'+ICON_BELL+'</span>'+
@@ -564,7 +580,11 @@
      나머지 입찰은 자동 탈락. 입찰 데이터는 요청(reqs[i].bids)에 고정 저장됨. */
   var _bidReq=-1, _ovMode=null;
   /* 스크롤 잠금 — 스크롤바가 사라지며 폭이 바뀌지 않게 사라진 스크롤바 폭만큼 body에 패딩 보정(사이드바 밀림 방지) */
-  function lockScroll(on){ document.documentElement.style.overflow = on ? 'hidden' : ''; }
+  /* 배경 스크롤 잠금 — 스크롤바가 사라지며 화면이 밀리는 것 방지: 사라진 스크롤바 폭만큼 padding으로 보정 */
+  function lockScroll(on){ var h=document.documentElement;
+    /* scrollbar-gutter:stable가 스크롤바 자리를 늘 예약 → overflow만 토글. paddingRight 보정을 넣으면 자리가 이중 예약돼 콘텐츠가 왼쪽으로 밀림 */
+    h.style.overflow = on ? 'hidden' : '';
+  }
   // 독립 전체 페이지: 상단 내비 아래를 덮고 배경 스크롤 잠금(사이드바 없이 집중)
   function showOverlay(){ document.getElementById('bidsOverlay').classList.add('on'); lockScroll(true); document.getElementById('bidsOverlay').scrollTop=0; saveNav(); }
   function openBids(i){ _bidReq=i; _ovMode='bids'; renderBids(); showOverlay(); }              // 받은 견적(오픈)
@@ -644,7 +664,7 @@
   function reqActions(r,i){ var s=r.status;
     if(s==='대기') return '<div class="rq-btns"><button class="tinybtn ghost" onclick="confirmCancel('+i+')">요청 취소</button>'+
       '<button class="tinybtn ghost" onclick="reqReject('+i+')">거절 · 데모</button><button class="tinybtn" onclick="reqAccept('+i+')">수락 · 데모</button></div>';
-    if(s==='결제대기') return '<div class="rq-btns"><button class="tinybtn key" onclick="openPay('+i+')">결제하고 시작 →</button></div>';
+    if(s==='결제대기') return '<div class="rq-btns"><button class="tinybtn key" onclick="openPay('+i+')">결제하고 시작하기 →</button></div>';
     if(s==='진행중') return '';   // 진행 액션(완료 확인)은 progressSectionsHTML(대화·결과물 하단)에서 처리
     if(s==='완료'){ if(r._reviewing) return reviewForm(r,i); return '<button class="btn key" style="width:100%;margin-top:14px" onclick="openReviewForm('+i+')">후기 작성하기</button>'; }
     if(s==='후기완료'){ var rv=r.review||{}; return '<div class="reqact"><div class="revshow"><span class="starsRO">'+starsRO(rv.rating||5)+'</span> <span class="rtx">"'+(rv.text||'')+'"</span></div></div>'; }
@@ -940,7 +960,7 @@
     var title=[svcLabel(r.svc), (r.occ&&r.occ.length?r.occ.join('·'):'')].filter(Boolean).join(' · ') || svcLabel(r.svc);
     var dealOn=custDealStarted(r.status);
     var head='<div class="bids-head" style="display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-right:0">'+
-      '<div style="min-width:0"><span class="crumb-back" onclick="closeBids()">‹ 요청 내역</span>'+
+      '<div style="min-width:0"><button class="backbtn" onclick="closeBids()" aria-label="요청 내역으로" title="요청 내역으로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>'+
       '<h2>'+esc(title)+'</h2>'+
       '<p>'+(r.open?'받은 견적':'보낸 요청')+(r.date?' · '+r.date+' 요청':'')+'</p></div>'+
       (dealOn?chatOpenBtnCust():'')+'</div>';
@@ -981,7 +1001,7 @@
           '<div class="rs-row" style="border-top:1px solid var(--line);margin-top:2px;padding-top:11px"><span style="font-weight:800;color:var(--ink)">결제 금액</span><b class="num" style="color:var(--green);font-size:17px">'+price.toLocaleString()+'원</b></div>'+
         '</div>'+
         '<div class="statban go" style="margin-top:12px"><span class="sb-ic">'+stIcon('lock')+'</span><div class="sb-tx"><b>안전결제</b><p>완료 전까진 핏팅이 결제금을 보관해요</p></div></div>'+
-        '<button class="btn key" style="width:100%;margin-top:12px" onclick="openPay('+i+')">'+price.toLocaleString()+'원 결제하고 시작 →</button></div>'; }
+        '<button class="btn key" style="width:100%;margin-top:12px" onclick="openPay('+i+')">'+price.toLocaleString()+'원 결제하기 →</button></div>'; }
     if(s==='거절'){
       return '<div class="rq-sec"><div class="rq-h">요청 결과</div>'+
         '<p class="rq-guide">아쉽게도 요청이 거절되었어요 · 다른 스타일리스트를 찾아볼까요?</p>'+
@@ -1004,7 +1024,7 @@
     var r=reqs[_bidReq]; if(!r){ closeBids(); return; }
     var bids=(r.bids||[]).slice();
     bids.sort(function(a,b){ return EX[b.idx].matches-EX[a.idx].matches; });   // 매칭도 높은 순 고정
-    var back = r.awarded ? '<button class="bids-back" onclick="openReqDetail('+_bidReq+')">‹ 진행 상황</button>' : '';
+    var back = r.awarded ? '<button class="backbtn" onclick="openReqDetail('+_bidReq+')" aria-label="진행 상황으로" title="진행 상황으로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>' : '';
     var badge = r.awarded ? '' : '<span class="reqtype open">견적 요청 결과</span>';   // 지난 견적: 뒤로가기만 (배지 중복 제거)
     var head='<div class="bids-head"><button class="xbtn" onclick="closeBids()">✕</button>'+ back + badge +
       '<h2>'+(r.awarded?'지난 견적':'받은 견적')+'</h2>'+
@@ -1251,7 +1271,7 @@
     var svcCards=e.services.map(function(sv){ var meta=SMODE[sv.type]+(sv.regions&&sv.regions.length?' · '+sv.regions.join('·'):'');
       return '<div class="svctile"><span class="svct-ic">'+svcIcon(sv.type)+'</span><b class="svct-nm">'+SVC[sv.type]+'</b><span class="svct-mode">'+meta+'</span><div class="svct-pr"><span class="num">'+sv.price.toLocaleString()+'</span>원</div></div>'; }).join('');
     var folioHTML=(e.portfolio&&e.portfolio.length?e.portfolio:DEMO_FOLIO).map(function(p){ var s=folioSpec(p); return '<div style="background-image:url(\''+p.src+'\')">'+(s?'<span class="pspec">'+s+'</span>':'')+'</div>'; }).join('');
-    return '<div class="detailbody"><a class="back" onclick="'+opts.back+'">← 뒤로</a>'+
+    return '<div class="detailbody"><button class="backbtn" onclick="'+opts.back+'" aria-label="뒤로" title="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>'+
       '<div class="dhero">'+
         '<div class="dhero-img"><img src="'+img(e)+'" onerror="'+FB+'"><span class="dside-match">매칭 '+e.matches+'회</span></div>'+
         '<div class="dhero-info">'+
@@ -1318,7 +1338,7 @@
     var SNM={online:'온라인 스타일링', shopping:'동행 쇼핑', image:'이미지 컨설팅'};
     var svc3=e.services.map(function(sv,i){ return '<div class="s '+(i===0?'on':'')+'" data-v="'+sv.type+'" onclick="pickSvc(this)"><div class="i">'+svcIcon(sv.type)+'</div><b>'+SNM[sv.type]+'</b><span class="p num">'+sv.price.toLocaleString()+'</span></div>'; }).join('');
     document.getElementById('requestView').innerHTML=
-      '<a class="back" onclick="openDetail('+idx+')">← 뒤로</a>'+
+      '<button class="backbtn" onclick="openDetail('+idx+')" aria-label="뒤로" title="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>'+
       '<div class="reqsplit">'+
         '<div class="reqside">'+
           '<div class="reqside-img"><img src="'+img(e)+'" onerror="'+FB+'"><span class="dside-match">매칭 '+e.matches+'회</span></div>'+
@@ -1330,7 +1350,7 @@
         '<div class="reqmain">'+
           '<h1>견적 요청</h1><p class="lead">조건을 남기면 이 스타일리스트가 검토하고 제안(견적)을 보내드려요</p>'+
           reqFormHTML(svc3, null, true)+
-          '<button class="btn full" id="reqBtn" disabled style="margin-top:22px" onclick="confirmMatch()">견적 요청 보내기</button>'+
+          '<button class="btn full" id="reqBtn" disabled style="margin-top:22px" onclick="confirmMatch()">견적 요청하기</button>'+
           '<p class="reqhint" id="reqHint">상황·일정을 입력하면 보낼 수 있어요</p>'+
         '</div>'+
       '</div>';
@@ -1344,11 +1364,11 @@
     var SNM={online:'온라인 스타일링',shopping:'동행 쇼핑',image:'이미지 컨설팅'};
     var svc3=['online','shopping','image'].map(function(v){ return '<div class="s '+(v==='online'?'on':'')+'" data-v="'+v+'" onclick="pickSvc(this)"><div class="i">'+svcIcon(v)+'</div><b>'+SNM[v]+'</b></div>'; }).join('');
     document.getElementById('requestView').innerHTML=
-      '<a class="back" onclick="showOnly(\'listView\')">← 목록으로</a>'+
+      '<button class="backbtn" onclick="showOnly(\'listView\')" aria-label="목록으로" title="목록으로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>'+
       '<div class="reqpage">'+
       '<h1>견적 요청</h1><p class="lead">조건을 남기면 <b style="color:var(--ink)">여러 스타일리스트가 견적</b>을 보내요</p>'+
       reqFormHTML(svc3)+
-      '<button class="btn full" id="reqBtn" disabled style="margin-top:22px" onclick="confirmMatch()">견적 요청 보내기</button>'+
+      '<button class="btn full" id="reqBtn" disabled style="margin-top:22px" onclick="confirmMatch()">견적 요청하기</button>'+
       '<p class="reqhint" id="reqHint">상황·예산·일정을 모두 입력하면 보낼 수 있어요</p></div>';
     closeAll(); showOnly('requestView'); validate();
   }
@@ -1436,6 +1456,10 @@
 
   /* ===== 전역 이벤트 ===== */
   document.addEventListener('click', closeDD);
+  /* 헤더 아바타 드롭다운(마이페이지·로그아웃) */
+  window.toggleUserMenu=function(e){ if(e) e.stopPropagation(); var m=document.getElementById('userMenu'); if(m) m.classList.toggle('on'); };
+  window.closeUserMenu=function(){ var m=document.getElementById('userMenu'); if(m) m.classList.remove('on'); };
+  document.addEventListener('click', function(e){ var m=document.getElementById('userMenu'); if(!m||!m.classList.contains('on')) return; var u=document.getElementById('navUser'); if(!m.contains(e.target) && !(u&&u.contains(e.target))) m.classList.remove('on'); });
   document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeConfirm(); closeAll(); closeDD(); closeBids(); } });
   // MVP(api): 스타일리스트찾기 = '준비 중 · 오픈 알림' 웨이트리스트로 통일(목업 목록/견적 미노출 · 리텐션은 탭 유지+알림).
   // 진입(상단 탭·홈 CTA·진단 후 결과 게이트) 전부 이 뷰로. 수요 = 알림 신청(saveLead notify).

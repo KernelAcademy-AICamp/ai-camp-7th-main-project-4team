@@ -6,25 +6,29 @@
 <title>fitting · 스타일리스트 지원 (공급자)</title>
 <!-- 스타일리스트(공급자) 포털 시작 구조(스캐폴딩). 페르소나: 소희 스타일리스트.
      고객 측(index.html)의 요청 라이프사이클과 대칭 — 실제 연동은 v2에서 같은 요청 레코드 공유. -->
-<link rel="stylesheet" href="css/tokens.css?v=10fb5117">
+<link rel="stylesheet" href="css/tokens.css?v=4a4e8b7c">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/pro.css?v=59920d46">
+<link rel="stylesheet" href="css/pro.css?v=d4b84e60">
 </head>
 <body>
 
 <header><div class="nav">
-  <span class="logo" style="cursor:pointer" onclick="location.href='index.html'">Fitting<i class="sq"></i></span>
+  <span class="logo" style="cursor:pointer" onclick="goPanel('dash')">Fitting<i class="sq"></i></span>
   <div class="navr">
     <span class="cust" onclick="location.href='index.html'">← 고객 화면</span>
     <span class="navdiv"></span>
-    <span class="bell" onclick="goPanel('inbox')" title="알림" aria-label="알림"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 4.6-1.9 6-1.9 6h15.8s-1.9-1.4-1.9-6z"/><path d="M10.2 18.5a2 2 0 0 0 3.6 0"/></svg><span class="bell-badge" id="bellBadge" style="display:none">0</span></span>
+    <span class="bell" onclick="toggleNotiPop(event)" title="알림" aria-label="알림"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 4.6-1.9 6-1.9 6h15.8s-1.9-1.4-1.9-6z"/><path d="M10.2 18.5a2 2 0 0 0 3.6 0"/></svg><span class="bell-badge" id="bellBadge" style="display:none">0</span></span>
     <span class="navdiv"></span>
     <span class="me" onclick="toggleAccMenu(event)"><span class="navav"><img id="hdrAvatar" src="photos/p1.jpg" alt="프로필 사진" onerror="this.style.visibility='hidden'"></span><span id="hdrName">소희 스타일리스트</span></span>
   </div>
   <div class="accmenu" id="accMenu">
     <a onclick="goPanel('profile')">내 프로필</a>
     <a onclick="logout()">로그아웃</a>
+  </div>
+  <div class="notipop" id="notiPop">
+    <div class="notipop-hd">알림 <a id="notiMarkAll" onclick="markAllProNoti()">모두 읽음</a></div>
+    <div class="notipop-list" id="proNotiList"></div>
   </div>
 </div></header>
 
@@ -50,25 +54,23 @@
   <main>
     <!-- 대시보드 -->
     <section class="panel on" id="dash">
-      <div class="crumb">스타일리스트 지원 · 대시보드</div>
       <h1 id="dashHello">안녕하세요, 소희 스타일리스트님</h1>
       <p class="lead">오늘의 요청과 진행 현황이에요</p>
-      <div class="stats" id="dashStats"></div>
-      <div class="card urgent" id="dashUrgent"></div>
-      <div class="card"><div class="subhead">최근 요청</div><div id="dashRecent"></div></div>
+      <div class="stats2" id="dashStats"></div>
+      <div class="card" id="dashUrgent" style="margin-bottom:16px"></div>
+      <div class="card"><div class="subhead">진행 중인 코디</div><div id="dashRecent"></div></div>
     </section>
 
     <!-- 요청함 -->
     <section class="panel" id="inbox">
-      <div class="crumb">스타일리스트 지원 · 요청 내역</div>
       <h1>요청 내역</h1>
-      <p class="lead">고객이 보낸 견적 요청을 검토하고 제안을 보내세요</p>
+      <p class="lead">고객이 보낸 요청을 <b style="color:var(--ink)">확인하고 관리</b>하세요</p>
       <div class="card">
         <div class="rghead"><span class="rgicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/><path d="M8 11l4 4 4-4"/><path d="M12 3.5v11.5"/></svg></span><div class="rgtx"><b>새 요청</b><p>고객의 견적 요청</p></div><span class="rgcount"><span class="num" id="cntNew">0</span>건</span></div>
         <div id="inboxNewList"></div>
       </div>
       <div class="card" style="margin-top:16px">
-        <div class="rghead"><span class="rgicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3.2 2"/></svg></span><div class="rgtx"><b>진행 중</b><p>진행 중인 코디</p></div><span class="rgcount"><span class="num" id="cntProg">0</span>건</span></div>
+        <div class="rghead"><span class="rgicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3.2 2"/></svg></span><div class="rgtx"><b>진행 중</b><p>진행 중인 코디</p></div><span class="rgcount prog"><span class="num" id="cntProg">0</span>건</span></div>
         <div id="inboxProgList"></div>
       </div>
       <div class="card" id="inboxDoneCard" style="margin-top:16px">
@@ -79,9 +81,8 @@
 
     <!-- 견적 보내기 -->
     <section class="panel" id="propose">
-      <div class="crumb">스타일리스트 지원 · 견적 보내기</div>
       <h1>견적 보내기</h1>
-      <p class="lead">고객이 올린 <b style="color:var(--ink)">공개 요청</b>에 내가 먼저 견적을 보내는 곳이에요 · 요청 내역과 반대 방향</p>
+      <p class="lead"><b style="color:var(--ink)">공개 요청</b>에 먼저 견적을 보내세요</p>
       <div class="card" id="dashCandCard">
         <div class="rghead"><span class="rgicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18z"/></svg></span><div class="rgtx"><b>공개 요청</b><p>내가 먼저 보낼 열린 요청</p></div><span class="rgcount"><span class="num" id="cntCand">0</span>건</span></div>
         <div id="dashCand"></div>
@@ -94,102 +95,141 @@
 
     <!-- 내 프로필 -->
     <section class="panel" id="profile">
-      <div class="crumb">스타일리스트 지원 · 내 프로필</div>
       <h1>내 프로필</h1>
-      <p class="lead">고객에게 보이는 프로필이에요 · <b style="color:var(--ink)">프로필이 곧 첫인상</b>이에요</p>
+      <p class="lead">고객에게 <b style="color:var(--ink)">노출되는 프로필</b>을 관리하세요</p>
+      <div class="pfnudge" id="pfNudge" style="display:none" onclick="editProfile()">
+        <span class="pfnudge-ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.7 5.6L19.5 9l-5.8 1.4L12 16l-1.7-5.6L4.5 9l5.8-1.4L12 2z"/></svg></span>
+        <div class="pfnudge-tx"><b>프로필을 마저 채워보세요</b><span>소개·전문 분야·포트폴리오를 채우면 고객에게 더 잘 보여요</span></div>
+        <span class="pfnudge-edit" title="프로필 수정하기" aria-label="프로필 수정하기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></span>
+      </div>
       <!-- 보기 모드 -->
-      <div class="card" id="profileView">
-        <div class="subhead">기본 정보</div>
-        <div class="field"><span>이름</span><span class="v" id="pfName">소희 스타일리스트</span></div>
-        <div class="field" style="align-items:flex-start"><span>전문 분야</span><span class="v" id="pfFields"></span></div>
-        <div class="field" style="align-items:flex-start"><span>전문 스타일</span><span class="v" id="pfStyles"></span></div>
-        <div class="subhead">서비스·가격</div>
-        <div class="svclist" id="pfServices"></div>
-        <div class="subhead">소개</div>
-        <p id="pfBio" style="font-size:14px;color:var(--ink-soft);line-height:1.6;padding-bottom:16px">데일리·소개팅룩 전문 스타일리스트 · 온라인 쇼핑몰 MD 출신으로 비대면 큐레이션이 강점이에요</p>
-        <div class="subhead">포트폴리오</div>
-        <div class="pgal" id="pgal"></div>
-        <div style="padding:18px 0 6px"><button class="tinybtn" onclick="editProfile()">프로필 편집</button></div>
+      <div class="card ef" id="profileView">
+        <div class="sec">
+          <div class="sechead"><div class="sectitle">기본 정보</div></div>
+          <div class="secfields">
+            <div class="pfhero">
+              <div class="pfnk" id="pfName">소희 스타일리스트</div>
+              <div class="pfrole" id="pfRole">온라인 스타일링</div>
+              <div class="pfgrp"><div class="glab">전문 분야</div><div class="v" id="pfFields"></div></div>
+              <div class="pfgrp"><div class="glab">전문 스타일</div><div class="v" id="pfStyles"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="sec">
+          <div class="sechead"><div class="sectitle">서비스·가격</div></div>
+          <div class="secfields"><div class="svclist" id="pfServices"></div></div>
+        </div>
+        <div class="sec">
+          <div class="sechead"><div class="sectitle">소개</div></div>
+          <div class="secfields"><p id="pfBio" style="font-size:14px;color:var(--ink-soft);line-height:1.6;margin:0">데일리·소개팅룩 전문 스타일리스트 · 온라인 쇼핑몰 MD 출신으로 비대면 큐레이션이 강점이에요</p></div>
+        </div>
+        <div class="sec">
+          <div class="sechead"><div class="sectitle">포트폴리오</div></div>
+          <div class="secfields"><div class="pgal" id="pgal"></div></div>
+        </div>
+        <div style="padding-top:20px;display:flex;justify-content:flex-end"><button class="tinybtn" onclick="editProfile()">프로필 수정하기</button></div>
       </div>
 
       <!-- 편집 모드 -->
       <div class="card ef" id="profileEdit" style="display:none">
-        <div class="subhead">프로필 편집</div>
-        <div class="edavatar">
-          <img id="edAvatarPreview" src="photos/p1.jpg" alt="" onerror="this.style.visibility='hidden'">
-          <div class="edavatar-act">
-            <button class="tinybtn ghost" onclick="document.getElementById('edAvatarFile').click()">프로필 사진 변경</button>
-            <button class="tinybtn ghost" onclick="edRemoveAvatar()">기본으로</button>
-            <div class="efhint" style="margin-top:6px">고객에게 가장 먼저 보이는 얼굴이에요</div>
+        <!-- ① 기본 정보 -->
+        <div class="sec">
+          <div class="sechead"><div class="sectitle">기본 정보</div><div class="secdesc">고객에게 보여질 이름과 프로필을 설정하세요</div></div>
+          <div class="secfields">
+            <div class="idrow">
+              <div class="avacol">
+                <img id="edAvatarPreview" src="photos/p1.jpg" alt="프로필 사진" onerror="this.style.visibility='hidden'">
+              </div>
+              <div class="idcol">
+                <label class="efl">닉네임</label>
+                <input class="efin" id="edName" type="text" placeholder="예: 소희 스타일리스트">
+                <div class="edavatar-act">
+                  <button class="tinybtn ghost" onclick="document.getElementById('edAvatarFile').click()">프로필 사진 변경</button>
+                  <a class="avreset" onclick="edRemoveAvatar()">기본 이미지로 되돌리기</a>
+                </div>
+                <input type="file" id="edAvatarFile" accept="image/*" style="display:none" onchange="edOnAvatar(event)">
+              </div>
+            </div>
+          </div></div>
+
+        <!-- ② 전문성 -->
+        <div class="sec">
+          <div class="sechead"><div class="sectitle">전문성</div><div class="secdesc">활동 분야와 스타일을 선택하세요</div></div>
+          <div class="secfields">
+          <label class="efl">전문 분야 <span id="edFieldCnt" style="color:var(--green)">0/3</span> <small style="font-weight:600;color:var(--sub2)">· 최대 3개</small></label>
+          <div class="eftags" id="edFields"></div>
+          <label class="efl">전문 스타일 <span id="edStyleCnt" style="color:var(--green)">0/3</span> <small style="font-weight:600;color:var(--sub2)">· 최대 3개</small></label>
+          <div class="eftags" id="edStyles"></div>
+        </div></div>
+
+        <!-- ③ 서비스·가격 -->
+        <div class="sec">
+          <div class="sechead"><div class="sectitle">서비스·가격</div><div class="secdesc">제공 서비스와 가격을 설정하세요</div></div>
+          <div class="secfields">
+          <div class="esvc" id="edSvcOnline">
+            <label class="etog"><input type="checkbox" id="edOnlineOn" onchange="edToggleSvc()"> 온라인 스타일링</label>
+            <input class="epr" id="edOnlinePrice" type="number"><span class="won">원</span>
           </div>
-          <input type="file" id="edAvatarFile" accept="image/*" style="display:none" onchange="edOnAvatar(event)">
-        </div>
-        <label class="efl">활동명 (고객에게 보여요)</label>
-        <input class="efin" id="edName" type="text" placeholder="예: 소희 스타일리스트">
+          <div class="esvc" id="edSvcShopping">
+            <label class="etog"><input type="checkbox" id="edShoppingOn" onchange="edToggleSvc()"> 동행 쇼핑</label>
+            <input class="epr" id="edShoppingPrice" type="number"><span class="won">원</span>
+          </div>
+          <div class="esvcreg" id="edRegBlock_shopping" style="display:none">
+            <label class="efl" style="margin:0 0 7px">활동 지역 <small style="font-weight:600;color:var(--sub2)">· 필수</small></label>
+            <div class="eftags" id="edRegTags_shopping"></div>
+            <div class="eftagadd"><input class="efin" id="edRegInput_shopping" type="text" placeholder="지역 입력 후 추가 (예: 서울 강남)"><button class="tinybtn ghost" onclick="edAddRegion('shopping')">추가</button></div>
+          </div>
+          <div class="esvc" id="edSvcImaging">
+            <label class="etog"><input type="checkbox" id="edImagingOn" onchange="edToggleSvc()"> 이미지 컨설팅</label>
+            <input class="epr" id="edImagingPrice" type="number"><span class="won">원</span>
+          </div>
+          <div class="esvcreg" id="edRegBlock_image" style="display:none">
+            <label class="efl" style="margin:0 0 7px">활동 지역 <small style="font-weight:600;color:var(--sub2)">· 필수</small></label>
+            <div class="eftags" id="edRegTags_image"></div>
+            <div class="eftagadd"><input class="efin" id="edRegInput_image" type="text" placeholder="지역 입력 후 추가 (예: 서울 강남)"><button class="tinybtn ghost" onclick="edAddRegion('image')">추가</button></div>
+          </div>
+          <div class="efhint">최소 1개 서비스를 등록해야 저장할 수 있어요</div>
+        </div></div>
 
-        <label class="efl">서비스 유형별 가격 (제공할 유형을 켜고 가격 입력)</label>
-        <div class="esvc" id="edSvcOnline">
-          <label class="etog"><input type="checkbox" id="edOnlineOn" onchange="edToggleSvc()"> 온라인 스타일링</label>
-          <input class="epr" id="edOnlinePrice" type="number"><span class="won">원</span>
-        </div>
-        <div class="esvc" id="edSvcShopping">
-          <label class="etog"><input type="checkbox" id="edShoppingOn" onchange="edToggleSvc()"> 동행 쇼핑</label>
-          <input class="epr" id="edShoppingPrice" type="number"><span class="won">원</span>
-        </div>
-        <div class="esvcreg" id="edRegBlock_shopping" style="display:none">
-          <label class="efl" style="margin:0 0 7px">활동 지역 <small style="font-weight:600;color:var(--sub2)">· 텍스트로 입력하면 태그로 추가</small></label>
-          <div class="eftags" id="edRegTags_shopping"></div>
-          <div class="eftagadd"><input class="efin" id="edRegInput_shopping" type="text" placeholder="지역 입력 후 추가 (예: 서울 강남)"><button class="tinybtn ghost" onclick="edAddRegion('shopping')">추가</button></div>
-        </div>
-        <div class="esvc" id="edSvcImaging">
-          <label class="etog"><input type="checkbox" id="edImagingOn" onchange="edToggleSvc()"> 이미지 컨설팅</label>
-          <input class="epr" id="edImagingPrice" type="number"><span class="won">원</span>
-        </div>
-        <div class="esvcreg" id="edRegBlock_image" style="display:none">
-          <label class="efl" style="margin:0 0 7px">활동 지역 <small style="font-weight:600;color:var(--sub2)">· 텍스트로 입력하면 태그로 추가</small></label>
-          <div class="eftags" id="edRegTags_image"></div>
-          <div class="eftagadd"><input class="efin" id="edRegInput_image" type="text" placeholder="지역 입력 후 추가 (예: 서울 강남)"><button class="tinybtn ghost" onclick="edAddRegion('image')">추가</button></div>
-        </div>
-        <div class="efhint">최소 1개 유형을 켜야 저장돼요. 대면 서비스(동행 쇼핑·이미지 컨설팅)는 활동 지역을 입력하세요.</div>
+        <!-- ④ 소개 -->
+        <div class="sec">
+          <div class="sechead"><div class="sectitle">소개</div><div class="secdesc">나를 소개하는 한두 문장을 작성하세요</div></div>
+          <div class="secfields">
+          <input class="efin" id="edTagline" type="text" placeholder="예: 데일리·소개팅룩 전문, 비대면 큐레이션이 강점이에요">
+        </div></div>
 
-        <label class="efl">소개</label>
-        <input class="efin" id="edTagline" type="text" placeholder="예: 데일리·소개팅룩 전문, 비대면 큐레이션이 강점이에요">
+        <!-- ⑤ 포트폴리오 -->
+        <div class="sec">
+          <div class="sechead"><div class="sectitle">포트폴리오</div><div class="secdesc">스타일을 보여줄 사진을 등록하세요</div></div>
+          <div class="secfields">
+          <div class="eplist" id="edPgal"></div>
+          <input type="file" id="edFile" accept="image/*" multiple style="display:none" onchange="edOnFiles(event)">
+        </div></div>
 
-        <label class="efl">전문 분야 <span id="edFieldCnt" style="color:var(--green)">0/3</span> <small style="font-weight:600;color:var(--sub2)">· 최대 3개</small></label>
-        <div class="eftags" id="edFields"></div>
-        <label class="efl">전문 스타일 <span id="edStyleCnt" style="color:var(--green)">0/3</span> <small style="font-weight:600;color:var(--sub2)">· 최대 3개</small></label>
-        <div class="eftags" id="edStyles"></div>
-
-        <label class="efl">포트폴리오 (최대 8장 — 사진마다 착용 모델 키·몸무게 입력)</label>
-        <div class="eplist" id="edPgal"></div>
-        <input type="file" id="edFile" accept="image/*" multiple style="display:none" onchange="edOnFiles(event)">
-
-        <div class="efbtns"><button class="tinybtn ghost" onclick="cancelEdit()">취소</button><button class="tinybtn" onclick="saveProfile()">저장</button></div>
+        <div class="efbtns"><button class="tinybtn ghost" onclick="cancelEdit()">취소</button><button class="tinybtn" onclick="saveProfile()">저장하기</button></div>
       </div>
     </section>
 
     <!-- 받은 후기 -->
     <section class="panel" id="reviews">
-      <div class="crumb">스타일리스트 지원 · 받은 후기</div>
       <h1>받은 후기</h1>
-      <p class="lead">완료된 코디에 고객이 남긴 후기예요</p>
-      <div class="card"><div class="subhead">후기</div><div id="reviewList"></div></div>
+      <p class="lead">고객이 남긴 <b style="color:var(--ink)">후기를 확인</b>하세요</p>
+      <div class="card revsum" id="reviewSummary" style="display:none"></div>
+      <div class="card" style="margin-top:16px"><div class="subhead">상세 후기</div><div id="reviewList"></div></div>
     </section>
 
     <!-- 정산 -->
     <section class="panel" id="settle">
-      <div class="crumb">스타일리스트 지원 · 정산</div>
       <h1>정산</h1>
-      <p class="lead">완료된 서비스의 수익과 정산 내역이에요</p>
+      <p class="lead">완료된 서비스의 <b style="color:var(--ink)">수익과 정산 내역</b>이에요</p>
       <div class="stats" id="settleStats" style="grid-template-columns:repeat(3,1fr)"></div>
       <div class="card"><div class="subhead">정산 내역</div><div id="settleList"></div></div>
     </section>
 
     <!-- 지원·문의 (전문가 CS · IA 2.x) — 스타일리스트가 플랫폼 운영에 1:1 문의 -->
     <section class="panel" id="support">
-      <div class="crumb">스타일리스트 지원 · 지원·문의</div>
       <h1>지원·문의</h1>
-      <p class="lead">정산·거래·심사 등 운영에 궁금하거나 문제가 있으면 <b style="color:var(--ink)">1:1로 문의</b>하세요 · 보통 1영업일 안에 답변드려요</p>
+      <p class="lead">정산·거래·심사 관련 문의를 <b style="color:var(--ink)">1:1</b>로 남겨보세요</p>
       <div class="card ef">
         <div class="subhead">새 문의</div>
         <label class="efl">문의 유형</label>
@@ -203,7 +243,7 @@
         </select>
         <label class="efl">내용</label>
         <textarea class="efin" id="supText" rows="4" placeholder="문의 내용을 적어주세요 · 거래 관련이면 고객명·일자를 함께 적으면 빨라요"></textarea>
-        <div style="padding-top:12px"><button class="tinybtn" onclick="submitProSupport()">문의 접수</button></div>
+        <div style="padding-top:12px;display:flex;justify-content:flex-end"><button class="tinybtn" onclick="submitProSupport()">문의 접수</button></div>
       </div>
       <div class="card" style="margin-top:16px"><div class="subhead">내 문의 내역</div><div id="supList"></div></div>
     </section>
@@ -219,6 +259,6 @@
 <div class="avlightbox" id="avLightbox" onclick="closeAvatar()"><img id="avLightboxImg" src="" alt="프로필 사진"></div>
 <div class="toast" id="toast"></div>
 
-<script src="js/pro.js?v=726aa38b"></script>
+<script src="js/pro.js?v=755308cf"></script>
 </body>
 </html>

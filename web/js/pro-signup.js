@@ -7,12 +7,12 @@
   function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2000); }
 
   /* 이미 가입한 스타일리스트면 온보딩 건너뛰고 포털로 (재방문 처리, 화면정의서 SP-1) */
-  (function(){ var p=loadLS('pro.profile',null); if(p&&p.registered){ location.replace('pro.html'); } })();
+  (function(){ var p=loadLS('pro.profile',null); if(p&&p.registered && !/[?&]preview/.test(location.search)){ location.replace('pro.html'); } })();
 
   var STEPS=6;               // 0~5
   var cur=0;
   var TAG_PRESETS=['데일리룩','소개팅룩','미니멀','오피스','하객룩','캐주얼','스트릿','미니멀'];
-  var selectedTags=['데일리룩','소개팅룩','미니멀'];   // 기본 선택(예시)
+  var selectedTags=[];   // B 온보딩: 전문분야는 가입 후 프로필에서(가입 단계에서 안 받음)
   var allTags=TAG_PRESETS.slice();
   var photos=[];             // dataURL 배열
 
