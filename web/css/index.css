@@ -841,6 +841,7 @@
 
   /* ===== 마이 · 내 진단 결과 상세 (MBTI형 유형 풀이) ===== */
   /* 레이아웃 A — 좌 카드 스티키 + 우 콘텐츠(결과 화면 result.html과 동일 언어) */
+  /* 진단 결과 레이아웃 A: 좌 카드(스티키) + 우 콘텐츠 스택 */
   #my .dtl-A{display:grid; grid-template-columns:380px 1fr; gap:28px; align-items:start;}
   #my .dtl-A-left{display:flex; flex-direction:column; gap:16px;}
   #my .dtl-A-left .cardframe{height:684px; width:380px; max-width:100%; border:0; border-radius:20px; box-shadow:0 14px 36px rgba(20,22,28,.12); display:block;}
@@ -1330,3 +1331,199 @@
   .chatdrawer .pm-send svg{width:18px;height:18px}
   .chatdrawer .pm-send:hover{background:#233b2f}
   @media(prefers-reduced-motion:reduce){.chatdrawer{transition:none}}
+
+
+  /* 진단 결과 상단 유형 배지 — 카드는 프로필에 있고 여기선 맥락 한 줄 */
+  #my .dtl-badge{display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:13px 16px;}
+  #my .dtl-badge:empty{display:none;}
+  #my .dtl-badge .c{font-size:17px; font-weight:850; color:var(--green); letter-spacing:-.02em;}
+  #my .dtl-badge .n{font-size:14.5px; color:var(--sub); flex:1; min-width:0;}
+  #my .dtl-badge .go{font-size:13px; font-weight:800; color:var(--green); background:var(--green-soft);
+    border-radius:20px; padding:6px 13px; cursor:pointer; white-space:nowrap;}
+  #my .dtl-badge .go:hover{background:var(--green-line, var(--green-soft));}
+
+  /* 프로필로 옮긴 체형 카드 자리 */
+  #my .profcard{display:flex; flex-direction:column; align-items:center; gap:16px;
+    background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:22px;}
+  #my .profcard .cardframe{width:100%; max-width:380px; height:var(--mycard-h); border:0; border-radius:20px;
+    box-shadow:0 14px 36px rgba(20,22,28,.12); display:block;}
+  #my .profcard .dtl-id{text-align:center;}
+  #my .profcard .profshare{max-width:380px;}
+
+  /* ===== 모바일 셸(A안) — 하단 탭바 + 상단바 축약. 641px↑는 기존 데스크톱 그대로 ===== */
+  .tabbar{ display:none; }
+  :root{ --mycard-h:684px; }
+  @media(max-width:640px){
+    /* 상단: 탭바와 중복되는 메뉴 제거 → 로고 + 알림벨만 */
+    .nav{ gap:0; height:56px; }
+    .nav .menu{ display:none; }
+    .navr{ gap:10px; }
+    .navr .sup, .navr .navdiv, .navr .navname, .navr .navauth{ display:none; }
+
+    /* 하단 탭바 */
+    .tabbar{ display:flex; position:fixed; left:0; right:0; bottom:0; z-index:80;
+      height:calc(56px + env(safe-area-inset-bottom)); padding-bottom:env(safe-area-inset-bottom);
+      background:rgba(255,255,255,.94); backdrop-filter:blur(14px); border-top:1px solid var(--line); }
+    .tabbar .tb{ flex:1; min-height:44px; display:flex; flex-direction:column; align-items:center;
+      justify-content:center; gap:3px; color:var(--sub); text-decoration:none;
+      font-size:10.5px; font-weight:700; cursor:pointer; }
+    .tabbar .tb svg{ width:23px; height:23px; }
+    .tabbar .tb.on{ color:var(--green); }
+    .tabbar .tb:active{ transform:scale(.96); }
+
+    /* 중앙 FAB(진단) */
+    .tabbar .tb.fab{ color:var(--green); }
+    .tabbar .tb.fab .bump{ width:46px; height:46px; margin-top:-20px; border-radius:50%;
+      background:var(--green); color:#fff; display:flex; align-items:center; justify-content:center;
+      box-shadow:0 6px 16px rgba(46,74,59,.34); border:3px solid var(--bg); }
+    .tabbar .tb.fab .bump svg{ width:26px; height:26px; }
+
+
+    /* ── 마이(①안): 섹션 메뉴는 상단 가로 탭 · 내용은 인사이트 먼저 ──
+       하단 탭바가 화면 아래를 쓰므로 마이 안쪽 내비는 위에 둔다(세로 목록을 아래 두면 내비가 이중).
+       체형 카드는 재미·공유 요소 → 추천/핏 인사이트를 앞에, 카드는 뒤로.
+       카드 높이는 --mycard-h로 분리(카드 리뉴얼 시 이 값만 교체). */
+    #my .mwrap{ display:flex; flex-direction:column; gap:14px; min-width:0; }
+    /* flex 아이템은 기본 min-width:auto라 자식(칩)의 min-content보다 안 좁아짐 →
+       min-width:0을 줘야 .smenu의 overflow-x:auto가 작동(안 그러면 페이지 전체가 가로로 밀림) */
+    #my .side{ order:1; min-width:0; max-width:100%; }
+    #my .mwrap > main{ order:2; min-width:0; }
+    /* 세로 사이드 메뉴 → 가로 스크롤 탭 칩 */
+    #my .smenu{ flex-direction:row; gap:6px; overflow-x:auto; scrollbar-width:none; padding-bottom:2px; max-width:100%; }
+    #my .smenu::-webkit-scrollbar{ display:none; }
+    #my .smenu a{ flex:none; white-space:nowrap; min-height:44px; padding:10px 14px;
+      border:1.5px solid var(--line); border-radius:22px; background:var(--surface); font-size:13.5px; }
+    #my .smenu a .i{ display:none; }   /* 가로 칩에선 아이콘 생략해 폭 절약 */
+    #my .smenu a.on{ background:var(--green); color:#fff; border-color:var(--green); font-weight:800; }
+    /* 진단 결과 패널: 추천·핏 인사이트 → 그다음 체형 카드(공유) */
+    #my .dtl-A{ gap:16px; }   /* 모바일: 820px에서 이미 1단 — 간격만 축소 */
+    #my .profcard{ padding:16px; }
+
+    /* ── 마이 패널 공통 — 390px 가로 넘침 방지 ──
+       가용폭: 390 − .wrap 패딩(30×2) − .mcard 패딩(24×2) = 282px 뿐이었음.
+       여백을 되찾고, 키-값 행(.field)이 긴 값에서 줄바꿈되게 한다. */
+    .wrap{ padding:0 18px; }
+    #my .mpanel{ min-width:0; }
+    #my .mcard{ padding:4px 16px; }
+    /* 키-값 행: 값이 길면 아래 줄로(전엔 space-between + nowrap이라 넘침) */
+    #my .field{ flex-wrap:wrap; gap:2px 12px; align-items:baseline; }
+    #my .field .v{ min-width:0; margin-left:auto; text-align:right; overflow-wrap:anywhere; }
+    /* 이메일·URL 등 긴 토큰 강제 줄바꿈 */
+    #my .links a{ gap:10px; overflow-wrap:anywhere; }
+    #my .links a .arr{ flex:none; }
+    #my .offerbox{ min-width:0; }
+    #my .reqrow{ padding:16px 2px; }
+    #my .sup-submit .note{ min-width:0; }
+
+    /* ── 요청 내역(.ureq) — 아이콘·간격 축소 + 제목 줄바꿈(잘림 대신) ── */
+    #my .ureq{ gap:10px; padding:14px 2px; }
+    #my .ureq-ic{ width:34px; height:34px; border-radius:9px; }
+    #my .ureq-ic svg{ width:17px; height:17px; }
+    #my .ureq-title{ white-space:normal; font-size:15px; }
+    #my .ureq-r{ gap:6px; }
+    #my .ureq-r .cnt{ font-size:13px; }
+
+    /* ── 알림/설정 토글 행 — 라벨은 줄어들고 스위치는 고정 ── */
+    #my .field > span:first-child{ flex:1 1 auto; min-width:0; }
+    #my .field .toggle, #my .field .switch{ flex:none; }
+
+    /* ── 개인정보 — 위험 액션(탈퇴·삭제)은 시각적으로 분리 ── */
+    #my .links a.danger{ margin-top:10px; }
+
+    /* ══ 홈(#home) 모바일 ══
+       원인: @media(820px)가 .steps를 1fr 1fr(2단)로 두는데 390px에선 칸이 ~100px밖에 안 남아
+             STEP 카드 글자가 한 자씩 쪼개짐. .how의 세로 줄자(70px+gap40)가 폭을 더 먹음. */
+    #home .how{ grid-template-columns:1fr; gap:20px; margin-top:32px; }
+    #home .vtape{ display:none; }              /* 장식용 세로 줄자 — 모바일에선 폭만 차지 */
+    .steps{ grid-template-columns:1fr; }       /* 2단 → 1단 (핵심 수정) */
+    #home .step{ grid-template-columns:auto 1fr; gap:14px; padding:20px 18px; border-radius:16px; }
+    #home .step h3{ font-size:17px; }
+    #home .step p{ font-size:13.5px; }
+
+    /* 히어로 CTA — 나란히 두면 버튼 폭이 좁아 글자가 깨짐 → 세로 전체폭 */
+    #home .cta{ flex-direction:column; gap:10px; margin-top:28px; }
+    #home .cta .btn{ width:100%; padding:15px 18px; }
+
+    /* 8유형 칩 — 4열 유지하되 여백·글자 축소 */
+    #home .types{ gap:7px; margin-top:18px; }
+    #home .types .ty{ padding:9px 4px; font-size:12.5px; letter-spacing:.06em; }
+
+    /* 푸터 — 링크가 좁게 쪼개지지 않게 */
+    .site-foot .in{ padding:24px 18px 34px; gap:10px 16px; }
+    .site-foot .flinks{ gap:12px 16px; flex-wrap:wrap; }
+
+    /* 결과카드 쇼케이스 — .showpanel 좌우 52px + .cardprev 340px 고정이라 390px에서 ~100px 튀어나옴.
+       패널 여백을 줄이고 카드를 유동(min())으로. 내부 iframe(392px)은 스케일 고정 + overflow:hidden 크롭. */
+    #home .showpanel{ padding:24px 16px; border-radius:20px; }
+    #home .showcard{ justify-self:stretch; display:flex; justify-content:center; }
+    #home .showcard .cardprev{ width:min(288px,100%); height:488px; border-radius:22px; }
+    #home .showcard .cardprev .cf{ transform:scale(.735); }   /* 288/392 */
+    #home .showcard .lock{ padding:20px; gap:10px; }
+    #home .showcard .lock b{ font-size:18px; }
+    #home .showcard .lock p{ font-size:13px; }
+    /* 프로모 배너도 좌우 52px → 축소 */
+    #home .promo{ padding:26px 20px; border-radius:20px; gap:16px; }
+
+    /* ══ 스타일리스트 찾기(#shop) 모바일 ══
+       .grid도 홈 .steps와 같은 원인(820에서 2단 유지) → 1단 + 카드를 가로형으로. */
+    /* 1) 목록 — 1단 + 가로형 카드 */
+    .grid{ grid-template-columns:1fr; gap:12px; }
+    .ecard{ display:flex; align-items:stretch; border-radius:14px; }
+    .ecard:hover{ transform:none; box-shadow:0 6px 18px rgba(20,18,16,.08); }
+    .ecard .cover{ width:108px; height:auto; min-height:116px; flex:none; }
+    .ecard .match{ top:8px; left:8px; font-size:11px; padding:3px 8px; }
+    .ecard .eb{ flex:1; min-width:0; padding:11px 12px; }
+    .ecard .nm{ font-size:15px; }
+    .ecard .spec{ font-size:12.5px; margin:4px 0 7px; }
+    .ecard .subtags{ font-size:12px; margin:6px 0 8px; min-height:0; }
+    .ecard .tags{ gap:5px; margin-bottom:8px; }
+    .ecard .tags span{ font-size:11.5px; padding:3px 7px; margin:0; }
+    .ecard .cardprice{ font-size:13px; }
+
+    /* 2) 필터바 — 가로 스크롤 · 드롭다운 메뉴가 화면 밖으로 안 나가게 */
+    .fbar{ flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; gap:7px; padding-bottom:2px; }
+    .fbar::-webkit-scrollbar{ display:none; }
+    .fbar > *{ flex:none; }
+    .search{ min-width:0; flex:1 0 190px; max-width:none; }
+    .ddbtn, .favfilter{ padding:10px 12px; font-size:13.5px; min-height:44px; }
+    .ddmenu{ min-width:0; width:max-content; max-width:calc(100vw - 48px); }
+    .reqbanner{ padding:16px; gap:10px; margin:18px 0; }
+
+    /* 3) 상세 — 히어로 축소 + 액션 하단 고정
+       ※ 하단 탭바(56px+safe)가 bottom:0을 이미 쓰므로 그만큼 띄운다. */
+    .dhero-img{ height:180px; }
+    .dhero-acts{ position:sticky; bottom:calc(56px + env(safe-area-inset-bottom)); z-index:30;
+      margin:16px -18px 0; padding:12px 18px;
+      background:linear-gradient(180deg, rgba(246,246,245,0), var(--bg) 26%); }
+
+    /* 4) 견적 요청 — 요약(사이드)을 위로 축약 */
+    .reqside{ order:-1; }
+    .reqside-img{ height:96px; }
+
+    /* 5) 제공 서비스 타일 — 세로 중앙정렬 카드(아이콘↑이름↑모드↑가격)라 세로로만 길어짐.
+       DOM(아이콘·이름·모드·가격 4형제) 변경 없이 grid-area로 가로형 행으로 재배치. */
+    .svctiles{ flex-direction:column; gap:8px; }
+    .svctile{ flex:1 1 auto; max-width:none; display:grid; text-align:left;
+      grid-template-columns:auto 1fr auto;
+      grid-template-areas:"ic nm pr" "ic mode pr";
+      align-items:center; gap:2px 12px; padding:12px 14px; border-radius:12px; }
+    .svctile .svct-ic{ grid-area:ic; width:38px; height:38px; margin-bottom:0; border-radius:10px; }
+    .svctile .svct-ic svg{ width:19px; height:19px; }
+    .svctile .svct-nm{ grid-area:nm; font-size:15px; white-space:normal; align-self:end; }
+    .svctile .svct-mode{ grid-area:mode; font-size:12.5px; margin-top:0; align-self:start; }
+    .svctile .svct-pr{ grid-area:pr; font-size:15px; margin-top:0; padding-top:0; white-space:nowrap; }
+
+    /* 콘텐츠가 탭바에 가리지 않게 + 가로 넘침 가드(index는 fitting.css를 안 써서 여기 둔다) */
+    body{ padding-bottom:calc(66px + env(safe-area-inset-bottom)); overflow-x:clip; }
+
+    /* 터치 타깃·눌림 피드백·입력 확대 방지 (fitting.css와 동일 규칙 — index는 fitting.css를 안 씀) */
+    .opt, .chip, .btn, .btn-primary, .btn-line, .btn-ghost, .cb, .svc{ min-height:44px; }
+    .opt:active, .chip:active, .btn:active,
+    .btn-primary:active, .btn-line:active, .btn-ghost:active{ transform:scale(.97); }
+    input, select, textarea{ font-size:16px; }
+  }
+  @media(max-width:640px) and (prefers-reduced-motion:reduce){
+    .opt:active, .chip:active, .btn:active,
+    .btn-primary:active, .btn-line:active, .btn-ghost:active{ transform:none; }
+  }

@@ -6,9 +6,9 @@
 <title>핏팅 — 진단 결과</title>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/fitting.css?v=f6422608">
-<link rel="stylesheet" href="css/diag.css?v=d3eb5b74">
-<link rel="stylesheet" href="css/result.css?v=230d1cee">
+<link rel="stylesheet" href="css/fitting.css?v=90fc1187">
+<link rel="stylesheet" href="css/diag.css?v=657ab9f2">
+<link rel="stylesheet" href="css/result.css?v=ae49ddf2">
 </head>
 <body>
 
@@ -25,13 +25,21 @@
   <div class="rgrid">
     <div class="rleft">
       <div id="cardslot"></div>
+      <!-- 공유(바이럴) — 카드가 실제로 그려지면 result.js가 hidden 해제 -->
+      <div id="rshare" class="rshare" hidden>
+        <button type="button" class="rsharebtn" onclick="shareResult()">
+          <svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>
+          내 핏 카드 공유하기
+        </button>
+        <span class="rshare-note">친구도 3분이면 자기 핏을 알 수 있어요</span>
+      </div>
       <div id="rtypeid" class="dtl-id"></div>
       <div id="rfit" class="dtl-fitbox"></div>
     </div>
     <div class="rcol">
       <div id="rtip" class="dtl-tip"></div>
       <div id="recs" class="rpanel"></div>
-      <div class="rpanel"><div class="rfbq">추천 결과가 잘 맞나요? <span>· 정확도 검증</span></div>
+      <div class="rpanel" id="rfb"><div class="rfbq">추천 결과가 잘 맞나요? <span>· 정확도 검증</span></div>
         <div class="rseg"><div class="o ok" onclick="fb(this,'맞음')"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> 맞아요</div><div class="o mid" onclick="fb(this,'보통')"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg> 보통</div><div class="o no" onclick="fb(this,'안맞음')"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg> 안 맞아요</div></div>
         <label class="rconsent"><input type="checkbox" id="eiConsent" onchange="setEngineConsent(this.checked)">
           <span class="rconsent-txt"><b>익명으로 진단 개선</b>에 활용하는 데 동의하며, <b>만 14세 이상</b> 또는 법정대리인 동의를 확인했어요 (선택)
@@ -51,6 +59,6 @@
 <script src="js/bodytype.js?v=b00f36c1"></script>
 <script src="js/config.js?v=66a385e1"></script>
 <script src="js/data.js?v=856deef9"></script>
-<script src="js/result.js?v=aab8706b"></script>
+<script src="js/result.js?v=332bba24"></script>
 </body>
 </html>
