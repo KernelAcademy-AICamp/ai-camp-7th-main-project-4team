@@ -39,7 +39,7 @@
   var REQS_VER = 9;   // 데모 버전 — 결과물·분쟁 샘플(#36) + wearExp + 대화 스레드(msgs) + 결제대기(5단계) 시드 + 분쟁 _prevStatus
   /* wearExp = 고객 진단 착용경험(상품명 없이 브랜드·카테고리·핏·사이즈·부위느낌). 없으면 미첨부(견적서에서 '없음' 표기) */
   var DEMO_REQS = [
-    {cust:'한서준', type:'TUB', bodytype:'슬릭 라인',     gender:'male',   cm:180, kg:68, occ:'데일리',     budget:'5~10만',  date:'2026.07.14', service:'online', note:'심플하게, 근데 밋밋하지 않게 입고 싶어요', status:'신규'},
+    {cust:'한서준', type:'TUB', bodytype:'슬릭 라인',     gender:'male',   cm:180, kg:68, occ:'데일리',     budget:'5~10만',  date:'협의', service:'online', note:'심플하게, 근데 밋밋하지 않게 입고 싶어요', status:'신규'},
     {cust:'김도현', type:'STR', bodytype:'시크 스트레이트', gender:'male',   cm:172, kg:65, occ:'소개팅',     budget:'5~10만',  date:'2026.07.02', service:'online', note:'과하지 않게 깔끔한 첫인상 원해요', status:'신규', wearExp:[{brand:'유니클로',cat:'상의',fit:'레귤러핏',size:'M',feel:'딱맞음'},{brand:'무신사 스탠다드',cat:'하의',fit:'스트레이트',size:'32',feel:'딱맞음'}]},
     {cust:'정예린', type:'INV', bodytype:'모던 V라인',     gender:'female', cm:167, kg:58, occ:'일상 코디',   budget:'~5만',    date:'2026.07.01', service:'shopping', note:'출근룩 위주로 데일리하게 입고 싶어요', status:'신규', wearExp:[{brand:'ZARA',cat:'상의',fit:'슬림핏',size:'S',feel:'딱맞음'}]},
     {cust:'이서연', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:163, kg:52, occ:'면접·발표',   budget:'10~15만', date:'2026.06.30', service:'image', note:'신뢰감 있는 오피스룩', dir:'out', status:'제안발송', offer:{price:95000, msg:'면접관 시선까지 고려해 첫인상 깔끔하게 잡아드릴게요'}},
