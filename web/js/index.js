@@ -1269,7 +1269,7 @@
         '<div class="feat">상황 · 최대 2개 · <em>필수</em></div><div class="seg" id="mOcc"><span class="o" onclick="toggleOcc(this)">소개팅·데이트</span><span class="o" onclick="toggleOcc(this)">면접·발표</span><span class="o" onclick="toggleOcc(this)">결혼식 하객</span><span class="o" onclick="toggleOcc(this)">여행</span><span class="segbrk"></span><span class="o" onclick="toggleOcc(this)">데일리 스타일링</span><span class="o" onclick="toggleOcc(this)">퍼스널 스타일링</span><span class="o" onclick="toggleOcc(this)">체형 커버 스타일링</span></div>'+
         (noBudget?'':'<div class="feat">예산 · <em>필수</em></div><div class="seg" id="mBud"><span class="o" onclick="pickBud(this)">~5만</span><span class="o" onclick="pickBud(this)">5~10만</span><span class="o" onclick="pickBud(this)">10~15만</span><span class="o" onclick="pickBud(this)">15만+</span></div>')+
         '<div class="feat">일정 · <em>필수</em> · 오늘 이후만 선택 가능</div><input class="inp" type="date" id="reqDate" min="'+todayStr()+'" onchange="validate()">'+
-        '<div class="attach" style="margin-top:12px"><div class="at"><b>날짜를 아직 못 정했어요</b><div>스타일리스트와 상의해서 정할게요</div></div><div class="toggle" id="reqFlexDate" onclick="toggleFlexDate(this)"></div></div>'+
+        '<div class="attach" style="margin-top:12px"><div class="at"><b>날짜를 아직 못 정했어요</b><div>일정을 스타일리스트와 협의할게요</div></div><div class="toggle" id="reqFlexDate" onclick="toggleFlexDate(this)"></div></div>'+
       '</div>'+
       '<div class="grp"><div class="grp-h"><span class="n">3</span>요청사항을 적어주세요</div>'+
         '<input class="inp" id="reqNote" maxlength="100" placeholder="예) 과하지 않게 깔끔한 첫인상 원해요">'+
