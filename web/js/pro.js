@@ -36,7 +36,7 @@
   var STYLE_PRESETS = ['캐주얼','미니멀','시크','클래식','스트리트','빈티지','스포티','걸리시'];
   var REGION_PRESETS = ['서울','경기','인천','부산','대구','대전','광주'];
 
-  var REQS_VER = 10;   // 데모 버전 — 결과물·분쟁 샘플(#36) + wearExp + 대화 스레드(msgs) + 결제대기(5단계) 시드 + 분쟁 _prevStatus + 일정 협의 예시(서지호)
+  var REQS_VER = 11;   // 데모 버전 — 결과물·분쟁 샘플(#36) + wearExp + 대화 스레드(msgs) + 결제대기(5단계) 시드 + 분쟁 _prevStatus + 일정 협의 예시(서지호) + 후기 1개 추가(김서연)
   /* wearExp = 고객 진단 착용경험(상품명 없이 브랜드·카테고리·핏·사이즈·부위느낌). 없으면 미첨부(견적서에서 '없음' 표기) */
   var DEMO_REQS = [
     {cust:'한서준', type:'TUB', bodytype:'슬릭 라인',     gender:'male',   cm:180, kg:68, occ:'데일리',     budget:'5~10만',  date:'2026.07.14', service:'online', note:'심플하게, 근데 밋밋하지 않게 입고 싶어요', status:'신규'},
@@ -46,6 +46,7 @@
     {cust:'이서연', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:163, kg:52, occ:'면접·발표',   budget:'10~15만', date:'2026.06.30', service:'image', note:'신뢰감 있는 오피스룩', dir:'out', status:'제안발송', offer:{price:95000, msg:'면접관 시선까지 고려해 첫인상 깔끔하게 잡아드릴게요'}},
     {cust:'박지우', type:'TRI', bodytype:'소프트 A라인',   gender:'female', cm:160, kg:54, occ:'결혼식 하객', budget:'10~15만', date:'2026.06.27', service:'online', note:'', status:'수락됨', offer:{price:120000, msg:'하객룩 단정하게 코디해드릴게요'}, msgs:[{from:'cust', text:'안녕하세요! 결혼식이 다음 주 토요일이에요 🙂'},{from:'pro', text:'네 반가워요! 하객룩은 튀지 않게 단정하게 잡아드릴게요. 혹시 원하는 색 계열 있으세요?'},{from:'cust', text:'차분한 톤이 좋아요. 잘 부탁드려요!'}]},
     {cust:'최민준', type:'BAL', bodytype:'이지 밸런스',    gender:'male',   cm:175, kg:70, occ:'데일리',     budget:'~5만',    date:'2026.06.18', service:'online', status:'완료', offer:{price:60000, msg:''}, review:{rating:5, text:'취향 저격이었어요! 반품 없이 한 번에 성공'}},
+    {cust:'김서연', type:'HRG', bodytype:'엘레강스 X라인', gender:'female', cm:164, kg:52, occ:'하객룩', budget:'10~15만', date:'2026.06.20', service:'online', status:'완료', offer:{price:110000, msg:''}, review:{rating:5, text:'핏이 완벽했어요 · 다음에 또 부탁드려요'}},
     {cust:'한지민', type:'STR', bodytype:'시크 스트레이트', gender:'female', cm:164, kg:52, occ:'소개팅',     budget:'5~10만',  date:'2026.06.29', service:'online', note:'', status:'분쟁', _prevStatus:'수락됨', offer:{price:90000, msg:'소개팅룩 깔끔하게 잡아드릴게요'}, dispute:{reason:'미이행', detail:'결과물을 받지 못했어요', at:'2026.07.02'}, msgs:[{from:'cust', text:'결과물 언제 받을 수 있을까요?'},{from:'pro', text:'죄송해요, 어제 코디 3안 링크 전달드렸는데 혹시 확인 안 되셨을까요? 다시 보내드릴게요.'}]},
     {cust:'윤채원', type:'BAL', bodytype:'이지 밸런스',    gender:'female', cm:165, kg:53, occ:'데이트룩',   budget:'5~10만',  date:'2026.07.13', service:'online', note:'봄 데이트룩 화사하게', status:'결제대기', offer:{price:88000, msg:'화사한 데이트룩으로 잡아드릴게요'}, wearExp:[{brand:'마인드브릿지',cat:'상의',fit:'레귤러',size:'M',feel:'딱맞음'}], msgs:[{from:'cust', text:'견적 감사해요! 방금 입금했어요 :)'}]}
   ];
@@ -244,7 +245,7 @@
             ? '<div class="rvreplyform"><textarea id="rvReplyInput" placeholder="후기에 답글을 남겨보세요"></textarea><div class="rb"><button class="tinybtn ghost" onclick="cancelReply()">취소</button><button class="tinybtn" onclick="saveReply('+i+')">답글 등록</button></div></div>'
             : '<div style="margin-top:10px;display:flex;justify-content:flex-end"><button class="tinybtn ghost" onclick="openReply('+i+')">답글 달기</button></div>');
       return '<div class="req">'+
-        '<div class="reqtop"><div class="av">'+r.cust.charAt(0)+'</div>'+
+        '<div class="reqtop">'+
           '<div class="info"><b>'+r.cust+' 님 · '+r.occ+'</b><small style="letter-spacing:1px">'+starsRO(r.review.rating)+'</small>'+
             '<p class="rvtext">'+r.review.text+'</p></div>'+
           '<button class="rvgo" onclick="goQuote('+i+')" title="이 고객과의 거래 내역 보기">거래 내역 ›</button></div>'+
@@ -254,20 +255,12 @@
   function renderReviewSummary(rv){
     var box=document.getElementById('reviewSummary'); if(!box) return;
     if(!rv.length){ box.style.display='none'; return; }
-    var dist=[0,0,0,0,0], sum=0;                                  // dist[0]=1★ … dist[4]=5★
-    rv.forEach(function(r){ var n=Math.max(1,Math.min(5,r.review.rating||0)); dist[n-1]++; sum+=n; });
+    var sum=0; rv.forEach(function(r){ sum+=Math.max(1,Math.min(5,r.review.rating||0)); });
     var avg=(sum/rv.length).toFixed(1);
-    var rows='';
-    for(var k=5;k>=1;k--){ var c=dist[k-1], pct=Math.round(c/rv.length*100);
-      rows+='<div class="rs-row"><span class="rs-lab">'+k+'★</span>'+
-            '<span class="rs-bar"><span class="rs-fill" style="width:'+pct+'%"></span></span>'+
-            '<span class="rs-n">'+c+'</span></div>';
-    }
     box.style.display='flex';
-    box.innerHTML='<div class="rs-score"><div class="rs-avg">'+avg+'</div>'+
-        '<div class="rs-stars">'+starsRO(Math.round(avg))+'</div>'+
-        '<div class="rs-count">후기 '+rv.length+'개</div></div>'+
-        '<div class="rs-dist">'+rows+'</div>';
+    box.innerHTML='<span class="rs-avg">'+avg+'</span>'+
+        '<span class="rs-meta"><span class="rs-stars">'+starsRO(Math.round(avg))+'</span>'+
+        '<span class="rs-count">후기 '+rv.length+'개</span></span>';
   }
   function openReply(i){ replyIdx=i; renderReviews(); }
   function cancelReply(){ replyIdx=-1; renderReviews(); }
@@ -288,7 +281,7 @@
     document.getElementById('dashStats').innerHTML=
       '<div class="kc hero" onclick="goPanel(\'settle\')"><small>이번 달 수익</small><b>'+won(monthRevenue())+'</b><div class="trend">거래 '+completedReqs().length+'건 완료</div></div>'+
       '<div class="kc" onclick="goPanel(\'inbox\')"><small>신규 요청 ›</small><b>'+nw+'</b></div>'+
-      '<div class="kc" onclick="goPanel(\'inbox\')"><small>진행 중 ›</small><b>'+prog+'</b></div>'+
+      '<div class="kc" onclick="goInboxProg()"><small>진행 중 ›</small><b>'+prog+'</b></div>'+
       '<div class="kc" onclick="goPanel(\'reviews\')"><small>평점 ›</small><b>★ '+rt+'</b></div>';
     document.getElementById('newCnt').textContent=nw;
     document.getElementById('pRev').textContent=reqs.filter(function(r){return r.review;}).length;
@@ -385,6 +378,8 @@
 
   /* ===== 헤더: 알림·계정 ===== */
   function goPanel(p){ var a=document.querySelector('#smenu a[data-p="'+p+'"]'); if(a) nav(a); var m=document.getElementById('accMenu'); if(m) m.classList.remove('on'); }
+  /* 대시보드 '진행 중' → 요청 내역 열고 진행 중 섹션으로 스크롤(신규 요청과 화면 전환이 같아서 구분) */
+  function goInboxProg(){ goPanel('inbox'); setTimeout(function(){ var l=document.getElementById('inboxProgList'), c=l&&l.closest&&l.closest('.card'); if(c) c.scrollIntoView({behavior:'smooth',block:'start'}); },70); }
   function toggleAccMenu(e){ if(e) e.stopPropagation(); document.getElementById('accMenu').classList.toggle('on'); }
   function logout(){ if(confirm('로그아웃할까요?')) location.href='pro-login.html'; }
   document.addEventListener('click', function(e){ var m=document.getElementById('accMenu'); if(!m||!m.classList.contains('on')) return; var me=document.querySelector('.navr .me'); if(!m.contains(e.target) && !(me&&me.contains(e.target))) m.classList.remove('on'); });
@@ -400,7 +395,15 @@
     el.innerHTML='<div class="subhead">지금 응답이 필요해요 <span class="ucount">'+news.length+'건</span></div>'+
       news.map(function(r){ return reqTop(r, true); }).join('');
   }
-  function renderAll(){ renderStats(); renderUrgent(); renderCandidates(); renderRecent(); renderInbox(); renderReviews(); renderSettle(); renderProSupport(); renderProNotis(); }
+  function renderProfileNudge(){   // 신규(가입 직후) 등 프로필이 덜 찬 경우만 '지금 채우기' 유도
+    var el=document.getElementById('pfNudge'); if(!el) return;
+    if(!PROFILE){ el.style.display='none'; return; }   // 데모(가입 전)엔 안 띄움
+    var hasBio=!!(PROFILE.bio||PROFILE.tagline);
+    var hasSpec=((PROFILE.occ||PROFILE.fields||PROFILE.specialties||[]).length>0)||((PROFILE.tags||PROFILE.styles||[]).length>0);
+    var hasPort=((PROFILE.portfolio||[]).length>0);
+    el.style.display=(!hasBio||!hasSpec||!hasPort)?'flex':'none';
+  }
+  function renderAll(){ renderStats(); renderUrgent(); renderCandidates(); renderRecent(); renderInbox(); renderReviews(); renderSettle(); renderProSupport(); renderProNotis(); renderProfileNudge(); }
   /* 요청 클릭 → 견적서 페이지로 이동(사이드 드로어 대신) */
   function goQuote(i){ location.href='pro-quote.html?req='+i+'&from='+curPanel(); }
 
@@ -443,9 +446,9 @@
   function renderTagsView(){
     var base=PROFILE||DEFAULT_PROFILE;
     var pf=document.getElementById('pfFields'), ps=document.getElementById('pfStyles');
-    var dash='<span style="color:var(--sub2)">—</span>';
-    if(pf) pf.innerHTML=(base.occ||base.fields||[]).map(function(c){ return '<span class="tag">'+fieldLabel(c)+'</span>'; }).join('') || dash;
-    if(ps) ps.innerHTML=(base.tags||base.styles||[]).map(function(t){ return '<span class="tag">'+t+'</span>'; }).join('') || dash;
+    var add='<a class="pfadd" onclick="editProfile()">+ 추가하기</a>';   // 빈 값이면 대시(—) 대신 추가 유도
+    if(pf) pf.innerHTML=(base.occ||base.fields||[]).map(function(c){ return '<span class="tag">'+fieldLabel(c)+'</span>'; }).join('') || add;
+    if(ps) ps.innerHTML=(base.tags||base.styles||[]).map(function(t){ return '<span class="tag">'+t+'</span>'; }).join('') || add;
   }
   /* 프로필 사진 확대 */
   function openAvatar(){

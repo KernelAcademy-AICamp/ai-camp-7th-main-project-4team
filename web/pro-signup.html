@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="css/tokens.css?v=10fb5117">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/pro-signup.css?v=5d3f7c63">
+<link rel="stylesheet" href="css/pro-signup.css?v=3f275319">
 <style>
 /* 계정 인증(이메일·휴대폰) UI — pro-signup.css 변수/톤 재사용, 개발 추가분 */
 .req{color:#c0392b}
@@ -90,8 +90,8 @@
 
       <!-- SP-2 기본 정보 -->
       <section class="panel" data-step="2">
-        <div class="lbl">활동명 (고객에게 보여요)</div>
-        <input type="text" id="name" placeholder="예: 소희 스타일리스트" oninput="validate()">
+        <div class="lbl">닉네임</div>
+        <input type="text" id="name" placeholder="예: 핏팅" oninput="validate()">
         <div class="lbl">서비스 유형별 가격 (제공할 유형을 켜고 가격 입력)</div>
         <div class="svc" id="svcOnline">
           <label class="tog"><input type="checkbox" id="svcOnlineOn" checked onchange="toggleSvc()"> 온라인 스타일링</label>
@@ -105,9 +105,10 @@
           <label class="tog"><input type="checkbox" id="svcImagingOn" checked onchange="toggleSvc()"> 이미지 컨설팅</label>
           <span class="price"><input type="number" id="priceImaging" value="90000" oninput="validate()"></span><span class="won">원</span>
         </div>
-        <div class="hint">최소 1개 유형을 켜야 진행돼요.</div>
-        <div class="err" id="err2">활동명과 켠 유형의 가격을 확인해주세요</div>
-        <button class="btn" id="next2" onclick="go(3)">다음</button>
+        <div class="hint">최소 1개 유형을 켜야 진행돼요</div>
+        <div class="err" id="err2">닉네임과 켠 유형의 가격을 확인해주세요</div>
+        <button class="btn" id="next2" onclick="finish()">가입 완료</button>
+        <div class="hint" style="text-align:center;margin-top:12px">소개·전문 분야·포트폴리오는 가입 후 <b style="color:var(--green,#2E4A3B)">내 프로필</b>에서 채울 수 있어요</div>
       </section>
 
       <!-- SP-3 이력·전문분야 -->
@@ -138,15 +139,15 @@
         <div class="hero" style="padding:20px 0 6px">
           <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.3 12.3l2.5 2.5 5-5.4"/></svg></div>
           <h1>스타일리스트 등록 완료!</h1>
-          <p><b id="doneName">스타일리스트</b>님, 이제 고객 요청을 받을 수 있어요.</p>
+          <p><b id="doneName">스타일리스트</b>님, 이제 고객 요청을 받을 수 있어요.<br>프로필을 더 채우면 고객에게 나를 더 잘 보여줄 수 있어요.</p>
         </div>
-        <button class="btn" onclick="location.href='pro.html'">스타일리스트 포털 시작하기 →</button>
+        <button class="btn" onclick="location.href='pro.html?panel=profile'">스타일리스트 시작하기 →</button>
       </section>
 
     </div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
-<script src="js/pro-signup.js?v=3a1bff23"></script>
+<script src="js/pro-signup.js?v=0329d16d"></script>
 </body>
 </html>

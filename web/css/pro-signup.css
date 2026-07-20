@@ -32,8 +32,8 @@
   .benefits span{display:inline-flex;align-items:center;gap:5px;background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B);padding:8px 14px;border-radius:20px;font-size:13px;font-weight:800}
   .benefits svg{width:15px;height:15px;color:var(--green,#2E4A3B)}
 
-  .lbl{font-size:13px;font-weight:800;color:var(--sub2,#8a857b);margin:18px 0 7px}
-  .lbl:first-child{margin-top:4px}
+  .lbl{font-size:15px;font-weight:800;color:var(--sub,#6b675f);margin:22px 0 9px}
+  .lbl:first-child{margin-top:6px}
   input[type=text],input[type=email],input[type=tel],input[type=number],textarea{width:100%;border:1.5px solid var(--line2,#d8d4cc);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:15px;background:#fff;color:var(--ink,#1c1a17)}
   textarea{resize:vertical;min-height:64px}
   input:focus,textarea:focus{outline:none;border-color:var(--green,#2E4A3B)}
