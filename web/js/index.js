@@ -3,7 +3,7 @@
     if(id==='my' && !loggedIn()){ openLogin('마이페이지', function(){ go('my'); }); return; }   // 비로그인 My 접근 차단(로그인 게이트)
     var ov=document.getElementById('bidsOverlay'); if(ov) ov.classList.remove('on');   // 페이지 이동 시 열린 상세 닫기
     document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on', p.id===id));
-    document.querySelectorAll('.menu a').forEach(a=>a.classList.toggle('on', a.dataset.t===id));
+    document.querySelectorAll('.menu a, .tabbar .tb[data-t]').forEach(a=>a.classList.toggle('on', a.dataset.t===id));   // 상단 메뉴 + 모바일 하단 탭바 동시 동기화
     // 스타일리스트찾기: proto=목록부터 / api(MVP)=준비 중·알림 웨이트리스트(목업 목록 미노출)
     if(id==='shop') showOnly((window.FDATA&&FDATA.mode==='api')?'stylistWaitlist':'listView');
     window.scrollTo({top:0, behavior:'smooth'});

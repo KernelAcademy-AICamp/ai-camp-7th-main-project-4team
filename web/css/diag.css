@@ -207,3 +207,12 @@
 .size-row .sz{ font-size:19px; font-weight:800; color:var(--ink); }
 .size-row .sz .conf{ font-family:var(--sans); font-size:12px; font-weight:800; color:var(--green); background:var(--green-soft); padding:4px 10px; border-radius:16px; margin-left:8px; }
 .st-head{ font-size:12px; }
+
+/* ===== 모바일: 진단 CTA 하단 고정. diag-basic·diag-fit 공통(.wnav) =====
+   ※ 터치 타깃·입력 16px 등 공통 모바일 규칙은 fitting.css(소비자 공통)로 분리 */
+@media(max-width:640px){
+  .flow{ padding-left:20px; padding-right:20px; padding-bottom:12px; }
+  .wnav{ position:sticky; bottom:0; z-index:30; margin:20px -20px 0;
+    padding:14px 20px calc(14px + env(safe-area-inset-bottom));
+    background:linear-gradient(180deg, rgba(246,246,245,0), var(--bg) 26%); }
+}

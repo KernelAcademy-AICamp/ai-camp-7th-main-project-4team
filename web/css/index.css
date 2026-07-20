@@ -1164,3 +1164,44 @@
   .chatdrawer .pm-send svg{width:18px;height:18px}
   .chatdrawer .pm-send:hover{background:#233b2f}
   @media(prefers-reduced-motion:reduce){.chatdrawer{transition:none}}
+
+  /* ===== 모바일 셸(A안) — 하단 탭바 + 상단바 축약. 641px↑는 기존 데스크톱 그대로 ===== */
+  .tabbar{ display:none; }
+  @media(max-width:640px){
+    /* 상단: 탭바와 중복되는 메뉴 제거 → 로고 + 알림벨만 */
+    .nav{ gap:0; height:56px; }
+    .nav .menu{ display:none; }
+    .navr{ gap:10px; }
+    .navr .sup, .navr .navdiv, .navr .navname, .navr .navauth{ display:none; }
+
+    /* 하단 탭바 */
+    .tabbar{ display:flex; position:fixed; left:0; right:0; bottom:0; z-index:80;
+      height:calc(56px + env(safe-area-inset-bottom)); padding-bottom:env(safe-area-inset-bottom);
+      background:rgba(255,255,255,.94); backdrop-filter:blur(14px); border-top:1px solid var(--line); }
+    .tabbar .tb{ flex:1; min-height:44px; display:flex; flex-direction:column; align-items:center;
+      justify-content:center; gap:3px; color:var(--sub); text-decoration:none;
+      font-size:10.5px; font-weight:700; cursor:pointer; }
+    .tabbar .tb svg{ width:23px; height:23px; }
+    .tabbar .tb.on{ color:var(--green); }
+    .tabbar .tb:active{ transform:scale(.96); }
+
+    /* 중앙 FAB(진단) */
+    .tabbar .tb.fab{ color:var(--green); }
+    .tabbar .tb.fab .bump{ width:46px; height:46px; margin-top:-20px; border-radius:50%;
+      background:var(--green); color:#fff; display:flex; align-items:center; justify-content:center;
+      box-shadow:0 6px 16px rgba(46,74,59,.34); border:3px solid var(--bg); }
+    .tabbar .tb.fab .bump svg{ width:26px; height:26px; }
+
+    /* 콘텐츠가 탭바에 가리지 않게 */
+    body{ padding-bottom:calc(66px + env(safe-area-inset-bottom)); }
+
+    /* 터치 타깃·눌림 피드백·입력 확대 방지 (fitting.css와 동일 규칙 — index는 fitting.css를 안 씀) */
+    .opt, .chip, .btn, .btn-primary, .btn-line, .btn-ghost, .cb, .svc{ min-height:44px; }
+    .opt:active, .chip:active, .btn:active,
+    .btn-primary:active, .btn-line:active, .btn-ghost:active{ transform:scale(.97); }
+    input, select, textarea{ font-size:16px; }
+  }
+  @media(max-width:640px) and (prefers-reduced-motion:reduce){
+    .opt:active, .chip:active, .btn:active,
+    .btn-primary:active, .btn-line:active, .btn-ghost:active{ transform:none; }
+  }

@@ -499,3 +499,20 @@ footer.foot a:hover{color:var(--ink)}
   .grid-3{grid-template-columns:1fr}
   .protobar .links{width:100%;margin-left:0;margin-top:4px}
 }
+
+/* ===== 모바일 공통 — 터치 타깃·눌림 피드백·입력 확대 방지 =====
+   fitting.css를 쓰는 소비자 페이지 전부(diag-*·result·about·faq·가이드·약관·개인정보)에 적용.
+   ※ index.html은 fitting.css를 안 써서 index.css에 같은 블록이 있음(로드 구조상 불가피). */
+@media(max-width:640px){
+  /* 터치 타깃 최소 44px */
+  .opt, .chip, .btn, .btn-primary, .btn-line, .btn-ghost, .cb, .svc{ min-height:44px; }
+  /* 눌림 피드백(모바일엔 hover가 없음) */
+  .opt:active, .chip:active, .btn:active,
+  .btn-primary:active, .btn-line:active, .btn-ghost:active{ transform:scale(.97); }
+  /* iOS 포커스 자동 확대 방지 */
+  input, select, textarea{ font-size:16px; }
+}
+@media(max-width:640px) and (prefers-reduced-motion:reduce){
+  .opt:active, .chip:active, .btn:active,
+  .btn-primary:active, .btn-line:active, .btn-ghost:active{ transform:none; }
+}
