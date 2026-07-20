@@ -391,7 +391,7 @@
           '<div class="field"><span>상의 핏 취향</span><span class="v">'+U.fitTop+'</span></div>'+
           '<div class="field"><span>하의 핏 취향</span><span class="v">'+U.fitBottom+'</span></div>'+
           '<div class="note">🔒 민감정보 · 편집 시 재진단을 추천해요</div></div>'+
-        '</div><div class="prof-actions"><button class="btn" onclick="editProfile()">수정하기</button></div>';
+        '</div><div class="prof-actions"><button class="btn" onclick="editProfile()">프로필 수정하기</button></div>';
     } else {
       el.innerHTML='<div class="mcard">'+
         '<div class="mcard-hd">프로필 <span>· 매칭·진단 관리</span></div>'+
@@ -550,7 +550,7 @@
     }
     var html =
       group(open,'open',ICON_RECV,'받은 견적', reqCardOpen, '여러 스타일리스트가 보낸 견적 · 비교하고 선택',
-        '아직 없어요 · <a onclick="go(\'shop\');openMatch()">견적 요청 보내기</a>', true) +
+        '아직 없어요 · <a onclick="go(\'shop\');openMatch()">견적 요청하기</a>', true) +
       group(named,'named',ICON_SENT,'보낸 요청', reqCardNamed, '내가 지명한 스타일리스트에게 직접 · 진행 확인',
         '아직 없어요 · <a onclick="go(\'shop\')">스타일리스트 찾아 요청하기</a>');
     if(notify.length) html += '<div class="reqgroup"><div class="rghead alert"><span class="rgicon">'+ICON_BELL+'</span>'+
@@ -664,7 +664,7 @@
   function reqActions(r,i){ var s=r.status;
     if(s==='대기') return '<div class="rq-btns"><button class="tinybtn ghost" onclick="confirmCancel('+i+')">요청 취소</button>'+
       '<button class="tinybtn ghost" onclick="reqReject('+i+')">거절 · 데모</button><button class="tinybtn" onclick="reqAccept('+i+')">수락 · 데모</button></div>';
-    if(s==='결제대기') return '<div class="rq-btns"><button class="tinybtn key" onclick="openPay('+i+')">결제하고 시작 →</button></div>';
+    if(s==='결제대기') return '<div class="rq-btns"><button class="tinybtn key" onclick="openPay('+i+')">결제하고 시작하기 →</button></div>';
     if(s==='진행중') return '';   // 진행 액션(완료 확인)은 progressSectionsHTML(대화·결과물 하단)에서 처리
     if(s==='완료'){ if(r._reviewing) return reviewForm(r,i); return '<button class="btn key" style="width:100%;margin-top:14px" onclick="openReviewForm('+i+')">후기 작성하기</button>'; }
     if(s==='후기완료'){ var rv=r.review||{}; return '<div class="reqact"><div class="revshow"><span class="starsRO">'+starsRO(rv.rating||5)+'</span> <span class="rtx">"'+(rv.text||'')+'"</span></div></div>'; }
@@ -1001,7 +1001,7 @@
           '<div class="rs-row" style="border-top:1px solid var(--line);margin-top:2px;padding-top:11px"><span style="font-weight:800;color:var(--ink)">결제 금액</span><b class="num" style="color:var(--green);font-size:17px">'+price.toLocaleString()+'원</b></div>'+
         '</div>'+
         '<div class="statban go" style="margin-top:12px"><span class="sb-ic">'+stIcon('lock')+'</span><div class="sb-tx"><b>안전결제</b><p>완료 전까진 핏팅이 결제금을 보관해요</p></div></div>'+
-        '<button class="btn key" style="width:100%;margin-top:12px" onclick="openPay('+i+')">'+price.toLocaleString()+'원 결제하고 시작 →</button></div>'; }
+        '<button class="btn key" style="width:100%;margin-top:12px" onclick="openPay('+i+')">'+price.toLocaleString()+'원 결제하기 →</button></div>'; }
     if(s==='거절'){
       return '<div class="rq-sec"><div class="rq-h">요청 결과</div>'+
         '<p class="rq-guide">아쉽게도 요청이 거절되었어요 · 다른 스타일리스트를 찾아볼까요?</p>'+
@@ -1350,7 +1350,7 @@
         '<div class="reqmain">'+
           '<h1>견적 요청</h1><p class="lead">조건을 남기면 이 스타일리스트가 검토하고 제안(견적)을 보내드려요</p>'+
           reqFormHTML(svc3, null, true)+
-          '<button class="btn full" id="reqBtn" disabled style="margin-top:22px" onclick="confirmMatch()">견적 요청 보내기</button>'+
+          '<button class="btn full" id="reqBtn" disabled style="margin-top:22px" onclick="confirmMatch()">견적 요청하기</button>'+
           '<p class="reqhint" id="reqHint">상황·일정을 입력하면 보낼 수 있어요</p>'+
         '</div>'+
       '</div>';
@@ -1368,7 +1368,7 @@
       '<div class="reqpage">'+
       '<h1>견적 요청</h1><p class="lead">조건을 남기면 <b style="color:var(--ink)">여러 스타일리스트가 견적</b>을 보내요</p>'+
       reqFormHTML(svc3)+
-      '<button class="btn full" id="reqBtn" disabled style="margin-top:22px" onclick="confirmMatch()">견적 요청 보내기</button>'+
+      '<button class="btn full" id="reqBtn" disabled style="margin-top:22px" onclick="confirmMatch()">견적 요청하기</button>'+
       '<p class="reqhint" id="reqHint">상황·예산·일정을 모두 입력하면 보낼 수 있어요</p></div>';
     closeAll(); showOnly('requestView'); validate();
   }

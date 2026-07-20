@@ -155,10 +155,10 @@
       var cancel='<button class="btn ghost" style="margin-top:8px" onclick="confirmCancel()">취소 처리</button>';
       // 제출 후에도 완료 전까지는 수정 가능. 결과물=사진·내용(전 서비스 공통) + 구매 상품·예산(온라인 추가)
       if(r.deliver) return banner + price + deliverSummary(r) +
-        '<button class="btn ghost" style="margin-top:10px" onclick="editDeliver()">결과물 수정</button>'+
+        '<button class="btn ghost" style="margin-top:10px" onclick="editDeliver()">결과물 수정하기</button>'+
         '<button class="btn" style="margin-top:8px" onclick="confirmComplete()">완료 처리</button>' + cancel;
       var hasDraft=((r._draft||[]).length || (r._photos||[]).length || (r._dmsg||'').trim());
-      return banner + price + '<button class="btn" style="margin-top:10px" onclick="openDeliverModal()">결과물 작성'+(hasDraft?' (임시저장)':'')+' →</button>' + cancel;
+      return banner + price + '<button class="btn" style="margin-top:10px" onclick="openDeliverModal()">결과물 작성하기'+(hasDraft?' (임시저장)':'')+' →</button>' + cancel;
     }
     // 분쟁은 타임라인의 막힌 단계 칸이 맡음(disputeStepBody) — 여기(폴백 경로)로는 더 이상 오지 않음
     if(r.status==='완료'){
@@ -394,7 +394,7 @@
     return '<div class="dlv-sec" style="margin-top:16px">'+esc(C.noteSec)+'</div><div class="offerform"><textarea id="dvMsg" style="min-height:104px" placeholder="'+esc(C.notePh)+'">'+esc(r._dmsg||'')+'</textarea></div>'; }
   function renderDeliverModal(){ var r=reqs[idx], m=$('deliverModal'); if(!m||!r) return;
     var draft=r._draft||[], hasItems=(r.service!=='image' && draft.length);
-    var submit='결과물 '+(r.deliver?'다시 제출':'제출')+(hasItems ? ' ('+draft.length+'개 · '+itemsTotal(draft).toLocaleString()+'원)' : '');
+    var submit='결과물 '+(r.deliver?'다시 보내기':'보내기')+(hasItems ? ' ('+draft.length+'개 · '+itemsTotal(draft).toLocaleString()+'원)' : '');
     m.innerHTML='<div class="dlv-bd" onclick="closeDeliverModal()"></div><div class="dlv-pan">'+
       '<div class="dlv-h"><div><b>'+(r.deliver?'결과물 수정':'결과물 작성')+'</b> <span>'+esc(r.cust)+'님 · '+svcLabel(r.service)+'</span></div><button class="dlv-x" onclick="closeDeliverModal()">✕</button></div>'+
       '<div class="dlv-b">'+deliverBlocksHTML(r)+'</div>'+
@@ -836,7 +836,7 @@
   /* 결과물 제출 완료 요약(현재=수락됨, 제출됨) — 수정/완료/취소 */
   function deliverDoneBody(r){
     return deliverSummary(r) +
-      '<button class="btn ghost" style="margin-top:12px" onclick="editDeliver()">결과물 수정</button>'+
+      '<button class="btn ghost" style="margin-top:12px" onclick="editDeliver()">결과물 수정하기</button>'+
       '<button class="btn" style="margin-top:8px" onclick="confirmComplete()">완료 처리</button>'+
       '<div class="quiet"><a onclick="confirmCancel()">취소하기</a></div>';
   }
