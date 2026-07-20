@@ -25,6 +25,9 @@
   /* 뒤로가기 — 상단바에서 빼서 본문 브레드크럼으로 */
   .backlink{display:inline-block;font-size:14px;font-weight:800;color:var(--sub);cursor:pointer;margin-bottom:10px}
   .backlink:hover{color:var(--green)}
+  .backbtn{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer;margin-bottom:12px}
+  .backbtn:hover{border-color:var(--green);color:var(--green)}
+  .backbtn svg{width:20px;height:20px}
 
   /* 상세(마스터→디테일) — 2단: 좌 요청서+견적작성 / 우 고객 체형(아바타) */
   .qwrap{max-width:1160px;margin:0 auto;padding:30px 28px 90px}
@@ -66,7 +69,7 @@
   .kv:last-of-type{border-bottom:none} .kv span{color:var(--sub,#6b675f)} .kv b{font-weight:800}
   .fitline{font-size:13.5px;color:var(--ink-soft,#3a382f);margin:6px 0;line-height:1.5}
   .fitline b{color:var(--ink,#1c1a17)}
-  .note-quote{background:var(--soft,#f6f5f2);border-radius:12px;padding:14px 16px;font-size:14px;color:var(--ink-soft,#3a382f);line-height:1.55}
+  .note-quote{background:#F7F6F3;border-radius:12px;padding:14px 16px;font-size:14px;color:var(--ink-soft,#3a382f);line-height:1.55}
   .note-quote.muted{color:var(--sub2,#8a857b)}
 
   .btn{display:block;width:100%;text-align:center;padding:14px;border:none;border-radius:12px;background:var(--ink,#1c1a17);color:#fff;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer}
@@ -361,8 +364,8 @@
   .pay-edit .pe-in input:focus{outline:none;border-color:var(--green)}
   .pay-edit .pe-ok{padding:7px 12px;border:none;border-radius:8px;background:var(--green-soft);color:var(--green);font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
   .pay-edit .pe-ok:hover{background:#DCEAE1}
-  .now-body .rr-mini{margin-bottom:2px}
-  .now-body .rr-mini .rrow{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+  .now-body .rr-mini{margin-top:14px;margin-bottom:2px}
+  .now-body .rr-mini .rrow{display:flex;justify-content:space-between;gap:14px;padding:13px 0;border-bottom:1px solid var(--line);font-size:13.5px}
   .now-body .rr-mini .rrow:last-child{border-bottom:none}
   .now-body .act-row{display:flex;gap:10px}
   .now-body .act-row .btn{flex:1}

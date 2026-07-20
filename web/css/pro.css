@@ -101,7 +101,7 @@
   .smenu a .i{width:20px;display:inline-flex;align-items:center;justify-content:center} .smenu a .i svg{width:18px;height:18px}
   .smenu a .cnt{margin-left:auto;font-size:12px;font-weight:800;background:var(--green);color:#fff;border-radius:20px;padding:1px 8px}
 
-  .panel{display:none;animation:f .24s} .panel.on{display:block}
+  .panel{display:none;animation:f .24s;padding-top:20px} .panel.on{display:block}   /* 브레드크럼 제거분 만큼 본문을 아래로 — 상단 숨 트기 */
   @keyframes f{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   .crumb{font-size:12.5px;color:var(--sub2);font-weight:700;margin-bottom:6px}
   h1{font-size:25px;font-weight:800;letter-spacing:-.04em}

@@ -240,28 +240,37 @@
   var GO_TYPE = { 'mp-req':'quote', 'mp-support':'reply', 'shop':'news' };
   function notiType(n){ return n.type || GO_TYPE[n.go] || 'news'; }
   var NOTI_SEED=[
-    {type:'quote', msg:'소희 스타일리스트가 견적을 보냈어요', time:'10분 전', read:false, go:'mp-req'},
+    {type:'quote', msg:'소희 스타일리스트가 견적을 보냈어요', time:'10분 전', read:false, req:3, ov:'bids'},
     {type:'reply', msg:'1:1 문의 답변이 등록됐어요', time:'1시간 전', read:false, go:'mp-support'},
     {type:'news', msg:'새 스타일리스트가 합류했어요', time:'어제', read:true, go:'shop'}
   ];
-  var NOTI_VER=2;   // 문구 바뀌면 올려서 로컬 캐시 재시드
+  var NOTI_VER=3;   // 문구 바뀌면 올려서 로컬 캐시 재시드
   var notis = loadLS('notis', null);
   if(!notis || loadLS('notisVer',0)!==NOTI_VER){ notis=JSON.parse(JSON.stringify(NOTI_SEED)); saveLS('notis',notis); saveLS('notisVer',NOTI_VER); }
   function notiUnread(){ return notis.filter(function(n){ return !n.read; }).length; }
-  function updateNotiDot(){ var d=document.getElementById('notiDot'); if(d) d.style.display=notiUnread()?'block':'none'; }
+  function updateNotiDot(){ var u=notiUnread();
+    var d=document.getElementById('notiDot'); if(d) d.style.display=u?'block':'none';
+    var ma=document.getElementById('notiMarkAll'); if(ma) ma.style.display=u?'inline':'none';   // 미읽음 0이면 '모두 읽음' 숨김
+  }
+  function notiItemHTML(n,i){ var t=notiType(n);
+    return '<a class="noti'+(n.read?'':' unread')+'" onclick="notiOpen('+i+')">'+
+      '<span class="noti-ic t-'+t+'">'+(NOTI_IC[t]||NOTI_IC.news)+'</span>'+
+      '<span class="noti-bd"><span class="noti-msg">'+esc(n.msg)+'</span><span class="noti-time">'+esc(n.time)+'</span></span>'+
+      '<span class="arr">›</span></a>';
+  }
   function renderNotis(){
-    var el=document.getElementById('notiList'); if(!el){ updateNotiDot(); return; }
-    if(!notis.length){ el.innerHTML='<div class="note">새 알림이 없어요</div>'; updateNotiDot(); return; }
-    el.innerHTML=notis.map(function(n,i){
-      var t=notiType(n);
-      return '<a class="noti'+(n.read?'':' unread')+'" onclick="notiOpen('+i+')">'+
-        '<span class="noti-ic t-'+t+'">'+(NOTI_IC[t]||NOTI_IC.news)+'</span>'+
-        '<span class="noti-bd"><span class="noti-msg">'+esc(n.msg)+'</span><span class="noti-time">'+esc(n.time)+'</span></span>'+
-        '<span class="arr">›</span></a>';
-    }).join('');
+    var el=document.getElementById('notiList');   // 마이 > 알림 페이지(전체)
+    if(el) el.innerHTML = notis.length ? notis.map(notiItemHTML).join('') : '<div class="note">새 알림이 없어요</div>';
+    var pop=document.getElementById('custNotiList');   // 헤더 벨 팝오버(최근 5개)
+    if(pop) pop.innerHTML = notis.length ? notis.slice(0,5).map(notiItemHTML).join('') : '<div class="notipop-empty">새 알림이 없어요</div>';
     updateNotiDot();
   }
-  function notiOpen(i){ var n=notis[i]; if(!n) return; n.read=true; saveLS('notis',notis); renderNotis();
+  function toggleNotiPop(e){ if(e) e.stopPropagation(); var p=document.getElementById('notiPop'); if(p) p.classList.toggle('on'); }
+  function closeNotiPop(){ var p=document.getElementById('notiPop'); if(p) p.classList.remove('on'); }
+  document.addEventListener('click', function(e){ var p=document.getElementById('notiPop'); if(!p||!p.classList.contains('on')) return; var bell=document.getElementById('navBell'); if(!p.contains(e.target) && !(bell&&bell.contains(e.target))) p.classList.remove('on'); });
+  /* 알림 클릭 → 읽음 + 해당 상세로. req 지정이면 받은 견적/요청 상세 오버레이, 아니면 소식·문의 패널 */
+  function notiOpen(i){ var n=notis[i]; if(!n) return; n.read=true; saveLS('notis',notis); renderNotis(); closeNotiPop();
+    if(typeof n.req==='number' && reqs[n.req]){ if(n.ov==='bids') openBids(n.req); else openReqDetail(n.req); return; }
     if(n.go==='shop') go('shop'); else if(n.go && document.querySelector('#smenu a[data-p="'+n.go+'"]')) goMy(n.go); }
   function markAllNoti(){ notis.forEach(function(n){ n.read=true; }); saveLS('notis',notis); renderNotis(); toast('모든 알림을 읽음 처리했어요'); }
 
@@ -346,7 +355,9 @@
     var el=document.getElementById('profCard'); if(!el) return; var U=USER;
     if(!_profEdit){
       el.innerHTML='<div class="mcard">'+
-        '<div class="msub"><div class="subhead">신체 · 선호 정보 <span class="pr half">◐ MVP</span></div>'+
+        '<div class="mcard-hd">프로필 <span>· 매칭·진단 관리</span></div>'+
+        '<div class="msub"><div class="subhead">신체 · 선호 정보</div>'+
+          '<div class="field"><span>이름</span><span class="v">'+esc(U.name)+'</span></div>'+
           '<div class="field"><span>성별 · 나이</span><span class="v">'+(U.gender==='female'?'여성':'남성')+' · <span class="num">'+U.age+'</span>세</span></div>'+
           '<div class="field"><span>키 · 몸무게</span><span class="v"><span class="num">'+U.height+'</span>cm · <span class="num">'+U.weight+'</span>kg</span></div>'+
           '<div class="field"><span>상의 핏 취향</span><span class="v">'+U.fitTop+'</span></div>'+
@@ -355,7 +366,9 @@
         '</div><div class="prof-actions"><button class="btn" onclick="editProfile()">수정하기</button></div>';
     } else {
       el.innerHTML='<div class="mcard">'+
+        '<div class="mcard-hd">프로필 <span>· 매칭·진단 관리</span></div>'+
         '<div class="msub"><div class="subhead">신체 · 선호 정보</div>'+
+          '<div class="pedit"><label>이름</label><input class="inp" id="pName" value="'+esc(U.name)+'"></div>'+
           '<div class="pedit"><label>성별</label><div class="seg" id="pGender">'+['male','female'].map(function(g){return '<span class="o'+(U.gender===g?' on':'')+'" data-g="'+g+'" onclick="pPick(this)">'+(g==='male'?'남성':'여성')+'</span>';}).join('')+'</div></div>'+
           '<div class="pedit inrow3"><div><label>나이</label><input class="inp" id="pAge" type="number" value="'+U.age+'"></div><div><label>키(cm)</label><input class="inp" id="pHeight" type="number" value="'+U.height+'"></div><div><label>몸무게(kg)</label><input class="inp" id="pWeight" type="number" value="'+U.weight+'"></div></div>'+
           '<div class="pedit"><label>상의 핏 취향</label><div class="seg" id="pFitTop">'+FIT_OPTS.map(function(f){return '<span class="o'+(U.fitTop===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div>'+
@@ -363,12 +376,12 @@
           '<div class="note" style="color:var(--warn)">⚠️ 신체정보를 바꾸면 재진단을 추천해요</div></div>'+
         '</div><div class="prof-actions"><button class="btn ghost" onclick="cancelProfile()">취소</button><button class="btn" onclick="saveProfile()">저장하기</button></div>';
     }
-    var an=document.getElementById('acctName'); if(an) an.textContent=U.name;   // 이름은 계정 섹션에 표시(신원)
   }
   function editProfile(){ _profEdit=true; renderProfile(); }
   function cancelProfile(){ _profEdit=false; renderProfile(); }
   function pPick(el){ var ch=el.parentNode.children; for(var i=0;i<ch.length;i++) ch[i].classList.remove('on'); el.classList.add('on'); }
   function saveProfile(){
+    var nm=document.getElementById('pName'); if(nm&&nm.value.trim()) USER.name=nm.value.trim();
     var g=document.querySelector('#pGender .o.on'); if(g) USER.gender=g.dataset.g;
     var a=document.getElementById('pAge'), h=document.getElementById('pHeight'), w=document.getElementById('pWeight');
     if(a&&a.value) USER.age=+a.value; if(h&&h.value) USER.height=+h.value; if(w&&w.value) USER.weight=+w.value;
@@ -539,7 +552,11 @@
      나머지 입찰은 자동 탈락. 입찰 데이터는 요청(reqs[i].bids)에 고정 저장됨. */
   var _bidReq=-1, _ovMode=null;
   /* 스크롤 잠금 — 스크롤바가 사라지며 폭이 바뀌지 않게 사라진 스크롤바 폭만큼 body에 패딩 보정(사이드바 밀림 방지) */
-  function lockScroll(on){ document.documentElement.style.overflow = on ? 'hidden' : ''; }
+  /* 배경 스크롤 잠금 — 스크롤바가 사라지며 화면이 밀리는 것 방지: 사라진 스크롤바 폭만큼 padding으로 보정 */
+  function lockScroll(on){ var h=document.documentElement;
+    if(on){ var sw=window.innerWidth-h.clientWidth; h.style.overflow='hidden'; if(sw>0) h.style.paddingRight=sw+'px'; }
+    else { h.style.overflow=''; h.style.paddingRight=''; }
+  }
   // 독립 전체 페이지: 상단 내비 아래를 덮고 배경 스크롤 잠금(사이드바 없이 집중)
   function showOverlay(){ document.getElementById('bidsOverlay').classList.add('on'); lockScroll(true); document.getElementById('bidsOverlay').scrollTop=0; saveNav(); }
   function openBids(i){ _bidReq=i; _ovMode='bids'; renderBids(); showOverlay(); }              // 받은 견적(오픈)
@@ -915,7 +932,7 @@
     var title=[svcLabel(r.svc), (r.occ&&r.occ.length?r.occ.join('·'):'')].filter(Boolean).join(' · ') || svcLabel(r.svc);
     var dealOn=custDealStarted(r.status);
     var head='<div class="bids-head" style="display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-right:0">'+
-      '<div style="min-width:0"><span class="crumb-back" onclick="closeBids()">‹ 요청 내역</span>'+
+      '<div style="min-width:0"><button class="backbtn" onclick="closeBids()" aria-label="요청 내역으로" title="요청 내역으로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>'+
       '<h2>'+esc(title)+'</h2>'+
       '<p>'+(r.open?'받은 견적':'보낸 요청')+(r.date?' · '+r.date+' 요청':'')+'</p></div>'+
       (dealOn?chatOpenBtnCust():'')+'</div>';
@@ -979,7 +996,7 @@
     var r=reqs[_bidReq]; if(!r){ closeBids(); return; }
     var bids=(r.bids||[]).slice();
     bids.sort(function(a,b){ return EX[b.idx].matches-EX[a.idx].matches; });   // 매칭도 높은 순 고정
-    var back = r.awarded ? '<button class="bids-back" onclick="openReqDetail('+_bidReq+')">‹ 진행 상황</button>' : '';
+    var back = r.awarded ? '<button class="backbtn" onclick="openReqDetail('+_bidReq+')" aria-label="진행 상황으로" title="진행 상황으로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>' : '';
     var badge = r.awarded ? '' : '<span class="reqtype open">견적 요청 결과</span>';   // 지난 견적: 뒤로가기만 (배지 중복 제거)
     var head='<div class="bids-head"><button class="xbtn" onclick="closeBids()">✕</button>'+ back + badge +
       '<h2>'+(r.awarded?'지난 견적':'받은 견적')+'</h2>'+
@@ -1226,7 +1243,7 @@
     var svcCards=e.services.map(function(sv){ var meta=SMODE[sv.type]+(sv.regions&&sv.regions.length?' · '+sv.regions.join('·'):'');
       return '<div class="svctile"><span class="svct-ic">'+svcIcon(sv.type)+'</span><b class="svct-nm">'+SVC[sv.type]+'</b><span class="svct-mode">'+meta+'</span><div class="svct-pr"><span class="num">'+sv.price.toLocaleString()+'</span>원</div></div>'; }).join('');
     var folioHTML=(e.portfolio&&e.portfolio.length?e.portfolio:DEMO_FOLIO).map(function(p){ var s=folioSpec(p); return '<div style="background-image:url(\''+p.src+'\')">'+(s?'<span class="pspec">'+s+'</span>':'')+'</div>'; }).join('');
-    return '<div class="detailbody"><a class="back" onclick="'+opts.back+'">← 뒤로</a>'+
+    return '<div class="detailbody"><button class="backbtn" onclick="'+opts.back+'" aria-label="뒤로" title="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>'+
       '<div class="dhero">'+
         '<div class="dhero-img"><img src="'+img(e)+'" onerror="'+FB+'"><span class="dside-match">매칭 '+e.matches+'회</span></div>'+
         '<div class="dhero-info">'+
@@ -1293,7 +1310,7 @@
     var SNM={online:'온라인 스타일링', shopping:'동행 쇼핑', image:'이미지 컨설팅'};
     var svc3=e.services.map(function(sv,i){ return '<div class="s '+(i===0?'on':'')+'" data-v="'+sv.type+'" onclick="pickSvc(this)"><div class="i">'+svcIcon(sv.type)+'</div><b>'+SNM[sv.type]+'</b><span class="p num">'+sv.price.toLocaleString()+'</span></div>'; }).join('');
     document.getElementById('requestView').innerHTML=
-      '<a class="back" onclick="openDetail('+idx+')">← 뒤로</a>'+
+      '<button class="backbtn" onclick="openDetail('+idx+')" aria-label="뒤로" title="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>'+
       '<div class="reqsplit">'+
         '<div class="reqside">'+
           '<div class="reqside-img"><img src="'+img(e)+'" onerror="'+FB+'"><span class="dside-match">매칭 '+e.matches+'회</span></div>'+
@@ -1319,7 +1336,7 @@
     var SNM={online:'온라인 스타일링',shopping:'동행 쇼핑',image:'이미지 컨설팅'};
     var svc3=['online','shopping','image'].map(function(v){ return '<div class="s '+(v==='online'?'on':'')+'" data-v="'+v+'" onclick="pickSvc(this)"><div class="i">'+svcIcon(v)+'</div><b>'+SNM[v]+'</b></div>'; }).join('');
     document.getElementById('requestView').innerHTML=
-      '<a class="back" onclick="showOnly(\'listView\')">← 목록으로</a>'+
+      '<button class="backbtn" onclick="showOnly(\'listView\')" aria-label="목록으로" title="목록으로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>'+
       '<div class="reqpage">'+
       '<h1>견적 요청</h1><p class="lead">조건을 남기면 <b style="color:var(--ink)">여러 스타일리스트가 견적</b>을 보내요</p>'+
       reqFormHTML(svc3)+
