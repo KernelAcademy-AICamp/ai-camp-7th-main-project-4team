@@ -1,3 +1,8 @@
+/* 페이지 이동을 부드러운 크로스페이드로 — 교차문서 View Transition (미지원 브라우저는 기존 즉시 이동) */
+@view-transition{ navigation: auto; }
+::view-transition-old(root),::view-transition-new(root){ animation-duration:.32s; animation-timing-function:cubic-bezier(.2,.8,.2,1); }
+@media (prefers-reduced-motion:reduce){ ::view-transition-old(root),::view-transition-new(root){ animation:none; } }
+
 /* ==========================================================================
    diag.css — sangmin 진단 화면(fitting.css "Precision 블랙")을 sohee 딥그린으로 재스킨.
    fitting.css 뒤에 로드. 토큰만 덮고, sohee 원칙(버튼=잉크블랙 · 활성=딥그린)만 보정한다.

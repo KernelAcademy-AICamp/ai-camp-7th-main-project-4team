@@ -111,25 +111,25 @@
   var SMODE={online:'비대면', shopping:'대면', image:'대면'};   // 제공 방식(타입 고정) · 대면이면 활동지역
   /* 스타일리스트 = 다중 서비스(services[{type,price,dur,regions?}]). 코드 image로 통일 */
   var EX=[
-    {lock:32, nm:'소희', photo:'photos/p1.jpg', occ:['date','daily','personal'], rating:4.9, review:12, match:97, matches:132, tags:['미니멀','캐주얼','시크'],
+    {lock:32, nm:'소희', photo:'photos/p1.jpg', occ:['date','daily','personal'], rating:4.9, review:12, match:97, matches:9, tags:['미니멀','캐주얼','시크'],
       services:[{type:'online',price:90000},{type:'shopping',price:130000,regions:['서울 강남','서울 마포']},{type:'image',price:110000,regions:['서울 강남','서울 마포']}],
       bio:'데일리·소개팅룩 전문 스타일리스트<br>온라인 쇼핑몰 MD 출신으로<br>비대면 큐레이션이 강점이에요', reviews:[['비대면인데도 사이즈까지 딱 맞게 골라주셨어요','30세 · 소개팅룩'],['길게 설명 안 해도 취향을 바로 잡아주셔서 편했어요','27세 · 데일리']]},
-    {lock:47, nm:'건형', photo:'photos/p2.jpg', occ:['interview','bodycover'], rating:4.8, review:9, match:90, matches:88, tags:['클래식','시크','미니멀'],
+    {lock:47, nm:'건형', photo:'photos/p2.jpg', occ:['interview','bodycover'], rating:4.8, review:9, match:90, matches:8, tags:['클래식','시크','미니멀'],
       services:[{type:'image',price:190000,regions:['서울 강남','서울 종로']}],
       bio:'남성 이미지 컨설턴트<br>면접·오피스 첫인상을<br>헤어부터 셔츠 핏까지 정돈해드려요', reviews:[['면접관 시선까지 짚어주셔서 자신감이 생겼어요','29세 · 면접']]},
-    {lock:15, nm:'상민', photo:'photos/p3.jpg', occ:['wedding','interview'], rating:4.7, review:7, match:86, matches:64, tags:['클래식','시크','빈티지'],
+    {lock:15, nm:'상민', photo:'photos/p3.jpg', occ:['wedding','interview'], rating:4.7, review:7, match:86, matches:5, tags:['클래식','시크','빈티지'],
       services:[{type:'shopping',price:150000,regions:['서울 종로','경기 성남']}],
       bio:'포멀·하객룩 동행 쇼핑 전문<br>매장을 함께 돌며 체형에 맞는<br>옷을 현장에서 골라드려요', reviews:[['혼자였으면 못 골랐을 옷을 잘 맞게 찾아주셨어요','34세 · 결혼식']]},
-    {lock:52, nm:'지현', occ:['date','daily'], rating:4.8, review:8, match:93, matches:71, tags:['캐주얼','스포티','미니멀'],
+    {lock:52, nm:'지현', occ:['date','daily'], rating:4.8, review:8, match:93, matches:7, tags:['캐주얼','스포티','미니멀'],
       services:[{type:'online',price:98000},{type:'shopping',price:115000,regions:['서울 강남']}],
       bio:'가성비 데일리룩 큐레이터<br>합리적인 예산 안에서<br>실용적인 코디를 짜드려요', reviews:[['예산을 딱 지켜서 골라주셔서 좋았어요','26세 · 데일리']]},
-    {lock:63, nm:'유나', occ:['date','wedding','personal'], rating:5.0, review:6, match:95, matches:58, tags:['걸리시','시크','빈티지'],
+    {lock:63, nm:'유나', occ:['date','wedding','personal'], rating:5.0, review:6, match:95, matches:4, tags:['걸리시','시크','빈티지'],
       services:[{type:'online',price:145000}],
       bio:'트렌디 여성 스타일링 전문<br>시즌 무드를 반영한<br>감각적인 큐레이션이 강점이에요', reviews:[['유행을 잘 녹여주면서 과하지 않았어요','28세 · 하객룩']]},
-    {lock:71, nm:'세라', occ:['interview','wedding','bodycover'], rating:4.9, review:7, match:92, matches:66, tags:['클래식','시크','미니멀'],
+    {lock:71, nm:'세라', occ:['interview','wedding','bodycover'], rating:4.9, review:7, match:92, matches:6, tags:['클래식','시크','미니멀'],
       services:[{type:'image',price:175000,regions:['서울 강남','서울 용산']}],
       bio:'퍼스널컬러·이미지 컨설턴트<br>색과 실루엣으로 첫인상을<br>목적에 맞게 설계해드려요', reviews:[['퍼스널컬러까지 잡아주셔서 만족했어요','31세 · 면접']]},
-    {lock:84, nm:'태오', occ:['daily','travel'], rating:4.6, review:5, match:88, matches:43, tags:['캐주얼','스포티','스트리트'],
+    {lock:84, nm:'태오', occ:['daily','travel'], rating:4.6, review:5, match:88, matches:3, tags:['캐주얼','스포티','스트리트'],
       services:[{type:'shopping',price:130000,regions:['서울 마포','서울 용산']}],
       bio:'남성 캐주얼 동행 쇼핑 전문<br>매장을 함께 돌며 핏에 맞는<br>데일리 아이템을 골라드려요', reviews:[['혼자 사면 실패했을 옷을 잘 잡아주셨어요','33세 · 데일리']]}
   ];
@@ -582,8 +582,8 @@
   /* 스크롤 잠금 — 스크롤바가 사라지며 폭이 바뀌지 않게 사라진 스크롤바 폭만큼 body에 패딩 보정(사이드바 밀림 방지) */
   /* 배경 스크롤 잠금 — 스크롤바가 사라지며 화면이 밀리는 것 방지: 사라진 스크롤바 폭만큼 padding으로 보정 */
   function lockScroll(on){ var h=document.documentElement;
-    if(on){ var sw=window.innerWidth-h.clientWidth; h.style.overflow='hidden'; if(sw>0) h.style.paddingRight=sw+'px'; }
-    else { h.style.overflow=''; h.style.paddingRight=''; }
+    /* scrollbar-gutter:stable가 스크롤바 자리를 늘 예약 → overflow만 토글. paddingRight 보정을 넣으면 자리가 이중 예약돼 콘텐츠가 왼쪽으로 밀림 */
+    h.style.overflow = on ? 'hidden' : '';
   }
   // 독립 전체 페이지: 상단 내비 아래를 덮고 배경 스크롤 잠금(사이드바 없이 집중)
   function showOverlay(){ document.getElementById('bidsOverlay').classList.add('on'); lockScroll(true); document.getElementById('bidsOverlay').scrollTop=0; saveNav(); }
