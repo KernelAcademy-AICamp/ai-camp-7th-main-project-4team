@@ -214,7 +214,7 @@
     if(slot){ slot.className='rlock';
       slot.innerHTML='<div class="lk"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="8" rx="1.5"/><path d="M7 8v3M11 8v4M15 8v3"/></svg></div><div class="t1">아직 진단 데이터가 없어요</div>'+
         '<div class="t2">키·몸무게와 착용 경험을 입력하면 체형과 추천 사이즈가 나와요</div>'+
-        '<a class="b" href="diag-basic.html">진단 시작 →</a>'; }
+        '<a class="b" href="diag-basic.html">진단 시작하기 →</a>'; }
     renderRecsError('진단을 먼저 완료해 주세요');
     var mEl=document.getElementById('meas'); if(mEl) mEl.innerHTML='';
   }

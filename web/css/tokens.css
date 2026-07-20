@@ -1,3 +1,8 @@
+/* 페이지 이동을 부드러운 크로스페이드로 — 교차문서 View Transition (미지원 브라우저는 기존 즉시 이동) */
+@view-transition{ navigation: auto; }
+::view-transition-old(root),::view-transition-new(root){ animation-duration:.32s; animation-timing-function:cubic-bezier(.2,.8,.2,1); }
+@media (prefers-reduced-motion:reduce){ ::view-transition-old(root),::view-transition-new(root){ animation:none; } }
+
 /* ==========================================================================
    fitting · 디자인 토큰 (단일 출처 / Single Source of Truth)
    기준: sohee/디자인가이드.html "딥그린" (2026-07)

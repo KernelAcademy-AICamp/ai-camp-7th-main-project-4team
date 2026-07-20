@@ -111,7 +111,7 @@
 
   /* ===== 상세 드로어 ===== */
   function drawerAction(r,i){ var s=r.status;
-    if(s==='신규'){ if(r._offering) return offerForm(r,i); return '<button class="btn full" onclick="openOffer('+i+')">제안 보내기</button>'; }
+    if(s==='신규'){ if(r._offering) return offerForm(r,i); return '<button class="btn full" onclick="openOffer('+i+')">견적 보내기</button>'; }
     if(s==='제안발송'){ var o=r.offer||{}; return '<div class="note-quote"><b style="color:var(--green)">제안 발송됨</b> · <span style="font-family:var(--num);font-weight:800">'+(o.price?o.price.toLocaleString():'—')+'</span>원<br><span style="font-size:13px;color:var(--sub)">"'+(o.msg||'')+'"</span><br><span style="font-size:12.5px;color:var(--sub2)">고객 응답을 기다리는 중이에요</span></div><button class="btn ghost full" style="margin-top:10px" onclick="simAccept('+i+')">고객 수락 · 데모</button>'; }
     if(s==='상담중'){ var oc=r.offer||{}; return '<div class="note-quote"><b style="color:var(--green)">수락함 · 대화 중</b> · <span style="font-family:var(--num);font-weight:800">'+(oc.price?oc.price.toLocaleString():'—')+'</span>원<br><span style="font-size:12.5px;color:var(--sub2)">'+(isOfflineSvc(r.service)?'약속을 잡고 입금을 요청해요':'내용을 맞춰본 뒤 입금을 요청해요')+'</span></div>'+
       '<button class="btn full" style="margin-top:10px" onclick="goQuote('+i+')">상세에서 이어가기 →</button>'; }
@@ -124,7 +124,7 @@
       if(r.deliver) return hd + deliverSummary(r) + '<button class="btn full" style="margin-top:10px" onclick="completeReq('+i+')">완료 처리</button>';
       var lead = r.service==='image' ? '진단 리포트를 작성해 전달해요' : (r.service==='shopping' ? '구매 내역을 정리해 전달해요' : '추천 상품·코디를 작성해 전달해요');
       return hd + '<p class="note-quote muted" style="margin-top:10px">'+lead+' · 상세에서 작성</p>'+
-        '<button class="btn full" style="margin-top:10px" onclick="goQuote('+i+')">상세에서 결과물 작성 →</button>'; }
+        '<button class="btn full" style="margin-top:10px" onclick="goQuote('+i+')">상세에서 결과물 작성하기 →</button>'; }
     if(s==='분쟁'){ var dp=r.dispute||{}; return '<div class="note-quote" style="border-left:3px solid var(--warn);padding-left:12px"><b style="color:var(--warn)">분쟁 처리 중</b><br><span style="font-size:12.5px;color:var(--sub2)">'+esc(dp.reason||'기타')+' · '+(dp.reply?'소명 제출됨':'소명 필요')+'</span></div>'+
       '<button class="btn full" style="margin-top:10px" onclick="goQuote('+i+')">상세에서 대응 →</button>'; }
     if(s==='거절'||s==='취소'){ return '<div class="note-quote muted">'+(s==='거절'?'거절한 요청이에요':'취소된 건이에요')+'</div>'+
@@ -136,7 +136,7 @@
     return '<div class="offerform">'+
       '<div class="row"><label>견적</label><input id="offAmt'+i+'" type="number" value="'+((r.offer&&r.offer.price)||MY_PRICE)+'"> 원</div>'+
       '<textarea id="offMsg'+i+'" placeholder="고객에게 전할 한 줄 제안">'+((r.offer&&r.offer.msg)||'')+'</textarea>'+
-      '<div class="obtns"><button class="tinybtn ghost" onclick="cancelOffer('+i+')">취소</button><button class="tinybtn" onclick="sendOffer('+i+')">제안 발송</button></div>'+
+      '<div class="obtns"><button class="tinybtn ghost" onclick="cancelOffer('+i+')">취소</button><button class="tinybtn" onclick="sendOffer('+i+')">견적 보내기</button></div>'+
     '</div>';
   }
   /* ===== 결과물 = 상세(견적서)에서 작성. 여기 목록 드로어는 '제출한 결과물 요약'만 읽기전용으로 보여줌 ===== */
