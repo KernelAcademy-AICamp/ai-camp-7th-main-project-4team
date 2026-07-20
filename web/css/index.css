@@ -17,7 +17,12 @@
   .menu a:hover{color:var(--ink);}
   .menu a.on{color:var(--ink); font-weight:800;}
   .menu a.on::after{content:""; position:absolute; left:50%; transform:translateX(-50%); bottom:3px; width:5px; height:5px; border-radius:50%; background:var(--green);}
-  .navr{margin-left:auto; display:flex; align-items:center; gap:16px; font-size:15px; color:var(--sub);}
+  .navr{position:relative; margin-left:auto; display:flex; align-items:center; gap:16px; font-size:15px; color:var(--sub);}
+  /* 헤더 아바타 드롭다운(마이페이지·로그아웃) — 스타일리스트 화면과 동일 패턴 */
+  .navr .usermenu{position:absolute; top:calc(100% + 6px); right:0; background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:0 12px 32px rgba(0,0,0,.13); padding:6px; display:none; z-index:60; min-width:150px;}
+  .navr .usermenu.on{display:block;}
+  .navr .usermenu a{display:block; padding:10px 12px; font-size:13.5px; font-weight:700; color:var(--ink); border-radius:8px; cursor:pointer;}
+  .navr .usermenu a:hover{background:var(--soft);}
   .navr .sup{font-weight:700; color:var(--green);}
   /* 헤더 우상단 사용자 = 아바타 + 이름(마이 사이드 프로필 카드 대체) */
   .navr .navdiv{width:1px; height:18px; background:var(--line2); display:inline-block; flex:none;}

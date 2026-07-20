@@ -1401,6 +1401,10 @@
 
   /* ===== 전역 이벤트 ===== */
   document.addEventListener('click', closeDD);
+  /* 헤더 아바타 드롭다운(마이페이지·로그아웃) */
+  window.toggleUserMenu=function(e){ if(e) e.stopPropagation(); var m=document.getElementById('userMenu'); if(m) m.classList.toggle('on'); };
+  window.closeUserMenu=function(){ var m=document.getElementById('userMenu'); if(m) m.classList.remove('on'); };
+  document.addEventListener('click', function(e){ var m=document.getElementById('userMenu'); if(!m||!m.classList.contains('on')) return; var u=document.getElementById('navUser'); if(!m.contains(e.target) && !(u&&u.contains(e.target))) m.classList.remove('on'); });
   document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeConfirm(); closeAll(); closeDD(); closeBids(); } });
   // MVP(api): 스타일리스트찾기 = '준비 중 · 오픈 알림' 웨이트리스트로 통일(목업 목록/견적 미노출 · 리텐션은 탭 유지+알림).
   // 진입(상단 탭·홈 CTA·진단 후 결과 게이트) 전부 이 뷰로. 수요 = 알림 신청(saveLead notify).

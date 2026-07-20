@@ -60,8 +60,9 @@
     var m=document.querySelectorAll('#smenu a'); for(var i=0;i<m.length;i++) m[i].classList.remove('on'); el.classList.add('on');
     var ps=document.querySelectorAll('.panel'); for(var j=0;j<ps.length;j++) ps[j].classList.remove('on');
     document.getElementById(el.dataset.p).classList.add('on');
-    /* 현재 패널을 URL에 남김 — 견적서에 들어갔다 브라우저 뒤로가기로 돌아와도 대시보드로 초기화되지 않게 */
+    /* 현재 패널을 URL·localStorage에 남김 — 새로고침/재진입해도 보던 화면 유지(고객 화면과 동일 동작) */
     try{ history.replaceState(null,'','pro.html?panel='+el.dataset.p); }catch(_){}
+    saveLS('lastPanel', el.dataset.p);
     window.scrollTo({top:0, behavior:'smooth'});
   }
   /* 지금 열려 있는 패널 키 — 견적서로 넘어갈 때 '어디서 왔는지'로 함께 넘김 */
@@ -82,7 +83,8 @@
   }
   function svcLabel(s){ return svcMeta(s).label; }
   function svcBadge(s){ var m=svcMeta(s); return '<span class="svcbadge '+m.cls+'">'+m.icon+' '+m.label+'</span>'; }
-  function starsRO(n){ var s=''; for(var k=1;k<=5;k++) s+='<span style="color:'+(k<=n?'var(--ink)':'var(--line2)')+'">★</span>'; return s; }
+  function starSVG(){ return '<svg class="cutestar" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M12 4 L14.1 9.6 20.1 9.9 15.4 13.6 17 19.4 12 16.1 7 19.4 8.6 13.6 3.9 9.9 9.9 9.6Z"/></svg>'; }
+  function starsRO(n){ var s=''; for(var k=1;k<=5;k++) s+='<span style="color:'+(k<=n?'var(--green)':'var(--line2)')+'">'+starSVG()+'</span>'; return s; }   /* 고객 화면과 동일 cutestar */
 
   /* ===== 요청 행(요약, 클릭 시 상세) ===== */
   /* 날짜 6글자 — 2026.07.12 → 26.07.12 */
@@ -233,15 +235,38 @@
   function renderReviews(){
     var el=document.getElementById('reviewList');
     var rv=reqs.filter(function(r){return r.review;});
+    renderReviewSummary(rv);
     el.innerHTML = rv.length ? rv.map(function(r){ var i=reqs.indexOf(r);
       var replyBlock = r.reply
         ? '<div class="rvreply"><b>스타일리스트 답글</b><br>'+r.reply+'</div>'
         : (replyIdx===i
             ? '<div class="rvreplyform"><textarea id="rvReplyInput" placeholder="후기에 답글을 남겨보세요"></textarea><div class="rb"><button class="tinybtn ghost" onclick="cancelReply()">취소</button><button class="tinybtn" onclick="saveReply('+i+')">답글 등록</button></div></div>'
-            : '<div style="margin-top:10px"><button class="tinybtn ghost" onclick="openReply('+i+')">답글 달기</button></div>');
-      return '<div class="req"><div class="reqtop"><div class="av">'+r.cust.charAt(0)+'</div><div class="info"><b>'+r.cust+' 님 · '+r.occ+'</b><small style="letter-spacing:1px">'+starsRO(r.review.rating)+'</small></div></div>'+
-        '<div class="reqact" style="display:block"><span class="reqnote">"'+r.review.text+'"</span>'+replyBlock+'</div></div>';
+            : '<div style="margin-top:10px;display:flex;justify-content:flex-end"><button class="tinybtn ghost" onclick="openReply('+i+')">답글 달기</button></div>');
+      return '<div class="req">'+
+        '<div class="reqtop"><div class="av">'+r.cust.charAt(0)+'</div>'+
+          '<div class="info"><b>'+r.cust+' 님 · '+r.occ+'</b><small style="letter-spacing:1px">'+starsRO(r.review.rating)+'</small>'+
+            '<p class="rvtext">'+r.review.text+'</p></div>'+
+          '<button class="rvgo" onclick="goQuote('+i+')" title="이 고객과의 거래 내역 보기">거래 내역 ›</button></div>'+
+        '<div class="rvreplywrap">'+replyBlock+'</div></div>';
     }).join('') : '<p class="note" style="padding:14px 0">아직 받은 후기가 없어요</p>';
+  }
+  function renderReviewSummary(rv){
+    var box=document.getElementById('reviewSummary'); if(!box) return;
+    if(!rv.length){ box.style.display='none'; return; }
+    var dist=[0,0,0,0,0], sum=0;                                  // dist[0]=1★ … dist[4]=5★
+    rv.forEach(function(r){ var n=Math.max(1,Math.min(5,r.review.rating||0)); dist[n-1]++; sum+=n; });
+    var avg=(sum/rv.length).toFixed(1);
+    var rows='';
+    for(var k=5;k>=1;k--){ var c=dist[k-1], pct=Math.round(c/rv.length*100);
+      rows+='<div class="rs-row"><span class="rs-lab">'+k+'★</span>'+
+            '<span class="rs-bar"><span class="rs-fill" style="width:'+pct+'%"></span></span>'+
+            '<span class="rs-n">'+c+'</span></div>';
+    }
+    box.style.display='flex';
+    box.innerHTML='<div class="rs-score"><div class="rs-avg">'+avg+'</div>'+
+        '<div class="rs-stars">'+starsRO(Math.round(avg))+'</div>'+
+        '<div class="rs-count">후기 '+rv.length+'개</div></div>'+
+        '<div class="rs-dist">'+rows+'</div>';
   }
   function openReply(i){ replyIdx=i; renderReviews(); }
   function cancelReply(){ replyIdx=-1; renderReviews(); }
@@ -352,9 +377,10 @@
   /* 프로필 사진: 저장된 게 있으면 그걸, 없으면 기본 SVG 캐릭터 */
   function renderAvatar(){
     var src=(PROFILE&&PROFILE.avatar)||DEFAULT_AVATAR;
-    var h=document.getElementById('hdrAvatar'), sd=document.getElementById('sideAvatar');
+    var h=document.getElementById('hdrAvatar'), sd=document.getElementById('sideAvatar'), pf=document.getElementById('pfAvatar');
     if(h){ h.src=src; h.style.visibility='visible'; }
     if(sd){ sd.src=src; sd.style.visibility='visible'; }
+    if(pf){ pf.src=src; pf.style.visibility='visible'; }
   }
   /* 서비스·가격을 카테고리별 카드 행으로 (가입 전이면 데모 기본값 사용) */
   function svcIcon(t){ return svcSvg(t); }
@@ -370,6 +396,7 @@
         '<span class="pr">'+(s.price||0).toLocaleString()+'<small>원</small></span></div>';
     }).join('');
     if(svc[0]) setText('sideRole', svc[0].label);
+    if(svc.length) setText('pfRole', svc.map(function(s){return s.label;}).join(' · '));   // 기본 정보 히어로 역할 줄
   }
   /* 전문 분야·스타일을 보기 화면에 (가입 전이면 데모값) */
   function renderTagsView(){
@@ -571,4 +598,6 @@
   renderPortfolio();
   renderAll();
   /* 견적서(pro-quote) 사이드 내비에서 ?panel=inbox 등으로 돌아올 때 해당 패널 열기 */
-  var _pp=new URLSearchParams(location.search).get('panel'); if(_pp) goPanel(_pp);
+  var _pp=new URLSearchParams(location.search).get('panel');
+  if(_pp) goPanel(_pp);
+  else { var _lp=loadLS('lastPanel',null); if(_lp && _lp!=='dash') goPanel(_lp); }   /* 쿼리 없으면 마지막 보던 패널 복원 */

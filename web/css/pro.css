@@ -6,10 +6,10 @@
   .wrap{max-width:1240px;margin:0 auto;padding:0 30px;width:100%;flex:1 0 auto}
 
   header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-  .nav{max-width:1240px;margin:0 auto;height:66px;display:flex;align-items:center;gap:14px;padding:0 30px}
+  .nav{position:relative;max-width:1320px;margin:0 auto;height:66px;display:flex;align-items:center;gap:48px;padding:0 24px}   /* 고객(index) 헤더와 동일 폭·패딩 — 로고/우측 클러스터 위치 일치 */
   .logo{display:inline-block;font-size:22px;font-weight:800;letter-spacing:-.05em;color:var(--green);line-height:1}
   .logo i,.logo .sq{display:inline-block;width:6px;height:6px;background:var(--green);margin-left:2px;vertical-align:baseline}
-  .pill-role{font-size:11.5px;font-weight:800;color:var(--green);background:var(--green-soft);padding:5px 11px;border-radius:20px;letter-spacing:.02em}
+  .pill-role{font-size:12px;font-weight:800;color:var(--green);background:var(--green-soft);padding:5px 11px;border-radius:20px;letter-spacing:.02em}
   /* 앱 상단바 — 고객(index) 내비와 동일 구조: 로고 · 고객화면 · 구분선 · 알림(점) · 구분선 · 프로필 */
   .navr{margin-left:auto;display:flex;align-items:center;gap:16px;font-size:15px;color:var(--sub)}
   .navr .cust{cursor:pointer;font-weight:700;color:var(--green)}
@@ -19,7 +19,7 @@
   .navr .me{display:flex;align-items:center;gap:9px;cursor:pointer;color:var(--ink);font-weight:700}
   .navr .me .navav{width:34px;height:34px;border-radius:50%;overflow:hidden;flex:none}
   .navr .me .navav img{width:100%;height:100%;object-fit:cover}
-  .accmenu{position:absolute;top:58px;right:30px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.13);padding:6px;display:none;z-index:60;min-width:150px}
+  .accmenu{position:absolute;top:58px;right:24px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.13);padding:6px;display:none;z-index:60;min-width:150px}
   .accmenu.on{display:block}
   .accmenu a{display:block;padding:10px 12px;font-size:13.5px;font-weight:700;color:var(--ink);border-radius:8px;cursor:pointer}
   .accmenu a:hover{background:var(--soft)}
@@ -27,13 +27,40 @@
   .setrow{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)} .setrow:last-child{border-bottom:none}
   .setrow .si{flex:1;min-width:0} .setrow .si b{font-size:14px} .setrow .si small{display:block;font-size:12.5px;color:var(--sub);margin-top:2px}
   .setrow .amt{font-family:var(--num);font-weight:800;font-size:15px;white-space:nowrap}
-  .setrow .stag{font-size:11px;font-weight:800;padding:4px 9px;border-radius:20px;background:var(--green-soft);color:var(--green);white-space:nowrap}
+  .setrow .stag{font-size:12px;font-weight:800;padding:4px 9px;border-radius:20px;background:var(--green-soft);color:var(--green);white-space:nowrap}
   .setrow .stag.wait{background:var(--soft);color:var(--sub)}
   /* 후기 답글 */
   .rvreply{margin-top:10px;padding:11px 13px;background:var(--green-soft);border-radius:10px;font-size:13px;color:var(--ink-soft)}
   .rvreply b{color:var(--green)}
   .rvreplyform{margin-top:10px} .rvreplyform textarea{width:100%;border:1.5px solid var(--line2);border-radius:10px;padding:10px 12px;font-family:inherit;font-size:13.5px;resize:vertical;min-height:52px}
   .rvreplyform .rb{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+  /* 받은 후기 요약 헤더 */
+  .revsum{display:flex;gap:30px;align-items:center;flex-wrap:wrap}
+  .card.revsum{padding:22px 24px}   /* .card(뒤 정의)의 6px을 이기도록 2-클래스 우선순위 */
+  .revsum .rs-score{flex:none;min-width:110px;text-align:center}
+  .revsum .rs-avg{font-family:var(--num);font-feature-settings:'tnum';font-size:46px;font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--green)}
+  .revsum .rs-stars{font-size:15px;letter-spacing:2px;margin-top:7px}
+  .revsum .rs-count{font-size:12.5px;font-weight:600;color:var(--sub);margin-top:7px}
+  .revsum .rs-dist{flex:1;min-width:210px;display:flex;flex-direction:column;gap:7px}
+  .revsum .rs-row{display:flex;align-items:center;gap:11px}
+  .revsum .rs-lab{width:26px;flex:none;font-size:12px;font-weight:700;color:var(--ink-soft)}
+  .revsum .rs-bar{flex:1;height:7px;border-radius:20px;background:var(--line);overflow:hidden}
+  .revsum .rs-fill{height:100%;border-radius:20px;background:var(--green)}
+  .revsum .rs-n{width:22px;flex:none;text-align:right;font-family:var(--num);font-size:12px;font-weight:700;color:var(--ink-soft)}
+  /* 후기 본문 — 인용문을 돋보이게(딥그린 얇은 라인 강조) */
+  .rvbody{margin-top:13px}
+  /* 별 — 고객 화면과 동일 cutestar */
+  .cutestar{width:15px;height:15px;display:inline-block;vertical-align:-2px}
+  .revsum .rs-stars .cutestar{width:18px;height:18px}
+  /* 상세 후기 카드 — 이름·별점·후기 텍스트 한 블록, 이동은 '거래 내역' 버튼만 */
+  #reviewList .reqtop{align-items:flex-start}
+  #reviewList .rvtext{margin:9px 0 0;font-size:15px;color:var(--ink-soft);line-height:1.55}
+  #reviewList .rvreplywrap{padding-left:58px}   /* 답글 영역을 후기 텍스트(아바타 폭 44+gap 14) 왼쪽선에 맞춤 */
+  .rvgo{margin-left:auto;flex:none;background:none;border:none;font-family:inherit;font-size:12px;font-weight:700;color:var(--sub2);white-space:nowrap;cursor:pointer;padding:4px 7px;border-radius:7px}
+  .rvgo:hover{color:var(--green);background:var(--green-soft)}
+  .rvquote{position:relative;margin:13px 0 0;padding-left:34px}   /* 후기 본문 — 큰 따옴표 장식 강조 */
+  .rvquote::before{content:"\201C";position:absolute;left:0;top:-6px;font-size:42px;line-height:1;font-weight:800;color:var(--green);opacity:.85;font-family:Georgia,serif}
+  .rvquote p{margin:0;font-size:15.5px;font-weight:600;line-height:1.6;letter-spacing:-.01em;color:var(--ink)}
 
   .prowrap{display:grid;grid-template-columns:250px 1fr;gap:30px;align-items:start;padding:32px 0 60px}
   .side{position:sticky;top:88px}
@@ -48,7 +75,7 @@
   .smenu a:hover{background:var(--soft);color:var(--ink)}
   .smenu a.on{background:var(--green-soft);color:var(--green);font-weight:800}
   .smenu a .i{width:20px;display:inline-flex;align-items:center;justify-content:center} .smenu a .i svg{width:18px;height:18px}
-  .smenu a .cnt{margin-left:auto;font-size:11px;font-weight:800;background:var(--green);color:#fff;border-radius:20px;padding:1px 8px}
+  .smenu a .cnt{margin-left:auto;font-size:12px;font-weight:800;background:var(--green);color:#fff;border-radius:20px;padding:1px 8px}
 
   .panel{display:none;animation:f .24s} .panel.on{display:block}
   @keyframes f{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -76,6 +103,7 @@
   .rghead .rgicon svg{width:21px;height:21px}
   .rghead .rgtx{flex:1;min-width:0} .rghead .rgtx b{font-size:16px;font-weight:800;letter-spacing:-.03em} .rghead .rgtx p{font-size:12.5px;color:var(--sub);margin-top:3px;line-height:1.5}
   .rghead .rgcount{font-size:12.5px;font-weight:800;color:var(--sub);background:var(--soft);padding:5px 11px;border-radius:20px;flex:none}
+  .rghead .rgcount.prog{background:var(--green-soft);color:var(--green)}   /* 진행 중 건수만 연한 초록 */
 
   /* 요청 아이템 */
   .req{padding:16px 0;border-bottom:1px solid var(--line)} .req:last-child{border:none}
@@ -95,10 +123,10 @@
   .ureq-r{display:flex;align-items:center;gap:9px;flex:none}
   /* 진행 중 활성 — 아이콘 칩은 그대로 중립 회색. (초록 테두리 '띠'가 회색 채움과 따로 놀아 제거)
      활성 신호는 제목 초록 + 상태 뱃지가 맡음. 헤더(green-soft 칩)와도 자연히 갈림. */
-  .ureq.active .ureq-title{color:var(--green)}
+  /* 제목색은 상태와 무관하게 잉크블랙 통일 — 상태는 뱃지로만 구분(진행중 딥그린 제목 제거) */
   .ureq.past{opacity:.5}
   /* 서비스 유형 배지(온라인 스타일링·동행 쇼핑·이미지 컨설팅) */
-  .svcbadge{display:inline-block;font-size:11px;font-weight:800;border-radius:20px;padding:2px 9px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+  .svcbadge{display:inline-block;font-size:12px;font-weight:800;border-radius:20px;padding:2px 9px;margin-left:8px;vertical-align:middle;white-space:nowrap}
   .svcbadge svg{width:13px;height:13px;vertical-align:-2px;margin-right:2px}
   .svcbadge.online{background:var(--green-soft);color:var(--green)}
   .svcbadge.shopping{background:#fbeede;color:#b9741a}
@@ -125,7 +153,7 @@
   .field .v{font-weight:700} .tag{display:inline-block;font-size:12px;font-weight:700;background:var(--soft);color:#5b584f;padding:5px 11px;border-radius:20px;margin:0 5px 5px 0}
   /* 서비스·가격 목록(카테고리별) */
   .svclist{display:flex;flex-direction:column;gap:9px;padding:2px 0 8px}
-  .svcrow{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--soft)}
+  .svcrow{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:#fff}
   .svcrow .ic{width:38px;height:38px;flex:none;border-radius:10px;background:var(--green-soft);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:18px}
   .svcrow .ic svg{width:19px;height:19px}
   .svcrow .nm{flex:1;min-width:0} .svcrow .nm b{font-size:14.5px;font-weight:800} .svcrow .nm small{display:block;font-size:12px;color:var(--sub2);margin-top:1px}
@@ -137,10 +165,42 @@
     text-shadow:-1.2px -1.2px 0 #000,1.2px -1.2px 0 #000,-1.2px 1.2px 0 #000,1.2px 1.2px 0 #000,0 0 3px rgba(0,0,0,.55)}
 
   /* 프로필 편집 폼 */
-  .ef .efl{display:block;font-size:12.5px;font-weight:800;color:var(--sub2);margin:18px 0 7px}
+  .ef .efl{display:block;font-size:12.5px;font-weight:800;color:var(--ink-soft);margin:18px 0 7px}
   .ef .efin{width:100%;border:1.5px solid var(--line2);border-radius:10px;padding:11px 13px;font-family:inherit;font-size:14px;background:#fff;color:var(--ink)}
   .ef textarea.efin{resize:vertical;min-height:64px}
   .ef .efin:focus{outline:none;border-color:var(--green)}
+  /* 지원·문의 새 문의 폼 — 카드 위/아래 여백 대칭(기본 .card 6px는 버튼이 바닥에 붙어 비대칭) */
+  #support .card.ef{padding:20px 24px}
+  #support .card.ef>.subhead:first-child{margin-top:0}
+  /* 프로필 편집 — 번호 섹션 위계 레이아웃(후보 A) */
+  /* 프로필 편집 — 제목 왼쪽 열 / 입력 오른쪽 열 2단 */
+  .ef .sec{padding:24px 0;border-top:1px solid var(--line)}
+  .ef .sec:first-of-type{border-top:none;padding-top:20px}
+  .ef .sec .sechead{text-align:left;margin-bottom:16px}
+  .ef .sec .sectitle{font-size:17px;font-weight:800;letter-spacing:-.01em;margin-bottom:4px;text-align:left;color:var(--ink)}
+  .ef .sec .secdesc{font-size:12px;color:var(--sub2);line-height:1.5;text-align:left}
+  .ef .sec .secfields{min-width:0}
+  .ef .sec .secfields>.efl:first-child{margin-top:0}   /* 오른쪽 열 첫 라벨을 제목 상단과 맞춤 */
+  /* 기본 정보 — 아바타 좌(오른쪽 높이에 맞춰 원 크기 스트레치) · 우측 닉네임+사진변경 */
+  .ef .idrow{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:stretch}
+  .ef .idrow .avacol{display:flex}
+  .ef .idrow .avacol img{height:100%;width:auto;aspect-ratio:1;min-height:104px;border-radius:50%;object-fit:cover;background:var(--soft);display:block}
+  .ef .idrow .idcol>.efl:first-child{margin-top:0}
+  @media(max-width:600px){.ef .idrow{grid-template-columns:1fr}}
+  #profileEdit, #profileView{padding-bottom:24px}   /* 버튼이 카드 바닥에 붙지 않게(위 여백과 대칭) */
+  .ef .idrow .idcol:last-child .efin{max-width:300px}   /* 닉네임 박스 폭 축소 */
+  /* 읽기(저장된) 화면 값 표시 — 편집 화면과 동일 섹션 위에 값만 얹음 */
+  .ef .secfields .v{font-size:14px;font-weight:700;color:var(--ink)}
+  .ef .kv{display:grid;grid-template-columns:88px 1fr;gap:13px 16px;align-items:start}
+  .ef .kv .k{font-size:12.5px;font-weight:800;color:var(--ink-soft);padding-top:3px}
+  /* 기본 정보(읽기) — 아이덴티티 히어로 */
+  .ef .pfhero{background:linear-gradient(180deg,var(--green-soft),#fff 90%);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .ef .pfhero .pfnk{font-size:22px;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
+  .ef .pfhero .pfrole{font-size:13px;color:var(--green);font-weight:700;margin-top:4px}
+  .ef .pfhero .pfgrp{margin-top:16px}
+  .ef .pfhero .glab{font-size:12px;font-weight:800;letter-spacing:.03em;color:var(--sub2);margin-bottom:8px}
+  .ef .pfava{width:76px;height:76px;border-radius:50%;object-fit:cover;background:var(--soft);cursor:pointer;display:block}
+  .efl small{font-size:12px}   /* 라벨 보조문구 최소 가독성 12px 보장 */
   .ef .esvc{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line)}
   .ef .esvc:last-of-type{border-bottom:none}
   .ef .etog{display:flex;align-items:center;gap:9px;flex:1;font-size:14px;font-weight:700;cursor:pointer}
@@ -151,7 +211,7 @@
   .ef .efhint{font-size:12px;color:var(--sub2);margin-top:8px}
   .ef .esvcreg{margin:2px 0 6px 4px;padding:8px 0 6px 12px;border-left:2px solid var(--green-soft)}
   .ef .ehw{display:flex;align-items:center;gap:8px} .ef .ehw .efin{width:auto;flex:1} .ef .ehw .won{font-size:13px;color:var(--sub)}
-  .ef .eftags{display:flex;flex-wrap:wrap;gap:8px}
+  .ef .eftags{display:flex;flex-wrap:wrap;gap:5px}
   .ef .eftags .tag{cursor:pointer;border:1.5px solid var(--line2);background:#fff;color:var(--sub)}
   .ef .eftags .tag.on{border-color:var(--green);color:var(--green);background:var(--green-soft)}
   .ef .eftagadd{display:flex;gap:8px;margin-top:10px} .ef .eftagadd .efin{flex:1}
@@ -170,9 +230,11 @@
   .ef .eprowf .won{font-size:12.5px;color:var(--sub)}
   .ef .epdel{width:30px;height:30px;flex:none;border:none;background:var(--soft);border-radius:8px;font-size:14px;cursor:pointer;color:var(--sub)}
   .ef .epadd{margin-top:2px;padding:11px;border:1.5px dashed var(--line2);background:var(--soft);border-radius:12px;font-family:inherit;font-size:13.5px;font-weight:800;color:var(--sub);cursor:pointer;width:100%}
-  .ef .edavatar{display:flex;align-items:center;gap:16px;padding:6px 0 4px}
+  .ef .edavatar{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:0}
   .ef .edavatar img{width:76px;height:76px;border-radius:50%;object-fit:cover;background:var(--soft);filter:saturate(.6);flex:none}
-  .ef .edavatar-act{display:flex;flex-direction:column;gap:7px;align-items:flex-start}
+  .ef .edavatar-act{display:flex;flex-direction:row;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+  .ef .avreset{font-size:12px;font-weight:700;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+  .ef .avreset:hover{color:var(--ink)}
 
   footer{border-top:1px solid var(--line);flex:none}
   footer .in{max-width:1240px;margin:0 auto;padding:26px 30px 34px;display:flex;gap:22px;align-items:baseline;flex-wrap:wrap;font-size:13px;color:var(--sub)}
