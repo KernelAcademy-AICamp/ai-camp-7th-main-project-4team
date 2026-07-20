@@ -1182,11 +1182,15 @@
   /* 폼 선택 헬퍼 */
   function pickOne(el){ var ch=el.parentNode.children; for(var i=0;i<ch.length;i++) ch[i].classList.remove('on'); el.classList.add('on'); validate(); }
   function pickBud(el){ var was=el.classList.contains('on'); var ch=el.parentNode.children; for(var i=0;i<ch.length;i++) ch[i].classList.remove('on'); if(!was) el.classList.add('on'); validate(); }
+  /* 일정 '스타일리스트와 협의' 토글 — 켜면 날짜 입력을 비우고 비활성(협의로 대체) */
+  function toggleFlexDate(el){ el.classList.toggle('on'); var on=el.classList.contains('on');
+    var d=document.getElementById('reqDate'); if(d){ d.disabled=on; if(on) d.value=''; } validate(); }
   function validate(){
     var btn=document.getElementById('reqBtn'); if(!btn) return;
     var occ=document.querySelectorAll('#mOcc .o.on').length>0;
     var bud=!document.getElementById('mBud') || document.querySelectorAll('#mBud .o.on').length>0;   // 지명 요청엔 예산 없음
-    var d=document.getElementById('reqDate'); var date=d && d.value && d.value>=todayStr();  // 오늘 이후만 유효
+    var fx=document.getElementById('reqFlexDate'); var flex=fx && fx.classList.contains('on');
+    var d=document.getElementById('reqDate'); var date=flex || (d && d.value && d.value>=todayStr());  // 협의 토글 또는 오늘 이후 날짜
     var ok=occ && bud && !!date;
     btn.disabled=!ok;
     var hint=document.getElementById('reqHint'); if(hint) hint.style.display=ok?'none':'block';
@@ -1261,10 +1265,11 @@
   /* 견적 요청 폼 (A안 — 섹션 카드 3그룹: 무엇을 / 언제·얼마 / 요청 메모) */
   function reqFormHTML(svc3, g1label, noBudget){
     return '<div class="grp"><div class="grp-h"><span class="n">1</span>'+(g1label||'어떤 서비스로 받을까요?')+'</div><div class="svc3" id="mSvc">'+svc3+'</div></div>'+
-      '<div class="grp"><div class="grp-h"><span class="n">2</span>언제 어디서 진행할까요?</div>'+
+      '<div class="grp"><div class="grp-h"><span class="n">2</span>언제 진행할까요?</div>'+
         '<div class="feat">상황 · 최대 2개 · <em>필수</em></div><div class="seg" id="mOcc"><span class="o" onclick="toggleOcc(this)">소개팅·데이트</span><span class="o" onclick="toggleOcc(this)">면접·발표</span><span class="o" onclick="toggleOcc(this)">결혼식 하객</span><span class="o" onclick="toggleOcc(this)">여행</span><span class="segbrk"></span><span class="o" onclick="toggleOcc(this)">데일리 스타일링</span><span class="o" onclick="toggleOcc(this)">퍼스널 스타일링</span><span class="o" onclick="toggleOcc(this)">체형 커버 스타일링</span></div>'+
         (noBudget?'':'<div class="feat">예산 · <em>필수</em></div><div class="seg" id="mBud"><span class="o" onclick="pickBud(this)">~5만</span><span class="o" onclick="pickBud(this)">5~10만</span><span class="o" onclick="pickBud(this)">10~15만</span><span class="o" onclick="pickBud(this)">15만+</span></div>')+
         '<div class="feat">일정 · <em>필수</em> · 오늘 이후만 선택 가능</div><input class="inp" type="date" id="reqDate" min="'+todayStr()+'" onchange="validate()">'+
+        '<div class="attach" style="margin-top:12px"><div class="at"><b>날짜를 아직 못 정했어요</b><div>일정을 스타일리스트와 협의할게요</div></div><div class="toggle" id="reqFlexDate" onclick="toggleFlexDate(this)"></div></div>'+
       '</div>'+
       '<div class="grp"><div class="grp-h"><span class="n">3</span>요청사항을 적어주세요</div>'+
         '<input class="inp" id="reqNote" maxlength="100" placeholder="예) 과하지 않게 깔끔한 첫인상 원해요">'+
@@ -1339,6 +1344,7 @@
     var occ=[].map.call(document.querySelectorAll('#mOcc .o.on'), function(o){ return o.textContent; });
     var budEl=document.querySelector('#mBud .o.on'); var budget=budEl?budEl.textContent:'';
     var dEl=document.getElementById('reqDate'); var date=(dEl && dEl.value)?dEl.value.replace(/-/g,'.'):'';
+    var fxEl=document.getElementById('reqFlexDate'); if(!date && fxEl && fxEl.classList.contains('on')) date='협의';   // 협의 선택 → 일정 값 '협의'
     var nEl=document.getElementById('reqNote'); var note=(nEl && nEl.value.trim())?nEl.value.trim():'';
     var styles=[].map.call(document.querySelectorAll('#mStyle .o.on'), function(o){ return o.textContent; });
     var she=curReq.nm?EX.filter(function(x){return x.nm===curReq.nm;})[0]:null;
@@ -1368,6 +1374,7 @@
     var occ=[].map.call(document.querySelectorAll('#mOcc .o.on'), function(o){ return o.textContent; });
     var budEl=document.querySelector('#mBud .o.on'); var budget=budEl?budEl.textContent:'';
     var dEl=document.getElementById('reqDate'); var date=(dEl && dEl.value)?dEl.value.replace(/-/g,'.'):'';
+    var fxEl=document.getElementById('reqFlexDate'); if(!date && fxEl && fxEl.classList.contains('on')) date='협의';   // 협의 선택 → 일정 값 '협의'
     var nEl=document.getElementById('reqNote'); var note=nEl?nEl.value:'';
     var styles=[].map.call(document.querySelectorAll('#mStyle .o.on'), function(o){ return o.textContent; });
     var attEl=document.getElementById('reqAttach'); var attach=attEl?attEl.classList.contains('on'):true;
