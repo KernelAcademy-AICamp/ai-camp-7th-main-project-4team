@@ -93,7 +93,7 @@
   function reqTop(r, opts){ opts=opts||{}; var i=reqs.indexOf(r);
     var s=r.status;
     var xc=(s==='수락됨'||s==='결제대기'||s==='상담중')?'active':((s==='완료'||s==='거절'||s==='취소')?'past':'');   // 진행중=활성 / 완료·취소·거절=지난
-    var title=(r.occ?r.occ+' · ':'')+svcLabel(r.service);
+    var title=svcLabel(r.service)+(r.occ?' · '+r.occ:'');
     var parts=[]; if(r.cust) parts.push(r.cust+' 님'); var sd=shortDate(r.date); if(sd) parts.push(sd); if(r.budget) parts.push('<b>예산 '+r.budget+'</b>');
     var onclick = opts.href ? "location.href='"+opts.href+"'" : 'goQuote('+i+')';
     var badge = opts.badge!=null ? opts.badge : s;

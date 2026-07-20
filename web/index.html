@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="css/tokens.css?v=10fb5117">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/index.css?v=29022849">
+<link rel="stylesheet" href="css/index.css?v=8ce3a0ad">
 </head>
 <body>
 
@@ -529,7 +529,24 @@
 <div class="confirm-scrim" id="confirmModal" onclick="closeConfirm()">
   <div class="confirm-box" onclick="event.stopPropagation()">
     <div class="confirm-msg" id="confirmMsg"></div>
-    <div class="confirm-btns"><button class="cf-no" id="confirmNo" onclick="closeConfirm()">취소하기</button><button class="cf-yes" id="confirmYes">확인</button></div>
+    <div class="confirm-btns"><button class="cf-yes" id="confirmYes">확인</button></div>
+    <div class="cf-quiet"><button id="confirmNo" onclick="closeConfirm()">돌아가기</button></div>
+  </div>
+</div>
+
+<!-- ===== 결제 모달 (요청 상세 위에 뜸) ===== -->
+<div class="pay-scrim" id="payModal" onclick="closePayModal()">
+  <div class="pay-box" onclick="event.stopPropagation()">
+    <button class="pay-x" onclick="closePayModal()" aria-label="닫기">✕</button>
+    <div id="payBody"></div>
+  </div>
+</div>
+
+<!-- ===== 신고·환불 모달 (쇼퍼 신고 모달과 동일 구성) ===== -->
+<div class="pay-scrim" id="disputeModal" onclick="closeDisputeModal()">
+  <div class="pay-box" onclick="event.stopPropagation()">
+    <button class="pay-x" onclick="closeDisputeModal()" aria-label="닫기">✕</button>
+    <div id="disputeBody"></div>
   </div>
 </div>
 
@@ -538,6 +555,6 @@
 <!-- sangmin 모듈(⑥): 진단 입력 설문(M1) + 엔진 계약 목업(M2) -->
 <script src="js/config.js?v=66a385e1"></script>
 <script src="js/data.js?v=856deef9"></script>
-<script src="js/index.js?v=6debed35"></script>
+<script src="js/index.js?v=2d28c484"></script>
 </body>
 </html>
