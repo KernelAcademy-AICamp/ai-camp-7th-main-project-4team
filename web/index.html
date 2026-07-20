@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="css/tokens.css?v=10fb5117">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/index.css?v=d1ccd86f">
+<link rel="stylesheet" href="css/index.css?v=0d66e1e8">
 </head>
 <body>
 
@@ -274,6 +274,20 @@
           <div class="msec-label" style="font-size:17px;font-weight:800;color:var(--ink);margin:22px 2px 12px">프로필 <span style="font-size:13px;font-weight:600;color:var(--sub2)">· 매칭·진단 관리</span></div>
           <div id="profCard"></div>
 
+          <!-- ①-2 내 체형 카드 — 재미·바이럴 요소라 "내 몸" 정보(위)와 한 자리에. 진단 결과는 인사이트만. -->
+          <div class="msec-label" style="font-size:17px;font-weight:800;color:var(--ink);margin:26px 2px 12px">내 체형 카드 <span style="font-size:13px;font-weight:600;color:var(--sub2)">· 공유</span></div>
+          <div class="profcard">
+            <iframe class="cardframe" id="myDiagCard" src="card.html?type=STR&g=male" scrolling="no"></iframe>
+            <div class="dtl-id">
+              <span class="dtl-code">STR</span>
+              <h2 class="dtl-name">시크 스트레이트</h2>
+              <span class="dtl-korea">사이즈코리아 · 사각체형</span>
+              <p class="dtl-desc">어깨–허리–힙이 일직선인 <b>직선 라인</b>.<br>군더더기 없는 깔끔함이 가장 멋있어요</p>
+              <div class="dtl-hash"><span>#미니멀</span><span>#클린</span><span>#직선</span></div>
+            </div>
+            <button type="button" class="btn full profshare" onclick="shareMyCard()">내 핏 카드 공유하기</button>
+          </div>
+
           <!-- ② 계정 (신원 + 데이터·로그인 관리) — 한 묶음 -->
           <div class="msec-label" style="font-size:17px;font-weight:800;color:var(--ink);margin:28px 2px 12px">계정 <span style="font-size:13px;font-weight:600;color:var(--sub2)">· 로그인·데이터 관리</span></div>
           <div class="mcard">
@@ -301,15 +315,10 @@
           <!-- 레이아웃 A: 좌 카드 스티키 + 우 콘텐츠 스택 -->
           <div class="dtl-A">
            <div class="dtl-A-left">
-            <iframe class="cardframe" id="myDiagCard" src="card.html?type=STR&g=male" scrolling="no"></iframe>
-            <div class="dtl-id">
-              <span class="dtl-code">STR</span>
-              <h2 class="dtl-name">시크 스트레이트</h2>
-              <span class="dtl-korea">사이즈코리아 · 사각체형</span>
-              <p class="dtl-desc">어깨–허리–힙이 일직선인 <b>직선 라인</b>.<br>군더더기 없는 깔끔함이 가장 멋있어요</p>
-              <div class="dtl-hash"><span>#미니멀</span><span>#클린</span><span>#직선</span></div>
-            </div>
-            <!-- 어울리는 핏 / 피해야 할 핏 — 카드 라인(좌측) -->
+            <!-- 체형 카드·유형 정체성은 프로필로 이동(재미·바이럴 요소) — 여기선 맥락용 배지 한 줄만.
+                 index.js renderMyTypeBadge()가 채움. -->
+            <div class="dtl-badge" id="myTypeBadge"></div>
+            <!-- 어울리는 핏 / 피해야 할 핏 — 핏 인사이트라 진단 결과에 남는다 -->
             <div class="dtl-fitbox">
               <div class="dtl-fit ok">
                 <div class="dtl-fit-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>잘맞 FIT</div>
@@ -571,6 +580,6 @@
 <!-- sangmin 모듈(⑥): 진단 입력 설문(M1) + 엔진 계약 목업(M2) -->
 <script src="js/config.js?v=66a385e1"></script>
 <script src="js/data.js?v=856deef9"></script>
-<script src="js/index.js?v=c1bcce14"></script>
+<script src="js/index.js?v=40712cd1"></script>
 </body>
 </html>
