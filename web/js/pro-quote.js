@@ -1100,7 +1100,7 @@
     if(!r){ $('quoteRoot').innerHTML='<p class="crumb">요청을 찾을 수 없어요.</p><p style="margin-top:10px"><a class="tinybtn" onclick="goBackToPro()">'+PANEL_LABEL[fromPanel]+'</a></p>'; return; }
     var out = r.dir==='out';
     // 대화=제안 발송~진행~완료·분쟁(견적작성 전/거절·취소 제외) · 신고=실제 진행된 고객만
-    var showMsg = !isCand && ['제안발송','상담중','결제대기','수락됨','완료','분쟁'].indexOf(r.status)>=0;
+    var showMsg = !isCand && ['상담중','결제대기','수락됨','완료','분쟁'].indexOf(r.status)>=0;   // 제안발송(수락 전)은 대화 없음 → 버튼 숨김
     var showReport = !isCand && ['결제대기','수락됨','완료','분쟁'].indexOf(r.status)>=0;
     if(showMsg||showReport) ensureProStyle();
     var bt = btResolve(BTMAP[r.type], r.gender) || {};   // 고객 성별로 콘텐츠 해석
@@ -1123,8 +1123,7 @@
     // 대화는 상단 오른쪽 아이콘 → 우측 드로어(별도 관리)
     $('quoteRoot').innerHTML =
       '<div class="qtop"><div class="qtop-l">'+
-        '<a class="backlink" onclick="goBackToPro()">← '+PANEL_LABEL[fromPanel]+'</a>'+
-        '<p class="crumb">스타일리스트 지원 · '+(r.status==='견적작성'?'견적 보내기':(out?'보낸 제안':'받은 요청'))+'</p>'+
+        '<button class="backbtn" onclick="goBackToPro()" aria-label="뒤로" title="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>'+
         '<h1>'+esc(r.cust)+'님 · '+esc(svcLabel(r.service))+'</h1>'+
       '</div>'+(showMsg?chatOpenBtn(r):'')+'</div>'+
       '<div class="qgrid2"><div class="qleft'+(r.status==='수락됨'?' ref-on':'')+'">'+ custCard + bodyCard +'</div><div class="qright">'+ qwork +'</div></div>'+

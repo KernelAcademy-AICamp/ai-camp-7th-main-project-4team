@@ -4,7 +4,7 @@
   body{margin:0;min-height:100vh;background:var(--soft,#f6f5f2);font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;color:var(--ink,#1c1a17);display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
   a{color:inherit;text-decoration:none;cursor:pointer}
 
-  .shell{width:480px;max-width:100%;padding:22px 16px 60px}
+  .shell{width:600px;max-width:100%;margin:auto;padding:24px 16px 40px}   /* 로그인·가입 공통 모달: 크게 + 화면 중앙 */
   .brandbar{display:flex;align-items:center;gap:10px;padding:6px 2px 16px}
   .logo{font-size:20px;font-weight:800;letter-spacing:-.05em;color:var(--green,#2E4A3B)}
   .logo i{display:inline-block;width:6px;height:6px;background:var(--green,#2E4A3B);margin-left:2px}
@@ -17,7 +17,8 @@
   .chead .stp{margin-left:auto;font-variant-numeric:tabular-nums}
   .prog{height:5px;background:#eee9e2}
   .prog>i{display:block;height:100%;background:var(--green,#2E4A3B);transition:width .3s}
-  .cbody{padding:24px 22px 26px}
+  .chead,.prog{display:none}   /* 로고바만 남기고 '스타일리스트 지원' 제목바·회색 진행줄 숨김 */
+  .cbody{padding:30px 30px 32px}
 
   .panel{display:none;animation:f .22s} .panel.on{display:block}
   @keyframes f{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
@@ -25,15 +26,15 @@
   .hero{text-align:center;padding:6px 0 2px}
   .hero .ic{display:flex;justify-content:center}
   .hero .ic svg{width:46px;height:46px;color:var(--green,#1f7a3f)}
-  .hero h1{font-size:22px;font-weight:800;letter-spacing:-.03em;margin:12px 0 8px}
-  .hero p{font-size:14px;color:var(--sub,#6b675f);line-height:1.6;margin:0 auto;max-width:320px}
-  .benefits{display:flex;justify-content:center;gap:14px;margin:18px 0 6px;font-size:13px;font-weight:700;flex-wrap:wrap}
-  .benefits span{display:inline-flex;align-items:center;gap:5px}
-  .benefits svg{width:16px;height:16px;color:var(--green,#1f7a3f)}
+  .hero h1{font-size:24px;font-weight:800;letter-spacing:-.03em;margin:12px 0 8px}
+  .hero p{font-size:15px;color:var(--sub,#6b675f);line-height:1.6;margin:0 auto;max-width:340px}
+  .benefits{display:flex;justify-content:center;gap:8px;margin:20px 0 4px;flex-wrap:wrap}
+  .benefits span{display:inline-flex;align-items:center;gap:5px;background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B);padding:8px 14px;border-radius:20px;font-size:13px;font-weight:800}
+  .benefits svg{width:15px;height:15px;color:var(--green,#2E4A3B)}
 
-  .lbl{font-size:12.5px;font-weight:800;color:var(--sub2,#8a857b);margin:18px 0 7px}
-  .lbl:first-child{margin-top:4px}
-  input[type=text],input[type=email],input[type=tel],input[type=number],textarea{width:100%;border:1.5px solid var(--line2,#d8d4cc);border-radius:10px;padding:11px 13px;font-family:inherit;font-size:14px;background:#fff;color:var(--ink,#1c1a17)}
+  .lbl{font-size:15px;font-weight:800;color:var(--sub,#6b675f);margin:22px 0 9px}
+  .lbl:first-child{margin-top:6px}
+  input[type=text],input[type=email],input[type=tel],input[type=number],textarea{width:100%;border:1.5px solid var(--line2,#d8d4cc);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:15px;background:#fff;color:var(--ink,#1c1a17)}
   textarea{resize:vertical;min-height:64px}
   input:focus,textarea:focus{outline:none;border-color:var(--green,#2E4A3B)}
   .hint{font-size:12px;color:var(--sub2,#8a857b);margin-top:8px}
@@ -66,9 +67,29 @@
   .pcell img{width:100%;height:100%;object-fit:cover}
   .pcell .del{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center}
 
-  .btn{display:block;width:100%;text-align:center;padding:14px;border:none;border-radius:11px;background:var(--green,#2E4A3B);color:#fff;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;margin-top:22px}
+  .btn{display:block;width:100%;text-align:center;padding:15px;border:none;border-radius:11px;background:var(--ink,#1c1a17);color:#fff;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-top:22px}
+  .btn:not(:disabled):hover{background:#000}
   .btn:disabled{opacity:.4;cursor:not-allowed}
   .link{display:block;text-align:center;font-size:13px;color:var(--sub,#6b675f);margin-top:14px;cursor:pointer}
+  /* ===== 스타일리스트 로그인 전용 — 모달 크게·로고/닫기 카드 안·글씨 확대 (가입 화면 영향 없음) ===== */
+  .shell.login{width:600px;margin:auto}   /* 화면 중앙정렬 + 확대 */
+  .card .brandbar.cardbar{display:flex;align-items:center;gap:10px;padding:16px 26px 15px;border-bottom:1px solid var(--line,#e7e4de);margin:0}
+  .card .brandbar.cardbar .logo{font-size:22px}
+  .card .brandbar.cardbar .closex{margin-left:auto;font-size:14px}
+  .login .cbody{padding:30px 30px 32px}
+  .login .hero{padding:16px 0 6px}
+  .login .hero .ic svg{width:66px;height:66px}
+  .login .hero .eyebrow{font-size:24px;font-weight:800;letter-spacing:-.02em;color:var(--green,#2E4A3B);margin:14px 0 7px}   /* 주제목 */
+  .login .hero h1{font-size:15px;font-weight:600;color:var(--sub,#6b675f);letter-spacing:-.01em;margin:0 0 6px}   /* 부제 */
+  .link-em{color:var(--green,#2E4A3B);font-weight:800;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+  .login .hero p{font-size:15px;max-width:360px}
+  .login .lbl{font-size:13px}
+  .login .vrow input,.login .vbox input{font-size:15px}
+  .login .vbtn{font-size:14px}
+  .login .btn{font-size:16.5px;padding:16px;margin-top:24px;background:var(--ink,#1c1a17)}
+  .login .btn:not(:disabled):hover{background:#000}
+  .login .link{font-size:14px;margin-top:16px}
+  .login .mocknote{font-size:12.5px}
 
   .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(16px);background:var(--ink,#1c1a17);color:#fff;padding:12px 20px;border-radius:30px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:60}
   .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}

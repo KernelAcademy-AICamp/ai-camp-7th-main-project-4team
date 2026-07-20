@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="css/tokens.css?v=10fb5117">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/index.css?v=74fa07e5">
+<link rel="stylesheet" href="css/index.css?v=701e76f0">
 </head>
 <body>
 
@@ -40,7 +40,7 @@
       <a data-t="shop" onclick="go('shop',this)">Stylists</a>
       <a data-t="my" id="navMy" onclick="go('my',this)">My</a>
     </nav>
-    <div class="navr"><span class="sup" style="cursor:pointer" onclick="location.href='pro-signup.html'">스타일리스트 지원</span><span class="navdiv"></span><span class="navbell" id="navBell" onclick="goMy('mp-noti')" title="알림" aria-label="알림" style="position:relative;display:inline-flex;align-items:center;cursor:pointer;color:var(--sub)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 4.6-1.9 6-1.9 6h15.8s-1.9-1.4-1.9-6z"/><path d="M10.2 18.5a2 2 0 0 0 3.6 0"/></svg><span id="notiDot" style="position:absolute;top:-2px;right:-2px;width:7px;height:7px;border-radius:50%;background:var(--warn);border:1.5px solid var(--bg);display:none"></span></span><span class="navdiv" id="navBellDiv"></span><button class="navauth" id="navAuth" style="display:none;padding:8px 15px;border-radius:10px;background:var(--green);color:#fff;border:none;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit;white-space:nowrap" onclick="openLogin('')">로그인 · 회원가입</button><span class="navuser" id="navUser" onclick="go('my')"><span class="navav" id="myAv">김</span><span class="navname">김도현 님</span></span></div>
+    <div class="navr"><span class="sup" style="cursor:pointer" onclick="location.href='pro-signup.html'">스타일리스트 지원</span><span class="navdiv"></span><span class="navbell" id="navBell" onclick="toggleNotiPop(event)" title="알림" aria-label="알림" style="position:relative;display:inline-flex;align-items:center;cursor:pointer;color:var(--sub)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 4.6-1.9 6-1.9 6h15.8s-1.9-1.4-1.9-6z"/><path d="M10.2 18.5a2 2 0 0 0 3.6 0"/></svg><span id="notiDot" style="position:absolute;top:-2px;right:-2px;width:7px;height:7px;border-radius:50%;background:var(--warn);border:1.5px solid var(--bg);display:none"></span></span><span class="navdiv" id="navBellDiv"></span><button class="navauth" id="navAuth" style="display:none;padding:8px 15px;border-radius:10px;background:var(--green);color:#fff;border:none;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit;white-space:nowrap" onclick="openLogin('')">로그인 · 회원가입</button><span class="navuser" id="navUser" onclick="toggleUserMenu(event)"><span class="navav" id="myAv">김</span><span class="navname">김도현 님</span></span><div class="usermenu" id="userMenu"><a onclick="closeUserMenu();go('my')">마이페이지</a><a onclick="closeUserMenu();doLogout()">로그아웃</a></div><div class="notipop" id="notiPop"><div class="notipop-hd">알림 <a id="notiMarkAll" onclick="markAllNoti()">모두 읽음</a></div><div class="notipop-list" id="custNotiList"></div></div></div>
   </div>
 </header>
 
@@ -57,30 +57,106 @@
       <button class="ib-x" aria-label="배너 닫기" onclick="document.getElementById('inviteBanner').classList.remove('on')">✕</button>
     </div>
 
-    <!-- 히어로: 줄자로 측정 -->
-    <section class="hhero"><div class="hrow">
-      <span class="kick"><span class="dot"></span> 체형·사이즈 진단</span>
-      <h1>안 입어본 브랜드도<br><b>내 사이즈</b>로 딱 <b>FIT</b></h1>
-      <p class="sub">평소 입던 옷의 느낌으로, 당신에게 딱 맞는 브랜드와 핏을 찾아드려요</p>
-      <div class="rulerwrap">
-        <div class="ruler">
-          <div class="nums"><span>150</span><span>160</span><span>170</span><span>180</span><span>190</span></div>
-          <div class="tape"></div><div class="ticks"></div><div class="ticks major"></div><div class="shimmer"></div>
-          <div class="marker" id="hMarker"></div>
+    <!-- 히어로: 8체형 카드덱 온보딩(로드/새로고침마다 풀재생) -->
+    <section class="hhero">
+      <div class="stage" id="stage">
+        <div class="intro" id="intro">
+          <div class="l" id="l1">당신의 체형, 아직도 모르시나요?</div>
+          <div class="l" id="l2"><span class="lg" id="mlogo">Fitting<i></i></span><span class="tail" id="tail">에서 알려드립니다</span></div>
         </div>
-        <div class="readout">
-          <span class="val"><span class="num" id="hCm">150</span><small>cm</small></span>
-          <span class="sep">·</span>
-          <span class="val"><span class="num" id="hKg">45</span><small>kg</small></span>
+        <div class="lock" id="lock">
+          <div class="lgbig" id="lgtarget">Fitting<i></i></div>
+          <div class="uline"><span class="ticks"></span><span class="fill"></span><span class="penmk"></span><span class="spark"></span></div>
         </div>
-        <div class="measure-tag" id="hMtag">측정 중…</div>
+        <div class="midcopy" id="midcopy"><span class="typebox"><span class="txt">체형진단 끝</span><span class="dot"></span></span></div>
+        <div class="skiphint" id="skiphint">온보딩 건너뛰기 →</div>
+        <div class="deck" id="deck"></div>
+        <div class="final" id="final">
+          <div class="copy">8유형 중,<br><b>나의 핏</b>은?</div>
+          <div class="flip"><div class="flipin">
+            <div class="face front"><span class="logo">Fitting<i></i></span><div class="q">?</div><span class="qspark"></span></div>
+            <div class="face back"><span class="logo">Fitting<i></i></span>
+              <div class="bc"><div class="t">3분이면<br><b>내 FIT</b>이 나와요</div><button class="btn" onclick="startDiag()">진단하러가기 →</button></div></div>
+          </div></div>
+        </div>
       </div>
-      <div class="cta">
-        <button class="btn ghost" onclick="go('shop')">스타일리스트 둘러보기</button>
-        <button class="btn beige" onclick="startDiag()">내 체형 진단 시작하기 →</button>
-      </div>
-      <div class="downhint">측정값으로 8체형을 진단해요<span class="arr">↓</span></div>
-    </div></section>
+    </section>
+    <script>
+    /* 히어로 온보딩(8체형 카드덱) — _home-full.html 이식. 순수 CSS 키프레임 + 로고이동 FLIP만 JS. 로드마다 풀재생. */
+    (function(){
+      var stage=document.getElementById('stage'); if(!stage) return;
+      var G='female';
+      var CODES=['TRI','INV','HRG','STR','BAL','DIA','RND','TUB'];
+      var ROT=['-9deg','7deg','-4deg','8deg','-7deg','3deg','-8deg','5deg'];
+      var FALL=[0,.20,.07,.40,.13,.50,.28,.44];   // 카드별 낙하 딜레이(우수수)
+      var PIV=1457.7, ANG=4.4;
+      var LOCK_AT=4600, INTRO_END=7400;            // 로고 이동 / 인트로→카드 핸드오프 시점(ms)
+      var deck=document.getElementById('deck'), finalEl=document.getElementById('final');
+      var timers=[];
+      function figHTML(silhouette, point){
+        var head='<div class="head '+G+'">'+(G==='female'?'<span class="longhair"></span>':'')+
+          '<span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div>';
+        return '<div class="fig">'+head+'<div class="body '+silhouette+'" style="background-color:'+point+'; height:150px"></div></div>';
+      }
+      function fitHTML(code, t){
+        var g=(t.gender&&(t.gender[G]||t.gender.female))||{};
+        var tag=(g.profile&&g.profile[0])||'';
+        return '<div class="hc" style="background:radial-gradient(ellipse 70% 34% at 50% 11%, '+t.point+'2b, transparent 60%), linear-gradient(160deg,#191a1f,#0f1014)">'+
+          '<div class="ctop"><span class="clogo">Fitting<i class="sq"></i></span></div>'+
+          '<div class="hcbody">'+figHTML(t.silhouette, t.point)+
+            '<div class="code" style="color:'+t.point+'">'+code+'</div>'+
+            '<div class="word">'+t.name+'</div>'+
+            '<div class="tagline">'+tag+'</div></div></div>';
+      }
+      function moveLogo(){
+        var ml=document.getElementById('mlogo'), tg=document.getElementById('lgtarget'), tail=document.getElementById('tail');
+        if(!ml||!tg) return;
+        var r1=ml.getBoundingClientRect(), r2=tg.getBoundingClientRect();
+        var s=r2.height/r1.height;
+        var dx=(r2.left+r2.width/2)-(r1.left+r1.width/2), dy=(r2.top+r2.height/2)-(r1.top+r1.height/2);
+        if(tail) tail.style.opacity='0';
+        ml.style.transition='transform .82s cubic-bezier(.2,.8,.3,1)';
+        ml.style.transform='translate('+dx+'px,'+dy+'px) scale('+s+')';
+      }
+      function resetLogo(){ var ml=document.getElementById('mlogo'), tail=document.getElementById('tail');
+        if(ml){ ml.style.transition='none'; ml.style.transform='none'; } if(tail) tail.style.opacity=''; }
+      function run(){
+        timers.forEach(clearTimeout); timers=[];
+        finalEl.classList.remove('on'); stage.classList.remove('run','handoff','play','done'); resetLogo();
+        void stage.offsetWidth;
+        var tapeAt=(LOCK_AT+850)/1000;
+        stage.style.setProperty('--tape-at', tapeAt+'s');
+        stage.style.setProperty('--glint-at', (tapeAt+0.82).toFixed(2)+'s');
+        stage.classList.add('run');
+        timers.push(setTimeout(moveLogo, LOCK_AT));
+        timers.push(setTimeout(function(){ stage.classList.add('handoff','play'); }, INTRO_END));
+      }
+      function measureTw(){ var t=stage.querySelector('#midcopy .txt'); if(t){ document.getElementById('midcopy').style.setProperty('--tw', Math.ceil(t.scrollWidth)+'px'); } }
+      function skip(){ timers.forEach(clearTimeout); timers=[]; resetLogo(); stage.classList.remove('run','handoff','play'); stage.classList.add('done'); finalEl.classList.add('on'); }
+      fetch('data/bodytypes.json').then(function(r){ return r.json(); }).then(function(j){
+        var map={}; j.types.forEach(function(t){ map[t.code]=t; });
+        CODES.forEach(function(code,i){
+          if(!map[code]) return;
+          var el=document.createElement('div'); el.className='card';
+          el.style.setProperty('--i', i); el.style.setProperty('--r', ROT[i]||'0deg');
+          el.style.setProperty('--d', (Math.abs(i-3.5)*70).toFixed(0)+'ms');
+          el.style.setProperty('--fd', (FALL[i]||0)+'s');
+          el.style.setProperty('--fx', (Math.round(Math.random()*180-90))+'px');
+          var th=(i-3.5)*ANG*Math.PI/180;
+          el.style.setProperty('--x', (PIV*Math.sin(th)).toFixed(1)+'px');
+          el.style.setProperty('--y', (PIV*(1-Math.cos(th))).toFixed(1)+'px');
+          el.style.setProperty('--rot', ((i-3.5)*ANG).toFixed(2)+'deg');
+          el.innerHTML=fitHTML(code, map[code]); deck.appendChild(el);
+        });
+        measureTw();
+        run();   // 로드(새로고침)마다 온보딩 풀재생
+      }).catch(function(){ skip(); });
+      if(document.fonts&&document.fonts.ready){ document.fonts.ready.then(measureTw); } else { setTimeout(measureTw,300); }
+      measureTw();
+      stage.addEventListener('click', function(){ if(!stage.classList.contains('done')) skip(); });   // 아무곳 클릭 = 건너뛰기
+      stage.addEventListener('animationend', function(e){ if(e.animationName==='doFlip') finalEl.classList.add('on'); });
+    })();
+    </script>
 
     <!-- 이렇게 측정해요 (세로 줄자) -->
     <section class="blk"><div class="hrow">
@@ -89,11 +165,11 @@
         <p class="lead">복잡한 신체 치수 입력 없이, 평소 옷의 느낌만으로 3단계면 끝나요</p>
       </div>
       <div class="how">
-        <div class="vtape"><div class="vfill" id="hVfill"></div><div class="vhead" id="hVhead"></div></div>
+        <div class="vtape"><div class="rail"></div><div class="ticks"></div><div class="vfill" id="hVfill"></div><div class="vhead" id="hVhead"></div></div>
         <div class="steps">
-          <div class="step reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></div><div><div class="no">STEP 01</div><h3>착용 경험 입력</h3><p>평소 입는 옷의 브랜드·핏·부위별 느낌을 알려주세요. 치수 대신 '경험'으로 시작해요</p><div class="big"><span class="hcount" data-to="2">0</span>분이면 충분</div></div></div>
-          <div class="step reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8L12 3z"/><path d="M19 14.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6.6-1.6z"/></svg></div><div><div class="no">STEP 02</div><h3>AI 체형 진단</h3><p>8가지 체형 유형 중 내 유형을 판정하고, 공유용 캐릭터 카드로 보여드려요</p><div class="big"><span class="hcount" data-to="8">0</span>체형으로 정밀 분류</div></div></div>
-          <div class="step reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15.6 2.3l6.1 6.1a1 1 0 0 1 0 1.4L9.8 21.7a1 1 0 0 1-1.4 0l-6.1-6.1a1 1 0 0 1 0-1.4L14.2 2.3a1 1 0 0 1 1.4 0z"/><path d="M14 5l2 2M11 8l2 2M8 11l2 2M5 14l2 2"/></svg></div><div><div class="no">STEP 03</div><h3>브랜드별 사이즈 번역</h3><p>안 입어본 브랜드도 내 몸 기준으로 사이즈를 환산해, 반품 없이 한 번에 맞춰요</p><div class="big">반품 <span class="hcount" data-to="0">9</span>회를 목표로</div></div></div>
+          <div class="step reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></div><div class="mid"><div class="no">STEP 01</div><h3>착용 경험 입력</h3><p>평소 입는 옷의 브랜드·핏·부위별 느낌을 알려주세요. 치수 대신 '경험'으로 시작해요</p></div><div class="big"><b><span class="hcount" data-to="3">0</span></b><span>분이면 충분</span></div></div>
+          <div class="step reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8L12 3z"/><path d="M19 14.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6.6-1.6z"/></svg></div><div class="mid"><div class="no">STEP 02</div><h3>AI 체형 진단</h3><p>8가지 체형 유형 중 내 유형을 판정하고, 공유용 캐릭터 카드로 보여드려요</p></div><div class="big"><b><span class="hcount" data-to="8">0</span></b><span>체형으로 정밀 분류</span></div></div>
+          <div class="step reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15.6 2.3l6.1 6.1a1 1 0 0 1 0 1.4L9.8 21.7a1 1 0 0 1-1.4 0l-6.1-6.1a1 1 0 0 1 0-1.4L14.2 2.3a1 1 0 0 1 1.4 0z"/><path d="M14 5l2 2M11 8l2 2M8 11l2 2M5 14l2 2"/></svg></div><div class="mid"><div class="no">STEP 03</div><h3>브랜드별 사이즈 번역</h3><p>안 입어본 브랜드도 내 몸 기준으로 사이즈를 환산해, 반품 없이 한 번에 맞춰요</p></div><div class="big"><b><span class="hcount" data-to="0">9</span></b><span>반품을 목표로</span></div></div>
         </div>
       </div>
     </div></section>
@@ -111,7 +187,7 @@
           <div class="tyname" id="hTyname"><b>시크 스트레이트</b> · 어깨–허리–힙이 일직선인 직선 라인</div>
           <div class="stats">
             <div class="stat"><b><span class="hcount" data-to="8">0</span></b><small>체형 유형</small></div>
-            <div class="stat"><b><span class="hcount" data-to="2">0</span>분</b><small>진단 소요</small></div>
+            <div class="stat"><b><span class="hcount" data-to="3">0</span>분</b><small>진단 소요</small></div>
           </div>
         </div>
         <div class="showcard reveal">
@@ -149,8 +225,15 @@
     <!-- 프로모 -->
     <section class="blk" style="padding-top:0"><div class="hrow reveal">
       <div class="promo">
-        <div><b>실패 없는 쇼핑, 스타일리스트와 함께</b><p>진단 결과 그대로, 검증된 스타일리스트가 딱 맞는 코디를 찾아드려요</p></div>
-        <span class="pin" onclick="go('shop')">스타일리스트 찾기</span>
+        <div class="rib"></div>
+        <div class="txt">
+          <h2>이제 실패 없이 입어요<br>스타일리스트와 함께</h2>
+          <p>진단 결과 그대로, 검증된 스타일리스트가 내 체형에 딱 맞는 코디를 찾아드려요</p>
+        </div>
+        <div class="act">
+          <button class="cta" onclick="go('shop')">스타일리스트 찾기 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          <button class="sub" onclick="startDiag()">3분 진단 먼저 하기</button>
+        </div>
       </div>
     </div></section>
 
@@ -158,7 +241,8 @@
     <section class="outro reveal"><div class="hrow">
       <div class="ologo">Fitting<i></i></div>
       <div class="otag">착용 경험을 사이즈로, 그리고 스타일링까지</div>
-      <div class="otape"><div class="track"></div><div class="tk"></div><div class="draw"></div><div class="mk"></div></div>
+      <div class="otape"><div class="rail"></div><div class="ticks"></div><div class="draw"></div><div class="mk"></div></div>
+      <div class="foot">© 2026 Fitting</div>
     </div></section>
 
   </section>
@@ -266,40 +350,23 @@
       <main>
         <!-- 1.4·A 프로필 -->
         <section class="mpanel on" id="mp-profile">
-          <div class="crumb">마이페이지 · 1.4·A</div>
           <h1>프로필 · 계정</h1>
           <p class="lead">매칭·진단에 쓰는 프로필과 로그인·계정을 한 곳에서 관리해요</p>
 
-          <!-- ① 프로필 (매칭·진단용 신체 정보) — 먼저 -->
-          <div class="msec-label" style="font-size:17px;font-weight:800;color:var(--ink);margin:22px 2px 12px">프로필 <span style="font-size:13px;font-weight:600;color:var(--sub2)">· 매칭·진단 관리</span></div>
+          <!-- 프로필 (매칭·진단용 신체 정보) -->
           <div id="profCard"></div>
 
-          <!-- ①-2 내 체형 카드 — 재미·바이럴 요소라 "내 몸" 정보(위)와 한 자리에. 진단 결과는 인사이트만. -->
-          <div class="msec-label" style="font-size:17px;font-weight:800;color:var(--ink);margin:26px 2px 12px">내 체형 카드 <span style="font-size:13px;font-weight:600;color:var(--sub2)">· 공유</span></div>
-          <div class="profcard">
-            <iframe class="cardframe" id="myDiagCard" src="card.html?type=STR&g=male" scrolling="no"></iframe>
-            <div class="dtl-id">
-              <span class="dtl-code">STR</span>
-              <h2 class="dtl-name">시크 스트레이트</h2>
-              <span class="dtl-korea">사이즈코리아 · 사각체형</span>
-              <p class="dtl-desc">어깨–허리–힙이 일직선인 <b>직선 라인</b>.<br>군더더기 없는 깔끔함이 가장 멋있어요</p>
-              <div class="dtl-hash"><span>#미니멀</span><span>#클린</span><span>#직선</span></div>
-            </div>
-            <button type="button" class="btn full profshare" onclick="shareMyCard()">내 핏 카드 공유하기</button>
-          </div>
-
-          <!-- ② 계정 (신원 + 데이터·로그인 관리) — 한 묶음 -->
-          <div class="msec-label" style="font-size:17px;font-weight:800;color:var(--ink);margin:28px 2px 12px">계정 <span style="font-size:13px;font-weight:600;color:var(--sub2)">· 로그인·데이터 관리</span></div>
+          <!-- 계정 (로그인·데이터 관리) -->
           <div class="mcard">
-            <div class="msub"><div class="subhead">기본 정보 <span class="pr half">◐ MVP</span></div>
-              <div class="field"><span>이름</span><span class="v" id="acctName">김도현</span></div>
+            <div class="mcard-hd">계정 <span>· 로그인·데이터 관리</span></div>
+            <div class="msub"><div class="subhead">기본 정보</div>
               <div class="field"><span>연결 계정</span><span class="v">카카오 · dlthg***@kakao.com</span></div>
               <div class="note">lazy registration — 진단·매칭 시점에 가입</div>
             </div>
-            <div class="msub"><div class="subhead">개인정보·데이터 관리 <span class="pr core">★ 법적</span></div>
+            <div class="msub"><div class="subhead">개인정보·데이터 관리</div>
               <div class="links"><a onclick="openMyPanel('mp-privacy')">내 데이터 내려받기·삭제 · 동의 관리 <span class="arr">›</span></a></div>
             </div>
-            <div class="msub"><div class="subhead">로그아웃 <span class="pr half">◐ MVP</span></div>
+            <div class="msub"><div class="subhead">로그아웃</div>
               <div class="links"><a onclick="doLogout()">로그아웃 <span class="arr">›</span></a></div>
               <div class="quitrow"><a class="quitlink" onclick="doQuit()">회원 탈퇴</a></div>
             </div>
@@ -308,16 +375,20 @@
 
         <!-- 1.4·B 내 진단 결과 -->
         <section class="mpanel" id="mp-diag" style="--tp:#9db8ff">
-          <div class="crumb">마이페이지 · 1.4·B</div>
           <h1>내 진단 결과</h1>
           <p class="lead">나의 FIT 체형 진단 결과를 확인해요</p>
 
           <!-- 레이아웃 A: 좌 카드 스티키 + 우 콘텐츠 스택 -->
           <div class="dtl-A">
            <div class="dtl-A-left">
-            <!-- 체형 카드·유형 정체성은 프로필로 이동(재미·바이럴 요소) — 여기선 맥락용 배지 한 줄만.
-                 index.js renderMyTypeBadge()가 채움. -->
-            <div class="dtl-badge" id="myTypeBadge"></div>
+            <iframe class="cardframe" id="myDiagCard" src="card.html?type=STR&g=male" scrolling="no"></iframe>
+            <div class="dtl-id">
+              <span class="dtl-code">STR</span>
+              <h2 class="dtl-name">시크 스트레이트</h2>
+              <span class="dtl-korea">사이즈코리아 · 사각체형</span>
+              <p class="dtl-desc">어깨–허리–힙이 일직선인 <b>직선 라인</b>.<br>군더더기 없는 깔끔함이 가장 멋있어요</p>
+              <div class="dtl-hash"><span>#미니멀</span><span>#클린</span><span>#직선</span></div>
+            </div>
             <!-- 어울리는 핏 / 피해야 할 핏 — 핏 인사이트라 진단 결과에 남는다 -->
             <div class="dtl-fitbox">
               <div class="dtl-fit ok">
@@ -340,7 +411,7 @@
 
           <!-- 브랜드별 추천 사이즈 -->
           <div class="mcard">
-            <div class="msub"><div class="subhead">브랜드별 추천 사이즈 <span class="pr core">★ MVP</span></div>
+            <div class="msub"><div class="subhead">브랜드별 추천 사이즈</div>
               <p class="lead" style="font-size:14px; margin-bottom:8px">몸에 <b style="color:var(--ink)">가장 잘 맞을 순</b>으로 · 핏 지수 = 예상 적합도</p>
               <div class="dtl-grp up" style="margin-top:14px">상의 — 가슴·어깨 기준</div>
               <div class="s2row"><div class="s2fill" style="width:89%"></div><div class="s2in"><div class="b">H&amp;M<small>가슴 기준 · 정사이즈</small></div><div class="r"><span class="sz">M</span><span class="p">딱맞음 89%</span></div></div></div>
@@ -390,7 +461,7 @@
 
           <!-- 진단 이력 -->
           <div class="mcard">
-            <div class="msub"><div class="subhead">진단 이력 <span class="pr v2">○ v2</span></div>
+            <div class="msub"><div class="subhead">진단 이력</div>
               <div class="field"><span>과거 진단 목록·비교</span><span class="v ph"><span class="num">2026.06</span> · <span class="num">1</span>건</span></div>
             </div>
           </div>
@@ -404,33 +475,29 @@
 
         <!-- 1.4·C 코디 요청 내역 -->
         <section class="mpanel" id="mp-req">
-          <div class="crumb">마이페이지 · 1.4·C</div>
           <h1>요청 내역</h1>
           <p class="lead">보낸 요청과 받은 견적을 관리해요</p>
           <div id="reqList"></div>
-          <p class="note">※ 목업에선 브라우저(localStorage)에 저장돼요 · 실제 요청·결과·후기 연동은 v2에서 채워져요</p>
         </section>
 
         <!-- 1.4·D 즐겨찾기 -->
         <section class="mpanel" id="mp-fav">
-          <div class="crumb">마이페이지 · 1.4·D</div>
           <h1>즐겨찾기</h1>
           <p class="lead">찜한 스타일리스트를 모아봐요</p>
-          <div class="mcard"><div class="msub"><div class="subhead">찜한 스타일리스트 <span class="pr half">◐ MVP</span></div>
+          <div class="mcard"><div class="msub"><div class="subhead">찜한 스타일리스트</div>
             <div class="fav" id="favList"></div>
           </div></div>
         </section>
 
         <!-- 1.9 / G.2 고객센터 · 1:1 문의 -->
         <section class="mpanel" id="mp-support">
-          <div class="crumb">마이페이지 · 고객지원</div>
           <h1>고객센터</h1>
           <p class="lead">자주 묻는 질문을 확인하고, 해결이 안 되면 1:1로 문의해요</p>
           <div class="mcard">
-            <div class="msub"><div class="subhead">자주 묻는 질문(FAQ) <span class="pr half">◐ MVP</span></div>
+            <div class="msub"><div class="subhead">자주 묻는 질문(FAQ)</div>
               <div class="links"><a class="faqmore" href="faq.html">FAQ 더보기 <span class="arr">›</span></a></div>
             </div>
-            <div class="msub"><div class="subhead">1:1 문의 <span class="pr half">◐ MVP</span></div>
+            <div class="msub"><div class="subhead">1:1 문의</div>
               <div class="feat">문의 유형</div>
               <div class="seg" id="supType"><span class="o on" onclick="supPick(this)">결제·환불</span><span class="o" onclick="supPick(this)">매칭·스타일리스트</span><span class="o" onclick="supPick(this)">진단·엔진</span><span class="o" onclick="supPick(this)">계정·기타</span></div>
               <div class="feat">관련 거래 · <em style="color:var(--sub2);font-style:normal">선택</em></div>
@@ -443,7 +510,7 @@
             <div class="msub"><div class="subhead">내 문의 내역</div>
               <div id="supList"></div>
             </div>
-            <div class="msub"><div class="subhead">거래에 문제가 있나요? <span class="pr v2">○ v2</span></div>
+            <div class="msub"><div class="subhead">거래에 문제가 있나요?</div>
               <div class="links"><a class="danger" onclick="supDispute()">거래 문제 신고 · 환불 요청 <span class="arr">›</span></a></div>
               <div class="note">에스크로 거래 분쟁은 릴리스 보류 게이트를 거쳐 처리해요 · 관리자 CS와 연결</div>
             </div>
@@ -452,11 +519,10 @@
 
         <!-- G.6 알림 센터 -->
         <section class="mpanel" id="mp-noti">
-          <div class="crumb">마이페이지 · 알림</div>
           <h1>알림</h1>
           <p class="lead">매칭·문의 답변·소식을 여기서 모아봐요</p>
           <div class="mcard">
-            <div class="msub"><div class="subhead">알림 <span class="pr v2">○ v2</span><a onclick="markAllNoti()" style="float:right;font-size:13px;font-weight:600;color:var(--sub2);cursor:pointer">모두 읽음</a></div>
+            <div class="msub"><div class="subhead">알림<a onclick="markAllNoti()" style="float:right;font-size:13px;font-weight:600;color:var(--sub2);cursor:pointer">모두 읽음</a></div>
               <div class="links" id="notiList"></div>
             </div>
           </div>
@@ -464,8 +530,8 @@
             <div class="msub"><div class="subhead">채널 설정</div>
               <div class="field"><span>이메일</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
               <div class="field"><span>카카오 알림톡</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
-              <div class="field"><span>앱 푸시 <span class="pr v2">○ v2</span></span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
-              <div class="note">거래 필수 알림(견적·결제·분쟁 결과)은 정책상 항상 수신돼요 · MVP는 이메일/알림톡, 인앱 센터는 데모</div>
+              <div class="field"><span>앱 푸시</span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+              <div class="note">거래 필수 알림(견적·결제·분쟁 결과)은 항상 수신돼요</div>
             </div>
           </div>
         </section>
@@ -476,7 +542,7 @@
           <h1>개인정보 · 데이터 관리</h1>
           <p class="lead">내 데이터를 내려받거나 삭제하고, 동의를 관리해요</p>
           <div class="mcard">
-            <div class="msub"><div class="subhead">내 진단 데이터 <span class="pr core">★ 법적</span></div>
+            <div class="msub"><div class="subhead">내 진단 데이터</div>
               <div id="privData"></div>
               <div class="links"><a onclick="downloadMyData()">데이터 내려받기(JSON) <span class="arr">›</span></a><a class="danger" onclick="deleteMyData()">진단 데이터 삭제 <span class="arr">›</span></a></div>
             </div>
@@ -580,6 +646,6 @@
 <!-- sangmin 모듈(⑥): 진단 입력 설문(M1) + 엔진 계약 목업(M2) -->
 <script src="js/config.js?v=66a385e1"></script>
 <script src="js/data.js?v=856deef9"></script>
-<script src="js/index.js?v=59e0a116"></script>
+<script src="js/index.js?v=ae040625"></script>
 </body>
 </html>
