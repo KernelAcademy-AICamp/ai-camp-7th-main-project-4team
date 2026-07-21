@@ -87,9 +87,7 @@
       var stage=document.getElementById('stage'); if(!stage) return;
       var G='female';
       var CODES=['TRI','INV','HRG','STR','BAL','DIA','RND','TUB'];
-      /* 부채각 — 벌어지면 카드 사이 틈으로 밝은 배경이 비쳐 흰 선이 됨.
-         그림자 없이 플랫하게 가려고 ±1.2deg까지 좁혀 카드를 거의 포갬(틈 자체를 제거) */
-      var ROT=['-1.2deg','.9deg','-.5deg','1.1deg','-.9deg','.4deg','-1deg','.6deg'];
+      var ROT=['-9deg','7deg','-4deg','8deg','-7deg','3deg','-8deg','5deg'];
       var FALL=[0,.20,.07,.40,.13,.50,.28,.44];   // 카드별 낙하 딜레이(우수수)
       var PIV=1457.7, ANG=4.4;
       var LOCK_AT=4600, INTRO_END=7400;            // 로고 이동 / 인트로→카드 핸드오프 시점(ms)
