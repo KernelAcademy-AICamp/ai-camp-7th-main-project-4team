@@ -81,6 +81,9 @@
 body{
   font-family:var(--sans); background:var(--bg); color:var(--ink);
   line-height:1.5; letter-spacing:var(--ls-body); -webkit-font-smoothing:antialiased;
+  /* 한국어 어절 단위 줄바꿈 — 없으면 '알려/주세요' '공유/용'처럼 단어 중간이 끊김.
+     긴 URL·영문은 overflow-wrap으로 예외 처리 */
+  word-break:keep-all; overflow-wrap:break-word;
 }
 /* 측정 수치는 SUIT + tabular-nums (자릿수 흔들림 방지) */
 .num{font-family:var(--num); font-feature-settings:'tnum'; letter-spacing:0;}
