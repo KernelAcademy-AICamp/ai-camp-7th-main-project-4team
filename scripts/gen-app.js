@@ -15,7 +15,7 @@ var OUT = path.join(ROOT, 'app');
 
 // ── 노출 화면(화이트리스트). admin*은 로그인+noindex 뒤 — 숨기지 않고 포함(공개 노출 아님). ──
 var PAGES = [
-  'index.html', 'diag-basic.html', 'diag-fit.html', 'diag-loading.html', 'result.html', 'card.html',
+  'index.html', 'diag-basic.html', 'diag-fit.html', 'diag-loading.html', 'result.html', 'judge.html', 'card.html',
   'about.html', 'faq.html', 'terms.html', 'privacy.html', 'body-type-guide.html', '404.html',
   // MVP 범위: 사이즈·데이터(+하위) + 진단·정확도(킬메트릭) + 엔진 강화 + 전문가 수요(lead). 나머지 admin 섹션은 v2라 미배포.
   'admin-login.html', 'admin.html', 'admin-diagnostics.html', 'admin-improve.html', 'admin-leads.html', 'admin-access.html', 'admin-brands.html',

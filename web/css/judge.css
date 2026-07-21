@@ -1,0 +1,169 @@
+/* judge.css — 구매 판정(Fit) 화면. 소유: 개발자 배선 초안(디자이너 재스킨 대상).
+   result.css .rwrap과 동일하게 팔레트를 스코프(.jwrap)해 다른 화면과 격리. 값은 tokens.css 딥그린. */
+/* 팔레트·wrapper 규격은 result.css .rwrap과 동일하게 맞춰 형제 화면으로 통일. */
+.jwrap{
+  --g:#2E4A3B; --gs:#E7EFEA; --gl:#CBDDD2; --ink:#16140F; --ink2:#3A382F;
+  --sub:#6E6B63; --sub2:#A6A29A; --line:#E6E5E1; --line2:#DAD8D2; --soft:#EDEDEA;
+  --warn:#B0553F; --wsoft:#F7ECE8; --surface:#fff;
+  max-width:720px; margin:0 auto; padding:36px 24px 90px; color:var(--ink);
+}
+.jwrap [hidden]{display:none !important;}   /* .jsetup/.jresult의 display:flex가 UA [hidden]을 덮는 것 방지 */
+.jtitle{font-size:31.5px; font-weight:800; letter-spacing:-.04em; line-height:1.2; color:var(--ink);}
+.jsub{font-size:17px; color:var(--sub); margin-top:8px; line-height:1.55;}
+
+.jloading{margin-top:40px; font-size:15px; font-weight:700; color:var(--sub2);}
+
+/* ── 진단 유도 게이트: 에디토리얼 헤드라인 + 히트맵 예시 + 시작 ─────── */
+.jgate{margin-top:20px; display:flex; flex-direction:column; gap:24px;}
+.jgate-lead{display:flex; flex-direction:column; gap:0;}
+.jgate-ey{font-size:11px; font-weight:800; color:var(--sub2); letter-spacing:.14em; text-transform:uppercase;}
+.jgate-t{font-size:29px; font-weight:800; letter-spacing:-.055em; line-height:1.18; margin-top:13px;}
+.jgate-t b{color:var(--g);}
+.jgate-d{font-size:14.5px; color:var(--sub); line-height:1.65; margin-top:14px;}
+.jgate-d b{color:var(--ink2); font-weight:700;}
+/* 예시 히트맵 */
+.jgate-demo{border:1px solid var(--line); border-radius:16px; padding:20px 22px 18px; background:var(--surface);}
+.jgate-demo-h{font-size:12.5px; font-weight:800; color:var(--sub2); letter-spacing:.04em; margin-bottom:14px; display:flex; align-items:center; gap:9px;}
+.jgate-eg{font-size:10.5px; font-weight:800; color:var(--g); background:var(--gs); padding:2px 8px; border-radius:20px; letter-spacing:.02em;}
+.jgate-hm{display:grid; grid-template-columns:38px repeat(3,1fr); gap:6px; align-items:center;}
+.jgate-hm .rw{font-size:12px; font-weight:800; color:var(--sub);}
+.jgate-hm .col{font-size:13px; font-weight:800; text-align:center; color:var(--ink2);}
+.jgate-hm .col.pk{color:var(--g);}
+.jgate-hm .c{height:36px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:11.5px; font-weight:800;}
+.jgate-hm .c.t{background:var(--wsoft); color:var(--warn);} .jgate-hm .c.s{background:var(--gs); color:var(--g);} .jgate-hm .c.r{background:var(--soft); color:var(--sub2);}
+.jgate-hm .c.pk{box-shadow:0 0 0 2px var(--g);}
+.jgate-demo-c{font-size:13.5px; color:var(--ink2); font-weight:700; margin-top:15px; padding-top:14px; border-top:1px solid var(--line); text-align:center;}
+.jgate-demo-c b{color:var(--g); font-weight:800;}
+/* 시작 — A 시안: 풀폭 버튼 + 그 아래 짧은 안내문(가운데) */
+.jgate-start{display:flex; flex-direction:column; gap:12px;}
+.jgate-start .jbtn{display:block; width:100%; margin-top:0;}
+.jgate-note{font-size:13px; color:var(--sub2); line-height:1.6; text-align:center;}
+.jgate-note b{color:var(--ink2); font-weight:700;}
+
+/* ── 버튼 (초록 버튼 금지 원칙: 주요=잉크블랙) ─────── */
+.jbtn{display:inline-block; margin-top:8px; background:var(--ink); color:#fff; border:none; cursor:pointer;
+      font-family:inherit; font-size:15px; font-weight:800; letter-spacing:-.02em; padding:14px 20px; border-radius:12px;
+      text-align:center; text-decoration:none;}
+.jbtn:hover{background:#000;}
+.jbtn:disabled{background:var(--line2); cursor:not-allowed;}
+.jbtn.ghost{background:transparent; color:var(--ink); border:1.5px solid var(--line2);}
+.jbtn.ghost:hover{background:var(--soft);}
+
+/* ── 상품(셀) 선택 ────────────────────────────────── */
+.jsetup{margin-top:26px; display:flex; flex-direction:column; gap:22px;}
+.jfield{display:flex; flex-direction:column; gap:10px;}
+.jlabel{font-size:13px; font-weight:800; color:var(--sub2); letter-spacing:.06em; text-transform:uppercase;}
+.jseg{display:inline-flex; border:1.5px solid var(--line2); border-radius:12px; overflow:hidden; align-self:flex-start;}
+.jseg-b{background:transparent; border:none; cursor:pointer; font-family:inherit; font-size:15px; font-weight:700;
+        color:var(--sub); padding:11px 26px;}
+.jseg-b.on{background:var(--g); color:#fff; font-weight:800;}
+.jselect{font-family:inherit; font-size:16px; padding:13px 14px; border:1.5px solid var(--line2); border-radius:12px;
+         background:var(--surface); color:var(--ink); max-width:320px;}
+.jchips{display:flex; flex-wrap:wrap; gap:8px;}
+.jchip{background:var(--surface); border:1.5px solid var(--line2); border-radius:20px; cursor:pointer;
+       font-family:inherit; font-size:13.5px; font-weight:600; color:var(--sub); padding:9px 15px;}
+.jchip.on{background:var(--g); border-color:var(--g); color:#fff; font-weight:800;}
+.jmiss{font-size:14px; color:var(--warn); font-weight:700; line-height:1.55;}
+
+/* 작동 설명 — 배경 채움 없이 상단 경계선 + 딥그린 번호로 절제(디자인 원칙: 배경색 억제) */
+.jhow{margin-top:8px; padding-top:22px; border-top:1px solid var(--line);}
+.jhow-h{font-size:13px; font-weight:800; color:var(--sub2); letter-spacing:.06em; text-transform:uppercase; margin-bottom:14px;}
+.jhow-list{list-style:none; counter-reset:h; display:flex; flex-direction:column; gap:13px; margin:0; padding:0;}
+.jhow-list li{counter-increment:h; position:relative; padding-left:30px; font-size:14px; color:var(--sub); line-height:1.6;}
+.jhow-list li::before{content:counter(h); position:absolute; left:0; top:1px; width:20px; height:20px; border-radius:50%;
+  background:var(--gs); color:var(--g); font-size:11.5px; font-weight:800; display:flex; align-items:center; justify-content:center;}
+.jhow-list li b{color:var(--ink2); font-weight:800;}
+
+/* ── 판정 결과 ────────────────────────────────────── */
+.jresult{margin-top:26px; display:flex; flex-direction:column; gap:20px;}
+/* ── 다크 판정 히어로(방향1) — 결과화면 체형카드 언어. 시그니처 다크라 라이트/다크 무관 고정색 ── */
+.jhero{--acc:#8FD6A8; background:linear-gradient(160deg,#1e2026,#16171b); border-radius:20px; padding:24px 24px 22px;
+  color:#EDECEA; position:relative; overflow:hidden;}
+.jhero.warn{--acc:#E8A08A;}
+.jhero::after{content:""; position:absolute; top:-46px; right:-34px; width:180px; height:180px; border-radius:50%;
+  background:radial-gradient(circle,color-mix(in srgb,var(--acc) 34%,transparent),transparent 68%); pointer-events:none;}
+.jhero .vtop{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; position:relative;}
+.jhero .vey{font-size:10.5px; font-weight:800; letter-spacing:.09em; color:var(--acc); text-transform:uppercase;}
+.jhero .vsize{font-size:52px; font-weight:800; letter-spacing:-.05em; line-height:.95; margin-top:7px; color:#fff;}
+.jhero .vsize small{font-size:15px; font-weight:700; color:#98978f; letter-spacing:-.02em;}
+.jhero .vgauge{width:82px; height:82px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; position:relative;}
+.jhero .vgauge::before{content:""; position:absolute; inset:9px; border-radius:50%; background:#16171b;}
+.jhero .vgauge .gv{position:relative; font-size:23px; font-weight:800; letter-spacing:-.02em; color:#fff; text-align:center; line-height:1;}
+.jhero .vgauge .gl{position:relative; font-size:9px; font-weight:800; color:var(--acc); letter-spacing:.08em; display:block; margin-top:2px;}
+.jhero .vverdict{position:relative; font-size:18px; font-weight:800; letter-spacing:-.035em; margin-top:17px; color:#fff;}
+.jhero .vbody{position:relative; font-size:13px; color:#b6b5ae; line-height:1.6; margin-top:6px;}
+.jhero .vchips{position:relative; display:flex; flex-wrap:wrap; gap:7px; margin-top:15px;}
+.jhero .vchip{font-size:11px; font-weight:700; color:#cfcec8; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:20px; padding:5px 11px;}
+
+.jconf{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line);
+       border-radius:12px; overflow:hidden;}
+.jconf > div{background:var(--surface); padding:13px 16px; display:flex; flex-direction:column; gap:4px;}
+.jconf b{font-size:10.5px; font-weight:800; color:var(--sub2); letter-spacing:.06em;}
+.jconf strong{font-size:14.5px; font-weight:800; letter-spacing:-.03em;}
+.jconf span{font-size:12px; color:var(--sub); line-height:1.45;}
+.jconf .lo strong{color:var(--warn);}
+
+.jpanel{border:1px solid var(--line); border-radius:18px; padding:22px 24px; background:var(--surface); min-width:0;}
+.jphead{display:flex; align-items:center; justify-content:space-between; gap:12px;}
+.jpt{font-size:18px; font-weight:800; letter-spacing:-.035em;}
+.jpd{font-size:13.5px; color:var(--sub); line-height:1.55; margin:5px 0 18px;}
+/* result.css .pill과 동일한 초록 배지 모티프(섹션 코너 라벨) */
+.jpill{padding:5px 11px; border-radius:20px; background:var(--gs); color:var(--g); font-weight:800; font-size:11.5px; white-space:nowrap;}
+.jpill:empty{display:none;}
+
+/* 사이즈 매트릭스 */
+.jmatrix-wrap{overflow-x:auto; min-width:0;}
+.jmatrix{border-collapse:collapse; width:100%; min-width:440px;}
+.jmatrix th, .jmatrix td{padding:12px 9px; text-align:center; font-size:13.5px; border-top:1px solid var(--line);}
+.jmatrix thead th{border-top:none; font-size:16px; font-weight:800; letter-spacing:-.03em; color:var(--ink); position:relative;}
+.jmatrix thead th small{display:block; font-size:10px; font-weight:700; color:var(--sub2); margin-top:2px;}
+.jmatrix thead th.pick::after{content:"추천"; position:absolute; top:-8px; left:50%; transform:translateX(-50%);
+  background:var(--g); color:#fff; font-size:9px; font-weight:800; padding:2px 8px; border-radius:20px;}
+.jmatrix tbody th{text-align:left; font-weight:800; color:var(--ink2); white-space:nowrap; font-size:13.5px;}
+.jmatrix td.pickcol{background:var(--gs);}
+.jmatrix .fp{display:inline-block; font-size:12px; font-weight:800; padding:4px 9px; border-radius:20px; letter-spacing:-.01em;}
+.fp.tight{background:var(--wsoft); color:var(--warn);}
+.fp.snug{background:var(--gs); color:var(--g);}
+.fp.relax{background:var(--soft); color:var(--sub);}
+.fp.big{background:var(--soft); color:var(--sub2);}
+.fp.na{color:var(--sub2); background:transparent; font-weight:700;}
+.fp.brd{background:var(--wsoft); color:var(--warn); outline:1.5px dashed var(--warn); outline-offset:-1.5px;}
+.jmxnote{font-size:12.5px; color:var(--sub2); line-height:1.6; margin-top:14px; padding-top:14px; border-top:1px solid var(--line);}
+
+/* 밴드 차트 */
+/* ── 줄자 게이지(방향2) — 홈 줄자 + 스펙트럼 바 언어. 눈금 위 '나' 위치로 여유·오차 직관화 ── */
+.jrul{display:flex; flex-direction:column;}
+.jrul + .jrul{margin-top:16px; padding-top:16px; border-top:1px solid var(--line);}
+.jrul-hd{display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-bottom:13px;}
+.jrul-nm{font-size:14.5px; font-weight:800; letter-spacing:-.02em;}
+.jrul-nm .w{font-size:10.5px; font-weight:800; color:var(--warn); margin-left:7px;}
+.jrul-ev{font-size:12.5px; font-weight:700; color:var(--sub); font-feature-settings:"tnum";}
+.jrul-track{position:relative; height:42px;}
+.jrul-zone{position:absolute; top:16px; height:9px; border-radius:5px;}
+.jz-t{background:var(--wsoft);} .jz-s{background:var(--gs);} .jz-r{background:var(--soft);}
+.jrul-znlab{position:absolute; top:0; font-size:9px; font-weight:800; color:var(--sub2); white-space:nowrap;}
+.jrul-ticks{position:absolute; left:0; right:0; top:20px; height:12px;}
+.jrul-ticks i{position:absolute; top:0; width:1px; height:6px; background:var(--line2);}
+.jrul-ticks i.maj{height:12px; background:var(--sub2);}
+.jrul-whisk{position:absolute; top:15px; height:11px; background:rgba(110,107,99,.14); border-left:1px dashed var(--sub); border-right:1px dashed var(--sub);}
+.jrul-mark{position:absolute; top:8px; width:2.5px; height:26px; border-radius:3px; background:var(--ink); z-index:3;}
+.jrul-mark::after{content:"나"; position:absolute; top:-14px; left:50%; transform:translateX(-50%); font-size:9px; font-weight:800; color:var(--ink);}
+.jrul-note{font-size:12px; color:var(--sub); line-height:1.5; margin-top:8px;}
+.jrul-note.warn{color:var(--warn); font-weight:700;}
+.jrul.miss .jrul-track{height:22px; border-radius:6px; background:repeating-linear-gradient(135deg,var(--soft),var(--soft) 6px,transparent 6px,transparent 12px); border:1px dashed var(--line2);}
+
+@media (max-width:640px){
+  .jwrap{padding:22px 13px 72px;}
+  .jtitle{font-size:24px;}
+  .jpanel{padding:20px 15px;}
+  /* 매트릭스: 7사이즈가 가로 스크롤 없이 폭 안에 들어오게 압축 */
+  .jmatrix{min-width:0; table-layout:fixed;}
+  .jmatrix th, .jmatrix td{padding:9px 1px;}
+  .jmatrix thead th{font-size:13px;}
+  .jmatrix tbody th{font-size:12px; text-align:left; width:34px;}
+  .jmatrix .fp{font-size:10px; padding:3px 4px; letter-spacing:-.03em;}
+  /* 히어로: 큰 사이즈 타이포·게이지 살짝 축소 */
+  .jhero{padding:22px 20px 20px;}
+  .jhero .vsize{font-size:46px;}
+  .jhero .vgauge{width:72px; height:72px;}
+}

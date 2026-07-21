@@ -72,6 +72,15 @@
       return Promise.resolve(null);
     },
 
+    /* ── 구매 판정(단일 상품 셀) = /api/judge ─────────────────
+       api: 클라 추정 cm+착용경험+대상 셀(브랜드·핏·종류)을 서버로 → 서버가 specs로 역산·판정.
+            반환 {covered, judgment, eb}. garments.json은 서버 전용(실측 비노출).
+       proto: 로컬 계산(호출부 judge.js가 garments.json 직접 로드) → null. */
+    judge: function (d) {
+      if (MODE === 'api') return postJSON('/api/judge', d).then(function (r) { return r.json(); });
+      return Promise.resolve(null);
+    },
+
     /* ── 수요 신호(스타일리스트찾기 페이크도어) = /api/lead ──────
        실매칭 없이 "얼마나 원하나"만 측정. api 모드에서만 서버 저장(목업 downstream 미개방).
        demand: {kind:'quote'|'notify', service, occasion, budget, note, stylist, contact}
