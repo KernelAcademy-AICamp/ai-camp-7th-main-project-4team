@@ -23,6 +23,13 @@
     renderGarments();
   }).catch(function(){ $('gKpis').innerHTML='<div class="kpi"><div class="l">실측 데이터 로드 실패 · admin 로그인 필요</div></div>'; });
 
+  // 사용자 제출 검수 대기 건수 뱃지(하위 메뉴)
+  if(window.ADMINAUTH && ADMINAUTH.submissions){
+    ADMINAUTH.submissions('pending').then(function(rows){
+      var n=(rows||[]).length, b=$('subCount'); if(b && n){ b.textContent=n; b.hidden=false; }
+    }).catch(function(){});
+  }
+
   function uniq(arr){ return arr.filter(function(v,i){ return arr.indexOf(v)===i; }); }
 
   function renderGarments(){
