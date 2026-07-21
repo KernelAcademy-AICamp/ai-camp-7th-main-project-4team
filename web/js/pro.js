@@ -190,8 +190,8 @@
   function sendOffer(i){ var a=document.getElementById('offAmt'+i), m=document.getElementById('offMsg'+i);
     var price=a?parseInt(a.value,10)||MY_PRICE:MY_PRICE, msg=m?m.value.trim():'';
     reqs[i].offer={price:price, msg:msg||'요청에 맞춰 코디해드릴게요'}; reqs[i].status='제안발송'; reqs[i]._offering=false;
-    saveLS('pro.reqs',reqs); refresh(i); toast(reqs[i].cust+' 님에게 제안을 보냈어요'); }
-  function simAccept(i){ reqs[i].status='상담중'; saveLS('pro.reqs',reqs); refresh(i); toast(reqs[i].cust+' 님이 제안을 수락했어요 · 대화로 내용을 맞춰보세요'); }
+    saveLS('pro.reqs',reqs); refresh(i); toast(reqs[i].cust+' 님에게 견적을 보냈어요'); }
+  function simAccept(i){ reqs[i].status='상담중'; saveLS('pro.reqs',reqs); refresh(i); toast(reqs[i].cust+' 님이 견적을 수락했어요 · 대화로 내용을 맞춰보세요'); }
   function completeReq(i){ reqs[i].status='완료'; saveLS('pro.reqs',reqs); refresh(i); toast('완료 처리했어요 · 고객 후기를 기다려요'); }
 
   /* ===== 렌더 ===== */

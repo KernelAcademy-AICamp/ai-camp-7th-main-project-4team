@@ -462,7 +462,7 @@
             : '곧 코디를 시작해요 · 완료되면 후기를 남겨주세요';
     var ck='<span class="mb-ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>';
     return '<div class="matchban">'+ck+
-      '<div class="mb-tx"><b>'+(r.nm||'')+' 스타일리스트로 매칭되었어요!</b><span>'+sub+'</span></div></div>';
+      '<div class="mb-tx"><b>'+(r.nm||'')+' 스타일리스트로 매칭됐어요</b><span>'+sub+'</span></div></div>';
   }
   function reqAction(r,i){ var s=r.status;
     if(s==='견적중'){ var n=(r.bids||[]).length;
@@ -471,14 +471,14 @@
     if(s==='대기') return '<div class="reqact"><span>스타일리스트가 요청을 검토하고 있어요 · 응답을 기다리는 중</span><button class="tinybtn ghost" style="margin-left:auto" onclick="confirmCancel('+i+')">요청 취소</button></div>'+
       '<div class="reqact" style="background:none; padding:10px 2px 0"><span class="muted" style="font-size:12px">데모 · 스타일리스트 응답 시뮬레이션</span><div class="obtns" style="margin-left:auto"><button class="tinybtn ghost" onclick="reqReject('+i+')">거절</button><button class="tinybtn" onclick="reqAccept('+i+')">수락</button></div></div>';
     if(s==='취소함') return '<div class="reqact"><span class="muted">요청을 취소했어요</span></div>';
-    if(s==='수락') return '<div class="reqact"><span><b style="color:var(--green)">요청 수락되었어요!</b> 이제 스타일리스트와 코디를 진행해요</span></div>';
+    if(s==='수락') return '<div class="reqact"><span><b style="color:var(--green)">요청 수락됐어요</b> 이제 스타일리스트와 코디를 진행해요</span></div>';
     if(s==='결제대기') return '<div class="reqact"><div class="offerbox"><b>결제하고 시작하기</b><div class="omsg">'+(r.nm||'')+' 스타일리스트로 매칭됐어요 · 에스크로 결제 후 코디를 시작해요</div></div><button class="tinybtn key" style="margin-left:auto" onclick="openPay('+i+')">결제하기 →</button></div>';
     if(s==='진행중') return matchedBannerHTML(r)+
       '<div class="reqact" style="background:none; padding:10px 2px 0"><span class="muted" style="font-size:12px">데모 · 서비스 완료 시뮬레이션</span><button class="tinybtn ghost" style="margin-left:auto" onclick="reqComplete('+i+')">완료 처리</button></div>';
     if(s==='완료'){ if(r._reviewing) return matchedBannerHTML(r)+reviewForm(r,i);
       return matchedBannerHTML(r)+'<div class="reqact" style="background:none; padding:12px 2px 0"><span class="muted" style="font-size:12px">서비스가 완료됐어요</span><button class="tinybtn" style="margin-left:auto" onclick="openReviewForm('+i+')">후기 작성하기</button></div>'; }
     if(s==='후기완료'){ var rv=r.review||{}; return matchedBannerHTML(r)+'<div class="reqact"><div class="revshow"><span class="starsRO">'+starsRO(rv.rating||5)+'</span> <span class="rtx">"'+(rv.text||'')+'"</span></div></div>'; }
-    if(s==='거절') return '<div class="reqact"><span class="muted">아쉽게도 요청이 거절되었어요!</span><button class="tinybtn ghost" style="margin-left:auto" onclick="closeBids();go(\'shop\')">다른 스타일리스트 찾기</button></div>';
+    if(s==='거절') return '<div class="reqact"><span class="muted">아쉽게도 요청이 거절됐어요</span><button class="tinybtn ghost" style="margin-left:auto" onclick="closeBids();go(\'shop\')">다른 스타일리스트 찾기</button></div>';
     return '';
   }
   /* 요청 카드 1개 (원본 reqs 인덱스 i 유지 — 액션 핸들러가 참조) */
@@ -563,7 +563,7 @@
   function reqAccept(i){ var r=reqs[i]; r.status='상담중'; pushCustSysMsg(r,'acceptReq'); saveLS('reqs',reqs); renderReqs(); openReqDetail(i); toast((r.nm||'')+' 스타일리스트가 수락했어요 · 대화로 맞춰보세요'); }
   function setApptDemo(i){ var r=reqs[i]; r.appt={date:(r.date||'—'), time:'02:00 PM', place:'신논현역 3번 출구'}; pushCustSysMsg(r,'appt'); saveLS('reqs',reqs); renderReqs(); renderReqDetail(); toast('약속이 확정됐어요 · 이제 입금 안내를 기다려요'); }
   function askPayDemo(i){ var r=reqs[i]; r.status='결제대기'; pushCustSysMsg(r,'askPay'); saveLS('reqs',reqs); renderReqs(); renderReqDetail(); toast('스타일리스트가 입금을 요청했어요 · 결제하고 시작하세요'); }
-  function reqReject(i){ reqs[i].status='거절'; saveLS('reqs',reqs); syncReqViews(); toast('아쉽게도 요청이 거절되었어요!'); }
+  function reqReject(i){ reqs[i].status='거절'; saveLS('reqs',reqs); syncReqViews(); toast('아쉽게도 요청이 거절됐어요'); }
   function reqCancel(i){ reqs[i].status='취소함'; saveLS('reqs',reqs); syncReqViews(); toast('요청을 취소했어요'); }
   function reqComplete(i){ reqs[i].status='완료'; saveLS('reqs',reqs); syncReqViews(); toast('서비스가 완료됐어요 · 후기를 남겨보세요'); }
   function confirmReqComplete(i){ var r=reqs[i]||{};
@@ -914,7 +914,7 @@
         ? consultCardCust(r,i)
         : nowCard('수락 대기','지금 할 일','스타일리스트가 요청을 검토하고 있어요', reqActions(r,i));
       else if(state==='exc') inner=(r.status==='거절')
-        ? nowCardWarn('요청 거절됨','거절','아쉽게도 요청이 거절되었어요','')
+        ? nowCardWarn('요청 거절됨','거절','아쉽게도 요청이 거절됐어요','')
         : nowCardWarn('요청 취소됨','취소','요청을 취소했어요','');
       else if(state==='done'){ var offA=custAppt(r);
         inner=tlReceipt('수락', esc(nm)+' 스타일리스트와 상담함',
@@ -1004,7 +1004,7 @@
         '<button class="btn key" style="width:100%;margin-top:12px" onclick="openPay('+i+')">'+price.toLocaleString()+'원 결제하기 →</button></div>'; }
     if(s==='거절'){
       return '<div class="rq-sec"><div class="rq-h">요청 결과</div>'+
-        '<p class="rq-guide">아쉽게도 요청이 거절되었어요 · 다른 스타일리스트를 찾아볼까요?</p>'+
+        '<p class="rq-guide">아쉽게도 요청이 거절됐어요 · 다른 스타일리스트를 찾아볼까요?</p>'+
         '<button class="tinybtn key" style="width:100%" onclick="closeBids();go(\'shop\')">다른 스타일리스트 찾기 →</button></div>'; }
     if(s==='취소함'){
       return '<div class="rq-sec"><div class="rq-h">요청 결과</div>'+

@@ -88,7 +88,7 @@
   /* 상태 → [배너색, 아이콘, 제목, 설명] (스타일리스트 시점) */
   var ST_BAN_PRO={
     '신규':    ['wait','clock','새 요청 도착','새로운 요청을 확인해 주세요'],
-    '제안발송':['wait','clock','제안 발송됨','고객의 응답을 기다리고 있어요'],
+    '제안발송':['wait','clock','견적 발송됨','고객의 응답을 기다리고 있어요'],
     '상담중':  ['go','check','요청 수락함','대화로 내용을 맞춰본 뒤 입금을 안내해 주세요'],
     '수락됨':  ['go','check','진행 중','결과물을 작성해 전달해 주세요'],
     '완료':    ['go','flag','서비스 완료','고객의 후기를 기다리고 있어요'],
@@ -132,7 +132,7 @@
   /* 요청서 아래 액션 박스 제목 — '진행 상태'(스테퍼가 대신) 대신 지금 할 일 중심 */
   function actionTitle(r){
     if(r.status==='견적작성') return '견적 작성';
-    if(r.status==='제안발송') return '제안 현황';
+    if(r.status==='제안발송') return '견적 현황';
     var T={'신규':'요청 수락','상담중':'입금 안내','수락됨':'결과물 전달','완료':'완료','거절':'거절한 요청','취소':'취소한 요청','분쟁':'분쟁 대응'};
     return T[r.status]||'진행 관리';
   }
@@ -222,7 +222,7 @@
   function confirmPayment(){ askConfirm(reqs[idx].cust+'님의 입금을 확인할까요?', markPaid, '확인하기', '확인하면 코디를 진행할 수 있어요'); }
   function reject(){ reqs[idx].reason=''; reqs[idx].status='거절'; saveLS('pro.reqs',reqs); render(); toast('요청을 거절했어요'); }
   function undoReject(){ reqs[idx].status='신규'; reqs[idx].reason=''; saveLS('pro.reqs',reqs); render(); toast('거절을 되돌렸어요'); }
-  function simAccept(){ reqs[idx].status='상담중'; pushSysMsg(reqs[idx],'acceptOffer'); saveLS('pro.reqs',reqs); render(); toast(reqs[idx].cust+'님이 제안을 수락했어요 · 대화로 내용을 맞춰보세요'); }
+  function simAccept(){ reqs[idx].status='상담중'; pushSysMsg(reqs[idx],'acceptOffer'); saveLS('pro.reqs',reqs); render(); toast(reqs[idx].cust+'님이 견적을 수락했어요 · 대화로 내용을 맞춰보세요'); }
   function completeReq(){ reqs[idx].status='완료'; saveLS('pro.reqs',reqs); render(); toast('완료 처리했어요'); }
   function cancelReq(){ reqs[idx].reason=''; reqs[idx].status='취소'; saveLS('pro.reqs',reqs); render(); toast('진행을 취소했어요'); }
   function undoCancel(){ reqs[idx].status='수락됨'; reqs[idx].reason=''; saveLS('pro.reqs',reqs); render(); toast('취소를 되돌렸어요'); }
@@ -854,7 +854,7 @@
           var b='<div class="note-quote"><b style="color:var(--green)">보낸 견적</b> · <span class="num">'+((o.price||0).toLocaleString())+'</span>원'+(o.msg?'<br><span style="font-size:13px;color:var(--sub)">"'+esc(o.msg)+'"</span>':'')+'</div>'+
             '<div class="rr-mini">'+reqRowsHTML(r)+'</div>'+attachChip(attached,10)+
             '<button class="btn ghost" style="margin-top:12px" onclick="simAccept()">고객 수락 · 데모</button>';
-          inner=nowCard('제안 발송됨','응답 대기','고객의 응답을 기다리고 있어요', b);
+          inner=nowCard('견적 발송됨','응답 대기','고객의 응답을 기다리고 있어요', b);
         } else {
           var b2='<div class="rr-mini">'+reqRowsHTML(r)+'</div>'+attachChip(attached,12)+
             '<div class="act-row" style="margin-top:14px"><button class="btn ghost" onclick="confirmReject()">거절하기</button><button class="btn" onclick="confirmAccept()">수락하기</button></div>';
@@ -1057,12 +1057,12 @@
      {cust}=고객 이름 · {pro}=스타일리스트 이름 */
   var SYS_COPY = {
     acceptReq:   { pro:'요청을 수락했어요 · {cust}님과 대화를 시작해보세요',   cust:'{pro}님이 요청을 수락했어요 · 대화를 시작해보세요' },
-    acceptOffer: { pro:'{cust}님이 제안을 수락했어요 · 대화를 시작해보세요',  cust:'제안을 수락했어요 · 대화를 시작해보세요' },
+    acceptOffer: { pro:'{cust}님이 견적을 수락했어요 · 대화를 시작해보세요',  cust:'견적을 수락했어요 · 대화를 시작해보세요' },
     appt:        { pro:'약속을 확정했어요',                                cust:'약속이 확정됐어요' },
     askPay:      { pro:'서비스 결제를 안내했어요',                          cust:'서비스 결제를 진행해주세요' },
     paid:        { pro:'입금을 확인했어요 · 결과물을 준비해주세요',           cust:'결제가 완료됐어요 · 결과물을 기다려주세요' },
     deliver:     { pro:'결과물을 전달했어요 · 후기를 기다려주세요',           cust:'결과물을 받았어요 · 후기를 남겨주세요' },
-    review:      { pro:'후기가 등록됐어요 · 서비스가 완료되었어요!',          cust:'후기를 남겨주셔서 감사해요 · 서비스가 완료되었어요!' }
+    review:      { pro:'후기가 등록됐어요 · 서비스가 완료됐어요',          cust:'후기를 남겨주셔서 감사해요 · 서비스가 완료됐어요' }
   };
   function sysText(ev, r, view){
     var c=SYS_COPY[ev]; if(!c) return '';
