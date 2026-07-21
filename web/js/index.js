@@ -442,7 +442,7 @@
     go('shop'); openDetail(idx); _detailBack=function(){ goMy('mp-fav'); };
   }
   /* 마이페이지 · 코디 요청 내역 렌더 (라이프사이클) */
-  function stClass(s){ return (s==='완료'||s==='후기완료')?'done':(s==='진행중'||s==='수락'||s==='상담중'?'prog':(s==='견적중'?'offer':(s==='분쟁'?'warn':(s==='거절'||s==='취소함'||s==='환불'?'cancel':'wait')))); }
+  function stClass(s){ return (s==='완료'||s==='후기완료')?'done':(s==='진행중'||s==='수락'||s==='상담중'||s==='결제대기'?'prog':(s==='견적중'?'offer':(s==='분쟁'?'warn':(s==='거절'||s==='취소함'||s==='환불'?'cancel':'wait')))); }
   function statusLabel(s){ return s==='견적중'?'견적 받는 중':(s==='상담중'?'상담 중':(s==='결제대기'?'결제 대기':(s==='분쟁'?'분쟁 처리 중':(s==='환불'?'환불 완료':(s==='후기완료'?'후기 완료':(s==='수락'?'수락됨':(s==='거절'?'거절됨':(s==='대기'?'응답 대기':s)))))))); }
   function starsRO(n){ var s=''; for(var k=1;k<=5;k++) s+='<span style="color:'+(k<=n?'var(--green)':'var(--line2)')+'">'+starSVG()+'</span>'; return s; }
   /* 통통하고 둥근 별 (귀여운 모양) — round join으로 뾰족함 없이 */

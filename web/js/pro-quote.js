@@ -628,7 +628,7 @@
     var gLabel=r.gender==='male'?'남성':(r.gender==='female'?'여성':'');
     var guide=SHOPPER_DESC[bt.code||r.type] || bt.insight || ((bt.profile&&bt.profile[1])||'');
     return '<div class="card bodycard2">'+
-      '<div class="rr-eye">고객 체형 · 제안 참고용</div>'+
+      '<div class="rr-eye">고객 체형 · 견적 참고용</div>'+
       /* ① 기본 — 성별·키·몸무게 */
       '<div class="body-basic">'+(gLabel?esc(gLabel)+' · ':'')+'<span class="num">'+(r.cm||'—')+'</span>cm · <span class="num">'+(r.kg||'—')+'</span>kg</div>'+
       /* ② 체형 + 체형 설명(같이) */
