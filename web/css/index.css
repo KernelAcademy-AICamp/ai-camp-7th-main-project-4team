@@ -117,9 +117,12 @@
   @keyframes deckStackDim{0%{opacity:1}14%{opacity:.5}80%{opacity:.5}100%{opacity:1}}
   @keyframes deckDim{to{filter:brightness(.5)}}
   /* 모서리는 border-radius+overflow로 — clip-path는 회전된 합성 레이어에서 안티앨리어싱이 안 돼 톱니·흰 실선이 생김 */
-  #stage .card{position:absolute;left:calc(50% - 100px);top:180px;width:200px;height:339px;background:#16171b;border-radius:17px;overflow:hidden;transform-origin:50% 50%;backface-visibility:hidden;-webkit-font-smoothing:antialiased;z-index:calc(8 - var(--i))}
-  #stage.play .card{animation:fallIn var(--stack-in) cubic-bezier(.5,0,.6,1) var(--fd) both,dealOnce var(--t-deal) cubic-bezier(.5,0,.2,1) calc(var(--bridge) + var(--d)) forwards}
-  @keyframes fallIn{0%{opacity:0;transform:translate(var(--fx,0),-310px) rotate(calc(var(--r) * 1.9));animation-timing-function:cubic-bezier(.5,0,.82,.62)}22%{opacity:1}70%{transform:translate(0,0) rotate(var(--r));animation-timing-function:cubic-bezier(.32,0,.4,1)}82%{transform:translate(0,-9px) rotate(var(--r));animation-timing-function:cubic-bezier(.5,0,.7,1)}100%{opacity:1;transform:translate(0,0) rotate(var(--r))}}
+  /* 그림자 필수 — 없으면 어두운 카드의 AA 가장자리가 밝은 배경과 섞여, 뒤 카드 위에서 흰 선처럼 보임 */
+  #stage .card{position:absolute;left:calc(50% - 100px);top:180px;width:200px;height:339px;background:#16171b;border-radius:17px;overflow:hidden;transform-origin:50% 50%;backface-visibility:hidden;-webkit-font-smoothing:antialiased;z-index:calc(8 - var(--i));
+    box-shadow:0 0 0 1.5px rgba(16,17,21,.92), 0 2px 6px rgba(10,11,14,.45), 0 12px 30px rgba(10,11,14,.28), 0 28px 64px rgba(10,11,14,.16)}
+  /* 낙하: 가속 하강 → 안착 → 아주 작은 되튐(9px→5px)으로 과장 줄임. 딜: 관성 있는 ease-out으로 매끄럽게 */
+  #stage.play .card{animation:fallIn var(--stack-in) cubic-bezier(.4,0,.5,1) var(--fd) both,dealOnce var(--t-deal) cubic-bezier(.22,.75,.24,1) calc(var(--bridge) + var(--d)) forwards}
+  @keyframes fallIn{0%{opacity:0;transform:translate(var(--fx,0),-310px) rotate(calc(var(--r) * 1.9));animation-timing-function:cubic-bezier(.45,0,.75,.7)}18%{opacity:1}68%{transform:translate(0,0) rotate(var(--r));animation-timing-function:cubic-bezier(.28,0,.35,1)}80%{transform:translate(0,-5px) rotate(var(--r));animation-timing-function:cubic-bezier(.4,0,.6,1)}92%{transform:translate(0,-1px) rotate(var(--r))}100%{opacity:1;transform:translate(0,0) rotate(var(--r))}}
   @keyframes dealOnce{0%{transform:rotate(var(--r))}100%{transform:translate(var(--x),var(--y)) rotate(var(--rot))}}
   #stage .card .hc{position:absolute;top:0;left:0;width:392px;height:664px;transform:scale(.5102);transform-origin:top left;color:#fff;display:flex;flex-direction:column;align-items:center;padding:26px 26px 30px;background:#16171b}
   #stage .card .hc .ctop{width:100%;display:flex;justify-content:flex-start}
