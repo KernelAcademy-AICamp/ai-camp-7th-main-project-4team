@@ -81,6 +81,22 @@
       catch (e) { return false; }
     },
 
+    // ── 사용자 제출 사이즈표 검수(garment_submission 테이블) [db/08] — admin RLS. 판정 ④⑤ ──
+    // 읽기: 상태별(기본 pending) 최신순. 쓰기: status만 변경(verified|rejected|merged).
+    submissions: async function (status) {
+      if (!client) return [];
+      try {
+        var q = client.from('garment_submission').select('*').order('created_at', { ascending: false }).limit(500);
+        if (status) q = q.eq('status', status);
+        var r = await q; return r.data || [];
+      } catch (e) { return []; }
+    },
+    setSubmissionStatus: async function (id, status) {
+      if (!client) return false;
+      try { var r = await client.from('garment_submission').update({ status: status }).eq('id', id); return !r.error; }
+      catch (e) { return false; }
+    },
+
     // ── 실측표 CRUD(garment 테이블) [db/05] — admin RLS 쓰기. 변경 시 rev 자동 증가(트리거)→진단 즉시 반영. ──
     // 저장 전략: 현재 뷰 행을 insert(무 id, identity 생성) 후 기존 id 삭제 → GENERATED ALWAYS upsert 충돌 회피.
     // rows: [{brand_id, category, spec}] (id 없음).

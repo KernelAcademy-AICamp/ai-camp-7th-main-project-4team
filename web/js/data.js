@@ -90,6 +90,15 @@
       return Promise.resolve(null);
     },
 
+    /* ── 사이즈표 제공(수집) = /api/submit-garment ────────────
+       판정에서 사용자가 올린 표를 엔진 개선 opt-in 동의 시 저장(검수 큐행).
+       api: consent=true일 때만 POST → {ok}. proto: 미저장(데모) → false. */
+    submitGarment: function (payload) {
+      if (MODE !== 'api') return Promise.resolve(false);
+      var d = payload || {}; d.session_id = this.sessionId();
+      return postJSON('/api/submit-garment', d).then(function (r) { return r.ok; }).catch(function () { return false; });
+    },
+
     /* ── 수요 신호(스타일리스트찾기 페이크도어) = /api/lead ──────
        실매칭 없이 "얼마나 원하나"만 측정. api 모드에서만 서버 저장(목업 downstream 미개방).
        demand: {kind:'quote'|'notify', service, occasion, budget, note, stylist, contact}

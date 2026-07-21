@@ -256,9 +256,30 @@
     renderMatrix(j, pickSize);
     renderBands(pick, j.category, pickSize);
 
+    // 수집 opt-in 초기화(판정마다 리셋)
+    state.lastPick = pickSize;
+    var cb = $("jconsent"), sub = $("jsubmit"), msg = $("jsharemsg");
+    if (cb) cb.checked = false; if (sub) sub.disabled = true;
+    if (msg) { msg.hidden = true; msg.textContent = ""; }
+
     $("jsetup").hidden = true;
     $("jresult").hidden = false;
     window.scrollTo(0, 0);
+  }
+
+  function submitGarment() {
+    if (!(window.FDATA && FDATA.submitGarment) || !state.lastCell) return;
+    var sub = $("jsubmit"), msg = $("jsharemsg");
+    if (sub) sub.disabled = true;
+    var m = state.meta || {};
+    FDATA.submitGarment({
+      brand: m.brand || null, product: m.product || null, category: state.cat, unit: "cm",
+      chestBasis: state.basis || null, sizes: state.lastCell,
+      parsedRaw: (state.parsed && state.parsed.sizes && !state.manual) ? state.parsed : null,
+      source: state.manual ? "manual" : "capture", confirmedSize: state.lastPick || null, consent: true
+    }).then(function (ok) {
+      if (msg) { msg.hidden = false; msg.textContent = ok ? "고마워요 — 검수 후 반영돼요." : "지금은 저장되지 않았어요(데모)."; }
+    });
   }
 
   // 실제 판정된 부위(핵심 + 표에 있던 보조 = 허리 등). 렌더가 CAT_PARTS만 보면 보조를 빼먹음.
@@ -386,7 +407,11 @@
     if (ev.target.closest("#jcapzone")) { $("jcapfile").click(); return; }
     if (ev.target.id === "jreupload") { state.manual = false; showCapture(); var t = $("jcapthumb"); if (t) { t.hidden = true; t.src = ""; } return; }
     if (ev.target.id === "jrun") run();
+    if (ev.target.id === "jsubmit") submitGarment();
     if (ev.target.id === "jredo") { $("jresult").hidden = true; $("jsetup").hidden = false; showCapture(); window.scrollTo(0, 0); }
+  });
+  document.addEventListener("change", function (ev) {
+    if (ev.target.id === "jconsent") { var s = $("jsubmit"); if (s) s.disabled = !ev.target.checked; }
   });
   // 파일 선택
   var fi = $("jcapfile"); if (fi) fi.addEventListener("change", function (e) { state.manual = false; onImageFile(e.target.files && e.target.files[0]); });

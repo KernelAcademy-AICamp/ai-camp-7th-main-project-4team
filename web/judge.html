@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=90fc1187">
 <link rel="stylesheet" href="css/diag.css?v=20da8405">
-<link rel="stylesheet" href="css/judge.css?v=1c08103d">
+<link rel="stylesheet" href="css/judge.css?v=576eb99e">
 </head>
 <body>
 <!-- 판정(Fit) — 개발자 기능 배선. 디자이너 재스킨 대상(마크업 최소·토큰만 사용). -->
@@ -117,6 +117,16 @@
       <div id="jbands"></div>
     </div>
 
+    <!-- 수집 opt-in — 이 표를 핏팅 개선에 제공(동의 시에만 저장) -->
+    <div class="jshare" id="jshare">
+      <label class="jshare-row">
+        <input type="checkbox" id="jconsent">
+        <span class="jshare-tx"><b>이 사이즈표를 핏팅 개선에 쓸게요</b><span>다른 분들의 판정이 더 정확해져요. 브랜드·상품명이 있으면 더 좋아요.</span></span>
+      </label>
+      <button class="jbtn" id="jsubmit" disabled>제공하기</button>
+      <div class="jshare-msg" id="jsharemsg" hidden></div>
+    </div>
+
     <button class="jbtn ghost" id="jredo">다른 옷 판정하기</button>
   </section>
 
@@ -126,7 +136,7 @@
 <script src="js/body-model.js?v=2596b757"></script>
 <script src="js/engine.js?v=3f01a221"></script>
 <script src="js/config.js?v=66a385e1"></script>
-<script src="js/data.js?v=589145b3"></script>
-<script src="js/judge.js?v=1dc06d90"></script>
+<script src="js/data.js?v=f8d00d5f"></script>
+<script src="js/judge.js?v=19353493"></script>
 </body>
 </html>

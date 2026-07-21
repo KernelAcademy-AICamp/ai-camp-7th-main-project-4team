@@ -11,7 +11,7 @@
     // 나머지(회원·거래·사업현황·B2B API·내부운영)는 v2라 숨김. admin-diagnostics는 네비에 없어 추가.
     // MVP 측정 2축: 진단 정확도(킬메트릭) + 전문가 수요(lead). + 데이터 콘솔(사이즈·데이터).
     var MVP={'admin.html':1,'admin-diagnostics.html':1,'admin-leads.html':1,'admin-improve.html':1,'admin-access.html':1};
-    var sizePages={'admin.html':1,'admin-brands.html':1,'admin-collect.html':1,'admin-engine.html':1,'admin-garments.html':1};
+    var sizePages={'admin.html':1,'admin-brands.html':1,'admin-collect.html':1,'admin-engine.html':1,'admin-garments.html':1,'admin-submissions.html':1};
     var EXTRA=[['admin-diagnostics.html','진단·정확도'],['admin-improve.html','엔진 강화'],['admin-leads.html','전문가 수요'],['admin-access.html','관리자']];   // 네비 마크업에 없어 주입
     var nav=document.querySelector('.asecs');
     if(nav){

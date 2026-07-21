@@ -84,6 +84,16 @@
 .jparsehint{flex:1; font-size:14px; color:var(--ink2); line-height:1.55; min-width:0;}
 .jparsehint b{font-weight:800;} .jparsehint .w{color:var(--warn); font-weight:700;}
 .jreup{flex:none; font-size:12.5px; white-space:nowrap;}
+/* 수집 opt-in 카드 (결과 하단) */
+.jshare{border:1px solid var(--gl); background:var(--gs); border-radius:16px; padding:18px 20px; display:flex; flex-direction:column; gap:13px;}
+.jshare-row{display:flex; align-items:flex-start; gap:11px; cursor:pointer;}
+.jshare-row input{margin-top:2px; width:18px; height:18px; accent-color:var(--g); flex:none; cursor:pointer;}
+.jshare-tx{display:flex; flex-direction:column; gap:3px;}
+.jshare-tx b{font-size:14.5px; font-weight:800; letter-spacing:-.02em; color:var(--ink);}
+.jshare-tx span{font-size:13px; color:var(--sub); line-height:1.5;}
+.jshare .jbtn{align-self:flex-start; margin-top:0; padding:11px 20px;}
+.jshare-msg{font-size:13px; font-weight:700; color:var(--g);}
+
 .jmeta{display:flex; flex-direction:column; gap:8px;}
 .jmeta-in{width:100%; min-width:0; font:inherit; font-size:14px; padding:11px 12px; border:1.5px solid var(--line2); border-radius:10px; background:var(--surface); color:var(--ink);}
 .jmeta-in::placeholder{color:var(--sub2);}
