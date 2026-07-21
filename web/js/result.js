@@ -174,7 +174,9 @@
       ranked=ranked.slice(0,3);
     }
     return '<div class="s2list">'+ranked.map(function(r){
-      var note=(FLK[r.fitLine]||'')+' · '+r.bottleneck+' 기준'+(r.variance?' · '+r.variance:'');
+      // 조각마다 nowrap — 좁은 화면에서 '허리 / 기준'처럼 구 중간이 끊기지 않게, 줄바꿈은 ' · '에서만
+      var nw=function(t){ return '<span class="nw">'+t+'</span>'; };
+      var note=[FLK[r.fitLine]||'', r.bottleneck+' 기준', r.variance||''].filter(Boolean).map(nw).join(' · ');
       var pct=(r.fitScore!=null)?r.fitScore:0;
       var scoreTxt=(r.fitScore!=null)?r.fit+' '+r.fitScore+'%':r.fit;
       var loCls=(r.warn||(r.fitScore!=null&&r.fitScore<70))?' lo':'';

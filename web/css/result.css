@@ -19,6 +19,14 @@
           max-width:1180px; margin:0 auto; padding:36px 30px 90px; }
   .rwrap h1{ font-size:31.5px; font-weight:800; letter-spacing:-.04em; color:var(--ink); }
   .rwrap .subttl{ font-size:17px; color:var(--sub); margin-top:8px; }
+  .rwrap .subttl .sep{ font-style:normal; }
+  /* 마지막 줄에 한 단어만 남는 '고아줄' 방지 — 브라우저가 앞줄에서 미리 접어줌.
+     미지원 브라우저는 기존 normal로 폴백(레이아웃 영향 없음) */
+  .rwrap .subttl, .rnote, .rfoot, .rcta-note, .rex p, .rconsent-txt,
+  .dtl-tip p, .dtl-desc, .dtl-desc b, .rlock .t2, .rconf-msg{ text-wrap:pretty; }
+  .rwrap h1, .dtl-name, .rfbq{ text-wrap:balance; }
+  /* 구(句) 중간이 끊기면 안 되는 조각 — result.js가 캡션 조각마다 붙임 */
+  .nw{ white-space:nowrap; }
   .rgrid{ display:grid; grid-template-columns:392px 1fr; gap:34px; align-items:start; margin-top:28px; }
   @media(max-width:840px){ .rgrid{ grid-template-columns:1fr; } }
   .rcard iframe{ width:392px; max-width:100%; height:684px; border:0; border-radius:22px; display:block; position:sticky; top:80px; box-shadow:0 18px 44px rgba(20,22,28,.14); }
@@ -213,4 +221,32 @@
       display:flex; gap:8px; padding:12px 18px calc(12px + env(safe-area-inset-bottom));
       background:linear-gradient(180deg, rgba(246,246,245,0), var(--bg) 30%); }
     .rcta .rbtn{ flex:1; min-height:44px; }
+    /* CTA는 두 줄로 접히면 하단바 높이가 튐 — 한 줄 유지, 폭이 모자라면 글자만 축소 */
+    .rcta .rbtn{ white-space:nowrap; font-size:clamp(15px, 4.2vw, 18px); padding:15px 10px; }
+
+    /* ── 좁은 화면 줄바꿈 다듬기 ─────────────────────────────────────────
+       핵심: 폭이 부족해 '구(句)' 중간이 끊기던 자리들. 글자만 줄이면 잔글씨가 되므로
+       "끊길 자리를 지정 + 필요한 만큼만 축소"로 처리. */
+
+    /* 브랜드 추천 캡션: 이름 옆이 아니라 아랫줄 전체 폭으로 → ' · ' 앞뒤로만 접힘
+       (조각별 nowrap은 result.js의 .nw 스팬이 담당) */
+    .s2in .b{ font-size:16.5px; min-width:0; }
+    .s2in .b small{ display:block; margin-left:0; margin-top:3px; font-size:13px; line-height:1.45; }
+    .s2in .sz{ font-size:21px; } .s2in .p{ font-size:14px; }
+
+    /* 정확도 피드백 3분할: '안 / 맞아요'로 쪼개지던 자리 — 한 줄 유지 */
+    .rseg{ gap:7px; }
+    .rseg .o{ padding:12px 4px; font-size:15px; white-space:nowrap; }
+
+    /* 동의문: 강조구가 '만 14세 / 이상'처럼 끊기지 않게 */
+    .rconsent-txt > b{ white-space:nowrap; }
+
+    /* 결과 풀이: 강조구가 두 줄로 쪼개지지 않게 통째로 다음 줄로.
+       .rex.eq는 제외 — 강조구가 길어(최대 19자) nowrap하면 넘침 */
+    .rex.plus p strong, .rex.warn p strong{ white-space:nowrap; }
+
+    /* 부제: '· ' 한가운데서 끊기던 걸 두 문장으로 분리(구분점은 숨김) */
+    .rwrap .subttl{ font-size:15.5px; line-height:1.5; }
+    .rwrap .subttl span{ display:block; }
+    .rwrap .subttl .sep{ display:none; }
   }
