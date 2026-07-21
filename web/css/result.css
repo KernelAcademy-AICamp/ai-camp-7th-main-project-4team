@@ -142,6 +142,11 @@
   .s2in{ position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:12px; }
   .s2in .b{ font-size:18px; font-weight:800; color:var(--ink); } .s2in .b small{ font-weight:600; color:var(--sub); font-size:15.5px; margin-left:8px; }
   .s2in .r{ display:flex; align-items:center; gap:14px; flex:none; }
+  /* 사이즈 표기 폭은 카테고리마다 제각각(상의 'XS'·'M' 2~3글자 / 하의 'M(31)'·'080' 5글자).
+     행마다 폭이 다르면 상·하의를 한 패널에 같이 볼 때 열이 계단처럼 어긋나므로,
+     고정폭 + 우측정렬로 열을 고정한다(행별 grid로는 행 간 정렬이 안 됨). */
+  .s2in .sz{ min-width:76px; text-align:right; letter-spacing:0; }   /* 수치 열 — tokens .num과 동일 규칙 */
+  .s2in .p{ min-width:72px; text-align:right; }
   .s2in .sz{ font-family:var(--suit,inherit); font-feature-settings:'tnum'; font-size:24.5px; font-weight:800; color:var(--ink); }
   .s2in .p{ font-size:15.5px; font-weight:800; color:var(--g); }
   .s2row.lo .s2fill{ background:#F0EFEC; } .s2row.lo .s2in .p{ color:var(--sub2); }
@@ -165,7 +170,8 @@
   #meas .n2row:has(+ .dtl-grp){ border-bottom:none; }
   #meas .n2row.lo .n2top .zone{ color:var(--gm); }
   #meas .n2row.lo .n2seg.on{ background:var(--gm); } #meas .n2row.lo .n2seg.near{ background:#B9CFC2; }
-  .rpanel .dtl-note{ font-size:14px; color:var(--sub); margin-top:16px; line-height:1.55; }
+  .rpanel .dtl-note{ font-size:14px; color:var(--sub); margin-top:16px; line-height:1.55; text-wrap:pretty; }
+  .rpanel .dtl-note b{ white-space:nowrap; }   /* '이지 밸런스 / (BAL)'처럼 유형명이 쪼개지지 않게 */
   /* recs 그룹(상의·하의) 헤더 바로 뒤 목록은 붙여서 '내 체형 측정' 그룹 간격과 통일 */
   #recs .dtl-grp + .s2list{ margin-top:0; }
 
@@ -232,7 +238,9 @@
        (조각별 nowrap은 result.js의 .nw 스팬이 담당) */
     .s2in .b{ font-size:16.5px; min-width:0; }
     .s2in .b small{ display:block; margin-left:0; margin-top:3px; font-size:13px; line-height:1.45; }
-    .s2in .sz{ font-size:21px; } .s2in .p{ font-size:14px; }
+    /* 좁은 폭에선 열 고정폭도 함께 축소 — 'M(31)'(최장) 기준으로 잡음 */
+    .s2in .r{ gap:9px; }
+    .s2in .sz{ font-size:19px; min-width:58px; } .s2in .p{ font-size:13.5px; min-width:64px; }
 
     /* 정확도 피드백 3분할: '안 / 맞아요'로 쪼개지던 자리 — 한 줄 유지 */
     .rseg{ gap:7px; }
