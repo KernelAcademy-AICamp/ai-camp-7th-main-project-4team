@@ -81,6 +81,15 @@
       return Promise.resolve(null);
     },
 
+    /* ── 사이즈표 캡처 인식 = /api/parse-size-table ───────────
+       사용자가 올린 상품 사이즈표 이미지를 서버(Claude 비전)가 구조화 JSON으로.
+       api: POST {image:base64|dataURL} → {parsed, usage}. 키는 서버 전용(비노출).
+       proto: 서버 없음 → null(호출부가 '직접 입력' 폴백 유도). */
+    parseSizeTable: function (imageDataUrl) {
+      if (MODE === 'api') return postJSON('/api/parse-size-table', { image: imageDataUrl }).then(function (r) { return r.json(); });
+      return Promise.resolve(null);
+    },
+
     /* ── 수요 신호(스타일리스트찾기 페이크도어) = /api/lead ──────
        실매칭 없이 "얼마나 원하나"만 측정. api 모드에서만 서버 저장(목업 downstream 미개방).
        demand: {kind:'quote'|'notify', service, occasion, budget, note, stylist, contact}

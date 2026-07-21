@@ -24,6 +24,7 @@
     "TOP:chest":    { tight: 2, snug: 8, big: 16 },
     "TOP:shoulder": { tight: 0, snug: 1.5, big: 4 },
     "TOP:belly":    { tight: 0, snug: 8, big: 18 },
+    "TOP:waist":    { tight: 0, snug: 8, big: 18 },   // 상의 허리(핏 상의) — belly와 동일 가설값. 표에 있을 때만 판정.
     "BOTTOM:waist": { tight: 0, snug: 4, big: 10 },
     "BOTTOM:hip":   { tight: 0, snug: 6, big: 14 },
     "BOTTOM:thigh": { tight: 0, snug: 5, big: 12 },
@@ -33,6 +34,8 @@
               waist: "circ", hip: "circ", thigh: "circ", rise: "len", hem: "width" };
   // 카테고리별 역산 가능 부위(garmentCm에 있고 밴드가 있는 둘레/너비 부위)
   var CAT_PARTS = { TOP: ["chest", "shoulder"], BOTTOM: ["waist", "hip", "thigh"] };
+  // 보조 부위: 표에 있을 때만 판정에 씀(없어도 미표기로 캐묻지 않음). 제공된 데이터 최대 활용.
+  var CAT_PARTS_OPT = { TOP: ["waist"], BOTTOM: [] };
 
   // ① 의류 단면(flat) → 인체 축
   function toBodyAxis(part, flatCm) { return CMP[part] === "circ" ? flatCm * 2 : flatCm; }
@@ -317,6 +320,14 @@
       if (partEase.chest == null) return null;
       pen = penaltyTop(partEase.chest, partEase.shoulder == null ? 999 : partEase.shoulder);
     }
+    // 보조 부위(상의 허리 등)가 표에 있으면 추가 감점 — 핵심보다 약하게. 없으면 영향 없음.
+    (CAT_PARTS_OPT[category] || []).forEach(function (p) {
+      var e = partEase[p]; if (e == null) return;
+      var b = BANDS[category + ":" + p]; if (!b) return;
+      var ideal = (b.tight + b.snug) / 2;
+      var dev = e < b.tight ? (b.tight - e) * 1.8 + 1 : Math.max(0, Math.abs(e - ideal) - (b.snug - b.tight) / 2);
+      pen += dev * 3;
+    });
     return Math.max(0, Math.min(100, Math.round(100 - pen)));
   }
 
@@ -346,6 +357,8 @@
     specRows = (specRows || []).filter(function (s) { return s && s.garmentCm; });
     var cat = opts.category || (specRows.length ? specRows[0].category : "TOP");
     var parts = CAT_PARTS[cat] || [];
+    var optParts = CAT_PARTS_OPT[cat] || [];       // 표에 있을 때만 판정하는 보조 부위
+    var allParts = parts.concat(optParts);
 
     // 사이즈 라벨별 그룹(중복 제품은 부위별 평균)
     var bySize = {};
@@ -353,7 +366,7 @@
       if (s.category !== cat) return;
       var g = bySize[s.sizeLabel] || (bySize[s.sizeLabel] =
         { sizeLabel: s.sizeLabel, sizeOrder: (s.sizeOrder != null ? s.sizeOrder : 0), acc: {} });
-      parts.forEach(function (p) {
+      allParts.forEach(function (p) {
         var v = s.garmentCm[p];
         if (v != null) (g.acc[p] = g.acc[p] || []).push(v);
       });
@@ -362,9 +375,14 @@
 
     var sizes = Object.keys(bySize).map(function (k) {
       var g = bySize[k], partJ = [], missing = [], partEase = {};
-      parts.forEach(function (p) {
+      parts.forEach(function (p) {                                         // 핵심 부위 — 없으면 미표기로 표시
         if (!g.acc[p] || !g.acc[p].length) { missing.push(p); return; }   // 브랜드가 표기 안 함
         if (bodyVec[p] == null) { missing.push(p); return; }              // 내 몸 치수 없음
+        var pj = judgePart(p, avg(g.acc[p]), bodyVec[p], cat, errors[p]);
+        partJ.push(pj); partEase[p] = pj.easeCm;
+      });
+      optParts.forEach(function (p) {                                      // 보조 부위 — 있을 때만, 없어도 안 캐물음
+        if (!g.acc[p] || !g.acc[p].length || bodyVec[p] == null) return;
         var pj = judgePart(p, avg(g.acc[p]), bodyVec[p], cat, errors[p]);
         partJ.push(pj); partEase[p] = pj.easeCm;
       });

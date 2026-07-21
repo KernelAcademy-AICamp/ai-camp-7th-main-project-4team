@@ -65,6 +65,43 @@
 .jchip.on{background:var(--g); border-color:var(--g); color:#fff; font-weight:800;}
 .jmiss{font-size:14px; color:var(--warn); font-weight:700; line-height:1.55;}
 
+/* ── 캡처 입력 ─────────────────────────────────────── */
+.jcap{display:flex; flex-direction:column; gap:14px;}
+.jcap-zone{border:1.5px dashed var(--line2); border-radius:16px; padding:34px 20px; text-align:center; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; gap:10px; transition:border-color .15s, background .15s;}
+.jcap-zone:hover, .jcap-zone.over{border-color:var(--g); background:var(--gs);}
+.jcap-ic{color:var(--sub2);} .jcap-zone:hover .jcap-ic, .jcap-zone.over .jcap-ic{color:var(--g);}
+.jcap-ic svg{width:34px; height:34px; display:block;}
+.jcap-t{font-size:16px; font-weight:800; letter-spacing:-.03em;}
+.jcap-d{font-size:13px; color:var(--sub); line-height:1.5;} .jcap-d b{color:var(--ink2); font-weight:700;}
+.jcap-alt{text-align:center;}
+.jlink{font-size:13.5px; font-weight:700; color:var(--g); cursor:pointer; text-decoration:none; border-bottom:1px solid var(--gl);}
+
+/* ── 인식·보정 ─────────────────────────────────────── */
+.jcorrect{display:flex; flex-direction:column; gap:16px;}
+.jcorrect-top{display:flex; align-items:flex-start; gap:12px;}
+.jcap-thumb{width:60px; height:60px; object-fit:cover; border-radius:10px; border:1px solid var(--line); flex:none;}
+.jparsehint{flex:1; font-size:14px; color:var(--ink2); line-height:1.55; min-width:0;}
+.jparsehint b{font-weight:800;} .jparsehint .w{color:var(--warn); font-weight:700;}
+.jreup{flex:none; font-size:12.5px; white-space:nowrap;}
+.jmeta{display:flex; flex-direction:column; gap:8px;}
+.jmeta-in{width:100%; min-width:0; font:inherit; font-size:14px; padding:11px 12px; border:1.5px solid var(--line2); border-radius:10px; background:var(--surface); color:var(--ink);}
+.jmeta-in::placeholder{color:var(--sub2);}
+.jctab{width:100%; border-collapse:collapse;}
+.jctab th{font-size:11px; font-weight:800; color:var(--sub2); letter-spacing:.04em; text-align:left; padding:0 6px 8px 0;}
+.jopt{font-size:9px; font-weight:700; color:var(--sub2); margin-left:3px; opacity:.75;}
+.jctab td{padding:5px 6px 5px 0; border-top:1px solid var(--line); vertical-align:middle;}
+.jctab td.sl{font-weight:800; font-size:13.5px; white-space:nowrap;}
+.jctab input{width:100%; min-width:52px; font:inherit; font-size:14px; padding:9px 10px; border:1.5px solid var(--line2); border-radius:9px; background:var(--surface); color:var(--ink);}
+.jctab input.jsl{font-weight:800;}
+.jctab input.jce{font-feature-settings:"tnum";}
+.jctab .jsl:not(input){font-weight:800;}
+.jbasis{display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-top:2px; font-size:13px; color:var(--sub);}
+.jbasis-l{font-weight:700; color:var(--ink2);}
+.jbz{font:inherit; font-size:12.5px; font-weight:700; padding:6px 12px; border:1.5px solid var(--line2); border-radius:20px; background:var(--surface); color:var(--sub); cursor:pointer;}
+.jbz.on{background:var(--g); border-color:var(--g); color:#fff; font-weight:800;}
+.jbasis-n{flex-basis:100%; font-size:12px; color:var(--sub2); line-height:1.5;}
+
 /* 작동 설명 — 배경 채움 없이 상단 경계선 + 딥그린 번호로 절제(디자인 원칙: 배경색 억제) */
 .jhow{margin-top:8px; padding-top:22px; border-top:1px solid var(--line);}
 .jhow-h{font-size:13px; font-weight:800; color:var(--sub2); letter-spacing:.06em; text-transform:uppercase; margin-bottom:14px;}

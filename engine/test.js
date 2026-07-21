@@ -50,7 +50,8 @@ close(FitEngine.ratingToEase("shoulder", "BIG"), 6, "어깨 BIG = 4 + 4/2");
 close(FitEngine.ratingToEase("belly", "SNUG"), 4, "배 SNUG = (0+8)/2");
 close(FitEngine.ratingToEase("belly", "RELAXED"), 13, "배 RELAXED = (8+18)/2");
 eq(FitEngine.ratingToEase("chest", "NONSENSE"), null, "미정의 등급 → null");
-eq(FitEngine.ratingToEase("waist", "SNUG"), null, "미활성 부위(하의) → null");
+close(FitEngine.ratingToEase("waist", "SNUG"), 4, "상의 허리 SNUG=(0+8)/2 — 보조밴드 TOP:waist 활성");
+eq(FitEngine.ratingToEase("nope", "SNUG"), null, "미정의 부위 → null");
 
 /* ── 착용경험 → 인체 역산 (bodyFromExperiences) ─────────────────────────────── */
 const specsMatch = [
@@ -194,6 +195,15 @@ eq(FitEngine.easeToRating("nope", 5, "TOP"), null, "밴드 없는 부위 → nul
 // recommend는 종전 하한 35 유지(판정과 분리) — 회귀 확인
 assert.ok(FitEngine.recommend({ chest: 130, shoulder: 60 }, "regular", "male", "long_sleeve", jspecs)
   .every((r) => r.fitScore >= 35), "recommend는 하한 35 유지"); pass++;
+// 보조 부위(상의 허리): 표에 있으면 판정에 포함, 없으면 미표기로 안 캐물음
+const jwaist = [{ category: "TOP", brandId: "a", brandName: "A", fitLine: "regular", sizeLabel: "M", sizeOrder: 0,
+  gender: "male", subtype: "long_sleeve", garmentCm: { chest: 52, shoulder: 46, waist: 44 } }];
+const jw = FitEngine.judge({ chest: 96, shoulder: 45, waist: 92 }, jwaist);   // 가슴+8·어깨+1 정상, 허리 44단면=88둘레 −92 = −4 끼임
+const wp = jw.sizes[0].parts.filter((p) => p.part === "waist")[0];
+assert.ok(wp && wp.rating === "TIGHT", "상의 허리 있으면 판정 포함(88−92=−4 끼임)"); pass++;
+eq(jw.sizes[0].verdict.ko, "허리가 껴요", "상의 허리 끼면 종합판정에 반영");
+eq(FitEngine.judge({ chest: 96, shoulder: 45, waist: 92 }, jspecs).sizes[0].missing, [],
+   "허리 없는 상의는 미표기로 안 캐물음(missing 빈배열)");
 
 /* ── 실데이터 스모크: garments.json 전량으로 깨지지 않고 계약 지키는지 ───────── */
 try {

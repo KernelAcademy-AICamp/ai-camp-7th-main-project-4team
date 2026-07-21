@@ -66,10 +66,14 @@ module.exports = async function handler(req, res) {
 
   var bodyVec = cat === 'BOTTOM'
     ? { waist: cm.waist, hip: cm.hip, thigh: cm.thigh }
-    : { chest: cm.chestFull, shoulder: cm.shoulder };
+    : { chest: cm.chestFull, shoulder: cm.shoulder, waist: cm.waist };   // 상의 허리(보조 부위) 대비
 
-  var cell = pickCell(SPECS, { category: cat, brandId: b.brandId, gender: sex,
-    subtype: b.subtype, fitLine: b.fitLine, silhouette: b.silhouette });
+  // 판정 대상 셀: ① 클라가 캡처로 만든 셀(본류) 우선, ② 없으면 우리 garments에서 브랜드 필터(앵커 지름길·폴백).
+  //   캡처 셀은 사용자 소유 데이터라 그대로 판정에 씀 — 우리 실측표(SPECS)는 여기에 안 섞이고 노출도 안 됨.
+  var cell = Array.isArray(b.cell) && b.cell.length
+    ? b.cell.filter(function (s) { return s && s.garmentCm; })
+    : pickCell(SPECS, { category: cat, brandId: b.brandId, gender: sex,
+        subtype: b.subtype, fitLine: b.fitLine, silhouette: b.silhouette });
   if (!cell.length) return res.status(200).json({ covered: false, category: cat, brandId: b.brandId });
 
   var judgment = FitEngine.judge(bodyVec, cell, { errors: b.errors || {}, category: cat });

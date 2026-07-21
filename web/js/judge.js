@@ -33,49 +33,142 @@
       if (!est || !est.ready) { showGate(); return; }
       state.sex = est.sex;
       est.parts.forEach(function (p) { state.cm[p.key] = p.cm; if (p.rmse != null) state.err[p.key] = p.rmse; });
-      return fetchJSON("data/size-catalog.json").then(function (c) {
-        state.catalog = (c && c.specs) || c || [];
-        state.ready = true;
-        $("jloading").hidden = true;
-        $("jsetup").hidden = false;
-        populateBrands();
-      });
+      state.ready = true;
+      $("jloading").hidden = true;
+      $("jsetup").hidden = false;
+      showCapture();
     }).catch(function (e) { fail("불러오는 중 문제가 생겼어요. 새로고침해 주세요."); });
   }
 
-  /* ── 셀 선택 UI ─────────────────────────────────────────── */
-  function catalogFor(cat) {
-    var sub = SUBTYPE[cat];
-    return state.catalog.filter(function (s) {
-      return s.category === cat && (s.subtype === sub || !s.subtype) &&
-             (s.gender === state.sex || s.gender === "unisex");
+  /* ── 캡처 입력 → 인식 → 보정 ──────────────────────────────
+     둘레 부위(가슴·허리·엉덩이·허벅지)는 garments 규약(단면)으로 저장 — 판정 시 ×2로 복원.
+     라벨이 아닌 값 분포로 단면/둘레 자동판정(FLAT_MAX 초과=둘레), 사용자가 토글로 override. */
+  var CIRC = { chest: 1, waist: 1, hip: 1, thigh: 1, belly: 1 };
+  var FLAT_MAX = { chest: 78, waist: 70, hip: 78, thigh: 44 };
+  var JUDGE_PARTS = { TOP: ["chest", "shoulder"], BOTTOM: ["waist", "hip", "thigh"] };
+  var JUDGE_PARTS_OPT = { TOP: ["waist"], BOTTOM: [] };   // 표에 있을 때만 쓰는 보조 부위(상의 허리)
+  // 이 보정 화면에 표시·수집할 부위 = 핵심 + 보조. forceOpt(직접입력)=보조 전부 노출(선택),
+  //   아니면(캡처) 파싱된 표에 실제로 있는 보조만.
+  function correctParts(sizes, forceOpt) {
+    var opt = (JUDGE_PARTS_OPT[state.cat] || []).filter(function (p) {
+      return forceOpt || (sizes || []).some(function (s) { return s.values && s.values[p] != null; });
     });
+    return JUDGE_PARTS[state.cat].concat(opt);
   }
-  function populateBrands() {
-    var rows = catalogFor(state.cat);
-    var seen = {}, brands = [];
-    rows.forEach(function (s) { if (!seen[s.brandId]) { seen[s.brandId] = 1; brands.push({ id: s.brandId, name: s.brandName }); } });
-    brands.sort(function (a, b) { return a.name.localeCompare(b.name, "ko"); });
-    var sel = $("jbrand");
-    sel.innerHTML = '<option value="">브랜드 선택</option>' +
-      brands.map(function (b) { return '<option value="' + esc(b.id) + '">' + esc(b.name) + "</option>"; }).join("");
-    state.brandId = null; state.fit = null;
-    $("jfit").innerHTML = ""; $("jmiss").hidden = true; syncRun();
+  function isOptPart(p) { return (JUDGE_PARTS_OPT[state.cat] || []).indexOf(p) >= 0; }
+  function koP(p) { return (E.partKo && E.partKo[p]) || p; }
+  function toFlat(part, val, ov) {
+    if (val == null || val === "") return null;
+    val = +val; if (isNaN(val)) return null;
+    if (!CIRC[part]) return val;                        // 너비·길이는 그대로
+    var circ = ov === "circ" ? true : ov === "flat" ? false : val > (FLAT_MAX[part] || 78);
+    return circ ? Math.round(val / 2 * 10) / 10 : val;  // 둘레면 단면으로
   }
-  function populateFits() {
-    var isBottom = state.cat === "BOTTOM";
-    $("jfitLabel").textContent = isBottom ? "실루엣" : "핏";
-    var rows = catalogFor(state.cat).filter(function (s) { return s.brandId === state.brandId; });
-    var key = isBottom ? "silhouette" : "fitLine", map = isBottom ? SIL_KO : FIT_KO;
-    var seen = {}, fits = [];
-    rows.forEach(function (s) { var v = s[key]; if (v && !seen[v]) { seen[v] = 1; fits.push(v); } });
-    state.fit = null;
-    $("jfit").innerHTML = fits.length
-      ? fits.map(function (f) { return '<button class="jchip" data-fit="' + esc(f) + '">' + esc(map[f] || f) + "</button>"; }).join("")
-      : '<span class="jmiss">이 브랜드는 아직 수집된 ' + (isBottom ? "하의" : "상의") + "가 없어요.</span>";
-    syncRun();
+
+  function setCat(cat) {
+    state.cat = cat; state.basis = null;
+    document.querySelectorAll(".jseg-b").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-cat") === cat); });
   }
-  function syncRun() { $("jrun").disabled = !(state.brandId && state.fit); }
+  function showCapture() { $("jcap").hidden = false; $("jcorrect").hidden = true; var m = $("jmiss"); if (m) m.hidden = true; state.parsed = null; }
+
+  // 붙여넣기/드롭/파일 → dataURL → 인식
+  function onImageFile(file) {
+    if (!file || file.type.indexOf("image") !== 0) return;
+    var r = new FileReader(); r.onload = function () { parseImage(r.result); }; r.readAsDataURL(file);
+  }
+  function parseImage(dataUrl) {
+    state.capture = dataUrl; state.parsed = null; state.basis = null;
+    $("jcap").hidden = true; $("jcorrect").hidden = false;
+    var th = $("jcapthumb"); if (th) { th.src = dataUrl; th.hidden = false; }
+    $("jparsehint").innerHTML = "사이즈표를 읽는 중…"; $("jparsetable").innerHTML = ""; $("jrun").disabled = true;
+    if (!(window.FDATA && FDATA.parseSizeTable)) return parseUnavailable();
+    FDATA.parseSizeTable(dataUrl).then(function (resp) {
+      if (!resp) return parseUnavailable();
+      if (resp.error || !resp.parsed) return parseFailed();
+      onParsed(resp.parsed);
+    }).catch(function () { parseFailed(); });
+  }
+  function parseUnavailable() { $("jparsehint").innerHTML = "이 환경에선 자동 인식이 안 돼요. <a class='jlink' data-act='manual'>직접 입력</a>으로 진행하세요."; }
+  function parseFailed() { $("jparsehint").innerHTML = "표를 못 읽었어요. 더 또렷한 캡처로 다시 하거나 <a class='jlink' data-act='manual'>직접 입력</a>하세요."; }
+
+  function onParsed(p) {
+    state.parsed = p;
+    if (p.category === "TOP" || p.category === "BOTTOM") setCat(p.category);
+    if (p.tableKind === "body_range") {
+      $("jparsehint").innerHTML = "<b class='w'>이건 신체 권장범위표예요.</b> 옷 실측표(단면·기장)를 올려주세요 — 못 입어보는 옷의 실제 치수가 필요해요.";
+      $("jparsetable").innerHTML = ""; $("jrun").disabled = true; return;
+    }
+    var warn = p.truncated ? " <span class='w'>일부 사이즈가 가려졌어요 — 사려는 사이즈가 없으면 다시 캡처해주세요.</span>" : "";
+    $("jparsehint").innerHTML = "읽었어요. <b>사려는 사이즈의 값</b>을 확인·수정해주세요." + warn;
+    renderCorrect(p.sizes || [], false);
+  }
+
+  // 보정 테이블: 사이즈 × 판정부위(핵심+표에있는보조, 편집 가능) + 단면/둘레 토글. editableLabel=직접입력 모드.
+  function renderCorrect(sizes, editableLabel) {
+    var parts = correctParts(sizes, editableLabel);   // 직접입력이면 보조(허리)도 선택칸으로 노출
+    var circParts = parts.filter(function (x) { return CIRC[x]; });
+    var circPart = circParts[0];
+    if (state.basis == null && circPart) {
+      var vals = sizes.map(function (s) { return s.values ? s.values[circPart] : null; }).filter(function (v) { return v != null; });
+      var mx = vals.length ? Math.max.apply(null, vals) : 0;
+      state.basis = mx > (FLAT_MAX[circPart] || 78) ? "circ" : "flat";
+    }
+    var head = "<tr><th>사이즈</th>" + parts.map(function (pt) {
+      return "<th>" + koP(pt) + (isOptPart(pt) ? "<span class='jopt'>선택</span>" : "") + "</th>";
+    }).join("") + "</tr>";
+    var rows = sizes.map(function (s, i) {
+      var lbl = editableLabel
+        ? "<input class='jsl' data-i='" + i + "' placeholder='예: M' value='" + esc(s.label || "") + "'>"
+        : "<span class='jsl' data-i='" + i + "'>" + esc(s.label) + "</span>";
+      return "<tr><td class='sl'>" + lbl + "</td>" + parts.map(function (pt) {
+        var v = s.values ? s.values[pt] : null;
+        return "<td><input class='jce' data-i='" + i + "' data-p='" + pt + "' inputmode='decimal' value='" + (v == null ? "" : esc(v)) + "'></td>";
+      }).join("") + "</tr>";
+    }).join("");
+    var basisCtl = circPart
+      ? "<div class='jbasis'><span class='jbasis-l'>" + circParts.map(koP).join("·") + " 값은</span>" +
+        "<button class='jbz " + (state.basis === "flat" ? "on" : "") + "' data-b='flat'>단면</button>" +
+        "<button class='jbz " + (state.basis === "circ" ? "on" : "") + "' data-b='circ'>둘레</button>" +
+        "<span class='jbasis-n'>표에 적힌 그대로가 단면(반접어 잰 값)인지 둘레인지</span></div>" : "";
+    $("jparsetable").innerHTML = "<table class='jctab'>" + head + rows + "</table>" + basisCtl;
+    $("jrun").disabled = false;
+  }
+
+  function showManual() {
+    $("jcap").hidden = true; $("jcorrect").hidden = false; $("jmiss").hidden = true;
+    var th = $("jcapthumb"); if (th) th.hidden = true;
+    state.parsed = { sizes: [{ label: "" }] }; state.basis = "flat";
+    $("jparsehint").innerHTML = "사려는 <b>사이즈</b>와 <b>" + JUDGE_PARTS[state.cat].map(koP).join("·") + "</b>을 표에서 그대로 옮겨 적어주세요.";
+    renderCorrect(state.parsed.sizes, true);
+  }
+
+  // 보정값 → 셀(garments 규약: 단면). 렌더된 입력(핵심+보조)을 그대로 읽음.
+  function readLabel(i) {
+    var el = document.querySelector(".jsl[data-i='" + i + "']");
+    return el ? (el.value != null ? el.value : el.textContent) : "";
+  }
+  function buildCell() {
+    var brand = ($("jbrandin") && $("jbrandin").value || "").trim();
+    var prod = ($("jprodin") && $("jprodin").value || "").trim();
+    state.meta = { brand: brand, product: prod };
+    var rows = {};
+    document.querySelectorAll(".jce").forEach(function (el) {
+      var i = +el.getAttribute("data-i"), pt = el.getAttribute("data-p");
+      (rows[i] = rows[i] || { i: i })[pt] = el.value;
+    });
+    return Object.keys(rows).map(function (k) {
+      var r = rows[k], g = {};
+      Object.keys(r).forEach(function (pt) {                              // 렌더된 부위(핵심+보조) 전부
+        if (pt === "i") return;
+        var f = toFlat(pt, r[pt], CIRC[pt] ? state.basis : null); if (f != null) g[pt] = f;
+      });
+      return {
+        category: state.cat, brandId: "user", brandName: brand || "내가 입력", product: prod || null, gender: "unisex",
+        fitLine: "regular", silhouette: "straight", subtype: SUBTYPE[state.cat],
+        sizeLabel: (readLabel(r.i) || "#" + (r.i + 1)).trim(), sizeOrder: r.i, garmentCm: g
+      };
+    }).filter(function (row) { return Object.keys(row.garmentCm).length; });
+  }
 
   /* ── 판정 계산 ──────────────────────────────────────────── */
   function errForEngine() {
@@ -84,41 +177,27 @@
     return e;
   }
   function run() {
+    var cell = buildCell();
+    if (!cell.length) return showMiss("판정할 값이 없어요. 사려는 사이즈의 치수를 채워주세요.");
+    state.lastCell = cell;
     $("jrun").disabled = true;
-    var cat = state.cat, isBottom = cat === "BOTTOM";
-    var query = {
-      category: cat, sex: state.sex, cm: state.cm, experiences: state.exps,
-      brandId: state.brandId, subtype: SUBTYPE[cat], errors: errForEngine()
-    };
-    if (isBottom) query.silhouette = state.fit; else query.fitLine = state.fit;
-
-    computeJudgment(query).then(function (j) {
-      $("jrun").disabled = false;
-      if (!j) return showMiss();
-      render(j);
-    }).catch(function () { $("jrun").disabled = false; showMiss(); });
+    computeJudgment({ category: state.cat, sex: state.sex, cm: state.cm, experiences: state.exps, errors: errForEngine(), cell: cell })
+      .then(function (j) { $("jrun").disabled = false; if (!j) return showMiss(); render(j); })
+      .catch(function () { $("jrun").disabled = false; showMiss(); });
   }
-  // proto=클라 로컬 계산(garments 직접) / api=서버(/api/judge, 실측 비노출)
+  // api=서버(/api/judge, cell 전달·실측 비노출) / proto=클라 로컬(garments로 역산 + 캡처셀 판정)
   function computeJudgment(q) {
     if (window.FDATA && FDATA.mode === "api") {
       return FDATA.judge(q).then(function (resp) { return (resp && resp.covered) ? resp.judgment : null; });
     }
     return loadGarments().then(function (specs) {
-      if (!specs) return null;
-      var eb = E.bodyFromExperiences ? E.bodyFromExperiences(q.experiences, specs) : {};
+      var eb = specs && E.bodyFromExperiences ? E.bodyFromExperiences(q.experiences, specs) : {};
       var mcm = {}; Object.keys(q.cm).forEach(function (k) { mcm[k] = q.cm[k]; });
       Object.keys(EBMAP).forEach(function (k) { if (eb[k] != null) mcm[EBMAP[k]] = eb[k]; });
       var bodyVec = q.category === "BOTTOM"
         ? { waist: mcm.waist, hip: mcm.hip, thigh: mcm.thigh }
-        : { chest: mcm.chestFull, shoulder: mcm.shoulder };
-      var cell = specs.filter(function (s) {
-        if (s.category !== q.category || s.brandId !== q.brandId) return false;
-        if (!(s.gender === q.sex || s.gender === "unisex")) return false;
-        if (q.subtype && s.subtype !== q.subtype) return false;
-        return q.category === "BOTTOM" ? s.silhouette === q.silhouette : s.fitLine === q.fitLine;
-      });
-      if (!cell.length) return null;
-      return E.judge(bodyVec, cell, { errors: q.errors, category: q.category });
+        : { chest: mcm.chestFull, shoulder: mcm.shoulder, waist: mcm.waist };  // 상의 허리(보조) 대비
+      return E.judge(bodyVec, q.cell, { errors: q.errors, category: q.category });
     });
   }
   function loadGarments() {
@@ -182,9 +261,17 @@
     window.scrollTo(0, 0);
   }
 
+  // 실제 판정된 부위(핵심 + 표에 있던 보조 = 허리 등). 렌더가 CAT_PARTS만 보면 보조를 빼먹음.
+  function judgedParts(category, sizes) {
+    var core = (E.catParts && E.catParts[category]) || [];
+    var seen = {};
+    (sizes || []).forEach(function (s) { (s.parts || []).forEach(function (p) { if (core.indexOf(p.part) < 0) seen[p.part] = 1; }); });
+    return core.concat(Object.keys(seen));
+  }
+
   function renderMatrix(j, pickSize) {
     var sizes = j.sizes || [];
-    var parts = (E.catParts && E.catParts[j.category]) || [];
+    var parts = judgedParts(j.category, sizes);
     // 헤더
     var head = "<thead><tr><th></th>" + sizes.map(function (s) {
       return '<th class="' + (s.sizeLabel === pickSize ? "pick" : "") + '">' + esc(s.sizeLabel) + "</th>";
@@ -214,7 +301,7 @@
   function renderBands(pick, category, pickSize) {
     $("jbandHead").textContent = "추천 사이즈(" + (pickSize || "-") + ") 자세히";
     if (!pick) { $("jbands").innerHTML = ""; return; }
-    var parts = (E.catParts && E.catParts[category]) || [];
+    var parts = judgedParts(category, [pick]);   // 핵심 + 판정된 보조(허리)
     $("jbands").innerHTML = parts.map(function (part) {
       var pj = pick.parts.filter(function (p) { return p.part === part; })[0];
       var band = E.bands[category + ":" + part];
@@ -262,12 +349,11 @@
     return Object.keys(m);
   }
   function koPart(p) { return (E.partKo && E.partKo[p]) || p; }
-  // 판정 대상 셀 라벨: "브랜드명 · 핏". 배지에 표시.
+  // 판정 대상 = 사용자가 입력한 표. 배지에 표시.
   function cellLabel() {
-    var row = (state.catalog || []).filter(function (s) { return s.brandId === state.brandId; })[0];
-    var name = row ? row.brandName : state.brandId;
-    var map = state.cat === "BOTTOM" ? SIL_KO : FIT_KO;
-    return name + (state.fit ? " · " + (map[state.fit] || state.fit) : "");
+    var m = state.meta || {};
+    if (m.brand || m.product) return [m.brand, m.product].filter(Boolean).join(" · ");
+    return "내가 입력한 표";
   }
   function fmt(n) { return (Math.round(n * 10) / 10).toString(); }
   function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
@@ -276,9 +362,9 @@
   // 게이트는 자체 에디토리얼 헤드라인을 가지므로, 공통 제목/부제는 숨겨 이중 헤드라인 방지.
   function showGate() { $("jloading").hidden = true; $("jsetup").hidden = true; $("jgate").hidden = false;
     var t = document.querySelector(".jtitle"), s = $("jsub"); if (t) t.hidden = true; if (s) s.hidden = true; }
-  function showMiss() {
+  function showMiss(msg) {
     $("jmiss").hidden = false;
-    $("jmiss").textContent = "이 조합은 아직 수집된 실측이 없어요. 다른 핏이나 브랜드를 선택해 보세요.";
+    $("jmiss").textContent = msg || "판정할 수 없어요. 값을 확인해주세요.";
   }
   function fail(msg) { $("jloading").textContent = msg; }
 
@@ -286,20 +372,38 @@
   document.addEventListener("click", function (ev) {
     var seg = ev.target.closest(".jseg-b");
     if (seg) {
-      document.querySelectorAll(".jseg-b").forEach(function (b) { b.classList.remove("on"); });
-      seg.classList.add("on"); state.cat = seg.getAttribute("data-cat"); populateBrands();
+      setCat(seg.getAttribute("data-cat"));
+      if (!$("jcorrect").hidden && state.parsed) renderCorrect(state.parsed.sizes || [], !!state.manual);
       return;
     }
-    var chip = ev.target.closest(".jchip");
-    if (chip && chip.hasAttribute("data-fit")) {
-      document.querySelectorAll(".jchip").forEach(function (c) { c.classList.remove("on"); });
-      chip.classList.add("on"); state.fit = chip.getAttribute("data-fit"); syncRun();
+    var bz = ev.target.closest(".jbz");
+    if (bz) {
+      state.basis = bz.getAttribute("data-b");
+      document.querySelectorAll(".jbz").forEach(function (b) { b.classList.toggle("on", b === bz); });
       return;
     }
+    if (ev.target.closest(".jlink[data-act='manual']") || ev.target.id === "jmanuallink") { state.manual = true; showManual(); return; }
+    if (ev.target.closest("#jcapzone")) { $("jcapfile").click(); return; }
+    if (ev.target.id === "jreupload") { state.manual = false; showCapture(); var t = $("jcapthumb"); if (t) { t.hidden = true; t.src = ""; } return; }
     if (ev.target.id === "jrun") run();
-    if (ev.target.id === "jredo") { $("jresult").hidden = true; $("jsetup").hidden = false; window.scrollTo(0, 0); }
+    if (ev.target.id === "jredo") { $("jresult").hidden = true; $("jsetup").hidden = false; showCapture(); window.scrollTo(0, 0); }
   });
-  $("jbrand").addEventListener("change", function (e) { state.brandId = e.target.value || null; populateFits(); });
+  // 파일 선택
+  var fi = $("jcapfile"); if (fi) fi.addEventListener("change", function (e) { state.manual = false; onImageFile(e.target.files && e.target.files[0]); });
+  // 드래그&드롭
+  var dz = $("jcapzone");
+  if (dz) {
+    dz.addEventListener("dragover", function (e) { e.preventDefault(); dz.classList.add("over"); });
+    dz.addEventListener("dragleave", function () { dz.classList.remove("over"); });
+    dz.addEventListener("drop", function (e) { e.preventDefault(); dz.classList.remove("over");
+      state.manual = false; onImageFile(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]); });
+  }
+  // 클립보드 붙여넣기 — 캡처 단계일 때만
+  document.addEventListener("paste", function (e) {
+    if ($("jcap") && $("jcap").hidden) return;
+    var items = (e.clipboardData && e.clipboardData.items) || [];
+    for (var i = 0; i < items.length; i++) { if (items[i].type.indexOf("image") === 0) { state.manual = false; onImageFile(items[i].getAsFile()); e.preventDefault(); return; } }
+  });
 
   if (E && E._real) boot(); else fail("엔진을 불러오지 못했어요.");
 })();
