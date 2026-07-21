@@ -116,7 +116,8 @@
   #stage.play .deck{opacity:1;animation:deckStackDim var(--copy-hold) ease var(--copy-at) both,deckDim .5s ease calc(var(--bridge) + var(--t-deal) + var(--hold)) forwards}
   @keyframes deckStackDim{0%{opacity:1}14%{opacity:.5}80%{opacity:.5}100%{opacity:1}}
   @keyframes deckDim{to{filter:brightness(.5)}}
-  #stage .card{position:absolute;left:calc(50% - 100px);top:180px;width:200px;height:339px;background:#16171b;clip-path:inset(0 round 17px);transform-origin:50% 50%;backface-visibility:hidden;z-index:calc(8 - var(--i))}
+  /* 모서리는 border-radius+overflow로 — clip-path는 회전된 합성 레이어에서 안티앨리어싱이 안 돼 톱니·흰 실선이 생김 */
+  #stage .card{position:absolute;left:calc(50% - 100px);top:180px;width:200px;height:339px;background:#16171b;border-radius:17px;overflow:hidden;transform-origin:50% 50%;backface-visibility:hidden;-webkit-font-smoothing:antialiased;z-index:calc(8 - var(--i))}
   #stage.play .card{animation:fallIn var(--stack-in) cubic-bezier(.5,0,.6,1) var(--fd) both,dealOnce var(--t-deal) cubic-bezier(.5,0,.2,1) calc(var(--bridge) + var(--d)) forwards}
   @keyframes fallIn{0%{opacity:0;transform:translate(var(--fx,0),-310px) rotate(calc(var(--r) * 1.9));animation-timing-function:cubic-bezier(.5,0,.82,.62)}22%{opacity:1}70%{transform:translate(0,0) rotate(var(--r));animation-timing-function:cubic-bezier(.32,0,.4,1)}82%{transform:translate(0,-9px) rotate(var(--r));animation-timing-function:cubic-bezier(.5,0,.7,1)}100%{opacity:1;transform:translate(0,0) rotate(var(--r))}}
   @keyframes dealOnce{0%{transform:rotate(var(--r))}100%{transform:translate(var(--x),var(--y)) rotate(var(--rot))}}
