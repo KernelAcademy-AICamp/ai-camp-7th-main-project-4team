@@ -68,8 +68,10 @@
   #home .hhero .sub{font-size:19px;color:var(--sub);margin:20px auto 0;line-height:1.65;max-width:560px}
 
   /* ===== 히어로 온보딩(8체형 카드덱 애니) — _home-full 이식. 전부 #stage 스코프 ===== */
-  #home .hhero:has(#stage){padding:40px 0 68px;overflow-x:visible;overflow-y:clip}
-  #stage{position:relative;width:1000px;max-width:100%;height:600px;margin:0 auto;text-align:left;
+  /* 스테이지 축소는 transform:scale 사용(zoom은 iOS Safari/WebKit에서 글씨를 안 줄여 카드·인트로가 깨짐).
+     1000px 고정 박스를 flex로 중앙정렬하고 넘치는 폭은 clip. 세로 여백은 각 스케일의 margin-bottom으로 흡수. */
+  #home .hhero:has(#stage){padding:40px 0 68px;overflow:clip;display:flex;justify-content:center;align-items:flex-start}
+  #stage{position:relative;width:1000px;height:600px;flex:none;text-align:left;transform-origin:top center;
     --l1-at:.8s;--l1-dur:2.55s;--l2-at:3.35s;--stack-in:.9s;--fall-span:.5s;--copy-gap:.45s;--copy-hold:2.2s;
     --copy-at:calc(var(--fall-span) + var(--stack-in) + var(--copy-gap));--bridge:calc(var(--copy-at) + var(--copy-hold));
     --t-deal:1.3s;--hold:.55s;--gap-copy:.8s;--gap-flip:.9s;--t-flip:1.1s;--tape-at:5.25s;--glint-at:5.95s}
@@ -186,14 +188,13 @@
   #stage .skiphint{position:absolute;left:50%;transform:translateX(-50%);bottom:-40px;font-size:12.5px;font-weight:700;color:var(--sub);background:rgba(0,0,0,.045);border:1px solid var(--line);border-radius:20px;padding:6px 14px;cursor:pointer;z-index:60;pointer-events:auto}
   #stage .skiphint:hover{color:var(--ink);background:rgba(0,0,0,.09)}
   #stage.done .skiphint{display:none}
-  @media(max-width:1040px){#stage{zoom:.74}}
-  @media(max-width:720px){#stage{zoom:.54}}
-  /* 모바일: 부채덱(고정 폭 ~1008px×zoom)이 화면보다 넓어 양끝 카드가 잘리던 것 →
-     .4→.34로 낮춰 360·390·412px 모두 화면 안에 들어오게(덱은 균일 축소라 딜 애니 비례 유지) */
-  @media(max-width:470px){#stage{zoom:.34}}
-  /* 넓은 화면에선 온보딩을 더 크게 — zoom은 레이아웃 박스까지 키워 잘림·여백 자동 처리(.wrap 콘텐츠폭 1180 안) */
-  @media(min-width:1160px){#stage{zoom:1.08}}
-  @media(min-width:1300px){#stage{zoom:1.16}}
+  /* scale + margin-bottom(=600px×(scale−1))로 축소·확대. transform은 레이아웃 높이를 안 줄이므로
+     남는 세로 공간을 margin-bottom 음수로 흡수(확대는 양수). 모바일 .34는 부채덱이 화면 안에 들어오는 값. */
+  @media(max-width:1040px){#stage{transform:scale(.74);margin-bottom:-156px}}
+  @media(max-width:720px){#stage{transform:scale(.54);margin-bottom:-276px}}
+  @media(max-width:470px){#stage{transform:scale(.34);margin-bottom:-396px}}
+  @media(min-width:1160px){#stage{transform:scale(1.08);margin-bottom:48px}}
+  @media(min-width:1300px){#stage{transform:scale(1.16);margin-bottom:96px}}
   @media(prefers-reduced-motion:reduce){#stage *{animation:none!important}#stage .final{opacity:1}#stage .flipin{transform:rotateY(180deg)}#stage .intro,#stage .lock,#stage .deck{opacity:0}}
   /* 줄자(주인공) */
   #home .rulerwrap{max-width:740px;margin:50px auto 0;user-select:none}

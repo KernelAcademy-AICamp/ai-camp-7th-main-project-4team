@@ -78,6 +78,10 @@
 
 /* ── 기본 리셋·바디 ───────────────────────────────────────────────── */
 *{box-sizing:border-box; margin:0; padding:0;}
+/* iOS 자동 글씨 확대 끔 — 없으면 zoom으로 축소한 온보딩(#stage)의 텍스트만
+   Safari/카톡 인앱브라우저가 임의로 키워 카드 글씨·인트로가 깨짐(fitting.css엔 이미 있음).
+   index.html은 fitting.css를 안 써서 tokens.css에도 필요. */
+html{-webkit-text-size-adjust:100%; text-size-adjust:100%;}
 body{
   font-family:var(--sans); background:var(--bg); color:var(--ink);
   line-height:1.5; letter-spacing:var(--ls-body); -webkit-font-smoothing:antialiased;
