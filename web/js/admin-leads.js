@@ -15,7 +15,25 @@
 
   var EMAILS=[];   // 고유 이메일(복사·CSV용)
 
+  // 화면 개발용 샘플 — 실 DB(api·admin 로그인)가 아닐 때 대표 수요로 렌더. (admin-diagnostics의 SAMPLE 관례와 동일)
+  var MODE=(window.FITTING_MODE==='api')?'api':'proto';
+  var LIVEON=MODE==='api' && window.ADMINAUTH && ADMINAUTH.ready();
+  var SAMPLE_SESSIONS=['s-d01','s-d02','s-d03','s-d04','s-d05','s-d06','s-d07','s-d08','s-d09','s-d10','s-d11','s-d12'];   // 진단 세션(전환 분모)
+  var SAMPLE_LEADS=[   // kind=notify·이메일(B안). budget·note·stylist는 실스키마대로 항상 null.
+    {id:1, created_at:'2026-07-20T10:12:00Z', session_id:'s-d01', kind:'notify', service:'online',    occasion:'결혼식 하객', budget:null, note:null, stylist:null, contact:'minji@example.com'},
+    {id:2, created_at:'2026-07-20T15:40:00Z', session_id:'s-d03', kind:'notify', service:'shopping',  occasion:null,        budget:null, note:null, stylist:null, contact:'jun@example.com'},
+    {id:3, created_at:'2026-07-21T09:05:00Z', session_id:null,    kind:'notify', service:'image',     occasion:null,        budget:null, note:null, stylist:null, contact:'sora@example.com'},
+    {id:4, created_at:'2026-07-21T18:22:00Z', session_id:'s-d07', kind:'notify', service:'online',    occasion:'면접',       budget:null, note:null, stylist:null, contact:'minji@example.com'},
+    {id:5, created_at:'2026-07-22T08:30:00Z', session_id:null,    kind:'notify', service:'stylist',   occasion:null,        budget:null, note:null, stylist:null, contact:'hana@example.com'},
+    {id:6, created_at:'2026-07-22T13:15:00Z', session_id:'s-x99', kind:'notify', service:'undecided', occasion:null,        budget:null, note:null, stylist:null, contact:'yuna@example.com'}
+  ];
+
   function load(){
+    if(!LIVEON){   // 로컬/proto·미로그인 = 화면 개발용 샘플
+      var ds={}; SAMPLE_SESSIONS.forEach(function(sid){ ds[sid]=1; });
+      render(SAMPLE_LEADS, ds, SAMPLE_SESSIONS.length);
+      return Promise.resolve();
+    }
     return Promise.all([ADMINAUTH.leads(1000), ADMINAUTH.diagnosisSessions()]).then(function(res){
       var leads=res[0]||[], diagSet={}; (res[1]||[]).forEach(function(sid){ diagSet[sid]=1; });
       render(leads, diagSet, (res[1]||[]).length);
