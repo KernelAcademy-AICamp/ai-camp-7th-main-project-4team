@@ -86,7 +86,7 @@
   function svcLabel(s){ return svcMeta(s).label; }
   function svcBadge(s){ var m=svcMeta(s); return '<span class="svcbadge '+m.cls+'">'+m.icon+' '+m.label+'</span>'; }
   function starSVG(){ return '<svg class="cutestar" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M12 4 L14.1 9.6 20.1 9.9 15.4 13.6 17 19.4 12 16.1 7 19.4 8.6 13.6 3.9 9.9 9.9 9.6Z"/></svg>'; }
-  function starsRO(n){ var s=''; for(var k=1;k<=5;k++) s+='<span style="color:'+(k<=n?'var(--green)':'var(--line2)')+'">'+starSVG()+'</span>'; return s; }   /* 고객 화면과 동일 cutestar */
+  function starsRO(n){ var s=''; for(var k=1;k<=5;k++) s+='<span style="color:'+(k<=n?'#e8a13a':'var(--line2)')+'">'+starSVG()+'</span>'; return s; }   /* 고객 화면과 동일 cutestar · 후기 오렌지 통일 */
 
   /* ===== 요청 행(요약, 클릭 시 상세) ===== */
   /* 날짜 6글자 — 2026.07.12 → 26.07.12 */
@@ -282,7 +282,7 @@
       '<div class="kc hero" onclick="goPanel(\'settle\')"><small>이번 달 수익</small><b>'+won(monthRevenue())+'</b><div class="trend">거래 '+completedReqs().length+'건 완료</div></div>'+
       '<div class="kc" onclick="goPanel(\'inbox\')"><small>신규 요청 ›</small><b>'+nw+'</b></div>'+
       '<div class="kc" onclick="goInboxProg()"><small>진행 중 ›</small><b>'+prog+'</b></div>'+
-      '<div class="kc" onclick="goPanel(\'reviews\')"><small>평점 ›</small><b>★ '+rt+'</b></div>';
+      '<div class="kc" onclick="goPanel(\'reviews\')"><small>평점 ›</small><b><span style="color:#e8a13a">'+starSVG()+'</span> '+rt+'</b></div>';
     document.getElementById('newCnt').textContent=nw;
     document.getElementById('pRev').textContent=reqs.filter(function(r){return r.review;}).length;
     var pr=document.getElementById('pRate'); if(pr) pr.textContent=rt;

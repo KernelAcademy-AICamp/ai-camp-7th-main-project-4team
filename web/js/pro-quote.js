@@ -73,7 +73,7 @@
   /* 서비스 아이콘만(글자 뺌) — 상단 태그줄용. 라벨은 title로 접근성 유지 */
   function svcBadgeIcon(s){ var m=svcMeta(s); return '<span class="svcbadge '+m.cls+' icon-only" title="'+esc(m.label)+'" aria-label="'+esc(m.label)+'">'+m.icon+'</span>'; }
   function stClass(s){ return s==='신규'?'nw':(s==='제안발송'?'sent':(s==='수락됨'?'prog':(s==='분쟁'?'warn':(s==='완료'?'done':'sent')))); }
-  function starsRO(n){ var s=''; for(var k=1;k<=5;k++) s+='<span style="color:'+(k<=n?'#e8a13a':'#ddd')+'">★</span>'; return s; }
+  function starsRO(n){ var st='<svg class="cutestar" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M12 4 L14.1 9.6 20.1 9.9 15.4 13.6 17 19.4 12 16.1 7 19.4 8.6 13.6 3.9 9.9 9.9 9.6Z"/></svg>'; var s=''; for(var k=1;k<=5;k++) s+='<span style="color:'+(k<=n?'#e8a13a':'var(--line2)')+'">'+st+'</span>'; return s; }   /* 귀여운 cutestar 모양 · 후기색 오렌지(포털·고객은 초록 유지) */
 
   /* 진행 상태 배너 — 고객 화면(index reqStatusBlock)과 동일 .statban 컴포넌트, 스타일리스트 시점 카피 */
   function stIcon(k){

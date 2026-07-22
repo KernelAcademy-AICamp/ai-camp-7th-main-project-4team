@@ -71,6 +71,7 @@
   .fitline b{color:var(--ink,#1c1a17)}
   .note-quote{background:#F7F6F3;border-radius:12px;padding:14px 16px;font-size:14px;color:var(--ink-soft,#3a382f);line-height:1.55}
   .note-quote.muted{color:var(--sub2,#8a857b)}
+  .cutestar{width:15px;height:15px;display:inline-block;vertical-align:-2px}   /* 고객 후기 별 — pro.css와 동일 크기 */
 
   .btn{display:block;width:100%;text-align:center;padding:14px;border:none;border-radius:12px;background:var(--ink,#1c1a17);color:#fff;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer}
   .act-row{display:flex;gap:10px} .act-row .btn{flex:1}
