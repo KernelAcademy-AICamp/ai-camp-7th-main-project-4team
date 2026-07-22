@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=5bf0aadb">
 <link rel="stylesheet" href="css/diag.css?v=f3d4b54a">
-<link rel="stylesheet" href="css/judge.css?v=60eec295">
+<link rel="stylesheet" href="css/judge.css?v=3f15339c">
 <link rel="stylesheet" href="css/appnav.css?v=81aba01d">
 <script defer src="js/appnav.js?v=007ae564"></script>
 </head>
@@ -49,59 +49,78 @@
   </section>
 
   <!-- 상품 사이즈표 캡처 입력 -->
+  <!-- 넓은 폭 → 좌(작업: 체형·무슨옷·업로드) / 우(안심: 방법·예시) 투컬럼. 모바일은 세로 스택. -->
   <section class="jsetup" id="jsetup" hidden>
-    <!-- 내 체형 컨텍스트 — 이 판정이 '내 체형 기준'임을 보여줌(신뢰·진단 연결) -->
-    <div class="jmine">
-      <span class="jmine-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg></span>
-      <div class="jmine-tx"><b>내 체형 기준으로 판정해요</b><span id="jmineType">진단 결과를 바탕으로 봐요</span></div>
-      <a class="jmine-re" href="diag-basic.html">진단 수정</a>
-    </div>
-    <div class="jfield">
-      <span class="jlabel">무슨 옷</span>
-      <div class="jseg" id="jcat">
-        <button class="jseg-b on" data-cat="TOP">상의</button>
-        <button class="jseg-b" data-cat="BOTTOM">하의</button>
+   <div class="jsetup-cols">
+    <!-- 좌: 작업 -->
+    <div class="jsetup-main">
+      <!-- 내 체형 컨텍스트 = 진단 결과 유형카드 반영(홈·마이 USER=김도현·STR 시크 스트레이트와 동일). 유형 바뀌면 --jtype·이름·코드 함께 교체. 진단 수정 링크 유지. -->
+      <div class="jmine" style="--jtype:#9db8ff">
+        <span class="jmine-av"><span class="head male"><span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></span></span>
+        <div class="jmine-tx"><span class="jmine-k">판정 기준</span><b>시크 스트레이트<span class="jmine-code">STR</span></b></div>
+        <a class="jmine-re" href="diag-basic.html">진단 수정</a>
       </div>
-    </div>
-
-    <!-- 캡처/붙여넣기 -->
-    <div class="jcap" id="jcap">
-      <div class="jcap-zone" id="jcapzone" tabindex="0" role="button" aria-label="사이즈표 이미지 올리기">
-        <div class="jcap-ic">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 15l4-4 3 3 4-5 7 7"/><circle cx="9" cy="9" r="1.3"/></svg>
+      <div class="jfield">
+        <span class="jlabel">무슨 옷</span>
+        <div class="jseg" id="jcat">
+          <button class="jseg-b on" data-cat="TOP">상의</button>
+          <button class="jseg-b" data-cat="BOTTOM">하의</button>
         </div>
-        <div class="jcap-t">상품 사이즈표를 올려주세요</div>
-        <div class="jcap-d">쇼핑몰 사이즈표를 캡처해 <b>붙여넣기(⌘V)</b> · 드래그 · 눌러서 선택</div>
       </div>
-      <input type="file" id="jcapfile" accept="image/*" hidden>
-      <div class="jcap-alt"><a class="jlink" data-act="manual">또는 표를 직접 입력하기 →</a></div>
+
+      <!-- 캡처/붙여넣기 -->
+      <div class="jcap" id="jcap">
+        <div class="jcap-zone" id="jcapzone" tabindex="0" role="button" aria-label="사이즈표 이미지 올리기">
+          <div class="jcap-ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 15l4-4 3 3 4-5 7 7"/><circle cx="9" cy="9" r="1.3"/></svg>
+          </div>
+          <div class="jcap-t">상품 사이즈표를 올려주세요</div>
+          <div class="jcap-d">쇼핑몰 사이즈표를 캡처해 <b>붙여넣기(⌘V)</b> · 드래그 · 눌러서 선택</div>
+        </div>
+        <input type="file" id="jcapfile" accept="image/*" hidden>
+        <div class="jcap-alt"><a class="jlink" data-act="manual">또는 표를 직접 입력하기 →</a></div>
+      </div>
+
+      <!-- 인식·보정 -->
+      <div class="jcorrect" id="jcorrect" hidden>
+        <div class="jcorrect-top">
+          <img class="jcap-thumb" id="jcapthumb" alt="캡처한 사이즈표" hidden>
+          <div class="jparsehint" id="jparsehint"></div>
+          <a class="jlink jreup" id="jreupload">다시 올리기</a>
+        </div>
+        <div class="jmeta">
+          <input class="jmeta-in" id="jbrandin" placeholder="브랜드 (선택)" autocomplete="off">
+          <input class="jmeta-in" id="jprodin" placeholder="상품명 (선택)" autocomplete="off">
+        </div>
+        <div id="jparsetable"></div>
+        <button class="jbtn" id="jrun" disabled>판정하기</button>
+        <p class="jmiss" id="jmiss" hidden></p>
+      </div>
     </div>
 
-    <!-- 인식·보정 -->
-    <div class="jcorrect" id="jcorrect" hidden>
-      <div class="jcorrect-top">
-        <img class="jcap-thumb" id="jcapthumb" alt="캡처한 사이즈표" hidden>
-        <div class="jparsehint" id="jparsehint"></div>
-        <a class="jlink jreup" id="jreupload">다시 올리기</a>
+    <!-- 우: 안심(방법 + 예시) -->
+    <aside class="jsetup-side">
+      <!-- 작동 설명 — 홈의 'HOW IT WORKS 3스텝' 모티프를 판정용으로 축소 -->
+      <div class="jhow">
+        <div class="jhow-h">이렇게 판정해요</div>
+        <ol class="jhow-list">
+          <li><b>사이즈표를 올려요</b> 캡처해서 붙여넣으면 자동으로 읽어줘요</li>
+          <li><b>값만 확인해요</b> 잘못 읽은 데가 있으면 그 자리서 고쳐요</li>
+          <li><b>내 체형에 대봐 판정해요</b> 사이즈별로 어디가 끼고 남는지, 부위별로</li>
+        </ol>
       </div>
-      <div class="jmeta">
-        <input class="jmeta-in" id="jbrandin" placeholder="브랜드 (선택)" autocomplete="off">
-        <input class="jmeta-in" id="jprodin" placeholder="상품명 (선택)" autocomplete="off">
+      <!-- 예시 결과 미리보기(게이트와 동일 히트맵 언어) -->
+      <div class="jgate-demo">
+        <div class="jgate-demo-h">이런 결과를 받아요 <span class="jgate-eg">예시</span></div>
+        <div class="jgate-hm">
+          <div class="rw">가슴</div><div class="c t">끼임</div><div class="c s pk">딱</div><div class="c r">여유</div>
+          <div class="rw">어깨</div><div class="c t">끼임</div><div class="c s pk">딱</div><div class="c s">딱</div>
+          <div></div><div class="col">S</div><div class="col pk">M</div><div class="col">L</div>
+        </div>
+        <div class="jgate-demo-c">→ 이 옷은 <b>M</b>이 맞겠네요</div>
       </div>
-      <div id="jparsetable"></div>
-      <button class="jbtn" id="jrun" disabled>판정하기</button>
-      <p class="jmiss" id="jmiss" hidden></p>
-    </div>
-
-    <!-- 작동 설명 — 홈의 'HOW IT WORKS 3스텝' 모티프를 판정용으로 축소 -->
-    <div class="jhow">
-      <div class="jhow-h">이렇게 판정해요</div>
-      <ol class="jhow-list">
-        <li><b>사려는 상품의 사이즈표를 올려요</b> 캡처해서 붙여넣으면 자동으로 읽어줘요</li>
-        <li><b>사려는 사이즈 값만 확인해요</b> 잘못 읽은 데가 있으면 그 자리서 고쳐요</li>
-        <li><b>내 체형에 대봐 판정해요</b> 사이즈별로 어디가 끼고 남는지, 부위별로</li>
-      </ol>
-    </div>
+    </aside>
+   </div>
   </section>
 
   <!-- 판정 결과 -->
