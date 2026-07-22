@@ -15,6 +15,21 @@
     return fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   }
 
+  /* 로컬/proto 화면 개발용 대표 사이즈표 — 캡처 인식(api=서버 Claude 비전)이 없을 때
+     parseSizeTable가 이걸 돌려줘 캡처→보정→판정 플로우를 그대로 렌더한다.
+     프로덕션 app/은 api 모드라 이 분기에 오지 않는다. api 응답과 동일 shape({parsed,usage}). */
+  var SAMPLE_PARSED = {
+    tableKind: 'garment', category: 'TOP', unit: 'cm',
+    columns: ['가슴단면', '어깨너비', '소매길이', '총장'],
+    sizes: [
+      { label: 'S',  values: { chest: 50, shoulder: 43, sleeve: 61,   length: 68 } },
+      { label: 'M',  values: { chest: 53, shoulder: 45, sleeve: 62.5, length: 70 } },
+      { label: 'L',  values: { chest: 56, shoulder: 47, sleeve: 64,   length: 72 } },
+      { label: 'XL', values: { chest: 59, shoulder: 49, sleeve: 65.5, length: 74 } }
+    ],
+    labeledCircumference: [], truncated: false, notes: '샘플(로컬 개발용) 사이즈표'
+  };
+
   var FDATA = {
     mode: MODE,
 
@@ -87,7 +102,7 @@
        proto: 서버 없음 → null(호출부가 '직접 입력' 폴백 유도). */
     parseSizeTable: function (imageDataUrl) {
       if (MODE === 'api') return postJSON('/api/parse-size-table', { image: imageDataUrl }).then(function (r) { return r.json(); });
-      return Promise.resolve(null);
+      return Promise.resolve({ parsed: SAMPLE_PARSED, usage: { mock: true }, model: 'dev-sample' });   // 로컬 화면 개발용 대표 표
     },
 
     /* ── 사이즈표 제공(수집) = /api/submit-garment ────────────
