@@ -9,7 +9,47 @@
       '<span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div>';
     return '<div class="fig">'+head+'<div class="body '+d.silhouette+'" style="background-color:'+d.point+'; height:150px"></div></div>';
   }
-  function pills(a){ return '<div class="ps">'+a.map(function(x){return '<span>'+x+'</span>';}).join('')+'</div>'; }
+  function items(a){ return (a||[]).map(function(x){ return '<div class="b-it">'+x+'</div>'; }).join(''); }
+  var CW='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+  var CX='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>';
+  var HINT_F='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>';
+  var HINT_B='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.64-6.36"/><path d="M3 3v6h6"/></svg>';
+  // 카드 뒷면 인사이트 줄바꿈(성별별) — 데이터(bodytypes.json)는 한 줄 유지, '한 끗' 등 다른 곳은 그대로. 카드 표시에서만 3줄.
+  var INS_BR={
+    female:{
+      TRI:'<b>상의에 포인트</b>를 주고<br>하의는 차분하게 가면<br>균형이 잡혀요',
+      INV:'<b>상의는 깔끔하게</b>,<br>하의로 시선을 분산하면<br>균형이 살아나요',
+      HRG:'<b>허리를 강조</b>하고<br>세로로 길게 떨어뜨리면<br>라인이 돋보여요',
+      STR:'<b>벨트로 허리에 곡선</b>을<br>더하면 직선 라인이<br>한층 살아나요',
+      BAL:'<b>트렌드는 자유롭게</b>,<br>포인트는 한 곳만 주면<br>깔끔하게 완성돼요',
+      DIA:'<b>중앙은 흐르게</b> 두고<br>어깨·다리를 살리면<br>실루엣이 정돈돼요',
+      RND:'<b>세로로 길게</b>,<br>다크 톤으로 정돈하면<br>한층 슬림해 보여요',
+      TUB:'<b>레이어와 디테일</b>로<br>입체감을 더하면<br>밋밋함이 사라져요'
+    },
+    male:{
+      TRI:'<b>상체에 구조감</b>을 주고<br>하의는 어두운 스트레이트로<br>가면 균형이 잡혀요',
+      INV:'<b>상의는 심플하게</b>,<br>하의에 볼륨을 줘<br>넓은 어깨와 균형을 맞춰요',
+      HRG:'<b>몸에 맞는 핏</b>으로<br>어깨–허리 라인을 드러내면<br>균형 잡힌 실루엣이 살아나요',
+      STR:'<b>소재감과 레이어드로<br>입체감</b>을 더하면<br>밋밋한 직선이 살아나요',
+      BAL:'<b>트렌드는 자유롭게</b>,<br>포인트는 한 곳만 주면<br>깔끔하게 완성돼요',
+      DIA:'<b>세로로 흐르는 오픈 아우터</b>로<br>중앙을 감싸고<br>어깨·다리를 살리면 정돈돼요',
+      RND:'<b>세로 라인과 다크 톤</b>,<br>오픈 아우터로 정돈하면<br>한층 슬림해 보여요',
+      TUB:'<b>레이어와 두툼한 소재</b>로<br>볼륨을 더하면<br>가는 라인이 채워져요'
+    }
+  };
+  // 카드 잘맞/피할 줄바꿈 — 5자 넘는 항목만 두 줄(승인된 지점). 여성은 다 짧아 한 줄이라 맵 불필요(원본 사용).
+  var FIT_BR={
+    male:{
+      TRI:{ok:['구조감 있는<br>재킷·셔츠','스트레이트<br>팬츠'], no:['스키니 팬츠','밝은·강조된<br>하의']},
+      INV:{ok:['브이넥·<br>심플한 상의','스트레이트·<br>와이드 팬츠'], no:['어깨 강조<br>(패드·뽕)','스키니 팬츠']},
+      HRG:{ok:['몸에 맞는<br>셔츠·니트','테이퍼드<br>팬츠'], no:['펑퍼짐한<br>오버핏','박시한 핏']},
+      STR:{ok:['살짝 핏 있는<br>셔츠·니트','일자 슬랙스'], no:['박시한<br>오버핏','펑퍼짐한 옷']},
+      BAL:{ok:['웬만한 핏 OK','포인트 하나'], no:['너무 큰 옷']},
+      DIA:{ok:['오픈 셔츠·<br>가디건','일자·<br>스트레이트 팬츠'], no:['허리 꽉<br>끼는 옷','짧은 상의']},
+      RND:{ok:['세로 줄무늬·<br>다크 톤','오픈 재킷'], no:['딱 붙는 옷','크고 화려한<br>무늬']},
+      TUB:{ok:['레이어드','두툼한<br>소재·질감'], no:['딱 붙는 옷','얇고 밋밋한<br>옷']}
+    }
+  };
   // 8유형 성별 축: 구조필드(공유) + gender.{male,female} 콘텐츠 병합. 구 포맷(gender 없음)은 raw 폴백.
   function btResolve(t, g){
     if(!t) return t;
@@ -21,28 +61,46 @@
 
   function render(d){
     var card=document.getElementById('card');
-    var p1=d.profile[0]||'', p2=d.profile[1]||'';
-    card.style.background='radial-gradient(ellipse 70% 34% at 50% 11%, '+d.point+'2b, transparent 60%), linear-gradient(160deg,#191a1f,#0f1014)';
-    wmStyle.textContent='.card::after{content:"'+d.code+'";}';
-    var top='<div class="ctop"><span class="clogo">Fitting<i class="sq"></i></span><span class="cacts">'+
+    card.style.setProperty('--tp', d.point);                       // 유형 포인트색 → CSS 변수
+    wmStyle.textContent='.front::after{content:"'+d.code+'";}';    // 워터마크 코드
+    var actions='<span class="cacts">'+
       '<button id="cSave" title="결과 저장" aria-label="결과 저장">🔖</button>'+
       '<button id="cShare" title="카드 공유" aria-label="카드 공유">🔗</button>'+
-      '</span></div>';
-    var head=figHTML(d)+'<div class="code" style="color:'+d.point+'">'+d.code+'</div><div class="word">'+d.name+'</div>';
-    var myfit='<div class="sl" style="color:'+d.point+'">MY FIT</div><div class="desc two">'+p1+(p2?'<br>'+p2:'')+'</div>';
-    if(compact){
-      card.innerHTML=top+head+'<div class="info">'+myfit+'</div><div class="grow"></div>';
+      '</span>';
+    // 앞면 = 온보딩 정체성(그림·유형명·태그라인)
+    var front='<div class="cface front">'+
+      '<div class="ctop"><span class="clogo">Fitting<i class="sq"></i></span>'+actions+'</div>'+
+      '<div class="hcbody">'+figHTML(d)+
+        '<div class="code">'+d.code+'</div>'+
+        '<div class="word">'+d.name+'</div>'+
+        '<div class="tagline">'+((d.profile&&d.profile[0])||'')+'</div>'+
+      '</div>'+
+      (compact?'':'<div class="fliphint">'+HINT_F+'자세히 보기</div>')+
+    '</div>';
+    if(compact){                                                   // 쇼퍼 고객카드 등 — 앞면만(플립 없음)
+      card.innerHTML='<div class="flip">'+front+'</div>';
       wireActions(d);
       return;
     }
-    card.innerHTML=top+head+
-      '<div class="info">'+myfit+
-        '<div class="sl sec2" style="color:'+d.point+'">FIT INSIGHT</div><div class="desc ins">'+d.insight+'</div>'+
-        '<div class="fits sec2"><div class="fr ok"><span class="fl" style="color:'+d.point+'">잘맞 FIT</span>'+pills(d.fitOk)+'</div>'+
-        '<div class="fr no"><span class="fl no">피할 FIT</span>'+pills(d.fitNo)+'</div></div>'+
+    // 뒷면 = FIT INSIGHT · 잘맞 VS 피할 · 환상의 궁합
+    var ins=(INS_BR[gender]&&INS_BR[gender][d.code])?INS_BR[gender][d.code]:(d.insight||'');   // 카드 표시용 3줄(성별별)
+    var fb=(FIT_BR[gender]&&FIT_BR[gender][d.code])||null;                                     // 카드 표시용 줄바꿈(있으면)
+    var back='<div class="cface back">'+
+      '<div class="ctop"><span class="clogo">Fitting<i class="sq"></i></span><span class="ctop-r">'+d.name+'</span></div>'+
+      '<div class="b-main">'+
+        '<div class="b-ins"><span class="b-lab">FIT INSIGHT</span><p>'+ins+'</p></div>'+
+        '<div class="b-fitbox"><div class="b-duel">'+
+          '<div class="b-side ok"><div class="b-sh">'+CW+'잘맞</div>'+items(fb?fb.ok:d.fitOk)+'</div>'+
+          '<div class="b-vs">VS</div>'+
+          '<div class="b-side no"><div class="b-sh">'+CX+'피할</div>'+items(fb?fb.no:d.fitNo)+'</div>'+
+        '</div></div>'+
       '</div>'+
-      '<div class="grow"></div>'+
-      '<div class="match">🩷 환상의 궁합 · <b style="color:'+d.point+'">'+d.match+'</b></div>';
+      '<div class="b-foot"><span class="b-match">🩷 환상의 궁합 · <b>'+(d.match||'')+'</b></span></div>'+
+      '<div class="fliphint">'+HINT_B+'돌아가기</div>'+
+    '</div>';
+    card.innerHTML='<div class="flip" id="flip">'+front+back+'</div>';
+    var flip=document.getElementById('flip');
+    card.addEventListener('click', function(e){ if(e.target.closest('.cacts')) return; flip.classList.toggle('turned'); });   // 카드 클릭 = 뒤집기(저장·공유 버튼 제외)
     wireActions(d);
   }
 
@@ -52,7 +110,7 @@
     if(q.get('host')==='result' && window.parent && window.parent!==window){
       try{ window.parent.postMessage({type:'fitting:save'}, '*'); return; }catch(e){}
     }
-    var card=document.getElementById('card');
+    var card=document.querySelector('.cface.front')||document.getElementById('card');
     if(!window.htmlToImage||!card){ return; }
     var btn=document.getElementById('cSave'); if(btn) btn.disabled=true;
     htmlToImage.toPng(card, {

@@ -42,7 +42,7 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%; overflow-y:scroll; scrollbar-gutter:stable}   /* 스크롤바 항상 강제(scroll) → 모든 화면 폭 동일 → 페이지 이동 시 내비 좌우 밀림 방지(구형 브라우저도 적용) */
 body{
   background:var(--canvas);
   color:var(--ink);

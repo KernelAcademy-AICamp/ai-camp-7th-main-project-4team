@@ -226,10 +226,11 @@
 .toast{position:fixed; left:50%; bottom:32px; transform:translateX(-50%) translateY(16px); max-width:min(420px,90vw); text-align:center; background:var(--ink); color:#fff; padding:13px 22px; border-radius:16px; font-size:14.5px; font-weight:700; line-height:1.5; opacity:0; pointer-events:none; transition:.25s; z-index:130;}
 .toast.on{opacity:1; transform:translateX(-50%) translateY(0);}
 
-/* 지난 진단 이력 안내 바 — 정보만(버튼 없음), 다시 진단 시 결과 대체 안내 */
-.diaghist{display:none; align-items:center; gap:10px; background:#fff; border:1px solid var(--line,#E6E5E1); border-radius:12px; padding:11px 14px 11px 15px; margin:0 0 20px; position:relative; overflow:hidden; box-shadow:0 4px 14px rgba(20,18,16,.05);}
-.diaghist::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--accent,#2E4A3B);}
-.diaghist .dh-ic{flex:none; width:28px; height:28px; border-radius:8px; background:#E7EFEA; color:var(--accent,#2E4A3B); display:grid; place-items:center;}
-.diaghist .dh-ic svg{width:16px; height:16px;}
-.diaghist .dh-msg{flex:1; min-width:0; font-size:12.5px; font-weight:600; color:var(--muted,#6E6B63); line-height:1.45;}
-.diaghist .dh-msg b{font-weight:800; color:var(--ink,#16140F);}
+/* 지난 진단 이력 안내 — 상단 풀폭 알림바(announcement bar), 헤더 바로 아래 딱 붙음 */
+.diaghist{display:none; position:relative; align-items:center; justify-content:center; gap:9px; width:100%; background:#E7EFEA; border-bottom:1px solid #CBDDD2; padding:11px 44px; transition:opacity .2s ease;}
+.diaghist .dh-x{position:absolute; right:10px; top:50%; transform:translateY(-50%); border:none; background:transparent; color:var(--accent,#2E4A3B); font-size:13px; line-height:1; padding:7px 9px; border-radius:7px; cursor:pointer; opacity:.6;}
+.diaghist .dh-x:hover{opacity:1; background:rgba(46,74,59,.08);}
+.diaghist .dh-ic{flex:none; width:20px; height:20px; color:var(--accent,#2E4A3B); display:grid; place-items:center;}
+.diaghist .dh-ic svg{width:20px; height:20px;}
+.diaghist .dh-msg{font-size:12.5px; font-weight:600; color:var(--accent,#2E4A3B); line-height:1.45; text-align:center;}
+.diaghist .dh-msg b{font-weight:800;}
