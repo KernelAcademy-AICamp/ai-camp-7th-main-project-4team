@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>핏팅 — 사용자 저니맵 (As-is)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --green:#2E4A3B; --green-mid:#3E6B52; --green-soft:#EAF1ED;
+    --clay:#B5654A; --clay-soft:#FBEFEA;
+    --ink:#1A1D1B; --sub:#5B615D; --sub2:#8B908B;
+    --line:#E1E5DF; --bg:#FFFFFF;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{font-family:'Pretendard','Malgun Gothic',sans-serif; color:var(--ink); background:#fff;
+    -webkit-font-smoothing:antialiased; word-break:keep-all;}
+
+  .slide{width:13.333in; height:7.5in; padding:0.5in 0.55in; background:#fff;
+    page-break-after:always; display:flex; flex-direction:column; overflow:hidden;}
+  .slide:last-child{page-break-after:auto}
+
+  /* ── 헤더 ── */
+  .shead{display:flex; align-items:flex-end; gap:14px; margin-bottom:4px}
+  .eyebrow{font-size:10.5px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--sub2)}
+  h1{font-size:27px; font-weight:800; letter-spacing:-.02em; line-height:1.15}
+  h1 b{color:var(--green)}
+  .pchip{margin-left:auto; display:flex; gap:6px; align-items:center}
+  .pchip span{font-size:11.5px; font-weight:700; color:var(--sub); background:#F4F6F2;
+    border:1px solid var(--line); border-radius:20px; padding:5px 12px}
+  .pchip b{color:var(--ink); font-weight:800}
+  .lead{font-size:12.5px; color:var(--sub); margin-top:5px}
+  .lead em{font-style:normal; color:var(--clay); font-weight:800}
+
+  /* ── 저니맵 그리드 ── */
+  .jm{flex:1; display:grid; grid-template-columns:74px repeat(6,1fr); gap:0;
+    margin-top:13px; border-top:2px solid var(--green); }
+  .jm.five{grid-template-columns:74px repeat(5,1fr)}
+  .rlab{font-size:10.5px; font-weight:800; color:var(--sub2); letter-spacing:.04em;
+    display:flex; align-items:center; padding:0 8px 0 2px; border-right:1px solid var(--line);
+    border-bottom:1px solid var(--line);}
+  .cell{padding:8px 9px; border-right:1px solid var(--line); border-bottom:1px solid var(--line);
+    font-size:11px; line-height:1.45; color:var(--sub);}
+  .cell:last-child{border-right:none}
+  .cell b{color:var(--ink); font-weight:700}
+
+  /* 단계 헤더 */
+  .st{padding:9px; border-right:1px solid var(--line); border-bottom:1px solid var(--line);
+    background:var(--green-soft);}
+  .st .no{font-size:10px; font-weight:800; color:var(--green-mid); letter-spacing:.06em}
+  .st .nm{font-size:13.5px; font-weight:800; color:var(--green); margin-top:2px; letter-spacing:-.01em}
+  .st:last-child{border-right:none}
+
+  /* 최저점(핵심) 강조 열 */
+  .hot{background:var(--clay-soft) !important}
+  .st.hot .no,.st.hot .nm{color:var(--clay)}
+  .cell.hot{background:#FDF7F4}
+  .cell.hot b{color:var(--clay)}
+  .star{color:var(--clay); font-weight:800}
+
+  /* 생각(따옴표) */
+  .think{color:var(--ink); font-style:italic}
+
+  /* 감정 곡선 행 */
+  .emo{grid-column:2 / -1; border-bottom:1px solid var(--line); padding:0}
+  .emo svg{display:block; width:100%; height:92px}
+
+  /* 기회 행 */
+  .opp{background:var(--green-soft); color:var(--green); font-weight:700}
+  .opp b{color:var(--green)}
+
+  /* ── 하단 인사이트 ── */
+  .foot{margin-top:11px; display:flex; gap:10px; align-items:stretch}
+  .fbox{flex:1; border:1px solid var(--line); border-left:3px solid var(--clay);
+    border-radius:8px; padding:9px 12px; background:#FDFBFA}
+  .fbox.g{border-left-color:var(--green); background:var(--green-soft); border-color:#D6E3DA}
+  .fbox .k{font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--sub2)}
+  .fbox .v{font-size:12.5px; font-weight:700; color:var(--ink); margin-top:3px; line-height:1.4}
+  .fbox.g .v{color:var(--green)}
+  .pageno{position:absolute; right:0.55in; bottom:0.3in; font-size:10px; color:var(--sub2); font-weight:700}
+  .slide{position:relative}
+</style>
+</head>
+<body>
+
+<!-- ══════════ 슬라이드 1 · 김민석 (사이즈) ══════════ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">User Journey Map · As-is</div>
+      <h1>사이즈를 정하는 순간, <b>여정이 무너진다</b></h1>
+    </div>
+    <div class="pchip">
+      <span>페르소나 <b>김민석 · 32세 · 남</b></span>
+      <span>시나리오 <b>결혼식 하객룩 구매</b></span>
+    </div>
+  </div>
+  <p class="lead">기대감으로 시작한 구매 여정이 <em>③ 사이즈 결정</em> 단계에서 급락해 끝까지 회복되지 않는다.</p>
+
+  <div class="jm">
+    <!-- 단계 헤더 -->
+    <div class="rlab" style="border-top:none"></div>
+    <div class="st"><div class="no">STEP 01</div><div class="nm">초대 · 계기</div></div>
+    <div class="st"><div class="no">STEP 02</div><div class="nm">탐색</div></div>
+    <div class="st hot"><div class="no">STEP 03 ★</div><div class="nm">사이즈 결정</div></div>
+    <div class="st"><div class="no">STEP 04</div><div class="nm">주문</div></div>
+    <div class="st"><div class="no">STEP 05</div><div class="nm">수령 · 착용</div></div>
+    <div class="st"><div class="no">STEP 06</div><div class="nm">결과</div></div>
+
+    <!-- 행동 -->
+    <div class="rlab">행동</div>
+    <div class="cell">청첩장 받음<br>옷장 확인</div>
+    <div class="cell">온라인몰에서<br>하객룩 검색</div>
+    <div class="cell hot"><b>사이즈표·추천사이즈<br>·리뷰·구매이력</b> 확인</div>
+    <div class="cell">확신 없이<br>한 치수 크게 주문</div>
+    <div class="cell">배송 받고<br>입어봄</div>
+    <div class="cell">반품 신청<br>/ 그냥 입고 감</div>
+
+    <!-- 생각 -->
+    <div class="rlab">생각</div>
+    <div class="cell think">“예전 옷<br>맞으려나”</div>
+    <div class="cell think">“이거 괜찮네,<br>근데 사이즈는?”</div>
+    <div class="cell hot think">“추천은 L인데 예전엔 M…<br>리뷰는 다 제각각”</div>
+    <div class="cell think">“안 맞으면<br>반품하지 뭐”</div>
+    <div class="cell think">“어깨는 맞는데<br>배가…”</div>
+    <div class="cell think">“다시 살<br>시간이 없다”</div>
+
+    <!-- 감정 곡선 -->
+    <div class="rlab">감정</div>
+    <div class="emo">
+      <svg viewBox="0 0 600 92" preserveAspectRatio="none">
+        <line x1="0" y1="46" x2="600" y2="46" stroke="#E1E5DF" stroke-width="1" stroke-dasharray="4 4"/>
+        <polyline points="50,28 150,46 250,82 350,64 450,82 550,82"
+          fill="none" stroke="#3E6B52" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+        <circle cx="50"  cy="28" r="5" fill="#fff" stroke="#3E6B52" stroke-width="2.5"/>
+        <circle cx="150" cy="46" r="5" fill="#fff" stroke="#3E6B52" stroke-width="2.5"/>
+        <circle cx="250" cy="82" r="8" fill="#B5654A" stroke="#fff" stroke-width="2.5"/>
+        <circle cx="350" cy="64" r="5" fill="#fff" stroke="#3E6B52" stroke-width="2.5"/>
+        <circle cx="450" cy="82" r="5" fill="#fff" stroke="#3E6B52" stroke-width="2.5"/>
+        <circle cx="550" cy="82" r="5" fill="#fff" stroke="#3E6B52" stroke-width="2.5"/>
+        <text x="50"  y="18" font-size="11" font-weight="700" fill="#5B615D" text-anchor="middle">+1</text>
+        <text x="150" y="36" font-size="11" font-weight="700" fill="#5B615D" text-anchor="middle">0</text>
+        <text x="250" y="72" font-size="12" font-weight="800" fill="#B5654A" text-anchor="middle">−2 최저</text>
+        <text x="350" y="54" font-size="11" font-weight="700" fill="#5B615D" text-anchor="middle">−1</text>
+        <text x="450" y="72" font-size="11" font-weight="700" fill="#5B615D" text-anchor="middle">−2</text>
+        <text x="550" y="72" font-size="11" font-weight="700" fill="#5B615D" text-anchor="middle">−2</text>
+      </svg>
+    </div>
+
+    <!-- 페인포인트 -->
+    <div class="rlab">페인<br>포인트</div>
+    <div class="cell">예전 옷이<br>안 맞을 예감</div>
+    <div class="cell">옷은 정했는데<br>사이즈부터 막힘</div>
+    <div class="cell hot"><span class="star">★</span> <b>어떤 기준도<br>‘지금의 나’를 설명 못 함</b></div>
+    <div class="cell">반품을 전제로 한<br>확신 없는 결제</div>
+    <div class="cell">부위별로 안 맞음<br>(한 사이즈로 해결 X)</div>
+    <div class="cell">시간 압박 + 실패<br>→ 아는 브랜드만</div>
+  </div>
+
+  <div class="foot">
+    <div class="fbox">
+      <div class="k">가장 아픈 지점 (→ 5 Whys 입력)</div>
+      <div class="v">추천은 과거 이력과 다르고, 리뷰는 사람마다 제각각 — <b>어떤 기준도 ‘지금의 나’를 설명해주지 못한다</b></div>
+    </div>
+  </div>
+  <div class="pageno">1 / 2</div>
+</section>
+
+<!-- ══════════ 슬라이드 2 · 한예린 (스타일) ══════════ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">User Journey Map · As-is</div>
+      <h1>따라 사도 <b>‘나에게’ 어울리지 않는다</b></h1>
+    </div>
+    <div class="pchip">
+      <span>페르소나 <b>한예린 · 34세 · 여</b></span>
+      <span>시나리오 <b>거래처 미팅 옷 구매</b></span>
+    </div>
+  </div>
+  <p class="lead">참고할 정보는 넘치지만, <em>④ 착용·반응</em> 단계에서 “나에게 맞는 기준이 없다”는 사실이 드러난다.</p>
+
+  <div class="jm five">
+    <div class="rlab" style="border-top:none"></div>
+    <div class="st"><div class="no">STEP 01</div><div class="nm">계기</div></div>
+    <div class="st"><div class="no">STEP 02</div><div class="nm">탐색</div></div>
+    <div class="st"><div class="no">STEP 03</div><div class="nm">구매</div></div>
+    <div class="st hot"><div class="no">STEP 04 ★</div><div class="nm">착용 · 반응</div></div>
+    <div class="st"><div class="no">STEP 05</div><div class="nm">결과</div></div>
+
+    <div class="rlab">행동</div>
+    <div class="cell">중요 미팅 잡힘<br>“뭘 입지?”</div>
+    <div class="cell">유튜브·인스타<br>룩북 참고</div>
+    <div class="cell">룩북 따라<br>비슷한 옷 구매</div>
+    <div class="cell hot"><b>미팅에 입고 감<br>→ 주변 반응 확인</b></div>
+    <div class="cell">옷장에 방치<br>무채색으로 회귀</div>
+
+    <div class="rlab">생각</div>
+    <div class="cell think">“신뢰 있게<br>보여야 하는데”</div>
+    <div class="cell think">“이 코디<br>괜찮아 보인다”</div>
+    <div class="cell think">“이대로 입으면<br>되겠지”</div>
+    <div class="cell hot think">“왜 나만<br>안 어울리지?”</div>
+    <div class="cell think">“그냥 무난하게<br>입자”</div>
+
+    <div class="rlab">감정</div>
+    <div class="emo">
+      <svg viewBox="0 0 500 92" preserveAspectRatio="none">
+        <line x1="0" y1="46" x2="500" y2="46" stroke="#E1E5DF" stroke-width="1" stroke-dasharray="4 4"/>
+        <polyline points="50,28 150,28 250,46 350,82 450,64"
+          fill="none" stroke="#3E6B52" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+        <circle cx="50"  cy="28" r="5" fill="#fff" stroke="#3E6B52" stroke-width="2.5"/>
+        <circle cx="150" cy="28" r="5" fill="#fff" stroke="#3E6B52" stroke-width="2.5"/>
+        <circle cx="250" cy="46" r="5" fill="#fff" stroke="#3E6B52" stroke-width="2.5"/>
+        <circle cx="350" cy="82" r="8" fill="#B5654A" stroke="#fff" stroke-width="2.5"/>
+        <circle cx="450" cy="64" r="5" fill="#fff" stroke="#3E6B52" stroke-width="2.5"/>
+        <text x="50"  y="18" font-size="11" font-weight="700" fill="#5B615D" text-anchor="middle">+1</text>
+        <text x="150" y="18" font-size="11" font-weight="700" fill="#5B615D" text-anchor="middle">+1</text>
+        <text x="250" y="36" font-size="11" font-weight="700" fill="#5B615D" text-anchor="middle">0</text>
+        <text x="350" y="72" font-size="12" font-weight="800" fill="#B5654A" text-anchor="middle">−2 최저</text>
+        <text x="450" y="54" font-size="11" font-weight="700" fill="#5B615D" text-anchor="middle">−1</text>
+      </svg>
+    </div>
+
+    <div class="rlab">페인<br>포인트</div>
+    <div class="cell">체형에 어울리는<br>기준이 없음</div>
+    <div class="cell">트렌드는 알아도<br>“나한테도?”는 모름</div>
+    <div class="cell">모델 핏 ≠ 내 핏</div>
+    <div class="cell hot"><span class="star">★</span> <b>“안 어울린다”<br>대표 이미지에 타격</b></div>
+    <div class="cell">시도 포기<br>→ 존재감 없는 옷</div>
+
+    <div class="rlab">기회</div>
+    <div class="cell">—</div>
+    <div class="cell">—</div>
+    <div class="cell">—</div>
+    <div class="cell opp">체형·상황 맞춤<br><b>전문가 스타일링</b></div>
+    <div class="cell">—</div>
+  </div>
+
+  <div class="foot">
+    <div class="fbox">
+      <div class="k">가장 아픈 지점</div>
+      <div class="v">참고할 콘텐츠는 넘치는데 <b>‘나에게 맞는지’ 판단할 기준이 없다</b> — 그래서 따라 사도 어울리지 않는다</div>
+    </div>
+  </div>
+  <div class="pageno">2 / 2</div>
+</section>
+
+</body>
+</html>
