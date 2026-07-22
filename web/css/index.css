@@ -192,7 +192,9 @@
      남는 세로 공간을 margin-bottom 음수로 흡수(확대는 양수). 모바일 .34는 부채덱이 화면 안에 들어오는 값. */
   @media(max-width:1040px){#stage{transform:scale(.74);margin-bottom:-156px}}
   @media(max-width:720px){#stage{transform:scale(.54);margin-bottom:-276px}}
-  @media(max-width:470px){#stage{transform:scale(.52);margin-bottom:-288px}}
+  @media(max-width:470px){#stage{transform:scale(.52);margin-bottom:-288px}
+    /* 2줄 덱이 아래로 더 내려와 '온보딩 건너뛰기'와 겹침 → 모바일만 더 아래로(웹 -40 유지) */
+    #stage .skiphint{bottom:-96px}}
   @media(min-width:1160px){#stage{transform:scale(1.08);margin-bottom:48px}}
   @media(min-width:1300px){#stage{transform:scale(1.16);margin-bottom:96px}}
   @media(prefers-reduced-motion:reduce){#stage *{animation:none!important}#stage .final{opacity:1}#stage .flipin{transform:rotateY(180deg)}#stage .intro,#stage .lock,#stage .deck{opacity:0}}
