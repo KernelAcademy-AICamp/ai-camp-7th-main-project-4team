@@ -15,6 +15,9 @@
     if (forced) sessionStorage.setItem('fitting.mode', forced);
     else forced = sessionStorage.getItem('fitting.mode') || undefined;
   } catch (e) {}
-  w.FITTING_MODE = forced || 'proto';
+  // 로컬 `npm run dev:api`(vercel dev · 3000포트)는 ?mode=api 없이도 api 기본 — 서버 라우트 테스트용.
+  // (`npm run serve`=8000포트는 proto 유지=화면 개발용.) 명시적 ?mode=·저장값이 있으면 그게 우선.
+  if (!forced && location.port === '3000') forced = 'api';
+  w.FITTING_MODE = forced || 'proto';   // ← gen-app이 'proto'→'api' 치환(프로덕션은 항상 api)
   try { console.log('[fitting] mode:', w.FITTING_MODE); } catch (e) {}
 })(window);
