@@ -321,6 +321,7 @@
   var _btCache=null;
   function avatarFaceHTML(){ return '<div class="head '+USER.gender+'">'+(USER.gender==='female'?'<span class="longhair"></span>':'')+'<span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div>'; }
   function renderMyAvatar(){
+    var nm=document.querySelector('.navname'); if(nm) nm.textContent=USER.name+' 님';   // 헤더 이름 = 프로필 이름과 동기화
     var el=document.getElementById('myAv'); if(!el) return;
     if(!USER.type){ el.style.background='var(--ink)'; el.style.color='#fff'; el.textContent=USER.initial; return; }
     function paint(t){ if(!t){ el.style.background='var(--ink)'; el.textContent=USER.initial; return; } el.style.background=t.point; el.innerHTML=avatarFaceHTML(); }
