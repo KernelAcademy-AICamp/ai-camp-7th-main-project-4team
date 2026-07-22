@@ -87,7 +87,9 @@
   #stage .lock{position:absolute;left:50%;top:41%;transform:translate(-50%,-50%);width:min(600px,84%);text-align:center;pointer-events:none}
   #stage .lock .lgbig{display:inline-block;font-size:clamp(38px,5vw,64px);font-weight:800;letter-spacing:-.05em;color:var(--green);line-height:1;visibility:hidden}
   #stage .lock .lgbig i{display:inline-block;width:.12em;height:.12em;border-radius:1px;background:var(--green);margin-left:.05em;vertical-align:baseline}
-  #stage .lock .uline{position:relative;height:22px;margin-top:30px}
+  /* 줄자 길이를 로고('Fitting') 글자폭에 맞춤 — 로고와 같은 font-size 기준 3.15em(헤더 로고 실측 3.11em),
+     margin auto로 중앙정렬(부모 text-align:center + 블록 고정폭). 안 그러면 lock 전체폭(≈2배)으로 넓게 튐 */
+  #stage .lock .uline{position:relative;height:22px;font-size:clamp(38px,5vw,64px);width:3.15em;margin:30px auto 0}
   #stage .lock .uline .ticks{position:absolute;left:0;right:0;top:2px;height:18px;background-image:repeating-linear-gradient(90deg,var(--line2) 0 1.6px,transparent 1.6px 15px);clip-path:inset(0 100% 0 0)}
   #stage .lock .uline .fill{position:absolute;left:0;right:0;top:9px;height:4px;border-radius:3px;background:linear-gradient(90deg,transparent,var(--green-mid) 46%,var(--green));box-shadow:0 0 10px rgba(46,74,59,.3);clip-path:inset(0 100% 0 0)}
   #stage .lock .uline .penmk{position:absolute;top:7px;left:0;width:8px;height:8px;margin-left:-4px;border-radius:1.5px;background:var(--green);opacity:0;box-shadow:0 0 7px rgba(46,74,59,.45)}
@@ -1482,7 +1484,7 @@
     /* 하단 CTA 버튼: 위 '#home .cta{flex-direction:column}'(히어로용)이 클래스 충돌로
        promo 버튼에도 걸려 텍스트·화살표가 세로로 쌓이고 박스가 커짐 → row로 되돌리고 축소 */
     #home .promo .cta{ flex-direction:row; margin-top:0; gap:7px; padding:13px 20px; font-size:15px; border-radius:22px; }
-    #home .promo .act{ gap:9px; }
+    #home .promo .act{ gap:9px; margin-top:0; }   /* 데스크톱 2단용 -38px가 모바일 1단에서 버튼을 위 문단에 겹치게 함 → 해제 */
 
     /* ══ 스타일리스트 찾기(#shop) 모바일 ══
        .grid도 홈 .steps와 같은 원인(820에서 2단 유지) → 1단 + 카드를 가로형으로. */
