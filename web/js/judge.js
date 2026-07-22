@@ -46,7 +46,8 @@
   var CIRC = { chest: 1, waist: 1, hip: 1, thigh: 1, belly: 1 };
   var FLAT_MAX = { chest: 78, waist: 70, hip: 78, thigh: 44 };
   var JUDGE_PARTS = { TOP: ["chest", "shoulder"], BOTTOM: ["waist", "hip", "thigh"] };
-  var JUDGE_PARTS_OPT = { TOP: ["waist"], BOTTOM: [] };   // 표에 있을 때만 쓰는 보조 부위(상의 허리)
+  // 표에 있을 때만 쓰는 보조: 상의 허리+총장 / 하의 기장(length)+밑위(rise). 세로축은 len 그대로(×2 없음)·점수 미반영(소프트).
+  var JUDGE_PARTS_OPT = { TOP: ["waist", "length"], BOTTOM: ["length", "rise"] };
   // 이 보정 화면에 표시·수집할 부위 = 핵심 + 보조. forceOpt(직접입력)=보조 전부 노출(선택),
   //   아니면(캡처) 파싱된 표에 실제로 있는 보조만.
   function correctParts(sizes, forceOpt) {
@@ -174,6 +175,10 @@
   function errForEngine() {
     var e = {};
     Object.keys(EBMAP).forEach(function (k) { var bmk = EBMAP[k]; if (state.err[bmk] != null) e[k] = state.err[bmk]; });
+    // 세로축 오차 — 상의 총장=등길이 / 하의 기장=다리가쪽길이, 하의 밑위=몸밑위.
+    var lenKey = state.cat === "BOTTOM" ? "legOuter" : "backLength";
+    if (state.err[lenKey] != null) e.length = state.err[lenKey];
+    if (state.cat === "BOTTOM" && state.err.bodyRise != null) e.rise = state.err.bodyRise;
     return e;
   }
   function run() {
@@ -195,8 +200,8 @@
       var mcm = {}; Object.keys(q.cm).forEach(function (k) { mcm[k] = q.cm[k]; });
       Object.keys(EBMAP).forEach(function (k) { if (eb[k] != null) mcm[EBMAP[k]] = eb[k]; });
       var bodyVec = q.category === "BOTTOM"
-        ? { waist: mcm.waist, hip: mcm.hip, thigh: mcm.thigh }
-        : { chest: mcm.chestFull, shoulder: mcm.shoulder, waist: mcm.waist };  // 상의 허리(보조) 대비
+        ? { waist: mcm.waist, hip: mcm.hip, thigh: mcm.thigh, length: mcm.legOuter, rise: mcm.bodyRise }  // length=다리가쪽길이(기장), rise=몸밑위
+        : { chest: mcm.chestFull, shoulder: mcm.shoulder, waist: mcm.waist, length: mcm.backLength };     // length=등길이(총장)
       return E.judge(bodyVec, q.cell, { errors: q.errors, category: q.category });
     });
   }
@@ -224,9 +229,24 @@
       : vlabel === "OK" ? esc(pickSize) + "가 딱 맞는 구간에 들어와요. 아래에서 부위별로 자세히 볼 수 있어요."
       : vlabel === "BIG" ? esc(pickSize) + "가 넉넉하게 맞아요. 여유로운 핏을 좋아하면 괜찮아요."
       : esc(pickSize) + "가 여유 있게 맞아요. 딱 붙는 걸 원하면 한 치수 작게도 봐요.";
+    // 세로축(총장/기장·밑위) — 둘레 판정과 별개로 소프트 안내. 점수엔 미반영.
+    var isBottom = j.category === "BOTTOM", lenName = isBottom ? "기장" : "총장";
+    function lenLabel(lv) {
+      return (isBottom ? { CROP: "짧음", FIT: "적절", LONG: "긺", XLONG: "끌림" }
+                       : { CROP: "크롭", FIT: "적절", LONG: "롱", XLONG: "많이 긺" })[lv] || lv;
+    }
+    if (pick && pick.length && pick.length.level !== "FIT") {
+      var lv = pick.length.level;
+      body += isBottom
+        ? (lv === "CROP" ? " 기장은 짧은 편이에요." : lv === "LONG" ? " 기장이 길어요." : " 기장이 많이 길어 끌릴 수 있어요.")
+        : (lv === "CROP" ? " 총장은 짧은 편(크롭)이에요." : lv === "LONG" ? " 총장은 긴 편(롱)이에요." : " 총장이 많이 긴 편이에요.");
+    }
+    if (pick && pick.rise && pick.rise.short) body += " 밑위가 짧아 앉을 때 낄 수 있어요.";
     var chips = pick ? pick.parts.slice(0, 3).map(function (p) {
       return '<span class="vchip">' + esc(p.ko) + " " + (p.easeCm >= 0 ? "+" : "") + fmt(p.easeCm) + "cm " + esc(p.fit) + "</span>";
     }).join("") : "";
+    if (pick && pick.length) chips += '<span class="vchip len' + (pick.length.borderline ? " bl" : "") + '">' + lenName + " " + esc(lenLabel(pick.length.level)) + "</span>";
+    if (pick && pick.rise) chips += '<span class="vchip len' + (pick.rise.short ? " bl" : "") + '">밑위 ' + esc(pick.rise.fit) + "</span>";
     var acc = warn ? "#E8A08A" : "#8FD6A8";
     var deg = Math.max(0, Math.min(100, score)); // 게이지 채움 %
     $("jverdict").className = "jhero" + (warn ? " warn" : "");
