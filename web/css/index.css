@@ -122,7 +122,7 @@
   /* 낙하: 가속 하강 → 안착 → 아주 작은 되튐(9px→5px)으로 과장 줄임. 딜: 관성 있는 ease-out으로 매끄럽게 */
   #stage.play .card{animation:fallIn var(--stack-in) cubic-bezier(.4,0,.5,1) var(--fd) both,dealOnce var(--t-deal) cubic-bezier(.22,.75,.24,1) calc(var(--bridge) + var(--d)) forwards}
   @keyframes fallIn{0%{opacity:0;transform:translate(var(--fx,0),-310px) rotate(calc(var(--r) * 1.9));animation-timing-function:cubic-bezier(.45,0,.75,.7)}18%{opacity:1}68%{transform:translate(0,0) rotate(var(--r));animation-timing-function:cubic-bezier(.28,0,.35,1)}80%{transform:translate(0,-5px) rotate(var(--r));animation-timing-function:cubic-bezier(.4,0,.6,1)}92%{transform:translate(0,-1px) rotate(var(--r))}100%{opacity:1;transform:translate(0,0) rotate(var(--r))}}
-  @keyframes dealOnce{0%{transform:rotate(var(--r))}100%{transform:translate(var(--x),var(--y)) rotate(var(--rot))}}
+  @keyframes dealOnce{0%{transform:rotate(var(--r))}100%{transform:translate(var(--x),var(--y)) rotate(var(--rot)) scale(var(--cs,1))}}
   #stage .card .hc{position:absolute;top:0;left:0;width:392px;height:664px;transform:scale(.5102);transform-origin:top left;color:#fff;display:flex;flex-direction:column;align-items:center;padding:26px 26px 30px;background:#16171b}
   #stage .card .hc .ctop{width:100%;display:flex;justify-content:flex-start}
   #stage .card .hc .clogo{font-size:20px;font-weight:800;letter-spacing:-.05em}
@@ -188,7 +188,14 @@
   @media(max-width:720px){#stage{zoom:.54}}
   /* 모바일: 부채덱(고정 폭 ~1008px×zoom)이 화면보다 넓어 양끝 카드가 잘리던 것 →
      .4→.34로 낮춰 360·390·412px 모두 화면 안에 들어오게(덱은 균일 축소라 딜 애니 비례 유지) */
-  @media(max-width:470px){#stage{zoom:.34}}
+  /* 모바일만 zoom→transform:scale (iOS Safari는 zoom이 글씨를 안 줄여 온보딩 깨짐, #70).
+     데스크탑은 위 zoom 유지(소희님 복원). transform은 레이아웃 높이를 안 줄여 margin-bottom으로 흡수.
+     ⚠ 위 max-width:720 zoom:.54가 이 폭에도 걸리므로 zoom:1로 취소 후 transform 적용. */
+  @media(max-width:470px){
+    #home .hhero:has(#stage){display:flex;justify-content:center;align-items:flex-start;overflow:clip}
+    #stage{zoom:1;max-width:none;margin:0 0 -288px;flex:none;transform:scale(.52);transform-origin:top center}
+    #stage .skiphint{bottom:-96px}   /* 2줄 덱이 아래로 더 내려와 '건너뛰기'와 겹침 → 아래로 */
+  }
   /* 넓은 화면에선 온보딩을 더 크게 — zoom은 레이아웃 박스까지 키워 잘림·여백 자동 처리(.wrap 콘텐츠폭 1180 안) */
   @media(min-width:1160px){#stage{zoom:1.08}}
   @media(min-width:1300px){#stage{zoom:1.16}}
