@@ -161,7 +161,9 @@
   /* ── '내 체형 측정'·'브랜드별 추천' 마이 통일 — 헤더·그룹(색막대)·노트 (rpanel 공용) ── */
   .rpanel .dtl-meas-h{ display:flex; justify-content:space-between; align-items:center; }
   .rpanel .dtl-meas-h .k{ font-size:19px; font-weight:800; color:var(--ink); }
-  .rpanel .dtl-meas-h .chip{ font-size:14px; font-weight:700; color:var(--g); background:var(--gs); padding:6px 12px; border-radius:20px; white-space:nowrap; }
+  /* 표시용 badge — 탭 대상이 아니므로 fitting.css 모바일 터치타깃(min-height:44px) 예외.
+     안 그러면 14px 글씨 배경이 44px로 붕 떠 보임. line-height도 조여 배경이 글씨에 붙게. */
+  .rpanel .dtl-meas-h .chip{ font-size:14px; font-weight:700; color:var(--g); background:var(--gs); padding:6px 12px; border-radius:20px; white-space:nowrap; min-height:0; line-height:1.4; }
   .rpanel .dtl-grp{ font-size:15.5px; font-weight:800; color:var(--sub); margin:22px 0 15px; padding-bottom:9px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:7px; }
   .rpanel .dtl-grp::before{ content:""; width:4px; height:14px; border-radius:2px; flex:none; background:var(--g); }
   .rpanel .dtl-grp.up{ color:var(--g); } .rpanel .dtl-grp.up::before{ background:var(--g); }
