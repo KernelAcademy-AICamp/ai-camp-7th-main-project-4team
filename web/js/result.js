@@ -356,26 +356,89 @@
           else renderRecsError('이 입력만으로는 추천을 만들기 어려워요 — 착용 경험을 넣으면 정밀해져요');
         }
       }
+      // 결과 풀이 — 이 사용자의 백분위(pm)·추천 병목(D)·핏취향(prefs)으로 케이스 분기.
+      // 실데이터 카테고리(상의·하의·전신)만 구동, 파생(아우터·치마·원피스)은 카테고리 기본 문구.
+      if(fullBody || isTop || curCat==='BOTTOM'){
+        var mParts = fullBody ? ['shoulder','chestFull','waist','hip','thigh'] : (isTop?['shoulder','chestFull']:['waist','hip','thigh']);
+        var mSk=null, mDev=-1;
+        mParts.forEach(function(k){ if(pm[k]==null) return; var d=Math.abs(pm[k]-50); if(d>mDev){ mDev=d; mSk=k; } });
+        var mBalanced = (mDev < 12);   // 최대 편차가 표준존(38~62) 안 = 뚜렷한 극단 부위 없음
+        var mRecs = fullBody ? (D.topRecs||[]).concat(D.botRecs||[]) : (isTop?(D.topRecs||[]):(D.botRecs||[]));
+        var mBn={}; mRecs.forEach(function(r){ if(r.bottleneck) mBn[r.bottleneck]=(mBn[r.bottleneck]||0)+1; });
+        var mBk=Object.keys(mBn).sort(function(a,b){ return mBn[b]-mBn[a]; });
+        var mBottleneck = mBk[0]||null;
+        // 핏취향 극성 — 병목이 속한 축(상/하)의 취향으로. FITPCT<40=슬림쪽·>65=여유쪽·그외 표준.
+        var mSide = (mBottleneck==='어깨'||mBottleneck==='가슴') ? 'TOP' : (mBottleneck?'BOTTOM':null);
+        var mPrefKey = mSide ? ((payload.prefs&&payload.prefs[mSide])||(mSide==='TOP'?'regular':'straight')) : pref;
+        var mPv = FITPCT[mPrefKey], mPolarity = (mPv==null)?'reg':(mPv<40?'tight':(mPv>65?'loose':'reg'));
+        renderMeans({ cat:curCat, poleKey:(mBalanced?null:mSk), poleHigh:(mSk!=null && pm[mSk]>=50),
+          balanced:mBalanced, bottleneck:mBottleneck, polarity:mPolarity, est:noneDone });
+      } else {
+        renderMeans({ cat:curCat });   // 파생 카테고리 = 카테고리 기본 문구
+      }
       _contentReady=true; maybeHideLoading();
     });
   }).catch(function(){ renderLoadError(); hideRloading(); }); }
   else { renderLoadError(); hideRloading(); }   // BodyModel 스크립트 로드 실패
 
-  // ── 결과 풀이 (＋강점 / ＝핏 공식 / ！주의) — 규칙 기반 골격, 서술은 AI 자리 ──
+  // ── 결과 풀이 (＋강점 / ＝핏 공식 / ！주의) — 이 사용자의 실제 엔진 출력으로 데이터 구동:
+  //    강점=가장 또렷한 부위(최고 |백분위−50|) · 공식/주의=추천 실계산의 병목 부위. 없으면(파생 카테고리·계산 실패)
+  //    카테고리 기본 문구로 폴백. 숫자·부위는 결정론(규칙), 문체 다듬기만 추후 AI 몫. 엔진 계산 후(then) 호출됨. ──
+  // eq=핏 공식에 슬롯되는 구(句) · warn=완결된 정중체 한 문장(폴백에서 그대로 사용). 파생 카테고리·계산 실패용 기본.
   var MEANS={
-    TOP:   {eq:'어깨·가슴 중 큰 쪽을 기준으로', warn:'슬림핏은 가슴이 끼일 수 있어'},
-    BOTTOM:{eq:'허리·엉덩이 중 큰 쪽을 기준으로', warn:'스키니는 허벅지가 끼일 수 있어'},
-    OUTER: {eq:'어깨·품을 기준으로', warn:'이너 위에 겹쳐 입으면 품이 빠듯할 수 있어'},
-    SKIRT: {eq:'허리·엉덩이 중 큰 쪽을 기준으로', warn:'타이트 스커트는 힙이 끼일 수 있어'},
-    DRESS: {eq:'가슴·허리·엉덩이 중 큰 쪽을 기준으로', warn:'상하 비율이 안 맞으면 한 곳이 끼일 수 있어'}
+    TOP:   {eq:'어깨·가슴 중 큰 쪽을 기준으로', warn:'슬림핏은 가슴이 끼일 수 있어요 — 경계면 <strong>한 단계 위</strong>를 고려해요'},
+    BOTTOM:{eq:'허리·엉덩이 중 큰 쪽을 기준으로', warn:'스키니는 허벅지가 끼일 수 있어요 — 경계면 <strong>한 단계 위</strong>를 고려해요'},
+    OUTER: {eq:'어깨·품을 기준으로', warn:'이너 위에 겹쳐 입으면 품이 빠듯할 수 있어요 — <strong>한 단계 위</strong>를 고려해요'},
+    SKIRT: {eq:'허리·엉덩이 중 큰 쪽을 기준으로', warn:'타이트한 스커트는 힙이 끼일 수 있어요 — 경계면 <strong>한 단계 위</strong>를 고려해요'},
+    DRESS: {eq:'가슴·허리·엉덩이 중 큰 쪽을 기준으로', warn:'상하 비율이 다르면 한 곳이 끼일 수 있어요 — 큰 쪽 기준 <strong>한 단계 위</strong>를 고려해요'}
   };
-  var mn=MEANS[curCat]||MEANS.TOP;
-  document.getElementById('means').innerHTML=
-    '<div class="rkicker">결과 풀이</div>'+
-    '<div class="rex plus"><div class="lbl"><span class="mk">＋</span> 강점</div><p>가장 또렷한 부위를 기준으로 맞추면 <strong>실루엣이 안정적으로</strong> 떨어져요</p></div>'+
-    '<div class="rex eq"><div class="lbl"><span class="mk">＝</span> 핏 공식</div><p><strong>'+mn.eq+'</strong> 사이즈를 고르고, 나머지는 여유로 조절해요</p></div>'+
-    '<div class="rex warn"><div class="lbl"><span class="mk">！</span> 주의</div><p>'+mn.warn+' <strong>같은 치수에서 한 단계 위</strong>를 고려해요</p></div>'+
-    '<div class="rfoot">※ 캐릭터·해설 서술은 AI가 생성하는 자리예요(현재는 규칙 기반 예시)</div>';
+  // 부위별 방향 라벨 [슬림 극(백분위 낮음), 볼륨 극(높음)] — 강점 문구의 극성 표현.
+  var MEANS_POLE={shoulder:['좁은 어깨','넓은 어깨'],chestFull:['슬림한 가슴','볼륨 있는 가슴'],chest:['슬림한 가슴','볼륨 있는 가슴'],
+    waist:['슬림한 허리','볼륨 있는 허리'],hip:['슬림한 엉덩이','볼륨 있는 엉덩이'],thigh:['슬림한 허벅지','볼륨 있는 허벅지']};
+  function iRa(w){ var c=w.charCodeAt(w.length-1); return (c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28)?'이라':'라'; }   // 받침 유무로 이라/라
+  // ctx: {cat, poleKey, poleHigh, balanced, bottleneck, polarity('tight'|'loose'|'reg'), est}
+  //   강점=부위×방향×균형 / 공식=병목 유무 / 주의=병목×핏취향 극성 / est(0벌 추정)=완충 어미.
+  //   ctx 신호가 없으면(파생 카테고리·계산 실패) 카테고리 기본 문구(MEANS)로 폴백.
+  function renderMeans(ctx){
+    ctx=ctx||{}; var mn=MEANS[ctx.cat]||MEANS.TOP;
+    // ＋ 강점 — 균형형 / 극성(넓은·볼륨 vs 좁은·슬림) / 기본
+    var plus;
+    if(ctx.balanced){
+      plus = ctx.est ? '부위별 편차가 적은 <strong>균형형</strong>으로 보여요 — 표준 사이즈가 무난해요'
+                     : '부위별 편차가 적은 <strong>균형형</strong>이에요 — 표준 사이즈가 잘 맞아요';
+    } else if(ctx.poleKey && MEANS_POLE[ctx.poleKey]){
+      var pole=MEANS_POLE[ctx.poleKey][ctx.poleHigh?1:0];
+      plus = ctx.est ? '<strong>'+pole+'</strong> 편으로 보여요 — 여기를 기준으로 맞추면 실루엣이 안정적이에요'
+                     : '<strong>'+pole+'</strong>'+iRa(pole)+', 여기를 기준으로 맞추면 <strong>실루엣이 안정적으로</strong> 떨어져요';
+    } else {
+      plus = '가장 또렷한 부위를 기준으로 맞추면 <strong>실루엣이 안정적으로</strong> 떨어져요';
+    }
+    // ＝ 핏 공식 — 병목 부위 / 균형(병목 없음) / 카테고리 기본
+    var eq = ctx.bottleneck
+      ? '<strong>'+ctx.bottleneck+' 기준으로</strong> 사이즈를 고르고, 나머지는 여유로 조절해요'
+      : ctx.balanced
+        ? '특정 부위 병목 없이 <strong>표준 기준</strong>으로, 취향에 맞춰 한 끗만 조절해요'
+        : '<strong>'+mn.eq+'</strong> 사이즈를 고르고, 나머지는 여유로 조절해요';
+    // ！ 주의 — 병목×핏취향(끼임/남음/경계) / 균형 / 카테고리 기본
+    var warn;
+    if(ctx.bottleneck && ctx.polarity==='tight')
+      warn = '<strong>'+ctx.bottleneck+' 쪽</strong>이 끼기 쉬워요 — 슬림한 핏이면 <strong>한 단계 위</strong>를 고려해요';
+    else if(ctx.bottleneck && ctx.polarity==='loose')
+      warn = '여유 있는 핏이라 <strong>'+ctx.bottleneck+' 쪽</strong>이 남을 수 있어요 — <strong>한 단계 아래</strong>도 비교해요';
+    else if(ctx.bottleneck)
+      warn = '<strong>'+ctx.bottleneck+' 쪽</strong>이 치수 경계에 걸리면 <strong>큰 쪽</strong>을 골라요';
+    else if(ctx.balanced)
+      warn = '치수가 경계에 걸리면 <strong>큰 쪽</strong>으로 — 대부분 표준에서 무난해요';
+    else
+      warn = mn.warn;   // 파생 카테고리·계산 실패 = 완결 문장 그대로
+    var el=document.getElementById('means'); if(!el) return;
+    el.innerHTML=
+      '<div class="rkicker">결과 풀이</div>'+
+      '<div class="rex plus"><div class="lbl"><span class="mk">＋</span> 강점</div><p>'+plus+'</p></div>'+
+      '<div class="rex eq"><div class="lbl"><span class="mk">＝</span> 핏 공식</div><p>'+eq+'</p></div>'+
+      '<div class="rex warn"><div class="lbl"><span class="mk">！</span> 주의</div><p>'+warn+'</p></div>'+
+      '<div class="rfoot">※ 이 진단 데이터로 만든 규칙 해설이에요 · 문체는 추후 AI가 다듬어요</div>';
+  }
 
   // ── 옷장 · 이어서 진단 게이트: 노출 불필요로 제거(2026-07 디자인 결정) ──
 
