@@ -66,7 +66,7 @@
   .b-side.ok .b-sh{color:var(--tp);}
   .b-side.no .b-sh{color:rgba(255,255,255,.55);}
   .b-sh svg{width:15px; height:15px;}
-  .b-it{font-size:15px; font-weight:800; line-height:1.35; padding:8px 0;}
+  .b-it{font-size:15px; font-weight:800; line-height:1.32; min-height:52px; display:flex; align-items:center; justify-content:center; text-align:center; padding:5px 2px; word-break:keep-all;}   /* 같은 높이 칸 → 두 줄이어도 좌우 정렬 · 점(·) 줄앞 방지 */
   .b-side.no .b-it{color:rgba(255,255,255,.6);}
   .b-vs{font-size:13px; font-weight:900; letter-spacing:.04em; color:rgba(255,255,255,.72); padding:0 14px; position:relative; align-self:center;}
   .b-vs::before,.b-vs::after{content:""; position:absolute; left:50%; width:1px; background:rgba(255,255,255,.12); height:30px;}
