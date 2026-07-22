@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="css/tokens.css?v=36124a96">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/index.css?v=e854ac0f">
+<link rel="stylesheet" href="css/index.css?v=d8b11a8f">
 </head>
 <body>
 
@@ -114,11 +114,15 @@
         var ml=document.getElementById('mlogo'), tg=document.getElementById('lgtarget'), tail=document.getElementById('tail');
         if(!ml||!tg) return;
         var r1=ml.getBoundingClientRect(), r2=tg.getBoundingClientRect();
-        var s=r2.height/r1.height;   // 높이비 — zoom이 분모·분자에서 상쇄돼 보정 불필요
-        // getBoundingClientRect은 zoom 적용된 화면좌표. transform은 요소 로컬좌표(zoom에 다시 축소)라
-        // dx를 그대로 쓰면 이동량이 zoom배만 적용돼 로고가 목표(lgtarget)에 덜 도착 → 줄자와 어긋남. /zoom 보정.
-        var zoom=parseFloat(getComputedStyle(stage).zoom)||1;
-        var dx=((r2.left+r2.width/2)-(r1.left+r1.width/2))/zoom, dy=((r2.top+r2.height/2)-(r1.top+r1.height/2))/zoom;
+        var s=r2.height/r1.height;   // 높이비 — 스케일이 분모·분자에서 상쇄돼 보정 불필요
+        // getBoundingClientRect은 스케일 적용된 화면좌표. translate는 요소 로컬좌표(스케일에 다시 축소)라
+        // dx를 그대로 쓰면 이동량이 부족해 로고가 목표에 덜 도착 → /scale 보정.
+        // 데스크탑=zoom, 모바일=transform:scale 혼용 → 둘을 곱해 실제 스케일 계산.
+        var cs=getComputedStyle(stage);
+        var zoom=parseFloat(cs.zoom)||1, tsc=1;
+        var mm=(cs.transform||'').match(/matrix\(([^)]+)\)/); if(mm){ tsc=parseFloat(mm[1].split(',')[0])||1; }
+        var scale=zoom*tsc;
+        var dx=((r2.left+r2.width/2)-(r1.left+r1.width/2))/scale, dy=((r2.top+r2.height/2)-(r1.top+r1.height/2))/scale;
         if(tail) tail.style.opacity='0';
         ml.style.transition='transform .82s cubic-bezier(.2,.8,.3,1)';
         ml.style.transform='translate('+dx+'px,'+dy+'px) scale('+s+')';
@@ -140,17 +144,32 @@
       function skip(){ timers.forEach(clearTimeout); timers=[]; resetLogo(); stage.classList.remove('run','handoff','play'); stage.classList.add('done'); finalEl.classList.add('on'); }
       fetch('data/bodytypes.json').then(function(r){ return r.json(); }).then(function(j){
         var map={}; j.types.forEach(function(t){ map[t.code]=t; });
+        // 모바일(≤470px, transform:scale .52)만 2줄×4장으로 크게. 데스크탑은 소희님 한 줄 8장 부채 유지.
+        var twoRow = window.matchMedia && window.matchMedia('(max-width:470px)').matches;
         CODES.forEach(function(code,i){
           if(!map[code]) return;
           var el=document.createElement('div'); el.className='card';
           el.style.setProperty('--i', i); el.style.setProperty('--r', ROT[i]||'0deg');
-          el.style.setProperty('--d', (Math.abs(i-3.5)*70).toFixed(0)+'ms');
           el.style.setProperty('--fd', (FALL[i]||0)+'s');
           el.style.setProperty('--fx', (Math.round(Math.random()*180-90))+'px');
-          var th=(i-3.5)*ANG*Math.PI/180;
-          el.style.setProperty('--x', (PIV*Math.sin(th)).toFixed(1)+'px');
-          el.style.setProperty('--y', (PIV*(1-Math.cos(th))).toFixed(1)+'px');
-          el.style.setProperty('--rot', ((i-3.5)*ANG).toFixed(2)+'deg');
+          if(twoRow){
+            var PERROW=4, cc=(PERROW-1)/2;               // 행당 4장, 중심 col=1.5
+            var row=Math.floor(i/PERROW), col=i%PERROW;
+            var th=(col-cc)*ANG*Math.PI/180;
+            var rowOff=(row-0.5)*150 + 52;               // ROWGAP 150 + 제목 공간 확보 위해 아래로
+            el.style.setProperty('--cs', '.85');         // 2줄이 세로에 들어오게 카드 살짝 축소
+            el.style.setProperty('--d', (Math.abs(col-cc)*70 + row*120).toFixed(0)+'ms');
+            el.style.setProperty('--x', (PIV*Math.sin(th)).toFixed(1)+'px');
+            el.style.setProperty('--y', (PIV*(1-Math.cos(th))+rowOff).toFixed(1)+'px');
+            el.style.setProperty('--rot', ((col-cc)*ANG).toFixed(2)+'deg');
+            el.style.zIndex=row*4 + Math.round(PERROW-Math.abs(col-cc));
+          } else {
+            var th2=(i-3.5)*ANG*Math.PI/180;
+            el.style.setProperty('--d', (Math.abs(i-3.5)*70).toFixed(0)+'ms');
+            el.style.setProperty('--x', (PIV*Math.sin(th2)).toFixed(1)+'px');
+            el.style.setProperty('--y', (PIV*(1-Math.cos(th2))).toFixed(1)+'px');
+            el.style.setProperty('--rot', ((i-3.5)*ANG).toFixed(2)+'deg');
+          }
           el.innerHTML=fitHTML(code, map[code]); deck.appendChild(el);
         });
         measureTw();
