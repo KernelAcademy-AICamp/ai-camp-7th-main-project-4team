@@ -10,7 +10,12 @@
 
   var CATKO = { TOP: "상의", BOTTOM: "하의" };
   var PARTKO = { chest: "가슴", shoulder: "어깨", waist: "허리", hip: "엉덩이", thigh: "허벅지", sleeve: "소매", length: "기장", rise: "밑위", hem: "밑단" };
-  var state = { status: "pending" };
+  // 승격 시 관리자가 고르는 핏/종류 옵션
+  var FIT_OPT = { TOP: [["regular", "레귤러"], ["slim", "슬림"], ["loose", "루즈"], ["oversize", "오버"]],
+                  BOTTOM: [["straight", "스트레이트"], ["slim", "슬림"], ["tapered", "테이퍼드"], ["wide", "와이드"], ["skinny", "스키니"], ["bootcut", "부츠컷"]] };
+  var SUB_OPT = { TOP: [["long_sleeve", "긴팔"], ["short_sleeve", "반팔"]],
+                  BOTTOM: [["long_pants", "긴바지"], ["short_pants", "반바지"]] };
+  var state = { status: "pending", brands: [], brandsLoaded: false, rows: {} };
 
   // 셀 요약: "S 가슴53·어깨45 / M …"
   function sizesSummary(sizes) {
@@ -26,13 +31,36 @@
       $("subTable").innerHTML = '<tr><td>실 DB(api·admin 구글 로그인) 상태에서만 보입니다.</td></tr>';
       return;
     }
-    ADMINAUTH.submissions(state.status).then(render).catch(function () {
-      $("subTable").innerHTML = '<tr><td>로드 실패 · admin 로그인 필요</td></tr>';
-    });
+    // 승격용 기존 브랜드 목록은 1회만 로드(브랜드 매핑 드롭다운)
+    var brandsP = state.brandsLoaded ? Promise.resolve(null) : ADMINAUTH.garments();
+    Promise.all([ADMINAUTH.submissions(state.status), brandsP]).then(function (res) {
+      if (res[1]) {
+        var seen = {}, brands = [];
+        (res[1].specs || []).forEach(function (s) { if (s.brandId && !seen[s.brandId]) { seen[s.brandId] = 1; brands.push({ id: s.brandId, name: s.brandName || s.brandId }); } });
+        brands.sort(function (a, b) { return a.name.localeCompare(b.name, "ko"); });
+        state.brands = brands; state.brandsLoaded = true;
+      }
+      render(res[0]);
+    }).catch(function () { $("subTable").innerHTML = '<tr><td>로드 실패 · admin 로그인 필요</td></tr>'; });
+  }
+
+  // 승격 컨트롤: 브랜드 매핑 + 핏 + 종류 (관리자 확정)
+  function optHtml(list, sel) { return list.map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === sel ? " selected" : "") + ">" + o[1] + "</option>"; }).join(""); }
+  function mergeControls(r) {
+    var cat = r.category === "BOTTOM" ? "BOTTOM" : "TOP";
+    var matched = state.brands.filter(function (b) { return b.name === r.brand; })[0];
+    var bOpts = '<option value="__new__" data-name="' + esc(r.brand || "") + '"' + (matched ? "" : " selected") + ">+ 새 브랜드" + (r.brand ? ": " + esc(r.brand) : "") + "</option>" +
+      state.brands.map(function (b) { return '<option value="' + esc(b.id) + '" data-name="' + esc(b.name) + '"' + (matched && matched.id === b.id ? " selected" : "") + ">" + esc(b.name) + "</option>"; }).join("");
+    return '<div class="jmctl">' +
+      '<select class="jm-sel jm-brand" data-id="' + r.id + '">' + bOpts + "</select>" +
+      '<select class="jm-sel jm-fit" data-id="' + r.id + '">' + optHtml(FIT_OPT[cat], "") + "</select>" +
+      '<select class="jm-sel jm-sub" data-id="' + r.id + '">' + optHtml(SUB_OPT[cat], "") + "</select>" +
+      '<button class="abtn sm" data-act="merged" data-id="' + r.id + '">승격</button></div>';
   }
 
   function render(rows) {
     rows = rows || [];
+    state.rows = {}; rows.forEach(function (r) { state.rows[r.id] = r; });   // 승격 시 원본 조회용
     // 같은 브랜드·상품·사이즈 중복 제출 = 신뢰 신호(집계)
     var dupKey = {};
     rows.forEach(function (r) { var k = (r.brand || "") + "|" + (r.product || "") + "|" + (r.category || ""); dupKey[k] = (dupKey[k] || 0) + 1; });
@@ -50,7 +78,7 @@
         ? '<button class="abtn sm" data-act="verified" data-id="' + r.id + '">검증</button> ' +
           '<button class="abtn ghost sm" data-act="rejected" data-id="' + r.id + '">반려</button>'
         : state.status === "verified"
-          ? '<button class="abtn sm" data-act="merged" data-id="' + r.id + '">승격 표시</button>'
+          ? mergeControls(r)
           : "—";
       return "<tr>" +
         "<td>" + fmt(r.created_at) + "</td>" +
@@ -77,7 +105,24 @@
     if (a && a.getAttribute("data-id")) {
       var id = a.getAttribute("data-id"), st = a.getAttribute("data-act");
       a.disabled = true;
-      ADMINAUTH.setSubmissionStatus(id, st).then(function (ok) { if (ok) load(); else a.disabled = false; });
+      if (st === "merged") {   // 승격 = 관리자가 고른 브랜드·핏·종류로 garment 정본에 반영(추천 노출) + status=merged
+        var row = (state.rows || {})[id];
+        var bSel = document.querySelector(".jm-brand[data-id='" + id + "']");
+        var opts = {};
+        if (bSel) {
+          var o = bSel.options[bSel.selectedIndex];
+          if (bSel.value === "__new__") { opts.brandName = o.getAttribute("data-name"); opts.brandId = (opts.brandName || "").trim().toLowerCase().replace(/\s+/g, "-") || ("usub-" + id); }
+          else { opts.brandId = bSel.value; opts.brandName = o.getAttribute("data-name"); }
+        }
+        var fSel = document.querySelector(".jm-fit[data-id='" + id + "']"); if (fSel) opts.fit = fSel.value;
+        var sSel = document.querySelector(".jm-sub[data-id='" + id + "']"); if (sSel) opts.subtype = sSel.value;
+        ADMINAUTH.mergeSubmission(row, opts).then(function (r) {
+          if (r && r.ok) { alert("브랜드 실측(추천)에 반영됐어요 · " + (opts.brandName || "") + " · " + r.count + "개 사이즈"); load(); }
+          else { alert("승격 실패: " + ((r && r.error) || "")); a.disabled = false; }
+        });
+      } else {
+        ADMINAUTH.setSubmissionStatus(id, st).then(function (ok) { if (ok) load(); else a.disabled = false; });
+      }
     }
   });
 
