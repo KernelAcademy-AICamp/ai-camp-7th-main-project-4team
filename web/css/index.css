@@ -126,7 +126,7 @@
   /* 낙하: 가속 하강 → 안착 → 아주 작은 되튐(9px→5px)으로 과장 줄임. 딜: 관성 있는 ease-out으로 매끄럽게 */
   #stage.play .card{animation:fallIn var(--stack-in) cubic-bezier(.4,0,.5,1) var(--fd) both,dealOnce var(--t-deal) cubic-bezier(.22,.75,.24,1) calc(var(--bridge) + var(--d)) forwards}
   @keyframes fallIn{0%{opacity:0;transform:translate(var(--fx,0),-310px) rotate(calc(var(--r) * 1.9));animation-timing-function:cubic-bezier(.45,0,.75,.7)}18%{opacity:1}68%{transform:translate(0,0) rotate(var(--r));animation-timing-function:cubic-bezier(.28,0,.35,1)}80%{transform:translate(0,-5px) rotate(var(--r));animation-timing-function:cubic-bezier(.4,0,.6,1)}92%{transform:translate(0,-1px) rotate(var(--r))}100%{opacity:1;transform:translate(0,0) rotate(var(--r))}}
-  @keyframes dealOnce{0%{transform:rotate(var(--r))}100%{transform:translate(var(--x),var(--y)) rotate(var(--rot))}}
+  @keyframes dealOnce{0%{transform:rotate(var(--r))}100%{transform:translate(var(--x),var(--y)) rotate(var(--rot)) scale(var(--cs,1))}}
   #stage .card .hc{position:absolute;top:0;left:0;width:392px;height:664px;transform:scale(.5102);transform-origin:top left;color:#fff;display:flex;flex-direction:column;align-items:center;padding:26px 26px 30px;background:#16171b}
   #stage .card .hc .ctop{width:100%;display:flex;justify-content:flex-start}
   #stage .card .hc .clogo{font-size:20px;font-weight:800;letter-spacing:-.05em}
@@ -192,7 +192,7 @@
      남는 세로 공간을 margin-bottom 음수로 흡수(확대는 양수). 모바일 .34는 부채덱이 화면 안에 들어오는 값. */
   @media(max-width:1040px){#stage{transform:scale(.74);margin-bottom:-156px}}
   @media(max-width:720px){#stage{transform:scale(.54);margin-bottom:-276px}}
-  @media(max-width:470px){#stage{transform:scale(.34);margin-bottom:-396px}}
+  @media(max-width:470px){#stage{transform:scale(.52);margin-bottom:-288px}}
   @media(min-width:1160px){#stage{transform:scale(1.08);margin-bottom:48px}}
   @media(min-width:1300px){#stage{transform:scale(1.16);margin-bottom:96px}}
   @media(prefers-reduced-motion:reduce){#stage *{animation:none!important}#stage .final{opacity:1}#stage .flipin{transform:rotateY(180deg)}#stage .intro,#stage .lock,#stage .deck{opacity:0}}
