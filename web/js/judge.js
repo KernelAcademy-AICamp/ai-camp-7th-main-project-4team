@@ -69,7 +69,9 @@
     state.cat = cat; state.basis = null;
     document.querySelectorAll(".jseg-b").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-cat") === cat); });
   }
-  function showCapture() { $("jcap").hidden = false; $("jcorrect").hidden = true; var m = $("jmiss"); if (m) m.hidden = true; state.parsed = null; }
+  // 사이즈표 넣기 탭(캡처 업로드 ↔ 직접 입력) 활성 표시 동기화
+  function markTab(mode) { document.querySelectorAll(".jtab").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-tab") === mode); }); }
+  function showCapture() { $("jcap").hidden = false; $("jcorrect").hidden = true; var m = $("jmiss"); if (m) m.hidden = true; var r = $("jrun"); if (r) r.disabled = true; state.parsed = null; state.manual = false; markTab("capture"); }
 
   // 붙여넣기/드롭/파일 → dataURL → 인식
   function onImageFile(file) {
@@ -79,6 +81,8 @@
   function parseImage(dataUrl) {
     state.capture = dataUrl; state.parsed = null; state.basis = null;
     $("jcap").hidden = true; $("jcorrect").hidden = false;
+    $("jcorrect").classList.remove("man");                          // 캡처 모드: 썸네일·다시올리기 노출
+    var ru = $("jreupload"); if (ru) ru.hidden = false;
     var th = $("jcapthumb"); if (th) { th.src = dataUrl; th.hidden = false; }
     $("jparsehint").innerHTML = "사이즈표를 읽는 중…"; $("jparsetable").innerHTML = ""; $("jrun").disabled = true;
     if (!(window.FDATA && FDATA.parseSizeTable)) return parseUnavailable();
@@ -98,12 +102,13 @@
       $("jparsehint").innerHTML = "<b class='w'>이건 신체 권장범위표예요.</b> 옷 실측표(단면·기장)를 올려주세요 — 못 입어보는 옷의 실제 치수가 필요해요.";
       $("jparsetable").innerHTML = ""; $("jrun").disabled = true; return;
     }
-    var warn = p.truncated ? " <span class='w'>일부 사이즈가 가려졌어요 — 사려는 사이즈가 없으면 다시 캡처해주세요.</span>" : "";
-    $("jparsehint").innerHTML = "읽었어요. <b>사려는 사이즈의 값</b>을 확인·수정해주세요." + warn;
+    var warn = p.truncated ? " <span class='w'>일부 사이즈가 가려졌어요 — 구매하는 사이즈가 없으면 다시 캡처해주세요.</span>" : "";
+    $("jparsehint").innerHTML = "읽었어요. <b>구매하는 사이즈의 값</b>을 확인·수정해주세요." + warn;
     renderCorrect(p.sizes || [], false);
   }
 
-  // 보정 테이블: 사이즈 × 판정부위(핵심+표에있는보조, 편집 가능) + 단면/둘레 토글. editableLabel=직접입력 모드.
+  // 보정 UI(둘 다 .jsl/.jce/.jbz 훅 유지 → buildCell 공용):
+  //   직접입력 = 한 사이즈 '세로 폼' / 캡처 = 읽은 사이즈 '칩 요약 + 사이즈별 카드'(전 사이즈 판정)
   function renderCorrect(sizes, editableLabel) {
     var parts = correctParts(sizes, editableLabel);   // 직접입력이면 보조(허리)도 선택칸으로 노출
     var circParts = parts.filter(function (x) { return CIRC[x]; });
@@ -113,32 +118,63 @@
       var mx = vals.length ? Math.max.apply(null, vals) : 0;
       state.basis = mx > (FLAT_MAX[circPart] || 78) ? "circ" : "flat";
     }
-    var head = "<tr><th>사이즈</th>" + parts.map(function (pt) {
-      return "<th>" + koP(pt) + (isOptPart(pt) ? "<span class='jopt'>선택</span>" : "") + "</th>";
-    }).join("") + "</tr>";
-    var rows = sizes.map(function (s, i) {
-      var lbl = editableLabel
-        ? "<input class='jsl' data-i='" + i + "' placeholder='예: M' value='" + esc(s.label || "") + "'>"
-        : "<span class='jsl' data-i='" + i + "'>" + esc(s.label) + "</span>";
-      return "<tr><td class='sl'>" + lbl + "</td>" + parts.map(function (pt) {
-        var v = s.values ? s.values[pt] : null;
-        return "<td><input class='jce' data-i='" + i + "' data-p='" + pt + "' inputmode='decimal' value='" + (v == null ? "" : esc(v)) + "'></td>";
-      }).join("") + "</tr>";
-    }).join("");
     var basisCtl = circPart
       ? "<div class='jbasis'><span class='jbasis-l'>" + circParts.map(koP).join("·") + " 값은</span>" +
         "<button class='jbz " + (state.basis === "flat" ? "on" : "") + "' data-b='flat'>단면</button>" +
         "<button class='jbz " + (state.basis === "circ" ? "on" : "") + "' data-b='circ'>둘레</button>" +
         "<span class='jbasis-n'>표에 적힌 그대로가 단면(반접어 잰 값)인지 둘레인지</span></div>" : "";
-    $("jparsetable").innerHTML = "<table class='jctab'>" + head + rows + "</table>" + basisCtl;
-    $("jrun").disabled = false;
+    var body = editableLabel ? manualForm(sizes[0] || {}, parts) : captureCards(sizes, parts);
+    $("jparsetable").innerHTML = body + basisCtl;
+    refreshRun();   // 무조건 활성 대신 입력값 검증(핵심 부위 값이 있어야 판정 가능)
   }
+  // 직접 입력 — 한 사이즈, 부위마다 라벨 단 세로 입력(표 아님)
+  function manualForm(size, parts) {
+    var out = "<div class='jform'>" +
+      "<div class='jf-line'><span class='jf-k'>사이즈</span><input class='jsl jf-in jf-sz' data-i='0' placeholder='예: M' value='" + esc(size.label || "") + "'></div>";
+    parts.forEach(function (pt) {
+      var v = size.values ? size.values[pt] : null;
+      out += "<div class='jf-line'><span class='jf-k'>" + koP(pt) + (isOptPart(pt) ? " <span class='jopt'>선택</span>" : "") + "</span>" +
+        "<input class='jce jf-in' data-i='0' data-p='" + pt + "' inputmode='decimal' value='" + (v == null ? "" : esc(v)) + "'>" +
+        "<span class='jf-u'>cm</span></div>";
+    });
+    return out + "</div>";
+  }
+  // 캡처 후 — 읽은 사이즈 칩(중립·표시용) + 사이즈별 편집 카드(전 사이즈 판정)
+  function captureCards(sizes, parts) {
+    var chips = sizes.map(function (s) { return "<span class='jrchip'>" + esc(s.label || "?") + "</span>"; }).join("");
+    var chipRow = "<div class='jread'><span class='jread-l'>읽은 사이즈</span><span class='jread-c'>" + chips + "</span></div>";
+    var cards = sizes.map(function (s, i) {
+      var mrows = parts.map(function (pt) {
+        var v = s.values ? s.values[pt] : null;
+        return "<label class='jsz-m'><span class='jsz-k'>" + koP(pt) + "</span>" +
+          "<input class='jce jsz-mi' data-i='" + i + "' data-p='" + pt + "' inputmode='decimal' value='" + (v == null ? "" : esc(v)) + "'></label>";
+      }).join("");
+      return "<div class='jsz'><div class='jsz-h'><span class='jsz-hl'>사이즈</span>" +
+        "<input class='jsl jsz-in' data-i='" + i + "' value='" + esc(s.label || "") + "' placeholder='#" + (i + 1) + "'></div>" +
+        "<div class='jsz-b'>" + mrows + "</div></div>";
+    }).join("");
+    return chipRow + "<div class='jszlist'>" + cards + "</div>";
+  }
+
+  // 판정 가능 여부 = 핵심 부위(JUDGE_PARTS) 값이 최소 하나 유효하게 입력됨. 캡처·직접입력 공통.
+  function hasJudgeValue() {
+    var core = JUDGE_PARTS[state.cat] || [], ok = false;
+    document.querySelectorAll(".jce").forEach(function (el) {
+      if (core.indexOf(el.getAttribute("data-p")) < 0) return;
+      var v = el.value; if (v != null && String(v).trim() !== "" && !isNaN(+v) && +v > 0) ok = true;
+    });
+    return ok;
+  }
+  function refreshRun() { var r = $("jrun"); if (r) r.disabled = !hasJudgeValue(); }
 
   function showManual() {
     $("jcap").hidden = true; $("jcorrect").hidden = false; $("jmiss").hidden = true;
+    state.manual = true; markTab("manual");
+    $("jcorrect").classList.add("man");                             // 직접입력: 이미지 없음(썸네일·다시올리기 숨김)
     var th = $("jcapthumb"); if (th) th.hidden = true;
+    var ru = $("jreupload"); if (ru) ru.hidden = true;
     state.parsed = { sizes: [{ label: "" }] }; state.basis = "flat";
-    $("jparsehint").innerHTML = "사려는 <b>사이즈</b>와 <b>" + JUDGE_PARTS[state.cat].map(koP).join("·") + "</b>을 표에서 그대로 옮겨 적어주세요.";
+    $("jparsehint").innerHTML = "구매하는 <b>사이즈</b>와 <b>" + JUDGE_PARTS[state.cat].map(koP).join("·") + "</b> 치수를 적어주세요.";
     renderCorrect(state.parsed.sizes, true);
   }
 
@@ -178,7 +214,7 @@
   }
   function run() {
     var cell = buildCell();
-    if (!cell.length) return showMiss("판정할 값이 없어요. 사려는 사이즈의 치수를 채워주세요.");
+    if (!cell.length) return showMiss("판정할 값이 없어요. 구매하는 사이즈의 치수를 채워주세요.");
     state.lastCell = cell;
     $("jrun").disabled = true;
     computeJudgment({ category: state.cat, sex: state.sex, cm: state.cm, experiences: state.exps, errors: errForEngine(), cell: cell })
@@ -262,9 +298,10 @@
     if (cb) cb.checked = false; if (sub) sub.disabled = true;
     if (msg) { msg.hidden = true; msg.textContent = ""; }
 
-    $("jsetup").hidden = true;
+    // 한 화면 유지: setup은 그대로 두고 오른쪽 캔버스만 예시 → 결과로 교체
+    var aside = $("jaside"); if (aside) aside.hidden = true;
     $("jresult").hidden = false;
-    window.scrollTo(0, 0);
+    $("jresult").scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
   function submitGarment() {
@@ -403,15 +440,21 @@
       document.querySelectorAll(".jbz").forEach(function (b) { b.classList.toggle("on", b === bz); });
       return;
     }
+    var jtab = ev.target.closest(".jtab");
+    if (jtab) { if (jtab.getAttribute("data-tab") === "manual") showManual(); else showCapture(); return; }
     if (ev.target.closest(".jlink[data-act='manual']") || ev.target.id === "jmanuallink") { state.manual = true; showManual(); return; }
     if (ev.target.closest("#jcapzone")) { $("jcapfile").click(); return; }
     if (ev.target.id === "jreupload") { state.manual = false; showCapture(); var t = $("jcapthumb"); if (t) { t.hidden = true; t.src = ""; } return; }
     if (ev.target.id === "jrun") run();
     if (ev.target.id === "jsubmit") submitGarment();
-    if (ev.target.id === "jredo") { $("jresult").hidden = true; $("jsetup").hidden = false; showCapture(); window.scrollTo(0, 0); }
+    if (ev.target.id === "jredo") { $("jresult").hidden = true; var aside = $("jaside"); if (aside) aside.hidden = false; showCapture(); window.scrollTo(0, 0); }
   });
   document.addEventListener("change", function (ev) {
     if (ev.target.id === "jconsent") { var s = $("jsubmit"); if (s) s.disabled = !ev.target.checked; }
+  });
+  // 치수 입력 중 실시간으로 판정 버튼 활성/비활성 갱신
+  document.addEventListener("input", function (ev) {
+    if (ev.target && ev.target.classList && ev.target.classList.contains("jce")) refreshRun();
   });
   // 파일 선택
   var fi = $("jcapfile"); if (fi) fi.addEventListener("change", function (e) { state.manual = false; onImageFile(e.target.files && e.target.files[0]); });
