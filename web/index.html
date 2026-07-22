@@ -141,24 +141,34 @@
       function skip(){ timers.forEach(clearTimeout); timers=[]; resetLogo(); stage.classList.remove('run','handoff','play'); stage.classList.add('done'); finalEl.classList.add('on'); }
       fetch('data/bodytypes.json').then(function(r){ return r.json(); }).then(function(j){
         var map={}; j.types.forEach(function(t){ map[t.code]=t; });
+        // 모바일(≤470px, CSS 스케일 .52)만 2줄×4장. 웹은 원래 한 줄 8장 부채 유지.
+        var twoRow = window.matchMedia && window.matchMedia('(max-width:470px)').matches;
         CODES.forEach(function(code,i){
           if(!map[code]) return;
           var el=document.createElement('div'); el.className='card';
-          // 8장을 2줄×4장 부채로 — 한 줄 8장보다 폭이 절반이라 스테이지를 더 크게 볼 수 있음.
-          var PERROW=4, cc=(PERROW-1)/2;               // 행당 4장, 중심 col=1.5
-          var row=Math.floor(i/PERROW), col=i%PERROW;  // 위(0)/아래(1) 행, 행 안 위치 0~3
-          var th=(col-cc)*ANG*Math.PI/180;
-          var ROWGAP=150;                              // 두 행 세로 간격
-          var rowOff=(row-0.5)*ROWGAP + 52;            // 위 -23 / 아래 +127 (제목 공간 확보 위해 전체 아래로)
-          el.style.setProperty('--cs', '.85');         // 2줄이 세로로 들어오게 카드 살짝 축소
           el.style.setProperty('--i', i); el.style.setProperty('--r', ROT[i]||'0deg');
-          el.style.setProperty('--d', (Math.abs(col-cc)*70 + row*120).toFixed(0)+'ms'); // 위 행 먼저→아래 행
           el.style.setProperty('--fd', (FALL[i]||0)+'s');
           el.style.setProperty('--fx', (Math.round(Math.random()*180-90))+'px');
-          el.style.setProperty('--x', (PIV*Math.sin(th)).toFixed(1)+'px');
-          el.style.setProperty('--y', (PIV*(1-Math.cos(th))+rowOff).toFixed(1)+'px');
-          el.style.setProperty('--rot', ((col-cc)*ANG).toFixed(2)+'deg');
-          el.style.zIndex=row*4 + Math.round(PERROW-Math.abs(col-cc)); // 아래 행이 앞, 행 안 중앙이 위
+          if(twoRow){
+            // 8장을 2줄×4장 부채로 — 폭이 절반이라 스테이지를 더 크게 볼 수 있음.
+            var PERROW=4, cc=(PERROW-1)/2;               // 행당 4장, 중심 col=1.5
+            var row=Math.floor(i/PERROW), col=i%PERROW;
+            var th=(col-cc)*ANG*Math.PI/180;
+            var rowOff=(row-0.5)*150 + 52;               // ROWGAP 150 + 제목 공간 확보 위해 아래로
+            el.style.setProperty('--cs', '.85');         // 2줄이 세로에 들어오게 카드 살짝 축소
+            el.style.setProperty('--d', (Math.abs(col-cc)*70 + row*120).toFixed(0)+'ms');
+            el.style.setProperty('--x', (PIV*Math.sin(th)).toFixed(1)+'px');
+            el.style.setProperty('--y', (PIV*(1-Math.cos(th))+rowOff).toFixed(1)+'px');
+            el.style.setProperty('--rot', ((col-cc)*ANG).toFixed(2)+'deg');
+            el.style.zIndex=row*4 + Math.round(PERROW-Math.abs(col-cc)); // 아래 행 앞, 행 안 중앙이 위
+          } else {
+            // 웹: 원래 한 줄 8장 부채(--cs 미설정→1, z-index는 CSS calc(8 - --i) 사용)
+            var th2=(i-3.5)*ANG*Math.PI/180;
+            el.style.setProperty('--d', (Math.abs(i-3.5)*70).toFixed(0)+'ms');
+            el.style.setProperty('--x', (PIV*Math.sin(th2)).toFixed(1)+'px');
+            el.style.setProperty('--y', (PIV*(1-Math.cos(th2))).toFixed(1)+'px');
+            el.style.setProperty('--rot', ((i-3.5)*ANG).toFixed(2)+'deg');
+          }
           el.innerHTML=fitHTML(code, map[code]); deck.appendChild(el);
         });
         measureTw();
