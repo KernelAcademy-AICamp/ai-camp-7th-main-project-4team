@@ -21,10 +21,17 @@
         '<span class="navdiv"></span>' +
         '<a class="navbell" href="index.html#my" title="알림" aria-label="알림">' + bell + '</a>' +
         '<span class="navdiv"></span>' +
-        '<span class="navuser" id="appnavUser"><span class="navav">김</span><span class="navname">김도현 님</span></span>' +
+        '<span class="navuser" id="appnavUser"><span class="navav" id="appnavAv">김</span><span class="navname">김도현 님</span></span>' +
         '<div class="usermenu" id="appnavMenu"><a href="index.html#my">마이페이지</a><a href="index.html">로그아웃</a></div>' +
       '</div>' +
     '</div></header>';
+  // 아바타 = 홈·마이(index #myAv)와 동일한 얼굴 그림으로 통일. 페르소나=김도현(STR·남성) → index.js USER와 일치.
+  var AVA = { gender: 'male', color: '#9db8ff' };   // color = bodytypes.json STR point (유형 바뀌면 같이 바꿀 것)
+  var av = document.getElementById('appnavAv');
+  if(av){
+    av.style.background = AVA.color;
+    av.innerHTML = '<div class="head '+AVA.gender+'">'+(AVA.gender==='female'?'<span class="longhair"></span>':'')+'<span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div>';
+  }
   var u = document.getElementById('appnavUser'), m = document.getElementById('appnavMenu');
   if(u && m){
     u.addEventListener('click', function(e){ e.stopPropagation(); m.classList.toggle('on'); });

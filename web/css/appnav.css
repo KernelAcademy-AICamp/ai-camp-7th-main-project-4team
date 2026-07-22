@@ -23,6 +23,13 @@
 .appnav-r .navuser{display:flex; align-items:center; gap:9px; cursor:pointer;}
 .appnav-r .navname{color:#16140F; font-weight:700; white-space:nowrap;}
 .appnav-r .navav{width:34px; height:34px; border-radius:50%; background:#16140F; color:#fff; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:800; overflow:hidden; flex:none;}
+/* 진단 후 아바타 = 결과 카드 캐릭터 얼굴(head) — index #myAv와 동일(홈·마이와 같은 김도현). appnav.js가 유형 색 원 위에 얹음 */
+.appnav-r .navav .head{position:relative; width:34px; height:38px; margin-top:0; transform:scale(.58); transform-origin:center;}
+.appnav-r .navav .head .face{position:absolute; inset:0; border-radius:10px 10px 8px 8px; background:#ecd9c9; z-index:2; background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px),repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px);}
+.appnav-r .navav .head .cap{position:absolute; top:-3px; left:-3px; right:-3px; height:13px; border-radius:10px 10px 45% 45%; background:#2a2b30; z-index:3;}
+.appnav-r .navav .head.female .cap{background:#9a7350;}
+.appnav-r .navav .head .longhair{position:absolute; top:-5px; left:-7px; right:-7px; bottom:1px; background:#9a7350; border-radius:50% 50% 36% 36% / 46% 46% 30% 30%; z-index:1;}
+.appnav-r .navav .head .ey{position:absolute; top:18px; width:4px; height:5px; border-radius:50%; background:#2a2b30; z-index:4;} .appnav-r .navav .head .ey.l{left:9px;} .appnav-r .navav .head .ey.r{right:9px;}
 .appnav-r .usermenu{position:absolute; top:calc(100% + 6px); right:0; background:#fff; border:1px solid #E6E5E1; border-radius:12px; box-shadow:0 12px 32px rgba(0,0,0,.13); padding:6px; display:none; z-index:60; min-width:150px;}
 .appnav-r .usermenu.on{display:block;}
 .appnav-r .usermenu a{display:block; padding:10px 12px; font-size:13.5px; font-weight:700; color:#16140F; border-radius:8px; text-decoration:none;}
