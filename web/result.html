@@ -6,9 +6,9 @@
 <title>핏팅 — 진단 결과</title>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/fitting.css?v=20a1f07c">
-<link rel="stylesheet" href="css/diag.css?v=6b9af95b">
-<link rel="stylesheet" href="css/result.css?v=863150fe">
+<link rel="stylesheet" href="css/fitting.css?v=5bf0aadb">
+<link rel="stylesheet" href="css/diag.css?v=f3d4b54a">
+<link rel="stylesheet" href="css/result.css?v=0394bc1b">
 </head>
 <body>
 
@@ -22,6 +22,8 @@
 <div class="rwrap">
   <h1 id="rtitle">내 핏 타입이 나왔어요</h1>
   <div class="subttl"><span>평소 입던 옷으로 분석한 결과예요</span><i class="sep"> · </i><span>저장하고 브랜드별 추천 사이즈도 확인해보세요</span></div>
+  <!-- 완성 유도 배너(부분/0벌일 때만) — result.js가 채우고 hidden 해제 -->
+  <div id="rupgrade" class="rupgrade" hidden></div>
   <div class="rgrid">
     <div class="rleft">
       <div id="cardslot"></div>
@@ -31,7 +33,7 @@
           <svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>
           내 핏 카드 공유하기
         </button>
-        <span class="rshare-note">친구도 3분이면 자기 핏을 알 수 있어요</span>
+        <span class="rshare-note">친구와 함께 핏을 공유해보세요</span>
       </div>
       <div id="rtypeid" class="dtl-id"></div>
       <div id="rfit" class="dtl-fitbox"></div>
@@ -60,11 +62,12 @@
   </div>
 </div>
 
+<script src="js/demo-session.js?v=f0075c36"></script>
 <script src="js/body-model.js?v=2596b757"></script>
 <script src="js/engine.js?v=3f01a221"></script>
 <script src="js/bodytype.js?v=b00f36c1"></script>
 <script src="js/config.js?v=53f50277"></script>
 <script src="js/data.js?v=0353494d"></script>
-<script src="js/result.js?v=418947de"></script>
+<script src="js/result.js?v=7031f4b4"></script>
 </body>
 </html>

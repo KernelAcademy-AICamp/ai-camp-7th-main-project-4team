@@ -3,7 +3,7 @@
   /* 토큰·리셋·바디는 tokens.css가 담당(:root, *, body). 여기는 화면별 레이아웃 CSS만. */
   a{color:inherit; text-decoration:none; cursor:pointer;}
   /* 스크롤바 자리 항상 예약 — 콘텐츠 높이가 바뀌어(완료 화면 등) 스크롤바가 사라져도 폭이 안 변하게(내비·본문 고정) */
-  html{overflow-y:auto; scrollbar-gutter:stable;}
+  html{overflow-y:scroll; scrollbar-gutter:stable;}   /* 스크롤바 항상 강제 → 페이지 이동 시 내비 좌우 밀림 방지 */
   /* 푸터 하단 고정(sticky footer): body 세로 플렉스 + 본문이 남는 공간 채움 */
   body{min-height:100vh; display:flex; flex-direction:column; overflow-x:clip;}
 
@@ -38,7 +38,7 @@
   /* 스타일리스트찾기 화면 전환 — 잔잔한 페이드 */
   @keyframes viewIn{from{opacity:0;} to{opacity:1;}}
 
-  h2.sec{font-size:23px; font-weight:800; letter-spacing:-.04em; margin:44px 0 18px;}
+  h2.sec{font-size:25px; font-weight:800; letter-spacing:-.04em; margin:44px 0 18px;}   /* 내비 메인 카피 크기 통일(마이 h1·Fit jtitle과 25px) */
   /* .btn 은 tokens.css 정의(잉크블랙, hover #000)를 그대로 사용. 아래는 화면별 변형만. */
   .btn{padding:14px 24px; border-radius:13px; font-size:16px; font-family:inherit;}
   .btn.beige{background:var(--ink);}
@@ -153,9 +153,9 @@
   #stage.play .final{animation:finalFade .5s ease calc(var(--bridge) + var(--t-deal) + var(--hold) + var(--gap-copy)) both}
   #stage .final.on{pointer-events:auto}
   @keyframes finalFade{from{opacity:0}to{opacity:1}}
-  #stage .copy{font-size:clamp(26px,3.4vw,40px);font-weight:800;letter-spacing:-.04em;line-height:1.24;text-align:center}
+  #stage .copy{font-size:clamp(29px,3.75vw,44px);font-weight:800;letter-spacing:-.04em;line-height:1.24;text-align:center;margin-top:-0.3cm;margin-bottom:0.5cm}
   #stage .copy b{color:var(--green)}
-  #stage .flip{width:230px;height:390px;perspective:1300px}
+  #stage .flip{width:230px;height:390px;perspective:1300px;margin-top:-0.6cm}
   #stage.play .flip{animation:drawUp .72s cubic-bezier(.33,.72,.28,1) calc(var(--bridge) + var(--t-deal) + var(--hold) + var(--gap-copy) + .05s) both}
   @keyframes drawUp{0%{transform:translateY(205px) scale(.86)}72%{transform:translateY(-6px) scale(1.01)}100%{transform:translateY(0) scale(1)}}
   #stage .flipin{position:relative;width:100%;height:100%;transform-style:preserve-3d}
@@ -186,7 +186,9 @@
   #stage.done .skiphint{display:none}
   @media(max-width:1040px){#stage{zoom:.74}}
   @media(max-width:720px){#stage{zoom:.54}}
-  @media(max-width:470px){#stage{zoom:.4}}
+  /* 모바일: 부채덱(고정 폭 ~1008px×zoom)이 화면보다 넓어 양끝 카드가 잘리던 것 →
+     .4→.34로 낮춰 360·390·412px 모두 화면 안에 들어오게(덱은 균일 축소라 딜 애니 비례 유지) */
+  @media(max-width:470px){#stage{zoom:.34}}
   /* 넓은 화면에선 온보딩을 더 크게 — zoom은 레이아웃 박스까지 키워 잘림·여백 자동 처리(.wrap 콘텐츠폭 1180 안) */
   @media(min-width:1160px){#stage{zoom:1.08}}
   @media(min-width:1300px){#stage{zoom:1.16}}
@@ -303,10 +305,11 @@
   #home .promo h2{font-size:clamp(26px,3vw,33px);font-weight:800;letter-spacing:-.045em;line-height:1.26}
   #home .promo p{font-size:15px;color:var(--sub);line-height:1.6;margin-top:13px;max-width:500px}
   #home .promo .act{display:flex;flex-direction:column;gap:11px;min-width:210px;align-self:start;margin-top:-38px}
-  #home .promo .cta{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--green-soft);color:var(--green);font-size:15.5px;font-weight:800;padding:16px 26px;border-radius:26px;border:none;cursor:pointer;transition:transform .16s,filter .16s}
+  /* 두 버튼(.cta/.sub) 글씨·박스 크기 통일 — min-height로 테두리 유무(border-box) 차이까지 픽셀 일치 */
+  #home .promo .cta{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--green-soft);color:var(--green);font-size:15.5px;font-weight:800;padding:0 26px;min-height:54px;border-radius:26px;border:none;cursor:pointer;transition:transform .16s,filter .16s}
   #home .promo .cta:hover{transform:translateY(-2px);filter:brightness(.97)}
   #home .promo .cta svg{width:17px;height:17px}
-  #home .promo .sub{font-size:13.5px;font-weight:700;color:var(--green);background:transparent;border:1.5px solid var(--green-line,#B9D2C4);padding:12px 20px;border-radius:24px;cursor:pointer;transition:.15s}
+  #home .promo .sub{display:inline-flex;align-items:center;justify-content:center;font-size:15.5px;font-weight:700;color:var(--green);background:transparent;border:1.5px solid var(--green-line,#B9D2C4);padding:0 26px;min-height:54px;border-radius:26px;cursor:pointer;transition:.15s}
   #home .promo .sub:hover{background:var(--green-soft)}
   /* 아웃트로 */
   #home .outro{padding:100px 0 56px;text-align:center;border-top:1px solid var(--line)}
@@ -1449,6 +1452,12 @@
     #home .step{ grid-template-columns:auto 1fr; gap:14px; padding:20px 18px; border-radius:16px; }
     #home .step h3{ font-size:17px; }
     #home .step p{ font-size:13.5px; }
+    /* 지표(3분·8체형·0회)는 전체폭 아랫줄 → 왼쪽 대신 오른쪽 정렬 */
+    #home .step .big{ justify-self:end; }
+
+    /* 상황 칩(소개팅·면접·발표·…) — 2줄로 감기던 걸 한 줄로. 폭 부족 시 글자만 축소 */
+    #home .occtokens{ flex-wrap:nowrap; gap:5px; margin-top:20px; }
+    #home .occtokens .oc{ font-size:11.5px; padding:7px 8px; white-space:nowrap; flex:0 0 auto; }
 
     /* 히어로 CTA — 나란히 두면 버튼 폭이 좁아 글자가 깨짐 → 세로 전체폭 */
     #home .cta{ flex-direction:column; gap:10px; margin-top:28px; }
@@ -1473,6 +1482,12 @@
     #home .showcard .lock p{ font-size:13px; }
     /* 프로모 배너도 좌우 52px → 축소 */
     #home .promo{ padding:26px 20px; border-radius:20px; gap:16px; }
+    /* 하단 CTA 버튼: 위 '#home .cta{flex-direction:column}'(히어로용)이 클래스 충돌로
+       promo 버튼에도 걸려 텍스트·화살표가 세로로 쌓이고 박스가 커짐 → row로 되돌리고 축소 */
+    #home .promo .cta{ flex-direction:row; margin-top:0; gap:7px; padding:0 20px; min-height:48px; font-size:15px; border-radius:22px; }
+    /* .sub도 .cta와 글씨·박스 크기 동일하게(모바일) */
+    #home .promo .sub{ font-size:15px; padding:0 20px; min-height:48px; border-radius:22px; }
+    #home .promo .act{ gap:9px; margin-top:0; }   /* 데스크톱 2단용 -38px가 모바일 1단에서 버튼을 위 문단에 겹치게 함 → 해제 */
 
     /* ══ 스타일리스트 찾기(#shop) 모바일 ══
        .grid도 홈 .steps와 같은 원인(820에서 2단 유지) → 1단 + 카드를 가로형으로. */

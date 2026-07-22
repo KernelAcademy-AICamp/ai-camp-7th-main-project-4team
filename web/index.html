@@ -25,10 +25,10 @@
   통합 상태   = sohee 디자인 기반 완성 / sangmin 엔진·진단입력·엔진데이터 이식 대기(⑤⑥)
   결과카드    = card.html iframe (단일출처 data/bodytypes.json)
 -->
-<link rel="stylesheet" href="css/tokens.css?v=99f54572">
+<link rel="stylesheet" href="css/tokens.css?v=36124a96">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/index.css?v=cdc3d7df">
+<link rel="stylesheet" href="css/index.css?v=e854ac0f">
 </head>
 <body>
 
@@ -114,8 +114,11 @@
         var ml=document.getElementById('mlogo'), tg=document.getElementById('lgtarget'), tail=document.getElementById('tail');
         if(!ml||!tg) return;
         var r1=ml.getBoundingClientRect(), r2=tg.getBoundingClientRect();
-        var s=r2.height/r1.height;
-        var dx=(r2.left+r2.width/2)-(r1.left+r1.width/2), dy=(r2.top+r2.height/2)-(r1.top+r1.height/2);
+        var s=r2.height/r1.height;   // 높이비 — zoom이 분모·분자에서 상쇄돼 보정 불필요
+        // getBoundingClientRect은 zoom 적용된 화면좌표. transform은 요소 로컬좌표(zoom에 다시 축소)라
+        // dx를 그대로 쓰면 이동량이 zoom배만 적용돼 로고가 목표(lgtarget)에 덜 도착 → 줄자와 어긋남. /zoom 보정.
+        var zoom=parseFloat(getComputedStyle(stage).zoom)||1;
+        var dx=((r2.left+r2.width/2)-(r1.left+r1.width/2))/zoom, dy=((r2.top+r2.height/2)-(r1.top+r1.height/2))/zoom;
         if(tail) tail.style.opacity='0';
         ml.style.transition='transform .82s cubic-bezier(.2,.8,.3,1)';
         ml.style.transform='translate('+dx+'px,'+dy+'px) scale('+s+')';
@@ -210,7 +213,7 @@
     <!-- 원하는 상황 → 스타일리스트 연결 -->
     <section class="blk"><div class="hrow">
       <div class="reveal">
-        <span class="eyebrow">Shopper match</span>
+        <span class="eyebrow">Stylists match</span>
         <h2 class="hsec">나에게 어울리는 스타일<br>핏팅에서 함께 찾아가요</h2>
         <p class="lead">내 체형·사이즈에 맞는 스타일리스트를 연결해, 뭘 입을지 고민을 대신 풀어드려요</p>
         <div class="occtokens" id="hOccRow">

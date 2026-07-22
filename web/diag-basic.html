@@ -6,8 +6,8 @@
 <title>핏팅 — 기본 정보</title>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/fitting.css?v=20a1f07c">
-<link rel="stylesheet" href="css/diag.css?v=6b9af95b">
+<link rel="stylesheet" href="css/fitting.css?v=5bf0aadb">
+<link rel="stylesheet" href="css/diag.css?v=f3d4b54a">
 </head>
 <body>
 
@@ -18,13 +18,14 @@
   </div>
 </div>
 
-<div class="flow">
+<!-- 지난 진단 이력 안내 — 상단 풀폭 알림바(완료된 결과 있을 때만 · 아래 스크립트가 표시) -->
+<div class="diaghist" id="diagHist">
+  <span class="dh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5h.01"/></svg></span>
+  <span class="dh-msg"><b>지난 진단 결과가 있어요</b> · 다시 진단하면 지금 결과는 사라져요</span>
+  <button class="dh-x" type="button" aria-label="안내 닫기" onclick="diagHistClose()">✕</button>
+</div>
 
-  <!-- 지난 진단 이력 안내 — 완료된 결과가 있을 때만 노출(아래 스크립트가 표시) · 슬림 한 줄 바 -->
-  <div class="diaghist" id="diagHist">
-    <span class="dh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5h.01"/></svg></span>
-    <span class="dh-msg"><b>지난 진단 결과가 있어요</b> · 다시 진단하면 지금 결과는 사라져요</span>
-  </div>
+<div class="flow">
 
   <div class="dstepc">
     <div class="dnode now"><span class="ddot">1</span><span class="dlbl">기본정보</span></div>
@@ -73,6 +74,8 @@
     var has=false; try{ has=!!sessionStorage.getItem('fitting.done'); }catch(e){}   /* 완료된 진단 결과가 있을 때만 */
     if(has){ var el=document.getElementById('diagHist'); if(el) el.style.display='flex'; }
   })();
+  function diagHistClose(){ var el=document.getElementById('diagHist'); if(!el) return;   /* X — 자리(높이)는 유지해 본문 고정, 배너만 감춤 */
+    el.style.opacity='0'; setTimeout(function(){ el.style.visibility='hidden'; },200); }
 </script>
 <script src="js/diag-basic.js?v=f5f50b95"></script>
 </body>

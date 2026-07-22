@@ -1,5 +1,6 @@
 /* 페이지 이동을 부드러운 크로스페이드로 — 교차문서 View Transition (미지원 브라우저는 기존 즉시 이동) */
 @view-transition{ navigation: auto; }
+html{ overflow-y: scroll; scrollbar-gutter: stable; }   /* 스크롤바 항상 강제(scroll) → 모든 화면 폭 동일 → 페이지 이동 시 내비 좌우 밀림 방지(구형 브라우저도 적용) */
 ::view-transition-old(root),::view-transition-new(root){ animation-duration:.32s; animation-timing-function:cubic-bezier(.2,.8,.2,1); }
 @media (prefers-reduced-motion:reduce){ ::view-transition-old(root),::view-transition-new(root){ animation:none; } }
 
@@ -78,6 +79,10 @@
 
 /* ── 기본 리셋·바디 ───────────────────────────────────────────────── */
 *{box-sizing:border-box; margin:0; padding:0;}
+/* iOS 자동 글씨 확대 끔 — 없으면 zoom으로 축소한 온보딩(#stage)의 텍스트만
+   Safari/카톡 인앱브라우저가 임의로 키워 카드 글씨·인트로가 깨짐(fitting.css엔 이미 있음).
+   index.html은 fitting.css를 안 써서 tokens.css에도 필요. */
+html{-webkit-text-size-adjust:100%; text-size-adjust:100%;}
 body{
   font-family:var(--sans); background:var(--bg); color:var(--ink);
   line-height:1.5; letter-spacing:var(--ls-body); -webkit-font-smoothing:antialiased;

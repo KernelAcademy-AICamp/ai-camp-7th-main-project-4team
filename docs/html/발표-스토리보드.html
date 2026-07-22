@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅 — 서비스 소개 발표 스토리보드 (10분 · 15장)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --green:#2E4A3B; --green-mid:#3E6B52; --green-soft:#EAF1ED;
+    --clay:#B5654A; --teal:#2F7E8C; --neutral:#8A8F88;
+    --gold:#B8842B;
+    --ink:#1A1D1B; --sub:#5B615D; --sub2:#8B908B;
+    --line:#E4E7E2; --bg:#F5F7F3; --card:#FFFFFF;
+    --shadow:0 1px 2px rgba(30,45,35,.04), 0 6px 20px rgba(30,45,35,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Pretendard',system-ui,-apple-system,'Segoe UI',sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.55;
+    word-break:keep-all; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px; margin:0 auto; padding:40px 28px 72px}
+
+  /* ── 헤더 ── */
+  header{margin-bottom:8px}
+  .logo{font-size:26px; font-weight:800; letter-spacing:-.02em; color:var(--green); display:inline-flex; align-items:baseline; gap:1px}
+  .logo i{width:7px; height:7px; border-radius:50%; background:var(--green); display:inline-block; margin-left:1px}
+  .eyebrow{font-size:12px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--sub2); margin:22px 0 6px}
+  h1{font-size:30px; font-weight:800; letter-spacing:-.02em; margin:0 0 14px; text-wrap:balance}
+  h1 .thin{color:var(--sub); font-weight:600}
+  .meta{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px}
+  .chip{display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; color:var(--sub);
+    background:var(--card); border:1px solid var(--line); border-radius:999px; padding:6px 13px}
+  .chip b{color:var(--ink); font-weight:800}
+
+  /* ── 흐름 아크 ── */
+  .arc{margin:22px 0 6px; padding:18px 20px; background:var(--green); border-radius:16px; color:#fff;
+    display:flex; align-items:center; flex-wrap:wrap; gap:10px 6px}
+  .arc-lab{font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; opacity:.7; width:100%; margin-bottom:2px}
+  .arc-step{display:inline-flex; align-items:center; gap:9px}
+  .arc-step .b{font-size:14.5px; font-weight:800}
+  .arc-step .s{font-size:12px; opacity:.72; font-weight:600}
+  .arc-arrow{opacity:.5; font-weight:800; margin:0 2px}
+
+  /* ── 범례 ── */
+  .legend{display:flex; flex-wrap:wrap; gap:16px; margin:20px 0 4px; font-size:12.5px; color:var(--sub); font-weight:600}
+  .legend .star{color:var(--gold); font-weight:800}
+  .legend .dot{display:inline-block; width:9px; height:9px; border-radius:50%; vertical-align:middle; margin-right:5px}
+
+  /* ── 슬라이드 그리드 ── */
+  .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(340px,1fr)); gap:16px; margin-top:14px}
+  .slide{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 18px 16px;
+    box-shadow:var(--shadow); position:relative; overflow:hidden}
+  .slide::before{content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--acc,var(--green))}
+  .slide.key{border-color:#EAD9B0}
+  .s-top{display:flex; align-items:center; gap:9px; margin-bottom:10px}
+  .num{font-size:13px; font-weight:800; font-variant-numeric:tabular-nums; color:#fff; background:var(--acc,var(--green));
+    width:30px; height:30px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; flex:none}
+  .act{font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--acc,var(--green))}
+  .time{margin-left:auto; font-size:12px; font-weight:700; font-variant-numeric:tabular-nums; color:var(--sub);
+    background:var(--bg); border-radius:6px; padding:3px 9px}
+  .s-title{font-size:17.5px; font-weight:800; letter-spacing:-.01em; margin:0 0 8px; display:flex; align-items:center; gap:7px}
+  .s-title .star{color:var(--gold); font-size:15px}
+  .msg{font-size:14.5px; font-weight:700; color:var(--green); background:var(--green-soft);
+    border-radius:9px; padding:9px 12px; margin:0 0 11px; line-height:1.45}
+  .slide.key .msg{color:var(--ink)}
+  ul.content{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:6px}
+  ul.content li{font-size:13.5px; color:var(--sub); padding-left:16px; position:relative; line-height:1.5}
+  ul.content li::before{content:''; position:absolute; left:2px; top:8px; width:5px; height:5px; border-radius:50%; background:var(--acc,var(--green)); opacity:.55}
+  ul.content li b{color:var(--ink); font-weight:700}
+
+  /* 액트 색 */
+  [data-act="오프닝"]{--acc:var(--neutral)}
+  [data-act="발견"]{--acc:var(--clay)}
+  [data-act="정의"]{--acc:var(--gold)}
+  [data-act="솔루션"]{--acc:var(--green)}
+  [data-act="데모"]{--acc:var(--teal)}
+  [data-act="검증"]{--acc:var(--green-mid)}
+  [data-act="마무리"]{--acc:var(--neutral)}
+
+  /* ── 핸드오프 노트 ── */
+  .note{margin-top:26px; background:var(--card); border:1px solid var(--line); border-left:4px solid var(--gold);
+    border-radius:12px; padding:18px 20px}
+  .note h2{font-size:15px; font-weight:800; margin:0 0 10px; display:flex; align-items:center; gap:8px}
+  .note ol{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:6px}
+  .note li{font-size:13.5px; color:var(--sub); line-height:1.55}
+  .note li b{color:var(--ink); font-weight:700}
+  .foot{margin-top:22px; font-size:12px; color:var(--sub2); text-align:center}
+
+  @media (max-width:560px){
+    .wrap{padding:28px 16px 56px}
+    h1{font-size:24px}
+    .grid{grid-template-columns:1fr}
+  }
+  @media print{
+    body{background:#fff}
+    .slide, .arc, .note{box-shadow:none}
+    .arc{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <span class="logo">Fitting<i></i></span>
+    <div class="eyebrow">서비스 소개 발표 · 스토리보드 v2</div>
+    <h1>핏팅, 안 입어본 브랜드도 <span class="thin">내 사이즈로 딱 FIT</span></h1>
+    <div class="meta">
+      <span class="chip">⏱ <b>10분</b> 발표 (러닝 ≈ 9:05)</span>
+      <span class="chip">🗂 <b>14</b> 슬라이드 (표지 포함)</span>
+      <span class="chip">👥 대상 <b>코치 · 학원생</b></span>
+      <span class="chip">🎨 디자인 <b>소희</b> · 구성 <b>강건형</b></span>
+    </div>
+  </header>
+
+  <!-- 전체 흐름 -->
+  <div class="arc">
+    <span class="arc-lab">전체 흐름 (더블 다이아몬드)</span>
+    <span class="arc-step"><span class="b">발견</span><span class="s">자체 설문</span></span>
+    <span class="arc-arrow">→</span>
+    <span class="arc-step"><span class="b">정의</span><span class="s">페르소나 → 저니맵 → 5Whys → HMW</span></span>
+    <span class="arc-arrow">→</span>
+    <span class="arc-step"><span class="b">솔루션</span><span class="s">2축 + before/after</span></span>
+    <span class="arc-arrow">→</span>
+    <span class="arc-step"><span class="b">증명</span><span class="s">MVP 데모 · 해자</span></span>
+    <span class="arc-arrow">→</span>
+    <span class="arc-step"><span class="b">검증·수익</span><span class="s">수요 · BM</span></span>
+    <span class="arc-arrow">→</span>
+    <span class="arc-step"><span class="b">마무리</span><span class="s">팀 · 로드맵</span></span>
+  </div>
+
+  <div class="legend">
+    <span><span class="star">★</span> 승부처 (코치 가점 포인트)</span>
+    <span><span class="dot" style="background:var(--clay)"></span>발견</span>
+    <span><span class="dot" style="background:var(--gold)"></span>정의</span>
+    <span><span class="dot" style="background:var(--green)"></span>솔루션</span>
+    <span><span class="dot" style="background:var(--teal)"></span>데모</span>
+    <span><span class="dot" style="background:var(--green-mid)"></span>검증·수익</span>
+    <span><span class="dot" style="background:var(--neutral)"></span>오프닝·마무리</span>
+  </div>
+
+  <!-- 슬라이드 카드 -->
+  <div class="grid">
+
+    <article class="slide" data-act="오프닝">
+      <div class="s-top"><span class="num">00</span><span class="act">오프닝</span><span class="time">0:15</span></div>
+      <div class="s-title">표지</div>
+      <p class="msg">3초 안에 “뭐 하는 서비스”인지 각인</p>
+      <ul class="content">
+        <li>로고 <b>Fitting.</b> + 태그라인 “안 입어본 브랜드도 내 사이즈로 딱 FIT”</li>
+        <li>팀명 · 발표자</li>
+      </ul>
+    </article>
+
+    <article class="slide" data-act="발견">
+      <div class="s-top"><span class="num">01</span><span class="act">발견</span><span class="time">0:45</span></div>
+      <div class="s-title">배경 · 문제인식 (자체 설문)</div>
+      <p class="msg">우리가 직접 물어봤다 — 고민은 두 갈래였다</p>
+      <ul class="content">
+        <li>자체 설문 결과: ① <b>사이즈 고민</b> ② <b>스타일링 고민</b></li>
+        <li><b>표본 n명 · 조사 시기</b> 반드시 명시 (신뢰의 근거)</li>
+        <li>이 2가지 고민이 곧 <b>MVP 2개</b>로 이어짐 — 대칭 예고</li>
+        <li>보조 근거: 반품 1위 사유 = 사이즈 38% (Statista) · 국내 반품비용 연 4.5조 (머니투데이 ’24)</li>
+      </ul>
+    </article>
+
+    <article class="slide" data-act="정의">
+      <div class="s-top"><span class="num">02</span><span class="act">정의</span><span class="time">0:30</span></div>
+      <div class="s-title">페르소나</div>
+      <p class="msg">이 문제를 가장 아프게 겪는 사람</p>
+      <ul class="content">
+        <li>설문 기반 <b>대표 페르소나 1명</b> (예: 온라인으로만 옷 사는 20대)</li>
+        <li>사이즈 실패 경험 · 목표 · 불만</li>
+        <li>다음 장 <b>저니맵의 주인공</b>으로 연결</li>
+      </ul>
+    </article>
+
+    <article class="slide" data-act="정의">
+      <div class="s-top"><span class="num">03</span><span class="act">정의</span><span class="time">0:40</span></div>
+      <div class="s-title">저니맵</div>
+      <p class="msg">여정 어디서 아픈가 — 현재 흐름 + 페인포인트</p>
+      <ul class="content">
+        <li>페르소나의 <b>현재 여정</b> (검색→사이즈표 뒤지기→고민→주문→반품) × 감정 곡선</li>
+        <li>페인포인트 마킹 → <b>가장 아픈 지점 1개</b> 선정</li>
+        <li>그 1개가 다음 장 <b>5 Whys의 입력</b> (as-is 흐름은 07 before에서 재활용)</li>
+      </ul>
+    </article>
+
+    <article class="slide" data-act="정의">
+      <div class="s-top"><span class="num">04</span><span class="act">정의</span><span class="time">0:30</span></div>
+      <div class="s-title">5 Whys</div>
+      <p class="msg">왜를 다섯 번 — 근본 원인까지</p>
+      <ul class="content">
+        <li>핵심 페인포인트 <b>1개만</b> 파기 (여러 개 X)</li>
+        <li>표면(반품 귀찮음) → 근본(<b>브랜드마다 기준이 달라 내 사이즈를 모름</b>)</li>
+      </ul>
+    </article>
+
+    <article class="slide" data-act="정의">
+      <div class="s-top"><span class="num">05</span><span class="act">정의</span><span class="time">0:30</span></div>
+      <div class="s-title">문제정의</div>
+      <p class="msg">HMW 한 문장으로 못 박기</p>
+      <ul class="content">
+        <li>“어떻게 하면 <b>치수 재지 않고도</b> 내 몸에 맞는 사이즈를 알 수 있을까?”</li>
+        <li>설문 → 저니맵 → 5 Whys가 <b>이 문장으로 수렴</b>하는 구조 강조</li>
+      </ul>
+    </article>
+
+    <article class="slide" data-act="솔루션">
+      <div class="s-top"><span class="num">06</span><span class="act">솔루션</span><span class="time">0:45</span></div>
+      <div class="s-title">솔루션</div>
+      <p class="msg">착용 경험만으로 내 체형·사이즈를 번역한다</p>
+      <ul class="content">
+        <li>2축: ① <b>사이즈 진단</b> ← 사이즈 고민 ② <b>쇼퍼 매칭</b> ← 스타일링 고민</li>
+        <li>설문의 2가지 고민과 <b>1:1 대응</b>을 화면에 명시</li>
+        <li>치수 입력 X · AI 8체형 · 브랜드별 사이즈 번역</li>
+      </ul>
+    </article>
+
+    <article class="slide key" data-act="솔루션">
+      <div class="s-top"><span class="num">07</span><span class="act">솔루션</span><span class="time">0:45</span></div>
+      <div class="s-title">현재 → 핏팅 플로우 (before / after) <span class="star">★</span></div>
+      <p class="msg">같은 여정이 이렇게 짧아진다 — 한 화면 정면 대비</p>
+      <ul class="content">
+        <li><b>좌(현재·5단계)</b>: 검색 → 사이즈표·후기 뒤지기 → 고민 → 주문 → <b>반품/교환</b> (빨강 페인 마킹)</li>
+        <li><b>우(핏팅·3단계)</b>: 착용경험 입력(2분) → 8체형 진단 → 브랜드 사이즈 번역 (<b>반품 없이</b>)</li>
+        <li><b>같은 가로 축</b>으로 정렬 → “2단계가 사라졌다”가 한눈에</li>
+        <li>기존 대안 한계(사이즈표 어려움·실측 귀찮음)를 좌측에 한 줄</li>
+      </ul>
+    </article>
+
+    <article class="slide key" data-act="데모">
+      <div class="s-top"><span class="num">08</span><span class="act">데모</span><span class="time">1:15</span></div>
+      <div class="s-title">MVP① 사이즈 진단 + 해자 <span class="star">★</span></div>
+      <p class="msg">결과가 이렇게 나온다 — 그리고 아무나 못 따라 한다</p>
+      <ul class="content">
+        <li><b>실화면/30초 GIF</b>: 8체형 카드 · 체형 측정(상/하의 핏 취향) · 브랜드별 추천</li>
+        <li>해자: <b>사이즈코리아 회귀모델</b> · 8체형 엔진 · <b>garments DB</b>(실측 역산) · 서버 보호</li>
+        <li>Eval 한 줄: <b>정확도 피드백 루프</b>(맞아요/보통/안 맞아요) 구축·실측 중</li>
+        <li>차별점: 기존 사이즈 추천과 달리 <b>치수 입력 없이 착용경험 기반</b></li>
+      </ul>
+    </article>
+
+    <article class="slide key" data-act="데모">
+      <div class="s-top"><span class="num">09</span><span class="act">데모</span><span class="time">0:50</span></div>
+      <div class="s-title">MVP② 쇼퍼 매칭 <span class="star">★</span></div>
+      <p class="msg">혼자 어려우면 전문가와 — 두 번째 고민의 답</p>
+      <ul class="content">
+        <li><b>실화면</b>: 스타일리스트 찾기 · 견적서 · 매칭수 · 후기</li>
+        <li><b>에스크로 결제</b> · 결과물 전달</li>
+        <li>진단 결과(체형 카드)가 <b>견적서에 자동 첨부</b> — 두 축의 연결 고리</li>
+      </ul>
+    </article>
+
+    <article class="slide" data-act="검증">
+      <div class="s-top"><span class="num">10</span><span class="act">검증·수익</span><span class="time">0:40</span></div>
+      <div class="s-title">수요 검증</div>
+      <p class="msg">시장이 원한다는 증거</p>
+      <ul class="content">
+        <li><b>페이크도어 · 웨이트리스트</b> 실측</li>
+        <li>초기 지표 · 피드백</li>
+      </ul>
+    </article>
+
+    <article class="slide" data-act="검증">
+      <div class="s-top"><span class="num">11</span><span class="act">검증·수익</span><span class="time">0:35</span></div>
+      <div class="s-title">비즈니스 모델</div>
+      <p class="msg">어떻게 돈을 버나</p>
+      <ul class="content">
+        <li>스타일리스트 <b>매칭 수수료</b> (에스크로)</li>
+        <li>향후 브랜드 제휴</li>
+        <li>데이터 쌓일수록 <b>정확도↑ 선순환</b></li>
+      </ul>
+    </article>
+
+    <article class="slide key" data-act="마무리">
+      <div class="s-top"><span class="num">12</span><span class="act">마무리</span><span class="time">0:35</span></div>
+      <div class="s-title">팀 · 협업 방식 <span class="star">★</span></div>
+      <p class="msg">3명이 이렇게 굴렸다 — 팀플 평가 필수</p>
+      <ul class="content">
+        <li>강건형(팀장·데이터) · 이상민(개발) · 이소희(디자인)</li>
+        <li>역할별 브랜치 · <b>‘한 파일 = 한 역할’</b> 소유 규칙</li>
+        <li>RACI 업무 분담 · <b>Claude Code</b> 협업</li>
+      </ul>
+    </article>
+
+    <article class="slide" data-act="마무리">
+      <div class="s-top"><span class="num">13</span><span class="act">마무리</span><span class="time">0:30</span></div>
+      <div class="s-title">로드맵 + 마무리</div>
+      <p class="msg">다음은 이거, 그리고 감사합니다</p>
+      <ul class="content">
+        <li>MVP → <b>브랜드 커버리지 · 정확도</b> 확대</li>
+        <li>태그라인 재등장 (표지와 수미상관)</li>
+        <li>Q&amp;A</li>
+      </ul>
+    </article>
+
+  </div>
+
+  <!-- 핸드오프 노트 -->
+  <div class="note">
+    <h2>🎨 소희님께 넘길 때 (구성 담당 체크리스트)</h2>
+    <ol>
+      <li>각 카드의 <b>초록 박스 = 그 장의 한 메시지</b>. 디자인은 이 메시지에 종속 (한 슬라이드 = 한 메시지).</li>
+      <li>방법론 파트(02~05)는 <b>결론 1개 중심으로 30~40초</b> — 아티팩트 전체를 읽지 않기.</li>
+      <li><b>07 before/after는 좌·우를 같은 가로 축</b>으로 정렬 — 5단계 vs 3단계 대비가 핵심. 현재 흐름은 저니맵(03)에서 이미 봤으니 좌측은 압축 재활용.</li>
+      <li>MVP 장(08·09)은 기능 나열 금지 — <b>실제 화면 캡처/GIF가 본체</b>.</li>
+      <li>설문(01)엔 <b>표본 n·조사 시기</b>, 인용 수치엔 <b>출처+연도</b> 필수.</li>
+      <li>브랜드 통일: 딥그린 <b>#2E4A3B</b> + Pretendard/SUIT + <b>Fitting.</b> 로고 (tokens.css 기준).</li>
+      <li><b>★ 4장(07·08·09·12)</b>이 승부처 — 시간·디자인 공을 여기에.</li>
+    </ol>
+  </div>
+
+  <p class="foot">총 러닝타임 ≈ 9분 5초 · 남는 시간은 데모 트러블·Q&amp;A 버퍼 · 15분까지 여유 있음</p>
+
+</div>
+</body>
+</html>
