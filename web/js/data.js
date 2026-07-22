@@ -72,6 +72,33 @@
       return Promise.resolve(null);
     },
 
+    /* ── 구매 판정(단일 상품 셀) = /api/judge ─────────────────
+       api: 클라 추정 cm+착용경험+대상 셀(브랜드·핏·종류)을 서버로 → 서버가 specs로 역산·판정.
+            반환 {covered, judgment, eb}. garments.json은 서버 전용(실측 비노출).
+       proto: 로컬 계산(호출부 judge.js가 garments.json 직접 로드) → null. */
+    judge: function (d) {
+      if (MODE === 'api') return postJSON('/api/judge', d).then(function (r) { return r.json(); });
+      return Promise.resolve(null);
+    },
+
+    /* ── 사이즈표 캡처 인식 = /api/parse-size-table ───────────
+       사용자가 올린 상품 사이즈표 이미지를 서버(Claude 비전)가 구조화 JSON으로.
+       api: POST {image:base64|dataURL} → {parsed, usage}. 키는 서버 전용(비노출).
+       proto: 서버 없음 → null(호출부가 '직접 입력' 폴백 유도). */
+    parseSizeTable: function (imageDataUrl) {
+      if (MODE === 'api') return postJSON('/api/parse-size-table', { image: imageDataUrl }).then(function (r) { return r.json(); });
+      return Promise.resolve(null);
+    },
+
+    /* ── 사이즈표 제공(수집) = /api/submit-garment ────────────
+       판정에서 사용자가 올린 표를 엔진 개선 opt-in 동의 시 저장(검수 큐행).
+       api: consent=true일 때만 POST → {ok}. proto: 미저장(데모) → false. */
+    submitGarment: function (payload) {
+      if (MODE !== 'api') return Promise.resolve(false);
+      var d = payload || {}; d.session_id = this.sessionId();
+      return postJSON('/api/submit-garment', d).then(function (r) { return r.ok; }).catch(function () { return false; });
+    },
+
     /* ── 수요 신호(스타일리스트찾기 페이크도어) = /api/lead ──────
        실매칭 없이 "얼마나 원하나"만 측정. api 모드에서만 서버 저장(목업 downstream 미개방).
        demand: {kind:'quote'|'notify', service, occasion, budget, note, stylist, contact}

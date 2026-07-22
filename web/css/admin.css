@@ -152,6 +152,16 @@ table.dt td:has(.gcell){ padding:5px 6px; }
 .abtn.ghost:hover{ background:var(--soft); }
 /* 작은 인라인 버튼(가로바·헤더용) — .abtn을 width:auto로 축소 */
 .abtn.sm{ width:auto; padding:8px 14px; font-size:13px; border-radius:10px; }
+/* 데이터 하위 메뉴 버튼 줄 */
+.subnav{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:16px; }
+.subnav .abtn{ text-decoration:none; font-weight:700; display:inline-flex; align-items:center; gap:6px; }
+.subnav .abtn.hot{ border-color:var(--green); color:var(--green); }
+.subnav .abtn.hot:hover{ background:var(--green); color:#fff; }
+.subnav-badge{ display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 5px;
+  border-radius:9px; background:var(--warn,#B0553F); color:#fff; font-size:11px; font-weight:800; line-height:1; }
+/* 승격 컨트롤(브랜드 매핑·핏·종류 셀렉트) */
+.jmctl{ display:flex; gap:5px; flex-wrap:wrap; align-items:center; }
+.jm-sel{ font:inherit; font-size:12px; padding:6px 7px; border:1px solid var(--line2,#dcdcd8); border-radius:8px; background:#fff; color:var(--ink); max-width:130px; }
 
 /* 텍스트 입력(.filters select·.numin과 통일) — 이메일·검색 등 */
 .inp{ font-family:inherit; font-size:13px; padding:9px 13px; border:1px solid var(--line);

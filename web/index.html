@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="css/tokens.css?v=99f54572">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/index.css?v=aacc3ab6">
+<link rel="stylesheet" href="css/index.css?v=cdc3d7df">
 </head>
 <body>
 
@@ -38,6 +38,8 @@
     <nav class="menu">
       <a class="on" data-t="home" onclick="go('home',this)">Home</a>
       <a data-t="shop" onclick="go('shop',this)">Stylists</a>
+      <!-- 구매 판정(Fit) 진입 — 별도 페이지(judge.html). 라벨·배치는 디자이너 검수 대상. -->
+      <a href="judge.html">Fit</a>
       <a data-t="my" id="navMy" onclick="go('my',this)">My</a>
     </nav>
     <div class="navr"><span class="sup" style="cursor:pointer" onclick="location.href='pro-signup.html'">스타일리스트 지원</span><span class="navdiv"></span><span class="navbell" id="navBell" onclick="toggleNotiPop(event)" title="알림" aria-label="알림" style="position:relative;display:inline-flex;align-items:center;cursor:pointer;color:var(--sub)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 4.6-1.9 6-1.9 6h15.8s-1.9-1.4-1.9-6z"/><path d="M10.2 18.5a2 2 0 0 0 3.6 0"/></svg><span id="notiDot" style="position:absolute;top:-2px;right:-2px;width:7px;height:7px;border-radius:50%;background:var(--warn);border:1.5px solid var(--bg);display:none"></span></span><span class="navdiv" id="navBellDiv"></span><button class="navauth" id="navAuth" style="display:none;padding:8px 15px;border-radius:10px;background:var(--green);color:#fff;border:none;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit;white-space:nowrap" onclick="openLogin('')">로그인 · 회원가입</button><span class="navuser" id="navUser" onclick="toggleUserMenu(event)"><span class="navav" id="myAv">김</span><span class="navname">김도현 님</span></span><div class="usermenu" id="userMenu"><a onclick="closeUserMenu();go('my')">마이페이지</a><a onclick="closeUserMenu();doLogout()">로그아웃</a></div><div class="notipop" id="notiPop"><div class="notipop-hd">알림 <a id="notiMarkAll" onclick="markAllNoti()">모두 읽음</a></div><div class="notipop-list" id="custNotiList"></div></div></div>
@@ -636,6 +638,10 @@
   <a class="tb" data-t="shop" onclick="go('shop',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1.5 13H4.5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
     <span>샵</span></a>
+  <!-- 구매 판정(핏) 진입 — 별도 페이지(judge.html). 라벨·아이콘·배치는 디자이너 검수 대상. -->
+  <a class="tb" href="judge.html" aria-label="판정">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5.5"/></svg>
+    <span>핏</span></a>
   <a class="tb" data-t="my" onclick="go('my',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.6 3.1-5.5 7-5.5s7 1.9 7 5.5"/></svg>
     <span>마이</span></a>
@@ -645,7 +651,7 @@
 
 <!-- sangmin 모듈(⑥): 진단 입력 설문(M1) + 엔진 계약 목업(M2) -->
 <script src="js/config.js?v=66a385e1"></script>
-<script src="js/data.js?v=856deef9"></script>
-<script src="js/index.js?v=85a6cac0"></script>
+<script src="js/data.js?v=f8d00d5f"></script>
+<script src="js/index.js?v=94f3b388"></script>
 </body>
 </html>

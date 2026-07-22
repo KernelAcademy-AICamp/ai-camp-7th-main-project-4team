@@ -81,6 +81,53 @@
       catch (e) { return false; }
     },
 
+    // ── 사용자 제출 사이즈표 검수(garment_submission 테이블) [db/08] — admin RLS. 판정 ④⑤ ──
+    // 읽기: 상태별(기본 pending) 최신순. 쓰기: status만 변경(verified|rejected|merged).
+    submissions: async function (status) {
+      if (!client) return [];
+      try {
+        var q = client.from('garment_submission').select('*').order('created_at', { ascending: false }).limit(500);
+        if (status) q = q.eq('status', status);
+        var r = await q; return r.data || [];
+      } catch (e) { return []; }
+    },
+    setSubmissionStatus: async function (id, status) {
+      if (!client) return false;
+      try { var r = await client.from('garment_submission').update({ status: status }).eq('id', id); return !r.error; }
+      catch (e) { return false; }
+    },
+    // 승격: 제출 row → garment spec으로 변환해 정본 garment 테이블에 insert(rev 트리거→진단/추천 즉시 반영) → status=merged.
+    //   opts로 관리자가 브랜드 매핑·핏·종류를 확정(자동 슬러그·기본값의 어긋남 해결):
+    //   { brandId, brandName, fit(=fitLine|silhouette), subtype }. 없으면 안전 기본값.
+    //   provenance.method='user_submission'으로 앵커(수기)와 구분.
+    mergeSubmission: async function (row, opts) {
+      if (!client || !row) return { ok: false, error: 'no client/row' };
+      opts = opts || {};
+      try {
+        var cat = row.category === 'BOTTOM' ? 'BOTTOM' : 'TOP';
+        var brandId = opts.brandId || (row.brand || '').trim().toLowerCase().replace(/\s+/g, '-') || ('usub-' + row.id);
+        var brandName = opts.brandName || row.brand || '사용자 제출';
+        var subtype = opts.subtype || (cat === 'TOP' ? 'long_sleeve' : 'long_pants');
+        var fit = opts.fit || (cat === 'TOP' ? 'regular' : 'straight');
+        var specs = (row.sizes || []).filter(function (s) { return s && s.garmentCm; }).map(function (s, i) {
+          var spec = {
+            brandId: brandId, brandName: brandName, category: cat,
+            gender: 'unisex', subtype: subtype,
+            sizeLabel: s.sizeLabel, sizeCanonical: s.sizeLabel, sizeSystem: 'letter', sizeOrder: i,
+            garmentCm: s.garmentCm, product: row.product || null,
+            provenance: { method: 'user_submission', submissionId: row.id, confidence: 0.5 }
+          };
+          if (cat === 'TOP') spec.fitLine = fit; else spec.silhouette = fit;
+          return { brand_id: brandId, category: cat, spec: spec };
+        });
+        if (!specs.length) return { ok: false, error: 'no sizes' };
+        var ins = await this.insertGarment(specs);
+        if (!ins.ok) return ins;
+        await this.setSubmissionStatus(row.id, 'merged');
+        return { ok: true, count: specs.length };
+      } catch (e) { return { ok: false, error: String(e) }; }
+    },
+
     // ── 실측표 CRUD(garment 테이블) [db/05] — admin RLS 쓰기. 변경 시 rev 자동 증가(트리거)→진단 즉시 반영. ──
     // 저장 전략: 현재 뷰 행을 insert(무 id, identity 생성) 후 기존 id 삭제 → GENERATED ALWAYS upsert 충돌 회피.
     // rows: [{brand_id, category, spec}] (id 없음).

@@ -50,7 +50,8 @@ close(FitEngine.ratingToEase("shoulder", "BIG"), 6, "어깨 BIG = 4 + 4/2");
 close(FitEngine.ratingToEase("belly", "SNUG"), 4, "배 SNUG = (0+8)/2");
 close(FitEngine.ratingToEase("belly", "RELAXED"), 13, "배 RELAXED = (8+18)/2");
 eq(FitEngine.ratingToEase("chest", "NONSENSE"), null, "미정의 등급 → null");
-eq(FitEngine.ratingToEase("waist", "SNUG"), null, "미활성 부위(하의) → null");
+close(FitEngine.ratingToEase("waist", "SNUG"), 4, "상의 허리 SNUG=(0+8)/2 — 보조밴드 TOP:waist 활성");
+eq(FitEngine.ratingToEase("nope", "SNUG"), null, "미정의 부위 → null");
 
 /* ── 착용경험 → 인체 역산 (bodyFromExperiences) ─────────────────────────────── */
 const specsMatch = [
@@ -156,6 +157,53 @@ eq(FitEngine.recommendBottom({ waist: 80, hip: 98, thigh: 56 }, "wide", "male", 
 ["brandName", "silhouette", "size", "fit", "bottleneck", "fitScore", "waistEase"].forEach((k) => {
   assert.ok(k in brec[0], `하의 추천 항목에 ${k} 필드 존재`); pass++;
 });
+
+/* ── 단일 상품 판정 (judge): 사이즈 전체를 몸에 대고, 점수 하한 없이 판정 ────────── */
+const jspecs = [
+  { category: "TOP", brandId: "a", brandName: "A", fitLine: "regular", sizeLabel: "M", sizeOrder: 0,
+    gender: "male", subtype: "long_sleeve", garmentCm: { chest: 52, shoulder: 44 } },
+  { category: "TOP", brandId: "a", brandName: "A", fitLine: "regular", sizeLabel: "L", sizeOrder: 1,
+    gender: "male", subtype: "long_sleeve", garmentCm: { chest: 55, shoulder: 46 } },
+];
+// body chest96·shoulder45. M: chest 52×2−96=8(SNUG)·shoulder 44−45=−1(TIGHT) / L: chest 110−96=14(RELAXED)·shoulder 46−45=1(SNUG)
+const jr = FitEngine.judge({ chest: 96, shoulder: 45 }, jspecs);
+eq(jr.sizes.length, 2, "판정 — 사이즈 2개");
+eq(jr.sizes.map((s) => s.sizeLabel), ["M", "L"], "sizeOrder 정렬(M→L)");
+eq(jr.sizes[0].parts.find((p) => p.part === "shoulder").rating, "TIGHT", "M 어깨 −1 = 끼임");
+eq(jr.sizes[0].verdict.label, "TIGHT", "M 종합판정 = 끼임");
+eq(jr.sizes[0].verdict.ko, "어깨가 껴요", "조사 — 어깨'가'(받침 없음)");
+eq(FitEngine.judge({ chest: 120, shoulder: 52 }, jspecs).sizes[0].verdict.ko, "가슴이 껴요", "조사 — 가슴'이'(받침 있음)");
+eq(jr.pick, "L", "끼임 없는 L을 추천");
+assert.ok(jr.anyFit === true, "맞는 사이즈 있음"); pass++;
+// 점수 하한 없음: 심한 불일치는 35 밑으로도 내려간다(recommend와 다른 핵심)
+const badJ = FitEngine.judge({ chest: 130, shoulder: 60 }, jspecs);
+assert.ok(badJ.sizes[0].fitScore < 35, "판정 점수는 35 하한 없음 — '안 맞음' 표현 가능"); pass++;
+assert.ok(badJ.anyFit === false, "다 끼면 anyFit=false"); pass++;
+// 미표기 부위 → missing (판정에서 빠지고 표면에 드러남)
+const jmiss = [{ category: "TOP", brandId: "a", brandName: "A", fitLine: "regular", sizeLabel: "M",
+  gender: "male", subtype: "long_sleeve", garmentCm: { chest: 52 } }];
+eq(FitEngine.judge({ chest: 96, shoulder: 45 }, jmiss).sizes[0].missing, ["shoulder"], "어깨 미표기 → missing");
+// 오차막대: 오차구간이 끼임경계(0)를 물면 borderline. L 어깨 여유=1, ±2 → [−1,3]가 0을 물음
+const jbor = FitEngine.judge({ chest: 96, shoulder: 45 }, jspecs, { errors: { shoulder: 2 } });
+assert.ok(jbor.sizes[1].parts.find((p) => p.part === "shoulder").borderline === true,
+  "오차구간이 끼임경계 물면 borderline"); pass++;
+eq(jbor.sizes[1].parts.find((p) => p.part === "shoulder").easeLo, -1, "borderline 하한 = 여유−오차");
+// easeToRating 일반화 — 어깨 밴드 {0,1.5,4}
+eq(FitEngine.easeToRating("shoulder", -0.1, "TOP"), "TIGHT", "어깨 여유<0 = 끼임");
+eq(FitEngine.easeToRating("shoulder", 1, "TOP"), "SNUG", "어깨 여유1 = 딱맞음");
+eq(FitEngine.easeToRating("nope", 5, "TOP"), null, "밴드 없는 부위 → null");
+// recommend는 종전 하한 35 유지(판정과 분리) — 회귀 확인
+assert.ok(FitEngine.recommend({ chest: 130, shoulder: 60 }, "regular", "male", "long_sleeve", jspecs)
+  .every((r) => r.fitScore >= 35), "recommend는 하한 35 유지"); pass++;
+// 보조 부위(상의 허리): 표에 있으면 판정에 포함, 없으면 미표기로 안 캐물음
+const jwaist = [{ category: "TOP", brandId: "a", brandName: "A", fitLine: "regular", sizeLabel: "M", sizeOrder: 0,
+  gender: "male", subtype: "long_sleeve", garmentCm: { chest: 52, shoulder: 46, waist: 44 } }];
+const jw = FitEngine.judge({ chest: 96, shoulder: 45, waist: 92 }, jwaist);   // 가슴+8·어깨+1 정상, 허리 44단면=88둘레 −92 = −4 끼임
+const wp = jw.sizes[0].parts.filter((p) => p.part === "waist")[0];
+assert.ok(wp && wp.rating === "TIGHT", "상의 허리 있으면 판정 포함(88−92=−4 끼임)"); pass++;
+eq(jw.sizes[0].verdict.ko, "허리가 껴요", "상의 허리 끼면 종합판정에 반영");
+eq(FitEngine.judge({ chest: 96, shoulder: 45, waist: 92 }, jspecs).sizes[0].missing, [],
+   "허리 없는 상의는 미표기로 안 캐물음(missing 빈배열)");
 
 /* ── 실데이터 스모크: garments.json 전량으로 깨지지 않고 계약 지키는지 ───────── */
 try {

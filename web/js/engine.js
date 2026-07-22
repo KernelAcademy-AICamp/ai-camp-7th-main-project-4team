@@ -24,6 +24,7 @@
     "TOP:chest":    { tight: 2, snug: 8, big: 16 },
     "TOP:shoulder": { tight: 0, snug: 1.5, big: 4 },
     "TOP:belly":    { tight: 0, snug: 8, big: 18 },
+    "TOP:waist":    { tight: 0, snug: 8, big: 18 },   // 상의 허리(핏 상의) — belly와 동일 가설값. 표에 있을 때만 판정.
     "BOTTOM:waist": { tight: 0, snug: 4, big: 10 },
     "BOTTOM:hip":   { tight: 0, snug: 6, big: 14 },
     "BOTTOM:thigh": { tight: 0, snug: 5, big: 12 },
@@ -33,6 +34,8 @@
               waist: "circ", hip: "circ", thigh: "circ", rise: "len", hem: "width" };
   // 카테고리별 역산 가능 부위(garmentCm에 있고 밴드가 있는 둘레/너비 부위)
   var CAT_PARTS = { TOP: ["chest", "shoulder"], BOTTOM: ["waist", "hip", "thigh"] };
+  // 보조 부위: 표에 있을 때만 판정에 씀(없어도 미표기로 캐묻지 않음). 제공된 데이터 최대 활용.
+  var CAT_PARTS_OPT = { TOP: ["waist"], BOTTOM: [] };
 
   // ① 의류 단면(flat) → 인체 축
   function toBodyAxis(part, flatCm) { return CMP[part] === "circ" ? flatCm * 2 : flatCm; }
@@ -100,21 +103,39 @@
 
   var PILL = { TIGHT: { ko: "끼임", warn: true }, SNUG: { ko: "딱맞음", warn: false },
                RELAXED: { ko: "여유", warn: false }, BIG: { ko: "넉넉", warn: false } };
+  // 부위 한글명(판정 문구용)
+  var PART_KO = { chest: "가슴", shoulder: "어깨", belly: "배", waist: "허리", hip: "엉덩이", thigh: "허벅지", sleeve: "소매", length: "총장", rise: "밑위", hem: "밑단" };
+  // 조사 이/가 — 마지막 글자 받침 유무로. (가슴이 / 어깨가)
+  function josa(word) {
+    var c = String(word).charCodeAt(String(word).length - 1);
+    var batchim = c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 !== 0;
+    return word + (batchim ? "이" : "가");
+  }
+  // ③일반화: 여유(cm) → 등급. chestRating을 임의 부위로 확장(밴드 없으면 null).
+  function easeToRating(part, e, category) {
+    var b = BANDS[(category || "TOP") + ":" + part];
+    if (!b) return null;
+    return e <= b.tight ? "TIGHT" : e <= b.snug ? "SNUG" : e <= b.big ? "RELAXED" : "BIG";
+  }
   // 선호 fitLine이 없을 때 브랜드가 가진 것 중 이 순서로 대체
   var FITLINE_FALLBACK = ["regular", "slim", "loose", "oversize"];
   // A축 편차 경고(anchor-brands translationVariance)
   var VARIANCE = { hm: "사이즈 편차 큼", zara: "유럽핏 편차 큼" };
   var TARGET_CHEST_EASE = 5; // 가슴 여유 목표(cm) — SNUG 중앙. 사이즈는 이 근처를 겨눔.
 
-  // 핏 지수(0~100%): 이상 여유에서 벗어난 정도로 감점. 가슴(이상 5cm)+어깨(이상 ~1cm).
-  function scoreFit(ce, se) {
+  // 상의 핏 감점(원점): 이상 여유에서 벗어난 정도. 가슴(이상 5cm)+어깨(이상 ~1cm).
+  function penaltyTop(ce, se) {
     var chestDev = Math.abs(ce - TARGET_CHEST_EASE);
     var shDev;
     if (se == null || se >= 900) shDev = 0;         // 어깨 데이터 없음 → 감점 안 함
     else if (se < 0) shDev = (-se) * 1.8 + 1;       // 어깨 끼임 = 큰 감점
     else shDev = Math.max(0, Math.abs(se - 1) - 1); // 어깨 여유 1cm 근처는 관대
-    var penalty = chestDev * 5.5 + shDev * 7;
-    return Math.max(35, Math.min(99, Math.round(100 - penalty)));
+    return chestDev * 5.5 + shDev * 7;
+  }
+  // 핏 지수(35~100%): 추천용. 하한 35 — 브랜드 내 '최선의 사이즈'라 항상 뭔가는 보여줌.
+  //   ⚠️ 판정(judge)은 이 하한을 쓰지 않는다(judgeScore) — "어떤 사이즈도 안 맞음"을 말해야 하므로.
+  function scoreFit(ce, se) {
+    return Math.max(35, Math.min(99, Math.round(100 - penaltyTop(ce, se))));
   }
 
   /**
@@ -194,12 +215,16 @@
     var b = BANDS["BOTTOM:waist"], lo = waistband ? b.tight - 4 : b.tight;
     return e <= lo ? "TIGHT" : e <= b.snug ? "SNUG" : e <= b.big ? "RELAXED" : "BIG";
   }
-  // 핏 지수: 허리 이상편차 + 엉덩이·허벅지 끼임 감점. 여유(≥0)는 관대, 끼임(<0)은 큰 감점.
-  function scoreFitBottom(we, he, te) {
+  // 하의 핏 감점(원점): 허리 이상편차 + 엉덩이·허벅지 끼임. 여유(≥0)는 관대, 끼임(<0)은 큰 감점.
+  function penaltyBottom(we, he, te) {
     var wDev = Math.abs(we - TARGET_WAIST_EASE);
     var hDev = he >= 900 ? 0 : he < 0 ? -he * 1.6 + 1 : Math.max(0, Math.abs(he - 3) - 3);
     var tDev = te >= 900 ? 0 : te < 0 ? -te * 1.4 + 1 : Math.max(0, Math.abs(te - 2.5) - 3);
-    return Math.max(35, Math.min(99, Math.round(100 - (wDev * 4 + hDev * 3.5 + tDev * 2.5))));
+    return wDev * 4 + hDev * 3.5 + tDev * 2.5;
+  }
+  // 핏 지수(35~100%): 추천용 하한 35(judge는 미사용 — judgeScore 참조).
+  function scoreFitBottom(we, he, te) {
+    return Math.max(35, Math.min(99, Math.round(100 - penaltyBottom(we, he, te))));
   }
 
   function recommendBottom(bodyVec, prefSil, gender, subtype, specs) {
@@ -258,8 +283,130 @@
     return recs;
   }
 
+  /* ── 단일 상품 판정 (judge) ──────────────────────────────────────────────
+     추천(recommend)이 "이 브랜드에서 몇 사이즈?"라면, 판정은 "내가 고른 이 상품, 나한테 맞나?".
+     사용자가 상품을 특정(브랜드·상품·핏)한 뒤 그 상품의 전 사이즈를 몸에 대본다.
+     recommend와 다른 두 가지:
+       (1) 점수 하한이 없다(judgeScore) — "어떤 사이즈도 안 맞음"을 말할 수 있어야 신뢰됨.
+       (2) 부위별 추정오차(±rmse)를 받아, 오차구간이 끼임 경계를 물면 borderline로 표시.
+     specRows = 한 상품(같은 브랜드·핏)의 사이즈 행들. 같은 사이즈 라벨 중복은 평균.
+     opts.errors = { chest, shoulder, ... } 인체 추정 rmse(cm). opts.category 강제(빈 specRows 대비). */
+
+  // 부위 판정: 여유 + 등급 + (오차가 있으면) 끼임경계 걸침(borderline).
+  function judgePart(part, flatCm, bodyCm, category, err) {
+    var e = ease(part, flatCm, bodyCm);
+    var rating = easeToRating(part, e, category);
+    var pill = PILL[rating] || { ko: "-", warn: false };
+    var out = { part: part, ko: PART_KO[part] || part, easeCm: Math.round(e * 10) / 10,
+                rating: rating, fit: pill.ko, warn: pill.warn };
+    var b = BANDS[(category || "TOP") + ":" + part];
+    if (err != null && err > 0 && b) {
+      // 인체 추정이 ±err → 여유(=의류축−인체)도 ±err 흔들림. 몸이 큰 쪽(e−err)이 끼임 경계를 넘으면 위험.
+      out.easeLo = Math.round((e - err) * 10) / 10;
+      out.easeHi = Math.round((e + err) * 10) / 10;
+      out.borderline = rating !== "TIGHT" && (e - err) <= b.tight && b.tight < (e + err);
+    }
+    return out;
+  }
+
+  // 판정 점수(0~100, 하한 없음). 핵심 부위(가슴·허리) 없으면 null.
+  function judgeScore(category, partEase) {
+    var pen;
+    if (category === "BOTTOM") {
+      if (partEase.waist == null) return null;
+      pen = penaltyBottom(partEase.waist, partEase.hip == null ? 999 : partEase.hip,
+                                          partEase.thigh == null ? 999 : partEase.thigh);
+    } else {
+      if (partEase.chest == null) return null;
+      pen = penaltyTop(partEase.chest, partEase.shoulder == null ? 999 : partEase.shoulder);
+    }
+    // 보조 부위(상의 허리 등)가 표에 있으면 추가 감점 — 핵심보다 약하게. 없으면 영향 없음.
+    (CAT_PARTS_OPT[category] || []).forEach(function (p) {
+      var e = partEase[p]; if (e == null) return;
+      var b = BANDS[category + ":" + p]; if (!b) return;
+      var ideal = (b.tight + b.snug) / 2;
+      var dev = e < b.tight ? (b.tight - e) * 1.8 + 1 : Math.max(0, Math.abs(e - ideal) - (b.snug - b.tight) / 2);
+      pen += dev * 3;
+    });
+    return Math.max(0, Math.min(100, Math.round(100 - pen)));
+  }
+
+  // 한 사이즈의 종합 판정 라벨 + 병목 부위.
+  //   우선순위: 끼임 > 아슬(오차경계) > 주요부위(가슴/허리) 여유·큼 > 보조부위만 큼 > 잘맞음.
+  //   "잘 맞아요"는 주요부위가 딱맞고 다른 데도 크지 않을 때만 — 여유/넉넉을 잘맞음으로 뭉개지 않는다.
+  function sizeVerdict(partJ, category) {
+    var tight = partJ.filter(function (p) { return p.rating === "TIGHT"; });
+    if (tight.length) return { label: "TIGHT", ko: josa(tight[0].ko) + " 껴요", part: tight[0].part };
+    var border = partJ.filter(function (p) { return p.borderline; });
+    if (border.length) return { label: "BORDERLINE", ko: josa(border[0].ko) + " 아슬해요", part: border[0].part };
+
+    var primaryKey = (CAT_PARTS[category || "TOP"] || [])[0];   // chest / waist
+    var primary = partJ.filter(function (p) { return p.part === primaryKey; })[0];
+    if (primary && primary.rating === "BIG") return { label: "BIG", ko: "전체적으로 커요", part: primaryKey };
+    if (primary && primary.rating === "RELAXED") return { label: "RELAXED", ko: "여유 있게 맞아요", part: primaryKey };
+
+    // 주요부위는 딱맞음(또는 미측정) — 보조부위만 큰지 확인
+    var loose = partJ.filter(function (p) { return p.part !== primaryKey && (p.rating === "BIG" || p.rating === "RELAXED"); });
+    if (loose.length) return { label: "OK_LOOSE", ko: josa(loose[0].ko) + " 조금 여유로워요", part: loose[0].part };
+    return { label: "OK", ko: "잘 맞아요", part: null };
+  }
+
+  function judge(bodyVec, specRows, opts) {
+    opts = opts || {};
+    var errors = opts.errors || {};
+    specRows = (specRows || []).filter(function (s) { return s && s.garmentCm; });
+    var cat = opts.category || (specRows.length ? specRows[0].category : "TOP");
+    var parts = CAT_PARTS[cat] || [];
+    var optParts = CAT_PARTS_OPT[cat] || [];       // 표에 있을 때만 판정하는 보조 부위
+    var allParts = parts.concat(optParts);
+
+    // 사이즈 라벨별 그룹(중복 제품은 부위별 평균)
+    var bySize = {};
+    specRows.forEach(function (s) {
+      if (s.category !== cat) return;
+      var g = bySize[s.sizeLabel] || (bySize[s.sizeLabel] =
+        { sizeLabel: s.sizeLabel, sizeOrder: (s.sizeOrder != null ? s.sizeOrder : 0), acc: {} });
+      allParts.forEach(function (p) {
+        var v = s.garmentCm[p];
+        if (v != null) (g.acc[p] = g.acc[p] || []).push(v);
+      });
+    });
+    function avg(a) { return a.reduce(function (x, y) { return x + y; }, 0) / a.length; }
+
+    var sizes = Object.keys(bySize).map(function (k) {
+      var g = bySize[k], partJ = [], missing = [], partEase = {};
+      parts.forEach(function (p) {                                         // 핵심 부위 — 없으면 미표기로 표시
+        if (!g.acc[p] || !g.acc[p].length) { missing.push(p); return; }   // 브랜드가 표기 안 함
+        if (bodyVec[p] == null) { missing.push(p); return; }              // 내 몸 치수 없음
+        var pj = judgePart(p, avg(g.acc[p]), bodyVec[p], cat, errors[p]);
+        partJ.push(pj); partEase[p] = pj.easeCm;
+      });
+      optParts.forEach(function (p) {                                      // 보조 부위 — 있을 때만, 없어도 안 캐물음
+        if (!g.acc[p] || !g.acc[p].length || bodyVec[p] == null) return;
+        var pj = judgePart(p, avg(g.acc[p]), bodyVec[p], cat, errors[p]);
+        partJ.push(pj); partEase[p] = pj.easeCm;
+      });
+      return { sizeLabel: g.sizeLabel, sizeOrder: g.sizeOrder, parts: partJ,
+               missing: missing, fitScore: judgeScore(cat, partEase), verdict: sizeVerdict(partJ, cat) };
+    });
+    sizes.sort(function (a, b) { return a.sizeOrder - b.sizeOrder; });
+
+    // 추천 사이즈: 끼임 없는 것 중 최고 점수, 없으면 전체 최고.
+    var clean = sizes.filter(function (s) { return !s.parts.some(function (p) { return p.rating === "TIGHT"; }); });
+    var ranked = (clean.length ? clean : sizes).slice()
+      .sort(function (a, b) { return (b.fitScore || 0) - (a.fitScore || 0); });
+    var pick = ranked[0] || null;
+
+    return { category: cat, sizes: sizes,
+             pick: pick ? pick.sizeLabel : null,
+             pickVerdict: pick ? pick.verdict : null,
+             anyFit: clean.length > 0 };
+  }
+
   global.FitEngine = {
-    recommend: recommend, recommendBottom: recommendBottom, ease: ease, chestRating: chestRating,
-    ratingToEase: ratingToEase, bodyFromExperiences: bodyFromExperiences, _real: true
+    recommend: recommend, recommendBottom: recommendBottom, judge: judge,
+    ease: ease, chestRating: chestRating, easeToRating: easeToRating,
+    ratingToEase: ratingToEase, bodyFromExperiences: bodyFromExperiences,
+    bands: BANDS, catParts: CAT_PARTS, partKo: PART_KO, _real: true
   };
 })(typeof window !== "undefined" ? window : this);

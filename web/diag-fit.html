@@ -7,7 +7,7 @@
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=20a1f07c">
-<link rel="stylesheet" href="css/diag.css?v=20da8405">
+<link rel="stylesheet" href="css/diag.css?v=6b9af95b">
 </head>
 <body>
 
@@ -175,7 +175,7 @@
           <div class="acc-row now"><span class="l">2벌 · 지금<span class="cur">현재</span></span><span class="r">정확 — 권장</span></div>
         </div>
       </div>
-      <button class="add-garment" onclick="alert('프로토타입: 같은 카테고리 옷을 한 벌 더 추가하면 정보·느낌 2단계가 더 생깁니다 (최대 3벌)')">+ <span class="catword">상의</span> 더 추가하기</button>
+      <button class="add-garment" onclick="toast('프로토타입 · 같은 카테고리 옷을 한 벌 더 추가하면 정보·느낌 2단계가 더 생겨요 (최대 3벌)')">+ <span class="catword">상의</span> 더 추가하기</button>
       <div class="notice mt-16">입력은 자동 저장돼요. 결과 화면에서 언제든 수정·재진단할 수 있어요</div>
     </div>
   </div>
@@ -202,7 +202,7 @@
       <div class="opt" onclick="pick(this)">오버 — 크게 레이어링</div>
     </div>
     <div class="center mt-16">
-      <a href="#" class="btn-ghost" style="text-decoration:underline" onclick="alert('프로토타입: 정밀 보정 — 이 종류 실착 1벌을 옵션으로 받아 브랜드 여유폭 오차를 줄입니다(선택).');return false">+ 실착 정보 추가로 정확도 높이기</a>
+      <a href="#" class="btn-ghost" style="text-decoration:underline" onclick="toast('프로토타입 · 정밀 보정 — 이 종류 실착 1벌을 옵션으로 받아 브랜드 여유폭 오차를 줄여요 (선택)');return false">+ 실착 정보 추가로 정확도 높이기</a>
     </div>
     <div class="wnav">
       <a href="index.html" class="btn-line">이전</a>
@@ -250,6 +250,12 @@
   </div>
 </div>
 
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+  /* 안내 토스트 — 브라우저 기본 alert 대체 (diag-fit.js와 독립) */
+  function toast(m){ var t=document.getElementById('toast'); if(!t) return; t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2600); }
+</script>
 <script src="js/diag-fit.js?v=8c570cb1"></script>
 </body>
 </html>
