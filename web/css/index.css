@@ -188,7 +188,9 @@
   #stage.done .skiphint{display:none}
   @media(max-width:1040px){#stage{zoom:.74}}
   @media(max-width:720px){#stage{zoom:.54}}
-  @media(max-width:470px){#stage{zoom:.4}}
+  /* 모바일: 부채덱(고정 폭 ~1008px×zoom)이 화면보다 넓어 양끝 카드가 잘리던 것 →
+     .4→.34로 낮춰 360·390·412px 모두 화면 안에 들어오게(덱은 균일 축소라 딜 애니 비례 유지) */
+  @media(max-width:470px){#stage{zoom:.34}}
   /* 넓은 화면에선 온보딩을 더 크게 — zoom은 레이아웃 박스까지 키워 잘림·여백 자동 처리(.wrap 콘텐츠폭 1180 안) */
   @media(min-width:1160px){#stage{zoom:1.08}}
   @media(min-width:1300px){#stage{zoom:1.16}}
