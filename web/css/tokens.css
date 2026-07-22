@@ -1,5 +1,6 @@
 /* 페이지 이동을 부드러운 크로스페이드로 — 교차문서 View Transition (미지원 브라우저는 기존 즉시 이동) */
 @view-transition{ navigation: auto; }
+html{ overflow-y: auto; scrollbar-gutter: stable; }   /* 스크롤바 자리 항상 예약(overflow-y 있어야 gutter 적용) → 페이지 이동 시 내비 좌우 밀림 방지 */
 ::view-transition-old(root),::view-transition-new(root){ animation-duration:.32s; animation-timing-function:cubic-bezier(.2,.8,.2,1); }
 @media (prefers-reduced-motion:reduce){ ::view-transition-old(root),::view-transition-new(root){ animation:none; } }
 
