@@ -1,26 +1,41 @@
-/* card.html에서 분리한 페이지 스타일. 소유: 디자이너(web/*.css).
-   인라인→외부화(순수 이동, 렌더 무변화) — 충돌면 축소. 색·폰트·간격 토큰화는 별도(디자인 결정). */
+/* card.html — 플립 결과카드. 소유: 디자이너(web/*.css).
+   앞면 = 온보딩 정체성(그림·유형명·태그라인) ↔ 뒷면 = FIT INSIGHT · 잘맞 VS 피할 · 환상의 궁합.
+   외곽 392×664 유지(호스트 iframe 스케일 기준). 유형 포인트색은 #card의 --tp(card.js 주입).
+   디자인 원칙 5의 예외: 이 카드만 "다크 배경 + 8유형 포인트색"(UI 딥그린 토큰 미적용, 의도). */
   *{box-sizing:border-box; margin:0; padding:0;}
   body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; background:transparent; -webkit-font-smoothing:antialiased; display:flex; justify-content:center; align-items:flex-start; overflow:hidden;}
 
-  .card{width:392px; max-width:100%; min-height:664px; border-radius:30px; overflow:hidden; color:#fff; position:relative; box-shadow:0 24px 54px rgba(10,11,14,.30); display:flex; flex-direction:column; align-items:center; padding:24px 26px 26px; background:#16171b;}
-  .card::after{content:""; position:absolute; right:-46px; bottom:-44px; font-size:220px; font-weight:900; opacity:.045; letter-spacing:-.07em; line-height:1; color:#fff;}
+  /* 카드 = 3D 원근 컨테이너 — 고정 392×664. 투명 → 돌 때 그 화면(사이트 배경)이 비쳐 자연스럽게 섞임 */
+  .card{width:392px; max-width:100%; height:664px; perspective:1600px; background:transparent; position:relative;}
+  .flip{position:relative; width:100%; height:100%; transition:transform .72s cubic-bezier(.4,.05,.2,1); transform-style:preserve-3d; cursor:pointer;}
+  .flip.turned{transform:rotateY(180deg);}
+  .cface{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:30px; overflow:hidden; color:#fff; display:flex; flex-direction:column; align-items:center; box-shadow:0 24px 54px rgba(10,11,14,.30);}
+  .cface.back{transform:rotateY(180deg);}
+
+  /* 상단 공통 */
   .ctop{width:100%; display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:800; letter-spacing:.16em;}
+  .clogo{font-size:20px; font-weight:800; letter-spacing:-.05em;}
+  .clogo .sq{display:inline-block; width:6px; height:6px; background:currentColor; margin-left:2px; vertical-align:baseline;}
   .cacts{display:flex; gap:8px;}
   .cacts button{width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.14); border:none; color:#fff; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; line-height:1; transition:.14s;}
   .cacts button:hover{background:rgba(255,255,255,.26);}
   .cacts button:disabled{opacity:.5; cursor:default;}
   .cacts button svg{width:16px; height:16px; display:block;}
-  .clogo{font-size:18px; font-weight:800; letter-spacing:-.05em;}
-  .clogo .sq{display:inline-block; width:5px; height:5px; background:currentColor; margin-left:2px; vertical-align:baseline;}
-  .fig{position:relative; width:120px; height:184px; margin:8px 0 4px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; animation:bob 3.4s ease-in-out infinite;}
-  @keyframes bob{0%,100%{transform:translateY(0) scale(.85)} 50%{transform:translateY(-6px) scale(.85)}}
-  .fig .head{width:32px; height:36px; margin-bottom:-3px; z-index:2; position:relative;}
+  .fliphint{width:100%; text-align:center; font-size:13px; font-weight:700; color:rgba(255,255,255,.6); padding:14px 0 2px; border-top:1px solid rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; gap:6px;}
+  .fliphint svg{width:15px; height:15px;}
+
+  /* ── 앞면 = 온보딩 카드 ── */
+  .front{padding:26px 26px 30px; background:radial-gradient(ellipse 70% 34% at 50% 11%, color-mix(in srgb, var(--tp) 17%, transparent), transparent 60%), linear-gradient(160deg,#191a1f,#0f1014);}
+  .front::after{position:absolute; right:-46px; bottom:-44px; font-size:220px; font-weight:900; opacity:.045; letter-spacing:-.07em; line-height:1; color:#fff;}   /* 워터마크 코드 — card.js가 content 주입 */
+  .hcbody{flex:1; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .fig{position:relative; width:120px; height:184px; margin-bottom:6px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; transform:scale(.85);}
+  .fig .head{width:32px; height:36px; margin-bottom:-3px; z-index:2; position:relative; flex:none;}
   .fig .head .face{position:absolute; inset:0; border-radius:10px 10px 8px 8px; background:#ecd9c9; z-index:2; background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px),repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px);}
   .fig .head .cap{position:absolute; top:-3px; left:-3px; right:-3px; height:13px; border-radius:10px 10px 45% 45%; background:#2a2b30; z-index:3;}
   .fig .head.female .cap{background:#9a7350;}
   .fig .head .longhair{position:absolute; top:-5px; left:-7px; right:-7px; bottom:1px; background:#9a7350; border-radius:50% 50% 36% 36% / 46% 46% 30% 30%; z-index:1;}
-  .fig .head .ey{position:absolute; top:18px; width:4px; height:5px; border-radius:50%; background:#2a2b30; z-index:4;} .fig .head .ey.l{left:9px;} .fig .head .ey.r{right:9px;}
+  .fig .head .ey{position:absolute; top:18px; width:4px; height:5px; border-radius:50%; background:#2a2b30; z-index:4;}
+  .fig .head .ey.l{left:9px;} .fig .head .ey.r{right:9px;}
   .fig .body{width:120px; position:relative; image-rendering:pixelated; background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 8px),repeating-linear-gradient(90deg,rgba(0,0,0,.16) 0 1px,transparent 1px 8px);}
   .fig .body::before{content:""; position:absolute; left:0; top:0; bottom:0; width:42%; background:rgba(255,255,255,.18);}
   .fig .body.straight{clip-path:polygon(38% 0,62% 0,62% 64%,64% 100%,36% 100%,38% 64%);}
@@ -31,16 +46,30 @@
   .fig .body.diamond{clip-path:polygon(37% 0,63% 0,85% 50%,61% 100%,39% 100%,15% 50%);}
   .fig .body.round{clip-path:ellipse(45% 47% at 50% 53%);}
   .fig .body.tube{clip-path:polygon(43% 0,57% 0,57% 100%,43% 100%);}
-  .code{margin-top:12px; font-size:13px; font-weight:800; letter-spacing:.22em; opacity:.92;}
-  .word{font-size:32px; font-weight:800; letter-spacing:-.03em; line-height:1.08; margin-top:12px;}
-  .info{width:100%; text-align:left; margin-top:20px;}
-  .sl{font-size:12px; font-weight:800; letter-spacing:.04em; margin:0 0 7px;}
-  .desc{font-size:15px; line-height:1.55; opacity:.92;}
-  .desc.two{min-height:43px;} .desc.ins{min-height:22px;}
-  .fits{margin-top:11px; display:flex; flex-direction:column; gap:5px;}
-  .fr{display:flex; align-items:flex-start; gap:9px; flex-wrap:wrap;} .fl{font-size:12px; font-weight:800; white-space:nowrap; padding-top:6px; min-width:46px;} .fl.no{opacity:.55;}
-  .fr.ok{min-height:32px;} .fr.no{min-height:32px;}
-  .ps{display:flex; flex-wrap:wrap; gap:6px;} .ps span{font-size:13px; font-weight:600; background:rgba(255,255,255,.1); padding:6px 11px; border-radius:9px;}
-  .sec2{margin-top:18px;}
-  .match{margin-top:11px; font-size:14px; font-weight:600; opacity:.95; width:100%;} .match b{font-weight:800;}
-  .grow{flex:1; min-height:16px; width:100%;}
+  .code{margin-top:18px; font-size:14px; font-weight:800; letter-spacing:.22em; opacity:.92; color:var(--tp);}
+  .word{margin-top:12px; font-size:34px; font-weight:800; letter-spacing:-.03em; line-height:1.1; text-align:center;}
+  .tagline{margin-top:16px; font-size:17px; line-height:1.5; opacity:.8; text-align:center; max-width:300px;}
+
+  /* ── 뒷면 = FIT INSIGHT · VS · 궁합 ── */
+  .back{padding:28px 26px 26px; background:linear-gradient(165deg,#191a1f,#0f1014);}
+  .ctop-r{color:rgba(255,255,255,.45); font-size:12px; font-weight:800; letter-spacing:.14em;}
+  .b-main{flex:1; width:100%; display:flex; flex-direction:column; justify-content:center;}   /* 인사이트+VS를 세로 가운데 — 문구 길이 달라도 안 잘림 */
+  .b-lab{font-size:11.5px; font-weight:800; letter-spacing:.14em; color:var(--tp);}
+  .b-ins{width:100%; margin-bottom:26px; text-align:center;}
+  .b-ins .b-lab{display:block; margin-bottom:13px;}
+  .b-ins p{font-size:23px; font-weight:800; line-height:1.44; letter-spacing:-.02em;}
+  .b-ins p b{color:var(--tp); box-shadow:inset 0 -10px 0 color-mix(in srgb, var(--tp) 24%, transparent);}
+  .b-fitbox{width:100%; border:1px solid rgba(255,255,255,.13); border-radius:18px; padding:24px 16px; background:rgba(255,255,255,.03);}
+  .b-duel{width:100%; display:grid; grid-template-columns:1fr auto 1fr; align-items:start;}   /* 위쪽 기준 줄맞춤(개수 달라도 정렬 유지) */
+  .b-side{text-align:center; padding:6px;}
+  .b-sh{display:inline-flex; align-items:center; gap:5px; font-size:13px; font-weight:800; margin-bottom:14px;}
+  .b-side.ok .b-sh{color:var(--tp);}
+  .b-side.no .b-sh{color:rgba(255,255,255,.55);}
+  .b-sh svg{width:15px; height:15px;}
+  .b-it{font-size:15px; font-weight:800; line-height:1.35; padding:8px 0;}
+  .b-side.no .b-it{color:rgba(255,255,255,.6);}
+  .b-vs{font-size:13px; font-weight:900; letter-spacing:.04em; color:rgba(255,255,255,.72); padding:0 14px; position:relative; align-self:center;}
+  .b-vs::before,.b-vs::after{content:""; position:absolute; left:50%; width:1px; background:rgba(255,255,255,.12); height:30px;}
+  .b-vs::before{top:-42px;} .b-vs::after{bottom:-42px;}
+  .b-foot{width:100%; margin-top:22px; margin-bottom:22px; text-align:center;}   /* 아래 회전 구분선과 겹침 방지 */
+  .b-match{font-size:14.5px; font-weight:600; color:rgba(255,255,255,.9);} .b-match b{color:var(--tp); font-weight:800;}
