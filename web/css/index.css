@@ -247,9 +247,10 @@
   #home .step .no{font-size:11.5px;font-weight:800;color:var(--green);letter-spacing:.14em}
   #home .step h3{font-size:19.5px;font-weight:800;letter-spacing:-.03em;margin:5px 0 7px}
   #home .step p{font-size:14.5px;color:var(--sub);line-height:1.6;max-width:520px}
-  #home .step .big{text-align:right;flex:none;padding-left:20px}
-  #home .step .big b{display:block;font-family:var(--num);font-feature-settings:'tnum';font-size:72px;font-weight:800;letter-spacing:-.05em;color:var(--green);line-height:.88}
-  #home .step .big span{display:block;font-size:14.5px;color:var(--ink);font-weight:800;margin-top:8px;letter-spacing:-.01em}
+  /* 스텝 지표 — 배경 없이 한 줄(줄바꿈 방지). 숫자·라벨 같은 크기, 붙여서 자연스럽게 */
+  #home .step .big{flex:none;margin-left:20px;display:inline-flex;align-items:baseline;gap:0;white-space:nowrap}
+  #home .step .big b{font-family:var(--num);font-feature-settings:'tnum';font-size:17.5px;font-weight:800;letter-spacing:-.01em;color:var(--green);line-height:1.4}
+  #home .step .big>span{font-size:17.5px;color:var(--green);font-weight:800;letter-spacing:-.01em}
   /* 결과 카드 쇼케이스 (블러+잠금) */
   #home .showpanel{background:linear-gradient(180deg,#fff,#FBFBFA);border:1px solid var(--line);border-radius:28px;padding:52px}
   #home .show-in{display:grid;grid-template-columns:1fr 440px;gap:56px;align-items:center}
@@ -332,9 +333,8 @@
     #home .link .pulse{display:none}
     #home .how{grid-template-columns:1fr;gap:16px}#home .vtape{display:none}
     #home .step{grid-template-columns:46px 1fr;gap:14px;padding:20px}
-    #home .step .big{grid-column:1/-1;text-align:left;padding-left:0;display:flex;align-items:baseline;gap:7px}
-    #home .step .big b{display:inline;font-size:40px}
-    #home .step .big span{display:inline;margin-top:0;font-size:14px}
+    #home .step .big{grid-column:1/-1;margin-left:0;align-self:start}
+    #home .step .big b,#home .step .big>span{font-size:16px}
     #home .promo{grid-template-columns:1fr;padding:38px 30px;gap:26px}#home .promo .act{min-width:0}
     #home .outro .otape{max-width:none;margin-left:20px;margin-right:20px}}
   @media(prefers-reduced-motion:reduce){#home *{animation:none!important}#home .reveal{opacity:1;transform:none}}
@@ -432,6 +432,8 @@
   .reqbanner button{white-space:nowrap;}
 
   /* 드롭다운 필터바 (상황·예산) + 검색 + 정렬 */
+  /* 목록 부제 — 기본(넓은 화면)은 전문, 모바일 분기에서 축약본으로 스왑 */
+  .shoplead .narrow-only{display:none;}
   .fbar{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:20px 0 0;}
   .dd{position:relative;}
   .ddbtn{display:inline-flex; align-items:center; gap:6px; font-size:15px; font-weight:700; padding:11px 15px; border-radius:11px; border:1.5px solid var(--line2); background:#fff; color:var(--sub); cursor:pointer; font-family:inherit;}
@@ -1488,11 +1490,18 @@
     .ecard .tags span{ font-size:11.5px; padding:3px 7px; margin:0; }
     .ecard .cardprice{ font-size:13px; }
 
-    /* 2) 필터바 — 가로 스크롤 · 드롭다운 메뉴가 화면 밖으로 안 나가게 */
-    .fbar{ flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; gap:7px; padding-bottom:2px; }
-    .fbar::-webkit-scrollbar{ display:none; }
+    /* 1-b) 목록 부제 — 긴 문장이 3줄로 어색하게 끊겨 모바일용 축약본으로 교체 */
+    .shoplead .wide-only{ display:none; }
+    .shoplead .narrow-only{ display:inline; }
+
+    /* 2) 필터바 — 줄바꿈 허용. 가로 스크롤이면 검색·정렬이 화면 밖에 숨어 발견이 안 됨 */
+    .fbar{ flex-wrap:wrap; gap:7px; padding-bottom:2px; }
     .fbar > *{ flex:none; }
-    .search{ min-width:0; flex:1 0 190px; max-width:none; }
+    /* 검색 + 찾기를 한 줄에, 정렬은 그 아래 한 줄 전체 */
+    .search{ min-width:0; flex:1 1 auto; max-width:none; order:1; }
+    .fbar .btn.sm{ order:2; flex:0 0 auto; padding:11px 18px; }
+    .sort{ order:3; margin-left:0; flex:1 1 100%; }
+    .sort select{ width:100%; }
     .ddbtn, .favfilter{ padding:10px 12px; font-size:13.5px; min-height:44px; }
     .ddmenu{ min-width:0; width:max-content; max-width:calc(100vw - 48px); }
     .reqbanner{ padding:16px; gap:10px; margin:18px 0; }

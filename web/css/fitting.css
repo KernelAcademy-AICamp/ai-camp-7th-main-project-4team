@@ -51,6 +51,8 @@ body{
   -webkit-font-smoothing:antialiased;
   min-height:100vh;
   overflow-x:clip; /* full-bleed 헤더·푸터의 100vw가 가로 스크롤 만들지 않도록 */
+  /* 한국어 어절 단위 줄바꿈 — 없으면 '로/그인'처럼 단어 중간이 끊김 */
+  word-break:keep-all; overflow-wrap:break-word;
 }
 
 /* 숫자(사이즈·치수·스텝)는 SUIT + tabular */
