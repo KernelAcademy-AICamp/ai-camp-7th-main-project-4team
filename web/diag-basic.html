@@ -7,7 +7,7 @@
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=90fc1187">
-<link rel="stylesheet" href="css/diag.css?v=d985a38c">
+<link rel="stylesheet" href="css/diag.css?v=f3d4b54a">
 </head>
 <body>
 
@@ -74,9 +74,8 @@
     var has=false; try{ has=!!sessionStorage.getItem('fitting.done'); }catch(e){}   /* 완료된 진단 결과가 있을 때만 */
     if(has){ var el=document.getElementById('diagHist'); if(el) el.style.display='flex'; }
   })();
-  function diagHistClose(){ var el=document.getElementById('diagHist'); if(!el) return;   /* X — 현재 높이 고정 후 0으로 부드럽게 접기 */
-    el.style.height=el.offsetHeight+'px'; void el.offsetHeight; el.classList.add('closing');
-    setTimeout(function(){ el.style.display='none'; },300); }
+  function diagHistClose(){ var el=document.getElementById('diagHist'); if(!el) return;   /* X — 자리(높이)는 유지해 본문 고정, 배너만 감춤 */
+    el.style.opacity='0'; setTimeout(function(){ el.style.visibility='hidden'; },200); }
 </script>
 <script src="js/diag-basic.js?v=f5f50b95"></script>
 </body>
