@@ -114,8 +114,11 @@
         var ml=document.getElementById('mlogo'), tg=document.getElementById('lgtarget'), tail=document.getElementById('tail');
         if(!ml||!tg) return;
         var r1=ml.getBoundingClientRect(), r2=tg.getBoundingClientRect();
-        var s=r2.height/r1.height;
-        var dx=(r2.left+r2.width/2)-(r1.left+r1.width/2), dy=(r2.top+r2.height/2)-(r1.top+r1.height/2);
+        var s=r2.height/r1.height;   // 높이비 — zoom이 분모·분자에서 상쇄돼 보정 불필요
+        // getBoundingClientRect은 zoom 적용된 화면좌표. transform은 요소 로컬좌표(zoom에 다시 축소)라
+        // dx를 그대로 쓰면 이동량이 zoom배만 적용돼 로고가 목표(lgtarget)에 덜 도착 → 줄자와 어긋남. /zoom 보정.
+        var zoom=parseFloat(getComputedStyle(stage).zoom)||1;
+        var dx=((r2.left+r2.width/2)-(r1.left+r1.width/2))/zoom, dy=((r2.top+r2.height/2)-(r1.top+r1.height/2))/zoom;
         if(tail) tail.style.opacity='0';
         ml.style.transition='transform .82s cubic-bezier(.2,.8,.3,1)';
         ml.style.transform='translate('+dx+'px,'+dy+'px) scale('+s+')';
