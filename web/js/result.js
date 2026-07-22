@@ -79,19 +79,19 @@
   // 완성 유도 배너(상단) — 부분(1/2)·0벌일 때만. 스텝 도트(상의✓/하의○) + 문장 + CTA
   function upgradeHTML(){
     if(cardReady) return '';   // 완성(2/2) → 배너 없음
-    function step(done,label,n){ return '<div class="rup-step '+(done?'done':'todo')+'"><span class="rup-num">'+(done?'✓':n)+'</span>'+label+'</div>'; }
-    var steps='<div class="rup-steps">'+step(upperDone,'상의',1)+'<div class="rup-line"></div>'+step(lowerDone,'하의',2)+'</div>';
+    var doneN=(upperDone?1:0)+(lowerDone?1:0);   // 0(0벌) 또는 1(부분)
+    var badge='<span class="rup-badge">STEP '+doneN+' / 2</span>';
     var msg, href, btn;
-    if(noneDone){   // 0벌(건너뛰기)
+    if(noneDone){   // 0벌(건너뛰기) — 착용경험 1단계(상·하의 카테고리 선택)부터
       msg='<b>상의·하의를 넣으면</b> 체형이 또렷해져요';
-      href='diag-fit.html?cat=top'; btn='상의부터 진단';
+      href='diag-fit.html'; btn='진단 시작하기';
     }else{          // 부분(1/2) — 완료 안 된 쪽 유도
       var needBot=upperDone;   // 상의 완료 → 하의 남음
       msg='<b>'+(needBot?'하의':'상의')+'까지 하면</b> 체형이 또렷해져요';
       href=needBot?'diag-fit.html?cat=bottom&reuse=1&have=top':'diag-fit.html?cat=top&reuse=1&have=bottom';
       btn=(needBot?'하의':'상의')+' 진단하기';
     }
-    return '<div class="rup-wrap">'+steps+'<div class="rup-msg">'+msg+'</div><a class="rup-btn" href="'+href+'">'+btn+'</a></div>';
+    return '<div class="rup-wrap">'+badge+'<div class="rup-msg">'+msg+'</div><a class="rup-btn" href="'+href+'">'+btn+'</a></div>';
   }
   function renderCard(type){
     if(!type){ slot.innerHTML='<div class="rcard-load">체형 카드를 계산하고 있어요…</div>'; return; }  // 실분류 전 로딩(가짜 유형 X)
