@@ -227,7 +227,9 @@
 .toast.on{opacity:1; transform:translateX(-50%) translateY(0);}
 
 /* 지난 진단 이력 안내 — 상단 풀폭 알림바(announcement bar), 헤더 바로 아래 딱 붙음 */
-.diaghist{display:none; align-items:center; justify-content:center; gap:9px; width:100%; background:#E7EFEA; border-bottom:1px solid #CBDDD2; padding:11px 18px;}
+.diaghist{display:none; position:relative; align-items:center; justify-content:center; gap:9px; width:100%; background:#E7EFEA; border-bottom:1px solid #CBDDD2; padding:11px 44px;}
+.diaghist .dh-x{position:absolute; right:10px; top:50%; transform:translateY(-50%); border:none; background:transparent; color:var(--accent,#2E4A3B); font-size:13px; line-height:1; padding:7px 9px; border-radius:7px; cursor:pointer; opacity:.6;}
+.diaghist .dh-x:hover{opacity:1; background:rgba(46,74,59,.08);}
 .diaghist .dh-ic{flex:none; width:20px; height:20px; color:var(--accent,#2E4A3B); display:grid; place-items:center;}
 .diaghist .dh-ic svg{width:20px; height:20px;}
 .diaghist .dh-msg{font-size:12.5px; font-weight:600; color:var(--accent,#2E4A3B); line-height:1.45; text-align:center;}

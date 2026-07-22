@@ -7,7 +7,7 @@
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=90fc1187">
-<link rel="stylesheet" href="css/diag.css?v=c519c499">
+<link rel="stylesheet" href="css/diag.css?v=5768fe00">
 </head>
 <body>
 
@@ -22,6 +22,7 @@
 <div class="diaghist" id="diagHist">
   <span class="dh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5h.01"/></svg></span>
   <span class="dh-msg"><b>지난 진단 결과가 있어요</b> · 다시 진단하면 지금 결과는 사라져요</span>
+  <button class="dh-x" type="button" aria-label="안내 닫기" onclick="diagHistClose()">✕</button>
 </div>
 
 <div class="flow">
@@ -73,6 +74,7 @@
     var has=false; try{ has=!!sessionStorage.getItem('fitting.done'); }catch(e){}   /* 완료된 진단 결과가 있을 때만 */
     if(has){ var el=document.getElementById('diagHist'); if(el) el.style.display='flex'; }
   })();
+  function diagHistClose(){ var el=document.getElementById('diagHist'); if(el) el.style.display='none'; }   /* X — 안내 닫기 */
 </script>
 <script src="js/diag-basic.js?v=f5f50b95"></script>
 </body>
