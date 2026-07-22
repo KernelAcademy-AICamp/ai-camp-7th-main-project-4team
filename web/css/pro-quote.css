@@ -71,6 +71,7 @@
   .fitline b{color:var(--ink,#1c1a17)}
   .note-quote{background:#F7F6F3;border-radius:12px;padding:14px 16px;font-size:14px;color:var(--ink-soft,#3a382f);line-height:1.55}
   .note-quote.muted{color:var(--sub2,#8a857b)}
+  .cutestar{width:15px;height:15px;display:inline-block;vertical-align:-2px}   /* 고객 후기 별 — pro.css와 동일 크기 */
 
   .btn{display:block;width:100%;text-align:center;padding:14px;border:none;border-radius:12px;background:var(--ink,#1c1a17);color:#fff;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer}
   .act-row{display:flex;gap:10px} .act-row .btn{flex:1}
@@ -87,7 +88,7 @@
 
   /* 2단: 좌(1fr) 요청서 → 견적작성 · 우(500px) 고객 체형(아바타) · 좁아지면 1단 스택 */
   .qgrid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:24px;align-items:start;margin-top:22px}
-  @media(max-width:980px){.qgrid2{grid-template-columns:1fr}}
+  @media(max-width:980px){.qgrid2{grid-template-columns:1fr} .qgrid2 .qright{order:-1}}   /* 모바일: 작업대(타임라인) 먼저, 참고(고객카드+체형) 아래로 */
 
   /* 진행 스테퍼(정상 흐름) — 요청/제안 → 수락 → 진행 → 완료 */
   .statcard{padding:14px 16px 12px}

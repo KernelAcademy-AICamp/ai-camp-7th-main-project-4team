@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="css/tokens.css?v=4a4e8b7c">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/pro-quote.css?v=c5d195cf">
+<link rel="stylesheet" href="css/pro-quote.css?v=c49c2aee">
 </head>
 <body>
 <header><div class="nav">
@@ -21,8 +21,8 @@
     <span class="me" onclick="toggleAccMenu(event)"><span class="navav"><img id="hdrAvatar" src="photos/p1.jpg" alt="프로필 사진" onerror="this.style.visibility='hidden'"></span><span id="hdrName">소희 스타일리스트</span></span>
   </div>
   <div class="accmenu" id="accMenu">
-    <a onclick="location.href='pro.html'">내 프로필</a>
-    <a onclick="location.href='index.html'">로그아웃</a>
+    <a onclick="location.href='pro.html?panel=profile'">내 프로필</a>
+    <a onclick="if(confirm('로그아웃할까요?'))location.href='pro-login.html'">로그아웃</a>
   </div>
 </div></header>
 
@@ -38,6 +38,6 @@
   </div>
 </div>
 <div class="toast" id="toast"></div>
-<script src="js/pro-quote.js?v=4d406826"></script>
+<script src="js/pro-quote.js?v=754a3636"></script>
 </body>
 </html>
