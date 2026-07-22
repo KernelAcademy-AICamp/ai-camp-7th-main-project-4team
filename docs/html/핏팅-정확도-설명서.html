@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>핏팅 — 어떻게 자 없이 사이즈를 맞히나</title>
+<style>
+  :root {
+    --paper:   #E9E8E1;
+    --card:    #F1F0EA;
+    --ink:     #16191A;
+    --ink-soft:#565B58;
+    --ink-faint:#8B8F88;
+    --line:    #C6C7BD;
+    --line-2:  #D6D6CC;
+    --measure: #B23A1E;
+    --good:    #2C6E5E;
+    --shadow:  rgba(20,22,20,.08);
+    --grid:    rgba(22,25,26,.045);
+
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', 'Segoe UI', Roboto, 'Malgun Gothic', sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Menlo', 'Cascadia Code', 'D2Coding', monospace;
+
+    --step--1: clamp(.78rem, .76rem + .1vw, .84rem);
+    --step-0:  clamp(1rem, .97rem + .16vw, 1.1rem);
+    --step-1:  clamp(1.2rem, 1.12rem + .4vw, 1.44rem);
+    --step-2:  clamp(1.55rem, 1.4rem + .75vw, 2.1rem);
+    --step-3:  clamp(2.1rem, 1.7rem + 2vw, 3.4rem);
+    --step-4:  clamp(2.7rem, 2rem + 3.6vw, 4.8rem);
+
+    --measure-line: var(--measure);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:   #14171A;
+      --card:    #1A1E22;
+      --ink:     #E8E8E0;
+      --ink-soft:#A2A8A2;
+      --ink-faint:#6C726E;
+      --line:    #2E343A;
+      --line-2:  #262B30;
+      --measure: #E8613B;
+      --good:    #57B3A0;
+      --shadow:  rgba(0,0,0,.4);
+      --grid:    rgba(231,231,224,.045);
+    }
+  }
+  :root[data-theme="light"] {
+    --paper:#E9E8E1; --card:#F1F0EA; --ink:#16191A; --ink-soft:#565B58; --ink-faint:#8B8F88;
+    --line:#C6C7BD; --line-2:#D6D6CC; --measure:#B23A1E; --good:#2C6E5E; --shadow:rgba(20,22,20,.08); --grid:rgba(22,25,26,.045);
+  }
+  :root[data-theme="dark"] {
+    --paper:#14171A; --card:#1A1E22; --ink:#E8E8E0; --ink-soft:#A2A8A2; --ink-faint:#6C726E;
+    --line:#2E343A; --line-2:#262B30; --measure:#E8613B; --good:#57B3A0; --shadow:rgba(0,0,0,.4); --grid:rgba(231,231,224,.045);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background-color: var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 26px 26px;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: var(--step-0);
+    line-height: 1.62;
+    letter-spacing: -.006em;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 56px); }
+  .prose { max-width: 660px; }
+
+  /* ---- registration / drafting frame ---- */
+  .frame { position: relative; }
+  .tick { position: absolute; width: 15px; height: 15px; pointer-events: none; opacity: .5; }
+  .tick::before, .tick::after { content:""; position:absolute; background: var(--measure); }
+  .tick::before { width: 15px; height: 1.5px; top: 0; }
+  .tick::after  { width: 1.5px; height: 15px; left: 0; }
+  .tick.tl { top: 14px; left: 10px; }
+  .tick.tr { top: 14px; right: 10px; transform: scaleX(-1); }
+
+  /* ---- type ---- */
+  h1, h2, h3 { text-wrap: balance; letter-spacing: -.02em; line-height: 1.12; margin: 0; font-weight: 760; }
+  p { margin: 0; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--measure);
+    font-weight: 600;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .eyebrow::before { content:""; width: 22px; height: 1.5px; background: var(--measure); display:inline-block; }
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .soft { color: var(--ink-soft); }
+
+  /* ---- hero ---- */
+  header { padding: clamp(64px, 12vh, 130px) 0 clamp(40px, 8vh, 80px); }
+  .kicker {
+    font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: .22em;
+    text-transform: uppercase; color: var(--ink-faint); margin-bottom: 30px;
+    display:flex; gap: 14px; flex-wrap: wrap;
+  }
+  .kicker b { color: var(--ink-soft); font-weight: 600; }
+  h1 { font-size: var(--step-4); font-weight: 800; letter-spacing: -.035em; }
+  h1 .em { color: var(--measure); }
+  .lede { font-size: var(--step-1); color: var(--ink-soft); margin-top: 28px; max-width: 620px; font-weight: 400; letter-spacing: -.012em; }
+  .lede b { color: var(--ink); font-weight: 650; }
+
+  .fade { opacity: 0; transform: translateY(14px); animation: rise .8s cubic-bezier(.2,.7,.2,1) forwards; }
+  .d1 { animation-delay: .05s; } .d2 { animation-delay: .16s; } .d3 { animation-delay: .28s; } .d4 { animation-delay: .4s; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .fade { animation: none; opacity: 1; transform: none; } }
+
+  /* ---- section ---- */
+  section { padding: clamp(48px, 9vh, 92px) 0; border-top: 1px solid var(--line); }
+  .sec-head { display: flex; gap: 18px; align-items: baseline; margin-bottom: 34px; }
+  .sec-no { font-family: var(--font-mono); font-size: var(--step-0); color: var(--measure); font-weight: 600; flex: none; }
+  .sec-head h2 { font-size: var(--step-2); }
+  .sec-intro { font-size: var(--step-1); color: var(--ink-soft); max-width: 640px; margin-top: 10px; font-weight: 400; }
+
+  /* ---- problem cards ---- */
+  .probs { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+  @media (min-width: 720px) { .probs { grid-template-columns: repeat(3, 1fr); } }
+  .prob { background: var(--card); padding: 26px 24px; }
+  .prob .n { font-family: var(--font-mono); font-size: var(--step--1); color: var(--ink-faint); letter-spacing: .1em; }
+  .prob h3 { font-size: var(--step-1); margin: 12px 0 8px; }
+  .prob p { font-size: var(--step--1); color: var(--ink-soft); line-height: 1.55; }
+
+  /* ---- layer blocks ---- */
+  .layer { display: grid; gap: 4px; margin-top: 34px; }
+  .layer-row {
+    display: grid; grid-template-columns: auto 1fr; gap: 22px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 5px;
+    padding: 26px 26px 28px; position: relative;
+  }
+  @media (max-width: 620px) { .layer-row { grid-template-columns: 1fr; gap: 10px; } }
+  .layer-tag {
+    font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: .04em;
+    color: var(--paper); background: var(--ink); border-radius: 3px;
+    padding: 5px 10px; height: fit-content; white-space: nowrap; font-weight: 600;
+  }
+  .layer-row.hot .layer-tag { background: var(--measure); }
+  .layer-body h3 { font-size: var(--step-1); margin-bottom: 8px; }
+  .layer-body p { color: var(--ink-soft); font-size: var(--step-0); }
+  .layer-body p + p { margin-top: 12px; }
+  .layer-body .out { color: var(--ink); }
+  code, .k { font-family: var(--font-mono); font-size: .92em; background: color-mix(in srgb, var(--ink) 8%, transparent); padding: 1px 6px; border-radius: 3px; letter-spacing: 0; }
+
+  /* ---- ruler diagram (ease bands) ---- */
+  .ruler { margin: 26px 0 6px; }
+  .ruler .bar { display: grid; grid-template-columns: 1.1fr 1.4fr 1.4fr 1.1fr; height: 52px; border-radius: 5px; overflow: hidden; border: 1px solid var(--line); }
+  .ruler .seg { display: flex; align-items: center; justify-content: center; font-size: var(--step--1); font-weight: 650; position: relative; }
+  .ruler .seg.tight { background: color-mix(in srgb, var(--measure) 20%, var(--card)); color: var(--measure); }
+  .ruler .seg.snug  { background: color-mix(in srgb, var(--good) 22%, var(--card)); color: var(--good); }
+  .ruler .seg.relax { background: var(--card); color: var(--ink-soft); }
+  .ruler .seg.big   { background: color-mix(in srgb, var(--ink) 8%, var(--card)); color: var(--ink-soft); }
+  .ruler .ticks { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: var(--step--1); color: var(--ink-faint); margin-top: 8px; padding: 0 2px; }
+  .ruler .cap { font-size: var(--step--1); color: var(--ink-soft); margin-top: 14px; }
+  .ruler .cap b { color: var(--good); font-weight: 650; }
+
+  /* ---- variance split diagram (§ brand variance) ---- */
+  .vsplit { margin-top: 6px; display: grid; gap: 11px; max-width: 700px; }
+  .vrow { display: grid; grid-template-columns: 96px 1fr 122px; gap: 14px; align-items: center; }
+  @media (max-width: 600px) { .vrow { grid-template-columns: 66px 1fr 96px; gap: 9px; } }
+  .vrow .vlbl { font-size: var(--step--1); color: var(--ink-soft); line-height: 1.25; }
+  .vrow .vlbl b { color: var(--ink); font-weight: 650; }
+  .vtrack { position: relative; height: 30px; background: color-mix(in srgb, var(--ink) 5%, transparent); border: 1px solid var(--line); border-radius: 5px; }
+  .vspan { position: absolute; top: 3px; bottom: 3px; border-radius: 4px; }
+  .vspan.wide { background: var(--measure); }
+  .vspan.cell { background: var(--good); }
+  .vnum { font-family: var(--font-mono); font-size: var(--step--1); font-variant-numeric: tabular-nums; color: var(--ink-faint); text-align: right; }
+  .vnum b { color: var(--measure); font-weight: 700; }
+  .vnum.good b { color: var(--good); }
+  .vaxis { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: var(--step--1); color: var(--ink-faint); margin: 4px 136px 0 110px; }
+  @media (max-width: 600px) { .vaxis { margin: 4px 105px 0 75px; } }
+  .vsplit .split-note { display: flex; align-items: center; gap: 8px; font-size: var(--step--1); color: var(--measure); font-family: var(--font-mono); letter-spacing: .02em; margin: 3px 0 3px 110px; }
+  @media (max-width: 600px) { .vsplit .split-note { margin-left: 75px; } }
+  .vsplit .split-note::before { content: "↓"; font-size: 1.1em; }
+
+  /* ---- worked example flow ---- */
+  .flow { display: grid; gap: 0; margin-top: 12px; counter-reset: step; }
+  .step {
+    display: grid; grid-template-columns: 42px 1fr; gap: 20px;
+    padding: 26px 0; border-top: 1px dashed var(--line); position: relative;
+  }
+  .step:first-child { border-top: none; }
+  .step .dot {
+    counter-increment: step; grid-row: 1 / 3;
+    width: 42px; height: 42px; border-radius: 50%;
+    border: 1.5px solid var(--measure); color: var(--measure);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-weight: 700; font-size: var(--step-0);
+  }
+  .step .dot::before { content: counter(step); }
+  .step h3 { font-size: var(--step-1); margin-bottom: 6px; }
+  .step .desc { color: var(--ink-soft); font-size: var(--step-0); }
+  .calc {
+    font-family: var(--font-mono); font-size: var(--step--1); line-height: 1.9;
+    background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--measure);
+    border-radius: 4px; padding: 14px 18px; margin-top: 14px; overflow-x: auto;
+  }
+  .calc .lbl { color: var(--ink-faint); }
+  .calc .res { color: var(--measure); font-weight: 700; }
+  .calc .fit { color: var(--good); font-weight: 700; }
+
+  /* size result mini-table */
+  .sizes { width: 100%; border-collapse: collapse; margin-top: 14px; font-family: var(--font-mono); font-size: var(--step--1); }
+  .sizes th, .sizes td { text-align: right; padding: 9px 10px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  .sizes th { color: var(--ink-faint); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; font-size: .8em; }
+  .sizes td:first-child, .sizes th:first-child { text-align: left; }
+  .sizes tr.pick td { background: color-mix(in srgb, var(--good) 12%, transparent); }
+  .badge { display:inline-block; padding: 2px 8px; border-radius: 20px; font-size: .82em; font-weight: 650; }
+  .badge.t { background: color-mix(in srgb, var(--measure) 18%, transparent); color: var(--measure); }
+  .badge.s { background: color-mix(in srgb, var(--good) 18%, transparent); color: var(--good); }
+  .badge.r { background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--ink-soft); }
+
+  /* ---- trust grid ---- */
+  .trust { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 5px; overflow: hidden; margin-top: 8px; }
+  @media (min-width: 680px) { .trust { grid-template-columns: 1fr 1fr; } }
+  .trust .t { background: var(--card); padding: 24px 24px; }
+  .trust .t h3 { font-size: var(--step-0); margin-bottom: 8px; display: flex; align-items: center; gap: 9px; }
+  .trust .t h3 .m { color: var(--measure); font-family: var(--font-mono); font-weight: 700; }
+  .trust .t p { font-size: var(--step--1); color: var(--ink-soft); line-height: 1.55; }
+
+  /* ---- stats ---- */
+  .stats { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 5px; overflow: hidden; margin-top: 30px; }
+  @media (min-width: 620px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+  .stat { background: var(--card); padding: 22px 20px; }
+  .stat .v { font-family: var(--font-mono); font-size: var(--step-2); font-weight: 750; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .stat .l { font-size: var(--step--1); color: var(--ink-soft); margin-top: 4px; }
+
+  /* r2 bars */
+  .r2 { margin-top: 22px; display: grid; gap: 11px; max-width: 560px; }
+  .r2 .row { display: grid; grid-template-columns: 78px 1fr 96px; align-items: center; gap: 14px; }
+  .r2 .name { font-size: var(--step--1); color: var(--ink-soft); }
+  .r2 .track { height: 9px; background: color-mix(in srgb, var(--ink) 8%, transparent); border-radius: 6px; overflow: hidden; }
+  .r2 .fill { height: 100%; background: var(--good); border-radius: 6px; }
+  .r2 .fill.weak { background: var(--measure); }
+  .r2 .val { font-family: var(--font-mono); font-size: var(--step--1); color: var(--ink-faint); text-align: right; font-variant-numeric: tabular-nums; }
+
+  blockquote { margin: 0; padding: 0; }
+  .pull { font-size: var(--step-2); font-weight: 720; letter-spacing: -.022em; line-height: 1.24; max-width: 700px; }
+  .pull .em { color: var(--measure); }
+
+  footer { border-top: 1px solid var(--line); padding: 44px 0 70px; color: var(--ink-faint); font-size: var(--step--1); }
+  footer .mono { color: var(--ink-soft); }
+  a { color: var(--measure); text-decoration: none; }
+  a:focus-visible, :focus-visible { outline: 2px solid var(--measure); outline-offset: 3px; border-radius: 2px; }
+  ::selection { background: color-mix(in srgb, var(--measure) 30%, transparent); }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <span class="tick tl"></span><span class="tick tr"></span>
+
+  <div class="wrap">
+    <header>
+      <div class="kicker fade d1">
+        <span>핏팅 · FITTING</span><b>사이즈 판정 엔진</b><span>정확도 설명서</span>
+      </div>
+      <h1 class="fade d2">자를 대지 않고<br><span class="em">치수를 아는</span> 방법</h1>
+      <p class="lede fade d3">
+        핏팅은 사용자에게 몸을 재라고 하지 않습니다. <b>이미 가진 옷이 어떻게 맞았는지</b>를 묻고,
+        그 경험을 <b>센티미터로 되돌립니다.</b> 이 문서는 그게 왜 &lsquo;감&rsquo;이 아니라
+        측정인지, 비개발자도 따라올 수 있게 한 단계씩 풀어씁니다.
+      </p>
+    </header>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ─────────── 01 문제 ─────────── -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-no">§01</span>
+      <div>
+        <div class="eyebrow">풀어야 할 문제</div>
+        <h2 style="margin-top:14px">사이즈표는 왜 늘 틀리는가</h2>
+      </div>
+    </div>
+    <p class="sec-intro prose">온라인 옷 구매의 실패는 세 가지가 겹쳐 일어납니다. 핏팅은 이 셋을 각각 겨냥합니다.</p>
+
+    <div class="probs">
+      <div class="prob">
+        <span class="n">① 라벨</span>
+        <h3>M은 M이 아니다</h3>
+        <p>같은 &lsquo;M&rsquo;도 브랜드마다, 심지어 같은 브랜드의 옷 종류마다 실측이 다릅니다. 라벨은 신뢰할 수 있는 단위가 아닙니다.</p>
+      </div>
+      <div class="prob">
+        <span class="n">② 측정</span>
+        <h3>사람은 자기 몸을 못 잰다</h3>
+        <p>가슴·허리 둘레를 줄자로 정확히 재는 사람은 드뭅니다. 재라고 요구하는 순간, 대부분의 사용자가 이탈합니다.</p>
+      </div>
+      <div class="prob">
+        <span class="n">③ 느낌</span>
+        <h3>표는 &lsquo;착용감&rsquo;을 말 안 한다</h3>
+        <p>가슴 단면 52cm가 &lsquo;나에게&rsquo; 낄지 여유로울지는, 내 몸 치수를 알아야만 답이 나옵니다. 숫자 그 자체로는 부족합니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── 02 아이디어 ─────────── -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-no">§02</span>
+      <div>
+        <div class="eyebrow">핵심 아이디어</div>
+        <h2 style="margin-top:14px">거꾸로 푼다 — 옷의 &lsquo;느낌&rsquo;을 치수로</h2>
+      </div>
+    </div>
+    <div class="prose">
+      <p style="font-size:var(--step-1); color:var(--ink-soft); font-weight:400; letter-spacing:-.012em;">
+        누구나 대답할 수 있는 질문이 하나 있습니다. &mdash;
+        <span style="color:var(--ink); font-weight:650;">&ldquo;가지고 있는 그 유니클로 M, 가슴이 껴요, 딱 맞아요, 아니면 여유로워요?&rdquo;</span>
+      </p>
+      <p style="margin-top:18px; color:var(--ink-soft);">
+        핏팅은 그 옷의 <b style="color:var(--ink)">실제 실측 치수를 이미 알고 있습니다.</b>
+        그래서 물리를 <b style="color:var(--ink)">거꾸로</b> 돌릴 수 있습니다 &mdash;
+        옷 치수에서 &lsquo;느낌&rsquo;만큼을 빼면, 그게 곧 <b style="color:var(--measure)">내 몸 치수</b>입니다.
+        줄자 없이, 기억만으로 측정이 됩니다. 이것이 핏팅 정확도의 심장입니다.
+      </p>
+    </div>
+
+    <div class="ruler prose" style="max-width:660px">
+      <div class="bar" role="img" aria-label="여유(cm)를 끼임·딱맞음·여유·넉넉 등급으로 나누는 눈금">
+        <div class="seg tight">끼임</div>
+        <div class="seg snug">딱 맞음</div>
+        <div class="seg relax">여유</div>
+        <div class="seg big">넉넉</div>
+      </div>
+      <div class="ticks"><span>&larr; 몸보다 작음</span><span>+2cm</span><span>+8cm</span><span>+16cm</span><span>클수록 &rarr;</span></div>
+      <p class="cap">
+        &lsquo;느낌&rsquo;과 &lsquo;여유(옷 &minus; 몸, cm)&rsquo;를 잇는 <b>변환 눈금</b>(가슴 기준 예시).
+        사람이 말하는 주관적 느낌을 숫자 구간으로 고정해, 양방향으로 오갈 수 있게 합니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─────────── 03 엔진 3층 ─────────── -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-no">§03</span>
+      <div>
+        <div class="eyebrow">엔진의 구조</div>
+        <h2 style="margin-top:14px">세 개의 층으로 좁혀 들어간다</h2>
+      </div>
+    </div>
+    <p class="sec-intro prose">넓은 통계에서 출발해, 개인의 실제 경험으로 좁히고, 다시 모든 브랜드에 대입합니다.</p>
+
+    <div class="layer">
+      <div class="layer-row">
+        <span class="layer-tag">LAYER 1</span>
+        <div class="layer-body">
+          <h3>국가 실측 데이터로 출발점을 잡는다</h3>
+          <p>몸을 재라고 하지 않고, 누구나 아는 <b class="k">성별·키·몸무게·나이</b> 네 가지만 받습니다.
+             이걸 <b style="color:var(--ink)">사이즈코리아 8차 국가 인체 실측조사</b>(국가기술표준원, 2020&ndash;24, 수천 명 실측) 기반 회귀식에 넣어
+             부위별 cm를 추정합니다.</p>
+          <p class="out">중요한 건 <b>오차를 함께 내놓는다</b>는 점입니다. 각 부위 추정치에는 &lsquo;평균 오차(±cm)&rsquo;와
+             모집단 내 <b>백분위</b>가 붙습니다. 통계적 출발점이지, 최종 답이 아닙니다.</p>
+        </div>
+      </div>
+
+      <div class="layer-row hot">
+        <span class="layer-tag">LAYER 2</span>
+        <div class="layer-body">
+          <h3>착용경험을 &lsquo;역산&rsquo;해 출발점을 교정한다 &mdash; 핵심 해자</h3>
+          <p>사용자가 가진 옷의 브랜드·핏·사이즈와 <b>부위별 느낌</b>(껴요/딱맞음/여유/넉넉)을 받습니다.
+             핏팅이 그 옷의 실측을 알고 있으므로, 세 가지 규칙으로 몸 치수를 복원합니다:</p>
+          <p class="out mono" style="font-size:var(--step--1); background:color-mix(in srgb,var(--ink) 5%,transparent); padding:12px 14px; border-radius:4px;">
+            ① 단면 &rarr; 몸 축 &nbsp;(둘레 = 단면 &times; 2)<br>
+            ② 여유 = 옷 치수 &minus; 몸 치수<br>
+            ③ 느낌 &harr; 여유(cm) &nbsp;(위 변환 눈금)
+          </p>
+          <p>이 값이 Layer 1의 통계 추정치를 <b style="color:var(--measure)">덮어씁니다.</b>
+             옷을 여러 벌 대면 부위별로 평균을 내 <b>오차가 계속 좁아집니다.</b>
+             신축성 있는 밴딩 허리처럼 역산이 못 미더운 부위는 <b>자동으로 건너뛰어</b> 회귀값을 유지합니다.</p>
+        </div>
+      </div>
+
+      <div class="layer-row">
+        <span class="layer-tag">LAYER 3</span>
+        <div class="layer-body">
+          <h3>이제 알아낸 몸으로 모든 브랜드를 다시 계산한다</h3>
+          <p>몸 치수를 cm로 확정했으니, 같은 물리를 <b>앞으로</b> 돌려 브랜드별 실측표에 대입합니다. 두 가지를 답합니다:</p>
+          <p class="out"><b style="color:var(--ink)">추천</b> &mdash; &ldquo;이 브랜드에선 당신은 M입니다.&rdquo;
+             (여유가 이상 구간에 드는 사이즈를 고르고, 어깨·엉덩이 같은 병목 부위는 통과 게이트로 씀)</p>
+          <p class="out"><b style="color:var(--ink)">판정</b> &mdash; &ldquo;지금 보는 이 상품, 당신에게 맞나?&rdquo;
+             모든 사이즈를 몸에 대보고, <b>맞는 사이즈가 없으면 없다고</b> 말합니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── 04 워크드 예시 ─────────── -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-no">§04</span>
+      <div>
+        <div class="eyebrow">숫자로 따라가기</div>
+        <h2 style="margin-top:14px">한 사람이 실제로 계산되는 과정</h2>
+      </div>
+    </div>
+    <p class="sec-intro prose">가상의 사용자 <b class="mono" style="color:var(--ink)">남성 · 175cm · 72kg · 30세</b>가
+       엔진을 통과하는 전 과정입니다. 모든 숫자는 실제 규칙으로 계산했습니다.</p>
+
+    <div class="flow prose" style="max-width:680px">
+      <div class="step">
+        <span class="dot"></span>
+        <div>
+          <h3>네 가지만 입력</h3>
+          <p class="desc">성별·키·몸무게·나이. 줄자 없음. 이걸 국가 실측 기반 회귀식에 넣습니다.</p>
+        </div>
+        <div style="grid-column:2"></div>
+      </div>
+
+      <div class="step">
+        <span class="dot"></span>
+        <div>
+          <h3>통계 출발점: 가슴둘레 ≈ 95cm</h3>
+          <p class="desc">회귀식이 낸 값에 &lsquo;평균 오차&rsquo;가 함께 붙습니다. 아직 이 사람만의 값은 아닙니다.</p>
+          <div class="calc">
+            <span class="lbl">회귀 추정</span> &nbsp;→&nbsp; 가슴둘레 <span class="res">94.7 cm</span> <span class="lbl">± 3.0cm (평균 오차)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <span class="dot"></span>
+        <div>
+          <h3>가진 옷의 느낌을 역산 → 개인값으로 교정</h3>
+          <p class="desc">&ldquo;유니클로 레귤러 <b>M이 가슴에 딱 맞아요</b>&rdquo;라고 답합니다.
+             그 M의 가슴 단면(예시 <span class="mono">52cm</span>)을 몸 축으로 바꾸고, &lsquo;딱 맞음&rsquo;의 여유만큼 뺍니다.</p>
+          <div class="calc">
+            <span class="lbl">① 단면→몸축</span> &nbsp; 52cm × 2 = <b>104cm</b><br>
+            <span class="lbl">③ &lsquo;딱 맞음&rsquo; 여유</span> &nbsp; = <b>+5cm</b><br>
+            <span class="lbl">② 내 가슴</span> &nbsp; 104 − 5 = <span class="res">99 cm</span> &nbsp;<span class="lbl">← 통계값 95를 실제 경험으로 교정</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <span class="dot"></span>
+        <div>
+          <h3>확정된 몸으로 브랜드 사이즈를 다시 계산</h3>
+          <p class="desc">가슴 <span class="mono">99cm</span>를 기준으로, 대상 브랜드의 각 사이즈 여유를 구해 이상 구간(딱맞음)에
+             가장 가까운 걸 고릅니다.</p>
+          <table class="sizes">
+            <thead><tr><th>사이즈</th><th>옷 둘레</th><th>여유</th><th>판정</th></tr></thead>
+            <tbody>
+              <tr><td>S</td><td>98 cm</td><td>−1 cm</td><td><span class="badge t">껴요</span></td></tr>
+              <tr class="pick"><td>M</td><td>104 cm</td><td>+5 cm</td><td><span class="badge s">딱 맞음 ✓</span></td></tr>
+              <tr><td>L</td><td>109 cm</td><td>+10 cm</td><td><span class="badge r">여유</span></td></tr>
+            </tbody>
+          </table>
+          <p class="desc" style="margin-top:12px">
+            결과: <b style="color:var(--good)">M 추천.</b> 계산이 사용자의 실제 경험(&ldquo;M이 딱 맞았다&rdquo;)과 일치하며 닫힙니다 &mdash;
+            엔진이 스스로를 검증한 셈입니다. <span class="soft">(치수는 설명용 예시값)</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── 05 신뢰 장치 ─────────── -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-no">§05</span>
+      <div>
+        <div class="eyebrow">왜 믿을 수 있나</div>
+        <h2 style="margin-top:14px">정확도를 지키는 설계 원칙</h2>
+      </div>
+    </div>
+    <p class="sec-intro prose">과장하지 않는 것이 신뢰의 핵심입니다. 엔진은 자기가 확신하지 못하는 지점을 스스로 드러냅니다.</p>
+
+    <div class="trust">
+      <div class="t">
+        <h3><span class="m">±</span> 오차를 숨기지 않는다</h3>
+        <p>모든 추정치에 평균 오차가 붙습니다. 오차 구간이 &lsquo;끼임&rsquo; 경계에 걸치면 &lsquo;아슬해요&rsquo;로 표시합니다. 없는 정밀도를 지어내지 않습니다.</p>
+      </div>
+      <div class="t">
+        <h3><span class="m">∅</span> &ldquo;맞는 게 없다&rdquo;고 말한다</h3>
+        <p>판정 점수에는 하한선이 없습니다. 어떤 사이즈도 맞지 않으면 그대로 &lsquo;맞는 사이즈 없음&rsquo;. 억지로 추천하지 않는 게 신뢰의 조건입니다.</p>
+      </div>
+      <div class="t">
+        <h3><span class="m">≈</span> 못 믿을 부위는 건너뛴다</h3>
+        <p>밴딩 허리처럼 신축이라 역산이 부정확한 부위는 자동으로 제외하고 안전한 통계값을 씁니다. 강점 있는 데이터만 판정에 반영합니다.</p>
+      </div>
+      <div class="t">
+        <h3><span class="m">=</span> 블랙박스가 아니다</h3>
+        <p>규칙 기반 결정론 엔진입니다. 같은 입력 → 항상 같은 출력. 모든 숫자가 국가 실측 아니면 브랜드 실측 사이즈표로 추적됩니다. AI가 지어낸 값이 아닙니다.</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:var(--step-1); margin:44px 0 6px;">출발점의 정확도, 있는 그대로</h3>
+    <p class="prose soft" style="font-size:var(--step--1)">
+      국가 실측 회귀식이 부위마다 얼마나 잘 맞는지(설명력 R²)를 그대로 공개합니다.
+      가슴·허리·엉덩이는 높고, <b style="color:var(--measure)">어깨는 낮습니다</b> &mdash;
+      바로 이 약한 부위를 Layer 2 착용경험 역산이 덮어 메우는 이유입니다.
+    </p>
+    <div class="r2">
+      <div class="row"><span class="name">엉덩이둘레</span><div class="track"><div class="fill" style="width:87%"></div></div><span class="val">R² 0.87</span></div>
+      <div class="row"><span class="name">허리둘레</span><div class="track"><div class="fill" style="width:85%"></div></div><span class="val">R² 0.85</span></div>
+      <div class="row"><span class="name">가슴둘레</span><div class="track"><div class="fill" style="width:81%"></div></div><span class="val">R² 0.81</span></div>
+      <div class="row"><span class="name">위팔둘레</span><div class="track"><div class="fill" style="width:72%"></div></div><span class="val">R² 0.72</span></div>
+      <div class="row"><span class="name">어깨너비</span><div class="track"><div class="fill weak" style="width:42%"></div></div><span class="val">R² 0.42</span></div>
+    </div>
+  </section>
+
+  <!-- ─────────── 06 예상 질문: 브랜드 내 편차 ─────────── -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-no">§06</span>
+      <div>
+        <div class="eyebrow">예상 질문 · 자주 받는 반론</div>
+        <h2 style="margin-top:14px">&ldquo;같은 브랜드도 옷마다 실측이 다른데?&rdquo;</h2>
+      </div>
+    </div>
+    <p class="sec-intro prose">맞습니다. 그런데 그 편차의 <b style="color:var(--ink)">대부분은 무작위 노이즈가 아니라 &lsquo;구조&rsquo;</b>입니다 &mdash;
+       갈라놓으면 사라집니다.</p>
+
+    <div class="prose" style="max-width:680px">
+      <p style="color:var(--ink-soft)">
+        실제 데이터를 보죠. &lsquo;유니클로 레귤러 M&rsquo; 한 라벨에 가슴 단면이 <b class="mono" style="color:var(--measure)">43&ndash;56.5cm</b>,
+        무려 13.5cm나 벌어집니다. 하지만 까보면 오차가 아니라 <b style="color:var(--ink)">남녀 옷과 긴팔·반팔이 한 라벨에 섞인</b> 탓입니다.
+        <b style="color:var(--ink)">성별과 소매 종류로 가르면</b> 각 셀의 스프레드는
+        <b class="mono" style="color:var(--good)">1.5&ndash;2.5cm</b>로 주저앉습니다 &mdash; 밴드 한 폭 안입니다.
+      </p>
+    </div>
+
+    <div class="vsplit">
+      <div class="vrow">
+        <span class="vlbl"><b>reg M</b> 뭉치면</span>
+        <div class="vtrack"><span class="vspan wide" style="left:15%; right:17.5%;"></span></div>
+        <span class="vnum"><b>13.5cm</b> 편차</span>
+      </div>
+      <div class="split-note">성별 × 소매로 가르면 — 엔진의 실제 판정 단위</div>
+      <div class="vrow">
+        <span class="vlbl">남 · 긴팔</span>
+        <div class="vtrack"><span class="vspan cell" style="left:75%; right:17.5%;"></span></div>
+        <span class="vnum good"><b>1.5cm</b></span>
+      </div>
+      <div class="vrow">
+        <span class="vlbl">남 · 반팔</span>
+        <div class="vtrack"><span class="vspan cell" style="left:57.5%; right:35%;"></span></div>
+        <span class="vnum good"><b>1.5cm</b></span>
+      </div>
+      <div class="vrow">
+        <span class="vlbl">여 · 반팔</span>
+        <div class="vtrack"><span class="vspan cell" style="left:15%; right:72.5%;"></span></div>
+        <span class="vnum good"><b>2.5cm</b></span>
+      </div>
+      <div class="vaxis"><span>40cm</span><span>50cm</span><span>60cm</span></div>
+    </div>
+
+    <div class="layer" style="margin-top:38px">
+      <div class="layer-row">
+        <span class="layer-tag">① 쪼갠다</span>
+        <div class="layer-body">
+          <h3 style="font-size:var(--step-1)">편차를 만드는 축으로 먼저 분리</h3>
+          <p>매칭 키가 <b class="k">브랜드·성별·핏라인·실루엣·소매종류·사이즈</b>입니다. 남성 셔츠와 여성 반팔티를 절대 한데 비교하지 않습니다.
+             위 13.5cm 스프레드가 성별·소매만 갈라도 <b style="color:var(--ink)">셀당 1.5&ndash;2.5cm로 주저앉습니다.</b></p>
+        </div>
+      </div>
+      <div class="layer-row hot">
+        <span class="layer-tag">② 지목</span>
+        <div class="layer-body">
+          <h3 style="font-size:var(--step-1)">&lsquo;브랜드 M&rsquo;이 아니라 그가 입은 <em style="font-style:normal; color:var(--measure)">그 옷 한 벌</em></h3>
+          <p>역산(Layer 2)에서 사용자는 실제로 가진 <b>특정 제품</b>(브랜드·핏·사이즈)을 지목합니다.
+             브랜드 전체를 평균 내는 게 아니라, 그가 입어본 바로 그 옷의 실측을 읽습니다.</p>
+        </div>
+      </div>
+      <div class="layer-row">
+        <span class="layer-tag">③ 흡수</span>
+        <div class="layer-body">
+          <h3 style="font-size:var(--step-1)">진짜 셀 안에 남는 ±몇 cm는 두 겹으로 흡수</h3>
+          <p>같은 셀에 여러 제품이 있으면 <b style="color:var(--ink)">평균</b>으로 대표값을 안정화합니다.
+             그리고 출력이 mm가 아니라 <b style="color:var(--ink)">등급(밴드)</b>이라, 옷 간 ±2cm 노이즈는 대개 같은 등급 안에 머물러
+             <b>답이 뒤집히지 않습니다.</b> 우리는 mm가 아니라 <b style="color:var(--good)">밴드를 맞힙니다.</b></p>
+        </div>
+      </div>
+      <div class="layer-row">
+        <span class="layer-tag">④ 표시</span>
+        <div class="layer-body">
+          <h3 style="font-size:var(--step-1)">그래도 못 줄이는 편차는 숨기지 않고 표시</h3>
+          <p>오차 구간이 끼임 경계에 걸치면 <b class="badge t" style="font-size:.8em">아슬해요</b>.
+             편차가 구조적으로 큰 브랜드(H&amp;M·자라)는 <b class="k">편차 큼</b> 태그로 경고 + 추천 후순위로 내립니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <blockquote class="pull prose" style="margin-top:42px; font-size:var(--step-1); font-weight:650;">
+      &ldquo;편차를 없앤다고 주장하지 않습니다. <span class="em">구조적인 부분은 쪼개서 제거</span>하고,
+      남는 건 <span class="em">오차로 정량화</span>해 정직하게 표시합니다.&rdquo;
+    </blockquote>
+  </section>
+
+  <!-- ─────────── 07 해자 / 요약 ─────────── -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-no">§07</span>
+      <div>
+        <div class="eyebrow">왜 못 따라오나</div>
+        <h2 style="margin-top:14px">진짜 해자는 &lsquo;쓸수록&rsquo; 쌓인다</h2>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="v">1,679</div><div class="l">정규화한 실측 사이즈 행</div></div>
+      <div class="stat"><div class="v">9</div><div class="l">주요 SPA·브랜드</div></div>
+      <div class="stat"><div class="v">7</div><div class="l">부위별 회귀 모델</div></div>
+      <div class="stat"><div class="v">±1&ndash;3<span style="font-size:.5em">cm</span></div><div class="l">부위별 평균 오차</div></div>
+    </div>
+
+    <p class="prose" style="margin-top:34px; color:var(--ink-soft)">
+      해자를 정직하게 나누면 세 겹입니다 &mdash; 앞의 둘은 &lsquo;출발 우위&rsquo;, 마지막 하나가 &lsquo;진짜 해자&rsquo;입니다.
+    </p>
+    <div class="trust" style="margin-top:18px">
+      <div class="t">
+        <h3><span class="m">01</span> 정규화된 통합 데이터</h3>
+        <p>브랜드마다 사이즈표는 체계도·표기 부위도·형식도 제각각입니다. 9개 브랜드 1,600여 행을
+           <b style="color:var(--ink)">하나의 비교 가능한 형태로 수집·정규화</b>한 것 자체가 품이 많이 드는 자산입니다. (모방 가능하나 느림)</p>
+      </div>
+      <div class="t">
+        <h3><span class="m">02</span> 역산 엔진</h3>
+        <p>&lsquo;느낌 → cm&rsquo; 변환 로직. 데이터가 있어도 이 엔진이 없으면 사이즈표는 그냥 표일 뿐입니다.
+           방법은 알려질 수 있어도 <b style="color:var(--ink)">튜닝된 밴드·규칙은 쌓인 피드백의 산물</b>입니다.</p>
+      </div>
+      <div class="t" style="grid-column:1/-1; border-top:2px solid var(--measure);">
+        <h3><span class="m">03</span> 쓸수록 쌓이는 착용경험 데이터 &mdash; <span style="color:var(--measure)">진짜 해자</span></h3>
+        <p>사이즈표는 공개돼 있지만, <b style="color:var(--ink)">&ldquo;그 옷이 나에게 어떻게 맞았나&rdquo;와 브랜드가 표기 안 하는 부위(팔·목 등)</b>는
+           어디에도 없습니다. 사용자가 진단을 쓸 때마다 이 데이터가 쌓여 정확도가 스스로 좋아집니다.
+           공개 데이터로는 복제할 수 없고, <b style="color:var(--good)">쓸수록 격차가 벌어지는</b> 데이터 네트워크 효과 &mdash; 이게 핏팅의 해자입니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="mono">FITTING · 사이즈 판정 엔진 정확도 설명서</div>
+    <p style="margin-top:8px; max-width:640px;">
+      규칙·데이터 출처 &mdash; 국가 인체 실측: 국가기술표준원 사이즈코리아 제8차(2020&ndash;24).
+      옷 치수: 브랜드가 공개한 실측 사이즈표를 수집·정규화한 자산(garments.json). 계산은 모두 결정론적 규칙 엔진(engine.js) 기준이며,
+      본 문서의 개별 치수는 설명을 위한 예시값입니다.
+    </p>
+  </footer>
+
+</div>
+
+</body>
+</html>
