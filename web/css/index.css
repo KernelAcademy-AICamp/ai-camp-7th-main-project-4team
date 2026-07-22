@@ -482,7 +482,7 @@
   .dsvc{display:inline-block; font-size:16px; font-weight:800; color:var(--green); background:var(--green-soft); padding:8px 16px; border-radius:24px; letter-spacing:-.02em;}
   .dhero-info h1{font-size:36px; font-weight:800; letter-spacing:-.045em; margin-top:16px;}
   .dmeta{font-size:16px; color:var(--sub); font-weight:700; display:inline-flex; align-items:center; gap:5px;} .dmeta b{color:var(--green);}
-  .rvstar-gold{color:#f5a623 !important;} .rvstar-gold .cutestar{width:17px; height:17px;}
+  .rvstar-gold{color:#e8a13a !important;} .rvstar-gold .cutestar{width:17px; height:17px;}
   .dhero-info .dmeta{font-size:19px; gap:7px;} .dhero-info .rvstar-gold .cutestar{width:22px; height:22px;}
   .dmeta-rate{font-size:23px; font-weight:800; color:var(--ink);}
   .dmeta-rev{color:var(--green); font-weight:800; cursor:pointer; text-underline-offset:3px;}
@@ -760,11 +760,11 @@
   #my .revshow{color:var(--ink-soft);} #my .revshow .starsRO{letter-spacing:1px;} #my .revshow .rtx{margin-left:6px;}
   #my .reviewform{width:100%;} #my .reviewform .stars{display:flex; gap:8px; cursor:pointer;}
   #my .reviewform .stars span{line-height:0; color:var(--line2); transition:color .12s;}
-  #my .reviewform .stars span.on{color:var(--green);}
+  #my .reviewform .stars span.on{color:#e8a13a;}
   #my .reviewform .stars .cutestar{width:30px; height:30px;}
   .cutestar{width:16px; height:16px; display:inline-block; vertical-align:-2px;}
-  /* 리스트카드·히어로·견적 등 인라인 단일 별 — cutestar 초록으로 통일 */
-  .rvstar{color:var(--green); display:inline-block; line-height:0;}
+  /* 리스트카드·히어로·견적 등 인라인 단일 별 — cutestar 오렌지로 통일 */
+  .rvstar{color:#e8a13a; display:inline-block; line-height:0;}
   .rvstar .cutestar{width:14px; height:14px; vertical-align:-2.5px;}
   #my .reviewform .rtext{width:100%; margin-top:10px; padding:11px 13px; border:1.5px solid var(--line2); border-radius:10px; font-family:inherit; font-size:14px; resize:vertical; min-height:64px; background:#fff;}
   #my .reviewform .rtext:focus{outline:none; border-color:var(--green);}
@@ -1231,7 +1231,7 @@
   .bids-overlay .revshow{color:var(--ink-soft);} .bids-overlay .revshow .starsRO{letter-spacing:1px;} .bids-overlay .revshow .rtx{margin-left:6px;}
   .bids-overlay .reviewform{width:100%;} .bids-overlay .reviewform .stars{display:flex; gap:8px; cursor:pointer;}
   .bids-overlay .reviewform .stars span{line-height:0; color:var(--line2); transition:color .12s;}
-  .bids-overlay .reviewform .stars span.on{color:var(--green);}
+  .bids-overlay .reviewform .stars span.on{color:#e8a13a;}
   .bids-overlay .reviewform .stars .cutestar{width:30px; height:30px;}
   .bids-overlay .reviewform .rtext{width:100%; margin-top:10px; padding:11px 13px; border:1.5px solid var(--line2); border-radius:10px; font-family:inherit; font-size:14px; resize:vertical; min-height:64px; background:#fff;}
   .bids-overlay .reviewform .rtext:focus{outline:none; border-color:var(--green);}

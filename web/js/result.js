@@ -7,6 +7,7 @@
   var gender=(payload.basic&&payload.basic.gender)||'female';
   // 실엔진(BodyModel·FitEngine·FitBodyType)이 단일 정본. 목업(engine-mock) 제거 — confidenceTier만 로컬 계산.
   var hasBasic=!!(payload.basic && payload.basic.height!=null);   // 진단 데이터 유무(없으면 가짜 결과 대신 가드)
+  if(hasBasic){ try{ sessionStorage.setItem('fitting.done','1'); }catch(e){} }   // 진단 완료 표시 — 재진단 안내 배너(diag-basic) 조건
   var nExp=(payload.experiences||[]).length;
   var confidenceTier=nExp<=0?'low':(nExp===1?'mid':'high');       // 0벌 low·1벌 mid·2벌+ high
   // 8유형 성별 축: 구조필드(공유)+gender.{male,female} 콘텐츠 병합. 구 포맷(gender 없음)은 raw 폴백.
