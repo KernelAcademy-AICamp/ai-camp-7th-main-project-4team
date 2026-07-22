@@ -15,12 +15,28 @@
 
 /* 메인 앱 내비바 — index .nav와 동일 규격(max-width·height·gap·padding)으로 맞춰 페이지 간 위치 고정 */
 .dhead .dhead-in{max-width:1320px; margin:0 auto; height:66px; gap:48px; padding:0 24px;}
+.dhead{letter-spacing:-.02em;}   /* index 본문 자간(--ls-body)과 동일 → 메뉴·navr 글자폭 일치(내비 밀림 방지) */
+.dhead .logo{font-size:22px; letter-spacing:-.05em; line-height:1;}   /* index .logo와 동일 크기 → 전환 시 로고 움찔 방지 */
+.dhead .logo i{margin-left:2px;}
 .dhead .jmenu{display:flex; gap:2px;}
 .dhead .jmenu a{position:relative; padding:8px 14px; border-radius:10px; font-size:16px; font-weight:600; color:var(--muted,#6E6B63); text-decoration:none;}
 .dhead .jmenu a:hover{color:var(--ink,#16140F);}
 .dhead .jmenu a.on{color:var(--ink,#16140F); font-weight:800;}
 .dhead .jmenu a.on::after{content:""; position:absolute; left:50%; transform:translateX(-50%); bottom:3px; width:5px; height:5px; border-radius:50%; background:var(--accent,#2E4A3B);}
 @media (max-width:640px){ .dhead .dhead-in{height:56px; gap:0; padding:0 16px;} .dhead .jmenu a{padding:8px 10px; font-size:14.5px;} }
+/* 우측 내비 — index .navr와 동일(스타일리스트 지원·알림·프로필) */
+.dhead .navr{position:relative; margin-left:auto; display:flex; align-items:center; gap:16px; font-size:15px; color:var(--muted,#6E6B63);}
+.dhead .navr .sup{font-weight:700; color:var(--accent,#2E4A3B); text-decoration:none; cursor:pointer; white-space:nowrap;}
+.dhead .navr .navdiv{width:1px; height:18px; background:var(--field-line,#DAD8D2); display:inline-block; flex:none;}
+.dhead .navr .navbell{position:relative; display:inline-flex; align-items:center; color:var(--muted,#6E6B63);}
+.dhead .navr .navuser{display:flex; align-items:center; gap:9px; cursor:pointer;}
+.dhead .navr .navname{color:var(--ink,#16140F); font-weight:700; white-space:nowrap;}
+.dhead .navr .navav{width:34px; height:34px; border-radius:50%; background:var(--ink,#16140F); color:#fff; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:800; overflow:hidden; flex:none;}
+.dhead .navr .usermenu{position:absolute; top:calc(100% + 6px); right:0; background:#fff; border:1px solid var(--line,#E6E5E1); border-radius:12px; box-shadow:0 12px 32px rgba(0,0,0,.13); padding:6px; display:none; z-index:60; min-width:150px;}
+.dhead .navr .usermenu.on{display:block;}
+.dhead .navr .usermenu a{display:block; padding:10px 12px; font-size:13.5px; font-weight:700; color:var(--ink,#16140F); border-radius:8px; text-decoration:none;}
+.dhead .navr .usermenu a:hover{background:#EDEDEA;}
+@media (max-width:820px){ .dhead .navr .sup, .dhead .navr .navname{display:none;} }
 
 /* ── 진단 유도 게이트: 에디토리얼 헤드라인 + 히트맵 예시 + 시작 ─────── */
 .jgate{margin-top:20px; display:flex; flex-direction:column; gap:24px;}

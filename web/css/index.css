@@ -3,7 +3,7 @@
   /* 토큰·리셋·바디는 tokens.css가 담당(:root, *, body). 여기는 화면별 레이아웃 CSS만. */
   a{color:inherit; text-decoration:none; cursor:pointer;}
   /* 스크롤바 자리 항상 예약 — 콘텐츠 높이가 바뀌어(완료 화면 등) 스크롤바가 사라져도 폭이 안 변하게(내비·본문 고정) */
-  html{overflow-y:auto; scrollbar-gutter:stable;}
+  html{overflow-y:scroll; scrollbar-gutter:stable;}   /* 스크롤바 항상 강제 → 페이지 이동 시 내비 좌우 밀림 방지 */
   /* 푸터 하단 고정(sticky footer): body 세로 플렉스 + 본문이 남는 공간 채움 */
   body{min-height:100vh; display:flex; flex-direction:column; overflow-x:clip;}
 
