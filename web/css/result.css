@@ -45,6 +45,20 @@
   .rconf.low{ background:#f2ece0; color:#8a7a52; } .rconf.mid{ background:#e7efe7; color:#4a7a4a; } .rconf.high{ background:var(--ink); color:#fff; }
   .rconf-msg{ font-size:14.5px; color:var(--sub2); line-height:1.5; max-width:300px; } .rconf-msg a{ color:var(--ink); font-weight:700; }
 
+  /* 완성 유도 배너(상단) — 부분/0벌일 때만. 스텝 도트 + 문장 + CTA */
+  .rupgrade{ margin:2px 0 22px; }
+  .rup-wrap{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; background:#fff; border:1px solid var(--line); border-radius:14px; padding:13px 18px; box-shadow:0 4px 14px rgba(20,18,16,.04); }
+  .rup-steps{ display:flex; align-items:center; gap:10px; }
+  .rup-step{ display:flex; align-items:center; gap:7px; font-size:14px; font-weight:800; }
+  .rup-num{ width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; flex:none; }
+  .rup-step.done{ color:var(--g); } .rup-step.done .rup-num{ background:var(--g); color:#fff; }
+  .rup-step.todo{ color:var(--sub); } .rup-step.todo .rup-num{ background:#fff; border:1.6px solid var(--line); color:var(--sub2); }
+  .rup-line{ width:26px; height:1.6px; background:var(--line); }
+  .rup-msg{ flex:1; min-width:160px; font-size:14.5px; color:var(--sub); } .rup-msg b{ color:var(--ink); }
+  .rup-btn{ flex:none; background:transparent; color:var(--g); border:1.6px solid var(--gl); border-radius:11px; padding:10px 15px; font-size:13.5px; font-weight:800; cursor:pointer; text-decoration:none; white-space:nowrap; }
+  .rup-btn:hover{ background:var(--gs); }
+  @media(max-width:520px){ .rup-wrap{ gap:12px; } .rup-btn{ flex:1; text-align:center; } }
+
   .rcol{ display:flex; flex-direction:column; gap:18px; min-width:0; }
   .rpanel{ background:#fff; border:1px solid var(--line); border-radius:18px; padding:22px 24px; }
   .rkicker{ font-size:19px; font-weight:800; letter-spacing:-.03em; color:var(--ink); }

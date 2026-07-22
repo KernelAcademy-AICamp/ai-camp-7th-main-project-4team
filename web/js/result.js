@@ -73,15 +73,25 @@
     var tier=confidenceTier;
     if(!cardReady && tier==='high') tier='mid'; // 완성 전엔 '높음' 아님
     var tierKo=tier==='high'?'높음':tier==='mid'?'보통':'낮음';
-    var msg='';
-    if(noneDone){ // 0벌: 실착을 넣으면 정밀해진다는 안내
-      msg='<span class="rconf-msg"><a href="diag-fit.html?cat=top">상의</a> · <a href="diag-fit.html?cat=bottom">하의</a> 실착을 넣으면 체형이 또렷해져요</span>';
-    }else if(!cardReady){ // 부분(1/2): 잠금이 아니라 진행률·업그레이드로 유도
-      var needL=upperDone?'하의':'상의';
-      var needH=upperDone?'diag-fit.html?cat=bottom&reuse=1&have=top':'diag-fit.html?cat=top&reuse=1&have=bottom';
-      msg='<span class="rconf-msg"><b>1/2 완료</b> · <a href="'+needH+'">'+needL+'까지 진단</a>하면 체형이 또렷해져요</span>';
+    // 업그레이드 유도 문구는 상단 배너(upgradeHTML)로 이동 — 여기선 정확도 배지만.
+    return '<div class="rcardnote"><span class="rconf '+tier+'">정확도 '+tierKo+(tier==='low'?' · 기본 추정':'')+'</span></div>';
+  }
+  // 완성 유도 배너(상단) — 부분(1/2)·0벌일 때만. 스텝 도트(상의✓/하의○) + 문장 + CTA
+  function upgradeHTML(){
+    if(cardReady) return '';   // 완성(2/2) → 배너 없음
+    function step(done,label,n){ return '<div class="rup-step '+(done?'done':'todo')+'"><span class="rup-num">'+(done?'✓':n)+'</span>'+label+'</div>'; }
+    var steps='<div class="rup-steps">'+step(upperDone,'상의',1)+'<div class="rup-line"></div>'+step(lowerDone,'하의',2)+'</div>';
+    var msg, href, btn;
+    if(noneDone){   // 0벌(건너뛰기)
+      msg='<b>상의·하의를 넣으면</b> 체형이 또렷해져요';
+      href='diag-fit.html?cat=top'; btn='상의부터 진단';
+    }else{          // 부분(1/2) — 완료 안 된 쪽 유도
+      var needBot=upperDone;   // 상의 완료 → 하의 남음
+      msg='<b>'+(needBot?'하의':'상의')+'까지 하면</b> 체형이 또렷해져요';
+      href=needBot?'diag-fit.html?cat=bottom&reuse=1&have=top':'diag-fit.html?cat=top&reuse=1&have=bottom';
+      btn=(needBot?'하의':'상의')+' 진단하기';
     }
-    return '<div class="rcardnote"><span class="rconf '+tier+'">정확도 '+tierKo+(tier==='low'?' · 기본 추정':'')+'</span>'+msg+'</div>';
+    return '<div class="rup-wrap">'+steps+'<div class="rup-msg">'+msg+'</div><a class="rup-btn" href="'+href+'">'+btn+'</a></div>';
   }
   function renderCard(type){
     if(!type){ slot.innerHTML='<div class="rcard-load">체형 카드를 계산하고 있어요…</div>'; return; }  // 실분류 전 로딩(가짜 유형 X)
@@ -150,6 +160,8 @@
   }
   slot.className='rcard';
   renderCard(cardType);
+  // 완성 유도 배너(상단) — 부분/0벌이면 채우고 노출
+  (function(){ var up=document.getElementById('rupgrade'); if(!up) return; var h=upgradeHTML(); if(h){ up.innerHTML=h; up.hidden=false; } else { up.hidden=true; } })();
 
   // ── 브랜드별 추천 사이즈 — TOP(가슴·어깨)·BOTTOM(허리·엉덩이+실루엣) 실계산, 파생은 '준비중' ──
   var FLK={slim:'슬림',regular:'레귤러',loose:'루즈',oversize:'오버',skinny:'스키니',
