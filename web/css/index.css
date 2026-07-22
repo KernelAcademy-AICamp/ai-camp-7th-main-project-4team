@@ -1479,6 +1479,10 @@
     #home .showcard .lock p{ font-size:13px; }
     /* 프로모 배너도 좌우 52px → 축소 */
     #home .promo{ padding:26px 20px; border-radius:20px; gap:16px; }
+    /* 하단 CTA 버튼: 위 '#home .cta{flex-direction:column}'(히어로용)이 클래스 충돌로
+       promo 버튼에도 걸려 텍스트·화살표가 세로로 쌓이고 박스가 커짐 → row로 되돌리고 축소 */
+    #home .promo .cta{ flex-direction:row; margin-top:0; gap:7px; padding:13px 20px; font-size:15px; border-radius:22px; }
+    #home .promo .act{ gap:9px; }
 
     /* ══ 스타일리스트 찾기(#shop) 모바일 ══
        .grid도 홈 .steps와 같은 원인(820에서 2단 유지) → 1단 + 카드를 가로형으로. */
