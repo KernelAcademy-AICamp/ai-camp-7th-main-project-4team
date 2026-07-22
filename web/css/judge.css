@@ -5,11 +5,13 @@
   --g:#2E4A3B; --gs:#E7EFEA; --gl:#CBDDD2; --ink:#16140F; --ink2:#3A382F;
   --sub:#6E6B63; --sub2:#A6A29A; --line:#E6E5E1; --line2:#DAD8D2; --soft:#EDEDEA;
   --warn:#B0553F; --wsoft:#F7ECE8; --surface:#fff;
-  max-width:720px; margin:0 auto; padding:36px 24px 90px; color:var(--ink);
+  max-width:1240px; margin:0 auto; padding:38px 30px 90px; color:var(--ink);   /* 컨테이너를 스타일리스트·마이(.wrap 1240·30 + .page 38)와 통일 → 헤더 좌측 정렬·위치 일치 */
 }
 .jwrap [hidden]{display:none !important;}   /* .jsetup/.jresult의 display:flex가 UA [hidden]을 덮는 것 방지 */
-.jtitle{font-size:31.5px; font-weight:800; letter-spacing:-.04em; line-height:1.2; color:var(--ink);}
+.jtitle{font-size:25px; font-weight:800; letter-spacing:-.04em; line-height:1.2; color:var(--ink);}   /* 내비 메인 카피 크기 통일(스타일리스트 h2.sec·마이 h1과 25px) */
 .jsub{font-size:17px; color:var(--sub); margin-top:8px; line-height:1.55;}
+/* 폼·결과 본문은 읽기 좋은 폭으로 좌측 정렬(헤더는 위 gutter에 정렬, 본문은 컬럼 유지) */
+.jgate, .jresult, .jloading{max-width:680px;}
 
 .jloading{margin-top:40px; font-size:15px; font-weight:700; color:var(--sub2);}
 
@@ -75,16 +77,31 @@
 .jbtn.ghost:hover{background:var(--soft);}
 
 /* ── 상품(셀) 선택 ────────────────────────────────── */
-.jsetup{margin-top:26px; display:flex; flex-direction:column; gap:22px;}
-/* 내 체형 컨텍스트 — 판정이 '내 체형 기준'임을 보여줌(green-soft 행) */
-.jmine{display:flex; align-items:center; gap:12px; background:var(--gs); border:1px solid var(--gl); border-radius:14px; padding:12px 15px;}
-.jmine-ic{flex:none; width:38px; height:38px; border-radius:11px; background:var(--surface); color:var(--g); display:grid; place-items:center;}
-.jmine-ic svg{width:20px; height:20px;}
+.jsetup{margin-top:26px; max-width:1020px;}
+/* 넓은 폭 → 좌(작업) 1.5 : 우(안심) 1 투컬럼. 모바일은 세로 스택. */
+.jsetup-cols{display:grid; grid-template-columns:1.5fr 1fr; gap:28px; align-items:start;}
+.jsetup-main{display:flex; flex-direction:column; gap:22px; min-width:0;}
+.jsetup-side{display:flex; flex-direction:column; gap:16px; min-width:0;}
+@media (max-width:760px){ .jsetup-cols{grid-template-columns:1fr; gap:24px;} }
+
+/* 내 체형(판정 기준) — 유형색 옅은 틴트 카드(정체성만 색으로, 회색 박스 탈피). 유형 바뀌면 인라인 --jtype만 교체 */
+.jmine{--jtype:#9db8ff; display:flex; align-items:center; gap:13px; border-radius:14px; padding:13px 15px;
+  background:#eef3ff; background:color-mix(in srgb, var(--jtype) 13%, #fff);
+  border:1px solid #d6e2ff; border:1px solid color-mix(in srgb, var(--jtype) 32%, #fff);}
+/* 유형 아바타 = 홈·마이(#myAv)·상단 내비와 동일한 얼굴 그림. 유형색(--jtype) 원 위에 얹음. */
+.jmine-av{flex:none; width:44px; height:44px; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; background:var(--jtype);}
+.jmine-av .head{position:relative; width:34px; height:38px; transform:scale(.64); transform-origin:center;}
+.jmine-av .head .face{position:absolute; inset:0; border-radius:10px 10px 8px 8px; background:#ecd9c9; z-index:2; background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px),repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px);}
+.jmine-av .head .cap{position:absolute; top:-3px; left:-3px; right:-3px; height:13px; border-radius:10px 10px 45% 45%; background:#2a2b30; z-index:3;}
+.jmine-av .head.female .cap{background:#9a7350;}
+.jmine-av .head .longhair{position:absolute; top:-5px; left:-7px; right:-7px; bottom:1px; background:#9a7350; border-radius:50% 50% 36% 36% / 46% 46% 30% 30%; z-index:1;}
+.jmine-av .head .ey{position:absolute; top:18px; width:4px; height:5px; border-radius:50%; background:#2a2b30; z-index:4;} .jmine-av .head .ey.l{left:9px;} .jmine-av .head .ey.r{right:9px;}
 .jmine-tx{flex:1; min-width:0;}
-.jmine-tx b{display:block; font-size:14px; font-weight:800; color:var(--ink); letter-spacing:-.02em;}
-.jmine-tx span{display:block; font-size:12px; color:var(--g); margin-top:1px;}
-.jmine-re{flex:none; font-size:12px; font-weight:700; color:var(--g); border:1px solid var(--gl); border-radius:8px; padding:6px 10px; background:var(--surface); text-decoration:none; white-space:nowrap;}
-.jmine-re:hover{background:var(--gs);}
+.jmine-k{display:block; font-size:10.5px; font-weight:800; color:var(--sub2); letter-spacing:.09em; text-transform:uppercase; margin-bottom:1px;}
+.jmine-tx b{display:block; font-size:15px; font-weight:800; color:var(--ink); letter-spacing:-.02em;}
+.jmine-code{display:inline-block; font-size:10.5px; font-weight:800; color:var(--sub); background:var(--surface); border:1px solid var(--line); border-radius:5px; padding:1px 5px; margin-left:6px; letter-spacing:.03em; vertical-align:1.5px;}
+.jmine-re{flex:none; font-size:12px; font-weight:700; color:var(--sub); text-decoration:none; border-bottom:1px solid var(--line2); padding-bottom:1px; white-space:nowrap;}
+.jmine-re:hover{color:var(--ink2); border-color:var(--sub);}
 .jfield{display:flex; flex-direction:column; gap:10px;}
 .jlabel{font-size:13px; font-weight:800; color:var(--sub2); letter-spacing:.06em; text-transform:uppercase;}
 .jseg{display:inline-flex; gap:8px; align-self:flex-start;}
@@ -155,6 +172,11 @@
 .jhow-list li::before{content:counter(h); position:absolute; left:0; top:1px; width:20px; height:20px; border-radius:50%;
   background:var(--gs); color:var(--g); font-size:11.5px; font-weight:800; display:flex; align-items:center; justify-content:center;}
 .jhow-list li b{color:var(--ink2); font-weight:800;}
+/* 우측 안심 레일 — 방법은 옅은 카드, 예시는 게이트 히트맵 그대로 */
+.jsetup-side .jhow{margin-top:0; padding:18px 20px; border-top:none; background:var(--soft); border-radius:14px;}
+.jsetup-side .jhow-h{margin-bottom:12px;}
+.jsetup-side .jhow-list{gap:11px;}
+.jsetup-side .jhow-list li{font-size:13.5px;}
 
 /* ── 판정 결과 ────────────────────────────────────── */
 .jresult{margin-top:26px; display:flex; flex-direction:column; gap:20px;}
@@ -235,8 +257,7 @@
 .jrul.miss .jrul-track{height:22px; border-radius:6px; background:repeating-linear-gradient(135deg,var(--soft),var(--soft) 6px,transparent 6px,transparent 12px); border:1px dashed var(--line2);}
 
 @media (max-width:640px){
-  .jwrap{padding:22px 13px 72px;}
-  .jtitle{font-size:24px;}
+  .jwrap{padding:26px 18px 72px;}
   .jpanel{padding:20px 15px;}
   /* 매트릭스: 7사이즈가 가로 스크롤 없이 폭 안에 들어오게 압축 */
   .jmatrix{min-width:0; table-layout:fixed;}
