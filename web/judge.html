@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=5bf0aadb">
 <link rel="stylesheet" href="css/diag.css?v=f3d4b54a">
-<link rel="stylesheet" href="css/judge.css?v=3f15339c">
+<link rel="stylesheet" href="css/judge.css?v=a1e34c45">
 <link rel="stylesheet" href="css/appnav.css?v=81aba01d">
 <script defer src="js/appnav.js?v=007ae564"></script>
 </head>
@@ -20,7 +20,7 @@
 
 <main class="jwrap">
   <h1 class="jtitle">이 옷, 맞을까요?</h1>
-  <p class="jsub" id="jsub">사려는 상품의 사이즈표를 올리면 내 체형 기준으로 판정해요</p>
+  <p class="jsub" id="jsub">구매하는 상품의 사이즈표를 올리면 내 체형 기준으로 판정해요</p>
 
   <!-- 진단 안 했을 때: 막다른 길 금지 — '무엇인지 + 뭘 받는지(예시) + 시작'으로 안내 -->
   <section class="jgate" id="jgate" hidden>
@@ -49,7 +49,7 @@
   </section>
 
   <!-- 상품 사이즈표 캡처 입력 -->
-  <!-- 넓은 폭 → 좌(작업: 체형·무슨옷·업로드) / 우(안심: 방법·예시) 투컬럼. 모바일은 세로 스택. -->
+  <!-- 한 화면: 좌=입력 레일(체형·무슨옷·업로드, 고정) / 우=캔버스(판정 전 예시 → 판정 후 결과). 화면 전체를 바꾸지 않고 우측만 교체. 모바일은 세로 스택. -->
   <section class="jsetup" id="jsetup" hidden>
    <div class="jsetup-cols">
     <!-- 좌: 작업 -->
@@ -61,28 +61,35 @@
         <a class="jmine-re" href="diag-basic.html">진단 수정</a>
       </div>
       <div class="jfield">
-        <span class="jlabel">무슨 옷</span>
+        <span class="jlabel">옷 종류</span>
         <div class="jseg" id="jcat">
           <button class="jseg-b on" data-cat="TOP">상의</button>
           <button class="jseg-b" data-cat="BOTTOM">하의</button>
         </div>
       </div>
 
-      <!-- 캡처/붙여넣기 -->
-      <div class="jcap" id="jcap">
-        <div class="jcap-zone" id="jcapzone" tabindex="0" role="button" aria-label="사이즈표 이미지 올리기">
-          <div class="jcap-ic">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 15l4-4 3 3 4-5 7 7"/><circle cx="9" cy="9" r="1.3"/></svg>
-          </div>
-          <div class="jcap-t">상품 사이즈표를 올려주세요</div>
-          <div class="jcap-d">쇼핑몰 사이즈표를 캡처해 <b>붙여넣기(⌘V)</b> · 드래그 · 눌러서 선택</div>
+      <!-- 사이즈표 넣기 — 탭으로 '캡처 업로드 ↔ 직접 입력' 전환(D안). 탭은 두 상태(jcap·jcorrect) 위에 상시 노출 -->
+      <div class="jinput">
+        <span class="jlabel">사이즈표</span>
+        <div class="jtabs" id="jtabs" role="tablist">
+          <button class="jtab on" data-tab="capture" role="tab">캡처 업로드</button>
+          <button class="jtab" data-tab="manual" role="tab">직접 입력</button>
         </div>
-        <input type="file" id="jcapfile" accept="image/*" hidden>
-        <div class="jcap-alt"><a class="jlink" data-act="manual">또는 표를 직접 입력하기 →</a></div>
-      </div>
 
-      <!-- 인식·보정 -->
-      <div class="jcorrect" id="jcorrect" hidden>
+        <!-- 캡처/붙여넣기 -->
+        <div class="jcap" id="jcap">
+          <div class="jcap-zone" id="jcapzone" tabindex="0" role="button" aria-label="사이즈표 이미지 올리기">
+            <div class="jcap-ic">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 15l4-4 3 3 4-5 7 7"/><circle cx="9" cy="9" r="1.3"/></svg>
+            </div>
+            <div class="jcap-t">상품 사이즈표 업로드</div>
+            <div class="jcap-d">붙여넣기 · 드래그 · 눌러서 선택</div>
+          </div>
+          <input type="file" id="jcapfile" accept="image/*" hidden>
+        </div>
+
+        <!-- 인식·보정(캡처 결과 or 직접입력 테이블) -->
+        <div class="jcorrect" id="jcorrect" hidden>
         <div class="jcorrect-top">
           <img class="jcap-thumb" id="jcapthumb" alt="캡처한 사이즈표" hidden>
           <div class="jparsehint" id="jparsehint"></div>
@@ -93,65 +100,71 @@
           <input class="jmeta-in" id="jprodin" placeholder="상품명 (선택)" autocomplete="off">
         </div>
         <div id="jparsetable"></div>
+        </div>
+
+        <!-- 판정 버튼 — 캡처·직접입력 공통, 항상 아래 고정(준비되면 활성) -->
         <button class="jbtn" id="jrun" disabled>판정하기</button>
         <p class="jmiss" id="jmiss" hidden></p>
       </div>
     </div>
 
-    <!-- 우: 안심(방법 + 예시) -->
+    <!-- 우: 캔버스 — 판정 전엔 안심(방법·예시), 판정 후엔 결과. 같은 자리서 #jaside↔#jresult 교체(judge.js) -->
     <aside class="jsetup-side">
-      <!-- 작동 설명 — 홈의 'HOW IT WORKS 3스텝' 모티프를 판정용으로 축소 -->
-      <div class="jhow">
-        <div class="jhow-h">이렇게 판정해요</div>
-        <ol class="jhow-list">
-          <li><b>사이즈표를 올려요</b> 캡처해서 붙여넣으면 자동으로 읽어줘요</li>
-          <li><b>값만 확인해요</b> 잘못 읽은 데가 있으면 그 자리서 고쳐요</li>
-          <li><b>내 체형에 대봐 판정해요</b> 사이즈별로 어디가 끼고 남는지, 부위별로</li>
-        </ol>
-      </div>
-      <!-- 예시 결과 미리보기(게이트와 동일 히트맵 언어) -->
-      <div class="jgate-demo">
-        <div class="jgate-demo-h">이런 결과를 받아요 <span class="jgate-eg">예시</span></div>
-        <div class="jgate-hm">
-          <div class="rw">가슴</div><div class="c t">끼임</div><div class="c s pk">딱</div><div class="c r">여유</div>
-          <div class="rw">어깨</div><div class="c t">끼임</div><div class="c s pk">딱</div><div class="c s">딱</div>
-          <div></div><div class="col">S</div><div class="col pk">M</div><div class="col">L</div>
+      <!-- 판정 전 플레이스홀더 -->
+      <div id="jaside">
+        <!-- 작동 설명 — 홈의 'HOW IT WORKS 3스텝' 모티프를 판정용으로 축소 -->
+        <div class="jhow">
+          <div class="jhow-h">이렇게 판정해요</div>
+          <ol class="jhow-list">
+            <li><b>사이즈표를 올려요</b> 캡처해서 붙여넣으면 자동으로 읽어줘요</li>
+            <li><b>값만 확인해요</b> 잘못 읽은 데가 있으면 그 자리서 고쳐요</li>
+            <li><b>내 체형에 대봐 판정해요</b> 사이즈별로 어디가 끼고 남는지, 부위별로</li>
+          </ol>
         </div>
-        <div class="jgate-demo-c">→ 이 옷은 <b>M</b>이 맞겠네요</div>
+        <!-- 예시 결과 미리보기(게이트와 동일 히트맵 언어) -->
+        <div class="jgate-demo">
+          <div class="jgate-demo-h">이런 결과를 받아요 <span class="jgate-eg">예시</span></div>
+          <div class="jgate-hm">
+            <div class="rw">가슴</div><div class="c t">끼임</div><div class="c s pk">딱</div><div class="c r">여유</div>
+            <div class="rw">어깨</div><div class="c t">끼임</div><div class="c s pk">딱</div><div class="c s">딱</div>
+            <div></div><div class="col">S</div><div class="col pk">M</div><div class="col">L</div>
+          </div>
+          <div class="jgate-demo-c">→ 이 옷은 <b>M</b>이 맞겠네요</div>
+        </div>
       </div>
+
+      <!-- 판정 결과 — 캔버스 안에서 예시 자리를 교체(화면 전체를 바꾸지 않음) -->
+      <section class="jresult" id="jresult" hidden>
+        <div class="jverdict" id="jverdict"></div>
+        <div class="jconf" id="jconf"></div>
+
+        <div class="jpanel">
+          <div class="jphead"><div class="jpt">사이즈별로 어떻게 맞나</div><span class="jpill" id="jmxpill"></span></div>
+          <div class="jpd">올려주신 표의 모든 사이즈를 내 체형에 대봤어요 · 초록이 딱맞음, 주황이 끼임이에요</div>
+          <div class="jmatrix-wrap"><table class="jmatrix" id="jmatrix"></table></div>
+          <div class="jmxnote" id="jmxnote"></div>
+        </div>
+
+        <div class="jpanel">
+          <div class="jphead"><div class="jpt" id="jbandHead">추천 사이즈 자세히</div><span class="jpill" id="jbandpill"></span></div>
+          <div class="jpd">막대가 내 몸, 점선 폭이 추정 오차예요 · 색 구간은 이 옷의 끼임·딱맞음·여유 경계예요</div>
+          <div id="jbands"></div>
+        </div>
+
+        <!-- 수집 opt-in — 이 표를 핏팅 개선에 제공(동의 시에만 저장) -->
+        <div class="jshare" id="jshare">
+          <label class="jshare-row">
+            <input type="checkbox" id="jconsent">
+            <span class="jshare-tx"><b>이 사이즈표를 핏팅 개선에 쓸게요</b><span>다른 분들의 판정이 더 정확해져요 · 브랜드·상품명이 있으면 더 좋아요</span></span>
+          </label>
+          <button class="jbtn" id="jsubmit" disabled>제공하기</button>
+          <div class="jshare-msg" id="jsharemsg" hidden></div>
+        </div>
+
+        <button class="jbtn ghost" id="jredo">다른 옷 판정하기</button>
+      </section>
     </aside>
    </div>
-  </section>
-
-  <!-- 판정 결과 -->
-  <section class="jresult" id="jresult" hidden>
-    <div class="jverdict" id="jverdict"></div>
-    <div class="jconf" id="jconf"></div>
-
-    <div class="jpanel">
-      <div class="jphead"><div class="jpt">사이즈별로 어떻게 맞나</div><span class="jpill" id="jmxpill"></span></div>
-      <div class="jpd">올려주신 표의 모든 사이즈를 내 체형에 대봤어요 · 초록이 딱맞음, 주황이 끼임이에요</div>
-      <div class="jmatrix-wrap"><table class="jmatrix" id="jmatrix"></table></div>
-      <div class="jmxnote" id="jmxnote"></div>
-    </div>
-
-    <div class="jpanel">
-      <div class="jphead"><div class="jpt" id="jbandHead">추천 사이즈 자세히</div><span class="jpill" id="jbandpill"></span></div>
-      <div class="jpd">막대가 내 몸, 점선 폭이 추정 오차예요 · 색 구간은 이 옷의 끼임·딱맞음·여유 경계예요</div>
-      <div id="jbands"></div>
-    </div>
-
-    <!-- 수집 opt-in — 이 표를 핏팅 개선에 제공(동의 시에만 저장) -->
-    <div class="jshare" id="jshare">
-      <label class="jshare-row">
-        <input type="checkbox" id="jconsent">
-        <span class="jshare-tx"><b>이 사이즈표를 핏팅 개선에 쓸게요</b><span>다른 분들의 판정이 더 정확해져요 · 브랜드·상품명이 있으면 더 좋아요</span></span>
-      </label>
-      <button class="jbtn" id="jsubmit" disabled>제공하기</button>
-      <div class="jshare-msg" id="jsharemsg" hidden></div>
-    </div>
-
-    <button class="jbtn ghost" id="jredo">다른 옷 판정하기</button>
   </section>
 
   <div class="jloading" id="jloading">체형 불러오는 중…</div>
@@ -162,6 +175,6 @@
 <script src="js/engine.js?v=2ffd1c16"></script>
 <script src="js/config.js?v=53f50277"></script>
 <script src="js/data.js?v=0353494d"></script>
-<script src="js/judge.js?v=0fca6efe"></script>
+<script src="js/judge.js?v=52b2f71d"></script>
 </body>
 </html>
