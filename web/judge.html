@@ -7,9 +7,9 @@
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/fitting.css?v=5bf0aadb">
+<link rel="stylesheet" href="css/fitting.css?v=bf826fe0">
 <link rel="stylesheet" href="css/diag.css?v=0aeba357">
-<link rel="stylesheet" href="css/judge.css?v=e512fda3">
+<link rel="stylesheet" href="css/judge.css?v=a83ca02f">
 <link rel="stylesheet" href="css/appnav.css?v=81aba01d">
 <script defer src="js/appnav.js?v=007ae564"></script>
 </head>
@@ -20,7 +20,7 @@
 
 <main class="jwrap">
   <h1 class="jtitle">이 옷, 맞을까요?</h1>
-  <p class="jsub" id="jsub" hidden></p>
+  <p class="jsub" id="jsub">내 진단 결과를 기준으로 구매하려는 옷이 맞을지 알려드려요</p>
 
   <!-- 진단 안 했을 때: 막다른 길 금지 — '무엇인지 + 뭘 받는지(예시) + 시작'으로 안내 -->
   <section class="jgate" id="jgate" hidden>
@@ -68,7 +68,7 @@
       <div class="jcard">
         <!-- ① 판정 기준(내 체형). 유형 바뀌면 --jtype·이름·코드 함께 교체. -->
         <div class="jstep">
-          <div class="jstep-hd"><span class="jstep-n">1</span><span class="jstep-l">판정 기준</span></div>
+          <div class="jstep-hd"><span class="jstep-n">1</span><span class="jstep-l">판정 기준</span><span class="jstep-auto">진단 결과 자동</span></div>
           <div class="jmine" style="--jtype:#9db8ff">
             <span class="jmine-av"><span class="head male"><span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></span></span>
             <div class="jmine-tx"><b>시크 스트레이트<span class="jmine-code">STR</span></b></div>
@@ -144,7 +144,7 @@
         <div class="jpanel jgh-panel">
           <div class="jphead"><div class="jpt">자세히 알고 싶다면</div></div>
           <div class="jgh-bar" aria-hidden="true"></div>
-          <div class="jgh-cap">부위별 여유를 눈금으로 보여줘요</div>
+          <div class="jgh-cap">내 체형 그림 위에 부위별로 어떻게 맞는지 보여줘요</div>
         </div>
       </div>
 
@@ -167,12 +167,10 @@
 
         <div class="jpanel">
           <div class="jphead"><div class="jpt" id="jbandHead">자세히 알고 싶다면</div><span class="jpill" id="jbandpill"></span></div>
-          <div class="jpd">막대는 내 체형, 점선은 오차 범위예요</div>
+          <div class="jpd">사이즈별 끼임·딱맞음·여유를 수치와 함께 확인해요</div>
           <div id="jbands"></div>
         </div>
 
-        <!-- 대안 사이즈(다른 핏 원할 때) — render가 채움. 없으면 숨김 -->
-        <div class="jalt" id="jalt" hidden></div>
 
         <!-- 수집 opt-in — 이 표를 핏팅 개선에 제공(동의 시에만 저장) -->
         <div class="jshare" id="jshare">
@@ -180,11 +178,10 @@
             <input type="checkbox" id="jconsent">
             <span class="jshare-tx"><b>이 사이즈표를 핏팅 개선에 쓸게요</b><span>판정이 더 명확해져요</span></span>
           </label>
-          <button class="jbtn" id="jsubmit" disabled>제공하기</button>
           <div class="jshare-msg" id="jsharemsg" hidden></div>
         </div>
 
-        <button class="jbtn ghost" id="jredo">다른 옷 판정하기</button>
+        <button class="jbtn jredo-btn" id="jredo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>다른 옷 판정하기</button>
       </section>
     </aside>
    </div>
@@ -198,6 +195,6 @@
 <script src="js/engine.js?v=2ffd1c16"></script>
 <script src="js/config.js?v=53f50277"></script>
 <script src="js/data.js?v=0353494d"></script>
-<script src="js/judge.js?v=0f413332"></script>
+<script src="js/judge.js?v=53c106cb"></script>
 </body>
 </html>

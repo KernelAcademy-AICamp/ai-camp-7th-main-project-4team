@@ -8,8 +8,8 @@
   max-width:1240px; margin:0 auto; padding:38px 30px 90px; color:var(--ink);   /* 컨테이너를 스타일리스트·마이(.wrap 1240·30 + .page 38)와 통일 → 헤더 좌측 정렬·위치 일치 */
 }
 .jwrap [hidden]{display:none !important;}   /* .jsetup/.jresult의 display:flex가 UA [hidden]을 덮는 것 방지 */
-.jtitle{font-size:25px; font-weight:800; letter-spacing:-.04em; line-height:1.2; color:var(--ink);}   /* 내비 메인 카피 크기 통일(스타일리스트 h2.sec·마이 h1과 25px) */
-.jsub{font-size:17px; color:var(--sub); margin-top:8px; line-height:1.55;}
+.jtitle{font-size:25px; font-weight:800; letter-spacing:-.04em; line-height:1.2; color:var(--ink); margin:6px 0 0;}   /* 스타일리스트 h2.sec(margin:0)+listhead(margin-top:6)와 동일 위치·간격 */
+.jsub{font-size:15px; color:var(--sub); margin-top:8px; line-height:1.55;}   /* 스타일리스트 .shoplead와 동일 크기 */
 /* 부제 = 흐름 안내(옷 종류 → 사이즈표 → 판정) */
 .jflow-sub{font-size:15.5px;}
 .jflow-sub b{color:var(--g); font-weight:800;}
@@ -18,9 +18,10 @@
   box-shadow:0 1px 2px rgba(20,18,12,.03), 0 10px 26px -18px rgba(20,18,12,.14);}
 .jstep + .jstep{margin-top:18px; padding-top:18px; border-top:1px solid var(--line);}
 .jstep-hd{display:flex; align-items:center; gap:10px; margin-bottom:12px;}   /* 숫자·라벨 한 줄 정중앙 정렬 */
-.jstep-n{flex:none; width:24px; height:24px; border-radius:50%; background:var(--g); color:#fff;
+.jstep-n{flex:none; width:24px; height:24px; border-radius:7px; background:var(--ink); color:#fff;
   font-size:12.5px; font-weight:800; line-height:1; display:grid; place-items:center; text-align:center;}
 .jstep-l{font-size:15px; font-weight:800; color:var(--ink); letter-spacing:-.01em;}
+.jstep-auto{margin-left:auto; font-size:11px; font-weight:800; color:var(--sub2); background:var(--soft); padding:2px 9px; border-radius:20px; white-space:nowrap;}   /* ①은 자동 채움 = 확인만 */
 .jstep .jtabs{margin-bottom:11px;}
 .jstep .jseg{display:flex; gap:8px;}   /* 상의·하의 한 줄로 꽉 채움 */
 .jstep .jseg .jseg-b{flex:1;}
@@ -102,6 +103,8 @@
 /* 한 화면: 좌=좁은 입력 레일(고정) · 우=넓은 결과 캔버스. 판정 후에도 화면을 안 바꾸고 우측만 예시→결과로 교체. */
 .jsetup-cols{display:grid; grid-template-columns:380px minmax(0,1fr); gap:28px; align-items:start;}
 .jsetup-main{display:flex; flex-direction:column; gap:22px; min-width:0; position:sticky; top:20px;}
+/* 판정 후 = 입력부 '사용됨'으로 흐리게(다시 만지면 해제) */
+.jsetup-main.judged .jcard{opacity:.5; transition:opacity .25s ease;}
 .jsetup-side{display:flex; flex-direction:column; gap:16px; min-width:0;}
 .jsetup-side .jresult{margin-top:0; max-width:none;}   /* 캔버스에 꽉 차게 */
 @media (max-width:760px){ .jsetup-cols{grid-template-columns:1fr; gap:24px;} .jsetup-main{position:static;} .jsetup-side{margin-top:0;} }
@@ -148,11 +151,10 @@
 
 /* ── 캡처 입력 ─────────────────────────────────────── */
 .jcap{display:flex; flex-direction:column; gap:14px;}
-.jcap-zone{border:1.5px dashed var(--line2); border-radius:16px; padding:34px 20px; text-align:center; cursor:pointer;
-  display:flex; flex-direction:column; align-items:center; gap:10px; transition:border-color .15s, background .15s;}
-.jcap-zone:hover, .jcap-zone.over{border-color:var(--g); background:var(--gs);}
-.jcap-ic{width:52px; height:52px; border-radius:14px; background:var(--gs); color:var(--g); display:grid; place-items:center;}
-.jcap-zone:hover .jcap-ic, .jcap-zone.over .jcap-ic{background:#fff;}
+.jcap-zone{border:1.6px dashed var(--gl); border-radius:16px; padding:40px 20px; text-align:center; cursor:pointer;
+  background:var(--gs); display:flex; flex-direction:column; align-items:center; gap:11px; transition:border-color .15s, background .15s;}   /* 입력의 주 액션 — 초록 틴트로 돋보이게 */
+.jcap-zone:hover, .jcap-zone.over{border-color:var(--g); background:#DDEAE1;}
+.jcap-ic{width:56px; height:56px; border-radius:15px; background:#fff; color:var(--g); display:grid; place-items:center; box-shadow:0 2px 8px rgba(46,74,59,.10);}
 .jcap-ic svg{width:26px; height:26px; display:block;}
 .jcap-t{font-size:16px; font-weight:800; letter-spacing:-.03em;}
 .jcap-d{font-size:13px; color:var(--sub); line-height:1.5;} .jcap-d b{color:var(--ink2); font-weight:700;}
@@ -234,7 +236,7 @@
 /* ── 판정 결과 ────────────────────────────────────── */
 .jresult{margin-top:26px; display:flex; flex-direction:column; gap:20px;}
 /* ── 리빌 카드: 뒷면(Fit) → 앞면(B 게이지 요약)으로 뒤집힘 ── */
-.jflip{perspective:1600px; height:188px;}
+.jflip{perspective:1600px; height:200px;}
 .jflip-inner{position:relative; width:100%; height:100%; transform-style:preserve-3d; transition:transform .85s cubic-bezier(.2,.85,.25,1);}
 .jflip.on .jflip-inner{transform:rotateY(180deg);}
 .jflip-face{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:20px;}
@@ -254,10 +256,10 @@
 .rsum .hole .f{font-size:9.5px; font-weight:800; color:var(--g); letter-spacing:.08em; margin-top:3px;}
 .rsum.warn .hole .f{color:var(--warn);}
 .rsum-r{display:flex; flex-direction:column; min-width:0;}
-.rsum-vd{font-size:20px; font-weight:800; color:var(--g); letter-spacing:-.03em;}
+.rsum-vd{font-size:23px; font-weight:800; color:var(--g); letter-spacing:-.03em;}
 .rsum.warn .rsum-vd{color:var(--warn);}
-.rsum-say{margin:7px 0 0; font-size:14px; color:var(--ink2); line-height:1.55;}
-.rsum-note{font-size:11.5px; color:var(--sub2); margin-top:11px; padding-top:11px; border-top:1px solid var(--line);}
+.rsum-say{margin:8px 0 0; font-size:15.5px; color:var(--ink2); line-height:1.55;}
+.rsum-note{font-size:13px; color:var(--sub2); margin-top:12px; padding-top:12px; border-top:1px solid var(--line);}
 
 /* 대안 사이즈(다른 핏 원할 때) */
 .jalt{border:1px solid var(--line); border-radius:18px; padding:22px 24px; background:var(--surface);}
@@ -302,6 +304,37 @@
 .jmxnote:empty{display:none;}   /* 노트 없을 때 빈 회색선 제거 */
 /* 마지막 행(어깨) 바닥 = 추천 박스 초록 아랫선과 같은 높이의 회색 마감선 */
 .jmatrix tbody tr:last-child td, .jmatrix tbody tr:last-child th{border-bottom:1px solid var(--line2);}
+
+/* 자세히 = 체형(회색) 위에 추천 옷 테두리(초록) — 뜬 만큼 여유 */
+.bf{display:flex; gap:20px; align-items:center; flex-wrap:wrap;}
+.bf-fig{flex:none; width:148px;}
+.bf-fig svg{width:100%; display:block; overflow:visible;}
+.bf-leg{flex:1; min-width:150px; display:flex; flex-direction:column; gap:12px;}
+.bf-item{display:flex; flex-direction:column; gap:3px;}
+.bf-item-top{display:flex; align-items:center; gap:8px;}   /* 점·부위·상태 한 줄 정렬 */
+.bf-dot{flex:none; width:11px; height:11px; border-radius:50%;}
+.bf-item-top b{font-size:14.5px; font-weight:800;}
+.bf-st{font-size:12.5px; font-weight:800;}
+.bf-cm{margin:0 0 0 19px; font-size:12.5px; color:var(--sub); font-feature-settings:"tnum";}   /* 점 너비만큼 들여써서 부위와 정렬 */
+/* 다른 옷 판정하기 버튼 — 연한초록 채움 + 딥그린 아이콘·글자(되돌리기 아이콘) */
+.jredo-btn{display:flex; align-items:center; justify-content:center; gap:8px; background:var(--gs); color:var(--g); border:1px solid var(--gl);}
+.jredo-btn:hover{background:#DDEAE1;}
+.jredo-btn svg{width:17px; height:17px;}
+/* 사이즈 토글 — 누르면 그 사이즈가 몸에 어떻게 걸리는지. 기본=추천 고정 */
+.jbf-tog{display:flex; gap:6px; background:var(--soft); border-radius:12px; padding:4px; margin-top:6px;}
+.jbf-tog button{flex:1; position:relative; border:none; background:transparent; border-radius:9px; padding:9px 0; font:inherit; font-size:14px; font-weight:800; color:var(--sub); cursor:pointer;}
+.jbf-tog button.on{background:var(--surface); color:var(--g); box-shadow:0 2px 6px rgba(20,18,16,.08);}
+.jbf-rec{position:absolute; top:-8px; left:50%; transform:translateX(-50%); font-size:8px; font-weight:800; color:#fff; background:var(--g); padding:1px 6px; border-radius:20px;}
+.jbf-say{display:flex; align-items:center; flex-wrap:wrap; gap:7px; margin:14px 0 2px;}   /* 한 줄 정렬 */
+.jbf-say b{font-size:15px; font-weight:800; color:var(--ink);}
+.jbf-ft{font-size:13px; font-weight:800; color:var(--g);}
+.jbf-rs{font-size:13px; color:var(--sub);}
+.jbf-recl{font-size:10.5px; font-weight:800; color:var(--g); background:var(--gs); border:1px solid var(--gl); padding:1px 7px; border-radius:20px;}
+.jbf-key{margin-top:16px; padding-top:14px; border-top:1px solid var(--line); font-size:11.5px; color:var(--sub); line-height:1.6;}
+.jbf-sep{color:var(--line2); margin:0 4px;}
+.jbf-key b{color:var(--ink2); font-weight:800;}
+.jbf-kg{display:inline-block; width:15px; border-top:2px solid var(--g); vertical-align:middle; margin-right:1px;}
+.jbf-kb{display:inline-block; width:11px; height:11px; background:#E4E3DE; border-radius:3px; vertical-align:middle; margin-right:1px;}
 
 /* 밴드 차트 */
 /* ── 줄자 게이지(방향2) — 홈 줄자 + 스펙트럼 바 언어. 눈금 위 '나' 위치로 여유·오차 직관화 ── */
