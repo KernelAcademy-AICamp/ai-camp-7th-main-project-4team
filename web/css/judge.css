@@ -19,7 +19,7 @@
 .jstep + .jstep{margin-top:18px; padding-top:18px; border-top:1px solid var(--line);}
 .jstep-hd{display:flex; align-items:center; gap:10px; margin-bottom:12px;}   /* 숫자·라벨 한 줄 정중앙 정렬 */
 .jstep-n{flex:none; width:24px; height:24px; border-radius:50%; background:var(--g); color:#fff;
-  font-size:12.5px; font-weight:800; display:flex; align-items:center; justify-content:center;}
+  font-size:12.5px; font-weight:800; line-height:1; display:grid; place-items:center; text-align:center;}
 .jstep-l{font-size:15px; font-weight:800; color:var(--ink); letter-spacing:-.01em;}
 .jstep .jtabs{margin-bottom:11px;}
 .jstep .jseg{display:flex; gap:8px;}   /* 상의·하의 한 줄로 꽉 채움 */
@@ -277,24 +277,31 @@
 .jpill:empty{display:none;}
 
 /* 사이즈 매트릭스 */
-.jmatrix-wrap{overflow-x:auto; min-width:0; padding-top:16px;}   /* padding-top = M열 위 '추천' 뱃지가 안 잘리게 */
+.jmatrix-wrap{overflow-x:auto; min-width:0; padding-top:11px;}   /* padding-top = 추천 뱃지 클리어런스(표를 살짝 위로) */
 .jmatrix{border-collapse:collapse; width:100%; min-width:440px;}
 .jmatrix th, .jmatrix td{padding:12px 9px; text-align:center; font-size:13.5px; border-top:1px solid var(--line2);}   /* line2=회색 추천열 위에서도 구분선이 이어지도록 살짝 진하게 */
 .jmatrix thead th{border-top:none; font-size:16px; font-weight:800; letter-spacing:-.03em; color:var(--ink); position:relative;}
 .jmatrix thead th small{display:block; font-size:10px; font-weight:700; color:var(--sub2); margin-top:2px;}
 .jmatrix thead th{padding-top:16px;}   /* '추천' 뱃지와 사이즈 글자 사이 간격 */
-.jmatrix thead th.pick::after{content:"추천"; position:absolute; top:-14px; left:50%; transform:translateX(-50%);
+.jmatrix thead th.pick::after{content:"추천"; position:absolute; top:-10px; left:50%; transform:translateX(-50%);
   background:var(--g); color:#fff; font-size:9px; font-weight:800; padding:2px 8px; border-radius:20px;}
 .jmatrix tbody th{text-align:left; font-weight:800; color:var(--ink2); white-space:nowrap; font-size:13.5px;}
 .jmatrix td.pickcol{background:var(--gs);}
+/* 추천 열 = 초록 테두리 레인(C안) — 헤더~마지막 행을 초록 박스로 감쌈 */
+.jmatrix thead th.pick{border-top:2px solid var(--g);}
+.jmatrix th.pick, .jmatrix td.pickcol{border-left:2px solid var(--g); border-right:2px solid var(--g);}
+.jmatrix tbody tr:last-child td.pickcol{border-bottom:2px solid var(--g);}
 .jmatrix .fp{display:inline-block; font-size:12px; font-weight:800; padding:4px 9px; border-radius:20px; letter-spacing:-.01em;}
 .fp.tight{background:var(--wsoft); color:var(--warn);}
 .fp.snug{background:var(--gs); color:var(--g);}
-.fp.relax{background:var(--soft); color:var(--sub);}
-.fp.big{background:var(--soft); color:var(--sub2);}
+.fp.relax{background:#E4E3DE; color:var(--ink2);}   /* 여유 = 진한 회색 배경 */
+.fp.big{background:#F4F3EF; color:#8C887F;}          /* 넉넉 = 옅은 배경 + 중간 회색 글자(sub2보단 진하게) */
 .fp.na{color:var(--sub2); background:transparent; font-weight:700;}
 .fp.brd{background:var(--wsoft); color:var(--warn); outline:1.5px dashed var(--warn); outline-offset:-1.5px;}
 .jmxnote{font-size:12.5px; color:var(--sub2); line-height:1.6; margin-top:14px; padding-top:14px; border-top:1px solid var(--line);}
+.jmxnote:empty{display:none;}   /* 노트 없을 때 빈 회색선 제거 */
+/* 마지막 행(어깨) 바닥 = 추천 박스 초록 아랫선과 같은 높이의 회색 마감선 */
+.jmatrix tbody tr:last-child td, .jmatrix tbody tr:last-child th{border-bottom:1px solid var(--line2);}
 
 /* 밴드 차트 */
 /* ── 줄자 게이지(방향2) — 홈 줄자 + 스펙트럼 바 언어. 눈금 위 '나' 위치로 여유·오차 직관화 ── */
