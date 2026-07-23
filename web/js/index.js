@@ -384,7 +384,9 @@
     function paint(t){ if(!t) return;
       var g=(USER.gender==='female')?'female':'male';
       var c=(t.gender&&(t.gender[g]||t.gender.female))||t;   // 성별별 콘텐츠(insight와 동일 규칙)
-      if(idEl){ idEl.innerHTML='<span class="dtl-code">'+t.code+'</span><h2 class="dtl-name">'+(t.name||'')+'</h2>'+
+      // 유형 포인트색(--tp) — 정적 HTML의 STR 인라인색(#9db8ff)을 유형별 색으로 덮어씀(코드·이름·해시)
+      if(idEl){ idEl.style.setProperty('--tp', t.point||'#2E4A3B');
+        idEl.innerHTML='<span class="dtl-code">'+t.code+'</span><h2 class="dtl-name">'+(t.name||'')+'</h2>'+
         '<span class="dtl-korea">사이즈코리아 · '+(t.sizeKorea||'')+'</span>'+
         '<p class="dtl-desc">'+(c.profile||[]).map(function(p,i){ return i===0?'<b>'+p+'</b>':p; }).join('<br>')+'</p>'+
         '<div class="dtl-hash">'+chips(c.signature)+'</div>'; }
