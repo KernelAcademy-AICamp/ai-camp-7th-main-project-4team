@@ -198,7 +198,6 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
 </section>
 
 
-
 <section class="slide" data-nm="진단 2-1 기본정보">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/diagnose</div></div>
@@ -336,6 +335,52 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
       <div class="sp-l d"><span class="lb">설명</span>다음 행동 2갈래.</div>
       <div class="sp-l i"><span class="lb">의도</span>재방문(옷장) 또는 무료→유료 전환(전문가) 연결.</div>
       <div class="sp-l c"><span class="lb">제약</span>전문가 CTA → 쇼퍼찾기.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="구매 판정 (Fit)">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/judge</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span class="on">Fit</span><span>마이</span></div><div class="act">진단 수정</div></div>
+      <div class="pg"><div class="split l">
+        <div><div class="card"><span class="mk">1</span> 판정 기준 · <b>시크 스트레이트 STR</b></div>
+          <div class="row" style="margin-top:6px"><div class="btn ghost" style="margin:0"><span class="mk">2</span>캡처 업로드</div><div class="btn ghost" style="margin:0">직접 입력</div></div>
+          <div class="box tall"><span class="mk">3</span> 🖼 상품 사이즈표 업로드 — AI가 표를 읽어요</div>
+          <div class="btn"><span class="mk">4</span> 판정하기</div></div>
+        <div><div class="note"><span class="mk">5</span> 사이즈별로 어떻게 맞을까</div>
+          <div class="tbl"><div class="tr hd"><span>부위</span><span>S</span><span>M</span><span class="r">L</span></div>
+            <div class="tr"><span>허리</span><span>끼임</span><span>딱</span><span class="r">여유</span></div>
+            <div class="tr"><span>허벅지</span><span>끼임</span><span>딱</span><span class="r">여유</span></div></div>
+          <div class="card" style="background:var(--green-soft);border-color:var(--green)"><span class="mk">6</span> <b>M</b> · FIT 92 — 지금 사이즈로 사면 돼요 · 기장 적절</div>
+          <div class="card"><span class="mk">7</span> ☐ 이 사이즈표를 핏팅 개선에 제공</div></div>
+      </div></div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">2-5</span><span class="nm">구매 판정 (Fit)</span><span class="pri">★🟢 · 🔒</span>
+      <div class="io"><b>I/O</b> in fitting.dx(진단 체형) · POST /api/judge · out garment_submission(동의 시)</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">판정 기준 = 내 진단 결과</div>
+      <div class="sp-l d"><span class="lb">설명</span>진단에서 만든 체형(8유형·부위 cm)을 그대로 기준으로 쓴다.</div>
+      <div class="sp-l i"><span class="lb">의도</span>진단이 1회성으로 끝나지 않고 구매 순간에 재사용되게 — 재방문 이유.</div>
+      <div class="sp-l c"><span class="lb">제약</span>진단 없으면 게이트로 진단부터 유도.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">입력 2경로(탭)</div>
+      <div class="sp-l d"><span class="lb">설명</span>캡처 업로드(AI 인식) / 직접 입력. 브랜드는 필수.</div>
+      <div class="sp-l i"><span class="lb">의도</span>인식 실패해도 막다른 길이 없게 — 직접 입력으로 항상 진행 가능.</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">사이즈표 인식</div>
+      <div class="sp-l d"><span class="lb">설명</span>붙여넣기·드래그·선택 → /api/parse-size-table(비전)이 표를 읽고 값 보정.</div>
+      <div class="sp-l c"><span class="lb">제약</span>신체 권장범위표는 거절(옷 실측표만) · 상한 30s.</div></div></div>
+    <div class="sp-item"><span class="mk">5</span><div><div class="sp-nm">사이즈별 매트릭스</div>
+      <div class="sp-l d"><span class="lb">설명</span>올린 표의 전 사이즈를 부위별로 판정(끼임/딱/여유).</div>
+      <div class="sp-l i"><span class="lb">의도</span>"몇 사이즈?"가 아니라 "어디가 걸리나"를 보여 구매 판단을 돕는다.</div></div></div>
+    <div class="sp-item"><span class="mk">6</span><div><div class="sp-nm">요약 게이지 + 세로축</div>
+      <div class="sp-l d"><span class="lb">설명</span>FIT 점수·추천 사이즈 + 총장/기장·밑위는 참고용 소프트 안내.</div>
+      <div class="sp-l i"><span class="lb">의도</span>세로축은 취향축이라 점수를 흔들지 않는다 — 과장 없는 안내.</div>
+      <div class="sp-l c"><span class="lb">제약</span>핵심 부위 미측정이면 "판정할 수 없어요"로 단정하지 않음.</div></div></div>
+    <div class="sp-item"><span class="mk">7</span><div><div class="sp-nm">사이즈표 수집(opt-in)</div>
+      <div class="sp-l d"><span class="lb">설명</span>동의 시에만 garment_submission 저장 → 관리자 검수 후 정본 승격.</div>
+      <div class="sp-l i"><span class="lb">의도</span>쓸수록 실측 자산이 커지는 성장 구조(해자).</div>
+      <div class="sp-l c"><span class="lb">제약</span>판정 자체는 동의 없이 동작 · 재시도 중복은 멱등 차단.</div></div></div>
   </div>
 </section>
 
@@ -909,6 +954,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
+
 <section class="slide" data-nm="마이 · 개인정보·데이터 관리(삭제·철회)">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/my/privacy</div></div>
@@ -1015,6 +1061,35 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
       <div class="sp-l d"><span class="lb">설명</span>"유니클로 M = 자라?" 등 변환 가이드 결합.</div>
       <div class="sp-l i"><span class="lb">의도</span>FAQ + 브랜드 변환 콘텐츠(4.2)로 SEO 쇼케이스.</div>
       <div class="sp-l c"><span class="lb">제약</span>관리자 CS의 FAQ 관리(3.B.7)와 소스 공유.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="4.3 체형별 스타일 가이드">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/body-type-guide</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span class="on">체형별 가이드</span></div><div class="act">진단 시작</div></div>
+      <div class="pg">
+        <div class="row"><div class="field"><span class="mk">1</span>여성</div><div class="field">남성</div></div>
+        <div class="row">
+          <div class="card" style="margin:0"><span class="mk">2</span><b>STR</b> 시크 스트레이트<br><span style="font-size:11px">어울려요: 셋업 · 피해요: 과한 볼륨</span></div>
+          <div class="card" style="margin:0"><b>HRG</b> 아워글래스<br><span style="font-size:11px">허리 강조</span></div></div>
+        <div class="btn"><span class="mk">3</span> 내 체형 진단하기 →</div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">4.3</span><span class="nm">체형별 스타일 가이드</span><span class="pri">◐ · 🔍 색인</span>
+      <div class="io"><b>I/O</b> fetch bodytypes.json(디자이너 관리) · 저장 안 함 · 진단 미필요</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">성별 토글</div>
+      <div class="sp-l d"><span class="lb">설명</span>여성/남성 8유형을 각각 보여준다.</div>
+      <div class="sp-l c"><span class="lb">제약</span>유형 정의·문구는 bodytypes.json(디자이너 소유)이 원본.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">유형 카드 — 어울려요/피해요</div>
+      <div class="sp-l d"><span class="lb">설명</span>코드·이름·사이즈코리아 분류·특징과 아이템 칩(ok/no).</div>
+      <div class="sp-l i"><span class="lb">의도</span>진단 없이도 "내 얘기"를 발견하게 해 진단 동기를 만든다.</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">진단 전환</div>
+      <div class="sp-l d"><span class="lb">설명</span>내 체형 진단하기 → 기존 세션을 비우고 새 진단 시작.</div>
+      <div class="sp-l i"><span class="lb">의도</span>이 화면의 유일한 목표는 진단 유입 — 색인 가능한 유입 관문.</div></div></div>
   </div>
 </section>
 
@@ -1667,6 +1742,39 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 </section>
 
+<section class="slide" data-nm="3.A.2 제출 사이즈표 검수">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/submissions</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪ admin</span><div class="menu"><span class="on">사이즈·데이터</span><span>진단·정확도</span></div><div class="act">로그아웃</div></div>
+      <div class="pg">
+        <div class="row"><div class="field"><span class="mk">1</span>검수 대기</div><div class="field">검증됨</div><div class="field">반려</div><div class="field">승격</div></div>
+        <div class="tbl"><div class="tr hd"><span>브랜드·상품</span><span>사이즈</span><span>출처</span><span class="r">처리</span></div>
+          <div class="tr"><span><span class="mk">2</span>유니클로 · 와이드 팬츠</span><span>S~XL</span><span>캡처</span><span class="r"><span class="mk">3</span>검증 · 반려</span></div>
+          <div class="tr"><span>자라 · 리넨 셔츠</span><span>M/L</span><span>직접입력</span><span class="r">검증 · 반려</span></div></div>
+        <div class="row"><div class="field"><span class="mk">4</span>브랜드▾</div><div class="field">핏▾</div><div class="field">종류▾</div><div class="btn" style="margin:0">승격</div></div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">3.A.2</span><span class="nm">제출 사이즈표 검수</span><span class="pri">★🟢 · 🔒</span>
+      <div class="io"><b>I/O</b> in garment_submission(db/08) · out garment(정본 실측표) · admin RLS</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">상태 큐</div>
+      <div class="sp-l d"><span class="lb">설명</span>검수 대기 / 검증됨 / 반려 / 승격 4상태로 필터.</div>
+      <div class="sp-l i"><span class="lb">의도</span>수집물이 쌓이기만 하지 않고 처리 흐름을 갖게 한다.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">제출 원본 확인</div>
+      <div class="sp-l d"><span class="lb">설명</span>브랜드·상품·사이즈·출처(캡처/직접입력)와 OCR 원본을 함께 본다.</div>
+      <div class="sp-l c"><span class="lb">제약</span>사용자가 눈으로 확인한 사이즈(confirmed_size)는 신뢰↑, 나머지는 OCR 값.</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">검증 · 반려</div>
+      <div class="sp-l d"><span class="lb">설명</span>값이 신뢰 가능한지 판단해 상태를 바꾼다.</div>
+      <div class="sp-l i"><span class="lb">의도</span>잘못된 실측이 정본에 섞이면 추천·판정이 통째로 흔들린다 — 사람이 한 번 거른다.</div></div></div>
+    <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">정본 승격</div>
+      <div class="sp-l d"><span class="lb">설명</span>브랜드 매핑·핏라인/실루엣·옷 종류를 관리자가 확정해 garment로 올린다.</div>
+      <div class="sp-l i"><span class="lb">의도</span>사용자가 쓸수록 실측 자산이 커지는 고리(해자)의 마지막 단계.</div>
+      <div class="sp-l c"><span class="lb">제약</span>spec 최소 계약(부위·사이즈 키) 미충족이면 DB가 거절(db/09).</div></div></div>
+  </div>
+</section>
+
 <section class="slide" data-nm="3.A.3 엔진 시뮬·튜닝">
   <div class="stage"><div class="browser">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/engine</div></div>
@@ -1984,6 +2092,39 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
       <div class="sp-l d"><span class="lb">설명</span>API 문서·상태 페이지·변경 공지.</div>
       <div class="sp-l i"><span class="lb">의도</span>개발자 자가해결로 지원 비용↓.</div>
       <div class="sp-l c"><span class="lb">제약</span>v3 · 외부 개발자 포털 필요.</div></div></div>
+  </div>
+</section>
+
+<section class="slide" data-nm="3.E.1 관리자 관리 (초대·권한)">
+  <div class="stage"><div class="browser">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/access</div></div>
+    <div class="vp">
+      <div class="topnav"><span class="logo">Fitting▪ admin</span><div class="menu"><span>사이즈·데이터</span><span class="on">내부운영</span></div><div class="act">로그아웃</div></div>
+      <div class="pg">
+        <div class="row"><div class="field"><span class="mk">1</span>초대할 구글 이메일</div><div class="btn" style="margin:0">초대</div></div>
+        <div class="tbl"><div class="tr hd"><span><span class="mk">2</span>초대 대기</span><span>초대한 사람</span><span class="r">일시</span></div>
+          <div class="tr"><span>new@fitting.app</span><span>강건형</span><span class="r">07-23</span></div></div>
+        <div class="tbl"><div class="tr hd"><span><span class="mk">3</span>현재 관리자</span><span>승격</span><span class="r">관리</span></div>
+          <div class="tr"><span>trubard@…</span><span>07-10</span><span class="r">— (나)</span></div>
+          <div class="tr"><span>sohee@…</span><span>07-12</span><span class="r"><span class="mk">4</span>해제</span></div></div>
+      </div>
+    </div>
+  </div></div>
+  <div class="spec">
+    <div class="sp-head"><span class="id">3.E.1</span><span class="nm">관리자 관리 (초대·권한)</span><span class="pri">★🟢 · 🔒</span>
+      <div class="io"><b>I/O</b> in/out admin_invite · admin_user (db/07) · claim_admin() SECURITY DEFINER</div></div>
+    <div class="sp-item"><span class="mk">1</span><div><div class="sp-nm">이메일 초대</div>
+      <div class="sp-l d"><span class="lb">설명</span>구글 이메일을 허용목록(admin_invite)에 넣는다.</div>
+      <div class="sp-l i"><span class="lb">의도</span>브라우저는 로그인 계정 목록을 직접 조회할 수 없다 — 초대 방식이 유일하게 안전한 경로.</div></div></div>
+    <div class="sp-item"><span class="mk">2</span><div><div class="sp-nm">초대 대기 → 자동 승격</div>
+      <div class="sp-l d"><span class="lb">설명</span>초대된 이메일이 로그인하면 claim_admin()이 자동 승격하고 초대는 소진된다.</div>
+      <div class="sp-l c"><span class="lb">제약</span>SECURITY DEFINER지만 '초대목록에 있을 때만' 삽입 — 비초대자 호출은 무해.</div></div></div>
+    <div class="sp-item"><span class="mk">3</span><div><div class="sp-nm">현재 관리자 목록</div>
+      <div class="sp-l d"><span class="lb">설명</span>승격된 관리자와 승격 일시.</div>
+      <div class="sp-l i"><span class="lb">의도</span>이 목록이 곧 is_admin() — 모든 관리자 RLS의 원천이라 한눈에 보여야 한다.</div></div></div>
+    <div class="sp-item"><span class="mk">4</span><div><div class="sp-nm">권한 해제</div>
+      <div class="sp-l d"><span class="lb">설명</span>관리자에서 제거. 본인은 해제 불가(잠금 방지).</div>
+      <div class="sp-l c"><span class="lb">제약</span>초대·해제 모두 관리자만(RLS).</div></div></div>
   </div>
 </section>
 

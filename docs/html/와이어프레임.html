@@ -129,7 +129,7 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
 <body>
 <div class="top">
   <h1><b>핏팅</b> — 전체 화면 와이어프레임 <span style="font-size:13px;color:var(--sub2);font-weight:400">PC 웹 · 개요 갤러리</span></h1>
-  <div class="sub">전 화면(41)을 한눈에 보는 데스크톱 지도. 화면별 상세(요소·의도·제약)는 <b>스토리보드.html</b>, 정의·데이터 계약은 <b>시스템-화면정의서.md</b>.</div>
+  <div class="sub">전 화면(67)을 한눈에 보는 데스크톱 지도. 화면별 상세(요소·의도·제약)는 <b>스토리보드.html</b>, 정의·데이터 계약은 <b>시스템-화면정의서.md</b>.</div>
   <div class="nav">
     <a href="#app">1 · 사용자 여정</a><a href="#pro">2 · 전문가 앱</a><a href="#admin">3 · 운영 어드민</a><a href="#common">4 · 공통</a>
     <span class="pdf" onclick="window.print()">🖨 PDF</span>
@@ -197,6 +197,31 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
       <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span class="on">진단 결과</span></div><div class="act">저장 · 공유</div></div>
       <div class="pg"><div class="split l"><div class="dark"><div class="txt" style="color:#fff;font-weight:800">STR · 시크 스트레이트</div><div class="box tall" style="margin-top:5px">🧍 8유형</div></div><div><div class="note">브랜드별 추천 사이즈</div><div class="tbl"><div class="tr hd"><span>브랜드</span><span>사이즈</span><span class="r">핏</span></div><div class="tr"><span>유니클로</span><span>M</span><span class="r">96%</span></div><div class="tr"><span>자라</span><span>L</span><span class="r">91%</span></div></div></div></div>
         <div class="card" style="background:var(--green-soft);border-color:var(--green)">이 추천 맞아요? <b>✅ ➖ ❌</b> · ☐ 엔진개선 동의</div><div class="btn">전문가에게 받기 →</div></div>
+    </div></div>
+  </div>
+
+  <div class="cell">
+    <div class="cap"><span class="id">2-5</span><span class="nm">🎯 구매 판정 (Fit)</span><span class="pri">★🟢 🔒</span></div>
+    <div class="cap-l">사려는 옷의 사이즈표를 올리면 내 체형에 대봐 사이즈별로 판정. 진단(내 몸)에 이은 제품의 3번째 축.</div>
+    <div class="cap-i"><span class="lb">의도</span>못 입어보고 사는 불안을 해소 · 사이즈표 수집(동의 시)으로 실측 자산을 키움.</div>
+    <div class="stage"><div class="browser">
+      <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/judge</div></div>
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span class="on">Fit</span><span>마이</span></div><div class="act">진단 수정</div></div>
+      <div class="pg"><div class="split l">
+        <div><div class="note">① 사이즈표 넣기</div>
+          <div class="card">판정 기준 · <b>시크 스트레이트 STR</b></div>
+          <div class="row"><div class="field">캡처 업로드</div><div class="field">직접 입력</div></div>
+          <div class="box tall">🖼 상품 사이즈표 업로드</div><div class="note" style="font-size:11px">붙여넣기 · 드래그 · 눌러서 선택 · AI가 표를 읽어요</div>
+          <div class="tbl"><div class="tr hd"><span>브랜드*</span><span>상품명</span></div><div class="tr"><span>유니클로</span><span>와이드 팬츠</span></div></div>
+          <div class="btn">판정하기</div></div>
+        <div><div class="note">② 사이즈별로 어떻게 맞을까</div>
+          <div class="tbl"><div class="tr hd"><span>부위</span><span>S</span><span>M</span><span class="r">L</span></div>
+            <div class="tr"><span>허리</span><span>끼임</span><span>딱</span><span class="r">여유</span></div>
+            <div class="tr"><span>엉덩이</span><span>끼임</span><span>딱</span><span class="r">딱</span></div>
+            <div class="tr"><span>허벅지</span><span>끼임</span><span>딱</span><span class="r">여유</span></div></div>
+          <div class="card" style="background:var(--green-soft);border-color:var(--green)"><b>M</b> · FIT 92 — 지금 사이즈로 사면 돼요<br><span style="font-size:11px">기장 적절 · 밑위 미드라이즈 (세로축은 참고용)</span></div>
+          <div class="card">☐ 이 사이즈표를 핏팅 개선에 제공</div></div>
+      </div></div>
     </div></div>
   </div>
 
@@ -679,6 +704,24 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
   </div>
 
   <div class="cell">
+    <div class="cap"><span class="id">3.A.2</span><span class="nm">제출 사이즈표 검수</span><span class="pri">★🟢 🔒</span></div>
+    <div class="cap-l">사용자가 판정에서 올린 사이즈표를 검수해 정본 실측표로 승격한다.</div>
+    <div class="cap-i"><span class="lb">의도</span>수집(판정 ④) → 검수(⑤) → 자산화. 사용자가 쓸수록 실측표가 커지는 고리의 마지막 단계.</div>
+    <div class="stage"><div class="browser">
+      <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/submissions</div></div>
+      <div class="topnav"><span class="logo">Fitting▪ admin</span><div class="menu"><span class="on">사이즈·데이터</span><span>진단·정확도</span></div><div class="act">로그아웃</div></div>
+      <div class="pg">
+        <div class="row"><div class="field">검수 대기</div><div class="field">검증됨</div><div class="field">반려</div><div class="field">승격</div></div>
+        <div class="tbl"><div class="tr hd"><span>브랜드·상품</span><span>사이즈</span><span>출처</span><span class="r">처리</span></div>
+          <div class="tr"><span>유니클로 · 와이드 팬츠</span><span>S~XL</span><span>캡처</span><span class="r">검증 · 반려</span></div>
+          <div class="tr"><span>자라 · 리넨 셔츠</span><span>M/L</span><span>직접입력</span><span class="r">검증 · 반려</span></div></div>
+        <div class="note">승격 시 관리자가 확정: 브랜드 매핑 · 핏라인/실루엣 · 옷 종류</div>
+        <div class="row"><div class="field">브랜드▾</div><div class="field">핏▾</div><div class="field">종류▾</div><div class="btn" style="margin:0">승격</div></div>
+        <div class="card">사용자 확인 사이즈(confirmed_size)는 신뢰↑ · 나머지는 OCR 값</div></div>
+    </div></div>
+  </div>
+
+  <div class="cell">
     <div class="cap"><span class="id">3.A.1</span><span class="nm">브랜드 관리</span><span class="pri">★ 🔒</span></div>
     <div class="cap-l">브랜드별 커버리지·앵커 + 커버리지 갭(앵커인데 빈 셀).</div>
     <div class="cap-i"><span class="lb">의도</span>수집 우선순위 지목 → 실측표·수집 바로가기(?brand=).</div>
@@ -850,6 +893,26 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
 <div class="gallery">
 
   <div class="cell">
+    <div class="cap"><span class="id">3.E.1</span><span class="nm">관리자 관리 (초대·권한)</span><span class="pri">★🟢 🔒</span></div>
+    <div class="cap-l">이메일 초대 → 초대된 계정이 구글 로그인하면 자동 승격. 현 관리자 해제도 여기서.</div>
+    <div class="cap-i"><span class="lb">의도</span>브라우저는 로그인 계정 목록을 직접 못 보므로 <b>초대(허용목록)</b> 방식 — is_admin() RLS의 원천.</div>
+    <div class="stage"><div class="browser">
+      <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/admin/access</div></div>
+      <div class="topnav"><span class="logo">Fitting▪ admin</span><div class="menu"><span>사이즈·데이터</span><span class="on">내부운영</span></div><div class="act">로그아웃</div></div>
+      <div class="pg">
+        <div class="note">내부운영 › 관리자 관리 (초대·권한)</div>
+        <div class="row"><div class="field">초대할 구글 이메일</div><div class="btn" style="margin:0">초대</div></div>
+        <div class="note">초대 대기 — 아직 로그인 안 한 초대(로그인하면 자동 승격되어 사라짐)</div>
+        <div class="tbl"><div class="tr hd"><span>이메일</span><span>초대한 사람</span><span class="r">일시</span></div>
+          <div class="tr"><span>new@fitting.app</span><span>강건형</span><span class="r">07-23</span></div></div>
+        <div class="note">현재 관리자</div>
+        <div class="tbl"><div class="tr hd"><span>이메일</span><span>승격</span><span class="r">관리</span></div>
+          <div class="tr"><span>trubard@…</span><span>07-10</span><span class="r">— (나)</span></div>
+          <div class="tr"><span>sohee@…</span><span>07-12</span><span class="r">해제</span></div></div></div>
+    </div></div>
+  </div>
+
+  <div class="cell">
     <div class="cap"><span class="id">G.1</span><span class="nm">서비스 소개 (about)</span><span class="pri">★ 🔍</span></div>
     <div class="cap-l">작동 원리 3단계 → 무료 진단 CTA.</div>
     <div class="cap-i"><span class="lb">의도</span>진단 전 신뢰 형성(색인 대상).</div>
@@ -857,6 +920,25 @@ code{font-family:'SF Mono',ui-monospace,Menlo,monospace; font-size:.82em; backgr
       <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/about</div></div>
       <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span class="on">소개</span></div><div class="act">진단 시작</div></div>
       <div class="pg"><div class="box tall">작동 원리 3단계</div><div class="btn" style="max-width:200px;margin:8px auto">1분 무료 진단 시작</div></div>
+    </div></div>
+  </div>
+
+  <div class="cell">
+    <div class="cap"><span class="id">4.3</span><span class="nm">체형별 스타일 가이드</span><span class="pri">◐ 🔍</span></div>
+    <div class="cap-l">8유형별 특징과 어울리는/피할 아이템을 카드로. 성별 토글로 나눠 본다.</div>
+    <div class="cap-i"><span class="lb">의도</span>진단 전 방문자에게 가치를 먼저 보여주는 색인 가능한 콘텐츠 → 진단 유입.</div>
+    <div class="stage"><div class="browser">
+      <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">fitting.app/body-type-guide</div></div>
+      <div class="topnav"><span class="logo">Fitting▪</span><div class="menu"><span>홈</span><span class="on">체형별 가이드</span></div><div class="act">진단 시작</div></div>
+      <div class="pg">
+        <div class="row"><div class="field">여성</div><div class="field">남성</div></div>
+        <div class="row">
+          <div class="card" style="margin:0"><b>STR</b> 시크 스트레이트<br><span style="font-size:11px">어울려요: 셋업·직선 실루엣</span><br><span style="font-size:11px">피해요: 과한 볼륨</span></div>
+          <div class="card" style="margin:0"><b>HRG</b> 아워글래스<br><span style="font-size:11px">어울려요: 허리 강조</span><br><span style="font-size:11px">피해요: 박시한 상의</span></div></div>
+        <div class="row">
+          <div class="card" style="margin:0"><b>PER</b> 페어<br><span style="font-size:11px">하체 커버 · A라인</span></div>
+          <div class="card" style="margin:0"><b>INV</b> 역삼각<br><span style="font-size:11px">어깨 완화 · V넥</span></div></div>
+        <div class="btn">내 체형 진단하기 →</div></div>
     </div></div>
   </div>
 
