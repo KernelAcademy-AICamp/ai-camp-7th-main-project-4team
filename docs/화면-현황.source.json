@@ -3,35 +3,202 @@
   "_status_enum": "시안 → 구현 → 실연결 → 완료 · 보류",
   "_kind_enum": "app(진단/허브) · pro(공급자) · admin(운영) · info(정보/정책, JS 없어도 정상) · util(플래그 제외)",
   "_mvp_admin": "MVP admin 메뉴 = 사이즈·데이터 / 진단·정확도 / 엔진 강화 / 전문가 수요. v2(회원·거래·사업현황·B2B API·내부운영)는 admin-common.js가 네비 숨김 + gen-app 미배포. app/(프로덕션)=FITTING_MODE api·garments.json 서버전용(해자).",
-
-  "index":        { "name": "홈·허브(탭 홈/쇼퍼찾기/마이)", "kind": "app",  "status": "실연결",   "note": "단일 페이지에 탭 3섹션(#home/#shop/#my). **api 모드(프로덕션)**: 스타일리스트찾기=페이크도어를 '준비 중·오픈 알림 신청(이메일)' 웨이트리스트로 통일(목업 목록/견적 미노출) → saveLead(kind notify, contact=이메일)→lead 테이블. 인증 표면 전체 숨김(로그인·회원가입·My·알림·프로필)·기본 로그아웃 — 진단/수요 모두 로그인 불필요. **proto(데모)**: 기존 목업 흐름 유지(거래·에스크로·대화·분쟁 등 1.6~1.9 전 구현)." },
-  "admin-login":  { "name": "관리자 로그인(구글 OAuth)", "kind": "admin", "status": "실연결", "note": "Supabase Auth Google OAuth 실연결 + is_admin(admin_user 멤버십) 확인 → 세션 브릿지(fitting.admin)→admin.html. supabase-js 미로드 시 목업 폴백." },
-  "admin":        { "name": "관리자 · 사이즈/데이터(3.A)",   "kind": "admin", "status": "실연결", "note": "브랜드 실측=**garment 테이블(DB·RLS admin 읽기)**로 전환(garments.json→import). 커버리지 표를 **진단 노출 순서**로 정렬+순서 뱃지. 신체 사이즈(body-*)는 공개 기준이라 JSON 유지. MVP 데이터 콘솔." },
-  "admin-garments": { "name": "관리자 · 브랜드·제품 실측표 CRUD(3.A.1)", "kind": "admin", "status": "실연결", "note": "garment 테이블(DB)을 사이즈표(사이즈×부위 cm)로 제품별 표시 + **직접 CRUD**(사이즈 라벨·cm 인라인 편집·행 추가/삭제·저장). 저장=현재 뷰 insert 후 기존 id 삭제(교체). 변경 시 rev↑ → **진단(/api/diagnose)에 즉시 반영**. 대량 수집은 CSV→build-sizespec.py→import 유지." },
-  "admin-engine": { "name": "관리자 · 엔진 시뮬레이터·튜닝(3.A.3)", "kind": "admin", "status": "실연결", "note": "몸→사이즈 파이프라인을 실엔진(BodyModel·FitEngine)으로 재현. 신체추정→추천→핏스코어 분해→사이즈 래더+목표여유 what-if→파라미터. 실측표는 garment 테이블(DB) 읽기로 전환(로컬 폴백=garments.json)." },
-  "admin-collect": { "name": "관리자 · 이미지 붙여넣기 수집(3.A.1)", "kind": "admin", "status": "구현", "note": "사이즈표 이미지→CSV 3방법: 수동전사·OCR(베타)·AI프롬프트 브릿지. CSV→build-sizespec.py→garments.json→import(대량 시드). 브랜드 목록은 garment 테이블(DB) 읽기." },
-  "admin-brands": { "name": "관리자 · 브랜드 관리·노출순서(3.A.1)", "kind": "admin", "status": "실연결", "note": "브랜드별 커버리지·앵커·다양성·갭. + **진단 노출 순서 편집**(brand 테이블·db/04): 기본=실착 접근성 순(앵커 상위), admin이 순서 숫자·노출 토글 저장→다음 진단 반영. 실측표/수집 진입점." },
-  "admin-diagnostics": { "name": "관리자 · 진단 응답·정확도(3.C.2)", "kind": "admin", "status": "실연결", "note": "킬 메트릭(정확도) 집계. **실 DB(Supabase feedback+diagnosis 임베드·RLS admin)** 연결 + 로컬로그/샘플 소스 전환. **정확도 추세**(날짜별·엔진버전별 맞음율) 추가 → 엔진이 강해지는지 확인. 정확도×신뢰도 캘리브레이션·8유형/앵커/페인 분해·응답로그." },
-  "admin-improve": { "name": "관리자 · 엔진 강화(3.C.4)", "kind": "admin", "status": "실연결", "note": "진단 로그(diagnosis.input painFlags·openNote + feedback)를 **엔진 강화 작업목록**으로(docs/6 §1.1 성장구조·자동학습 아님). ① 미표기∩페인(브랜드×병목부위 끼임)→A축 역산 실측보정 ② 새 페인(자유서술)→PAIN_FLAGS 승격 ③ 확신 틀림→규칙 튜닝 ④ 수요 대비 데이터 부족→수집. 각 행이 실측표·수집으로 연결. RLS admin." },
-  "admin-leads":  { "name": "관리자 · 전문가 수요(3.C.3)", "kind": "admin", "status": "실연결", "note": "스타일리스트 매칭 수요(lead 테이블·db/02·RLS admin) 집계. KPI(총 수요·오픈알림·견적요청·이메일 확보) + **진단→수요 전환**(lead.session_id↔diagnosis.session_id 조인) + 서비스·상황별 + 수요 목록(이메일·유입 진단후/직접). 페이크도어 측정축." },
-  "admin-members":  { "name": "관리자 · 회원·거래(3.B) — v2",     "kind": "admin", "status": "보류", "note": "**MVP 범위 밖 → 네비 숨김·미배포**(admin-common.js MVP 스코프, gen-app HIDDEN). 회원·전문가 심사·매칭 수요·분쟁/환불 4탭 구현돼 있으나 매칭/거래는 v2. 승격 시 노출." },
-  "admin-business": { "name": "관리자 · 사업현황(3.C.1) — v2",      "kind": "admin", "status": "보류", "note": "**MVP 범위 밖 → 네비 숨김·미배포.** 운영 대시보드(퍼널·KPI 샘플)·금전(GMV·정산)은 v2. 진단·정확도는 admin-diagnostics로, 수요는 admin-leads로 이관됨." },
-  "admin-api":      { "name": "관리자 · B2B API(3.D) — v3",       "kind": "admin", "status": "보류", "note": "**MVP 범위 밖 → 네비 숨김·미배포.** API 고객·플랜·키·기술지원 콘솔(샘플). 실 게이트웨이·과금은 v3." },
-  "admin-ops":      { "name": "관리자 · 내부운영(3.E) — v2",       "kind": "admin", "status": "보류", "note": "**MVP 범위 밖 → 네비 숨김·미배포.** RBAC·감사로그·피처플래그·쿠폰(샘플). 실 접근제어는 Supabase RLS." },
-  "diag-basic":   { "name": "기본 정보 입력",              "kind": "app",  "status": "구현",   "note": "성별·키·몸무게. 성별 선택 시 평균값 프리필." },
-  "diag-fit":     { "name": "착용경험 보정 입력",          "kind": "app",  "status": "실연결", "note": "앵커 브랜드·사이즈 데이터화. 부위별 fit(체형역산)·flag(미표기∩페인 끼임/괜찮음)·pref·openNote(자유서술) 수집 → 진단 로그로 저장(엔진 강화 원천). 입력 옵션은 **size-catalog.json**(cm-free 공개 카탈로그) 사용 — garments 실측치 클라 미노출(해자). 엔진 역산 실연결은 상의(TOP) 기준." },
-  "diag-loading": { "name": "진단 로딩",                  "kind": "app",  "status": "구현",   "note": "역산+매칭 계산 대기 → result로 이동." },
-  "result":       { "name": "진단 결과",                  "kind": "app",  "status": "실연결", "note": "**api 모드**: 추천 계산을 서버(/api/diagnose)에서 — garments 서버전용(해자), 브랜드 노출순서(brand 테이블) 반영, diagnosis 저장+피드백(킬메트릭)→Supabase. 인증 표면 제거(계정 저장 숨김, '스타일리스트 찾기'만). **proto**: 클라 계산(garments.json). 상의 실계산, 파생 카테고리는 선호핏 폴백." },
-  "card":         { "name": "결과 공유 카드",             "kind": "app",  "status": "시안",   "note": "OG 공유 카드(소유자 아티팩트). card.js가 초대링크 index.html?from=CODE 생성 → 초대받은 사람은 홈으로 전환." },
-  "pro":          { "name": "쇼퍼 지원(공급자) 포털 — 페이크도어(비배포)",       "kind": "pro",  "status": "보류",   "note": "**MVP 미배포**(gen-app HIDDEN) — 스타일리스트찾기는 소비자 웨이트리스트로 대체(수요만). 포털 전체(대시보드·요청·프로필·정산·결과물 전달·전문가 CS) proto 구현돼 있으나 실매칭 v2." },
-  "pro-login":    { "name": "스타일리스트 로그인 — 비배포",        "kind": "pro",  "status": "보류",   "note": "**MVP 미배포.** 공급자 OTP 로그인(목업). v2." },
-  "pro-signup":   { "name": "쇼퍼 가입 — 비배포",                 "kind": "pro",  "status": "보류",   "note": "**MVP 미배포.** 온보딩 위저드(계정·이력·포트폴리오, OTP 목업). v2." },
-  "pro-quote":    { "name": "견적 요청·상세 — 비배포",             "kind": "pro",  "status": "보류",   "note": "**MVP 미배포.** 요청 상세·대화·양방향 신고 proto 구현. v2." },
-  "about":        { "name": "서비스 소개·작동원리",        "kind": "info", "status": "구현",   "note": "소개→diag-basic 전환 CTA 있음." },
-  "body-type-guide": { "name": "체형별 스타일 가이드(4.3)", "kind": "info", "status": "구현", "note": "공개 SEO. 8체형별(성별 토글) 어울리는옷·피할옷·스타일팁·해시태그 — bodytypes.json(자체 콘텐츠). 원본 브랜드 실측(garments)은 노출 안 함(해자). 진단 CTA." },
-  "404":          { "name": "오류·빈 상태(G.7)",           "kind": "util", "status": "구현",   "note": "**헤더/푸터 없는 공용 오류 페이지**(사용자·전문가·관리자). ?e=유형별 카피(notfound/expired/network) + 컨텍스트 감지(?app= 또는 referrer→admin/pro/user)로 '홈으로'를 해당 앱 홈으로, '이전 페이지로'=history.back. Vercel 404.html 컨벤션 + serve.js 라우팅(noindex)." },
-  "faq":          { "name": "자주 묻는 질문·도움말(G.2)",   "kind": "info", "status": "구현",   "note": "공개 SEO 페이지. 검색+카테고리 필터·details 아코디언. 고객센터와 상호링크." },
-  "privacy":      { "name": "개인정보 처리방침",           "kind": "info", "status": "완료",   "note": "" },
-  "terms":        { "name": "이용약관",                  "kind": "info", "status": "완료",   "note": "" },
-  "_reset":       { "name": "데모 초기화 — 비배포",                "kind": "util", "status": "구현",   "note": "sessionStorage 리셋 유틸. gen-app 미배포." }
+  "index": {
+    "name": "홈·허브(탭 홈/쇼퍼찾기/마이)",
+    "kind": "app",
+    "status": "실연결",
+    "note": "단일 페이지에 탭 3섹션(#home/#shop/#my). **api 모드(프로덕션)**: 스타일리스트찾기=페이크도어를 '준비 중·오픈 알림 신청(이메일)' 웨이트리스트로 통일(목업 목록/견적 미노출) → saveLead(kind notify, contact=이메일)→lead 테이블. 인증 표면 전체 숨김(로그인·회원가입·My·알림·프로필)·기본 로그아웃 — 진단/수요 모두 로그인 불필요. **proto(데모)**: 기존 목업 흐름 유지(거래·에스크로·대화·분쟁 등 1.6~1.9 전 구현)."
+  },
+  "admin-login": {
+    "name": "관리자 로그인(구글 OAuth)",
+    "kind": "admin",
+    "status": "실연결",
+    "note": "Supabase Auth Google OAuth 실연결 + is_admin(admin_user 멤버십) 확인 → 세션 브릿지(fitting.admin)→admin.html. supabase-js 미로드 시 목업 폴백."
+  },
+  "admin": {
+    "name": "관리자 · 사이즈/데이터(3.A)",
+    "kind": "admin",
+    "status": "실연결",
+    "note": "브랜드 실측=**garment 테이블(DB·RLS admin 읽기)**로 전환(garments.json→import). 커버리지 표를 **진단 노출 순서**로 정렬+순서 뱃지. 신체 사이즈(body-*)는 공개 기준이라 JSON 유지. MVP 데이터 콘솔."
+  },
+  "admin-garments": {
+    "name": "관리자 · 브랜드·제품 실측표 CRUD(3.A.1)",
+    "kind": "admin",
+    "status": "실연결",
+    "note": "garment 테이블(DB)을 사이즈표(사이즈×부위 cm)로 제품별 표시 + **직접 CRUD**(사이즈 라벨·cm 인라인 편집·행 추가/삭제·저장). 저장=현재 뷰 insert 후 기존 id 삭제(교체). 변경 시 rev↑ → **진단(/api/diagnose)에 즉시 반영**. 대량 수집은 CSV→build-sizespec.py→import 유지."
+  },
+  "admin-engine": {
+    "name": "관리자 · 엔진 시뮬레이터·튜닝(3.A.3)",
+    "kind": "admin",
+    "status": "실연결",
+    "note": "몸→사이즈 파이프라인을 실엔진(BodyModel·FitEngine)으로 재현. 신체추정→추천→핏스코어 분해→사이즈 래더+목표여유 what-if→파라미터. 실측표는 garment 테이블(DB) 읽기로 전환(로컬 폴백=garments.json)."
+  },
+  "admin-collect": {
+    "name": "관리자 · 이미지 붙여넣기 수집(3.A.1)",
+    "kind": "admin",
+    "status": "구현",
+    "note": "사이즈표 이미지→CSV 3방법: 수동전사·OCR(베타)·AI프롬프트 브릿지. CSV→build-sizespec.py→garments.json→import(대량 시드). 브랜드 목록은 garment 테이블(DB) 읽기."
+  },
+  "admin-brands": {
+    "name": "관리자 · 브랜드 관리·노출순서(3.A.1)",
+    "kind": "admin",
+    "status": "실연결",
+    "note": "브랜드별 커버리지·앵커·다양성·갭. + **진단 노출 순서 편집**(brand 테이블·db/04): 기본=실착 접근성 순(앵커 상위), admin이 순서 숫자·노출 토글 저장→다음 진단 반영. 실측표/수집 진입점."
+  },
+  "admin-diagnostics": {
+    "name": "관리자 · 진단 응답·정확도(3.C.2)",
+    "kind": "admin",
+    "status": "실연결",
+    "note": "킬 메트릭(정확도) 집계. **실 DB(Supabase feedback+diagnosis 임베드·RLS admin)** 연결 + 로컬로그/샘플 소스 전환. **정확도 추세**(날짜별·엔진버전별 맞음율) 추가 → 엔진이 강해지는지 확인. 정확도×신뢰도 캘리브레이션·8유형/앵커/페인 분해·응답로그."
+  },
+  "admin-improve": {
+    "name": "관리자 · 엔진 강화(3.C.4)",
+    "kind": "admin",
+    "status": "실연결",
+    "note": "진단 로그(diagnosis.input painFlags·openNote + feedback)를 **엔진 강화 작업목록**으로(docs/6 §1.1 성장구조·자동학습 아님). ① 미표기∩페인(브랜드×병목부위 끼임)→A축 역산 실측보정 ② 새 페인(자유서술)→PAIN_FLAGS 승격 ③ 확신 틀림→규칙 튜닝 ④ 수요 대비 데이터 부족→수집. 각 행이 실측표·수집으로 연결. RLS admin."
+  },
+  "admin-leads": {
+    "name": "관리자 · 전문가 수요(3.C.3)",
+    "kind": "admin",
+    "status": "실연결",
+    "note": "스타일리스트 매칭 수요(lead 테이블·db/02·RLS admin) 집계. KPI(총 수요·오픈알림·견적요청·이메일 확보) + **진단→수요 전환**(lead.session_id↔diagnosis.session_id 조인) + 서비스·상황별 + 수요 목록(이메일·유입 진단후/직접). 페이크도어 측정축."
+  },
+  "admin-members": {
+    "name": "관리자 · 회원·거래(3.B) — v2",
+    "kind": "admin",
+    "status": "보류",
+    "note": "**MVP 범위 밖 → 네비 숨김·미배포**(admin-common.js MVP 스코프, gen-app HIDDEN). 회원·전문가 심사·매칭 수요·분쟁/환불 4탭 구현돼 있으나 매칭/거래는 v2. 승격 시 노출."
+  },
+  "admin-business": {
+    "name": "관리자 · 사업현황(3.C.1) — v2",
+    "kind": "admin",
+    "status": "보류",
+    "note": "**MVP 범위 밖 → 네비 숨김·미배포.** 운영 대시보드(퍼널·KPI 샘플)·금전(GMV·정산)은 v2. 진단·정확도는 admin-diagnostics로, 수요는 admin-leads로 이관됨."
+  },
+  "admin-api": {
+    "name": "관리자 · B2B API(3.D) — v3",
+    "kind": "admin",
+    "status": "보류",
+    "note": "**MVP 범위 밖 → 네비 숨김·미배포.** API 고객·플랜·키·기술지원 콘솔(샘플). 실 게이트웨이·과금은 v3."
+  },
+  "admin-ops": {
+    "name": "관리자 · 내부운영(3.E) — v2",
+    "kind": "admin",
+    "status": "보류",
+    "note": "**MVP 범위 밖 → 네비 숨김·미배포.** RBAC·감사로그·피처플래그·쿠폰(샘플). 실 접근제어는 Supabase RLS."
+  },
+  "diag-basic": {
+    "name": "기본 정보 입력",
+    "kind": "app",
+    "status": "구현",
+    "note": "성별·키·몸무게. 성별 선택 시 평균값 프리필."
+  },
+  "diag-fit": {
+    "name": "착용경험 보정 입력",
+    "kind": "app",
+    "status": "실연결",
+    "note": "앵커 브랜드·사이즈 데이터화. 부위별 fit(체형역산)·flag(미표기∩페인 끼임/괜찮음)·pref·openNote(자유서술) 수집 → 진단 로그로 저장(엔진 강화 원천). 입력 옵션은 **size-catalog.json**(cm-free 공개 카탈로그) 사용 — garments 실측치 클라 미노출(해자). 엔진 역산 실연결은 상의(TOP) 기준."
+  },
+  "diag-loading": {
+    "name": "진단 로딩",
+    "kind": "app",
+    "status": "구현",
+    "note": "역산+매칭 계산 대기 → result로 이동."
+  },
+  "result": {
+    "name": "진단 결과",
+    "kind": "app",
+    "status": "실연결",
+    "note": "**api 모드**: 추천 계산을 서버(/api/diagnose)에서 — garments 서버전용(해자), 브랜드 노출순서(brand 테이블) 반영, diagnosis 저장+피드백(킬메트릭)→Supabase. 인증 표면 제거(계정 저장 숨김, '스타일리스트 찾기'만). **proto**: 클라 계산(garments.json). 상의 실계산, 파생 카테고리는 선호핏 폴백."
+  },
+  "card": {
+    "name": "결과 공유 카드",
+    "kind": "app",
+    "status": "시안",
+    "note": "OG 공유 카드(소유자 아티팩트). card.js가 초대링크 index.html?from=CODE 생성 → 초대받은 사람은 홈으로 전환."
+  },
+  "pro": {
+    "name": "쇼퍼 지원(공급자) 포털 — 페이크도어(비배포)",
+    "kind": "pro",
+    "status": "보류",
+    "note": "**MVP 미배포**(gen-app HIDDEN) — 스타일리스트찾기는 소비자 웨이트리스트로 대체(수요만). 포털 전체(대시보드·요청·프로필·정산·결과물 전달·전문가 CS) proto 구현돼 있으나 실매칭 v2."
+  },
+  "pro-login": {
+    "name": "스타일리스트 로그인 — 비배포",
+    "kind": "pro",
+    "status": "보류",
+    "note": "**MVP 미배포.** 공급자 OTP 로그인(목업). v2."
+  },
+  "pro-signup": {
+    "name": "쇼퍼 가입 — 비배포",
+    "kind": "pro",
+    "status": "보류",
+    "note": "**MVP 미배포.** 온보딩 위저드(계정·이력·포트폴리오, OTP 목업). v2."
+  },
+  "pro-quote": {
+    "name": "견적 요청·상세 — 비배포",
+    "kind": "pro",
+    "status": "보류",
+    "note": "**MVP 미배포.** 요청 상세·대화·양방향 신고 proto 구현. v2."
+  },
+  "about": {
+    "name": "서비스 소개·작동원리",
+    "kind": "info",
+    "status": "구현",
+    "note": "소개→diag-basic 전환 CTA 있음."
+  },
+  "body-type-guide": {
+    "name": "체형별 스타일 가이드(4.3)",
+    "kind": "info",
+    "status": "구현",
+    "note": "공개 SEO. 8체형별(성별 토글) 어울리는옷·피할옷·스타일팁·해시태그 — bodytypes.json(자체 콘텐츠). 원본 브랜드 실측(garments)은 노출 안 함(해자). 진단 CTA."
+  },
+  "404": {
+    "name": "오류·빈 상태(G.7)",
+    "kind": "util",
+    "status": "구현",
+    "note": "**헤더/푸터 없는 공용 오류 페이지**(사용자·전문가·관리자). ?e=유형별 카피(notfound/expired/network) + 컨텍스트 감지(?app= 또는 referrer→admin/pro/user)로 '홈으로'를 해당 앱 홈으로, '이전 페이지로'=history.back. Vercel 404.html 컨벤션 + serve.js 라우팅(noindex)."
+  },
+  "faq": {
+    "name": "자주 묻는 질문·도움말(G.2)",
+    "kind": "info",
+    "status": "구현",
+    "note": "공개 SEO 페이지. 검색+카테고리 필터·details 아코디언. 고객센터와 상호링크."
+  },
+  "privacy": {
+    "name": "개인정보 처리방침",
+    "kind": "info",
+    "status": "완료",
+    "note": ""
+  },
+  "terms": {
+    "name": "이용약관",
+    "kind": "info",
+    "status": "완료",
+    "note": ""
+  },
+  "_reset": {
+    "name": "데모 초기화 — 비배포",
+    "kind": "util",
+    "status": "구현",
+    "note": "sessionStorage 리셋 유틸. gen-app 미배포."
+  },
+  "judge": {
+    "name": "구매 판정(Fit)",
+    "kind": "app",
+    "status": "실연결",
+    "note": "사려는 상품 사이즈표를 캡처(AI 인식)/직접입력으로 올려 내 체형에 대보고 사이즈별 판정. **api 모드**: /api/judge가 서버에서 계산(실측표 비노출=해자). 세로축(총장·기장·밑위)은 소프트 정보로만 표시하고 핏 점수엔 미반영. 핵심 부위 미측정이면 '판정할 수 없어요'로 단정하지 않음. 동의 시 사이즈표를 garment_submission으로 수집(멱등)."
+  },
+  "admin-submissions": {
+    "name": "관리자 · 제출 사이즈표 검수",
+    "kind": "admin",
+    "status": "실연결",
+    "note": "사용자가 판정에서 올린 사이즈표(garment_submission) 검수 → 정본 garment 승격. 상태 pending/verified/rejected/merged."
+  },
+  "admin-access": {
+    "name": "관리자 · 접근 권한",
+    "kind": "admin",
+    "status": "실연결",
+    "note": "관리자 초대·승격·회수(admin_invite/admin_user, db/07). is_admin() RLS의 원천."
+  }
 }
