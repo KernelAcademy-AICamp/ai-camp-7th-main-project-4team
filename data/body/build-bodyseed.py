@@ -37,6 +37,9 @@ PARTS = [
     ("shoulder",   "어깨가쪽사이길이", "어깨가쪽사이길이", "shoulderWidth"),
     ("arm",        "팔길이",          "팔길이",           "armLength"),
     ("upperArm",   "편위팔둘레",      "위팔둘레",         "upperArmCircumference"),
+    # 허벅지 — 엔진은 하의 판정 부위(CAT_PARTS.BOTTOM)로 이미 쓰는데 회귀가 없어 0벌 사용자에게 빠지던 구멍.
+    #   옷 '허벅지 단면'은 샅 아래 윗허벅지 기준이라 중간둘레가 아닌 넙다리둘레와 맞춘다.
+    ("thigh",      "넙다리둘레",      "넙다리둘레",       "thighCircumference"),
     # 세로 축(총장 판정용) — 등길이(뒷목~허리). 상의 총장 적절선의 몸쪽 기준.
     ("backLength", "등길이",          "등길이",           "backLength"),
     # 하의 세로 축 — 다리가쪽길이(허리옆~바닥, 총장=outseam 기준) + 몸밑위(허리높이−샅높이, 밑위 기준).

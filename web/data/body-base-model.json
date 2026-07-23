@@ -89,6 +89,17 @@
       "rmse_cm": 1.5,
       "n": 2319
     },
+    "thigh": {
+      "label": "넙다리둘레",
+      "bodyDimension": "thighCircumference",
+      "a_height": -0.1724,
+      "b_weight": 0.4134,
+      "c_age": -0.0733,
+      "intercept": 60.075,
+      "r2": 0.808,
+      "rmse_cm": 2.14,
+      "n": 2319
+    },
     "backLength": {
       "label": "등길이",
       "bodyDimension": "backLength",
@@ -199,6 +210,17 @@
       "intercept": 31.329,
       "r2": 0.786,
       "rmse_cm": 1.34,
+      "n": 2773
+    },
+    "thigh": {
+      "label": "넙다리둘레",
+      "bodyDimension": "thighCircumference",
+      "a_height": -0.1448,
+      "b_weight": 0.4818,
+      "c_age": -0.076,
+      "intercept": 54.552,
+      "r2": 0.719,
+      "rmse_cm": 2.65,
       "n": 2773
     },
     "backLength": {
