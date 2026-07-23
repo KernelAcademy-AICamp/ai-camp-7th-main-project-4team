@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=bf826fe0">
 <link rel="stylesheet" href="css/diag.css?v=0aeba357">
-<link rel="stylesheet" href="css/judge.css?v=5fa46976">
+<link rel="stylesheet" href="css/judge.css?v=28568726">
 <link rel="stylesheet" href="css/appnav.css?v=81aba01d">
 <script defer src="js/appnav.js?v=007ae564"></script>
 </head>
@@ -19,7 +19,7 @@
 <div id="appnav" data-active="fit"></div>
 
 <main class="jwrap">
-  <h1 class="jtitle">이 옷, 맞을까요?</h1>
+  <h1 class="jtitle">구매 전 핏을 미리 확인하세요</h1>
   <p class="jsub" id="jsub">내 진단 결과를 기준으로 구매하려는 옷이 맞을지 알려드려요</p>
 
   <!-- 진단 안 했을 때: 막다른 길 금지 — '무엇인지 + 뭘 받는지(예시) + 시작'으로 안내 -->
@@ -53,13 +53,13 @@
   <!-- 상품 사이즈표 캡처 입력 -->
   <!-- 한 화면: 좌=입력 레일(체형·무슨옷·업로드, 고정) / 우=캔버스(판정 전 예시 → 판정 후 결과). 화면 전체를 바꾸지 않고 우측만 교체. 모바일은 세로 스택. -->
   <section class="jsetup" id="jsetup" hidden>
-   <!-- 판정 흐름 = 메인 설명. 아이콘 3스텝, 2단 위 full-width 바 -->
-   <div class="jflow">
-     <span class="jflow-s"><span class="jflow-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/></svg></span>원하는 옷 종류의 사이즈표를 넣으면</span>
-     <span class="jflow-ar">→</span>
-     <span class="jflow-s"><span class="jflow-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>값을 확인하고,</span>
-     <span class="jflow-ar">→</span>
-     <span class="jflow-s"><span class="jflow-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg></span>딱 판정해드려요</span>
+   <!-- 판정 흐름 안내 = 무채색 스트립(초록 없음, 위아래 얇은 선). 번호 대신 아이콘이라 왼쪽 ①②③과 안 겹침. -->
+   <div class="jhowto">
+     <span class="jhowto-s"><span class="jhowto-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/></svg></span>사이즈표 넣기</span>
+     <span class="jhowto-ar">→</span>
+     <span class="jhowto-s"><span class="jhowto-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>값 확인</span>
+     <span class="jhowto-ar">→</span>
+     <span class="jhowto-s"><span class="jhowto-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg></span>판정</span>
    </div>
    <div class="jsetup-cols">
     <!-- 좌: 작업 -->
@@ -68,11 +68,16 @@
       <div class="jcard">
         <!-- ① 판정 기준(내 체형). 유형 바뀌면 --jtype·이름·코드 함께 교체. -->
         <div class="jstep">
-          <div class="jstep-hd"><span class="jstep-n">1</span><span class="jstep-l">판정 기준</span><span class="jstep-auto">진단 결과 자동</span></div>
-          <div class="jmine" style="--jtype:#9db8ff">
+          <div class="jstep-hd"><span class="jstep-n">1</span><span class="jstep-l">판정 기준</span><span class="jstep-auto" id="jstepAuto">진단 결과 자동</span></div>
+          <div class="jmine" id="jmine" style="--jtype:#9db8ff">
             <span class="jmine-av"><span class="head male"><span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></span></span>
             <div class="jmine-tx"><b>시크 스트레이트<span class="jmine-code">STR</span></b></div>
             <a class="jmine-re" href="diag-basic.html">진단 수정</a>
+          </div>
+          <!-- 진단 안 한 신규 사용자 — 체형 결과 대신 진단으로 유도. 진단 전엔 판정 비활성. -->
+          <div class="jneeddx" id="jneeddx" hidden>
+            <div class="jneeddx-tx">이 옷이 맞을지 보려면<br><b>내 체형 진단</b>이 먼저 필요해요</div>
+            <a class="jneeddx-cta" href="diag-basic.html">진단 시작하기</a>
           </div>
         </div>
 
@@ -195,6 +200,6 @@
 <script src="js/engine.js?v=2ffd1c16"></script>
 <script src="js/config.js?v=53f50277"></script>
 <script src="js/data.js?v=0353494d"></script>
-<script src="js/judge.js?v=3483b1c7"></script>
+<script src="js/judge.js?v=7deb4cf4"></script>
 </body>
 </html>
