@@ -186,12 +186,26 @@
     });
     return ok;
   }
-  function refreshRun() { var r = $("jrun"); if (r) r.disabled = !hasJudgeValue(); }
-  // 판정 후 입력부를 '사용됨'으로 흐리게 + 판정버튼 비활성. 입력을 다시 만지면 해제.
+  function brandFilled() { var b = $("jbrandin"); return !b || b.value.trim() !== ""; }   // 브랜드 필수(입력칸 없으면 통과)
+  function refreshRun() { var r = $("jrun"); if (r) r.disabled = !(hasJudgeValue() && brandFilled()); }
+  // 판정 후 입력부를 '사용됨'으로 흐리게 + 판정버튼 비활성. 결과 중엔 왼쪽 잠금(다른 옷 판정하기로만 해제).
   function setJudged(on) {
     var m = document.querySelector(".jsetup-main"); if (m) m.classList.toggle("judged", !!on);
     state.judged = !!on;
     if (on) { var r = $("jrun"); if (r) r.disabled = true; } else refreshRun();
+  }
+  // 다른 옷 판정하기 = 입력 내역 전부 초기화(브랜드·상품명·사이즈표·동의) 후 캡처 업로드로 복귀
+  function resetJudge() {
+    $("jresult").hidden = true; var fl = $("jflip"); if (fl) fl.classList.remove("on");
+    var aside = $("jaside"); if (aside) aside.hidden = false;
+    ["jbrandin", "jprodin"].forEach(function (id) { var el = $(id); if (el) el.value = ""; });
+    var cs = $("jconsent"); if (cs) cs.checked = false;
+    var sm = $("jsharemsg"); if (sm) { sm.hidden = true; sm.textContent = ""; }
+    var pt = $("jparsetable"); if (pt) pt.innerHTML = "";
+    state.lastCell = null;                                           // 체형 오차(state.err)는 진단값이라 보존
+    setJudged(false); showCapture();                                 // showCapture가 parsed/manual/버튼 리셋
+    var card = document.querySelector(".jcard");                      // 리셋 후 왼쪽 입력으로 부드럽게 이동
+    if (card) card.scrollIntoView({ behavior: "smooth", block: "start" }); else window.scrollTo(0, 0);
   }
 
   function showManual() {
@@ -580,8 +594,6 @@
   document.addEventListener("click", function (ev) {
     var bfb = ev.target.closest("[data-bfsz]");
     if (bfb) { drawBodyFit(bfb.getAttribute("data-bfsz")); return; }   // 자세히 사이즈 토글
-    // 판정 후 입력부를 다시 만지면 '사용됨' 흐림 해제(판정버튼 재활성)
-    if (state.judged && ev.target.closest(".jsetup-main") && !ev.target.closest("#jrun")) setJudged(false);
     var seg = ev.target.closest(".jseg-b");
     if (seg) {
       setCat(seg.getAttribute("data-cat"));
@@ -600,20 +612,14 @@
     if (ev.target.closest("#jcapzone")) { $("jcapfile").click(); return; }
     if (ev.target.id === "jreupload") { state.manual = false; showCapture(); var t = $("jcapthumb"); if (t) { t.hidden = true; t.src = ""; } return; }
     if (ev.target.id === "jrun") run();
-    if (ev.target.closest("#jredo")) {
-      $("jresult").hidden = true; var fl2 = $("jflip"); if (fl2) fl2.classList.remove("on");
-      var aside = $("jaside"); if (aside) aside.hidden = false;
-      setJudged(false); showCapture();
-      var card = document.querySelector(".jcard");   // 리셋 후 왼쪽 입력으로 부드럽게 이동(어색하지 않게)
-      if (card) card.scrollIntoView({ behavior: "smooth", block: "start" }); else window.scrollTo(0, 0);
-    }
+    if (ev.target.closest("#jredo")) { resetJudge(); }
   });
   document.addEventListener("change", function (ev) {
     if (ev.target.id === "jconsent" && ev.target.checked) submitGarment();   // 체크만으로 제공(버튼 없음)
   });
   // 치수 입력 중 실시간으로 판정 버튼 활성/비활성 갱신
   document.addEventListener("input", function (ev) {
-    if (ev.target && ev.target.classList && ev.target.classList.contains("jce")) { if (state.judged) setJudged(false); else refreshRun(); }
+    if (ev.target && (ev.target.id === "jbrandin" || (ev.target.classList && ev.target.classList.contains("jce")))) refreshRun();
   });
   // 파일 선택
   var fi = $("jcapfile"); if (fi) fi.addEventListener("change", function (e) { state.manual = false; onImageFile(e.target.files && e.target.files[0]); });

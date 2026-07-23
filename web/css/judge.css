@@ -104,7 +104,7 @@
 .jsetup-cols{display:grid; grid-template-columns:380px minmax(0,1fr); gap:28px; align-items:start;}
 .jsetup-main{display:flex; flex-direction:column; gap:22px; min-width:0; position:sticky; top:20px;}
 /* 판정 후 = 입력부 '사용됨'으로 흐리게(다시 만지면 해제) */
-.jsetup-main.judged .jcard{opacity:.5; transition:opacity .25s ease;}
+.jsetup-main.judged .jcard{opacity:.5; pointer-events:none; transition:opacity .25s ease;}   /* 결과 중엔 왼쪽 입력 잠금 — 다른 옷 판정하기로만 리셋 */
 .jsetup-side{display:flex; flex-direction:column; gap:16px; min-width:0;}
 .jsetup-side .jresult{margin-top:0; max-width:none;}   /* 캔버스에 꽉 차게 */
 @media (max-width:760px){ .jsetup-cols{grid-template-columns:1fr; gap:24px;} .jsetup-main{position:static;} .jsetup-side{margin-top:0;} }
@@ -206,6 +206,7 @@
 .jform{display:flex; flex-direction:column; gap:9px;}
 .jf-line{display:flex; align-items:center; gap:10px;}
 .jf-k{flex:none; width:48px; font-size:13px; font-weight:700; color:var(--ink2);}
+.jf-req{color:var(--warn); font-style:normal; margin-left:1px;}
 .jf-k .jopt{margin-left:0;}
 .jf-in{flex:1; min-width:0; font:inherit; font-size:14px; padding:10px 11px; border:1.5px solid var(--line2); border-radius:9px; background:var(--surface); color:var(--ink); font-feature-settings:"tnum";}
 .jf-in.jf-sz{font-weight:800; font-feature-settings:normal;}
@@ -317,8 +318,8 @@
 .bf-st{font-size:12.5px; font-weight:800;}
 .bf-cm{margin:0 0 0 19px; font-size:12.5px; color:var(--sub); font-feature-settings:"tnum";}   /* 점 너비만큼 들여써서 부위와 정렬 */
 /* 다른 옷 판정하기 버튼 — 연한초록 채움 + 딥그린 아이콘·글자(되돌리기 아이콘) */
-.jredo-btn{display:flex; align-items:center; justify-content:center; gap:8px; background:var(--gs); color:var(--g); border:1px solid var(--gl);}
-.jredo-btn:hover{background:#DDEAE1;}
+.jredo-btn{display:flex; align-items:center; justify-content:center; gap:8px; margin-top:-8px; background:var(--surface); color:var(--ink2); border:1.5px solid var(--line2);}
+.jredo-btn:hover{background:var(--soft); border-color:var(--sub2);}
 .jredo-btn svg{width:17px; height:17px;}
 /* 사이즈 토글 — 누르면 그 사이즈가 몸에 어떻게 걸리는지. 기본=추천 고정 */
 .jbf-tog{display:flex; gap:6px; background:var(--soft); border-radius:12px; padding:4px; margin-top:6px;}
