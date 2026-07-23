@@ -85,7 +85,8 @@ footer.foot{padding-inline:max(24px, calc(50vw - 620px))}  /* 푸터 콘텐츠 1
 .protobar a:hover{color:#fff}
 
 /* ---- 글로벌 내비 ---- */
-nav.top{display:flex;align-items:center;justify-content:space-between;padding-block:22px;border-bottom:1px solid var(--line)}
+nav.top{display:flex;align-items:center;justify-content:space-between;padding-block:22px;border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}   /* index 헤더와 동일: 흰색 고정(sticky) */
 .logo{font-size:21px;font-weight:var(--dW);letter-spacing:var(--dS);color:var(--ink);text-decoration:none}
 .nav-r{display:flex;gap:20px;align-items:center}
 .nav-link{font-size:14px;color:var(--muted);font-weight:600;cursor:pointer;text-decoration:none}
@@ -480,9 +481,10 @@ footer.foot a:hover{color:var(--ink)}
 
 /* ---- 법적 페이지 헤더 (Precision, 절제) ---- */
 /* legal-head는 body 직속 → 전체폭 밴드 + 콘텐츠는 헤더 그리드(1320) 중앙 정렬 (nav.top과 동일 위치) */
-.legal-head{max-width:none;margin:0;padding:22px max(24px,calc(50vw - 660px));display:flex;align-items:center;justify-content:space-between;background:var(--field);border-bottom:1px solid var(--line)}
-.legal-head .logo{font-size:19px}
-.legal-head .back{font-size:14px;font-weight:700;color:var(--muted);text-decoration:none}
+.legal-head{max-width:none;margin:0;padding:22px max(24px,calc(50vw - 660px));display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}   /* index 헤더와 동일: 흰색 고정(sticky) */
+.legal-head .logo{font-size:21px}   /* nav.top .logo와 통일(정보 페이지 5개 헤더 일치) */
+.legal-head .back{font-size:14px;font-weight:700;color:var(--ink);text-decoration:none}   /* .nav-login과 통일(잉크) */
 .legal-head .back:hover{color:var(--ink)}
 
 /* ---- 유틸 ---- */
