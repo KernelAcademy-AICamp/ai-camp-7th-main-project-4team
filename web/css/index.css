@@ -922,6 +922,11 @@
   #my .rjudge-tx b{display:block; font-size:14.5px; font-weight:800; letter-spacing:-.02em; color:var(--ink);}
   #my .rjudge-tx span{font-size:12.5px; color:var(--sub);}
   #my .rjudge-go{font-size:13.5px; font-weight:800; color:var(--green); white-space:nowrap;}
+  /* 맨 위(제목·설명 아래·카드 위 전체폭) 배치 — 결과 화면 완성 유도 배너 자리와 동일.
+     흰 카드 + 초록 포인트(아이콘·글씨) — 옆 내비 선택(.smenu a.on = green-soft)과 색 겹침 방지 */
+  #my .rjudge-top{margin-bottom:22px; background:#fff; border-color:var(--line); box-shadow:0 6px 18px rgba(20,18,16,.05);}
+  #my .rjudge-top .rjudge-ic{background:var(--green-soft);}
+  #my .rjudge-top:hover{background:var(--soft);}
   #my .dtl-grp{font-size:15px; font-weight:800; color:var(--sub); margin:22px 0 15px; padding-bottom:9px; border-bottom:1px solid var(--line);}
   /* 상·하 컬러 라벨 (상=진초록 / 하=중간초록, 측정 게이지 색과 통일) */
   #my .dtl-grp.up, #my .dtl-grp.lo, #my .dtl-grp.pref{display:flex; align-items:center; gap:7px;}

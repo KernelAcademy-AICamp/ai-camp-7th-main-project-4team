@@ -21,6 +21,9 @@
 
 /* 화면 전환: 부드러운 슬라이드업 + 페이드 — 단계 이동이 스무스하게 넘어가는 느낌 */
 .wstep.active, #basic-check:not(.hidden){ animation:wfade .45s cubic-bezier(.16,.7,.28,1); }   /* 인터스티셜도 스텝과 동일한 전환 */
+/* '상의/하의 진단하기' 진입 시: JS 로드 전 첫 페인트에 카테고리 선택(idx0) 숨기고 선호핏(idx1) 노출 → 깜빡임 방지 */
+html.skipcat #w-cat{ display:none; }
+html.skipcat #w-cat + .wstep{ display:block; }
 @keyframes wfade{ from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none} }
 @media (prefers-reduced-motion:reduce){ .wstep.active, #basic-check:not(.hidden){ animation:none; } }
 
