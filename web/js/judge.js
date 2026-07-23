@@ -20,8 +20,30 @@
     catalog: null, gj: null  // gj=proto용 garments.json 캐시
   };
 
+  /* ── 판정 기준(내 체형) 표시 = 마이 진단카드와 동일 유형. localStorage fitting.user.type 기준.
+     기존엔 '시크 스트레이트(STR)'로 하드코딩돼 유형이 바뀌어도 안 변하던 버그 수정. ── */
+  function renderMine() {
+    var user = {}; try { user = JSON.parse(localStorage.getItem("fitting.user") || "{}") || {}; } catch (e) {}
+    var code = user.type; if (!code) return;   // 진단 전엔 정적 폴백(예시) 유지
+    var gender = (user.gender === "female") ? "female" : "male";
+    function paint(t) {
+      if (!t) return;
+      var box = document.querySelector(".jmine");
+      var b = document.querySelector(".jmine-tx b");
+      var head = document.querySelector(".jmine-av .head");
+      if (box && t.point) box.style.setProperty("--jtype", t.point);
+      if (b) b.innerHTML = (t.name || "") + '<span class="jmine-code">' + t.code + "</span>";
+      if (head) { head.classList.remove("male", "female"); head.classList.add(gender); }
+    }
+    if (window._jbt) { paint(window._jbt[code]); return; }
+    fetch("data/bodytypes.json").then(function (r) { return r.json(); })
+      .then(function (j) { window._jbt = {}; j.types.forEach(function (x) { window._jbt[x.code] = x; }); paint(window._jbt[code]); })
+      .catch(function () {});
+  }
+
   /* ── 부팅: 체형 복원 ─────────────────────────────────────── */
   function boot() {
+    renderMine();   // 판정 기준 유형 = 마이 진단결과와 일치
     var payload = readJSON("fitting.dx", {});
     var basic = payload.basic || readJSON("fitting.basic", {});
     state.exps = Array.isArray(payload.experiences) ? payload.experiences : [];
