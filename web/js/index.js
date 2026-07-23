@@ -6,7 +6,7 @@
     document.querySelectorAll('.menu a, .tabbar .tb[data-t]').forEach(a=>a.classList.toggle('on', a.dataset.t===id));   // 상단 메뉴 + 모바일 하단 탭바 동시 동기화
     // 스타일리스트찾기: proto=목록부터 / api(MVP)=준비 중·알림 웨이트리스트(목업 목록 미노출)
     if(id==='shop') showOnly((window.FDATA&&FDATA.mode==='api')?'stylistWaitlist':'listView');
-    window.scrollTo({top:0, behavior:'smooth'});
+    window.scrollTo(0, 0);   // 탭 전환 = 즉시 맨 위로(메인 헤딩부터). smooth는 페이지 교체 중 애니메이션이 끊겨 헤딩 아래서 멈춤
     saveNav();
   }
 
@@ -59,6 +59,7 @@
     var m=document.querySelectorAll('#smenu a'); for(var i=0;i<m.length;i++) m[i].classList.remove('on'); el.classList.add('on');
     var ps=document.querySelectorAll('#my .mpanel'); for(var j=0;j<ps.length;j++) ps[j].classList.remove('on');
     document.getElementById(el.dataset.p).classList.add('on');
+    window.scrollTo(0, 0);   // 마이 사이드 패널 전환 시에도 맨 위(패널 헤딩 '프로필·계정' 등)부터 보이게
     saveNav();
   }
   function goMy(panel){ go('my'); var a=document.querySelector('#smenu a[data-p="'+panel+'"]'); if(a) myNav(a); }
