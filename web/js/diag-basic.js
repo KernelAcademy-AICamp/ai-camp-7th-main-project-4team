@@ -36,8 +36,10 @@
       weight: +document.getElementById('weight').value };
     try{ sessionStorage.setItem('fitting.basic', JSON.stringify(basic)); }catch(e){}
   }
-  function next(){ if(!selDone()) return; if(cur<steps.length-1){cur++;render()} else { saveBasic(); location.href=NEXT_URL; } }
-  function prev(){ if(cur>0){cur--;render()} else location.href=PREV_URL; }
+  const RETURN_KEY='fitting.judge.return';   /* Fit '진단 수정'에서 왔는지 표식 — 첫 단계 '이전'의 복귀 지점을 정함 */
+  function clearReturn(){ try{ sessionStorage.removeItem(RETURN_KEY); }catch(e){} }
+  function next(){ if(!selDone()) return; if(cur<steps.length-1){cur++;render()} else { clearReturn(); saveBasic(); location.href=NEXT_URL; } }   /* 앞으로 = 재진단 → 복원 표식 해제 */
+  function prev(){ if(cur>0){cur--;render(); return;} var back=false; try{back=sessionStorage.getItem(RETURN_KEY)==='1';}catch(e){} location.href = back ? 'judge.html' : PREV_URL; }   /* 첫 단계 '이전' = Fit에서 왔으면 Fit으로(이전 판정 복원), 아니면 기존 경로 */
   function pick(el){[...el.parentElement.children].forEach(c=>c.classList.remove('on'));el.classList.add('on');updateNext();}
   function pickNext(el){pick(el);setTimeout(next,220)}   // 단일 선택 → 자동 진행
 
