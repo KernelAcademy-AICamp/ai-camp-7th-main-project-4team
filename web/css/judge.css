@@ -14,8 +14,8 @@
 .jflow-sub{font-size:15.5px;}
 .jflow-sub b{color:var(--g); font-weight:800;}
 /* 입력부 = 번호 스텝 카드(①판정기준 ②옷종류 ③사이즈표) */
-.jcard{border:1px solid var(--line); border-radius:20px; background:var(--surface); padding:22px;
-  box-shadow:0 1px 2px rgba(20,18,12,.03), 0 10px 26px -18px rgba(20,18,12,.14);}
+.jcard{border:1px solid var(--gl); border-radius:20px; background:#FBFCFB; padding:22px;   /* 입력 존 = 옅은 그린 틴트로 결과 패널(흰)과 구분·돋보이게 */
+  box-shadow:0 2px 4px rgba(46,74,59,.04), 0 14px 32px -20px rgba(46,74,59,.30);}
 .jstep + .jstep{margin-top:18px; padding-top:18px; border-top:1px solid var(--line);}
 .jstep-hd{display:flex; align-items:center; gap:10px; margin-bottom:12px;}   /* 숫자·라벨 한 줄 정중앙 정렬 */
 .jstep-n{flex:none; width:24px; height:24px; border-radius:7px; background:var(--ink); color:#fff;
@@ -113,6 +113,11 @@
 .jmine{--jtype:#9db8ff; display:flex; align-items:center; gap:13px; border-radius:14px; padding:13px 15px;
   background:#eef3ff; background:color-mix(in srgb, var(--jtype) 13%, #fff);
   border:1px solid #d6e2ff; border:1px solid color-mix(in srgb, var(--jtype) 32%, #fff);}
+/* 진단 안 한 신규 사용자 — ① 판정 기준 자리에 체형 결과 대신 진단 유도 CTA */
+.jneeddx{display:flex; align-items:center; gap:12px; border-radius:14px; padding:14px 16px; background:#F4F8F5; border:1px solid var(--gl);}
+.jneeddx-tx{flex:1; font-size:13.5px; color:var(--ink2); line-height:1.5;} .jneeddx-tx b{color:var(--g); font-weight:800;}
+.jneeddx-cta{flex:none; display:inline-flex; align-items:center; text-decoration:none; padding:11px 16px; border-radius:11px; background:var(--g); color:#fff; font-size:13.5px; font-weight:800; white-space:nowrap;}
+.jneeddx-cta:hover{background:#263E31;}
 /* 유형 아바타 = 홈·마이(#myAv)·상단 내비와 동일한 얼굴 그림. 유형색(--jtype) 원 위에 얹음. */
 .jmine-av{flex:none; width:44px; height:44px; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; background:var(--jtype);}
 .jmine-av .head{position:relative; width:34px; height:38px; transform:scale(.64); transform-origin:center;}
@@ -151,10 +156,10 @@
 
 /* ── 캡처 입력 ─────────────────────────────────────── */
 .jcap{display:flex; flex-direction:column; gap:14px;}
-.jcap-zone{border:1.6px dashed var(--gl); border-radius:16px; padding:40px 20px; text-align:center; cursor:pointer;
-  background:var(--gs); display:flex; flex-direction:column; align-items:center; gap:11px; transition:border-color .15s, background .15s;}   /* 입력의 주 액션 — 초록 틴트로 돋보이게 */
-.jcap-zone:hover, .jcap-zone.over{border-color:var(--g); background:#DDEAE1;}
-.jcap-ic{width:56px; height:56px; border-radius:15px; background:#fff; color:var(--g); display:grid; place-items:center; box-shadow:0 2px 8px rgba(46,74,59,.10);}
+.jcap-zone{border:1.5px dashed var(--gl); border-radius:16px; padding:40px 20px; text-align:center; cursor:pointer;
+  background:#F4F8F5; display:flex; flex-direction:column; align-items:center; gap:11px; transition:border-color .15s, background .15s;}   /* 입력의 주 액션 — 아주 옅은 초록 틴트(과하지 않게) */
+.jcap-zone:hover, .jcap-zone.over{border-color:var(--g); background:#EAF1EC;}
+.jcap-ic{width:56px; height:56px; border-radius:15px; background:#fff; color:var(--g); display:grid; place-items:center; box-shadow:0 2px 8px rgba(46,74,59,.08);}
 .jcap-ic svg{width:26px; height:26px; display:block;}
 .jcap-t{font-size:16px; font-weight:800; letter-spacing:-.03em;}
 .jcap-d{font-size:13px; color:var(--sub); line-height:1.5;} .jcap-d b{color:var(--ink2); font-weight:700;}
@@ -214,12 +219,13 @@
 
 /* 판정 전 = 아이콘 3스텝 한 줄 + 결과 골격(스켈레톤). 판정하면 #jaside→#jresult로 '같은 자리'가 채워져 갑작스런 전환을 줄임 */
 #jaside{display:flex; flex-direction:column; gap:14px;}
-.jflow{display:flex; align-items:center; justify-content:flex-start; flex-wrap:wrap; gap:7px 13px; padding:10px 16px; background:var(--gs); border:1px solid var(--gl); border-radius:14px;}
-.jsetup > .jflow{margin-bottom:22px;}   /* 2단 위 full-width 흐름 바 → 아래 컬럼과 간격 */
-.jflow-s{display:flex; align-items:center; gap:8px; font-size:15px; font-weight:800; color:var(--ink2);}
-.jflow-ic{flex:none; width:28px; height:28px; border-radius:8px; background:var(--surface); color:var(--g); display:flex; align-items:center; justify-content:center;}
-.jflow-ic svg{width:17px; height:17px;}
-.jflow-ar{color:#5A7A68; font-size:14px; font-weight:800;}
+/* 흐름 안내 = 무채색 스트립(초록 없음, 위아래 얇은 선). 번호 대신 아이콘이라 왼쪽 ①②③과 안 겹침 */
+.jhowto{display:flex; align-items:center; flex-wrap:wrap; gap:7px 14px; padding:12px 4px; border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+.jsetup > .jhowto{margin:2px 0 20px;}
+.jhowto-s{display:flex; align-items:center; gap:8px; font-size:14.5px; font-weight:800; color:var(--ink2);}
+.jhowto-ic{flex:none; width:26px; height:26px; border-radius:7px; background:var(--soft); color:var(--ink2); display:flex; align-items:center; justify-content:center;}
+.jhowto-ic svg{width:16px; height:16px; display:block;}
+.jhowto-ar{color:var(--sub2); font-size:13px; font-weight:800;}
 /* 히어로 자리 — 실제 B 게이지 요약과 같은 배치(게이지 왼쪽)의 대시 스켈레톤 */
 .jgh-hero{display:flex; align-items:center; gap:22px; border:1.5px dashed var(--line2); border-radius:20px; padding:22px 24px; background:var(--surface);}
 .jgh-gauge{flex:none; width:88px; height:88px; border-radius:50%; border:2px dashed var(--line2); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; letter-spacing:.08em; color:var(--sub2);}

@@ -49,16 +49,19 @@
     state.exps = Array.isArray(payload.experiences) ? payload.experiences : [];
     state.expCount = state.exps.length;
 
+    var forceNoDx = false; try { forceNoDx = /[?&]nodx=1/.test(location.search); } catch (e) {}   // ?nodx=1 = 진단 없음 화면 미리보기
     if (!window.BodyModel) return fail("체형 엔진을 불러오지 못했어요.");
     BodyModel.load().then(function () {
       var est = BodyModel.estimate(basic);
-      if (!est || !est.ready) { showGate(); return; }
+      if (forceNoDx || !est || !est.ready) { showNeedDx(); return; }   // 진단 없는 신규 = 게이트 대신 ① 안에서 '진단 시작하기' 유도
       state.sex = est.sex;
       est.parts.forEach(function (p) { state.cm[p.key] = p.cm; if (p.rmse != null) state.err[p.key] = p.rmse; });
       state.ready = true;
       $("jloading").hidden = true;
       $("jsetup").hidden = false;
       showCapture();
+      var back = false; try { back = sessionStorage.getItem(RETURN_KEY) === "1"; sessionStorage.removeItem(RETURN_KEY); } catch (e) {}
+      if (back) restoreJudge();   // '진단 수정'에서 이전으로 돌아온 경우에만 이전 판정 복원
     }).catch(function (e) { fail("불러오는 중 문제가 생겼어요. 새로고침해 주세요."); });
   }
 
@@ -120,7 +123,7 @@
 
   function onParsed(p) {
     state.parsed = p;
-    if (p.category === "TOP" || p.category === "BOTTOM") setCat(p.category);
+    // 옷 종류는 사용자가 고른 상의/하의가 기준 — 자동 인식이 이를 덮어쓰지 않음(하의 선택이 상의로 튕기던 버그)
     if (p.tableKind === "body_range") {
       $("jparsehint").innerHTML = "<b class='w'>이건 신체 권장범위표예요.</b> 옷 실측표(단면·기장)를 올려주세요 — 못 입어보는 옷의 실제 치수가 필요해요.";
       $("jparsetable").innerHTML = ""; $("jrun").disabled = true; return;
@@ -187,7 +190,7 @@
     return ok;
   }
   function brandFilled() { var b = $("jbrandin"); return !b || b.value.trim() !== ""; }   // 브랜드 필수(입력칸 없으면 통과)
-  function refreshRun() { var r = $("jrun"); if (r) r.disabled = !(hasJudgeValue() && brandFilled()); }
+  function refreshRun() { var r = $("jrun"); if (r) r.disabled = !(state.ready && hasJudgeValue() && brandFilled()); }   // 진단(state.ready) 없으면 판정 불가
   // 판정 후 입력부를 '사용됨'으로 흐리게 + 판정버튼 비활성. 결과 중엔 왼쪽 잠금(다른 옷 판정하기로만 해제).
   function setJudged(on) {
     var m = document.querySelector(".jsetup-main"); if (m) m.classList.toggle("judged", !!on);
@@ -203,9 +206,47 @@
     var sm = $("jsharemsg"); if (sm) { sm.hidden = true; sm.textContent = ""; }
     var pt = $("jparsetable"); if (pt) pt.innerHTML = "";
     state.lastCell = null;                                           // 체형 오차(state.err)는 진단값이라 보존
+    try { sessionStorage.removeItem(SNAP_KEY); } catch (e) {}         // 초기화하면 복원 스냅샷도 폐기
     setJudged(false); showCapture();                                 // showCapture가 parsed/manual/버튼 리셋
     var card = document.querySelector(".jcard");                      // 리셋 후 왼쪽 입력으로 부드럽게 이동
     if (card) card.scrollIntoView({ behavior: "smooth", block: "start" }); else window.scrollTo(0, 0);
+  }
+
+  /* 진단 수정 왕복 복원 — 판정 결과를 두고 '진단 수정'에 다녀와도(이전) 그 판정으로 되돌아오게 */
+  var SNAP_KEY = "fitting.judge.snap", RETURN_KEY = "fitting.judge.return";
+  function snapshotInputs() {                                         // 현재 입력표(라벨+부위값)를 그대로 직렬화(사용자 수정분 보존)
+    var rows = {};
+    document.querySelectorAll(".jsl").forEach(function (el) { var i = +el.getAttribute("data-i"); (rows[i] = rows[i] || { values: {} }).label = el.value; });
+    document.querySelectorAll(".jce").forEach(function (el) { var i = +el.getAttribute("data-i"); (rows[i] = rows[i] || { values: {} }).values[el.getAttribute("data-p")] = el.value; });
+    return Object.keys(rows).sort(function (a, b) { return a - b; }).map(function (k) { return { label: rows[k].label || "", values: rows[k].values }; });
+  }
+  function saveJudgeSnapshot() {
+    try {
+      sessionStorage.setItem(SNAP_KEY, JSON.stringify({
+        cat: state.cat, basis: state.basis, manual: !!state.manual,
+        brand: ($("jbrandin") && $("jbrandin").value) || "", product: ($("jprodin") && $("jprodin").value) || "",
+        sizes: snapshotInputs()
+      }));
+    } catch (e) {}
+  }
+  function restoreJudge() {                                           // 부팅 때 복귀 표식+스냅샷 있으면 그 판정 재현
+    var snap; try { snap = JSON.parse(sessionStorage.getItem(SNAP_KEY) || ""); } catch (e) {}
+    if (!snap || !snap.sizes || !snap.sizes.length) return false;
+    setCat(snap.cat); state.basis = snap.basis || null;
+    var bi = $("jbrandin"); if (bi) bi.value = snap.brand || "";
+    var pi = $("jprodin"); if (pi) pi.value = snap.product || "";
+    state.parsed = { sizes: snap.sizes };
+    if (snap.manual) { showManual(); renderCorrect(snap.sizes, true); }
+    else {                                                            // 캡처 파싱 상태 흉내(썸네일 이미지는 저장 안 하므로 숨김)
+      $("jcap").hidden = true; $("jcorrect").hidden = false; state.manual = false; markTab("capture");
+      $("jcorrect").classList.remove("man");
+      var th = $("jcapthumb"); if (th) { th.hidden = true; th.src = ""; }
+      var ru = $("jreupload"); if (ru) ru.hidden = true;
+      $("jparsehint").innerHTML = "이전 판정을 불러왔어요 · 값을 확인하고 다시 판정할 수 있어요";
+      renderCorrect(snap.sizes, false);
+    }
+    run();                                                            // 저장된 값으로 판정 재계산 → 이전 결과 화면 복원
+    return true;
   }
 
   function showManual() {
@@ -263,7 +304,7 @@
     state.lastCell = cell;
     $("jrun").disabled = true;
     computeJudgment({ category: state.cat, sex: state.sex, cm: state.cm, experiences: state.exps, errors: errForEngine(), cell: cell })
-      .then(function (j) { $("jrun").disabled = false; if (!j) return showMiss(); render(j); })
+      .then(function (j) { $("jrun").disabled = false; if (!j) return showMiss(); render(j); saveJudgeSnapshot(); })
       .catch(function () { $("jrun").disabled = false; showMiss(); });
   }
   // api=서버(/api/judge, cell 전달·실측 비노출) / proto=클라 로컬(garments로 역산 + 캡처셀 판정)
@@ -584,6 +625,15 @@
   // 게이트는 자체 에디토리얼 헤드라인을 가지므로, 공통 제목/부제는 숨겨 이중 헤드라인 방지.
   function showGate() { $("jloading").hidden = true; $("jsetup").hidden = true; $("jgate").hidden = false;
     var t = document.querySelector(".jtitle"), s = $("jsub"); if (t) t.hidden = true; if (s) s.hidden = true; }
+  // 진단 없는 신규 사용자 = 세팅 화면은 그대로 보여주되 ①을 '진단 시작하기' CTA로 교체, 판정은 비활성 유지
+  function showNeedDx() {
+    state.ready = false;
+    $("jloading").hidden = true; $("jsetup").hidden = false;
+    var mine = $("jmine"); if (mine) mine.hidden = true;
+    var auto = $("jstepAuto"); if (auto) auto.hidden = true;
+    var need = $("jneeddx"); if (need) need.hidden = false;
+    showCapture();   // 나머지 흐름은 보이되 판정하기는 refreshRun의 state.ready 게이팅으로 잠김
+  }
   function showMiss(msg) {
     $("jmiss").hidden = false;
     $("jmiss").textContent = msg || "판정할 수 없어요. 값을 확인해주세요.";
@@ -592,6 +642,8 @@
 
   /* ── 이벤트 ─────────────────────────────────────────────── */
   document.addEventListener("click", function (ev) {
+    // '진단 수정'·'진단 시작하기'로 나갈 때 표식 → diag에서 '이전' 누르면 Fit으로 복귀(수정이면 이전 판정 복원)
+    if (ev.target.closest(".jmine-re, .jneeddx-cta")) { try { sessionStorage.setItem(RETURN_KEY, "1"); } catch (e) {} }
     var bfb = ev.target.closest("[data-bfsz]");
     if (bfb) { drawBodyFit(bfb.getAttribute("data-bfsz")); return; }   // 자세히 사이즈 토글
     var seg = ev.target.closest(".jseg-b");
