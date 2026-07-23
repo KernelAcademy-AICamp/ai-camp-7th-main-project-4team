@@ -6,8 +6,8 @@
 
   .shell{width:600px;max-width:100%;margin:auto;padding:24px 16px 40px}   /* 로그인·가입 공통 모달: 크게 + 화면 중앙 */
   .brandbar{display:flex;align-items:center;gap:10px;padding:6px 2px 16px}
-  .logo{font-size:20px;font-weight:800;letter-spacing:-.05em;color:var(--green,#2E4A3B)}
-  .logo i{display:inline-block;width:6px;height:6px;background:var(--green,#2E4A3B);margin-left:2px}
+  .logo{font-size:20px;font-weight:800;letter-spacing:-.05em;color:var(--green,var(--green))}
+  .logo i{display:inline-block;width:6px;height:6px;background:var(--green,var(--green));margin-left:2px}
   .closex{margin-left:auto;font-size:13px;color:var(--sub,#6b675f);cursor:pointer}
 
   .card{background:#fff;border:1px solid var(--line,#e7e4de);border-radius:18px;box-shadow:0 8px 26px rgba(20,18,16,.06);overflow:hidden}
@@ -16,7 +16,7 @@
   .chead .ttl{color:var(--ink,#1c1a17);font-weight:800}
   .chead .stp{margin-left:auto;font-variant-numeric:tabular-nums}
   .prog{height:5px;background:#eee9e2}
-  .prog>i{display:block;height:100%;background:var(--green,#2E4A3B);transition:width .3s}
+  .prog>i{display:block;height:100%;background:var(--green,var(--green));transition:width .3s}
   .chead,.prog{display:none}   /* 로고바만 남기고 '스타일리스트 지원' 제목바·회색 진행줄 숨김 */
   .cbody{padding:30px 30px 32px}
 
@@ -29,26 +29,26 @@
   .hero h1{font-size:24px;font-weight:800;letter-spacing:-.03em;margin:12px 0 8px}
   .hero p{font-size:15px;color:var(--sub,#6b675f);line-height:1.6;margin:0 auto;max-width:340px}
   .benefits{display:flex;justify-content:center;gap:8px;margin:20px 0 4px;flex-wrap:wrap}
-  .benefits span{display:inline-flex;align-items:center;gap:5px;background:var(--green-soft,#E7EFEA);color:var(--green,#2E4A3B);padding:8px 14px;border-radius:20px;font-size:13px;font-weight:800}
-  .benefits svg{width:15px;height:15px;color:var(--green,#2E4A3B)}
+  .benefits span{display:inline-flex;align-items:center;gap:5px;background:var(--green-soft,var(--green-soft));color:var(--green,var(--green));padding:8px 14px;border-radius:20px;font-size:13px;font-weight:800}
+  .benefits svg{width:15px;height:15px;color:var(--green,var(--green))}
 
   .lbl{font-size:15px;font-weight:800;color:var(--sub,#6b675f);margin:22px 0 9px}
   .lbl:first-child{margin-top:6px}
   input[type=text],input[type=email],input[type=tel],input[type=number],textarea{width:100%;border:1.5px solid var(--line2,#d8d4cc);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:15px;background:#fff;color:var(--ink,#1c1a17)}
   textarea{resize:vertical;min-height:64px}
-  input:focus,textarea:focus{outline:none;border-color:var(--green,#2E4A3B)}
+  input:focus,textarea:focus{outline:none;border-color:var(--green,var(--green))}
   .hint{font-size:12px;color:var(--sub2,#8a857b);margin-top:8px}
-  .err{font-size:12.5px;color:#c0392b;font-weight:700;margin-top:8px;display:none}
+  .err{font-size:12.5px;color:var(--warn);font-weight:700;margin-top:8px;display:none}
   .err.on{display:block}
 
   .chk{display:flex;align-items:center;gap:10px;font-size:13.5px;margin-top:12px;cursor:pointer}
-  .chk input{width:17px;height:17px;accent-color:var(--green,#2E4A3B)}
+  .chk input{width:17px;height:17px;accent-color:var(--green,var(--green))}
 
   /* 서비스 유형별 가격 */
   .svc{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line,#e7e4de)}
   .svc:last-of-type{border-bottom:none}
   .svc .tog{display:flex;align-items:center;gap:9px;flex:1;font-size:14px;font-weight:700;cursor:pointer}
-  .svc .tog input{width:17px;height:17px;accent-color:var(--green,#2E4A3B)}
+  .svc .tog input{width:17px;height:17px;accent-color:var(--green,var(--green))}
   .svc .price{width:120px} .svc .price input{width:100%;text-align:right}
   .svc .won{font-size:13px;color:var(--sub,#6b675f)}
   .svc.off{opacity:.45} .svc.off .price input{background:var(--soft,#f6f5f2)}
@@ -56,7 +56,7 @@
   /* 전문분야 태그 */
   .tags{display:flex;flex-wrap:wrap;gap:8px}
   .tag{font-size:13px;font-weight:700;border:1.5px solid var(--line2,#d8d4cc);border-radius:20px;padding:8px 13px;color:var(--sub,#6b675f);cursor:pointer;user-select:none}
-  .tag.on{border-color:var(--green,#2E4A3B);color:var(--green,#2E4A3B);background:var(--green-soft,#E7EFEA)}
+  .tag.on{border-color:var(--green,var(--green));color:var(--green,var(--green));background:var(--green-soft,var(--green-soft))}
   .tagadd{display:flex;gap:8px;margin-top:10px}
   .tagadd input{flex:1}
   .tagadd button{font:inherit;font-size:13px;font-weight:800;border:1.5px solid var(--line2,#d8d4cc);background:#fff;border-radius:10px;padding:0 14px;cursor:pointer}
@@ -79,9 +79,9 @@
   .login .cbody{padding:30px 30px 32px}
   .login .hero{padding:16px 0 6px}
   .login .hero .ic svg{width:66px;height:66px}
-  .login .hero .eyebrow{font-size:24px;font-weight:800;letter-spacing:-.02em;color:var(--green,#2E4A3B);margin:14px 0 7px}   /* 주제목 */
+  .login .hero .eyebrow{font-size:24px;font-weight:800;letter-spacing:-.02em;color:var(--green,var(--green));margin:14px 0 7px}   /* 주제목 */
   .login .hero h1{font-size:15px;font-weight:600;color:var(--sub,#6b675f);letter-spacing:-.01em;margin:0 0 6px}   /* 부제 */
-  .link-em{color:var(--green,#2E4A3B);font-weight:800;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+  .link-em{color:var(--green,var(--green));font-weight:800;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
   .login .hero p{font-size:15px;max-width:360px}
   .login .lbl{font-size:13px}
   .login .vrow input,.login .vbox input{font-size:15px}

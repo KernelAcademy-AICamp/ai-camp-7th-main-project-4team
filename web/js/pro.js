@@ -140,7 +140,7 @@
     '</div>';
   }
   /* ===== 결과물 = 상세(견적서)에서 작성. 여기 목록 드로어는 '제출한 결과물 요약'만 읽기전용으로 보여줌 ===== */
-  function itemLine(it){ return (it.cat?'['+it.cat+'] ':'')+'<b style="color:var(--ink)">'+it.brand+'</b> '+it.name+' · '+it.size+' · <span class="num">'+(it.price?Number(it.price).toLocaleString():'—')+'</span>원'+(it.url?' 🔗':''); }
+  function itemLine(it){ return (it.cat?'['+esc(it.cat)+'] ':'')+'<b style="color:var(--ink)">'+esc(it.brand)+'</b> '+esc(it.name)+' · '+esc(it.size)+' · <span class="num">'+(it.price?Number(it.price).toLocaleString():'—')+'</span>원'+(it.url?' 🔗':''); }
   /* 대면 여부(pro-quote.js isOffline과 같은 기준) · 약속 표시 형식(상세와 동일: 26.07.20 11:00 AM) */
   function isOfflineSvc(s){ var f=(PROFILE&&PROFILE.services||[]).filter(function(x){return x.type===s;})[0]; if(f&&f.mode) return f.mode==='대면'; return s==='shopping'||s==='image'; }
   function shortDateP(d){ d=String(d||''); var p=d.split(/[.\-/]/); return (p.length===3&&p[0].length===4)?(p[0].slice(2)+'.'+('0'+p[1]).slice(-2)+'.'+('0'+p[2]).slice(-2)):d; }

@@ -4,6 +4,7 @@
    ★ 키는 서버 전용(ANTHROPIC_API_KEY) — 절대 클라 노출 금지.
    무의존: SDK 없이 raw fetch(Node18+ 전역 fetch). 구조화 출력은 안정적인 강제 tool-use로.
    재사용: parseSizeTable(b64, mediaType, opts) 를 export → 로컬 테스트 스크립트도 같은 로직 사용. */
+var F = require('./_fetch.js'), fetchT = F.fetchT, MS = F.MS;
 
 var MODEL = process.env.PARSE_MODEL || 'claude-sonnet-5';   // 기본 sonnet(비전+비용). 정확도 부족 시 claude-opus-4-8.
 
@@ -78,11 +79,11 @@ async function parseSizeTable(b64, mediaType, opts) {
     }]
   };
 
-  var r = await fetch('https://api.anthropic.com/v1/messages', {
+  var r = await fetchT('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'x-api-key': KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
     body: JSON.stringify(body)
-  });
+  }, MS.LLM);   // 비전 파싱은 수 초~수십 초 — Supabase 기본(6s)이 아닌 별도 상한
   if (!r.ok) { var t = await r.text(); throw new Error('anthropic ' + r.status + ': ' + t.slice(0, 400)); }
   var j = await r.json();
   var tool = (j.content || []).filter(function (c) { return c.type === 'tool_use' && c.name === 'emit_size_table'; })[0];

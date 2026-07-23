@@ -253,7 +253,7 @@
     document.head.appendChild(s); }
   function mbtn(label,action,kind){
     var s='padding:9px 15px;border-radius:9px;font-size:13.5px;font-weight:800;cursor:pointer;border:1px solid var(--line,#e0ddd6)';
-    s += kind==='warn' ? ';background:var(--warn,#c0392b);color:#fff;border-color:var(--warn,#c0392b)'
+    s += kind==='warn' ? ';background:var(--warn);color:#fff;border-color:var(--warn)'
        : kind==='primary' ? ';background:var(--green,#2E4A3B);color:#fff;border-color:var(--green,#2E4A3B)'
        : ';background:#fff;color:var(--ink,#1c1a17)';
     return '<button onclick="__dispAct(\''+action+'\')" style="'+s+'">'+label+'</button>';

@@ -252,7 +252,7 @@
   function budgetStatus(total, range){ if(!range) return {label:'예산 미설정', color:'var(--sub2,#8a857b)'};
     if(total < range.min) return {label:'예산보다 낮아요', color:'#b8862b'};
     if(range.max===Infinity || total <= range.max) return {label:'예산 내 ✓', color:'var(--green,#2E4A3B)'};
-    return {label:'예산 '+(total-range.max).toLocaleString()+'원 초과', color:'#c0392b'}; }
+    return {label:'예산 '+(total-range.max).toLocaleString()+'원 초과', color:'var(--warn)'}; }
   /* 합계·예산 서머리 (모달 + 제출요약 공용) */
   function budgetSummaryHTML(items, req, compact){
     var total=itemsTotal(items), range=budgetRange(req.budget), st=budgetStatus(total, range);
@@ -739,8 +739,8 @@
       '.rpt-reasons{display:flex;flex-direction:column;gap:2px}'+
       '.rpt-r{display:flex;align-items:center;gap:8px;padding:9px 4px;font-size:14px;cursor:pointer;border-bottom:1px solid var(--line,#ece9e3)}.rpt-r:last-child{border:none}'+
       '.rpt-link{display:block;width:100%;margin-top:10px;padding:11px;background:none;border:1px solid var(--line2,#d8d4cc);border-radius:11px;color:var(--sub,#6b6a67);font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}'+
-      '.rpt-link:hover{border-color:#c0392b;color:#c0392b}'+
-      '.rpt-done{margin-top:10px;padding:12px 14px;background:#fbf3f3;border:1px solid #e6b8b8;border-radius:11px;font-size:13px;color:#c0392b;line-height:1.5}';
+      '.rpt-link:hover{border-color:var(--warn);color:var(--warn)}'+
+      '.rpt-done{margin-top:10px;padding:12px 14px;background:#fbf3f3;border:1px solid #e6b8b8;border-radius:11px;font-size:13px;color:var(--warn);line-height:1.5}';
     document.head.appendChild(s); }
 
   /* ═══ 방향 A · 타임라인 작업대 ═══

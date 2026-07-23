@@ -37,7 +37,7 @@ http
         // 없는 경로 → 오류 페이지(G.7) 서빙 (Vercel의 404.html 컨벤션과 동일)
         return fs.readFile(path.join(ROOT, "404.html"), (e2, page) => {
           res.writeHead(404, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-cache, no-store, must-revalidate" });
-          res.end(page || ("not found: " + p));
+          res.end(page || "not found");   // 요청 경로를 반사하지 않는다(Reflected XSS 차단)
         });
       }
       res.writeHead(200, {

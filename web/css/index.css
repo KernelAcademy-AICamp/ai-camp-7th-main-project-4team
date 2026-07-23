@@ -93,7 +93,7 @@
   #stage .lock .uline .penmk{position:absolute;top:7px;left:0;width:8px;height:8px;margin-left:-4px;border-radius:1.5px;background:var(--green);opacity:0;box-shadow:0 0 7px rgba(46,74,59,.45)}
   #stage.run .uline .penmk{animation:tapePen .85s cubic-bezier(.35,.9,.3,1) var(--tape-at) both}
   @keyframes tapePen{0%{left:0;opacity:0;transform:scale(.6)}14%{opacity:1;transform:scale(1)}100%{left:100%;opacity:1;transform:scale(1)}}
-  #stage .lock .uline .spark{position:absolute;top:11px;left:100%;margin-left:-2px;width:4px;height:4px;opacity:0;pointer-events:none;background:#fff;box-shadow:0 0 8px 2px var(--green-light,#9CC1AE)}
+  #stage .lock .uline .spark{position:absolute;top:11px;left:100%;margin-left:-2px;width:4px;height:4px;opacity:0;pointer-events:none;background:#fff;box-shadow:0 0 8px 2px var(--green-light,var(--green-light))}
   #stage .lock .uline .spark::before,#stage .lock .uline .spark::after{content:"";position:absolute;background:#fff;border-radius:2px}
   #stage .lock .uline .spark::before{inset:-6px 0;width:2px;left:1px}
   #stage .lock .uline .spark::after{inset:0 -6px;height:2px;top:1px}
@@ -105,7 +105,7 @@
   #stage .midcopy{position:absolute;left:0;right:0;top:47%;text-align:center;font-size:clamp(24px,3.1vw,36px);font-weight:800;letter-spacing:-.03em;opacity:0;pointer-events:none;z-index:15;color:#fff;text-shadow:0 4px 14px rgba(0,0,0,.45);white-space:nowrap}
   #stage .midcopy .typebox{display:inline-block;text-align:left;white-space:nowrap;width:calc(var(--tw,7em) + .5em)}
   #stage .midcopy .txt{display:inline-block;overflow:hidden;white-space:nowrap;width:0;vertical-align:bottom;line-height:1.15}
-  #stage .midcopy .dot{display:inline-block;width:.3em;height:.3em;border-radius:2px;background:var(--green-light,#9CC1AE);margin-left:.1em;margin-bottom:.05em;vertical-align:bottom;opacity:0}
+  #stage .midcopy .dot{display:inline-block;width:.3em;height:.3em;border-radius:2px;background:var(--green-light,var(--green-light));margin-left:.1em;margin-bottom:.05em;vertical-align:bottom;opacity:0}
   #stage.play .midcopy{animation:mcShow var(--copy-hold) ease var(--copy-at) both}
   @keyframes mcShow{0%{opacity:0}7%{opacity:1}86%{opacity:1}100%{opacity:0}}
   #stage.play .midcopy .txt{animation:mcType calc(var(--copy-hold) * .42) steps(7,end) var(--copy-at) both}
@@ -118,12 +118,12 @@
   @keyframes deckDim{to{filter:brightness(.5)}}
   /* ⚠ border:none 필수 — tokens.css의 공용 .card{border:var(--bd)}가 흰 테두리를 입힘(같은 클래스명 충돌).
      padding:0도 마찬가지(공용 .card는 24px). 모서리는 border-radius+overflow로(clip-path는 회전 시 톱니). */
-  #stage .card{position:absolute;left:calc(50% - 100px);top:180px;width:200px;height:339px;background:#16171b;border:none;padding:0;border-radius:17px;overflow:hidden;transform-origin:50% 50%;backface-visibility:hidden;-webkit-font-smoothing:antialiased;z-index:calc(8 - var(--i))}
+  #stage .card{position:absolute;left:calc(50% - 100px);top:180px;width:200px;height:339px;background:var(--rc-bg);border:none;padding:0;border-radius:17px;overflow:hidden;transform-origin:50% 50%;backface-visibility:hidden;-webkit-font-smoothing:antialiased;z-index:calc(8 - var(--i))}
   /* 낙하: 가속 하강 → 안착 → 아주 작은 되튐(9px→5px)으로 과장 줄임. 딜: 관성 있는 ease-out으로 매끄럽게 */
   #stage.play .card{animation:fallIn var(--stack-in) cubic-bezier(.4,0,.5,1) var(--fd) both,dealOnce var(--t-deal) cubic-bezier(.22,.75,.24,1) calc(var(--bridge) + var(--d)) forwards}
   @keyframes fallIn{0%{opacity:0;transform:translate(var(--fx,0),-310px) rotate(calc(var(--r) * 1.9));animation-timing-function:cubic-bezier(.45,0,.75,.7)}18%{opacity:1}68%{transform:translate(0,0) rotate(var(--r));animation-timing-function:cubic-bezier(.28,0,.35,1)}80%{transform:translate(0,-5px) rotate(var(--r));animation-timing-function:cubic-bezier(.4,0,.6,1)}92%{transform:translate(0,-1px) rotate(var(--r))}100%{opacity:1;transform:translate(0,0) rotate(var(--r))}}
   @keyframes dealOnce{0%{transform:rotate(var(--r))}100%{transform:translate(var(--x),var(--y)) rotate(var(--rot)) scale(var(--cs,1))}}
-  #stage .card .hc{position:absolute;top:0;left:0;width:392px;height:664px;transform:scale(.5102);transform-origin:top left;color:#fff;display:flex;flex-direction:column;align-items:center;padding:26px 26px 30px;background:#16171b}
+  #stage .card .hc{position:absolute;top:0;left:0;width:392px;height:664px;transform:scale(.5102);transform-origin:top left;color:#fff;display:flex;flex-direction:column;align-items:center;padding:26px 26px 30px;background:var(--rc-bg)}
   #stage .card .hc .ctop{width:100%;display:flex;justify-content:flex-start}
   #stage .card .hc .clogo{font-size:20px;font-weight:800;letter-spacing:-.05em}
   #stage .card .hc .clogo .sq{display:inline-block;width:6px;height:6px;background:currentColor;margin-left:2px;vertical-align:baseline}
@@ -165,16 +165,16 @@
   #stage .flip .face .logo{font-size:18px;font-weight:800;letter-spacing:-.05em;color:rgba(255,255,255,.66)}
   #stage .flip .face .logo i{display:inline-block;width:5px;height:5px;background:currentColor;margin-left:2px;vertical-align:baseline}
   #stage .flip .front{background:linear-gradient(160deg,#20323f,#0f1014)}
-  #stage .flip .front .q{flex:1;display:flex;align-items:center;justify-content:center;font-size:158px;font-weight:800;color:var(--green-light,#9CC1AE);text-shadow:0 0 30px rgba(156,193,174,.4)}
-  #stage .flip .front .qspark{position:absolute;top:30%;right:26%;width:7px;height:7px;opacity:0;background:#fff;box-shadow:0 0 8px 2px var(--green-light,#9CC1AE)}
+  #stage .flip .front .q{flex:1;display:flex;align-items:center;justify-content:center;font-size:158px;font-weight:800;color:var(--green-light,var(--green-light));text-shadow:0 0 30px rgba(156,193,174,.4)}
+  #stage .flip .front .qspark{position:absolute;top:30%;right:26%;width:7px;height:7px;opacity:0;background:#fff;box-shadow:0 0 8px 2px var(--green-light,var(--green-light))}
   #stage .flip .front .qspark::before{content:"";position:absolute;top:-5px;bottom:-5px;left:2.5px;width:2px;background:#fff;border-radius:2px}
   #stage .flip .front .qspark::after{content:"";position:absolute;left:-5px;right:-5px;top:2.5px;height:2px;background:#fff;border-radius:2px}
   #stage.play .flip .qspark{animation:tapeSpark 1s ease calc(var(--bridge) + var(--t-deal) + var(--hold) + var(--gap-copy) + .35s) both}
   #stage .flip .back{background:radial-gradient(ellipse 80% 40% at 50% 12%,rgba(156,193,174,.16),transparent 60%),linear-gradient(160deg,#1b2a21,#0f1014);transform:rotateY(180deg)}
   #stage .flip .back .bc{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px}
   #stage .flip .back .bc .t{font-size:19px;font-weight:800;line-height:1.36}
-  #stage .flip .back .bc .t b{color:var(--green-light,#9CC1AE)}
-  #stage .flip .back .bc .btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-size:13px;font-weight:800;padding:11px 18px;border-radius:12px;background:#fff;color:#16171b;border:0;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+  #stage .flip .back .bc .t b{color:var(--green-light,var(--green-light))}
+  #stage .flip .back .bc .btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-size:13px;font-weight:800;padding:11px 18px;border-radius:12px;background:#fff;color:var(--rc-bg);border:0;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.25)}
   #stage.done .intro,#stage.done .lock,#stage.done .midcopy{display:none}
   #stage.done .deck{opacity:1}
   #stage.done .card{transform:translate(var(--x),var(--y)) rotate(var(--rot));filter:brightness(.5)}
@@ -272,7 +272,7 @@
   #home .stat b{display:block;font-family:var(--num);font-feature-settings:'tnum';font-size:32px;font-weight:800;letter-spacing:-.02em;color:var(--green)}
   #home .stat small{font-size:13px;color:var(--sub2);font-weight:700}
   #home .showcard{justify-self:center}
-  #home .showcard .cardprev{position:relative;width:340px;height:576px;border-radius:28px;overflow:hidden;box-shadow:0 30px 66px rgba(10,11,14,.24);background:#16171b}
+  #home .showcard .cardprev{position:relative;width:340px;height:576px;border-radius:28px;overflow:hidden;box-shadow:0 30px 66px rgba(10,11,14,.24);background:var(--rc-bg)}
   #home .showcard .cardprev .cf{position:absolute;top:0;left:0;width:392px;height:664px;border:0;transform:scale(.867);transform-origin:top left;pointer-events:none;opacity:0;transition:opacity .55s ease;filter:blur(7px)}
   #home .showcard .cardprev .cf.on{opacity:1}
   #home .showcard .lock{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:13px;padding:26px;color:#fff;background:linear-gradient(180deg,rgba(18,19,24,.30),rgba(18,19,24,.60))}
@@ -290,7 +290,7 @@
   #home .node{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px 22px;box-shadow:0 10px 28px rgba(20,22,28,.06);display:flex;align-items:center;gap:14px;flex:none;width:360px}
   #home .node .nm{font-size:17px;font-weight:800;letter-spacing:-.02em;word-break:keep-all}
   #home .node .sub2{font-size:13px;color:var(--sub);margin-top:3px}
-  #home .me .av{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#3a382f,var(--ink));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;flex:none}
+  #home .me .av{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--ink-soft),var(--ink));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;flex:none}
   #home .link{flex:1;position:relative;min-width:120px;display:flex;align-items:center;padding:0 6px}
   #home .link .wire{flex:1;position:relative;overflow:hidden;height:3px;border-radius:3px;background:repeating-linear-gradient(90deg,var(--line2) 0 7px,transparent 7px 15px);background-size:15px 3px;opacity:.9}
   #home .link .wire .wirefill{position:absolute;left:0;top:0;height:100%;width:0;background:var(--green);border-radius:3px}
@@ -868,12 +868,12 @@
   #my .dtl-A-right{min-width:0; display:flex; flex-direction:column; gap:16px;}
   #my .dtl-id{background:#fff; border:1px solid var(--line); border-radius:18px; padding:26px 26px 24px; box-shadow:0 6px 18px rgba(20,18,16,.05);}
   /* --tp = 유형 포인트색(결과 카드와 동일). dtl-id에 인라인으로 지정 → 유형별로 이 값만 바꾸면 됨 */
-  #my .dtl-code{font-family:var(--num); font-feature-settings:'tnum'; font-weight:800; font-size:14px; letter-spacing:.14em; color:color-mix(in srgb, var(--tp,var(--green)) 72%, #16140F); background:color-mix(in srgb, var(--tp,var(--green)) 22%, #fff); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--tp,var(--green)) 40%, #fff); display:inline-block; padding:5px 12px; border-radius:8px;}
+  #my .dtl-code{font-family:var(--num); font-feature-settings:'tnum'; font-weight:800; font-size:14px; letter-spacing:.14em; color:color-mix(in srgb, var(--tp,var(--green)) 72%, var(--ink)); background:color-mix(in srgb, var(--tp,var(--green)) 22%, #fff); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--tp,var(--green)) 40%, #fff); display:inline-block; padding:5px 12px; border-radius:8px;}
   #my .dtl-name{font-size:27px; font-weight:800; letter-spacing:-.04em; margin:14px 0 8px;}
   #my .dtl-korea{font-size:14px; font-weight:700; color:var(--sub2); background:var(--soft); padding:5px 11px; border-radius:20px;}
   #my .dtl-desc{font-size:16px; color:var(--ink-soft); line-height:1.7; margin:16px 0 18px;} #my .dtl-desc b{color:var(--ink); font-weight:800;}
   #my .dtl-hash{display:flex; flex-wrap:wrap; gap:7px;}
-  #my .dtl-hash span{font-size:14px; font-weight:800; color:color-mix(in srgb, var(--tp,var(--green)) 62%, #16140F); background:color-mix(in srgb, var(--tp,var(--green)) 20%, #fff); padding:6px 13px; border-radius:20px;}
+  #my .dtl-hash span{font-size:14px; font-weight:800; color:color-mix(in srgb, var(--tp,var(--green)) 62%, var(--ink)); background:color-mix(in srgb, var(--tp,var(--green)) 20%, #fff); padding:6px 13px; border-radius:20px;}
 
   /* 잘맞/피할 FIT — 한 박스에 위아래 두 줄(라벨+칩 가로 정렬) */
   #my .dtl-fitbox{background:#fff; border:1px solid var(--line); border-radius:18px; padding:4px 20px; margin-bottom:16px; box-shadow:0 6px 18px rgba(20,18,16,.05);}

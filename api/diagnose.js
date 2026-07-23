@@ -6,6 +6,7 @@
    env(Vercel): SUPABASE_URL · SUPABASE_SECRET_KEY(서버 전용, RLS 우회). */
 var FitEngine = require('../web/js/engine.js').FitEngine;
 var FitBodyType = require('../web/js/bodytype.js').FitBodyType;   // 8유형 분류(node 호환) — 저장 시점 카드 채움
+var fetchT = require('./_fetch.js').fetchT;
 var GARMENTS = require('../web/data/garments.json');
 var SPECS_FILE = GARMENTS && GARMENTS.specs;   // 폴백(garment 테이블 조회 실패 시)
 var _specsCache = null, _specsRev = -1;
@@ -16,33 +17,37 @@ var EBMAP = { chest: 'chestFull', shoulder: 'shoulder', waist: 'waist', hip: 'hi
 async function getSpecs(URL, KEY) {
   var hdr = { apikey: KEY, Authorization: 'Bearer ' + KEY };
   try {
-    var rv = await fetch(URL + '/rest/v1/garment_meta?id=eq.1&select=rev', { headers: hdr });
+    var rv = await fetchT(URL + '/rest/v1/garment_meta?id=eq.1&select=rev', { headers: hdr });
     var rev = null; if (rv.ok) { var jr = await rv.json(); rev = (jr[0] || {}).rev; }
     if (rev != null && rev === _specsRev && _specsCache) return _specsCache;
-    var specs = [], from = 0, PAGE = 1000;
+    var specs = [], from = 0, PAGE = 1000, complete = false;
     while (true) {
-      var r = await fetch(URL + '/rest/v1/garment?select=spec&limit=' + PAGE + '&offset=' + from, { headers: hdr });
-      if (!r.ok) break;
+      var r = await fetchT(URL + '/rest/v1/garment?select=spec&limit=' + PAGE + '&offset=' + from, { headers: hdr });
+      if (!r.ok) break;                                   // 페이지 실패 → complete=false로 남김
       var rows = await r.json();
       for (var i = 0; i < rows.length; i++) specs.push(rows[i].spec);
-      if (rows.length < PAGE) break;
+      if (rows.length < PAGE) { complete = true; break; }  // 마지막 페이지까지 정상 수신
       from += PAGE;
     }
-    if (specs.length) { _specsCache = specs; _specsRev = rev; return specs; }
+    // 중간에 끊긴 목록을 캐시하면 잘린 실측표가 rev 바뀔 때까지 추천·판정에 계속 쓰인다.
+    //   전 페이지를 다 받은 경우에만 캐시하고, 아니면 직전 캐시/번들 파일로 폴백.
+    if (complete && specs.length) { _specsCache = specs; _specsRev = rev; return specs; }
   } catch (e) {}
   return _specsCache || SPECS_FILE;
 }
 
 // 브랜드 노출 순서(admin 관리, brand 테이블) — service_role로 읽음. [db/04]
 // 반환 map: brand_id → display_order(작을수록 상위) · active=false면 null(추천 제외).
+var _brandMapCache = null;   // 직전 성공 맵 — 조회 실패 시 폴백(관리자의 비활성 설정을 잃지 않게)
 async function brandOrderMap(URL, KEY) {
   try {
-    var r = await fetch(URL + '/rest/v1/brand?select=brand_id,display_order,active', { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY } });
-    if (!r.ok) return {};
+    var r = await fetchT(URL + '/rest/v1/brand?select=brand_id,display_order,active', { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY } });
+    if (!r.ok) return _brandMapCache || {};
     var rows = await r.json(); var m = {};
     rows.forEach(function (x) { m[x.brand_id] = (x.active === false) ? null : x.display_order; });
+    _brandMapCache = m;
     return m;
-  } catch (e) { return {}; }
+  } catch (e) { return _brandMapCache || {}; }   // 빈 맵으로 떨어지면 비활성 브랜드가 다시 추천된다(fail-open)
 }
 // recs에 order 부여(미등록 브랜드=9999 뒤로) + 비활성(null) 제외. 최종 정렬·상위N은 클라(result.js)가 fit 자격 후 order로.
 function decorateRecs(recs, ord) {
@@ -97,11 +102,17 @@ module.exports = async function handler(req, res) {
     result: { card: b.card || card || null, confidenceTier: b.confidenceTier || null, recs: { top: topRecs, bottom: botRecs } },
     engine_version: b.engine_version || 'server-1'
   };
-  var r = await fetch(URL + '/rest/v1/diagnosis', {
-    method: 'POST',
-    headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json', Prefer: 'return=representation' },
-    body: JSON.stringify(row)
-  });
+  var r;
+  try {
+    r = await fetchT(URL + '/rest/v1/diagnosis', {
+      method: 'POST',
+      headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json', Prefer: 'return=representation' },
+      body: JSON.stringify(row)
+    });
+  } catch (e) {
+    // 상한 초과/네트워크 실패를 처리되지 않은 예외로 흘리지 않는다(500 대신 명시적 응답).
+    return res.status(e && e.timeout ? 504 : 502).json({ error: e && e.timeout ? 'upstream timeout' : 'upstream unreachable' });
+  }
   var t = await r.text();
   if (!r.ok) return res.status(502).json({ error: 'supabase insert failed', detail: t });
   var id = null; try { id = JSON.parse(t)[0].id; } catch (e) {}

@@ -9,13 +9,13 @@
   .rloading{ position:fixed; inset:0; z-index:900; display:flex; align-items:center; justify-content:center; background:#FBFAF8; transition:opacity .35s ease; }
   .rloading.hide{ opacity:0; pointer-events:none; }
   .rloading-in{ display:flex; flex-direction:column; align-items:center; gap:16px; }
-  .rloading-spin{ width:38px; height:38px; border-radius:50%; border:3px solid #E6E5E1; border-top-color:#2E4A3B; animation:rspin .8s linear infinite; }
-  .rloading-in p{ margin:0; font-size:15px; font-weight:700; color:#6E6B63; letter-spacing:-.01em; }
+  .rloading-spin{ width:38px; height:38px; border-radius:50%; border:3px solid var(--line); border-top-color:var(--accent); animation:rspin .8s linear infinite; }
+  .rloading-in p{ margin:0; font-size:15px; font-weight:700; color:var(--muted); letter-spacing:-.01em; }
   @keyframes rspin{ to{ transform:rotate(360deg); } }
   @media (prefers-reduced-motion: reduce){ .rloading-spin{ animation:none; } }
   /* 결과 화면 — sohee 디자인 언어 + sangmin 콘텐츠 (자체 팔레트로 클래스 격리) */
-  .rwrap{ --g:#2E4A3B; --gs:#E7EFEA; --ink:#16140F; --ink2:#3A382F; --sub:#6E6B63; --sub2:#A6A29A;
-          --line:#E6E5E1; --line2:#DAD8D2; --warn:#B0553F; --wsoft:#F7ECE8;
+  .rwrap{ --g:var(--accent); --gs:#E7EFEA; --ink:var(--ink); --ink2:#3A382F; --sub:var(--muted); --sub2:var(--faint);
+          --line:var(--line); --line2:var(--field-line); --warn:var(--warn); --wsoft:#F7ECE8;
           max-width:1180px; margin:0 auto; padding:36px 30px 90px; }
   .rwrap h1{ font-size:31.5px; font-weight:800; letter-spacing:-.04em; color:var(--ink); }
   .rwrap .subttl{ font-size:17px; color:var(--sub); margin-top:8px; }
@@ -117,12 +117,12 @@
   #rmodal{ position:fixed; inset:0; z-index:1000; display:flex; align-items:center; justify-content:center; padding:24px; }
   .rmodal-scrim{ position:absolute; inset:0; background:rgba(20,18,16,.44); }
   .rmodal-box{ position:relative; width:100%; max-width:360px; background:#fff; border-radius:20px; padding:26px 24px 20px; box-shadow:0 24px 60px rgba(20,18,16,.28); text-align:center; }
-  .rmodal-t{ font-size:19px; font-weight:800; color:#16140F; letter-spacing:-.02em; margin:0 0 8px; }
-  .rmodal-b{ font-size:14.5px; color:#6E6B63; line-height:1.55; margin:0 0 20px; }
+  .rmodal-t{ font-size:19px; font-weight:800; color:var(--ink); letter-spacing:-.02em; margin:0 0 8px; }
+  .rmodal-b{ font-size:14.5px; color:var(--muted); line-height:1.55; margin:0 0 20px; }
   .rmodal-acts{ display:flex; gap:10px; }
   .rmodal-btn{ flex:1; text-align:center; padding:14px; border-radius:12px; font-size:15px; font-weight:800; text-decoration:none; cursor:pointer; border:none; font-family:inherit; }
   .rmodal-btn.ghost{ background:#F1F0EC; color:#3A382F; }
-  .rmodal-btn.primary{ background:#16140F; color:#fff; }
+  .rmodal-btn.primary{ background:var(--ink); color:#fff; }
   .rcta-note{ text-align:center; font-size:14.5px; color:var(--sub2); margin-top:4px; }
   /* ── 마이 '내 진단결과'와 디자인 통일 — 유형 정체성 / 잘맞·피할 FIT / 한 끗 ── */
   .rwrap{ --soft:#EDEDEA; --gl:#9CC1AE; --gm:#5A7A68; }
@@ -130,12 +130,12 @@
   .rleft #cardslot iframe{ position:static; height:664px; }
   .dtl-id:empty, .dtl-fitbox:empty, .dtl-tip:empty{ display:none; }
   .dtl-id{ --tp:var(--g); background:#fff; border:1px solid var(--line); border-radius:18px; padding:26px 26px 24px; box-shadow:0 6px 18px rgba(20,18,16,.05); }
-  .dtl-code{ font-family:var(--suit,inherit); font-feature-settings:'tnum'; font-weight:800; font-size:15.5px; letter-spacing:.14em; color:color-mix(in srgb, var(--tp) 72%, #16140F); background:color-mix(in srgb, var(--tp) 22%, #fff); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--tp) 40%, #fff); display:inline-block; padding:5px 12px; border-radius:8px; }
+  .dtl-code{ font-family:var(--suit,inherit); font-feature-settings:'tnum'; font-weight:800; font-size:15.5px; letter-spacing:.14em; color:color-mix(in srgb, var(--tp) 72%, var(--ink)); background:color-mix(in srgb, var(--tp) 22%, #fff); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--tp) 40%, #fff); display:inline-block; padding:5px 12px; border-radius:8px; }
   .dtl-name{ font-size:30px; font-weight:800; letter-spacing:-.04em; margin:14px 0 8px; color:var(--ink); }
   .dtl-korea{ font-size:15.5px; font-weight:700; color:var(--sub2); background:var(--soft); padding:5px 11px; border-radius:20px; display:inline-block; }
   .dtl-desc{ font-size:18px; color:var(--ink2); line-height:1.7; margin:16px 0 18px; } .dtl-desc b{ color:var(--ink); font-weight:800; }
   .dtl-hash{ display:flex; flex-wrap:wrap; gap:7px; }
-  .dtl-hash span{ font-size:15.5px; font-weight:800; color:color-mix(in srgb, var(--tp) 62%, #16140F); background:color-mix(in srgb, var(--tp) 20%, #fff); padding:6px 13px; border-radius:20px; }
+  .dtl-hash span{ font-size:15.5px; font-weight:800; color:color-mix(in srgb, var(--tp) 62%, var(--ink)); background:color-mix(in srgb, var(--tp) 20%, #fff); padding:6px 13px; border-radius:20px; }
   .dtl-fitbox{ --tp:var(--g); background:#fff; border:1px solid var(--line); border-radius:18px; padding:4px 20px; box-shadow:0 6px 18px rgba(20,18,16,.05); }
   .dtl-fit{ display:flex; align-items:center; gap:12px; padding:16px 0; border-bottom:1px solid var(--line); }
   .dtl-fitbox .dtl-fit:last-child{ border-bottom:none; }
@@ -247,7 +247,7 @@
     /* CTA 하단 고정 — 스타일리스트 찾기·저장 상시 노출 */
     .rcta{ position:fixed; left:0; right:0; bottom:0; z-index:40; margin:0;
       display:flex; gap:8px; padding:12px 18px calc(12px + env(safe-area-inset-bottom));
-      background:linear-gradient(180deg, rgba(246,246,245,0), var(--bg) 30%); }
+      background:linear-gradient(180deg, rgba(246,246,245,0), var(--canvas) 30%); }
     .rcta .rbtn{ flex:1; min-height:44px; }
     /* CTA는 두 줄로 접히면 하단바 높이가 튐 — 한 줄 유지, 폭이 모자라면 글자만 축소 */
     .rcta .rbtn{ white-space:nowrap; font-size:clamp(15px, 4.2vw, 18px); padding:15px 10px; }

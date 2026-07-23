@@ -86,7 +86,17 @@ for f in htmls:
     js_wired = js_exists and js_ref
     h, a, d = git_last([f, jsf])
     # 이동 대상은 HTML 정적 링크 + JS 이동(location.href 등) 둘 다 스캔 — JS 이동을 놓치면 오탐 고아 발생.
-    js_text = jsf.read_text(encoding="utf-8", errors="ignore") if js_exists else ""
+    #   같은 이름 JS만 보면 공용 스크립트를 놓친다: 관리자 내비는 admin-common.js가 주입하므로
+    #   admin-improve·leads·access가 실제로는 도달 가능한데도 '고아'로 오탐됐다.
+    #   → 페이지가 실제로 <script src>로 싣는 모든 js/*.js를 함께 스캔한다.
+    js_paths = []
+    for name in dict.fromkeys(re.findall(r'src="[^"]*js/([\w-]+)\.js', text)):
+        p = web / "js" / f"{name}.js"
+        if p.exists():
+            js_paths.append(p)
+    if js_exists and jsf not in js_paths:
+        js_paths.append(jsf)
+    js_text = "\n".join(p.read_text(encoding="utf-8", errors="ignore") for p in js_paths)
     links = out_links(text + "\n" + js_text) - {stem}
     reads, writes, fetches = scan_data(text + "\n" + js_text)
     outgoing[stem] = links

@@ -2,6 +2,7 @@
    진단 정확도 피드백 기록(킬 메트릭 원천) → feedback 행 생성. [마일스톤1 §3 · db/00]
    verdict 매핑: 프로토타입(맞음/보통/안맞음) → 스키마(맞음/애매/틀림).
    env(Vercel): SUPABASE_URL · SUPABASE_SECRET_KEY(서버 전용, RLS 우회). */
+var fetchT = require('./_fetch.js').fetchT;
 var VERDICT_MAP = { '맞음': '맞음', '보통': '애매', '애매': '애매', '안맞음': '틀림', '틀림': '틀림' };
 
 module.exports = async function handler(req, res) {
@@ -25,11 +26,17 @@ module.exports = async function handler(req, res) {
     age_attested: !!b.age_attested
   };
 
-  var r = await fetch(URL + '/rest/v1/feedback', {
-    method: 'POST',
-    headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-    body: JSON.stringify(row)
-  });
+  var r;
+  try {
+    r = await fetchT(URL + '/rest/v1/feedback', {
+      method: 'POST',
+      headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify(row)
+    });
+  } catch (e) {
+    // 상한 초과/네트워크 실패를 처리되지 않은 예외로 흘리지 않는다(500 대신 명시적 응답).
+    return res.status(e && e.timeout ? 504 : 502).json({ error: e && e.timeout ? 'upstream timeout' : 'upstream unreachable' });
+  }
   if (!r.ok) return res.status(502).json({ error: 'supabase insert failed', detail: await r.text() });
   return res.status(201).json({ ok: true });
 };

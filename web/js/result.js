@@ -334,7 +334,12 @@
       } else {
         var grpLabel=(curCat==='TOP'?'상체 — 상의 진단':lowerCat?'하체 — '+curLabel+' 진단':'상체 — '+curLabel+' 진단');
         body='<div class="dtl-grp '+(lowerCat?'lo':'up')+'" style="margin-top:8px">'+grpLabel+'</div>'+
-             (MEAS[curCat]||MEAS.TOP).map(function(m){ return specRow(m[1],pm[m[0]],m[2],m[3],lowerCat||lowConf(m[0])); }).join('')+
+             // 회귀계수가 없는 부위(build_base_model이 실패 시 키 자체를 생략)는 행을 그리지 않는다.
+             //   specRow의 pct||50 폴백이 '표준'으로 위조 표시하는 걸 막음 — 값을 지어내지 않는 게 원칙.
+             (MEAS[curCat]||MEAS.TOP).map(function(m){
+               if(pm[m[0]]==null) return '';
+               return specRow(m[1],pm[m[0]],m[2],m[3],lowerCat||lowConf(m[0]));
+             }).join('')+
              (lowerCat
                ? specRow('슬림',FITPCT[pref]||50,'와이드','핏 취향',true)
                : specRow('타이트',FITPCT[pref]||55,'여유','핏 취향',false));
@@ -370,7 +375,9 @@
         var mParts = fullBody ? ['shoulder','chestFull','waist','hip','thigh'] : (isTop?['shoulder','chestFull']:['waist','hip','thigh']);
         var mSk=null, mDev=-1;
         mParts.forEach(function(k){ if(pm[k]==null) return; var d=Math.abs(pm[k]-50); if(d>mDev){ mDev=d; mSk=k; } });
-        var mBalanced = (mDev < 12);   // 최대 편차가 표준존(38~62) 안 = 뚜렷한 극단 부위 없음
+        // 백분위가 하나도 없으면(mDev=-1) 균형형으로 오판하던 문제 — 근거 없이 '편차가 적다'고 말하지 않는다.
+        var mHas = (mDev >= 0);
+        var mBalanced = mHas && (mDev < 12);   // 최대 편차가 표준존(38~62) 안 = 뚜렷한 극단 부위 없음
         var mRecs = fullBody ? (D.topRecs||[]).concat(D.botRecs||[]) : (isTop?(D.topRecs||[]):(D.botRecs||[]));
         var mBn={}; mRecs.forEach(function(r){ if(r.bottleneck) mBn[r.bottleneck]=(mBn[r.bottleneck]||0)+1; });
         var mBk=Object.keys(mBn).sort(function(a,b){ return mBn[b]-mBn[a]; });

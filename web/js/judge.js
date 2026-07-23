@@ -335,14 +335,17 @@
     var pick = sizes.filter(function (s) { return s.sizeLabel === pickSize; })[0] || sizes[0];
 
     // B 게이지 요약(결론) — 원형 게이지 채움=FIT점수, 가운데=추천 사이즈
-    var warn = !j.anyFit || (pick && pick.verdict && ["TIGHT", "BORDERLINE"].indexOf(pick.verdict.label) >= 0);
+    var unknown = !!(pick && pick.verdict && pick.verdict.unknown);
+    var warn = !j.anyFit || unknown || (pick && pick.verdict && ["TIGHT", "BORDERLINE"].indexOf(pick.verdict.label) >= 0);
     var head = pick ? pick.verdict.ko : "판정할 수 없어요";
     var score = pick && pick.fitScore != null ? pick.fitScore : 0;
     var vlabel = pick && pick.verdict ? pick.verdict.label : "";
     var deg = Math.max(0, Math.min(100, score));
     var accCol = warn ? "var(--warn)" : "var(--g)";
     // say(2줄) = 구매 결정 가이드 (1줄 verdict과 역할 분리)
-    var say = !j.anyFit ? "다른 핏이나 브랜드를 보는 게 좋을 것 같아요"
+    var say = (unknown || !j.anyJudged)
+        ? "판정에 필요한 " + (JUDGE_PARTS[state.cat] || []).map(koP).join("·") + " 치수가 표에 없어요"
+      : !j.anyFit ? "다른 핏이나 브랜드를 보는 게 좋을 것 같아요"
       : warn ? "다른 핏이나 브랜드를 보는 게 좋을 것 같아요"
       : vlabel === "OK" ? "지금 사이즈로 사면 돼요"
       : vlabel === "BIG" ? "딱 붙는 걸 원하면 한 치수 작게도 봐요"
@@ -356,6 +359,7 @@
         : (lv === "CROP" ? " · 총장 크롭" : lv === "LONG" ? " · 총장 롱" : " · 총장 많이 긺");
     }
     if (pick && pick.rise && pick.rise.short) say += " · 밑위 짧음";
+    else if (pick && pick.rise && pick.rise.shortMaybe) say += " · 밑위 짧을 수 있음";
     // 신뢰 메타 한 줄(구 신뢰도 2축을 압축)
     var expTxt = state.expCount >= 2 ? ["착용경험 " + state.expCount + "벌", "±2cm"]
                : state.expCount === 1 ? ["착용경험 1벌", "역산 일부"]
@@ -619,7 +623,7 @@
   }
   function fmt(n) { return (Math.round(n * 10) / 10).toString(); }
   function josaGa(w) { if (!w) return "가"; var c = w.charCodeAt(w.length - 1); if (c < 0xAC00 || c > 0xD7A3) return "가"; return ((c - 0xAC00) % 28) ? "이" : "가"; }
-  function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
+  function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }  // 홑따옴표 속성에도 쓰므로 ' 필수
   function readJSON(k, d) { try { return JSON.parse(sessionStorage.getItem(k) || "") || d; } catch (e) { return d; } }
   function fetchJSON(u) { return fetch(u).then(function (r) { return r.json(); }); }
   // 게이트는 자체 에디토리얼 헤드라인을 가지므로, 공통 제목/부제는 숨겨 이중 헤드라인 방지.

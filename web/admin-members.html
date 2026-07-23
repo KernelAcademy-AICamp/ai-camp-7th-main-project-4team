@@ -6,8 +6,8 @@
 <title>핏팅 관리자 — 회원·거래 운영</title>
 <meta name="robots" content="noindex">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
-<link rel="stylesheet" href="css/tokens.css?v=36124a96">
-<link rel="stylesheet" href="css/admin.css?v=87eed9c4">
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<link rel="stylesheet" href="css/admin.css?v=5846e5e3">
 </head>
 <body>
 <div class="anav"><div class="anav-in">
@@ -27,13 +27,13 @@
   <div class="crumb"><b>회원·거래 운영 (3.B)</b></div>
   <p class="subnote"><b>회원(진단 사용자)·전문가 심사</b>는 화면 구현. <b class="pill">화면 우선</b> — 샘플 데이터로 렌더하며 실회원 저장소·인증 배선은 마일스톤1(Supabase). 매칭·분쟁·정산·리뷰(3.B.3~6)는 실매칭 오픈(v2) 대상.</p>
 
-  <div class="atabs" id="atabs">
-    <div class="t on" data-tab="members" onclick="__mtab('members')">회원 <span class="muted">3.B.2</span></div>
-    <div class="t" data-tab="pros" onclick="__mtab('pros')">전문가 심사 <span class="muted">3.B.1</span></div>
-    <div class="t" data-tab="signals" onclick="__mtab('signals')">매칭 수요 신호 <span class="muted">3.B.3</span></div>
-    <div class="t" data-tab="disputes" onclick="__mtab('disputes')">분쟁·환불·신고 <span class="muted">3.B.4</span></div>
-    <div class="t" data-tab="monitor" onclick="__mtab('monitor')">매칭·정산·리뷰 <span class="muted">3.B.5·6</span></div>
-    <div class="t" data-tab="cs" onclick="__mtab('cs')">고객 문의 CS <span class="muted">3.B.7</span></div>
+  <div class="atabs" id="atabs" role="tablist">
+    <div class="t on" data-tab="members" role="tab" tabindex="0" aria-selected="true" onclick="__mtab('members')">회원 <span class="muted">3.B.2</span></div>
+    <div class="t" data-tab="pros" role="tab" tabindex="0" aria-selected="false" onclick="__mtab('pros')">전문가 심사 <span class="muted">3.B.1</span></div>
+    <div class="t" data-tab="signals" role="tab" tabindex="0" aria-selected="false" onclick="__mtab('signals')">매칭 수요 신호 <span class="muted">3.B.3</span></div>
+    <div class="t" data-tab="disputes" role="tab" tabindex="0" aria-selected="false" onclick="__mtab('disputes')">분쟁·환불·신고 <span class="muted">3.B.4</span></div>
+    <div class="t" data-tab="monitor" role="tab" tabindex="0" aria-selected="false" onclick="__mtab('monitor')">매칭·정산·리뷰 <span class="muted">3.B.5·6</span></div>
+    <div class="t" data-tab="cs" role="tab" tabindex="0" aria-selected="false" onclick="__mtab('cs')">고객 문의 CS <span class="muted">3.B.7</span></div>
   </div>
 
   <!-- 3.B.2 회원 -->
@@ -104,6 +104,7 @@
 </div>
 
 <script src="js/admin-common.js?v=33d76e93"></script>
-<script src="js/admin-members.js?v=be58ca5f"></script>
+<script src="js/admin-members.js?v=1881ad4b"></script>
+<script src="js/a11y.js?v=1876c5ec"></script>
 </body>
 </html>
