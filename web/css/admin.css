@@ -27,7 +27,7 @@ a{ color:inherit; }
   font-size:15px; font-weight:800; cursor:pointer; }
 .abtn:disabled{ opacity:.5; cursor:default; }
 .alink{ display:inline-block; margin-top:14px; font-size:13px; color:var(--sub); text-decoration:underline; cursor:pointer; }
-.ahint{ font-size:12.5px; color:var(--sub2,#a6a29a); margin-top:10px; line-height:1.5; }
+.ahint{ font-size:12.5px; color:var(--sub2,var(--sub2)); margin-top:10px; line-height:1.5; }
 .aerr{ font-size:13px; color:var(--warn); margin-top:8px; min-height:18px; }
 
 /* ── 관리자 셸 ─────────────────────────────────────────── */
@@ -54,7 +54,7 @@ a{ color:inherit; }
 .kpi{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px 20px; }
 .kpi .n{ font-size:28px; font-weight:800; color:var(--ink); font-family:var(--num,inherit); }
 .kpi .l{ font-size:13px; color:var(--sub); margin-top:4px; }
-.kpi .s{ font-size:12px; color:var(--sub2,#a6a29a); margin-top:2px; }
+.kpi .s{ font-size:12px; color:var(--sub2,var(--sub2)); margin-top:2px; }
 
 /* 커버리지·데이터 테이블 */
 .sec-h{ font-size:14px; font-weight:800; color:var(--ink); margin:26px 0 12px; }
@@ -66,7 +66,7 @@ table.dt td{ padding:10px 14px; border-bottom:1px solid var(--line); white-space
 table.dt tr:last-child td{ border-bottom:none; }
 table.dt tr:hover td{ background:var(--green-soft); }
 .anchor{ font-size:11px; font-weight:700; color:var(--green); background:var(--green-soft); border-radius:6px; padding:2px 7px; }
-.muted{ color:var(--sub2,#a6a29a); }
+.muted{ color:var(--sub2,var(--sub2)); }
 .num{ font-family:var(--num,inherit); }
 
 /* 필터바 */
@@ -87,7 +87,7 @@ table.dt tr:hover td{ background:var(--green-soft); }
 .stub ul{ margin:0; padding:0; list-style:none; display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:10px; }
 .stub li{ font-size:13.5px; color:var(--ink-soft,var(--ink)); background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:13px 15px; }
 .stub li b{ color:var(--green); font-weight:800; margin-right:6px; }
-.stub li small{ display:block; color:var(--sub2,#a6a29a); font-size:12px; margin-top:3px; }
+.stub li small{ display:block; color:var(--sub2,var(--sub2)); font-size:12px; margin-top:3px; }
 
 /* 브랜드·제품 실측표(3.A.1) */
 .crumb{ font-size:13px; color:var(--sub); margin-bottom:4px; }
@@ -143,7 +143,7 @@ table.dt tr.top td{ background:var(--green-soft); }
 .gcell{ width:100%; font-family:var(--num,inherit); font-size:13px; padding:7px 8px; border:1px solid var(--line); border-radius:8px; color:var(--ink); }
 .gcell:focus{ outline:none; border-color:var(--green); }
 table.dt td:has(.gcell){ padding:5px 6px; }
-.rmrow{ color:var(--sub2,#a6a29a); cursor:pointer; font-size:12px; }
+.rmrow{ color:var(--sub2,var(--sub2)); cursor:pointer; font-size:12px; }
 .rmrow:hover{ color:var(--warn); }
 .gridbtns{ margin:10px 0; display:flex; gap:8px; }
 .exportbar{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
@@ -158,7 +158,7 @@ table.dt td:has(.gcell){ padding:5px 6px; }
 .subnav .abtn.hot{ border-color:var(--green); color:var(--green); }
 .subnav .abtn.hot:hover{ background:var(--green); color:#fff; }
 .subnav-badge{ display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 5px;
-  border-radius:9px; background:var(--warn,#B0553F); color:#fff; font-size:11px; font-weight:800; line-height:1; }
+  border-radius:9px; background:var(--warn,var(--warn)); color:#fff; font-size:11px; font-weight:800; line-height:1; }
 /* 승격 컨트롤(브랜드 매핑·핏·종류 셀렉트) */
 .jmctl{ display:flex; gap:5px; flex-wrap:wrap; align-items:center; }
 .jm-sel{ font:inherit; font-size:12px; padding:6px 7px; border:1px solid var(--line2,#dcdcd8); border-radius:8px; background:#fff; color:var(--ink); max-width:130px; }
@@ -166,7 +166,7 @@ table.dt td:has(.gcell){ padding:5px 6px; }
 /* 텍스트 입력(.filters select·.numin과 통일) — 이메일·검색 등 */
 .inp{ font-family:inherit; font-size:13px; padding:9px 13px; border:1px solid var(--line);
   border-radius:10px; background:#fff; color:var(--ink); }
-.inp::placeholder{ color:var(--sub2,#a6a29a); }
+.inp::placeholder{ color:var(--sub2,var(--sub2)); }
 .inp:focus{ outline:none; border-color:var(--green); }
 
 /* 표 안의 작은 액션 버튼(취소·해제 등) */

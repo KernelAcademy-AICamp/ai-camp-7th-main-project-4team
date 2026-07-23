@@ -2,9 +2,9 @@
    result.css .rwrap과 동일하게 팔레트를 스코프(.jwrap)해 다른 화면과 격리. 값은 tokens.css 딥그린. */
 /* 팔레트·wrapper 규격은 result.css .rwrap과 동일하게 맞춰 형제 화면으로 통일. */
 .jwrap{
-  --g:#2E4A3B; --gs:#E7EFEA; --gl:#CBDDD2; --ink:#16140F; --ink2:#3A382F;
-  --sub:#6E6B63; --sub2:#A6A29A; --line:#E6E5E1; --line2:#DAD8D2; --soft:#EDEDEA;
-  --warn:#B0553F; --wsoft:#F7ECE8; --surface:#fff;
+  --g:var(--accent); --gs:#E7EFEA; --gl:#CBDDD2; --ink:var(--ink); --ink2:#3A382F;
+  --sub:var(--muted); --sub2:var(--faint); --line:var(--line); --line2:var(--field-line); --soft:#EDEDEA;
+  --warn:var(--warn); --wsoft:#F7ECE8; --surface:#fff;
   max-width:1240px; margin:0 auto; padding:38px 30px 90px; color:var(--ink);   /* 컨테이너를 스타일리스트·마이(.wrap 1240·30 + .page 38)와 통일 → 헤더 좌측 정렬·위치 일치 */
 }
 .jwrap [hidden]{display:none !important;}   /* .jsetup/.jresult의 display:flex가 UA [hidden]을 덮는 것 방지 */
@@ -21,22 +21,22 @@
 .dhead .logo{font-size:22px; letter-spacing:-.05em; line-height:1;}   /* index .logo와 동일 크기 → 전환 시 로고 움찔 방지 */
 .dhead .logo i{margin-left:2px;}
 .dhead .jmenu{display:flex; gap:2px;}
-.dhead .jmenu a{position:relative; padding:8px 14px; border-radius:10px; font-size:16px; font-weight:600; color:var(--muted,#6E6B63); text-decoration:none;}
-.dhead .jmenu a:hover{color:var(--ink,#16140F);}
-.dhead .jmenu a.on{color:var(--ink,#16140F); font-weight:800;}
-.dhead .jmenu a.on::after{content:""; position:absolute; left:50%; transform:translateX(-50%); bottom:3px; width:5px; height:5px; border-radius:50%; background:var(--accent,#2E4A3B);}
+.dhead .jmenu a{position:relative; padding:8px 14px; border-radius:10px; font-size:16px; font-weight:600; color:var(--muted,var(--muted)); text-decoration:none;}
+.dhead .jmenu a:hover{color:var(--ink,var(--ink));}
+.dhead .jmenu a.on{color:var(--ink,var(--ink)); font-weight:800;}
+.dhead .jmenu a.on::after{content:""; position:absolute; left:50%; transform:translateX(-50%); bottom:3px; width:5px; height:5px; border-radius:50%; background:var(--accent,var(--accent));}
 @media (max-width:640px){ .dhead .dhead-in{height:56px; gap:0; padding:0 16px;} .dhead .jmenu a{padding:8px 10px; font-size:14.5px;} }
 /* 우측 내비 — index .navr와 동일(스타일리스트 지원·알림·프로필) */
-.dhead .navr{position:relative; margin-left:auto; display:flex; align-items:center; gap:16px; font-size:15px; color:var(--muted,#6E6B63);}
-.dhead .navr .sup{font-weight:700; color:var(--accent,#2E4A3B); text-decoration:none; cursor:pointer; white-space:nowrap;}
-.dhead .navr .navdiv{width:1px; height:18px; background:var(--field-line,#DAD8D2); display:inline-block; flex:none;}
-.dhead .navr .navbell{position:relative; display:inline-flex; align-items:center; color:var(--muted,#6E6B63);}
+.dhead .navr{position:relative; margin-left:auto; display:flex; align-items:center; gap:16px; font-size:15px; color:var(--muted,var(--muted));}
+.dhead .navr .sup{font-weight:700; color:var(--accent,var(--accent)); text-decoration:none; cursor:pointer; white-space:nowrap;}
+.dhead .navr .navdiv{width:1px; height:18px; background:var(--field-line,var(--field-line)); display:inline-block; flex:none;}
+.dhead .navr .navbell{position:relative; display:inline-flex; align-items:center; color:var(--muted,var(--muted));}
 .dhead .navr .navuser{display:flex; align-items:center; gap:9px; cursor:pointer;}
-.dhead .navr .navname{color:var(--ink,#16140F); font-weight:700; white-space:nowrap;}
-.dhead .navr .navav{width:34px; height:34px; border-radius:50%; background:var(--ink,#16140F); color:#fff; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:800; overflow:hidden; flex:none;}
-.dhead .navr .usermenu{position:absolute; top:calc(100% + 6px); right:0; background:#fff; border:1px solid var(--line,#E6E5E1); border-radius:12px; box-shadow:0 12px 32px rgba(0,0,0,.13); padding:6px; display:none; z-index:60; min-width:150px;}
+.dhead .navr .navname{color:var(--ink,var(--ink)); font-weight:700; white-space:nowrap;}
+.dhead .navr .navav{width:34px; height:34px; border-radius:50%; background:var(--ink,var(--ink)); color:#fff; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:800; overflow:hidden; flex:none;}
+.dhead .navr .usermenu{position:absolute; top:calc(100% + 6px); right:0; background:#fff; border:1px solid var(--line,var(--line)); border-radius:12px; box-shadow:0 12px 32px rgba(0,0,0,.13); padding:6px; display:none; z-index:60; min-width:150px;}
 .dhead .navr .usermenu.on{display:block;}
-.dhead .navr .usermenu a{display:block; padding:10px 12px; font-size:13.5px; font-weight:700; color:var(--ink,#16140F); border-radius:8px; text-decoration:none;}
+.dhead .navr .usermenu a{display:block; padding:10px 12px; font-size:13.5px; font-weight:700; color:var(--ink,var(--ink)); border-radius:8px; text-decoration:none;}
 .dhead .navr .usermenu a:hover{background:#EDEDEA;}
 @media (max-width:820px){ .dhead .navr .sup, .dhead .navr .navname{display:none;} }
 

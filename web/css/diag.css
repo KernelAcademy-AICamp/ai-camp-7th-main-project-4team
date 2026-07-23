@@ -89,7 +89,7 @@
 
 /* 입력·선택 컨트롤: 흰 표면 + 부드러운 라운드, 포커스는 딥그린(브랜드색 노출) */
 .flow input[type=text], .flow input[type=number], .flow select, .open-note{
-  background-color:#FFFFFF; border:1.5px solid var(--field-line); border-radius:12px;
+  background-color:var(--field); border:1.5px solid var(--field-line); border-radius:12px;
 }
 .flow input:focus, .flow select:focus, .open-note:focus{ border-color:var(--green); background-color:#fff; }
 .seg .opt{ border-radius:12px; }
@@ -108,7 +108,7 @@
 
 /* 잠긴 파생 행: 시각 무게 낮추기 (죽은 행이 첫 화면을 덜 먹도록) */
 .seg.cat .opt.locked{ opacity:.4; }
-.seg.cat .opt .lockhint{ color:var(--sub2); }
+.seg.cat .opt .lockhint{ color:var(--faint); }
 
 /* ── 타이포·버튼·여백을 셸 디자인 언어에 맞춤 (index.html 값 기준) ─────────── */
 :root{ --dS:-.045em; --btnR:13px; }   /* 헤딩 자간·버튼 라운드를 셸과 동일하게 */
@@ -208,7 +208,7 @@
 
 /* 결과 사이즈표 — 셸 .szbox 룩(값 18/ink · 태그 딥그린 pill) */
 .size-row .brand{ font-size:15px; font-weight:700; }
-.size-row .brand small{ color:var(--sub2); }
+.size-row .brand small{ color:var(--faint); }
 .size-row .sz{ font-size:19px; font-weight:800; color:var(--ink); }
 .size-row .sz .conf{ font-family:var(--sans); font-size:12px; font-weight:800; color:var(--green); background:var(--green-soft); padding:4px 10px; border-radius:16px; margin-left:8px; }
 .st-head{ font-size:12px; }
@@ -219,7 +219,7 @@
   .flow{ padding-left:20px; padding-right:20px; padding-bottom:12px; }
   .wnav{ position:sticky; bottom:0; z-index:30; margin:20px -20px 0;
     padding:14px 20px calc(14px + env(safe-area-inset-bottom));
-    background:linear-gradient(180deg, rgba(246,246,245,0), var(--bg) 26%); }
+    background:linear-gradient(180deg, rgba(246,246,245,0), var(--canvas) 26%); }
 }
 
 /* 안내 토스트 — 브라우저 기본 alert 대체 (index 토스트와 동일 톤) */
@@ -228,9 +228,9 @@
 
 /* 지난 진단 이력 안내 — 상단 풀폭 알림바(announcement bar), 헤더 바로 아래 딱 붙음 */
 .diaghist{display:none; position:relative; align-items:center; justify-content:center; gap:9px; width:100%; background:#E7EFEA; border-bottom:1px solid #CBDDD2; padding:11px 44px; transition:opacity .2s ease;}
-.diaghist .dh-x{position:absolute; right:10px; top:50%; transform:translateY(-50%); border:none; background:transparent; color:var(--accent,#2E4A3B); font-size:13px; line-height:1; padding:7px 9px; border-radius:7px; cursor:pointer; opacity:.6;}
+.diaghist .dh-x{position:absolute; right:10px; top:50%; transform:translateY(-50%); border:none; background:transparent; color:var(--accent,var(--accent)); font-size:13px; line-height:1; padding:7px 9px; border-radius:7px; cursor:pointer; opacity:.6;}
 .diaghist .dh-x:hover{opacity:1; background:rgba(46,74,59,.08);}
-.diaghist .dh-ic{flex:none; width:20px; height:20px; color:var(--accent,#2E4A3B); display:grid; place-items:center;}
+.diaghist .dh-ic{flex:none; width:20px; height:20px; color:var(--accent,var(--accent)); display:grid; place-items:center;}
 .diaghist .dh-ic svg{width:20px; height:20px;}
-.diaghist .dh-msg{font-size:12.5px; font-weight:600; color:var(--accent,#2E4A3B); line-height:1.45; text-align:center;}
+.diaghist .dh-msg{font-size:12.5px; font-weight:600; color:var(--accent,var(--accent)); line-height:1.45; text-align:center;}
 .diaghist .dh-msg b{font-weight:800;}

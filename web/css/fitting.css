@@ -23,6 +23,7 @@
   --line-strong:#16140F;
   --field:#FFFFFF;
   --field-line:#DAD8D2;
+  --fs-label:13px;        /* 라벨 크기 — tokens.css와 동일. result.css가 참조 */
   --accent:#2E4A3B;       /* 딥그린 액센트(구 블랙→수렴) */
   --accentInk:#ffffff;
   --ok:#2E4A3B;           /* 동의·성공 (절제된 그린) */
