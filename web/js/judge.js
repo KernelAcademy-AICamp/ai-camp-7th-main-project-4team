@@ -254,12 +254,16 @@
     var pick = sizes.filter(function (s) { return s.sizeLabel === pickSize; })[0] || sizes[0];
 
     // 다크 판정 히어로(결론)
-    var warn = !j.anyFit || (pick && pick.verdict && ["TIGHT", "BORDERLINE"].indexOf(pick.verdict.label) >= 0);
+    var unknown = !!(pick && pick.verdict && pick.verdict.unknown);
+    var warn = !j.anyFit || unknown || (pick && pick.verdict && ["TIGHT", "BORDERLINE"].indexOf(pick.verdict.label) >= 0);
     var head = pick ? pick.verdict.ko : "판정할 수 없어요";
     var score = pick && pick.fitScore != null ? pick.fitScore : 0;
     var brandNm = cellLabel().split(" · ")[0];
     var vlabel = pick && pick.verdict ? pick.verdict.label : "";
-    var body = !j.anyFit
+    // 판정 불가(핵심 부위 미측정)를 '안 맞음'과 구분 — 근거 없이 좋다/나쁘다 말하지 않는다.
+    var body = unknown || !j.anyJudged
+      ? "이 표엔 판정에 필요한 " + (JUDGE_PARTS[state.cat] || []).map(koP).join("·") + " 치수가 없어요. 값을 채우면 판정할 수 있어요."
+      : !j.anyFit
       ? "이 상품은 어느 사이즈도 편하게 맞지 않아요. 다른 핏이나 브랜드를 보는 게 좋겠어요."
       : warn ? "가장 나은 건 " + esc(pickSize) + "지만 살짝 걸리는 데가 있어요. 아래 눈금에서 확인해 보세요."
       : vlabel === "OK" ? esc(pickSize) + "가 딱 맞는 구간에 들어와요. 아래에서 부위별로 자세히 볼 수 있어요."
@@ -277,12 +281,14 @@
         ? (lv === "CROP" ? " 기장은 짧은 편이에요." : lv === "LONG" ? " 기장이 길어요." : " 기장이 많이 길어 끌릴 수 있어요.")
         : (lv === "CROP" ? " 총장은 짧은 편(크롭)이에요." : lv === "LONG" ? " 총장은 긴 편(롱)이에요." : " 총장이 많이 긴 편이에요.");
     }
+    // 밑위 낌 경고 — 추정 오차가 경고선에만 걸치면 단정하지 않고 완화해 말한다.
     if (pick && pick.rise && pick.rise.short) body += " 밑위가 짧아 앉을 때 낄 수 있어요.";
+    else if (pick && pick.rise && pick.rise.shortMaybe) body += " 밑위가 짧은 편일 수 있어요(추정 오차 범위).";
     var chips = pick ? pick.parts.slice(0, 3).map(function (p) {
       return '<span class="vchip">' + esc(p.ko) + " " + (p.easeCm >= 0 ? "+" : "") + fmt(p.easeCm) + "cm " + esc(p.fit) + "</span>";
     }).join("") : "";
     if (pick && pick.length) chips += '<span class="vchip len' + (pick.length.borderline ? " bl" : "") + '">' + lenName + " " + esc(lenLabel(pick.length.level)) + "</span>";
-    if (pick && pick.rise) chips += '<span class="vchip len' + (pick.rise.short ? " bl" : "") + '">밑위 ' + esc(pick.rise.fit) + "</span>";
+    if (pick && pick.rise) chips += '<span class="vchip len' + (pick.rise.warn || pick.rise.borderline ? " bl" : "") + '">밑위 ' + esc(pick.rise.fit) + "</span>";
     var acc = warn ? "#E8A08A" : "#8FD6A8";
     var deg = Math.max(0, Math.min(100, score)); // 게이지 채움 %
     $("jverdict").className = "jhero" + (warn ? " warn" : "");
@@ -434,7 +440,7 @@
     return "내가 입력한 표";
   }
   function fmt(n) { return (Math.round(n * 10) / 10).toString(); }
-  function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
+  function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }  // 홑따옴표 속성에도 쓰므로 ' 필수
   function readJSON(k, d) { try { return JSON.parse(sessionStorage.getItem(k) || "") || d; } catch (e) { return d; } }
   function fetchJSON(u) { return fetch(u).then(function (r) { return r.json(); }); }
   // 게이트는 자체 에디토리얼 헤드라인을 가지므로, 공통 제목/부제는 숨겨 이중 헤드라인 방지.

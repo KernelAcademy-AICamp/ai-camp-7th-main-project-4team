@@ -74,9 +74,22 @@
     if (garmentRise == null || bodyRise == null) return null;
     var e = garmentRise - bodyRise;
     var lvl = e <= RISE_BAND.low ? "LOW" : e >= RISE_BAND.high ? "HIGH" : "MID";
-    return { part: "rise", ko: "밑위", easeCm: Math.round(e * 10) / 10, level: lvl,
-             fit: lvl === "LOW" ? "로우라이즈" : lvl === "HIGH" ? "하이라이즈" : "미드라이즈",
-             warn: e <= RISE_BAND.shortWarn, short: e <= RISE_BAND.shortWarn };  // 밑위 짧아 앉을 때 낄 수 있음
+    var out = { part: "rise", ko: "밑위", easeCm: Math.round(e * 10) / 10, level: lvl,
+                fit: lvl === "LOW" ? "로우라이즈" : lvl === "HIGH" ? "하이라이즈" : "미드라이즈",
+                short: e <= RISE_BAND.shortWarn, shortMaybe: false, warn: e <= RISE_BAND.shortWarn };
+    // 몸밑위 추정은 r²가 가장 낮은 축(±2cm 안팎) — 오차를 실어 경계 근처를 단정하지 않는다(judgeLength와 동일 원칙).
+    if (err != null && err > 0) {
+      out.easeLo = Math.round((e - err) * 10) / 10;   // 몸밑위가 큰 쪽 = 더 끼는 쪽
+      out.easeHi = Math.round((e + err) * 10) / 10;
+      // 등급 경계(로우/하이)를 오차구간이 물면 '아슬'
+      out.borderline = ((e - err) <= RISE_BAND.low && RISE_BAND.low < (e + err))
+                    || ((e - err) < RISE_BAND.high && RISE_BAND.high <= (e + err));
+      // 낌 경고: 최선의 경우까지 짧아야 '확실', 오차구간에만 걸치면 '그럴 수 있음'으로 완화
+      out.short = (e + err) <= RISE_BAND.shortWarn;
+      out.shortMaybe = !out.short && (e - err) <= RISE_BAND.shortWarn;
+      out.warn = out.short || out.shortMaybe;
+    }
+    return out;
   }
 
   // ① 의류 단면(flat) → 인체 축
@@ -335,18 +348,21 @@
      opts.errors = { chest, shoulder, ... } 인체 추정 rmse(cm). opts.category 강제(빈 specRows 대비). */
 
   // 부위 판정: 여유 + 등급 + (오차가 있으면) 끼임경계 걸침(borderline).
-  function judgePart(part, flatCm, bodyCm, category, err) {
+  //   banded=하의 허리 밴딩(신축) — 추천(recommendBottom)과 같은 완화 기준(waistRating)을 판정에도 적용.
+  function judgePart(part, flatCm, bodyCm, category, err, banded) {
     var e = ease(part, flatCm, bodyCm);
-    var rating = easeToRating(part, e, category);
+    var bandedWaist = (category === "BOTTOM" && part === "waist" && !!banded);
+    var rating = bandedWaist ? waistRating(e, true) : easeToRating(part, e, category);
     var pill = PILL[rating] || { ko: "-", warn: false };
     var out = { part: part, ko: PART_KO[part] || part, easeCm: Math.round(e * 10) / 10,
                 rating: rating, fit: pill.ko, warn: pill.warn };
     var b = BANDS[(category || "TOP") + ":" + part];
     if (err != null && err > 0 && b) {
       // 인체 추정이 ±err → 여유(=의류축−인체)도 ±err 흔들림. 몸이 큰 쪽(e−err)이 끼임 경계를 넘으면 위험.
+      var tight = bandedWaist ? b.tight - 4 : b.tight;   // 밴딩은 신축이라 끼임 경계가 내려간다
       out.easeLo = Math.round((e - err) * 10) / 10;
       out.easeHi = Math.round((e + err) * 10) / 10;
-      out.borderline = rating !== "TIGHT" && (e - err) <= b.tight && b.tight < (e + err);
+      out.borderline = rating !== "TIGHT" && (e - err) <= tight && tight < (e + err);
     }
     return out;
   }
@@ -377,6 +393,8 @@
   //   우선순위: 끼임 > 아슬(오차경계) > 주요부위(가슴/허리) 여유·큼 > 보조부위만 큼 > 잘맞음.
   //   "잘 맞아요"는 주요부위가 딱맞고 다른 데도 크지 않을 때만 — 여유/넉넉을 잘맞음으로 뭉개지 않는다.
   function sizeVerdict(partJ, category) {
+    partJ = partJ || [];
+    // 부정 신호(끼임·아슬)는 측정된 부위만으로도 유효한 경고 → 먼저 본다.
     var tight = partJ.filter(function (p) { return p.rating === "TIGHT"; });
     if (tight.length) return { label: "TIGHT", ko: josa(tight[0].ko) + " 껴요", part: tight[0].part };
     var border = partJ.filter(function (p) { return p.borderline; });
@@ -384,6 +402,9 @@
 
     var primaryKey = (CAT_PARTS[category || "TOP"] || [])[0];   // chest / waist
     var primary = partJ.filter(function (p) { return p.part === primaryKey; })[0];
+    // 핵심 부위(가슴/허리) 측정이 없으면 긍정 판정을 내지 않는다.
+    //   표에 치수가 없거나 내 몸 값이 없는데 '잘 맞아요'로 귀결되던 문제(근거 없는 단정) 차단.
+    if (!primary) return { label: "UNKNOWN", ko: "판정할 수 없어요", part: primaryKey || null, unknown: true };
     if (primary && primary.rating === "BIG") return { label: "BIG", ko: "전체적으로 커요", part: primaryKey };
     if (primary && primary.rating === "RELAXED") return { label: "RELAXED", ko: "여유 있게 맞아요", part: primaryKey };
 
@@ -401,6 +422,9 @@
     var parts = CAT_PARTS[cat] || [];
     var optParts = CAT_PARTS_OPT[cat] || [];       // 표에 있을 때만 판정하는 보조 부위
     var allParts = parts.concat(optParts);
+    // 하의 허리 밴딩(신축) — opts 우선, 없으면 표 행의 waistband 표기. 추천과 같은 완화 기준을 판정에도 쓴다.
+    var banded = opts.waistband != null ? !!opts.waistband
+               : specRows.some(function (s) { return s.waistband; });
 
     // 사이즈 라벨별 그룹(중복 제품은 부위별 평균)
     var bySize = {};
@@ -422,12 +446,12 @@
       parts.forEach(function (p) {                                         // 핵심 부위 — 없으면 미표기로 표시
         if (!g.acc[p] || !g.acc[p].length) { missing.push(p); return; }   // 브랜드가 표기 안 함
         if (bodyVec[p] == null) { missing.push(p); return; }              // 내 몸 치수 없음
-        var pj = judgePart(p, avg(g.acc[p]), bodyVec[p], cat, errors[p]);
+        var pj = judgePart(p, avg(g.acc[p]), bodyVec[p], cat, errors[p], banded);
         partJ.push(pj); partEase[p] = pj.easeCm;
       });
       optParts.forEach(function (p) {                                      // 보조 부위 — 있을 때만, 없어도 안 캐물음
         if (!g.acc[p] || !g.acc[p].length || bodyVec[p] == null) return;
-        var pj = judgePart(p, avg(g.acc[p]), bodyVec[p], cat, errors[p]);
+        var pj = judgePart(p, avg(g.acc[p]), bodyVec[p], cat, errors[p], banded);
         partJ.push(pj); partEase[p] = pj.easeCm;
       });
       // 세로축(별도·소프트 정보, 점수 미반영) — 총장/기장(bodyVec.length) + 하의 밑위(bodyVec.rise).
@@ -451,6 +475,8 @@
              pickVerdict: pick ? pick.verdict : null,
              pickLength: pick ? pick.length : null,   // 추천 사이즈의 총장/기장 판정(소프트 정보)
              pickRise: pick ? pick.rise : null,       // 추천 사이즈의 밑위(하의) 판정(소프트 정보)
+             // anyJudged=핵심 부위를 실제로 잰 사이즈가 하나라도 있나. false면 '안 맞음'이 아니라 '판정 불가'.
+             anyJudged: sizes.some(function (s) { return s.verdict && !s.verdict.unknown; }),
              anyFit: clean.length > 0 };
   }
 
