@@ -6,7 +6,7 @@
     document.querySelectorAll('.menu a, .tabbar .tb[data-t]').forEach(a=>a.classList.toggle('on', a.dataset.t===id));   // 상단 메뉴 + 모바일 하단 탭바 동시 동기화
     // 스타일리스트찾기: proto=목록부터 / api(MVP)=준비 중·알림 웨이트리스트(목업 목록 미노출)
     if(id==='shop') showOnly((window.FDATA&&FDATA.mode==='api')?'stylistWaitlist':'listView');
-    window.scrollTo({top:0, behavior:'smooth'});
+    window.scrollTo(0, 0);   // 탭 전환 = 즉시 맨 위로(메인 헤딩부터). smooth는 페이지 교체 중 애니메이션이 끊겨 헤딩 아래서 멈춤
     saveNav();
   }
 
@@ -59,6 +59,7 @@
     var m=document.querySelectorAll('#smenu a'); for(var i=0;i<m.length;i++) m[i].classList.remove('on'); el.classList.add('on');
     var ps=document.querySelectorAll('#my .mpanel'); for(var j=0;j<ps.length;j++) ps[j].classList.remove('on');
     document.getElementById(el.dataset.p).classList.add('on');
+    window.scrollTo(0, 0);   // 마이 사이드 패널 전환 시에도 맨 위(패널 헤딩 '프로필·계정' 등)부터 보이게
     saveNav();
   }
   function goMy(panel){ go('my'); var a=document.querySelector('#smenu a[data-p="'+panel+'"]'); if(a) myNav(a); }
@@ -375,6 +376,30 @@
     if(_btCache){ paint(_btCache[USER.type]); return; }
     fetch('data/bodytypes.json').then(function(r){return r.json();}).then(function(j){ _btCache={}; j.types.forEach(function(x){_btCache[x.code]=x;}); paint(_btCache[USER.type]); }).catch(function(){});
   }
+  /* 진단 결과 상세(유형 정체성·잘맞/피할 FIT) — 카드/팁과 달리 정적 HTML(STR 고정)이라 유형이 바뀌어도
+     '시크 스트레이트'로 남던 버그 수정. result.js와 동일하게 USER.type + 성별로 동적 렌더. */
+  function renderMyDiagDetail(){
+    var idEl=document.querySelector('#my .dtl-id'), fEl=document.querySelector('#my .dtl-fitbox');
+    if(!idEl && !fEl) return;
+    function chips(a){ return (a||[]).map(function(c){ return '<span>'+c+'</span>'; }).join(''); }
+    function paint(t){ if(!t) return;
+      var g=(USER.gender==='female')?'female':'male';
+      var c=(t.gender&&(t.gender[g]||t.gender.female))||t;   // 성별별 콘텐츠(insight와 동일 규칙)
+      // 유형 포인트색(--tp) — 정적 HTML의 STR 인라인색(#9db8ff)을 유형별 색으로 덮어씀(코드·이름·해시)
+      if(idEl){ idEl.style.setProperty('--tp', t.point||'#2E4A3B');
+        idEl.innerHTML='<span class="dtl-code">'+t.code+'</span><h2 class="dtl-name">'+(t.name||'')+'</h2>'+
+        '<span class="dtl-korea">사이즈코리아 · '+(t.sizeKorea||'')+'</span>'+
+        '<p class="dtl-desc">'+(c.profile||[]).map(function(p,i){ return i===0?'<b>'+p+'</b>':p; }).join('<br>')+'</p>'+
+        '<div class="dtl-hash">'+chips(c.signature)+'</div>'; }
+      if(fEl){ var okC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+        var noC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>';
+        fEl.innerHTML='<div class="dtl-fit ok"><div class="dtl-fit-h">'+okC+'잘맞 FIT</div><div class="dtl-chips">'+chips(c.fitOk)+'</div></div>'+
+          '<div class="dtl-fit no"><div class="dtl-fit-h">'+noC+'피할 FIT</div><div class="dtl-chips">'+chips(c.fitNo)+'</div></div>'; }
+    }
+    if(!USER.type){ return; }   // 진단 전엔 정적 폴백(HTML) 유지
+    if(_btCache){ paint(_btCache[USER.type]); return; }
+    fetch('data/bodytypes.json').then(function(r){return r.json();}).then(function(j){ _btCache={}; j.types.forEach(function(x){_btCache[x.code]=x;}); paint(_btCache[USER.type]); }).catch(function(){});
+  }
 
   /* 마이페이지 · 프로필 기본정보 (읽기/편집) */
   var FIT_OPTS=['스키니','슬림','레귤러','루즈','오버'];               // 상의(여유축)
@@ -416,7 +441,7 @@
     if(a&&a.value) USER.age=+a.value; if(h&&h.value) USER.height=+h.value; if(w&&w.value) USER.weight=+w.value;
     var ft=document.querySelector('#pFitTop .o.on'); if(ft) USER.fitTop=ft.dataset.fit;
     var fb=document.querySelector('#pFitBottom .o.on'); if(fb) USER.fitBottom=fb.dataset.fit;
-    _profEdit=false; renderProfile(); renderMyAvatar(); renderMyDiagCard(); renderMyInsight(); toast('프로필을 저장했어요');
+    _profEdit=false; renderProfile(); renderMyAvatar(); renderMyDiagCard(); renderMyInsight(); renderMyDiagDetail(); toast('프로필을 저장했어요');
   }
 
   /* 마이페이지 · 즐겨찾기 렌더 */
@@ -1500,7 +1525,7 @@
   /* 외부 화면에서 #home·#shop·#my 로 돌아오면 해당 탭 열기 */
   (function(){ var h=(location.hash||'').replace('#',''); if(['home','shop','my'].indexOf(h)>=0) go(h); })();
 
-  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagCard(); renderMyTypeBadge(); renderMyInsight(); renderSupport(); renderNotis(); renderPrivacy(); applyAuthUI();
+  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagCard(); renderMyTypeBadge(); renderMyInsight(); renderMyDiagDetail(); renderSupport(); renderNotis(); renderPrivacy(); applyAuthUI();
 
   /* 새로고침 시 보던 화면 복원 — 쿼리 딥링크(?from/?login/?my/?ctx)나 해시가 없을 때만(그건 각각 처리) */
   (function(){ try{ var q=new URLSearchParams(location.search);

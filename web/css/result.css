@@ -102,7 +102,7 @@
   .rseg .o.on{ background:var(--g); border-color:var(--g); color:#fff; }
   /* 판정(Fit) 진입 스트립 — 추천 패널 아래. 초록 절제(초록버튼 금지 원칙: 채움 아닌 연한 면+라인). */
   .rjudge{ display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit;
-    border:1.5px solid var(--gl,#CBDDD2); background:var(--gs); border-radius:16px; padding:14px 16px; margin-top:16px; }
+    border:1.5px solid var(--gl,#CBDDD2); background:var(--gs); border-radius:16px; padding:14px 16px; }
   .rjudge:hover{ background:#DCEAE2; }
   .rjudge-ic{ width:36px; height:36px; border-radius:10px; background:#fff; display:flex; align-items:center; justify-content:center; flex:none; }
   .rjudge-ic svg{ width:18px; height:18px; color:var(--g); }

@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="css/tokens.css?v=8e429c15">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/index.css?v=a27680c2">
+<link rel="stylesheet" href="css/index.css?v=7d8cae6d">
 </head>
 <body>
 
@@ -42,7 +42,7 @@
       <a href="judge.html">Fit</a>
       <a data-t="my" id="navMy" onclick="go('my',this)">My</a>
     </nav>
-    <div class="navr"><span class="sup" style="cursor:pointer" onclick="location.href='pro-signup.html'">스타일리스트 지원</span><span class="navdiv"></span><span class="navbell" id="navBell" onclick="toggleNotiPop(event)" title="알림" aria-label="알림" style="position:relative;display:inline-flex;align-items:center;cursor:pointer;color:var(--sub)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 4.6-1.9 6-1.9 6h15.8s-1.9-1.4-1.9-6z"/><path d="M10.2 18.5a2 2 0 0 0 3.6 0"/></svg><span id="notiDot" style="position:absolute;top:-2px;right:-2px;width:7px;height:7px;border-radius:50%;background:var(--warn);border:1.5px solid var(--bg);display:none"></span></span><span class="navdiv" id="navBellDiv"></span><button class="navauth" id="navAuth" style="display:none;padding:8px 15px;border-radius:10px;background:var(--green);color:#fff;border:none;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit;white-space:nowrap" onclick="openLogin('')">로그인 · 회원가입</button><span class="navuser" id="navUser" onclick="toggleUserMenu(event)"><span class="navav" id="myAv">김</span><span class="navname">김도현 님</span></span><div class="usermenu" id="userMenu"><a onclick="closeUserMenu();go('my')">마이페이지</a><a onclick="closeUserMenu();doLogout()">로그아웃</a></div><div class="notipop" id="notiPop"><div class="notipop-hd">알림 <a id="notiMarkAll" onclick="markAllNoti()">모두 읽음</a></div><div class="notipop-list" id="custNotiList"></div></div></div>
+    <div class="navr"><span class="sup" style="cursor:pointer" onclick="location.href='pro-signup.html'">스타일리스트 지원</span><span class="navdiv"></span><span class="navbell" id="navBell" onclick="toggleNotiPop(event)" title="알림" aria-label="알림" style="position:relative;display:inline-flex;align-items:center;cursor:pointer;color:var(--sub)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 4.6-1.9 6-1.9 6h15.8s-1.9-1.4-1.9-6z"/><path d="M10.2 18.5a2 2 0 0 0 3.6 0"/></svg><span id="notiDot" style="position:absolute;top:-2px;right:-2px;width:7px;height:7px;border-radius:50%;background:var(--warn);border:1.5px solid var(--bg);display:none"></span></span><span class="navdiv" id="navBellDiv"></span><button class="navauth" id="navAuth" style="display:none;padding:8px 15px;border-radius:10px;background:var(--green);color:#fff;border:none;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit;white-space:nowrap" onclick="openLogin('')">로그인 · 회원가입</button><span class="navuser" id="navUser" onclick="toggleUserMenu(event)"><span class="navav" id="myAv">김</span><span class="navname">김도현 님</span></span><div class="usermenu" id="userMenu"><a onclick="closeUserMenu();goMy('mp-profile')">마이페이지</a><a onclick="closeUserMenu();doLogout()">로그아웃</a></div><div class="notipop" id="notiPop"><div class="notipop-hd">알림 <a id="notiMarkAll" onclick="markAllNoti()">모두 읽음</a></div><div class="notipop-list" id="custNotiList"></div></div></div>
   </div>
 </header>
 
@@ -402,6 +402,13 @@
           <h1>내 진단 결과</h1>
           <p class="lead">나의 FIT 체형 진단 결과를 확인해요</p>
 
+          <!-- 판정(Fit) 진입 — 결과 화면 완성 유도 배너와 같은 맨 위 자리. 진단 체형을 그대로 들고 judge.html로. -->
+          <a class="rjudge rjudge-top" href="judge.html">
+            <span class="rjudge-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/><circle cx="8" cy="6" r="1.6" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="1.6" fill="currentColor" stroke="none"/></svg></span>
+            <span class="rjudge-tx"><b>사려는 옷이 따로 있나요?</b><span>사이즈표를 올리면 그 옷도 맞을지 판정해요</span></span>
+            <span class="rjudge-go">판정하기 →</span>
+          </a>
+
           <!-- 레이아웃 A: 좌 카드 스티키 + 우 콘텐츠 스택 -->
           <div class="dtl-A">
            <div class="dtl-A-left">
@@ -674,7 +681,7 @@
 <!-- sangmin 모듈(⑥): 진단 입력 설문(M1) + 엔진 계약 목업(M2) -->
 <script src="js/config.js?v=53f50277"></script>
 <script src="js/data.js?v=0353494d"></script>
-<script src="js/index.js?v=94f3b388"></script>
+<script src="js/index.js?v=4f6cd5ce"></script>
 <script src="js/a11y.js?v=1876c5ec"></script>
 </body>
 </html>
