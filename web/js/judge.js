@@ -46,7 +46,8 @@
   var CIRC = { chest: 1, waist: 1, hip: 1, thigh: 1, belly: 1 };
   var FLAT_MAX = { chest: 78, waist: 70, hip: 78, thigh: 44 };
   var JUDGE_PARTS = { TOP: ["chest", "shoulder"], BOTTOM: ["waist", "hip", "thigh"] };
-  var JUDGE_PARTS_OPT = { TOP: ["waist"], BOTTOM: [] };   // 표에 있을 때만 쓰는 보조 부위(상의 허리)
+  // 표에 있을 때만 쓰는 보조: 상의 허리+총장 / 하의 기장(length)+밑위(rise). 세로축은 len 그대로(×2 없음)·점수 미반영(소프트).
+  var JUDGE_PARTS_OPT = { TOP: ["waist", "length"], BOTTOM: ["length", "rise"] };
   // 이 보정 화면에 표시·수집할 부위 = 핵심 + 보조. forceOpt(직접입력)=보조 전부 노출(선택),
   //   아니면(캡처) 파싱된 표에 실제로 있는 보조만.
   function correctParts(sizes, forceOpt) {
@@ -208,6 +209,10 @@
   function errForEngine() {
     var e = {};
     Object.keys(EBMAP).forEach(function (k) { var bmk = EBMAP[k]; if (state.err[bmk] != null) e[k] = state.err[bmk]; });
+    // 세로축 오차 — 상의 총장=등길이 / 하의 기장=다리가쪽길이, 하의 밑위=몸밑위.
+    var lenKey = state.cat === "BOTTOM" ? "legOuter" : "backLength";
+    if (state.err[lenKey] != null) e.length = state.err[lenKey];
+    if (state.cat === "BOTTOM" && state.err.bodyRise != null) e.rise = state.err.bodyRise;
     return e;
   }
   function run() {
@@ -229,8 +234,8 @@
       var mcm = {}; Object.keys(q.cm).forEach(function (k) { mcm[k] = q.cm[k]; });
       Object.keys(EBMAP).forEach(function (k) { if (eb[k] != null) mcm[EBMAP[k]] = eb[k]; });
       var bodyVec = q.category === "BOTTOM"
-        ? { waist: mcm.waist, hip: mcm.hip, thigh: mcm.thigh }
-        : { chest: mcm.chestFull, shoulder: mcm.shoulder, waist: mcm.waist };  // 상의 허리(보조) 대비
+        ? { waist: mcm.waist, hip: mcm.hip, thigh: mcm.thigh, length: mcm.legOuter, rise: mcm.bodyRise }  // length=다리가쪽길이(기장), rise=몸밑위
+        : { chest: mcm.chestFull, shoulder: mcm.shoulder, waist: mcm.waist, length: mcm.backLength };     // length=등길이(총장)
       return E.judge(bodyVec, q.cell, { errors: q.errors, category: q.category });
     });
   }
@@ -258,6 +263,15 @@
       : vlabel === "OK" ? esc(pickSize) + "가 딱 맞는 구간이에요"
       : vlabel === "BIG" ? esc(pickSize) + "가 넉넉하게 맞아요"
       : esc(pickSize) + "가 여유 있게 맞아요";
+    // 세로축(총장/기장·밑위) — 둘레 판정과 별개인 소프트 안내(#78). 점수 미반영, 요약 문장에 덧붙임.
+    var isBottom = j.category === "BOTTOM";
+    if (pick && pick.length && pick.length.level !== "FIT") {
+      var lv = pick.length.level;
+      say += isBottom
+        ? (lv === "CROP" ? " · 기장 짧음" : lv === "LONG" ? " · 기장 긺" : " · 기장 많이 긺")
+        : (lv === "CROP" ? " · 총장 크롭" : lv === "LONG" ? " · 총장 롱" : " · 총장 많이 긺");
+    }
+    if (pick && pick.rise && pick.rise.short) say += " · 밑위 짧음";
     // 신뢰 메타 한 줄(구 신뢰도 2축을 압축)
     var expTxt = state.expCount >= 2 ? ["착용경험 " + state.expCount + "벌", "±2cm"]
                : state.expCount === 1 ? ["착용경험 1벌", "역산 일부"]
@@ -382,7 +396,7 @@
           '</span><span class="jrul-ev">미표기</span></div><div class="jrul-track"></div>' +
           '<div class="jrul-note">이 브랜드는 ' + koPart(part) + " 치수를 적지 않아요.</div></div>";
       }
-      return rulerHTML(part, pj, band);
+      return band ? rulerHTML(part, pj, band) : "";   // 밴드 정의 없는 부위(세로축 등)는 스킵 — 크래시 방지
     }).join("");
   }
 

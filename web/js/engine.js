@@ -37,6 +37,48 @@
   // 보조 부위: 표에 있을 때만 판정에 씀(없어도 미표기로 캐묻지 않음). 제공된 데이터 최대 활용.
   var CAT_PARTS_OPT = { TOP: ["waist"], BOTTOM: [] };
 
+  // ── 총장(세로축) 판정 — 둘레와 성격이 다른 '스타일축' ─────────────────────────
+  //   여유 = 옷 총장 − 몸 등길이(뒷목~허리) = "허리 아래로 내려오는 길이"(cm).
+  //   끼임/딱맞음(둘레)이 아니라 크롭·적절·롱으로 등급. 감점(judgeScore) 대신 별도 정보 라인으로만 반영.
+  //   경계값=가설값(garments.json TOP 총장 실측 분포로 보정, docs/6 §3-length). 하의 기장은 후속.
+  //   상의: 여유=옷총장−등길이(뒷목~허리). 하의: 여유=옷총장(outseam)−다리가쪽길이(허리옆~바닥).
+  var LEN_BANDS = { TOP: { crop: 15, fit: 36, long: 44 }, BOTTOM: { crop: -14, fit: 3, long: 9 } };
+  var LEN_PILL = { CROP: { ko: "크롭", warn: true }, FIT: { ko: "적절", warn: false },
+                   LONG: { ko: "롱", warn: false }, XLONG: { ko: "많이 긺", warn: false } };
+  // 총장 여유(cm) → 등급. 밴드 없으면 null(판정 안 함).
+  function lengthRating(ease, category) {
+    var b = LEN_BANDS[category || "TOP"]; if (!b) return null;
+    return ease <= b.crop ? "CROP" : ease <= b.fit ? "FIT" : ease <= b.long ? "LONG" : "XLONG";
+  }
+  // 한 사이즈의 총장 판정. garmentLen=옷 총장, bodyLen=몸 등길이 추정, err=등길이 rmse(cm).
+  //   len 축이라 ×2 없음(옷 총장 그대로). 오차구간이 등급 경계(크롭·롱)를 물면 borderline.
+  function judgeLength(garmentLen, bodyLen, category, err) {
+    if (garmentLen == null || bodyLen == null) return null;
+    var e = garmentLen - bodyLen, lvl = lengthRating(e, category); if (!lvl) return null;
+    var b = LEN_BANDS[category || "TOP"], p = LEN_PILL[lvl];
+    var out = { part: "length", ko: "총장", easeCm: Math.round(e * 10) / 10,
+                level: lvl, fit: p.ko, warn: p.warn };
+    if (err != null && err > 0 && b) {
+      out.easeLo = Math.round((e - err) * 10) / 10;
+      out.easeHi = Math.round((e + err) * 10) / 10;
+      out.borderline = (lvl === "FIT") && ((e - err) <= b.crop || (e + err) > b.long);
+    }
+    return out;
+  }
+
+  // 밑위(rise) — 하의 세로축, 취향 지배적이라 '등급 점수' 없이 소프트 표시만.
+  //   여유 = 옷 밑위 − 몸 밑위(허리높이−샅높이) → 로우/미드/하이. 크게 짧으면 낌 경고(short).
+  //   ⚠️ 옷 앞밑위(곡선)와 몸 밑위(수직)는 프레임이 달라 계통 오차 가능 — 경계값=가설값, 절대 등급 아님.
+  var RISE_BAND = { low: -3, high: 5, shortWarn: -6 };
+  function judgeRise(garmentRise, bodyRise, err) {
+    if (garmentRise == null || bodyRise == null) return null;
+    var e = garmentRise - bodyRise;
+    var lvl = e <= RISE_BAND.low ? "LOW" : e >= RISE_BAND.high ? "HIGH" : "MID";
+    return { part: "rise", ko: "밑위", easeCm: Math.round(e * 10) / 10, level: lvl,
+             fit: lvl === "LOW" ? "로우라이즈" : lvl === "HIGH" ? "하이라이즈" : "미드라이즈",
+             warn: e <= RISE_BAND.shortWarn, short: e <= RISE_BAND.shortWarn };  // 밑위 짧아 앉을 때 낄 수 있음
+  }
+
   // ① 의류 단면(flat) → 인체 축
   function toBodyAxis(part, flatCm) { return CMP[part] === "circ" ? flatCm * 2 : flatCm; }
   // ② 여유 = 의류환산 − 인체
@@ -370,6 +412,8 @@
         var v = s.garmentCm[p];
         if (v != null) (g.acc[p] = g.acc[p] || []).push(v);
       });
+      if (s.garmentCm.length != null) (g.acc.length = g.acc.length || []).push(s.garmentCm.length);  // 총장/기장(세로축)
+      if (s.garmentCm.rise != null) (g.acc.rise = g.acc.rise || []).push(s.garmentCm.rise);          // 밑위(하의)
     });
     function avg(a) { return a.reduce(function (x, y) { return x + y; }, 0) / a.length; }
 
@@ -386,7 +430,12 @@
         var pj = judgePart(p, avg(g.acc[p]), bodyVec[p], cat, errors[p]);
         partJ.push(pj); partEase[p] = pj.easeCm;
       });
-      return { sizeLabel: g.sizeLabel, sizeOrder: g.sizeOrder, parts: partJ,
+      // 세로축(별도·소프트 정보, 점수 미반영) — 총장/기장(bodyVec.length) + 하의 밑위(bodyVec.rise).
+      var lengthJ = (g.acc.length && g.acc.length.length && bodyVec.length != null)
+        ? judgeLength(avg(g.acc.length), bodyVec.length, cat, errors.length) : null;
+      var riseJ = (cat === "BOTTOM" && g.acc.rise && g.acc.rise.length && bodyVec.rise != null)
+        ? judgeRise(avg(g.acc.rise), bodyVec.rise, errors.rise) : null;
+      return { sizeLabel: g.sizeLabel, sizeOrder: g.sizeOrder, parts: partJ, length: lengthJ, rise: riseJ,
                missing: missing, fitScore: judgeScore(cat, partEase), verdict: sizeVerdict(partJ, cat) };
     });
     sizes.sort(function (a, b) { return a.sizeOrder - b.sizeOrder; });
@@ -400,6 +449,8 @@
     return { category: cat, sizes: sizes,
              pick: pick ? pick.sizeLabel : null,
              pickVerdict: pick ? pick.verdict : null,
+             pickLength: pick ? pick.length : null,   // 추천 사이즈의 총장/기장 판정(소프트 정보)
+             pickRise: pick ? pick.rise : null,       // 추천 사이즈의 밑위(하의) 판정(소프트 정보)
              anyFit: clean.length > 0 };
   }
 
@@ -407,6 +458,7 @@
     recommend: recommend, recommendBottom: recommendBottom, judge: judge,
     ease: ease, chestRating: chestRating, easeToRating: easeToRating,
     ratingToEase: ratingToEase, bodyFromExperiences: bodyFromExperiences,
-    bands: BANDS, catParts: CAT_PARTS, partKo: PART_KO, _real: true
+    judgeLength: judgeLength, lengthRating: lengthRating, judgeRise: judgeRise,
+    bands: BANDS, lenBands: LEN_BANDS, catParts: CAT_PARTS, partKo: PART_KO, _real: true
   };
 })(typeof window !== "undefined" ? window : this);
