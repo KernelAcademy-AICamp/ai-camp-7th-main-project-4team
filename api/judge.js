@@ -6,6 +6,7 @@
    → { judgment } 만 반환(사이즈별 여유·등급·병목 — 원본 실측표는 안 보냄).
    env(Vercel): SUPABASE_URL · SUPABASE_SECRET_KEY(서버 전용, RLS 우회). */
 var FitEngine = require('../web/js/engine.js').FitEngine;
+var fetchT = require('./_fetch.js').fetchT;
 var GARMENTS = require('../web/data/garments.json');
 var SPECS_FILE = GARMENTS && GARMENTS.specs;
 var _specsCache = null, _specsRev = -1;
@@ -15,19 +16,21 @@ var EBMAP = { chest: 'chestFull', shoulder: 'shoulder', waist: 'waist', hip: 'hi
 async function getSpecs(URL, KEY) {
   var hdr = { apikey: KEY, Authorization: 'Bearer ' + KEY };
   try {
-    var rv = await fetch(URL + '/rest/v1/garment_meta?id=eq.1&select=rev', { headers: hdr });
+    var rv = await fetchT(URL + '/rest/v1/garment_meta?id=eq.1&select=rev', { headers: hdr });
     var rev = null; if (rv.ok) { var jr = await rv.json(); rev = (jr[0] || {}).rev; }
     if (rev != null && rev === _specsRev && _specsCache) return _specsCache;
-    var specs = [], from = 0, PAGE = 1000;
+    var specs = [], from = 0, PAGE = 1000, complete = false;
     while (true) {
-      var r = await fetch(URL + '/rest/v1/garment?select=spec&limit=' + PAGE + '&offset=' + from, { headers: hdr });
-      if (!r.ok) break;
+      var r = await fetchT(URL + '/rest/v1/garment?select=spec&limit=' + PAGE + '&offset=' + from, { headers: hdr });
+      if (!r.ok) break;                                   // 페이지 실패 → complete=false로 남김
       var rows = await r.json();
       for (var i = 0; i < rows.length; i++) specs.push(rows[i].spec);
-      if (rows.length < PAGE) break;
+      if (rows.length < PAGE) { complete = true; break; }  // 마지막 페이지까지 정상 수신
       from += PAGE;
     }
-    if (specs.length) { _specsCache = specs; _specsRev = rev; return specs; }
+    // 중간에 끊긴 목록을 캐시하면 잘린 실측표가 rev 바뀔 때까지 추천·판정에 계속 쓰인다.
+    //   전 페이지를 다 받은 경우에만 캐시하고, 아니면 직전 캐시/번들 파일로 폴백.
+    if (complete && specs.length) { _specsCache = specs; _specsRev = rev; return specs; }
   } catch (e) {}
   return _specsCache || SPECS_FILE;
 }

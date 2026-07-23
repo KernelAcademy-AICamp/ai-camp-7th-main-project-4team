@@ -3,6 +3,7 @@
    판정 자체는 클라 계산(동의 불필요). 이 저장은 consent=true일 때만 — 아니면 400.
    provenance: source(capture|manual) + confirmed_size(사용자 확인 줄). 검수(⑤)·승격 대상.
    실측표는 해자 — 반환 최소, 공개 노출 0. env: SUPABASE_URL · SUPABASE_SECRET_KEY(서버 전용). */
+var fetchT = require('./_fetch.js').fetchT;
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'method not allowed' });
@@ -30,11 +31,17 @@ module.exports = async function handler(req, res) {
     status: 'pending'
   };
 
-  var r = await fetch(URL + '/rest/v1/garment_submission', {
-    method: 'POST',
-    headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-    body: JSON.stringify(row)
-  });
+  var r;
+  try {
+    r = await fetchT(URL + '/rest/v1/garment_submission', {
+      method: 'POST',
+      headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify(row)
+    });
+  } catch (e) {
+    // 상한 초과/네트워크 실패를 처리되지 않은 예외로 흘리지 않는다(500 대신 명시적 응답).
+    return res.status(e && e.timeout ? 504 : 502).json({ error: e && e.timeout ? 'upstream timeout' : 'upstream unreachable' });
+  }
   if (!r.ok) return res.status(502).json({ error: 'supabase insert failed', detail: await r.text() });
   return res.status(201).json({ ok: true });
 };
