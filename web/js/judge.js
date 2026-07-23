@@ -291,8 +291,13 @@
     var aside = $("jaside"); if (aside) aside.hidden = true;
     $("jresult").hidden = false;
     var fl = $("jflip");
-    if (fl) { fl.classList.remove("on"); void fl.offsetWidth; setTimeout(function () { fl.classList.add("on"); }, 140); }
-    $("jresult").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    if (fl) {
+      fl.classList.remove("on"); void fl.offsetWidth;
+      fl.scrollIntoView({ behavior: "smooth", block: "center" });   // 판정 버튼이 아래라 위쪽 리빌이 안 보이던 문제 — 리빌로 시선 이동
+      setTimeout(function () { fl.classList.add("on"); }, 240);
+    } else {
+      $("jresult").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
   }
 
   // 대안 사이즈 — 추천 기준 한 치수 작게(딱 붙는 핏)·크게(여유 핏). 인접 사이즈 없으면 숨김.
@@ -362,7 +367,7 @@
     var miss = uniqueMissing(sizes);
     $("jmxnote").innerHTML = miss.length
       ? "<b>" + esc(miss.map(koPart).join("·")) + "</b>은 이 브랜드가 사이즈표에 적지 않아 어느 사이즈도 판정할 수 없어요."
-      : "추천 사이즈는 끼임 없는 것 중 가장 잘 맞는 하나예요.";
+      : "";
   }
 
   function renderBands(pick, category, pickSize) {
@@ -390,6 +395,13 @@
     // 눈금 9개(0~100% 균등), 짝수 인덱스는 major
     var ticks = "";
     for (var i = 0; i <= 8; i++) ticks += '<i class="' + (i % 2 === 0 ? "maj" : "") + '" style="left:' + (i * 12.5) + '%"></i>';
+    // major 눈금(짝수)에 여유 cm 라벨
+    var cmlab = "";
+    for (var m2 = 0; m2 <= 8; m2 += 2) {
+      var cv = Math.round(lo + m2 * 0.125 * w);
+      var st = m2 === 0 ? "left:0" : m2 === 8 ? "right:0" : "left:" + (m2 * 12.5) + "%;transform:translateX(-50%)";
+      cmlab += '<span style="' + st + '">' + (cv > 0 ? "+" + cv : cv) + "</span>";
+    }
     var whisk = (pj.easeLo != null && pj.easeHi != null)
       ? '<span class="jrul-whisk" style="left:' + pct(pj.easeLo) + "%;width:" + (pct(pj.easeHi) - pct(pj.easeLo)) + '%"></span>' : "";
     var note = pj.borderline
@@ -406,6 +418,7 @@
         '<div class="jrul-znlab" style="left:' + (zt + 1) + '%;color:var(--g)">딱</div>' +
         '<div class="jrul-znlab" style="left:' + (zs + 2) + '%">여유</div>' +
         '<div class="jrul-ticks">' + ticks + "</div>" +
+        '<div class="jrul-cmlab">' + cmlab + "</div>" +
         whisk + '<span class="jrul-mark" style="left:' + pct(e) + '%"></span>' +
       "</div>" + note + "</div>";
   }

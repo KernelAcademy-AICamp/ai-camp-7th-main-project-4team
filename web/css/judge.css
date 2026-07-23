@@ -10,6 +10,21 @@
 .jwrap [hidden]{display:none !important;}   /* .jsetup/.jresult의 display:flex가 UA [hidden]을 덮는 것 방지 */
 .jtitle{font-size:25px; font-weight:800; letter-spacing:-.04em; line-height:1.2; color:var(--ink);}   /* 내비 메인 카피 크기 통일(스타일리스트 h2.sec·마이 h1과 25px) */
 .jsub{font-size:17px; color:var(--sub); margin-top:8px; line-height:1.55;}
+/* 부제 = 흐름 안내(옷 종류 → 사이즈표 → 판정) */
+.jflow-sub{font-size:15.5px;}
+.jflow-sub b{color:var(--g); font-weight:800;}
+/* 입력부 = 번호 스텝 카드(①판정기준 ②옷종류 ③사이즈표) */
+.jcard{border:1px solid var(--line); border-radius:20px; background:var(--surface); padding:22px;
+  box-shadow:0 1px 2px rgba(20,18,12,.03), 0 10px 26px -18px rgba(20,18,12,.14);}
+.jstep + .jstep{margin-top:18px; padding-top:18px; border-top:1px solid var(--line);}
+.jstep-hd{display:flex; align-items:center; gap:10px; margin-bottom:12px;}   /* 숫자·라벨 한 줄 정중앙 정렬 */
+.jstep-n{flex:none; width:24px; height:24px; border-radius:50%; background:var(--g); color:#fff;
+  font-size:12.5px; font-weight:800; display:flex; align-items:center; justify-content:center;}
+.jstep-l{font-size:15px; font-weight:800; color:var(--ink); letter-spacing:-.01em;}
+.jstep .jtabs{margin-bottom:11px;}
+.jstep .jseg{display:flex; gap:8px;}   /* 상의·하의 한 줄로 꽉 채움 */
+.jstep .jseg .jseg-b{flex:1;}
+.jcard .jbtn{display:block; width:100%; margin-top:20px;}
 /* 폼·결과 본문은 읽기 좋은 폭으로 좌측 정렬(헤더는 위 gutter에 정렬, 본문은 컬럼 유지) */
 .jgate, .jresult, .jloading{max-width:680px;}
 
@@ -156,14 +171,14 @@
 .jcorrect:not(.man) .jcorrect-top{background:var(--soft); border-radius:12px; padding:10px 12px;}
 .jcorrect.man .jcorrect-top{display:none;}
 /* 수집 opt-in 카드 (결과 하단) */
-.jshare{border:1px solid var(--gl); background:var(--gs); border-radius:16px; padding:18px 20px; display:flex; flex-direction:column; gap:13px;}
-.jshare-row{display:flex; align-items:flex-start; gap:11px; cursor:pointer;}
+.jshare{border:1px solid var(--gl); background:var(--gs); border-radius:16px; padding:16px 20px; display:flex; flex-direction:row; align-items:center; flex-wrap:wrap; gap:13px 16px;}
+.jshare-row{flex:1; min-width:220px; display:flex; align-items:flex-start; gap:11px; cursor:pointer;}
 .jshare-row input{margin-top:2px; width:18px; height:18px; accent-color:var(--g); flex:none; cursor:pointer;}
 .jshare-tx{display:flex; flex-direction:column; gap:3px;}
 .jshare-tx b{font-size:14.5px; font-weight:800; letter-spacing:-.02em; color:var(--ink);}
 .jshare-tx span{font-size:13px; color:var(--sub); line-height:1.5;}
-.jshare .jbtn{align-self:flex-start; margin-top:0; padding:11px 20px;}
-.jshare-msg{font-size:13px; font-weight:700; color:var(--g);}
+.jshare .jbtn{flex:none; align-self:center; margin-top:0; padding:11px 22px; white-space:nowrap;}
+.jshare-msg{flex-basis:100%; font-size:13px; font-weight:700; color:var(--g);}
 
 .jmeta{padding-bottom:14px; border-bottom:1px solid var(--line);}
 /* 캡처 후 = 읽은 사이즈표 그대로 표로(행=사이즈, 열=부위) — 업로드한 표와 같은 모양 */
@@ -196,16 +211,18 @@
 
 /* 판정 전 = 아이콘 3스텝 한 줄 + 결과 골격(스켈레톤). 판정하면 #jaside→#jresult로 '같은 자리'가 채워져 갑작스런 전환을 줄임 */
 #jaside{display:flex; flex-direction:column; gap:14px;}
-.jflow{display:flex; align-items:center; justify-content:center; gap:11px; padding:13px 14px; background:var(--soft); border-radius:14px;}
-.jflow-s{display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:800; color:var(--ink2);}
-.jflow-ic{flex:none; width:30px; height:30px; border-radius:9px; background:var(--surface); color:var(--g); display:flex; align-items:center; justify-content:center;}
+.jflow{display:flex; align-items:center; justify-content:flex-start; flex-wrap:wrap; gap:7px 13px; padding:10px 16px; background:var(--gs); border:1px solid var(--gl); border-radius:14px;}
+.jsetup > .jflow{margin-bottom:22px;}   /* 2단 위 full-width 흐름 바 → 아래 컬럼과 간격 */
+.jflow-s{display:flex; align-items:center; gap:8px; font-size:15px; font-weight:800; color:var(--ink2);}
+.jflow-ic{flex:none; width:28px; height:28px; border-radius:8px; background:var(--surface); color:var(--g); display:flex; align-items:center; justify-content:center;}
 .jflow-ic svg{width:17px; height:17px;}
-.jflow-ar{color:var(--sub2); font-size:13px; font-weight:800;}
-/* 히어로 자리(추천 사이즈) — 실제 다크 히어로와 같은 위치·크기의 대시 스켈레톤 */
-.jgh-hero{display:flex; align-items:center; justify-content:space-between; gap:16px; border:1.5px dashed var(--line2); border-radius:20px; padding:22px 24px; background:var(--surface);}
-.jgh-ey{display:block; font-size:10.5px; font-weight:800; letter-spacing:.09em; color:var(--sub2); text-transform:uppercase;}
-.jgh-ph{display:block; margin-top:7px; font-size:30px; font-weight:800; letter-spacing:-.05em; color:var(--line2);}
-.jgh-gauge{flex:none; width:72px; height:72px; border-radius:50%; border:2px dashed var(--line2); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; letter-spacing:.08em; color:var(--sub2);}
+.jflow-ar{color:#5A7A68; font-size:14px; font-weight:800;}
+/* 히어로 자리 — 실제 B 게이지 요약과 같은 배치(게이지 왼쪽)의 대시 스켈레톤 */
+.jgh-hero{display:flex; align-items:center; gap:22px; border:1.5px dashed var(--line2); border-radius:20px; padding:22px 24px; background:var(--surface);}
+.jgh-gauge{flex:none; width:88px; height:88px; border-radius:50%; border:2px dashed var(--line2); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; letter-spacing:.08em; color:var(--sub2);}
+.jgh-htx{display:flex; flex-direction:column; gap:6px; min-width:0;}
+.jgh-ph{font-size:22px; font-weight:800; letter-spacing:-.04em; color:var(--line2);}
+.jgh-ey{font-size:12.5px; font-weight:700; color:var(--sub2);}
 /* 패널 자리 = 실제 .jpanel 헤더 재사용 + 스켈레톤 바 */
 .jgh-panel{border-style:dashed; border-color:var(--line2);}
 .jgh-panel .jpt{color:var(--sub);}
@@ -243,8 +260,8 @@
 .rsum-note{font-size:11.5px; color:var(--sub2); margin-top:11px; padding-top:11px; border-top:1px solid var(--line);}
 
 /* 대안 사이즈(다른 핏 원할 때) */
-.jalt{border:1px solid var(--line); border-radius:18px; padding:18px 22px; background:var(--surface);}
-.jalt-h{font-size:13px; font-weight:800; color:var(--sub2); letter-spacing:.02em; margin-bottom:12px;}
+.jalt{border:1px solid var(--line); border-radius:18px; padding:22px 24px; background:var(--surface);}
+.jalt-h{font-size:18px; font-weight:800; color:var(--ink); letter-spacing:-.035em; margin-bottom:16px;}   /* 다른 메인 섹션 제목(.jpt)과 동일 톤 */
 .jalt-row{display:flex; align-items:center; gap:13px; padding:9px 0;}
 .jalt-row + .jalt-row{border-top:1px solid var(--line);}
 .jalt-sz{flex:none; width:40px; height:40px; border-radius:11px; border:1.5px solid var(--line2); display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:var(--ink2);}
@@ -260,12 +277,13 @@
 .jpill:empty{display:none;}
 
 /* 사이즈 매트릭스 */
-.jmatrix-wrap{overflow-x:auto; min-width:0; padding-top:10px;}   /* padding-top = M열 위 '추천' 뱃지가 안 잘리게 */
+.jmatrix-wrap{overflow-x:auto; min-width:0; padding-top:16px;}   /* padding-top = M열 위 '추천' 뱃지가 안 잘리게 */
 .jmatrix{border-collapse:collapse; width:100%; min-width:440px;}
-.jmatrix th, .jmatrix td{padding:12px 9px; text-align:center; font-size:13.5px; border-top:1px solid var(--line);}
+.jmatrix th, .jmatrix td{padding:12px 9px; text-align:center; font-size:13.5px; border-top:1px solid var(--line2);}   /* line2=회색 추천열 위에서도 구분선이 이어지도록 살짝 진하게 */
 .jmatrix thead th{border-top:none; font-size:16px; font-weight:800; letter-spacing:-.03em; color:var(--ink); position:relative;}
 .jmatrix thead th small{display:block; font-size:10px; font-weight:700; color:var(--sub2); margin-top:2px;}
-.jmatrix thead th.pick::after{content:"추천"; position:absolute; top:-8px; left:50%; transform:translateX(-50%);
+.jmatrix thead th{padding-top:16px;}   /* '추천' 뱃지와 사이즈 글자 사이 간격 */
+.jmatrix thead th.pick::after{content:"추천"; position:absolute; top:-14px; left:50%; transform:translateX(-50%);
   background:var(--g); color:#fff; font-size:9px; font-weight:800; padding:2px 8px; border-radius:20px;}
 .jmatrix tbody th{text-align:left; font-weight:800; color:var(--ink2); white-space:nowrap; font-size:13.5px;}
 .jmatrix td.pickcol{background:var(--gs);}
@@ -286,13 +304,15 @@
 .jrul-nm{font-size:14.5px; font-weight:800; letter-spacing:-.02em;}
 .jrul-nm .w{font-size:10.5px; font-weight:800; color:var(--warn); margin-left:7px;}
 .jrul-ev{font-size:12.5px; font-weight:700; color:var(--sub); font-feature-settings:"tnum";}
-.jrul-track{position:relative; height:42px;}
+.jrul-track{position:relative; height:52px;}
 .jrul-zone{position:absolute; top:16px; height:9px; border-radius:5px;}
 .jz-t{background:var(--wsoft);} .jz-s{background:var(--gs);} .jz-r{background:var(--soft);}
 .jrul-znlab{position:absolute; top:0; font-size:9px; font-weight:800; color:var(--sub2); white-space:nowrap;}
 .jrul-ticks{position:absolute; left:0; right:0; top:20px; height:12px;}
 .jrul-ticks i{position:absolute; top:0; width:1px; height:6px; background:var(--line2);}
 .jrul-ticks i.maj{height:12px; background:var(--sub2);}
+.jrul-cmlab{position:absolute; left:0; right:0; top:35px; height:12px;}
+.jrul-cmlab span{position:absolute; font-size:9px; font-weight:700; color:var(--sub2); font-feature-settings:"tnum"; white-space:nowrap;}
 .jrul-whisk{position:absolute; top:15px; height:11px; background:rgba(110,107,99,.14); border-left:1px dashed var(--sub); border-right:1px dashed var(--sub);}
 .jrul-mark{position:absolute; top:8px; width:2.5px; height:26px; border-radius:3px; background:var(--ink); z-index:3;}
 .jrul-mark::after{content:"나"; position:absolute; top:-14px; left:50%; transform:translateX(-50%); font-size:9px; font-weight:800; color:var(--ink);}
