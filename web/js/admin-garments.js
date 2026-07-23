@@ -121,13 +121,12 @@
       });
     });
     var oldIds=SPECS.filter(function(s){ return s.brandName===brand && s.category===cat && s.gender===gen && s._id!=null; }).map(function(s){ return s._id; });
-    // insert 먼저(안전) → 성공 시 old 삭제. insert 실패 시 old 보존.
-    var okI=true, ins=null;
-    if(newRows.length){ ins=await ADMINAUTH.insertGarment(newRows); okI=ins.ok; }
-    if(!okI){ if(msg) msg.textContent='저장 실패: '+((ins&&ins.error)||'admin 권한·로그인 확인'); return; }
-    var okD=true;
-    if(oldIds.length){ okD=await ADMINAUTH.deleteGarment(oldIds); }
-    if(msg) msg.textContent=okD?'저장됨 ✓ · 진단 즉시 반영':'저장됨(구행 삭제 일부 실패 — 새로고침 확인)';
+    // 셀 교체 = 한 트랜잭션(RPC, db/09). RPC 미적용 DB면 insert→delete 순서로 폴백(유실은 막고 중복만 가능).
+    var rep=await ADMINAUTH.replaceGarment(oldIds, newRows);
+    if(!rep.ok){ if(msg) msg.textContent='저장 실패: '+(rep.error||'admin 권한·로그인 확인'); return; }
+    if(msg) msg.textContent = rep.staleLeft
+      ? '저장됨(구행 삭제 일부 실패 — 새로고침 확인)'
+      : '저장됨 ✓ · 진단 즉시 반영';
     load();
   };
 })();

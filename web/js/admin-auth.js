@@ -6,6 +6,16 @@
   var url = w.SUPABASE_URL, key = w.SUPABASE_PUBLISHABLE_KEY;
   var client = (w.supabase && w.supabase.createClient && url && key) ? w.supabase.createClient(url, key) : null;
 
+  // db/09(원자적 RPC) 미적용 DB 판별 — 이때만 기존 비원자 경로로 폴백한다.
+  //   권한 거부(42501)·제약 위반 등 '진짜 실패'는 폴백하지 않고 그대로 실패시킨다.
+  function isMissingRpc(err) {
+    if (!err) return false;
+    var code = String(err.code || ''), msg = String(err.message || '');
+    if (code === '42501') return false;                       // forbidden — 폴백 금지
+    return code === 'PGRST202' || code === '404' ||
+           /could not find the function|schema cache|does not exist/i.test(msg);
+  }
+
   var A = {
     client: client,
     ready: function () { return !!client; },
@@ -139,6 +149,21 @@
       try { var r = await client.from('garment').delete().in('id', ids); return !r.error; }
       catch (e) { return false; }
     },
+    // 셀 교체(구행 삭제 + 신행 삽입)를 한 트랜잭션으로 [db/09].
+    //   기존 insert→delete 순서는 유실은 막지만, delete 실패 시 같은 셀에 구·신 행이 함께 남아
+    //   추천/판정이 뒤섞인다. RPC 미적용 DB면 기존 순서로 폴백(적용 전에도 동작).
+    replaceGarment: async function (oldIds, newRows) {
+      if (!client) return { ok: false, error: 'no client' };
+      try {
+        var rp = await client.rpc('admin_replace_garment', { old_ids: oldIds || [], new_rows: newRows || [] });
+        if (!rp.error) return { ok: true, inserted: rp.data, atomic: true };
+        if (!isMissingRpc(rp.error)) return { ok: false, error: rp.error.message };
+      } catch (e) { /* 폴백으로 진행 */ }
+      var ins = (newRows && newRows.length) ? await this.insertGarment(newRows) : { ok: true };
+      if (!ins.ok) return { ok: false, error: ins.error };                       // 삽입 실패 → 구행 보존
+      var okD = (oldIds && oldIds.length) ? await this.deleteGarment(oldIds) : true;
+      return { ok: true, atomic: false, staleLeft: !okD };                       // 삭제 실패 → 중복 잔존 신호
+    },
     // CRUD용: id 포함 전체 행(수정/삭제 대상 식별). 1000행 캡 페이지네이션.
     garmentRows: async function () {
       try {
@@ -159,9 +184,15 @@
     },
 
     // ── 테스트 로그 초기화 [db/06] — admin RLS delete. 되돌릴 수 없음. (created_at 필터=전체 행) ──
+    //   원자성: 두 번의 delete는 한 트랜잭션이 아니라, 중간 실패 시 '피드백만 삭제된' 부분 초기화가 남는다.
+    //   → RPC(admin_reset_diagnosis_logs, db/09)로 한 트랜잭션 처리. RPC 미적용 DB면 기존 2단 삭제로 폴백.
     resetDiagnosisLogs: async function () {  // 진단+피드백 (FK: feedback→diagnosis, feedback 먼저)
       if (!client) return { ok: false, error: 'no client' };
       try {
+        var rp = await client.rpc('admin_reset_diagnosis_logs');
+        if (!rp.error) return { ok: true, counts: rp.data || null };
+        if (!isMissingRpc(rp.error)) return { ok: false, error: rp.error.message };
+        // ↓ db/09 미적용 — 기존 경로(비원자적)
         var f = await client.from('feedback').delete().gte('created_at', '1900-01-01');
         if (f.error) return { ok: false, error: f.error.message };
         var d = await client.from('diagnosis').delete().gte('created_at', '1900-01-01');
