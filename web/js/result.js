@@ -41,9 +41,14 @@
     TOP:   [['shoulder','좁은 어깨','넓은 어깨','어깨 — 어깨 기준으로 사이즈가 갈려요'],
             ['chestFull','슬림한 가슴','볼륨 있는 가슴','가슴 — 슬림핏은 여유를 확인해요'],
             ['waist','슬림한 배','볼륨 있는 배','배 — 표준 대비 위치'],
-            ['arm','짧은 상체·팔','긴 상체·팔','총장·소매 — 기장이 맞는지']],
+            // 소매↔팔길이 / 총장↔등길이(뒷목~허리). 둘은 몸쪽 대응이 달라 한 축으로 뭉치지 않는다.
+            ['arm','짧은 팔','긴 팔','소매 — 소매 기장이 맞는지'],
+            ['backLength','짧은 상체','긴 상체','총장 — 상의 길이가 맞는지']],
     BOTTOM:[['waist','슬림한 허리','볼륨 있는 허리','허리 — 밴드·버튼 기준'],
-            ['hip','슬림한 엉덩이','볼륨 있는 엉덩이','엉덩이 — 힙 기준으로 사이즈가 갈려요']],
+            ['hip','슬림한 엉덩이','볼륨 있는 엉덩이','엉덩이 — 힙 기준으로 사이즈가 갈려요'],
+            ['thigh','슬림한 허벅지','볼륨 있는 허벅지','허벅지 — 스키니·슬림의 최대 병목'],
+            // 기장↔다리가쪽길이(허리옆~바닥). 상의 총장(등길이)에 대응하는 하의 세로축.
+            ['legOuter','짧은 다리','긴 다리','기장 — 바지 길이가 맞는지']],
     OUTER: [['shoulder','좁은 어깨','넓은 어깨','어깨 — 아우터는 어깨·품 기준'],
             ['chestFull','슬림한 가슴','볼륨 있는 가슴','가슴·품 — 레이어링 여유']],
     SKIRT: [['waist','슬림한 허리','볼륨 있는 허리','허리 — 치마 밴드 기준'],
@@ -285,19 +290,22 @@
   else if(window.BodyModel){ BodyModel.load().then(function(){
     var est=BodyModel.estimate(payload.basic||{});
     if(!est.ready){ renderNoData(); hideRloading(); return; }
-    var pm={}, cm={}; est.parts.forEach(function(p){ pm[p.key]=p.pct; cm[p.key]=p.cm; });
+    var pm={}, cm={}, r2m={}; est.parts.forEach(function(p){ pm[p.key]=p.pct; cm[p.key]=p.cm; r2m[p.key]=p.r2; });
     var pref=(payload.prefs&&payload.prefs[curCat])||'regular';
 
     // 역산+추천(specs 의존)은 diagnoseSpecs가 모드별로: proto=클라(garments 로드) / api=서버(/api/diagnose, garments 비노출).
     return diagnoseSpecs(est, cm, payload.prefs||{}).then(function(D){
-      var expUsed=false, eb=D.eb||{};
+      var expUsed=false, eb=D.eb||{}, ebKeys={};
       var EBMAP={chest:'chestFull',shoulder:'shoulder',waist:'waist',hip:'hip',thigh:'thigh'};
       Object.keys(EBMAP).forEach(function(k){
         if(eb[k]==null) return;
-        var key=EBMAP[k]; cm[key]=eb[k];
+        var key=EBMAP[k]; cm[key]=eb[k]; ebKeys[key]=1;
         var pc=BodyModel.pctOf(est.sex,key,eb[k]); if(pc!=null)pm[key]=pc;
         expUsed=true;
       });
+      // 저신뢰 표시(.lo) — 회귀 설명력이 낮은 부위(어깨 r²0.42·등길이 0.28 등)는 단정하지 않게.
+      //   단 착용경험으로 역산된 부위는 회귀보다 정확하므로 제외.
+      function lowConf(key){ return !ebKeys[key] && r2m[key]!=null && r2m[key]<0.5; }
       if(D.id) _diagId=D.id;
 
       // 8유형 판정 — 역산(상의:가슴 / 하의:허리·엉덩이)+회귀 폴백 몸으로 KS드롭 분류(bodytype.js). 스텁(mapToBodyType) 대체.
@@ -326,7 +334,7 @@
       } else {
         var grpLabel=(curCat==='TOP'?'상체 — 상의 진단':lowerCat?'하체 — '+curLabel+' 진단':'상체 — '+curLabel+' 진단');
         body='<div class="dtl-grp '+(lowerCat?'lo':'up')+'" style="margin-top:8px">'+grpLabel+'</div>'+
-             (MEAS[curCat]||MEAS.TOP).map(function(m){ return specRow(m[1],pm[m[0]],m[2],m[3],lowerCat); }).join('')+
+             (MEAS[curCat]||MEAS.TOP).map(function(m){ return specRow(m[1],pm[m[0]],m[2],m[3],lowerCat||lowConf(m[0])); }).join('')+
              (lowerCat
                ? specRow('슬림',FITPCT[pref]||50,'와이드','핏 취향',true)
                : specRow('타이트',FITPCT[pref]||55,'여유','핏 취향',false));

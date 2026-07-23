@@ -88,6 +88,50 @@
       "r2": 0.717,
       "rmse_cm": 1.5,
       "n": 2319
+    },
+    "thigh": {
+      "label": "넙다리둘레",
+      "bodyDimension": "thighCircumference",
+      "a_height": -0.1724,
+      "b_weight": 0.4134,
+      "c_age": -0.0733,
+      "intercept": 60.075,
+      "r2": 0.808,
+      "rmse_cm": 2.14,
+      "n": 2319
+    },
+    "backLength": {
+      "label": "등길이",
+      "bodyDimension": "backLength",
+      "a_height": 0.1829,
+      "b_weight": 0.0334,
+      "c_age": 0.0359,
+      "intercept": 8.318,
+      "r2": 0.276,
+      "rmse_cm": 2.02,
+      "n": 2319
+    },
+    "legOuter": {
+      "label": "다리가쪽길이",
+      "bodyDimension": "outerLegLength",
+      "a_height": 0.7112,
+      "b_weight": -0.0002,
+      "c_age": -0.0254,
+      "intercept": -16.461,
+      "r2": 0.853,
+      "rmse_cm": 1.86,
+      "n": 2319
+    },
+    "bodyRise": {
+      "label": "몸밑위(허리높이−샅높이)",
+      "bodyDimension": "bodyRise",
+      "a_height": 0.0913,
+      "b_weight": 0.0647,
+      "c_age": 0.0047,
+      "intercept": 6.596,
+      "r2": 0.273,
+      "rmse_cm": 1.78,
+      "n": 2319
     }
   },
   "female": {
@@ -166,6 +210,50 @@
       "intercept": 31.329,
       "r2": 0.786,
       "rmse_cm": 1.34,
+      "n": 2773
+    },
+    "thigh": {
+      "label": "넙다리둘레",
+      "bodyDimension": "thighCircumference",
+      "a_height": -0.1448,
+      "b_weight": 0.4818,
+      "c_age": -0.076,
+      "intercept": 54.552,
+      "r2": 0.719,
+      "rmse_cm": 2.65,
+      "n": 2773
+    },
+    "backLength": {
+      "label": "등길이",
+      "bodyDimension": "backLength",
+      "a_height": 0.1804,
+      "b_weight": 0.0532,
+      "c_age": 0.0246,
+      "intercept": 6.612,
+      "r2": 0.258,
+      "rmse_cm": 1.98,
+      "n": 2773
+    },
+    "legOuter": {
+      "label": "다리가쪽길이",
+      "bodyDimension": "outerLegLength",
+      "a_height": 0.7088,
+      "b_weight": -0.0035,
+      "c_age": -0.0243,
+      "intercept": -13.708,
+      "r2": 0.856,
+      "rmse_cm": 1.66,
+      "n": 2773
+    },
+    "bodyRise": {
+      "label": "몸밑위(허리높이−샅높이)",
+      "bodyDimension": "bodyRise",
+      "a_height": 0.1222,
+      "b_weight": 0.0476,
+      "c_age": 0.0019,
+      "intercept": 2.923,
+      "r2": 0.264,
+      "rmse_cm": 1.49,
       "n": 2773
     }
   }

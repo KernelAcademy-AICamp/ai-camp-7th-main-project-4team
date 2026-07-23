@@ -57,7 +57,12 @@
     { key: "hip",       name: "엉덩이둘레" },
     { key: "shoulder",  name: "어깨너비" },
     { key: "arm",       name: "팔길이" },
-    { key: "upperArm",  name: "위팔둘레" }
+    { key: "upperArm",  name: "위팔둘레" },
+    { key: "thigh",     name: "허벅지둘레" },  // 하의 판정 부위 — 0벌 사용자도 허벅지 병목을 보게(역산되면 덮어씀)
+    { key: "backLength", name: "등길이" },   // 세로축(상의 총장 판정용)
+    { key: "legOuter",  name: "다리가쪽길이" }, // 세로축(하의 기장 판정용 — 허리옆~바닥)
+    { key: "bodyRise",  name: "몸밑위" }        // 세로축(하의 밑위 판정용 — 허리높이−샅높이)
+    // ↑ 세로축 3종은 결과카드엔 미표시(result.js MEAS 별도), judge가 소비
   ];
 
   /**
