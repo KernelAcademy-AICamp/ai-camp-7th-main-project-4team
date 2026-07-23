@@ -49,7 +49,9 @@
     state.exps = Array.isArray(payload.experiences) ? payload.experiences : [];
     state.expCount = state.exps.length;
 
-    var forceNoDx = false; try { forceNoDx = /[?&]nodx=1/.test(location.search); } catch (e) {}   // ?nodx=1 = 진단 없음 화면 미리보기
+    // ?nodx=1 = 진단 없음 미리보기(세션 유지 → 진단 왕복해도 없는 상태 그대로). ?nodx=0 = 해제.
+    try { var qs = location.search || ""; if (/[?&]nodx=1/.test(qs)) sessionStorage.setItem(NODX_KEY, "1"); else if (/[?&]nodx=0/.test(qs)) sessionStorage.removeItem(NODX_KEY); } catch (e) {}
+    var forceNoDx = false; try { forceNoDx = sessionStorage.getItem(NODX_KEY) === "1"; } catch (e) {}
     if (!window.BodyModel) return fail("체형 엔진을 불러오지 못했어요.");
     BodyModel.load().then(function () {
       var est = BodyModel.estimate(basic);
@@ -97,10 +99,11 @@
   }
   // 사이즈표 넣기 탭(캡처 업로드 ↔ 직접 입력) 활성 표시 동기화
   function markTab(mode) { document.querySelectorAll(".jtab").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-tab") === mode); }); }
-  function showCapture() { $("jcap").hidden = false; $("jcorrect").hidden = true; var m = $("jmiss"); if (m) m.hidden = true; var r = $("jrun"); if (r) r.disabled = true; state.parsed = null; state.manual = false; markTab("capture"); }
+  function showCapture() { showLoad(false); $("jcap").hidden = false; $("jcorrect").hidden = true; var m = $("jmiss"); if (m) m.hidden = true; var r = $("jrun"); if (r) r.disabled = true; state.parsed = null; state.manual = false; markTab("capture"); }
 
   // 붙여넣기/드롭/파일 → dataURL → 인식
   function onImageFile(file) {
+    if (!state.ready) return;   // 진단 없는 사용자는 업로드 자체 차단(클릭·드롭·붙여넣기 공통 경로)
     if (!file || file.type.indexOf("image") !== 0) return;
     var r = new FileReader(); r.onload = function () { parseImage(r.result); }; r.readAsDataURL(file);
   }
@@ -110,13 +113,19 @@
     $("jcorrect").classList.remove("man");                          // 캡처 모드: 썸네일·다시올리기 노출
     var ru = $("jreupload"); if (ru) ru.hidden = false;
     var th = $("jcapthumb"); if (th) { th.src = dataUrl; th.hidden = false; }
-    $("jparsehint").innerHTML = "사이즈표를 읽는 중…"; $("jparsetable").innerHTML = ""; $("jrun").disabled = true;
+    $("jparsehint").innerHTML = "<span class='jspin-sm'></span>사이즈표를 읽는 중…"; $("jparsetable").innerHTML = ""; $("jrun").disabled = true;   // 인식 로딩 = 왼쪽(사진 올린 자리)
     if (!(window.FDATA && FDATA.parseSizeTable)) return parseUnavailable();
-    FDATA.parseSizeTable(dataUrl).then(function (resp) {
+    FDATA.parseSizeTable(dataUrl, state.cat).then(function (resp) {   // 로컬 데모: 고른 옷 종류에 맞는 샘플 표를 받음
       if (!resp) return parseUnavailable();
       if (resp.error || !resp.parsed) return parseFailed();
       onParsed(resp.parsed);
     }).catch(function () { parseFailed(); });
+  }
+  function showLoad(on, msg) {   // 오른쪽 캔버스 로딩 오버레이(판정 진행 / 리셋 전환). msg로 문구 교체.
+    var el = $("jload"); if (!el) return;
+    el.hidden = !on;
+    var tx = el.querySelector(".jload-tx");
+    if (on && tx) tx.innerHTML = msg || "판정을 진행 중이에요<b>잠시만요…</b>";
   }
   function parseUnavailable() { $("jparsehint").innerHTML = "이 환경에선 자동 인식이 안 돼요. <a class='jlink' data-act='manual'>직접 입력</a>으로 진행하세요."; }
   function parseFailed() { $("jparsehint").innerHTML = "표를 못 읽었어요. 더 또렷한 캡처로 다시 하거나 <a class='jlink' data-act='manual'>직접 입력</a>하세요."; }
@@ -208,12 +217,14 @@
     state.lastCell = null;                                           // 체형 오차(state.err)는 진단값이라 보존
     try { sessionStorage.removeItem(SNAP_KEY); } catch (e) {}         // 초기화하면 복원 스냅샷도 폐기
     setJudged(false); showCapture();                                 // showCapture가 parsed/manual/버튼 리셋
+    var cl = $("jcolsload");                                          // 리셋 = 2단 전체 덮는 로딩(결과 패널만 도는 어색함 방지)
+    if (cl) { cl.hidden = false; setTimeout(function () { cl.hidden = true; }, 550); }
     var card = document.querySelector(".jcard");                      // 리셋 후 왼쪽 입력으로 부드럽게 이동
     if (card) card.scrollIntoView({ behavior: "smooth", block: "start" }); else window.scrollTo(0, 0);
   }
 
   /* 진단 수정 왕복 복원 — 판정 결과를 두고 '진단 수정'에 다녀와도(이전) 그 판정으로 되돌아오게 */
-  var SNAP_KEY = "fitting.judge.snap", RETURN_KEY = "fitting.judge.return";
+  var SNAP_KEY = "fitting.judge.snap", RETURN_KEY = "fitting.judge.return", NODX_KEY = "fitting.judge.nodx";
   function snapshotInputs() {                                         // 현재 입력표(라벨+부위값)를 그대로 직렬화(사용자 수정분 보존)
     var rows = {};
     document.querySelectorAll(".jsl").forEach(function (el) { var i = +el.getAttribute("data-i"); (rows[i] = rows[i] || { values: {} }).label = el.value; });
@@ -303,9 +314,12 @@
     if (!cell.length) return showMiss("판정할 값이 없어요. 구매하는 사이즈의 치수를 채워주세요.");
     state.lastCell = cell;
     $("jrun").disabled = true;
+    showLoad(true);   // 판정 시작 → 오른쪽 결과 캔버스에 '판정 진행 중' 표시
+    var canvas = $("jaside");   // 판정 누른 순간 결과 캔버스로 스크롤 → '판정 중' 로딩이 바로 보이게(버튼이 아래라 안 보이던 문제)
+    if (canvas) canvas.scrollIntoView({ behavior: "smooth", block: "center" });
     computeJudgment({ category: state.cat, sex: state.sex, cm: state.cm, experiences: state.exps, errors: errForEngine(), cell: cell })
-      .then(function (j) { $("jrun").disabled = false; if (!j) return showMiss(); render(j); saveJudgeSnapshot(); })
-      .catch(function () { $("jrun").disabled = false; showMiss(); });
+      .then(function (j) { showLoad(false); $("jrun").disabled = false; if (!j) return showMiss(); render(j); saveJudgeSnapshot(); })
+      .catch(function () { showLoad(false); $("jrun").disabled = false; showMiss(); });
   }
   // api=서버(/api/judge, cell 전달·실측 비노출) / proto=클라 로컬(garments로 역산 + 캡처셀 판정)
   function computeJudgment(q) {
@@ -319,7 +333,8 @@
       var bodyVec = q.category === "BOTTOM"
         ? { waist: mcm.waist, hip: mcm.hip, thigh: mcm.thigh, length: mcm.legOuter, rise: mcm.bodyRise }  // length=다리가쪽길이(기장), rise=몸밑위
         : { chest: mcm.chestFull, shoulder: mcm.shoulder, waist: mcm.waist, length: mcm.backLength };     // length=등길이(총장)
-      return E.judge(bodyVec, q.cell, { errors: q.errors, category: q.category });
+      var res = E.judge(bodyVec, q.cell, { errors: q.errors, category: q.category });
+      return new Promise(function (r) { setTimeout(function () { r(res); }, 650); });   // 로컬: '판정 진행 중' 오버레이 보이게 짧은 지연(실제 api는 원래 시간 걸림)
     });
   }
   function loadGarments() {
@@ -544,10 +559,15 @@
     var svg, order;
     if (category === "BOTTOM") {
       var w = off((map.waist || {}).ease || 0), h = off((map.hip || {}).ease || 0), t = off((map.thigh || {}).ease || 0);
+      // 힙은 곡선(Q)으로 부드럽게 — 여유 크면 꼭짓점이 뾰족해지던 문제 해결. 밑단 왼쪽 좌표는 (72-t)로(다리 바깥과 일치, 이전엔 힙 좌표 50-h를 잘못 써서 왼쪽으로 삐침).
       svg = '<svg viewBox="0 0 200 280">' +
         '<path d="M70 24 L130 24 L144 78 L128 262 L106 262 L100 120 L94 262 L72 262 L56 78 Z" fill="' + FILL + '"/>' +
-        '<path d="M' + (70 - w) + ' 20 L' + (130 + w) + ' 20 L' + (150 + h) + ' 80 L' + (128 + t) + ' 250 L106 250 L100 122 L94 250 L' + (72 - t) + ' 250 L' + (50 - h) + ' 80 Z" fill="none" stroke="' + GS + '" stroke-width="2.4" stroke-linejoin="round"/>' +
-        '<line x1="' + (50 - h) + '" y1="250" x2="98" y2="250" stroke="' + GS + '" stroke-width="2.4"/>' +
+        '<path d="M' + (70 - w) + ' 20 L' + (130 + w) + ' 20 ' +
+          'Q' + (150 + h) + ' 80 ' + (128 + t) + ' 250 ' +
+          'L106 250 L100 122 L94 250 ' +
+          'L' + (72 - t) + ' 250 ' +
+          'Q' + (50 - h) + ' 80 ' + (70 - w) + ' 20 Z" fill="none" stroke="' + GS + '" stroke-width="2.4" stroke-linejoin="round"/>' +
+        '<line x1="' + (72 - t) + '" y1="250" x2="98" y2="250" stroke="' + GS + '" stroke-width="2.4"/>' +
         '<line x1="102" y1="250" x2="' + (128 + t) + '" y2="250" stroke="' + GS + '" stroke-width="2.4"/>' +
         dot("waist", 132, 44) + dot("hip", 148, 82) + dot("thigh", 127, 150) +
         '</svg>';
@@ -636,7 +656,8 @@
     var mine = $("jmine"); if (mine) mine.hidden = true;
     var auto = $("jstepAuto"); if (auto) auto.hidden = true;
     var need = $("jneeddx"); if (need) need.hidden = false;
-    showCapture();   // 나머지 흐름은 보이되 판정하기는 refreshRun의 state.ready 게이팅으로 잠김
+    var card = document.querySelector(".jcard"); if (card) card.classList.add("needdx");   // ②옷종류·③사이즈표 잠금(진단 먼저)
+    showCapture();   // 판정하기·업로드는 state.ready 게이팅으로 잠김
   }
   function showMiss(msg) {
     $("jmiss").hidden = false;
