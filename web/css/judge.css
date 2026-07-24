@@ -206,7 +206,7 @@
 .jctab input{width:100%; min-width:54px; font:inherit; font-size:14px; text-align:center; padding:9px 8px; border:1.5px solid var(--line2); border-radius:9px; background:var(--surface); color:var(--rink);}
 .jctab td.sl input{width:64px; min-width:0; font-weight:800;}
 .jctab input.jce{font-feature-settings:"tnum";}
-.jbasis{display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin:0 0 12px; padding-bottom:12px; border-bottom:1px solid var(--rline); font-size:13px; color:var(--sub);}
+.jbasis{display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin:4px 0 14px; padding:10px 0 0; border-top:1px solid var(--rline); font-size:13px; color:var(--sub);}
 .jbasis-l{font-weight:700; color:var(--ink2);}
 .jbz{font:inherit; font-size:12.5px; font-weight:700; padding:6px 12px; border:1.5px solid var(--line2); border-radius:20px; background:var(--surface); color:var(--sub); cursor:pointer;}
 .jbz.on{background:var(--gs); border-color:var(--g); color:var(--g); font-weight:800;}

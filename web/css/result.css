@@ -8,11 +8,16 @@
   /* 결과 준비 로딩 오버레이 — 준비되면 result.js가 .hide 후 제거 */
   .rloading{ position:fixed; inset:0; z-index:900; display:flex; align-items:center; justify-content:center; background:#FBFAF8; transition:opacity .35s ease; }
   .rloading.hide{ opacity:0; pointer-events:none; }
-  .rloading-in{ display:flex; flex-direction:column; align-items:center; gap:16px; }
-  .rloading-spin{ width:38px; height:38px; border-radius:50%; border:3px solid var(--rline); border-top-color:var(--accent); animation:rspin .8s linear infinite; }
+  .rloading-in{ display:flex; flex-direction:column; align-items:center; gap:18px; }
+  /* 판정(Fit) 화면과 통일한 브랜드 로딩 — 회전 링 + 로고. #rloading은 .rwrap 밖이라 :root 토큰 사용 */
+  .rload-mk{ position:relative; width:128px; height:128px; display:grid; place-items:center; }
+  .rload-ring{ position:absolute; inset:0; width:128px; height:128px; animation:rloadspin 1.4s cubic-bezier(.5,.1,.5,.9) infinite; }
+  .rload-ring .trk{ stroke:#E7EFEA; } .rload-ring .arc{ stroke:var(--accent); }
+  .rload-lg{ font-size:26px; font-weight:800; letter-spacing:-.05em; line-height:1; color:var(--accent); }
+  .rload-lg .sq{ display:inline-block; width:8px; height:8px; background:#9CC1AE; margin-left:3px; vertical-align:baseline; }
+  @keyframes rloadspin{ to{ transform:rotate(360deg); } }
   .rloading-in p{ margin:0; font-size:15px; font-weight:700; color:var(--muted); letter-spacing:-.01em; }
-  @keyframes rspin{ to{ transform:rotate(360deg); } }
-  @media (prefers-reduced-motion: reduce){ .rloading-spin{ animation:none; } }
+  @media (prefers-reduced-motion: reduce){ .rload-ring{ animation:none; } }
   /* 결과 화면 — sohee 디자인 언어 + sangmin 콘텐츠 (자체 팔레트로 클래스 격리) */
   /* ⚠ --ink/--line/--warn는 :root와 같은 이름 → var(--x) 자기참조=순환(무효). 이름 다른 로컬(--rink 등)으로 토큰 참조. */
   .rwrap{ --g:var(--accent); --gs:#E7EFEA; --rink:var(--ink); --ink2:#3A382F; --sub:var(--muted); --sub2:var(--faint);
@@ -376,21 +381,21 @@
   #p3 .part-list{ margin-top:12px; }
   #p3 .part-it{ display:flex; gap:13px; align-items:flex-start; padding:13px 0; border-bottom:1px solid var(--line); }
   #p3 .part-it:last-child{ border-bottom:0; padding-bottom:2px; }
-  #p3 .part-chip{ flex:none; width:52px; text-align:center; font-size:12.5px; font-weight:800; color:var(--g); background:var(--gs); padding:6px 0; border-radius:9px; }
+  #p3 .part-chip{ flex:none; width:52px; text-align:center; font-size:12.5px; font-weight:800; color:color-mix(in srgb, var(--tp,var(--g)) 74%, var(--ink)); background:color-mix(in srgb, var(--tp,var(--g)) 15%, #fff); padding:6px 0; border-radius:9px; }
   #p3 .part-it p{ margin:0; font-size:14.5px; line-height:1.55; color:#3d3b35; padding-top:2px; } #p3 .part-it p b{ color:var(--ink); font-weight:800; }
   #p3 .share-note{ margin-top:16px; padding-top:14px; border-top:1px solid var(--line); font-size:13px; color:var(--sub); line-height:1.6; } #p3 .share-note b{ color:var(--ink); font-weight:700; }
   /* 결과 근거(탭4) — 데이터 기반. 높음=착용경험 역산만. acc-prow=diag.css .acc-row 충돌 회피 */
   #p4 .av-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
   #p4 .conf-badge{ font-size:13px; font-weight:800; padding:5px 13px; border-radius:20px; }
-  #p4 .conf-badge.low{ background:#F2ECE0; color:#8A7A52; } #p4 .conf-badge.mid{ background:#E7EFE7; color:#4A7A4A; } #p4 .conf-badge.high{ background:var(--rink); color:#fff; }
+  #p4 .conf-badge.low{ background:#FAF1D6; color:#977B24; } #p4 .conf-badge.mid{ background:#E7F0E8; color:#3F7A4E; } #p4 .conf-badge.high{ background:var(--rink); color:#fff; }
   #p4 .acc-reason{ margin-top:13px; font-size:15px; line-height:1.6; color:var(--sub); } #p4 .acc-reason b{ color:var(--ink); font-weight:800; }
-  #p4 .acc-sub{ display:block; margin-top:5px; }
+  #p4 .acc-sub{ display:block; margin-top:2px; }
   #p4 .tier-steps{ display:flex; gap:8px; margin-top:18px; }
   #p4 .tier-step{ flex:1; text-align:center; padding:11px 6px 9px; border-radius:12px; border:1px solid var(--line); background:#fff; }
   #p4 .tier-step .ts-b{ font-size:13px; font-weight:800; color:var(--sub2); } #p4 .tier-step .ts-c{ margin-top:3px; font-size:11.5px; color:var(--sub2); font-weight:600; }
   #p4 .tier-step .ts-dot{ display:inline-block; width:6px; height:6px; border-radius:50%; background:#D8D5CE; margin-bottom:5px; }
-  #p4 .tier-step.on.low{ border-color:#D8C9A6; background:#FBF6EB; } #p4 .tier-step.on.low .ts-b{ color:#8A7A52; } #p4 .tier-step.on.low .ts-dot{ background:#C7A860; }
-  #p4 .tier-step.on.mid{ border-color:#BFD8BF; background:#F0F6F0; } #p4 .tier-step.on.mid .ts-b{ color:#4A7A4A; } #p4 .tier-step.on.mid .ts-dot{ background:#4A7A4A; }
+  #p4 .tier-step.on.low{ border-color:#E4CF8C; background:#FBF6EB; } #p4 .tier-step.on.low .ts-b{ color:#977B24; } #p4 .tier-step.on.low .ts-dot{ background:#E3B53E; }
+  #p4 .tier-step.on.mid{ border-color:#BFD8BF; background:#F0F6F0; } #p4 .tier-step.on.mid .ts-b{ color:#3F7A4E; } #p4 .tier-step.on.mid .ts-dot{ background:#4A7A4A; }
   #p4 .tier-step.on.high{ border-color:var(--rink); background:#F3F1EC; } #p4 .tier-step.on.high .ts-b{ color:var(--rink); } #p4 .tier-step.on.high .ts-dot{ background:var(--rink); }
   #p4 .acc-parts{ margin-top:6px; }
   #p4 .acc-prow{ display:flex; align-items:center; gap:12px; padding:14px 0; border-bottom:1px solid var(--line); }
@@ -399,9 +404,9 @@
   #p4 .acc-mid{ flex:1; min-width:0; }
   #p4 .acc-src{ font-size:11.5px; font-weight:700; color:var(--sub2); } #p4 .acc-src.eb{ color:#4A7A4A; }
   #p4 .acc-bar{ display:flex; gap:4px; margin-top:6px; } #p4 .acc-bar span{ flex:1; height:7px; border-radius:4px; background:#EDE9E0; }
-  #p4 .acc-bar.high span.on{ background:#4A7A4A; } #p4 .acc-bar.mid span.on{ background:#8FB08F; } #p4 .acc-bar.low span.on{ background:#C9A24B; }
+  #p4 .acc-bar.high span.on{ background:var(--rink); } #p4 .acc-bar.mid span.on{ background:#4A7A4A; } #p4 .acc-bar.low span.on{ background:#E3B53E; }
   #p4 .acc-pill{ flex:none; font-size:11.5px; font-weight:800; padding:3px 9px; border-radius:7px; }
-  #p4 .acc-pill.high{ background:#E7EFE7; color:#4A7A4A; } #p4 .acc-pill.mid{ background:#EDEEF1; color:#3A382F; } #p4 .acc-pill.low{ background:#F7EFDD; color:#8A6D2E; }
+  #p4 .acc-pill.high{ background:var(--rink); color:#fff; } #p4 .acc-pill.mid{ background:#E7F0E8; color:#3F7A4E; } #p4 .acc-pill.low{ background:#FAF1D6; color:#977B24; }
   #p4 .acc-foot{ margin-top:15px; padding-top:13px; border-top:1px solid var(--line); font-size:14.5px; color:var(--sub); line-height:1.6; } #p4 .acc-foot b{ color:var(--ink); font-weight:700; }
 
   /* iframe 임베드(마이>내진단결과): 자체 헤더·닫기 숨김 — 부모 SPA 내비가 대신함 */
@@ -415,3 +420,22 @@
   html.embed #rupgrade,
   html.embed .rbottom{ display:none !important; }   /* 하단 저장·스타일리스트·초기화 CTA는 마이에선 불필요(마이 자체 액션이 대신) */
   html.embed .rtabs{ margin-top:4px; }
+
+  /* 진단 결과 피드백 토스트 — 진단 플로우 결과 화면에만(마이 embed에선 숨김). 10초 뒤 하단서 슬쩍, 1회. id=rtoast(result.js rToast)와 충돌 피해 rfbToast/.rfbtoast 사용 */
+  .rfbtoast{ --g:#2E4A3B; --gs:#E7EFEA; --ink:#16140F; --sub:#6E6B63; --sub2:#A6A29A; --line:#E6E5E1; --line2:#E0DED8;
+    position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(20px); z-index:2000;
+    width:min(440px,calc(100% - 32px)); background:#fff; border:1px solid var(--line); border-radius:16px;
+    box-shadow:0 12px 40px rgba(20,18,14,.16); padding:18px 20px 16px; opacity:0; transition:opacity .35s ease, transform .35s ease; }
+  .rfbtoast.on{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .rfbtoast-x{ position:absolute; top:11px; right:11px; width:26px; height:26px; border:0; background:none; cursor:pointer; color:var(--sub2); font-size:18px; line-height:1; border-radius:8px; }
+  .rfbtoast-x:hover{ background:#F1F0EC; }
+  .rfbtoast-ey{ font-size:11.5px; font-weight:800; letter-spacing:.02em; color:var(--g); margin-bottom:6px; }
+  .rfbtoast-q{ font-size:16px; font-weight:800; letter-spacing:-.02em; color:var(--ink); padding-right:24px; }
+  .rfbtoast-sub{ margin-top:5px; font-size:13px; color:var(--sub); }
+  .rfbtoast-btns{ display:flex; gap:8px; margin-top:14px; }
+  .rfb-b{ flex:1; padding:11px 6px; border:1px solid var(--line2,#E0DED8); border-radius:11px; background:#fff; font-family:inherit; font-size:14px; font-weight:700; color:var(--ink); cursor:pointer; transition:.14s; }
+  .rfb-b:hover{ border-color:var(--g); background:var(--gs); color:var(--g); }
+  .rfb-b.sel{ background:var(--g); border-color:var(--g); color:#fff; }
+  .rfbtoast-btns.answered .rfb-b:not(.sel){ opacity:.45; }
+  /* 마이 embed에선 결과 피드백(토스트·검증 바) 숨김 — 진단 플로우 결과에서만 노출 */
+  html.embed #rfb, html.embed .rfbtoast{ display:none !important; }

@@ -148,6 +148,7 @@
       if(!showCard) return;   // 카드가 나오면 유형 상세도 함께(부분도 노출 — 완성도는 신뢰도 배지로 구분)
       var t=(list||[]).filter(function(x){ return x.code===cardType; })[0]; if(!t) return;
       var tp=t.point||'#2E4A3B';
+      var p3=document.getElementById('p3'); if(p3) p3.style.setProperty('--tp',tp);   // 체형그림 탭 부위 뱃지도 유형색 따라감
       var idEl=document.getElementById('rtypeid');
       if(idEl){ idEl.style.setProperty('--tp',tp);
         idEl.innerHTML='<span class="dtl-code">'+t.code+'</span><h2 class="dtl-name">'+t.name+'</h2>'+
@@ -677,4 +678,39 @@
     window.addEventListener('load', function(){ postH(); setTimeout(postH,300); setTimeout(postH,1200); });
     window.addEventListener('resize', postH);
     if(window.ResizeObserver){ try{ new ResizeObserver(postH).observe(document.body); }catch(e){} }
+  })();
+
+  /* ═══ 진단 결과 피드백 — 토스트(rfbToast) + 정확도 검증 바(#rfb) 연동. 마이 embed에선 미노출 ═══ */
+  /* 진단 상태별 키 — 넣은 옷 수+완료 카테고리로 서명. 기본→상의→하의 매번 상태가 달라져 그때마다 토스트 재노출 */
+  function fbStateKey(){ try{ return 'fitting.result.fbToast.'+((nExp||0)+':'+Object.keys(doneCats||{}).sort().join(',')); }catch(e){ return 'fitting.result.fbToast'; } }
+  function fbToastHide(){ var t=document.getElementById('rfbToast'); if(!t) return; t.classList.remove('on'); setTimeout(function(){ t.hidden=true; }, 380); }
+  function fbToastThanks(){
+    var t=document.getElementById('rfbToast'); if(!t) return;
+    var ey=t.querySelector('.rfbtoast-ey'), q=t.querySelector('.rfbtoast-q'), sub=t.querySelector('.rfbtoast-sub'), b=document.getElementById('rfbToastBtns');
+    if(ey) ey.style.display='none'; if(sub) sub.style.display='none'; if(b) b.style.display='none';
+    if(q) q.textContent='소중한 의견 감사합니다!';
+    setTimeout(fbToastHide, 1300);
+  }
+  /* 한쪽에서 답하면 검증 바·토스트 양쪽에 반영 + fb()와 동일 스키마로 저장 */
+  function pickFeedback(val, from, el){
+    window._resultFb=val;
+    var map={'비슷':'ok','보통':'mid','다름':'no'};
+    document.querySelectorAll('#rfb .rseg .o').forEach(function(o){ o.classList.toggle('on', o.classList.contains(map[val])); });
+    try{
+      var vmap={'비슷':'맞음','보통':'보통','다름':'안맞음'};
+      var consent=FDATA.readConsent();
+      FDATA.saveFeedback({ ts:new Date().toISOString(), bodyType:cardType, verdict:vmap[val]||val, confidenceTier:confidenceTier, engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId });
+    }catch(e){}
+    try{ sessionStorage.setItem(fbStateKey(),'1'); }catch(e){}
+    if(from==='toast'){ fbToastThanks(); }   // 토스트에서 답 → '소중한 의견 감사합니다!' 후 닫힘
+    else { fbToastHide(); }                    // 검증 바에서 답하면 토스트 닫기
+  }
+  (function fbToastInit(){
+    if(/[?&]embed/.test(location.search)) return;   // 마이 내진단결과(embed)에선 토스트 없음
+    // 진단하고 결과로 들어올 때마다 노출(중복방지 없음). 페이지 로드 1회 = 토스트 1회.
+    function fire(){
+      var t=document.getElementById('rfbToast'); if(!t) return; t.hidden=false;
+      requestAnimationFrame(function(){ t.classList.add('on'); });
+    }
+    window.addEventListener('load', function(){ setTimeout(fire, 6000); });   // 결과 들어올 때마다 6초 뒤
   })();

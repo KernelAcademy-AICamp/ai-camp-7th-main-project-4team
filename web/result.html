@@ -8,13 +8,16 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=6e180040">
 <link rel="stylesheet" href="css/diag.css?v=c3a3f62c">
-<link rel="stylesheet" href="css/result.css?v=374afac0">
+<link rel="stylesheet" href="css/result.css?v=a8c96242">
 </head>
 <body>
 
 <!-- 결과 준비 로딩 오버레이 — 분류·카드·측정·추천이 실제로 그려지면 result.js가 걷어냄 -->
 <div id="rloading" class="rloading" role="status" aria-live="polite">
-  <div class="rloading-in"><div class="rloading-spin" aria-hidden="true"></div><p>결과를 준비하고 있어요</p></div>
+  <div class="rloading-in">
+    <span class="rload-mk" aria-hidden="true"><svg class="rload-ring" viewBox="0 0 140 140" fill="none"><circle class="trk" cx="70" cy="70" r="62" stroke-width="2.5"/><path class="arc" d="M70 8a62 62 0 0 1 53.7 31" stroke-width="2.5" stroke-linecap="round"/></svg><span class="rload-lg">Fitting<i class="sq"></i></span></span>
+    <p>결과를 준비하고 있어요</p>
+  </div>
 </div>
 
 <div class="dhead"><div class="dhead-in"><a class="logo" href="index.html">Fitting<i></i></a><a class="dx" href="index.html" title="닫기">✕</a></div></div>
@@ -106,6 +109,12 @@
           <div class="rhow-step"><span class="no">3</span><div><b>8가지 체형 유형에 대조</b><p>부위별 비율을 8유형 기준과 견줘 가장 가까운 유형으로 분류해요</p></div></div>
           <div class="rhow-step"><span class="no">4</span><div><b>브랜드별 사이즈 대조</b><p>브랜드마다 다른 실측치에 내 치수를 대입해 가장 잘 맞는 사이즈를 골라요</p></div></div>
         </div>
+        <!-- 정확도 검증 바 — 결과 피드백(토스트와 동일 카피·연동). 마이 embed에선 CSS로 숨김 -->
+        <div class="rpanel" id="rfb"><div class="rfbq">이 결과, 평소 내 사이즈랑 비슷한가요? <span>· 진단 개선에 반영</span></div>
+          <div class="rseg"><div class="o ok" data-val="비슷" onclick="pickFeedback('비슷','tab4')"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> 비슷해요</div><div class="o mid" data-val="보통" onclick="pickFeedback('보통','tab4')"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg> 보통</div><div class="o no" data-val="다름" onclick="pickFeedback('다름','tab4')"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg> 달라요</div></div>
+          <label class="rconsent"><input type="checkbox" id="eiConsent" onchange="setEngineConsent(this.checked)">
+            <span class="rconsent-txt"><b>익명으로 진단 개선</b>에 활용하는 데 동의하며, <b>만 14세 이상</b> 또는 법정대리인 동의를 확인했어요 (선택)
+            </span></label></div>
         <a class="rjudge" href="judge.html">
           <span class="rjudge-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/><circle cx="8" cy="6" r="1.6" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="1.6" fill="currentColor" stroke="none"/></svg></span>
           <span class="rjudge-tx"><b>사려는 옷이 따로 있나요?</b><span>사이즈표를 올리면 그 옷도 맞을지 판정해요</span></span>
@@ -118,9 +127,22 @@
   <!-- ───── 탭 밖 공통 ───── -->
   <div class="rbottom">
     <div class="rcta"><button type="button" class="rbtn p" onclick="saveResult()">결과 저장하기</button><button type="button" class="rbtn l" onclick="goExpert()">스타일리스트 찾기</button></div>
-    <p class="rcta-note">비회원 진단은 끝까지 무료예요 · 저장·스타일리스트 매칭은 로그인 후 이어져요</p>
+    <p class="rcta-note" style="margin-top:18px">비회원 진단은 끝까지 무료예요 · 저장·스타일리스트 매칭은 로그인 후 이어져요</p>
     <p class="rcta-note" style="margin-top:10px"><a href="#" onclick="resetDiag();return false" style="color:var(--sub);text-decoration:underline"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg> 진단 초기화 — 입력을 지우고 처음부터</a></p>
     <p class="rcta-note" style="margin-top:22px;padding-top:16px;border-top:1px solid var(--line);font-size:14.5px;color:var(--sub2)"><a href="about.html" style="color:var(--sub2)">서비스 소개</a> · <a href="terms.html" style="color:var(--sub2)">이용약관</a> · <a href="privacy.html" style="color:var(--sub2)">개인정보 처리방침</a></p>
+  </div>
+</div>
+
+<!-- 진단 결과 피드백 토스트(1회) — 진단 플로우 결과에서만. 마이 embed에선 CSS로 숨김. id=rfbToast(result.js rToast의 #rtoast와 충돌 회피) -->
+<div class="rfbtoast" id="rfbToast" role="dialog" aria-label="결과 피드백" hidden>
+  <button class="rfbtoast-x" id="rfbToastX" aria-label="닫기" onclick="fbToastHide()">&times;</button>
+  <div class="rfbtoast-ey">잠깐, 한 가지만</div>
+  <div class="rfbtoast-q">이 결과, 평소 내 사이즈랑 비슷한가요?</div>
+  <div class="rfbtoast-sub">답해주시면 다음 진단이 더 정확해져요</div>
+  <div class="rfbtoast-btns" id="rfbToastBtns">
+    <button class="rfb-b" onclick="pickFeedback('비슷','toast',this)">비슷해요</button>
+    <button class="rfb-b" onclick="pickFeedback('보통','toast',this)">보통</button>
+    <button class="rfb-b" onclick="pickFeedback('다름','toast',this)">달라요</button>
   </div>
 </div>
 
@@ -130,8 +152,8 @@
 <script src="js/bodytype.js?v=b00f36c1"></script>
 <script src="js/config.js?v=53f50277"></script>
 <script src="js/data.js?v=177a2945"></script>
-<script src="js/body-figure.js?v=594b2bcf"></script>
-<script src="js/result.js?v=82423c9c"></script>
+<script src="js/body-figure.js?v=47856271"></script>
+<script src="js/result.js?v=c3be0f64"></script>
 <script src="js/a11y.js?v=1876c5ec"></script>
 </body>
 </html>

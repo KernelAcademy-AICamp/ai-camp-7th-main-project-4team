@@ -61,7 +61,7 @@
       {name:'허리',   key:'허리둘레',  pct:m.bottom.waist,   lo:'슬림',hi:'볼륨',half:wa,y:waistY},
       {name:'엉덩이', key:'엉덩이둘레', pct:m.bottom.hip,     lo:'슬림',hi:'볼륨',half:hi,y:hipY}];
     var estMap={}; (est||[]).forEach(function(e){ estMap[e.label]={val:e.val, pm:e.pm}; });
-    var vx=240, guides='';
+    var vx=260, guides='';   // 우측 예상치수 라벨 x — 넓은 어깨/팔(최대 ~247)과 안 겹치게 오른쪽으로
     LV.forEach(function(x){ var i=segIdx(x.pct), tag=zoneLabel(i,x.lo,x.hi), tn=tagTone(tc,i), bg=tn.bg, fg=tn.fg;
       var half=x.half, y=x.y, re=cx+half, le=cx-half, e=estMap[x.key];
       // 우: 부위명(+ 예상 cm을 바로 옆에). cm 있으면 이름은 위·수치 아래로.
@@ -76,7 +76,7 @@
         +'<rect x="'+ps.toFixed(1)+'" y="'+(y-12)+'" width="'+tw.toFixed(1)+'" height="24" rx="12" fill="'+bg+'" stroke="'+fg+'" stroke-opacity=".45"/>'
         +'<circle cx="'+(ps+13).toFixed(1)+'" cy="'+y+'" r="3.2" fill="'+fg+'"/>'
         +'<text class="g-tag" x="'+(ps+24).toFixed(1)+'" y="'+(y+4)+'" fill="'+fg+'">'+esc(tag)+'</text>'; });
-    var svg='<svg viewBox="0 0 360 520" role="img" aria-label="고객 체형 실루엣">'
+    var svg='<svg viewBox="0 0 392 520" role="img" aria-label="고객 체형 실루엣">'
       +'<ellipse cx="'+cx+'" cy="514" rx="52" ry="9" fill="var(--fig-line)" opacity=".10"/>'
       +'<path d="'+arm(1)+'" fill="none" stroke="var(--fig-line)" stroke-width="13.5" stroke-linecap="round" opacity=".92"/>'
       +'<path d="'+arm(-1)+'" fill="none" stroke="var(--fig-line)" stroke-width="13.5" stroke-linecap="round" opacity=".92"/>'
