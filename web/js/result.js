@@ -314,6 +314,9 @@
           heightCm:(payload.basic&&payload.basic.height), weightKg:(payload.basic&&payload.basic.weight),
           chestFull:cm.chestFull, chestUpper:cm.chestUpper, waist:cm.waist, hip:cm.hip });
         if(bt && bt!==cardType){ cardType=bt; renderCard(bt); if(window._renderType&&window._btList) window._renderType(window._btList); }
+        // Fit(judge) 판정기준이 '결과와 같은 유형'을 쓰도록 세션에 정본 저장.
+        //  judge는 키·몸무게만 재분류하면 착용경험 보정(api=서버 eb)이 빠져 유형이 어긋남 → 여기 값을 그대로 읽게 함.
+        if(bt){ try{ sessionStorage.setItem('fitting.dxtype', JSON.stringify({ code:bt, gender:est.sex })); }catch(e){} }
       }
 
       // 측정: 마이 '내 체형 측정' 디자인 통일(상체/하체/취향 그룹 + 5칸 스펙트럼).
