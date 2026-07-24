@@ -680,6 +680,8 @@
   })();
 
   /* ═══ 진단 결과 피드백 — 토스트(rfbToast) + 정확도 검증 바(#rfb) 연동. 마이 embed에선 미노출 ═══ */
+  /* 진단 상태별 키 — 넣은 옷 수+완료 카테고리로 서명. 기본→상의→하의 매번 상태가 달라져 그때마다 토스트 재노출 */
+  function fbStateKey(){ try{ return 'fitting.result.fbToast.'+((nExp||0)+':'+Object.keys(doneCats||{}).sort().join(',')); }catch(e){ return 'fitting.result.fbToast'; } }
   function fbToastHide(){ var t=document.getElementById('rfbToast'); if(!t) return; t.classList.remove('on'); setTimeout(function(){ t.hidden=true; }, 380); }
   function fbToastThanks(){
     var t=document.getElementById('rfbToast'); if(!t) return;
@@ -698,13 +700,13 @@
       var consent=FDATA.readConsent();
       FDATA.saveFeedback({ ts:new Date().toISOString(), bodyType:cardType, verdict:vmap[val]||val, confidenceTier:confidenceTier, engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId });
     }catch(e){}
-    try{ sessionStorage.setItem('fitting.result.fbToast','1'); }catch(e){}
+    try{ sessionStorage.setItem(fbStateKey(),'1'); }catch(e){}
     if(from==='toast'){ fbToastThanks(); }   // 토스트에서 답 → '소중한 의견 감사합니다!' 후 닫힘
     else { fbToastHide(); }                    // 검증 바에서 답하면 토스트 닫기
   }
   (function fbToastInit(){
     if(/[?&]embed/.test(location.search)) return;   // 마이 내진단결과(embed)에선 토스트 없음
-    var KEY='fitting.result.fbToast', shown=false;
+    var KEY=fbStateKey(), shown=false;              // 진단 상태별 1회 — 새 진단(옷 추가)마다 상태가 바뀌어 매번 재노출
     try{ shown=sessionStorage.getItem(KEY)==='1'; }catch(e){}
     if(shown) return;
     function fire(){ try{ sessionStorage.setItem(KEY,'1'); }catch(e){}

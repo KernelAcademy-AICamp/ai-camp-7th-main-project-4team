@@ -389,7 +389,7 @@
   #p4 .conf-badge{ font-size:13px; font-weight:800; padding:5px 13px; border-radius:20px; }
   #p4 .conf-badge.low{ background:#F2ECE0; color:#8A7A52; } #p4 .conf-badge.mid{ background:#E7EFE7; color:#4A7A4A; } #p4 .conf-badge.high{ background:var(--rink); color:#fff; }
   #p4 .acc-reason{ margin-top:13px; font-size:15px; line-height:1.6; color:var(--sub); } #p4 .acc-reason b{ color:var(--ink); font-weight:800; }
-  #p4 .acc-sub{ display:block; margin-top:5px; }
+  #p4 .acc-sub{ display:block; margin-top:2px; }
   #p4 .tier-steps{ display:flex; gap:8px; margin-top:18px; }
   #p4 .tier-step{ flex:1; text-align:center; padding:11px 6px 9px; border-radius:12px; border:1px solid var(--line); background:#fff; }
   #p4 .tier-step .ts-b{ font-size:13px; font-weight:800; color:var(--sub2); } #p4 .tier-step .ts-c{ margin-top:3px; font-size:11.5px; color:var(--sub2); font-weight:600; }
