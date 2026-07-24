@@ -29,7 +29,7 @@
         '<div class="appnav-r">' +
           '<a class="sup" href="pro-signup.html">스타일리스트 지원</a>' +
           '<span class="navdiv" id="appnavDiv0"></span>' +
-          '<a class="navbell" id="appnavBell" href="index.html#my" title="알림" aria-label="알림">' + bell + '</a>' +
+          '<a class="navbell" id="appnavBell" href="index.html#my" title="알림" aria-label="알림">' + bell + '<span class="notidot" id="appnavNotiDot"></span></a>' +
           '<span class="navdiv" id="appnavBellDiv"></span>' +
           '<a class="navauth" id="appnavAuth" href="index.html#my">로그인 · 회원가입</a>' +
           '<span class="navuser" id="appnavUser"><span class="navav" id="appnavAv">김</span><span class="navname">김도현 님</span></span>' +
@@ -52,6 +52,12 @@
       if(be) be.style.display = inA ? 'inline-flex' : 'none';
       if(bd) bd.style.display = inA ? 'inline-block' : 'none';
       if(my) my.style.display = inA ? '' : 'none';              // 비로그인 시 My(개인 데이터) 숨김
+      // 알림점 — index와 동일하게 미읽음 알림이 있으면 표시(index.js NOTI_SEED를 fitting.notis로 공유).
+      //  이 컴포넌트는 알림을 시드하지 않는다(index가 소유) → 시드 전이면 점 없음(index도 동일).
+      var dot = byId('appnavNotiDot');
+      if(dot && inA){ var ns = lget('notis', null);
+        var unread = ns && ns.length ? ns.filter(function(n){ return !n.read; }).length : 0;
+        dot.style.display = unread > 0 ? 'block' : 'none'; }
     }
 
     // 아바타 = 결과 카드 캐릭터 얼굴(index #myAv와 동일 김도현). 로그인(proto)일 때만 존재.
