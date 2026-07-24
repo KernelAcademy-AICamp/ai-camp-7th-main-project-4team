@@ -36,8 +36,11 @@
     // MVP(api): 인증은 측정 대상 아님(진단=킬메트릭·수요=lead) + 소비자 로그인 목업 → 인증 표면 전체 숨김.
     // 상단은 Home + Stylists만. 진단·수요수집은 로그인 불필요.
     if(window.FDATA && FDATA.mode==='api'){
-      [a,u,b,bd,my].forEach(function(el){ if(el) el.style.display='none'; });
-      return;   // Stylists 탭은 유지 — 클릭 시 '준비 중 · 알림' 웨이트리스트로(리텐션)
+      // 우측 전체 숨김 — 인증(벨·유저·로그인) 목업 + 스타일리스트 지원(pro-signup, 전화인증 등 미구현)까지.
+      //  '스타일리스트 지원' 뒤에 뜬 구분선이 남지 않도록 개별 요소가 아니라 .navr 컨테이너를 통째로 숨긴다.
+      var navr=document.querySelector('header .navr'); if(navr) navr.style.display='none';
+      if(my) my.style.display='none';   // My 탭(메뉴 안)은 별도로 숨김
+      return;   // Stylists 탭(메뉴)은 유지 — 클릭 시 '준비 중 · 알림' 웨이트리스트로(리텐션)
     }
     if(a) a.style.display=inA?'none':'inline-flex';
     if(u) u.style.display=inA?'inline-flex':'none';

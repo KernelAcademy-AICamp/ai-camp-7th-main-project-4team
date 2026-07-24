@@ -67,7 +67,7 @@ body{
    본문(.container)은 940 유지 — 상하단 chrome만 넓게. */
 nav.top,
 footer.foot{margin-inline:calc(50% - 50vw);background:var(--field)}
-nav.top{padding-inline:max(24px, calc(50vw - 660px))}      /* 헤더 콘텐츠 1320 (index .nav와 동일) */
+nav.top{padding-inline:max(24px, calc(50vw - 636px))}      /* 로고 좌측정렬을 index/judge와 일치 — .nav(max-width:1320 border-box + 안쪽 24px 패딩)의 콘텐츠 시작(=(W-1320)/2+24)에 맞춤 */
 footer.foot{padding-inline:max(24px, calc(50vw - 620px))}  /* 푸터 콘텐츠 1240 (index .site-foot .in과 동일) */
 
 /* ---- 상단 프로토타입 배너 (각 화면 식별 — 발표용) ---- */
@@ -88,7 +88,10 @@ footer.foot{padding-inline:max(24px, calc(50vw - 620px))}  /* 푸터 콘텐츠 1
 /* ---- 글로벌 내비 ---- */
 nav.top{display:flex;align-items:center;justify-content:space-between;padding-block:22px;border-bottom:1px solid var(--line);
   position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}   /* index 헤더와 동일: 흰색 고정(sticky) */
-.logo{font-size:21px;font-weight:var(--dW);letter-spacing:var(--dS);color:var(--ink);text-decoration:none}
+/* 브랜드 로고 — index(.logo .sq)·judge(.appnav-logo)·diag(.dhead .logo) 정본과 동일 스펙(딥그린 22px + 초록 점).
+   콘텐츠 페이지(nav.top·legal-head)가 여기서 로고를 받아 정본과 일치. <i>는 클래스 없어도 점으로 렌더(diag .dhead .logo i와 동일 방식). */
+.logo{font-size:22px;font-weight:var(--dW);letter-spacing:-.05em;color:var(--accent);text-decoration:none;line-height:1}
+.logo i{display:inline-block;width:6px;height:6px;background:var(--accent);margin-left:2px;vertical-align:baseline}
 .nav-r{display:flex;gap:20px;align-items:center}
 .nav-link{font-size:14px;color:var(--muted);font-weight:600;cursor:pointer;text-decoration:none}
 .nav-login{font-size:14px;color:var(--ink);font-weight:700;cursor:pointer;text-decoration:none}
@@ -323,7 +326,7 @@ section.block{padding:48px 0;border-bottom:1px solid var(--line)}
 .notice.warn strong{color:var(--warn)}
 
 /* ---- 법적 고정 페이지 (G.3/G.4) ---- */
-.legal{max-width:720px;margin:0 auto;padding:40px 24px 0} /* 아래 패딩 0 — 풀블리드 footer 밴드가 바닥에 붙도록(간격은 footer margin-top) */
+.legal{max-width:720px;margin:0 auto;padding:40px 24px 64px} /* 하단 여백 — 공용 .site-foot는 옛 .foot의 margin-top이 없으므로 콘텐츠가 직접 확보 */
 .legal h1{font-size:26px;font-weight:var(--dW);letter-spacing:var(--dS);margin-bottom:6px}
 .legal .updated{font-size:13px;color:var(--faint);margin-bottom:32px}
 .legal h2{font-size:17px;font-weight:800;margin:28px 0 10px}
@@ -481,10 +484,12 @@ footer.foot a{font-size:13px;color:var(--muted);font-weight:500;text-decoration:
 footer.foot a:hover{color:var(--ink)}
 
 /* ---- 법적 페이지 헤더 (Precision, 절제) ---- */
-/* legal-head는 body 직속 → 전체폭 밴드 + 콘텐츠는 헤더 그리드(1320) 중앙 정렬 (nav.top과 동일 위치) */
-.legal-head{max-width:none;margin:0;padding:22px max(24px,calc(50vw - 660px));display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);
-  position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}   /* index 헤더와 동일: 흰색 고정(sticky) */
-.legal-head .logo{font-size:21px}   /* nav.top .logo와 통일(정보 페이지 5개 헤더 일치) */
+/* legal-head = 전체폭 흰색 밴드(=index <header>). 안쪽 콘텐츠는 .hdr-in(=index .nav)에 담아 로고를 index/judge와 픽셀 일치. */
+.legal-head{border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}   /* index <header>와 동일: 흰색 고정(sticky) */
+/* 헤더 안쪽 그리드 — index .nav 규격 그대로(max-width 1320·중앙정렬·height 66·padding 0 24) → 로고 좌측이 index/judge와 픽셀 일치. */
+.hdr-in{max-width:1320px;margin:0 auto;height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.legal-head .logo{font-size:22px}   /* nav.top .logo(22px)와 통일(정보 페이지 5개 헤더 일치) */
 .legal-head .back{font-size:14px;font-weight:700;color:var(--ink);text-decoration:none}   /* .nav-login과 통일(잉크) */
 .legal-head .back:hover{color:var(--ink)}
 
