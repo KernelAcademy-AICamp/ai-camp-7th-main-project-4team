@@ -381,7 +381,7 @@
   #p3 .part-list{ margin-top:12px; }
   #p3 .part-it{ display:flex; gap:13px; align-items:flex-start; padding:13px 0; border-bottom:1px solid var(--line); }
   #p3 .part-it:last-child{ border-bottom:0; padding-bottom:2px; }
-  #p3 .part-chip{ flex:none; width:52px; text-align:center; font-size:12.5px; font-weight:800; color:var(--g); background:var(--gs); padding:6px 0; border-radius:9px; }
+  #p3 .part-chip{ flex:none; width:52px; text-align:center; font-size:12.5px; font-weight:800; color:color-mix(in srgb, var(--tp,var(--g)) 74%, var(--ink)); background:color-mix(in srgb, var(--tp,var(--g)) 15%, #fff); padding:6px 0; border-radius:9px; }
   #p3 .part-it p{ margin:0; font-size:14.5px; line-height:1.55; color:#3d3b35; padding-top:2px; } #p3 .part-it p b{ color:var(--ink); font-weight:800; }
   #p3 .share-note{ margin-top:16px; padding-top:14px; border-top:1px solid var(--line); font-size:13px; color:var(--sub); line-height:1.6; } #p3 .share-note b{ color:var(--ink); font-weight:700; }
   /* 결과 근거(탭4) — 데이터 기반. 높음=착용경험 역산만. acc-prow=diag.css .acc-row 충돌 회피 */

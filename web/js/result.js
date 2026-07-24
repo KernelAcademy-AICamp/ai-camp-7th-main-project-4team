@@ -148,6 +148,7 @@
       if(!showCard) return;   // 카드가 나오면 유형 상세도 함께(부분도 노출 — 완성도는 신뢰도 배지로 구분)
       var t=(list||[]).filter(function(x){ return x.code===cardType; })[0]; if(!t) return;
       var tp=t.point||'#2E4A3B';
+      var p3=document.getElementById('p3'); if(p3) p3.style.setProperty('--tp',tp);   // 체형그림 탭 부위 뱃지도 유형색 따라감
       var idEl=document.getElementById('rtypeid');
       if(idEl){ idEl.style.setProperty('--tp',tp);
         idEl.innerHTML='<span class="dtl-code">'+t.code+'</span><h2 class="dtl-name">'+t.name+'</h2>'+
