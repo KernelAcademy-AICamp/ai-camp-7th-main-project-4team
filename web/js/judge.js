@@ -243,8 +243,8 @@
     });
     return ok;
   }
-  function brandFilled() { var b = $("jbrandin"); return !b || b.value.trim() !== ""; }   // 브랜드 필수(입력칸 없으면 통과)
-  function refreshRun() { var r = $("jrun"); if (r) r.disabled = !(state.ready && hasJudgeValue() && brandFilled()); }   // 진단(state.ready) 없으면 판정 불가
+  function brandFilled() { var cs = $("jconsent"); if (!cs || !cs.checked) return true; var b = $("jbrandin"); return !b || b.value.trim() !== ""; }   // 브랜드는 '사이즈표 활용' 동의 시에만 필수
+  function refreshRun() { var r = $("jrun"); if (r) r.disabled = !(state.ready && hasJudgeValue()); }   // 판정 버튼은 사이즈 값만 있으면 활성(브랜드는 저장용, 판정 조건 아님) · 진단(state.ready) 없으면 불가
   // 판정 후 입력부를 '사용됨'으로 흐리게 + 판정버튼 비활성. 결과 중엔 왼쪽 잠금(다른 옷 판정하기로만 해제).
   function setJudged(on) {
     var m = document.querySelector(".jsetup-main"); if (m) m.classList.toggle("judged", !!on);
@@ -257,6 +257,7 @@
     var aside = $("jaside"); if (aside) aside.hidden = false;
     ["jbrandin", "jprodin"].forEach(function (id) { var el = $(id); if (el) el.value = ""; });
     var cs = $("jconsent"); if (cs) cs.checked = false;
+    var jm = $("jmeta"); if (jm) jm.hidden = true;                                              // 동의 해제 → 브랜드 바 숨김
     var sm = $("jsharemsg"); if (sm) { sm.hidden = true; sm.textContent = ""; }
     var pt = $("jparsetable"); if (pt) pt.innerHTML = "";
     state.lastCell = null;                                           // 체형 오차(state.err)는 진단값이라 보존
@@ -291,6 +292,7 @@
     setCat(snap.cat); state.basis = snap.basis || null;
     var bi = $("jbrandin"); if (bi) bi.value = snap.brand || "";
     var pi = $("jprodin"); if (pi) pi.value = snap.product || "";
+    if (snap.brand || snap.product) { var rcs = $("jconsent"); if (rcs) rcs.checked = true; var rjm = $("jmeta"); if (rjm) rjm.hidden = false; }   // 저장된 브랜드 있으면 동의·바 복원
     state.parsed = { sizes: snap.sizes };
     if (snap.manual) { showManual(); renderCorrect(snap.sizes, true); }
     else {                                                            // 캡처 파싱 상태 흉내(썸네일 이미지는 저장 안 하므로 숨김)
@@ -739,7 +741,10 @@
     if (ev.target.closest("#jredo")) { resetJudge(); }
   });
   document.addEventListener("change", function (ev) {
-    if (ev.target.id === "jconsent" && ev.target.checked && state.lastCell) submitGarment();   // 판정 후 다시 체크한 경우
+    if (ev.target.id === "jconsent") {
+      var m = $("jmeta"); if (m) m.hidden = !ev.target.checked;                                 // 동의 시에만 브랜드·상품명 바 노출
+      if (ev.target.checked) { var bi = $("jbrandin"); if (bi) bi.focus(); if (state.lastCell) submitGarment(); }   // 판정 후 다시 체크한 경우
+    }
   });
   // 치수 입력 중 실시간으로 판정 버튼 활성/비활성 갱신
   document.addEventListener("input", function (ev) {
