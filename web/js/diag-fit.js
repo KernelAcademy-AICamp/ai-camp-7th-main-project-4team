@@ -198,10 +198,9 @@
      드롭다운 표기 → garments의 brandId 매핑. 데이터 없는 브랜드/카테고리는 DEFAULT_SIZES. */
   // 착용경험 입력은 앵커 브랜드만(오프라인 시착 편의+garment실측 역산). 브랜드 목록·표시명 전부 데이터에서:
   //  id·순서=garments $meta.anchorBrands, 표시명=spec.brandName. 하드코딩 레지스트리 없음 → 신규 브랜드 자동 반영.
-  //  option value=brandId(엔진 키), text=brandName. 폴백 옵션은 value=''(앵커 밖 브랜드 → 선호핏만 플로우).
+  //  option value=brandId(엔진 키), text=brandName. 앵커 밖 브랜드는 '찾는 브랜드가 없어요'(→0벌 기본진단)로 유도(폴백 옵션 없음).
   var ANCHOR_BRANDS=[];
   var BRAND_CAVEAT={zara:'편차 큼'};   // 사이즈 편차 UI 주석만(브랜드 레지스트리 아님) — 데이터 확장과 무관.
-  var FALLBACK_BRAND='— 목록에 없음 —';
   var DEFAULT_SIZES=['XS','S','M','L','XL'];
   var GARMENTS=null;
   // 실측(garment cm) 데이터가 있는 카테고리 = 착용경험 역산 대상. 없으면 선호핏만 받아 진단.
@@ -289,8 +288,12 @@
       var el=document.getElementById('brand'+g); if(!el) return;
       // 초기 로드: 정적 HTML 기본값(자라) 대신 DB 순서 첫 브랜드(접근성 1위=탑텐)를 기본 선택. 이후 렌더는 사용자 선택 보존.
       var prev=_brandsInit ? el.value : list[0].id;
+      // 앵커 브랜드만 노출 — 폴백('목록에 없음') 옵션은 두지 않는다. garment 실측이 없는 브랜드로 착용경험을
+      //  받으면 역산은 스킵되는데 experiences엔 남아 신뢰도·완료가 부풀기 때문(유령 경험). 목록 밖 브랜드는
+      //  '찾는 브랜드가 없어요' 링크(→ 0벌 기본진단)로 유도한다.
       var html=list.map(function(b){ return '<option value="'+b.id+'"'+(b.id===prev?' selected':'')+'>'+b.label+'</option>'; }).join('');
-      html+='<option value="">'+FALLBACK_BRAND+'</option>';
+      // prev가 목록에 없으면(과거 폴백 '' 선택 잔상) 첫 브랜드로 보정.
+      if(!list.some(function(b){ return b.id===prev; })) prev=list[0].id;
       el.innerHTML=html; el.value=prev;
     });
     _brandsInit=true;
@@ -411,8 +414,12 @@
     var cat=CATMAP[target]||'TOP', prefLine=fitLineFromPref();
     var exps=[], n=DIAGNOSE_AT[cur]||1;
     [1,2].slice(0,n).forEach(function(g){
+      var bsel=document.getElementById('brand'+g);
+      // 앵커 밖 브랜드(value='')는 garment 실측이 없어 역산 불가 → 유령 경험을 만들지 않는다.
+      //  (정적 HTML 폴백·file:// 대비 방어. 유령 경험은 신뢰도·완료를 부풀려 회귀 추정을 고신뢰로 오표시.)
+      if(!bsel || !bsel.value) return;
       var f=collectFeel(g);
-      var bsel=document.getElementById('brand'+g), bopt=bsel&&bsel.selectedOptions?bsel.selectedOptions[0]:null;
+      var bopt=bsel&&bsel.selectedOptions?bsel.selectedOptions[0]:null;
       var brandTxt=bopt?bopt.textContent.trim():'';   // 표시명(brandName). id는 value.
       var isel=document.getElementById('item'+g), opt=isel&&isel.selectedOptions?isel.selectedOptions[0]:null;
       var itemVal=isel?isel.value:'', axis=opt?opt.getAttribute('data-axis'):null;
