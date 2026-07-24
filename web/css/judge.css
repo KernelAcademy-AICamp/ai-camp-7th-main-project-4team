@@ -2,9 +2,10 @@
    result.css .rwrap과 동일하게 팔레트를 스코프(.jwrap)해 다른 화면과 격리. 값은 tokens.css 딥그린. */
 /* 팔레트·wrapper 규격은 result.css .rwrap과 동일하게 맞춰 형제 화면으로 통일. */
 .jwrap{
-  --g:var(--accent); --gs:#E7EFEA; --gl:#CBDDD2; --ink:var(--ink); --ink2:#3A382F;
-  --sub:var(--muted); --sub2:var(--faint); --line:var(--line); --line2:var(--field-line); --soft:#EDEDEA;
-  --warn:var(--warn); --wsoft:#F7ECE8; --surface:#fff;
+  /* ⚠ --ink/--line/--warn는 :root와 같은 이름이라 var(--ink) 자기참조=순환(무효)이 됨 → 배지·테두리 사라짐. 리터럴로 고정. */
+  --g:var(--accent); --gs:#E7EFEA; --gl:#CBDDD2; --ink:#16140F; --ink2:#3A382F;
+  --sub:var(--muted); --sub2:var(--faint); --line:#E6E5E1; --line2:var(--field-line); --soft:#EDEDEA;
+  --warn:#B0553F; --wsoft:#F7ECE8; --surface:#fff;
   max-width:1240px; margin:0 auto; padding:38px 30px 90px; color:var(--ink);   /* 컨테이너를 스타일리스트·마이(.wrap 1240·30 + .page 38)와 통일 → 헤더 좌측 정렬·위치 일치 */
 }
 .jwrap [hidden]{display:none !important;}   /* .jsetup/.jresult의 display:flex가 UA [hidden]을 덮는 것 방지 */
@@ -17,6 +18,7 @@
 .jcard{border:1px solid var(--gl); border-radius:20px; background:#FBFCFB; padding:22px;   /* 입력 존 = 옅은 그린 틴트로 결과 패널(흰)과 구분·돋보이게 */
   box-shadow:0 2px 4px rgba(46,74,59,.04), 0 14px 32px -20px rgba(46,74,59,.30);}
 .jstep + .jstep{margin-top:18px; padding-top:18px; border-top:1px solid var(--line);}
+.jcard.needdx .jstep + .jstep{opacity:.4; pointer-events:none;}   /* 진단 전엔 ②옷종류·③사이즈표(업로드) 잠금 — 진단 먼저 */
 .jstep-hd{display:flex; align-items:center; gap:10px; margin-bottom:12px;}   /* 숫자·라벨 한 줄 정중앙 정렬 */
 .jstep-n{flex:none; width:24px; height:24px; border-radius:7px; background:var(--ink); color:#fff;
   font-size:12.5px; font-weight:800; line-height:1; display:grid; place-items:center; text-align:center;}
@@ -101,7 +103,10 @@
 /* ── 상품(셀) 선택 ────────────────────────────────── */
 .jsetup{margin-top:26px; max-width:1080px;}
 /* 한 화면: 좌=좁은 입력 레일(고정) · 우=넓은 결과 캔버스. 판정 후에도 화면을 안 바꾸고 우측만 예시→결과로 교체. */
-.jsetup-cols{display:grid; grid-template-columns:380px minmax(0,1fr); gap:28px; align-items:start;}
+.jsetup-cols{display:grid; grid-template-columns:380px minmax(0,1fr); gap:28px; align-items:start; position:relative;}
+/* 리셋 전환 로딩 = 2단 전체 덮개(부분만 도는 어색함 방지) */
+.jcols-load{position:absolute; inset:-6px; z-index:6; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:15px;
+  background:rgba(246,246,245,.82); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); border-radius:18px;}
 .jsetup-main{display:flex; flex-direction:column; gap:22px; min-width:0; position:sticky; top:20px;}
 /* 판정 후 = 입력부 '사용됨'으로 흐리게(다시 만지면 해제) */
 .jsetup-main.judged .jcard{opacity:.5; pointer-events:none; transition:opacity .25s ease;}   /* 결과 중엔 왼쪽 입력 잠금 — 다른 옷 판정하기로만 리셋 */
@@ -218,9 +223,18 @@
 .jf-u{flex:none; font-size:11.5px; font-weight:700; color:var(--sub2);}
 
 /* 판정 전 = 아이콘 3스텝 한 줄 + 결과 골격(스켈레톤). 판정하면 #jaside→#jresult로 '같은 자리'가 채워져 갑작스런 전환을 줄임 */
-#jaside{display:flex; flex-direction:column; gap:14px;}
+#jaside{display:flex; flex-direction:column; gap:14px; position:relative;}
+/* 사진 인식 중 로딩 — 캔버스 위 오버레이(스피너 + 안내). 인식 끝나면 JS가 숨김 */
+.jload{position:absolute; inset:0; z-index:3; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:15px;
+  background:rgba(251,252,251,.78); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); border-radius:20px;}
+.jload-spin{width:36px; height:36px; border-radius:50%; border:3px solid var(--gl); border-top-color:var(--g); animation:jspin .8s linear infinite;}
+@keyframes jspin{to{transform:rotate(360deg);}}
+.jload-tx{font-size:14px; font-weight:700; color:var(--sub); text-align:center; line-height:1.5; display:flex; flex-direction:column; gap:2px;}
+.jload-tx b{color:var(--g); font-weight:800;}
+/* 왼쪽 인식 로딩 = 힌트 옆 작은 스피너(사진 올린 자리) */
+.jspin-sm{display:inline-block; width:13px; height:13px; border:2px solid var(--gl); border-top-color:var(--g); border-radius:50%; animation:jspin .8s linear infinite; vertical-align:-2px; margin-right:7px;}
 /* 흐름 안내 = 무채색 스트립(초록 없음, 위아래 얇은 선). 번호 대신 아이콘이라 왼쪽 ①②③과 안 겹침 */
-.jhowto{display:flex; align-items:center; flex-wrap:wrap; gap:7px 14px; padding:12px 4px; border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+.jhowto{display:flex; align-items:center; flex-wrap:wrap; gap:7px 14px; padding:12px 4px; border-top:1px solid var(--line2); border-bottom:1px solid var(--line2);}
 .jsetup > .jhowto{margin:2px 0 20px;}
 .jhowto-s{display:flex; align-items:center; gap:8px; font-size:14.5px; font-weight:800; color:var(--ink2);}
 .jhowto-ic{flex:none; width:26px; height:26px; border-radius:7px; background:var(--soft); color:var(--ink2); display:flex; align-items:center; justify-content:center;}
