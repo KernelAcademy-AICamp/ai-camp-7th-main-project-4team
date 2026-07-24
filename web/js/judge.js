@@ -53,15 +53,22 @@
     try { var qs = location.search || ""; if (/[?&]nodx=1/.test(qs)) sessionStorage.setItem(NODX_KEY, "1"); else if (/[?&]nodx=0/.test(qs)) sessionStorage.removeItem(NODX_KEY); } catch (e) {}
     var forceNoDx = false; try { forceNoDx = sessionStorage.getItem(NODX_KEY) === "1"; } catch (e) {}
     if (!window.BodyModel) return fail("체형 엔진을 불러오지 못했어요.");
+
+    // 화면부터 즉시 렌더 — 체형 모델은 뒤에서 로드(진입 시 '불러오는 중' 깜빡임 제거).
+    // 판정하기는 refreshRun의 state.ready 게이팅으로 모델 준비 전까지 잠겨 있어 안전.
+    var hasBasic = !!(basic && basic.height && basic.weight);
+    $("jloading").hidden = true;
+    if (forceNoDx || !hasBasic) showNeedDx();
+    else { $("jsetup").hidden = false; showCapture(); }
+
     BodyModel.load().then(function () {
+      if (forceNoDx || !hasBasic) return;   // 이미 '진단 필요' 화면 — 체형값 불필요
       var est = BodyModel.estimate(basic);
-      if (forceNoDx || !est || !est.ready) { showNeedDx(); return; }   // 진단 없는 신규 = 게이트 대신 ① 안에서 '진단 시작하기' 유도
+      if (!est || !est.ready) { showNeedDx(); return; }
       state.sex = est.sex;
       est.parts.forEach(function (p) { state.cm[p.key] = p.cm; if (p.rmse != null) state.err[p.key] = p.rmse; });
       state.ready = true;
-      $("jloading").hidden = true;
-      $("jsetup").hidden = false;
-      showCapture();
+      refreshRun();   // 모델 준비 완료 → 입력이 갖춰졌으면 판정하기 활성
       var back = false; try { back = sessionStorage.getItem(RETURN_KEY) === "1"; sessionStorage.removeItem(RETURN_KEY); } catch (e) {}
       if (back) restoreJudge();   // '진단 수정'에서 이전으로 돌아온 경우에만 이전 판정 복원
     }).catch(function (e) { fail("불러오는 중 문제가 생겼어요. 새로고침해 주세요."); });
@@ -99,7 +106,7 @@
   }
   // 사이즈표 넣기 탭(캡처 업로드 ↔ 직접 입력) 활성 표시 동기화
   function markTab(mode) { document.querySelectorAll(".jtab").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-tab") === mode); }); }
-  function showCapture() { showLoad(false); $("jcap").hidden = false; $("jcorrect").hidden = true; var m = $("jmiss"); if (m) m.hidden = true; var r = $("jrun"); if (r) r.disabled = true; state.parsed = null; state.manual = false; markTab("capture"); }
+  function showCapture() { showJudging(false); $("jcap").hidden = false; $("jcorrect").hidden = true; var m = $("jmiss"); if (m) m.hidden = true; var r = $("jrun"); if (r) r.disabled = true; state.parsed = null; state.manual = false; markTab("capture"); }
 
   // 붙여넣기/드롭/파일 → dataURL → 인식
   function onImageFile(file) {
@@ -121,11 +128,12 @@
       onParsed(resp.parsed);
     }).catch(function () { parseFailed(); });
   }
-  function showLoad(on, msg) {   // 오른쪽 캔버스 로딩 오버레이(판정 진행 / 리셋 전환). msg로 문구 교체.
-    var el = $("jload"); if (!el) return;
-    el.hidden = !on;
-    var tx = el.querySelector(".jload-tx");
-    if (on && tx) tx.innerHTML = msg || "판정을 진행 중이에요<b>잠시만요…</b>";
+  // 판정 중 = 결과 카드 자리(플레이스홀더 히어로)를 카드 뒷면 로딩으로 교체.
+  // 결과가 오면 #jresult의 #jflip이 같은 자리·같은 뒷면에서 그대로 뒤집혀 크기 점프가 없다.
+  function showJudging(on) {
+    var lc = $("jloadcard"), hero = $("jghhero");
+    if (lc) lc.hidden = !on;
+    if (hero) hero.hidden = !!on;
   }
   function parseUnavailable() { $("jparsehint").innerHTML = "이 환경에선 자동 인식이 안 돼요. <a class='jlink' data-act='manual'>직접 입력</a>으로 진행하세요."; }
   function parseFailed() { $("jparsehint").innerHTML = "표를 못 읽었어요. 더 또렷한 캡처로 다시 하거나 <a class='jlink' data-act='manual'>직접 입력</a>하세요."; }
@@ -314,12 +322,12 @@
     if (!cell.length) return showMiss("판정할 값이 없어요. 구매하는 사이즈의 치수를 채워주세요.");
     state.lastCell = cell;
     $("jrun").disabled = true;
-    showLoad(true);   // 판정 시작 → 오른쪽 결과 캔버스에 '판정 진행 중' 표시
+    showJudging(true);   // 판정 시작 → 결과 카드 자리에 카드 뒷면 로딩(결과 오면 그대로 뒤집힘)
     var canvas = $("jaside");   // 판정 누른 순간 결과 캔버스로 스크롤 → '판정 중' 로딩이 바로 보이게(버튼이 아래라 안 보이던 문제)
     if (canvas) canvas.scrollIntoView({ behavior: "smooth", block: "center" });
     computeJudgment({ category: state.cat, sex: state.sex, cm: state.cm, experiences: state.exps, errors: errForEngine(), cell: cell })
-      .then(function (j) { showLoad(false); $("jrun").disabled = false; if (!j) return showMiss(); render(j); saveJudgeSnapshot(); })
-      .catch(function () { showLoad(false); $("jrun").disabled = false; showMiss(); });
+      .then(function (j) { showJudging(false); $("jrun").disabled = false; if (!j) return showMiss(); render(j); saveJudgeSnapshot(); })
+      .catch(function () { showJudging(false); $("jrun").disabled = false; showMiss(); });
   }
   // api=서버(/api/judge, cell 전달·실측 비노출) / proto=클라 로컬(garments로 역산 + 캡처셀 판정)
   function computeJudgment(q) {
@@ -663,7 +671,7 @@
     $("jmiss").hidden = false;
     $("jmiss").textContent = msg || "판정할 수 없어요. 값을 확인해주세요.";
   }
-  function fail(msg) { $("jloading").textContent = msg; }
+  function fail(msg) { var l = $("jloading"); if (l) { l.hidden = false; l.textContent = msg; } }   // 화면을 먼저 띄우므로 오류 시 로딩영역을 다시 노출
 
   /* ── 이벤트 ─────────────────────────────────────────────── */
   document.addEventListener("click", function (ev) {

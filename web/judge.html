@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=6e180040">
 <link rel="stylesheet" href="css/diag.css?v=c3a3f62c">
-<link rel="stylesheet" href="css/judge.css?v=7bafff9a">
+<link rel="stylesheet" href="css/judge.css?v=42c6ebdb">
 <link rel="stylesheet" href="css/appnav.css?v=7d3c22bd">
 <script defer src="js/appnav.js?v=007ae564"></script>
 </head>
@@ -55,15 +55,15 @@
   <section class="jsetup" id="jsetup" hidden>
    <!-- 판정 흐름 안내 = 무채색 스트립(초록 없음, 위아래 얇은 선). 번호 대신 아이콘이라 왼쪽 ①②③과 안 겹침. -->
    <div class="jhowto">
-     <span class="jhowto-s"><span class="jhowto-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/></svg></span>사이즈표 넣기</span>
+     <span class="jhowto-s"><span class="jhowto-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/></svg></span>사이즈표 넣으면</span>
      <span class="jhowto-ar">→</span>
-     <span class="jhowto-s"><span class="jhowto-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>값 확인</span>
+     <span class="jhowto-s"><span class="jhowto-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>값 확인해서</span>
      <span class="jhowto-ar">→</span>
-     <span class="jhowto-s"><span class="jhowto-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg></span>판정</span>
+     <span class="jhowto-s"><span class="jhowto-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg></span>판정 완료</span>
    </div>
    <div class="jsetup-cols">
     <!-- 리셋(다른 옷 판정하기) 전환 로딩 — 2단 전체를 덮음(결과 패널만 도는 어색함 방지) -->
-    <div class="jcols-load" id="jcolsload" hidden><span class="jload-spin"></span><span class="jload-tx">새 판정을 준비하고 있어요<b>잠시만요…</b></span></div>
+    <div class="jcols-load" id="jcolsload" hidden><span class="jload-mk"><svg viewBox="0 0 66 66" fill="none"><circle class="trk" cx="33" cy="33" r="28" stroke-width="3"/><path class="arc" d="M33 5a28 28 0 0 1 24.2 14" stroke-width="3" stroke-linecap="round"/></svg><i>FIT</i></span><span class="jload-tx">새 판정을 준비하고 있어요…</span></div>
     <!-- 좌: 작업 -->
     <div class="jsetup-main">
       <!-- 입력부 = 번호 스텝 카드 하나로 묶음(①판정기준 ②옷종류 ③사이즈표). '뭐부터'가 번호로 자명. -->
@@ -139,9 +139,10 @@
       <!-- 판정 전 플레이스홀더 -->
       <div id="jaside">
         <!-- 판정 진행 중 로딩 오버레이(결과 캔버스 위) — 판정 끝나면 결과로 교체 -->
-        <div class="jload" id="jload" hidden><span class="jload-spin"></span><span class="jload-tx">판정을 진행 중이에요<b>잠시만요…</b></span></div>
+        <!-- 판정 중 = 결과 카드 자리에 카드 뒷면이 먼저 서서 로딩 → 결과 오면 그 카드가 그대로 뒤집힘(크기 점프 없음) -->
+        <div class="jloadcard" id="jloadcard" hidden><span class="jload-mk"><svg viewBox="0 0 66 66" fill="none"><circle class="trk" cx="33" cy="33" r="28" stroke-width="3"/><path class="arc" d="M33 5a28 28 0 0 1 24.2 14" stroke-width="3" stroke-linecap="round"/></svg><i>FIT</i></span><span class="jloadcard-tx">판정을 진행 중이에요…</span></div>
         <!-- 결과가 나올 자리(골격) — 판정하면 이 자리가 그대로 결과로 채워져요 -->
-        <div class="jgh-hero">
+        <div class="jgh-hero" id="jghhero">
           <span class="jgh-gauge">FIT</span>
           <div class="jgh-htx"><span class="jgh-ph">추천 사이즈</span><span class="jgh-ey">판정하면 여기 나와요</span></div>
         </div>
@@ -204,7 +205,7 @@
 <script src="js/engine.js?v=e865d040"></script>
 <script src="js/config.js?v=53f50277"></script>
 <script src="js/data.js?v=177a2945"></script>
-<script src="js/judge.js?v=b54e1299"></script>
+<script src="js/judge.js?v=ee18e4f7"></script>
 <script src="js/a11y.js?v=1876c5ec"></script>
 </body>
 </html>

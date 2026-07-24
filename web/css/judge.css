@@ -224,13 +224,21 @@
 
 /* 판정 전 = 아이콘 3스텝 한 줄 + 결과 골격(스켈레톤). 판정하면 #jaside→#jresult로 '같은 자리'가 채워져 갑작스런 전환을 줄임 */
 #jaside{display:flex; flex-direction:column; gap:14px; position:relative;}
-/* 사진 인식 중 로딩 — 캔버스 위 오버레이(스피너 + 안내). 인식 끝나면 JS가 숨김 */
-.jload{position:absolute; inset:0; z-index:3; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:15px;
-  background:rgba(251,252,251,.78); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); border-radius:20px;}
-.jload-spin{width:36px; height:36px; border-radius:50%; border:3px solid var(--gl); border-top-color:var(--g); animation:jspin .8s linear infinite;}
+/* 판정 중 = 결과 카드 자리에 카드 뒷면(.jflip-back과 동일)이 서서 로딩 → 결과가 오면 그 카드가 그대로 뒤집힘 */
+.jloadcard{height:200px; border-radius:20px; border:1px solid #22232a; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  background:radial-gradient(ellipse 72% 34% at 50% 12%, rgba(156,193,174,.22), transparent 60%), linear-gradient(165deg,#191a1f,#0f1014);}
+.jloadcard .jload-mk i{color:var(--gl);}
+.jloadcard .jload-mk .trk{stroke:rgba(255,255,255,.16);}
+.jloadcard .jload-mk .arc{stroke:#9FD9B7;}
+.jloadcard-tx{font-size:13.5px; font-weight:700; color:rgba(255,255,255,.72); margin-top:12px;}
+@media (max-width:520px){ .jloadcard{height:212px;} }
+/* 로딩 모션 = 브랜드 링(FIT 마크 + 얇은 아크) — 결과 카드의 FIT 게이지와 이어지게 */
+.jload-mk{position:relative; width:66px; height:66px; display:grid; place-items:center;}
+.jload-mk svg{position:absolute; inset:0; width:66px; height:66px; animation:jspin 1.15s cubic-bezier(.5,.1,.5,.9) infinite;}
+.jload-mk .trk{stroke:var(--gs);} .jload-mk .arc{stroke:var(--g);}
+.jload-mk i{font-style:normal; font-size:13px; font-weight:800; letter-spacing:.08em; color:var(--g);}
 @keyframes jspin{to{transform:rotate(360deg);}}
-.jload-tx{font-size:14px; font-weight:700; color:var(--sub); text-align:center; line-height:1.5; display:flex; flex-direction:column; gap:2px;}
-.jload-tx b{color:var(--g); font-weight:800;}
+.jload-tx{font-size:14.5px; font-weight:700; color:var(--sub); text-align:center; line-height:1.5;}
 /* 왼쪽 인식 로딩 = 힌트 옆 작은 스피너(사진 올린 자리) */
 .jspin-sm{display:inline-block; width:13px; height:13px; border:2px solid var(--gl); border-top-color:var(--g); border-radius:50%; animation:jspin .8s linear infinite; vertical-align:-2px; margin-right:7px;}
 /* 흐름 안내 = 무채색 스트립(초록 없음, 위아래 얇은 선). 번호 대신 아이콘이라 왼쪽 ①②③과 안 겹침 */
