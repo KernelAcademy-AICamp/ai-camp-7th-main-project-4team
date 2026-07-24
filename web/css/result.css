@@ -387,15 +387,15 @@
   /* 결과 근거(탭4) — 데이터 기반. 높음=착용경험 역산만. acc-prow=diag.css .acc-row 충돌 회피 */
   #p4 .av-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
   #p4 .conf-badge{ font-size:13px; font-weight:800; padding:5px 13px; border-radius:20px; }
-  #p4 .conf-badge.low{ background:#F2ECE0; color:#8A7A52; } #p4 .conf-badge.mid{ background:#E7EFE7; color:#4A7A4A; } #p4 .conf-badge.high{ background:var(--rink); color:#fff; }
+  #p4 .conf-badge.low{ background:#FAF1D6; color:#977B24; } #p4 .conf-badge.mid{ background:#E7F0E8; color:#3F7A4E; } #p4 .conf-badge.high{ background:var(--rink); color:#fff; }
   #p4 .acc-reason{ margin-top:13px; font-size:15px; line-height:1.6; color:var(--sub); } #p4 .acc-reason b{ color:var(--ink); font-weight:800; }
   #p4 .acc-sub{ display:block; margin-top:2px; }
   #p4 .tier-steps{ display:flex; gap:8px; margin-top:18px; }
   #p4 .tier-step{ flex:1; text-align:center; padding:11px 6px 9px; border-radius:12px; border:1px solid var(--line); background:#fff; }
   #p4 .tier-step .ts-b{ font-size:13px; font-weight:800; color:var(--sub2); } #p4 .tier-step .ts-c{ margin-top:3px; font-size:11.5px; color:var(--sub2); font-weight:600; }
   #p4 .tier-step .ts-dot{ display:inline-block; width:6px; height:6px; border-radius:50%; background:#D8D5CE; margin-bottom:5px; }
-  #p4 .tier-step.on.low{ border-color:#D8C9A6; background:#FBF6EB; } #p4 .tier-step.on.low .ts-b{ color:#8A7A52; } #p4 .tier-step.on.low .ts-dot{ background:#C7A860; }
-  #p4 .tier-step.on.mid{ border-color:#BFD8BF; background:#F0F6F0; } #p4 .tier-step.on.mid .ts-b{ color:#4A7A4A; } #p4 .tier-step.on.mid .ts-dot{ background:#4A7A4A; }
+  #p4 .tier-step.on.low{ border-color:#E4CF8C; background:#FBF6EB; } #p4 .tier-step.on.low .ts-b{ color:#977B24; } #p4 .tier-step.on.low .ts-dot{ background:#E3B53E; }
+  #p4 .tier-step.on.mid{ border-color:#BFD8BF; background:#F0F6F0; } #p4 .tier-step.on.mid .ts-b{ color:#3F7A4E; } #p4 .tier-step.on.mid .ts-dot{ background:#4A7A4A; }
   #p4 .tier-step.on.high{ border-color:var(--rink); background:#F3F1EC; } #p4 .tier-step.on.high .ts-b{ color:var(--rink); } #p4 .tier-step.on.high .ts-dot{ background:var(--rink); }
   #p4 .acc-parts{ margin-top:6px; }
   #p4 .acc-prow{ display:flex; align-items:center; gap:12px; padding:14px 0; border-bottom:1px solid var(--line); }
@@ -404,9 +404,9 @@
   #p4 .acc-mid{ flex:1; min-width:0; }
   #p4 .acc-src{ font-size:11.5px; font-weight:700; color:var(--sub2); } #p4 .acc-src.eb{ color:#4A7A4A; }
   #p4 .acc-bar{ display:flex; gap:4px; margin-top:6px; } #p4 .acc-bar span{ flex:1; height:7px; border-radius:4px; background:#EDE9E0; }
-  #p4 .acc-bar.high span.on{ background:#4A7A4A; } #p4 .acc-bar.mid span.on{ background:#8FB08F; } #p4 .acc-bar.low span.on{ background:#C9A24B; }
+  #p4 .acc-bar.high span.on{ background:var(--rink); } #p4 .acc-bar.mid span.on{ background:#4A7A4A; } #p4 .acc-bar.low span.on{ background:#E3B53E; }
   #p4 .acc-pill{ flex:none; font-size:11.5px; font-weight:800; padding:3px 9px; border-radius:7px; }
-  #p4 .acc-pill.high{ background:#E7EFE7; color:#4A7A4A; } #p4 .acc-pill.mid{ background:#EDEEF1; color:#3A382F; } #p4 .acc-pill.low{ background:#F7EFDD; color:#8A6D2E; }
+  #p4 .acc-pill.high{ background:var(--rink); color:#fff; } #p4 .acc-pill.mid{ background:#E7F0E8; color:#3F7A4E; } #p4 .acc-pill.low{ background:#FAF1D6; color:#977B24; }
   #p4 .acc-foot{ margin-top:15px; padding-top:13px; border-top:1px solid var(--line); font-size:14.5px; color:var(--sub); line-height:1.6; } #p4 .acc-foot b{ color:var(--ink); font-weight:700; }
 
   /* iframe 임베드(마이>내진단결과): 자체 헤더·닫기 숨김 — 부모 SPA 내비가 대신함 */

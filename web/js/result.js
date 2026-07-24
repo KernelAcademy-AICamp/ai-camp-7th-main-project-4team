@@ -707,12 +707,10 @@
   }
   (function fbToastInit(){
     if(/[?&]embed/.test(location.search)) return;   // 마이 내진단결과(embed)에선 토스트 없음
-    var KEY=fbStateKey(), shown=false;              // 진단 상태별 1회 — 새 진단(옷 추가)마다 상태가 바뀌어 매번 재노출
-    try{ shown=sessionStorage.getItem(KEY)==='1'; }catch(e){}
-    if(shown) return;
-    function fire(){ try{ sessionStorage.setItem(KEY,'1'); }catch(e){}
+    // 진단하고 결과로 들어올 때마다 노출(중복방지 없음). 페이지 로드 1회 = 토스트 1회.
+    function fire(){
       var t=document.getElementById('rfbToast'); if(!t) return; t.hidden=false;
       requestAnimationFrame(function(){ t.classList.add('on'); });
     }
-    window.addEventListener('load', function(){ setTimeout(fire, 6000); });   // 결과 본 뒤 6초
+    window.addEventListener('load', function(){ setTimeout(fire, 6000); });   // 결과 들어올 때마다 6초 뒤
   })();
