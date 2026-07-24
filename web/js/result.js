@@ -71,7 +71,10 @@
   var fullBody=cardReady || noneDone;   // 측정 상세는 실제 측정한 범위만 — 부분은 그 카테고리만(정직성 유지)
   // ── 결과 준비 로딩 오버레이: 측정·추천 렌더(_contentReady) + 카드 iframe 로드(_cardPainted)가 실제로 끝나면 한 번에 공개 ──
   var _contentReady=false, _cardPainted=false;
-  function hideRloading(){ var el=document.getElementById('rloading'); if(!el) return; el.classList.add('hide'); setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 400); }
+  function hideRloading(){ var el=document.getElementById('rloading'); if(!el) return; el.classList.add('hide'); setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 400);
+    // 결과 공개 순간 카드가 옆에서 열리며 안착(B) — 최초 1회만
+    if(!window._cardIntroDone){ window._cardIntroDone=true; var ci=document.querySelector('#cardslot iframe'); if(ci) ci.classList.add('card-intro'); }
+  }
   function maybeHideLoading(){ if(_contentReady && (_cardPainted || !showCard)) hideRloading(); }
   setTimeout(hideRloading, 4000);   // 안전장치: 무슨 일이 있어도 4초 뒤엔 공개(카드 로드 실패 등)
   function cardNoteHTML(){
