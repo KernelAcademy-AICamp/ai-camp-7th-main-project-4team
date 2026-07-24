@@ -103,10 +103,11 @@
    */
   function braToBody(size) {
     if (size == null) return null;
-    var m = String(size).toUpperCase().replace(/\s+/g, "").match(/^(\d{2,3})(AA|[A-H])$/);
+    var m = String(size).toUpperCase().replace(/\s+/g, "").match(/^([1-9]\d{1,2})(AA|[A-H])$/); // 선행 0 거부
     if (!m) return null;
     var band = parseInt(m[1], 10), cup = BRA_CUP[m[2]];
-    if (cup == null || band < 55 || band > 120) return null;   // 상식 범위 밖이면 오입력 취급
+    // 한국/JIS 밴드는 5cm 스텝(55·65·75…) — 5의 배수·55~120만 유효, 그 외(56·119 등)는 오입력→null.
+    if (cup == null || band < 55 || band > 120 || band % 5 !== 0) return null;
     return { underbust: band, cupCm: cup, bustFull: band + cup, source: "bra" };
   }
 

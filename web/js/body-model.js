@@ -84,6 +84,8 @@
 
     var coef = BASE[sex] || {}, dist = (DIST && DIST[sex]) || {};
     var parts = SHOW.map(function (s) {
+      // underbust는 여성 전용 축 — 성별 무입력이 female로 매핑되는 기본값을 타지 않게 명시 female만 통과.
+      if (s.key === "underbust" && basic.gender !== "female") return null;
       var c = coef[s.key]; if (!c) return null;
       var cm = c.a_height * h + c.b_weight * w + c.c_age * a + c.intercept;
       var out = { key: s.key, name: s.name, cm: Math.round(cm * 10) / 10, rmse: c.rmse_cm, r2: c.r2, pct: null };
