@@ -14,7 +14,7 @@
   @keyframes rspin{ to{ transform:rotate(360deg); } }
   @media (prefers-reduced-motion: reduce){ .rloading-spin{ animation:none; } }
   /* 결과 화면 — sohee 디자인 언어 + sangmin 콘텐츠 (자체 팔레트로 클래스 격리) */
-  /* ⚠ --ink/--line/--warn는 :root와 같은 이름이라 var(--ink) 자기참조=순환(무효)이 됨 → 버튼 배경·테두리가 사라짐. 리터럴로 고정. */
+  /* ⚠ --ink/--line/--warn는 :root와 같은 이름 → var(--x) 자기참조=순환(무효). 리터럴 고정. */
   .rwrap{ --g:var(--accent); --gs:#E7EFEA; --ink:#16140F; --ink2:#3A382F; --sub:var(--muted); --sub2:var(--faint);
           --line:#E6E5E1; --line2:var(--field-line); --warn:#B0553F; --wsoft:#F7ECE8;
           max-width:1180px; margin:0 auto; padding:36px 30px 90px; }
