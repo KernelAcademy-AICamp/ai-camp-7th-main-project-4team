@@ -92,6 +92,24 @@
     return out;
   }
 
+  // 브라 컵 → (젖가슴 − 젖가슴아래) 낙차 cm. 한국/JIS 2.5cm 스텝(AA=7.5, A=10 …). docs/6 §4.3.
+  var BRA_CUP = { AA: 7.5, A: 10, B: 12.5, C: 15, D: 17.5, E: 20, F: 22.5, G: 25, H: 27.5 };
+  /**
+   * 브라 사이즈 '재인' 입력을 몸축으로. "75B"·"75 b"·"70AA" → {underbust, cupCm, bustFull, source}.
+   *   밴드(65/70/75…) ≈ 젖가슴아래둘레(cm, ±2.5 반올림). 컵 = 낙차 → bustFull = 밴드 + 컵.
+   *   여성이 유일하게 숫자로 아는 치수라, '재라'가 아니라 '아는 걸 고르라'. 회귀 사전확률을 덮어씀.
+   *   못 읽으면 null → 호출부가 회귀 추정으로 폴백. 한국/JIS의 cm 밴드(55~120)만 인식 —
+   *   인치 밴드(US·EU 30~44)는 범위 밖이라 null 처리(오해석 대신 회귀 폴백). 국내 사용자 대부분 cm 밴드.
+   */
+  function braToBody(size) {
+    if (size == null) return null;
+    var m = String(size).toUpperCase().replace(/\s+/g, "").match(/^(\d{2,3})(AA|[A-H])$/);
+    if (!m) return null;
+    var band = parseInt(m[1], 10), cup = BRA_CUP[m[2]];
+    if (cup == null || band < 55 || band > 120) return null;   // 상식 범위 밖이면 오입력 취급
+    return { underbust: band, cupCm: cup, bustFull: band + cup, source: "bra" };
+  }
+
   // ① 의류 단면(flat) → 인체 축
   function toBodyAxis(part, flatCm) { return CMP[part] === "circ" ? flatCm * 2 : flatCm; }
   // ② 여유 = 의류환산 − 인체
@@ -484,7 +502,7 @@
     recommend: recommend, recommendBottom: recommendBottom, judge: judge,
     ease: ease, chestRating: chestRating, easeToRating: easeToRating,
     ratingToEase: ratingToEase, bodyFromExperiences: bodyFromExperiences,
-    judgeLength: judgeLength, lengthRating: lengthRating, judgeRise: judgeRise,
+    judgeLength: judgeLength, lengthRating: lengthRating, judgeRise: judgeRise, braToBody: braToBody,
     bands: BANDS, lenBands: LEN_BANDS, catParts: CAT_PARTS, partKo: PART_KO, _real: true
   };
 })(typeof window !== "undefined" ? window : this);

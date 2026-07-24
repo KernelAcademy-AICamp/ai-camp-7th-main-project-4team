@@ -278,6 +278,17 @@
       "rmse_cm": 3.31,
       "n": 2773
     },
+    "underbust": {
+      "label": "젖가슴아래둘레",
+      "bodyDimension": "underbustCircumference",
+      "a_height": -0.2471,
+      "b_weight": 0.6759,
+      "c_age": 0.1228,
+      "intercept": 72.338,
+      "r2": 0.825,
+      "rmse_cm": 2.97,
+      "n": 2773
+    },
     "neck": {
       "label": "목둘레",
       "bodyDimension": "neckCircumference",
