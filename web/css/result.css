@@ -8,11 +8,16 @@
   /* 결과 준비 로딩 오버레이 — 준비되면 result.js가 .hide 후 제거 */
   .rloading{ position:fixed; inset:0; z-index:900; display:flex; align-items:center; justify-content:center; background:#FBFAF8; transition:opacity .35s ease; }
   .rloading.hide{ opacity:0; pointer-events:none; }
-  .rloading-in{ display:flex; flex-direction:column; align-items:center; gap:16px; }
-  .rloading-spin{ width:38px; height:38px; border-radius:50%; border:3px solid var(--rline); border-top-color:var(--accent); animation:rspin .8s linear infinite; }
+  .rloading-in{ display:flex; flex-direction:column; align-items:center; gap:18px; }
+  /* 판정(Fit) 화면과 통일한 브랜드 로딩 — 회전 링 + 로고. #rloading은 .rwrap 밖이라 :root 토큰 사용 */
+  .rload-mk{ position:relative; width:128px; height:128px; display:grid; place-items:center; }
+  .rload-ring{ position:absolute; inset:0; width:128px; height:128px; animation:rloadspin 1.4s cubic-bezier(.5,.1,.5,.9) infinite; }
+  .rload-ring .trk{ stroke:#E7EFEA; } .rload-ring .arc{ stroke:var(--accent); }
+  .rload-lg{ font-size:26px; font-weight:800; letter-spacing:-.05em; line-height:1; color:var(--accent); }
+  .rload-lg .sq{ display:inline-block; width:8px; height:8px; background:#9CC1AE; margin-left:3px; vertical-align:baseline; }
+  @keyframes rloadspin{ to{ transform:rotate(360deg); } }
   .rloading-in p{ margin:0; font-size:15px; font-weight:700; color:var(--muted); letter-spacing:-.01em; }
-  @keyframes rspin{ to{ transform:rotate(360deg); } }
-  @media (prefers-reduced-motion: reduce){ .rloading-spin{ animation:none; } }
+  @media (prefers-reduced-motion: reduce){ .rload-ring{ animation:none; } }
   /* 결과 화면 — sohee 디자인 언어 + sangmin 콘텐츠 (자체 팔레트로 클래스 격리) */
   /* ⚠ --ink/--line/--warn는 :root와 같은 이름 → var(--x) 자기참조=순환(무효). 이름 다른 로컬(--rink 등)으로 토큰 참조. */
   .rwrap{ --g:var(--accent); --gs:#E7EFEA; --rink:var(--ink); --ink2:#3A382F; --sub:var(--muted); --sub2:var(--faint);
@@ -415,3 +420,22 @@
   html.embed #rupgrade,
   html.embed .rbottom{ display:none !important; }   /* 하단 저장·스타일리스트·초기화 CTA는 마이에선 불필요(마이 자체 액션이 대신) */
   html.embed .rtabs{ margin-top:4px; }
+
+  /* 진단 결과 피드백 토스트 — 진단 플로우 결과 화면에만(마이 embed에선 숨김). 10초 뒤 하단서 슬쩍, 1회. id=rtoast(result.js rToast)와 충돌 피해 rfbToast/.rfbtoast 사용 */
+  .rfbtoast{ --g:#2E4A3B; --gs:#E7EFEA; --ink:#16140F; --sub:#6E6B63; --sub2:#A6A29A; --line:#E6E5E1; --line2:#E0DED8;
+    position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(20px); z-index:2000;
+    width:min(440px,calc(100% - 32px)); background:#fff; border:1px solid var(--line); border-radius:16px;
+    box-shadow:0 12px 40px rgba(20,18,14,.16); padding:18px 20px 16px; opacity:0; transition:opacity .35s ease, transform .35s ease; }
+  .rfbtoast.on{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .rfbtoast-x{ position:absolute; top:11px; right:11px; width:26px; height:26px; border:0; background:none; cursor:pointer; color:var(--sub2); font-size:18px; line-height:1; border-radius:8px; }
+  .rfbtoast-x:hover{ background:#F1F0EC; }
+  .rfbtoast-ey{ font-size:11.5px; font-weight:800; letter-spacing:.02em; color:var(--g); margin-bottom:6px; }
+  .rfbtoast-q{ font-size:16px; font-weight:800; letter-spacing:-.02em; color:var(--ink); padding-right:24px; }
+  .rfbtoast-sub{ margin-top:5px; font-size:13px; color:var(--sub); }
+  .rfbtoast-btns{ display:flex; gap:8px; margin-top:14px; }
+  .rfb-b{ flex:1; padding:11px 6px; border:1px solid var(--line2,#E0DED8); border-radius:11px; background:#fff; font-family:inherit; font-size:14px; font-weight:700; color:var(--ink); cursor:pointer; transition:.14s; }
+  .rfb-b:hover{ border-color:var(--g); background:var(--gs); color:var(--g); }
+  .rfb-b.sel{ background:var(--g); border-color:var(--g); color:#fff; }
+  .rfbtoast-btns.answered .rfb-b:not(.sel){ opacity:.45; }
+  /* 마이 embed에선 결과 피드백(토스트·검증 바) 숨김 — 진단 플로우 결과에서만 노출 */
+  html.embed #rfb, html.embed .rfbtoast{ display:none !important; }

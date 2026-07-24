@@ -678,3 +678,38 @@
     window.addEventListener('resize', postH);
     if(window.ResizeObserver){ try{ new ResizeObserver(postH).observe(document.body); }catch(e){} }
   })();
+
+  /* ═══ 진단 결과 피드백 — 토스트(rfbToast) + 정확도 검증 바(#rfb) 연동. 마이 embed에선 미노출 ═══ */
+  function fbToastHide(){ var t=document.getElementById('rfbToast'); if(!t) return; t.classList.remove('on'); setTimeout(function(){ t.hidden=true; }, 380); }
+  function fbToastThanks(){
+    var t=document.getElementById('rfbToast'); if(!t) return;
+    var ey=t.querySelector('.rfbtoast-ey'), q=t.querySelector('.rfbtoast-q'), sub=t.querySelector('.rfbtoast-sub'), b=document.getElementById('rfbToastBtns');
+    if(ey) ey.style.display='none'; if(sub) sub.style.display='none'; if(b) b.style.display='none';
+    if(q) q.textContent='소중한 의견 감사합니다!';
+    setTimeout(fbToastHide, 1300);
+  }
+  /* 한쪽에서 답하면 검증 바·토스트 양쪽에 반영 + fb()와 동일 스키마로 저장 */
+  function pickFeedback(val, from, el){
+    window._resultFb=val;
+    var map={'비슷':'ok','보통':'mid','다름':'no'};
+    document.querySelectorAll('#rfb .rseg .o').forEach(function(o){ o.classList.toggle('on', o.classList.contains(map[val])); });
+    try{
+      var vmap={'비슷':'맞음','보통':'보통','다름':'안맞음'};
+      var consent=FDATA.readConsent();
+      FDATA.saveFeedback({ ts:new Date().toISOString(), bodyType:cardType, verdict:vmap[val]||val, confidenceTier:confidenceTier, engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId });
+    }catch(e){}
+    try{ sessionStorage.setItem('fitting.result.fbToast','1'); }catch(e){}
+    if(from==='toast'){ fbToastThanks(); }   // 토스트에서 답 → '소중한 의견 감사합니다!' 후 닫힘
+    else { fbToastHide(); }                    // 검증 바에서 답하면 토스트 닫기
+  }
+  (function fbToastInit(){
+    if(/[?&]embed/.test(location.search)) return;   // 마이 내진단결과(embed)에선 토스트 없음
+    var KEY='fitting.result.fbToast', shown=false;
+    try{ shown=sessionStorage.getItem(KEY)==='1'; }catch(e){}
+    if(shown) return;
+    function fire(){ try{ sessionStorage.setItem(KEY,'1'); }catch(e){}
+      var t=document.getElementById('rfbToast'); if(!t) return; t.hidden=false;
+      requestAnimationFrame(function(){ t.classList.add('on'); });
+    }
+    window.addEventListener('load', function(){ setTimeout(fire, 6000); });   // 결과 본 뒤 6초
+  })();
