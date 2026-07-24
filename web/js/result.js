@@ -327,7 +327,8 @@
         if(bt && bt!==cardType){ cardType=bt; renderCard(bt); if(window._renderType&&window._btList) window._renderType(window._btList); }
         // Fit(judge) 판정기준이 '결과와 같은 유형'을 쓰도록 세션에 정본 저장.
         //  judge는 키·몸무게만 재분류하면 착용경험 보정(api=서버 eb)이 빠져 유형이 어긋남 → 여기 값을 그대로 읽게 함.
-        if(bt){ try{ sessionStorage.setItem('fitting.dxtype', JSON.stringify({ code:bt, gender:est.sex })); }catch(e){} }
+        if(bt){ try{ sessionStorage.setItem('fitting.dxtype', JSON.stringify({ code:bt, gender:est.sex })); }catch(e){}
+          if(window._drawAvatar) window._drawAvatar(bt); }   // 체형 그림·부위색을 결과와 같은 확정 유형색으로 통일
       }
 
       // 측정: 마이 '내 체형 측정' 디자인 통일(상체/하체/취향 그룹 + 5칸 스펙트럼).
@@ -581,8 +582,11 @@
     }
     window.scrollTo({top:0,behavior:'smooth'});
   }
-  /* 체형 그림(탭3) = 스타일리스트(pro-quote)와 동일한 BodyFigure.svg + 사용자 실제 추정치 */
-  window.addEventListener('load', function avatarReal(){
+  /* 체형 그림(탭3) = 스타일리스트(pro-quote)와 동일한 BodyFigure.svg + 사용자 실제 추정치.
+     유형·색은 결과 카드와 통일: 유형 코드는 카드가 확정한 값(eb 보정 포함)을 우선 사용
+     (인자 forceCode → 저장된 fitting.dxtype), 없을 때만 키·몸무게로 재분류.
+     BodyFigure가 그 코드의 point색으로 아바타·부위 태그를 모두 칠해 결과 색과 맞춰짐. */
+  function drawAvatar(forceCode){
     var el=document.getElementById("ravatar"); if(!el) return;
     if(!window.BodyModel || !window.BodyFigure){ return; }
     var payload={}, basic={};
@@ -595,7 +599,9 @@
       var est=BodyModel.estimate(payload.basic||{});
       if(!est || !est.ready){ el.innerHTML='<div class="rnote">진단 데이터가 없어 아바타를 그릴 수 없어요</div>'; return; }
       var pm={}, cm={}; est.parts.forEach(function(p){ pm[p.key]=p.pct; cm[p.key]=p.cm; });
-      var code=''; if(window.FitBodyType){ code=FitBodyType.classify({ gender:est.sex,
+      var code=forceCode||'';
+      if(!code){ try{ code=(JSON.parse(sessionStorage.getItem('fitting.dxtype')||'{}').code)||''; }catch(e){} }
+      if(!code && window.FitBodyType){ code=FitBodyType.classify({ gender:est.sex,
         heightCm:payload.basic.height, weightKg:payload.basic.weight,
         chestFull:cm.chestFull, chestUpper:cm.chestUpper, waist:cm.waist, hip:cm.hip }) || ''; }
       var m={ top:{shoulder:pm.shoulder, chestFull:pm.chestFull},
@@ -610,7 +616,9 @@
       ].filter(function(x){ return x.val!=null; });
       el.innerHTML=BodyFigure.svg(m, {code:code}, est.sex, estArr, '낮음 (키·몸무게만)');
     });
-  });
+  }
+  window._drawAvatar=drawAvatar;                                   // 결과 카드가 유형 확정 후 같은 코드로 다시 그리게 노출
+  window.addEventListener('load', function(){ drawAvatar(); });
   /* 결과 근거(탭4) — 부위 r²로 종합/부위별 신뢰도. 높음=착용경험 역산만, 키·몸무게 추정=보통(≥.6)/낮음. (0벌 데모=eb 없음) */
   window.addEventListener('load', function accReal(){
     var host=document.getElementById('accParts'); if(!host || !window.BodyModel) return;
