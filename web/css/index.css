@@ -49,14 +49,15 @@
 
   /* ===== 홈 (줄자 리디자인 · _home2 이식) ===== */
   #home .hrow{max-width:1160px;margin:0 auto;padding:0 6px}
-  #home .invite-banner{display:none; align-items:center; gap:14px; margin:20px 0 -10px; padding:15px 18px; background:var(--green); color:#fff; border-radius:16px; box-shadow:0 8px 22px rgba(46,74,59,.22); animation:f .3s;}
+  #home .invite-banner{display:none; align-items:center; gap:14px; margin:20px 0 -10px; padding:15px 18px; background:var(--ink); color:#fff; border-radius:16px; box-shadow:0 8px 22px rgba(20,18,16,.22); animation:f .3s;}
   #home .invite-banner.on{display:flex;}
-  #home .invite-banner .ib-ic{font-size:24px; flex:none;}
+  #home .invite-banner .ib-ic{flex:none; width:26px; height:26px; color:#9FD9B7;}   /* 선물 = 선 아이콘(이모지 아님) · 차콜 배경 위 민트 포인트 */
+  #home .invite-banner .ib-ic svg{width:100%; height:100%; display:block;}
   #home .invite-banner .ib-tx{flex:1; min-width:0; line-height:1.4;}
   #home .invite-banner .ib-tx b{display:block; font-size:16px; font-weight:800;}
-  #home .invite-banner .ib-tx span{font-size:13px; opacity:.9;}
-  #home .invite-banner .ib-cta{flex:none; background:#fff; color:var(--green); font-weight:800; font-size:14px; padding:10px 16px; border-radius:10px; border:none; cursor:pointer; white-space:nowrap; font-family:inherit;}
-  #home .invite-banner .ib-x{flex:none; background:transparent; border:none; color:#fff; opacity:.7; font-size:16px; cursor:pointer; padding:4px;}
+  #home .invite-banner .ib-tx span{font-size:13px; opacity:.75;}
+  #home .invite-banner .ib-cta{flex:none; background:#fff; color:var(--ink); font-weight:800; font-size:14px; padding:10px 16px; border-radius:10px; border:none; cursor:pointer; white-space:nowrap; font-family:inherit;}
+  #home .invite-banner .ib-x{flex:none; background:transparent; border:none; color:#fff; opacity:.6; font-size:16px; cursor:pointer; padding:4px;}
   #home .invite-banner .ib-x:hover{opacity:1;}
   @media(max-width:560px){ #home .invite-banner{flex-wrap:wrap;} #home .invite-banner .ib-cta{order:3;} }
   #home .hhero{position:relative;overflow:hidden;padding:60px 0 74px;text-align:center}
