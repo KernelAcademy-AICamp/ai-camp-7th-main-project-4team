@@ -231,6 +231,7 @@
   }
   // 데이터 없음(basic 미입력) — 가짜 결과 대신 진단 유도.
   function renderNoData(){
+    try{ sessionStorage.removeItem('fitting.dxtype'); }catch(e){}   // 유효 진단 없음 → 옛 정본이 Fit 판정기준에 남지 않게 정리
     if(slot){ slot.className='rlock';
       slot.innerHTML='<div class="lk"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="8" rx="1.5"/><path d="M7 8v3M11 8v4M15 8v3"/></svg></div><div class="t1">아직 진단 데이터가 없어요</div>'+
         '<div class="t2">키·몸무게와 착용 경험을 입력하면 체형과 추천 사이즈가 나와요</div>'+
@@ -240,6 +241,7 @@
   }
   // 엔진/데이터 로드 실패 — 목업 유지가 아니라 정직한 오류.
   function renderLoadError(){
+    try{ sessionStorage.removeItem('fitting.dxtype'); }catch(e){}   // 로드 실패 → 옛 정본 정리(위와 동일 이유)
     if(slot && !cardType){ slot.className='rlock';
       slot.innerHTML='<div class="lk"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l9 16H3z"/><path d="M12 10v4"/><path d="M12 17h.01"/></svg></div><div class="t1">결과를 불러오지 못했어요</div><div class="t2">잠시 후 새로고침해 주세요</div>'; }
     renderRecsError();
