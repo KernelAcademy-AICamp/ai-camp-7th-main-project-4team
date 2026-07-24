@@ -72,7 +72,10 @@
   var fullBody=cardReady || noneDone;   // 측정 상세는 실제 측정한 범위만 — 부분은 그 카테고리만(정직성 유지)
   // ── 결과 준비 로딩 오버레이: 측정·추천 렌더(_contentReady) + 카드 iframe 로드(_cardPainted)가 실제로 끝나면 한 번에 공개 ──
   var _contentReady=false, _cardPainted=false;
-  function hideRloading(){ var el=document.getElementById('rloading'); if(!el) return; el.classList.add('hide'); setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 400); }
+  function hideRloading(){ var el=document.getElementById('rloading'); if(!el) return; el.classList.add('hide'); setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 400);
+    // 결과 공개 순간 카드가 옆에서 열리며 안착(B) — 최초 1회만
+    if(!window._cardIntroDone){ window._cardIntroDone=true; var ci=document.querySelector('#cardslot iframe'); if(ci) ci.classList.add('card-intro'); }
+  }
   function maybeHideLoading(){ if(_contentReady && (_cardPainted || !showCard)) hideRloading(); }
   setTimeout(hideRloading, 4000);   // 안전장치: 무슨 일이 있어도 4초 뒤엔 공개(카드 로드 실패 등)
   function cardNoteHTML(){
@@ -82,9 +85,13 @@
     // 업그레이드 유도 문구는 상단 배너(upgradeHTML)로 이동 — 여기선 정확도 배지만.
     return '<div class="rcardnote"><span class="rconf '+tier+'">정확도 '+tierKo+(tier==='low'?' · 기본 추정':'')+'</span></div>';
   }
-  // 완성 유도 배너(상단) — 부분(1/2)·0벌일 때만. 스텝 도트(상의✓/하의○) + 문장 + CTA
+  // 완성 유도 배너(상단) — 상태별 CTA: 0벌·부분=진단 유도 / 완료(2/2)=판정하기 유도
   function upgradeHTML(){
-    if(cardReady) return '';   // 완성(2/2) → 배너 없음
+    if(cardReady){   // 완성(2/2) → 판정하기 유도바(진단 대신 '사려는 옷' 판정으로 유도)
+      return '<div class="rup-wrap"><span class="rup-badge">진단 완료</span>'
+        +'<div class="rup-msg"><b>사려는 옷</b>이 맞을지 궁금하면 사이즈표로 바로 판정해봐요</div>'
+        +'<a class="rup-btn" href="judge.html">판정하기</a></div>';
+    }
     var doneN=(upperDone?1:0)+(lowerDone?1:0);   // 0(0벌) 또는 1(부분)
     var badge='<span class="rup-badge">STEP '+doneN+' / 2</span>';
     var msg, href, btn;
@@ -141,6 +148,7 @@
       if(!showCard) return;   // 카드가 나오면 유형 상세도 함께(부분도 노출 — 완성도는 신뢰도 배지로 구분)
       var t=(list||[]).filter(function(x){ return x.code===cardType; })[0]; if(!t) return;
       var tp=t.point||'#2E4A3B';
+      var p3=document.getElementById('p3'); if(p3) p3.style.setProperty('--tp',tp);   // 체형그림 탭 부위 뱃지도 유형색 따라감
       var idEl=document.getElementById('rtypeid');
       if(idEl){ idEl.style.setProperty('--tp',tp);
         idEl.innerHTML='<span class="dtl-code">'+t.code+'</span><h2 class="dtl-name">'+t.name+'</h2>'+
@@ -319,7 +327,8 @@
         if(bt && bt!==cardType){ cardType=bt; renderCard(bt); if(window._renderType&&window._btList) window._renderType(window._btList); }
         // Fit(judge) 판정기준이 '결과와 같은 유형'을 쓰도록 세션에 정본 저장.
         //  judge는 키·몸무게만 재분류하면 착용경험 보정(api=서버 eb)이 빠져 유형이 어긋남 → 여기 값을 그대로 읽게 함.
-        if(bt){ try{ sessionStorage.setItem('fitting.dxtype', JSON.stringify({ code:bt, gender:est.sex })); }catch(e){} }
+        if(bt){ try{ sessionStorage.setItem('fitting.dxtype', JSON.stringify({ code:bt, gender:est.sex })); }catch(e){}
+          if(window._drawAvatar) window._drawAvatar(bt); }   // 체형 그림·부위색을 결과와 같은 확정 유형색으로 통일
       }
 
       // 측정: 마이 '내 체형 측정' 디자인 통일(상체/하체/취향 그룹 + 5칸 스펙트럼).
@@ -561,3 +570,155 @@
     document.body.appendChild(wrap);
   }
   function closeRModal(){ var m=document.getElementById('rmodal'); if(m) m.remove(); }
+
+  /* ═══════ 결과 4탭 재구성 — 탭 전환 · 체형 그림(아바타) · 결과 근거(신뢰도) · 결과 풀이 헤더 ═══════ */
+  function goTab(n){
+    for(var i=1;i<=4;i++){
+      var tab=document.getElementById('t'+i), pane=document.getElementById('p'+i);
+      if(!tab||!pane) continue;
+      var on=(i===n);
+      tab.classList.toggle('on',on); tab.setAttribute('aria-selected',on?'true':'false');
+      pane.classList.toggle('on',on);
+    }
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  /* 체형 그림(탭3) = 스타일리스트(pro-quote)와 동일한 BodyFigure.svg + 사용자 실제 추정치.
+     유형·색은 결과 카드와 통일: 유형 코드는 카드가 확정한 값(eb 보정 포함)을 우선 사용
+     (인자 forceCode → 저장된 fitting.dxtype), 없을 때만 키·몸무게로 재분류.
+     BodyFigure가 그 코드의 point색으로 아바타·부위 태그를 모두 칠해 결과 색과 맞춰짐. */
+  function drawAvatar(forceCode){
+    var el=document.getElementById("ravatar"); if(!el) return;
+    if(!window.BodyModel || !window.BodyFigure){ return; }
+    var payload={}, basic={};
+    try{ payload=JSON.parse(sessionStorage.getItem('fitting.dx')||'{}'); }catch(e){}
+    try{ basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'{}'); }catch(e){}
+    if(!payload.basic || payload.basic.height==null) payload.basic=basic;
+    var prefs=payload.prefs||{};
+    var FITPCT={skinny:20,slim:32,regular:55,loose:70,oversize:85,straight:50,wide:78,tight:30};
+    BodyModel.load().then(function(){
+      var est=BodyModel.estimate(payload.basic||{});
+      if(!est || !est.ready){ el.innerHTML='<div class="rnote">진단 데이터가 없어 아바타를 그릴 수 없어요</div>'; return; }
+      var pm={}, cm={}; est.parts.forEach(function(p){ pm[p.key]=p.pct; cm[p.key]=p.cm; });
+      var code=forceCode||'';
+      if(!code){ try{ code=(JSON.parse(sessionStorage.getItem('fitting.dxtype')||'{}').code)||''; }catch(e){} }
+      if(!code && window.FitBodyType){ code=FitBodyType.classify({ gender:est.sex,
+        heightCm:payload.basic.height, weightKg:payload.basic.weight,
+        chestFull:cm.chestFull, chestUpper:cm.chestUpper, waist:cm.waist, hip:cm.hip }) || ''; }
+      var m={ top:{shoulder:pm.shoulder, chestFull:pm.chestFull},
+              bottom:{waist:pm.waist, hip:pm.hip},
+              prefTop:FITPCT[prefs.TOP||'regular']||55, prefBottom:FITPCT[prefs.BOTTOM||'straight']||50 };
+      function r(v){ return v==null?null:Math.round(v); }
+      var estArr=[
+        {label:'어깨너비',   val:r(cm.shoulder),               pm:1},
+        {label:'가슴둘레',   val:r(cm.chestUpper||cm.chestFull), pm:3},
+        {label:'허리둘레',   val:r(cm.waist),                  pm:3},
+        {label:'엉덩이둘레', val:r(cm.hip),                    pm:3}
+      ].filter(function(x){ return x.val!=null; });
+      el.innerHTML=BodyFigure.svg(m, {code:code}, est.sex, estArr, '낮음 (키·몸무게만)');
+    });
+  }
+  window._drawAvatar=drawAvatar;                                   // 결과 카드가 유형 확정 후 같은 코드로 다시 그리게 노출
+  window.addEventListener('load', function(){ drawAvatar(); });
+  /* 결과 근거(탭4) — 부위 r²로 종합/부위별 신뢰도. 높음=착용경험 역산만, 키·몸무게 추정=보통(≥.6)/낮음. (0벌 데모=eb 없음) */
+  window.addEventListener('load', function accReal(){
+    var host=document.getElementById('accParts'); if(!host || !window.BodyModel) return;
+    var payload={}, basic={};
+    try{ payload=JSON.parse(sessionStorage.getItem('fitting.dx')||'{}'); }catch(e){}
+    try{ basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'{}'); }catch(e){}
+    if(!payload.basic || payload.basic.height==null) payload.basic=basic;
+    var nExp=(payload.experiences||[]).length;
+    var tier=nExp<=0?'low':(nExp===1?'mid':'high');
+    var KO={low:'낮음',mid:'보통',high:'높음'}, FILL={high:5,mid:3,low:2}, eb={};
+    function cert(r2,isEb){ return isEb?'high':(r2>=0.6?'mid':'low'); }
+    BodyModel.load().then(function(){
+      var est=BodyModel.estimate(payload.basic||{}); if(!est||!est.ready) return;
+      var byKey={}; est.parts.forEach(function(p){ byKey[p.key]=p; });
+      var cb=document.getElementById('confBadge'); if(cb){ cb.className='conf-badge '+tier; cb.textContent=KO[tier]; }
+      var cr=document.getElementById('confReason'); if(cr) cr.innerHTML = nExp<=0
+        ? '입어본 옷 <b>0벌</b> · 키·몸무게로만 추정한 <b>기본 단계</b>예요<span class="acc-sub">옷을 넣을수록 정확도가 올라가요</span>'
+        : (nExp===1 ? '입어본 옷 <b>1벌</b> 반영 · 일부 부위가 <b>실측으로 보정</b>됐어요<span class="acc-sub">하의를 넣으면 높음이 돼요</span>'
+                    : '입어본 옷 <b>'+nExp+'벌</b> 반영 · 대부분 부위가 실측으로 좁혀진 <b>정밀 단계</b>예요<span class="acc-sub">이 결과를 그대로 믿고 쓰셔도 돼요</span>');
+      var steps=[['낮음','옷 0벌','low'],['보통','옷 1벌','mid'],['높음','옷 2벌+','high']], si=(tier==='low'?0:tier==='mid'?1:2);
+      var ts=document.getElementById('tierSteps'); if(ts) ts.innerHTML=steps.map(function(s,i){ return '<div class="tier-step'+(i===si?' on '+s[2]:'')+'"><span class="ts-dot"></span><div class="ts-b">'+s[0]+'</div><div class="ts-c">'+s[1]+'</div></div>'; }).join('');
+      var PARTS=[['shoulder','어깨'],['chestFull','가슴'],['waist','허리'],['hip','엉덩이']], rows='', weakest=null;
+      PARTS.forEach(function(pp){
+        var p=byKey[pp[0]]||{}, isEb=!!eb[pp[0]], r2=p.r2!=null?p.r2:0.5, c=cert(r2,isEb);
+        if(!isEb && (!weakest||r2<weakest.r2)) weakest={ko:pp[1],c:c};
+        var segs=''; for(var i=0;i<5;i++) segs+='<span class="'+(i<FILL[c]?'on':'')+'"></span>';
+        rows+='<div class="acc-prow"><div class="acc-name">'+pp[1]+'</div><div class="acc-mid"><div class="acc-src'+(isEb?' eb':'')+'">'+(isEb?'착용경험 역산':'키·몸무게 추정')+'</div><div class="acc-bar '+c+'">'+segs+'</div></div><span class="acc-pill '+c+'">'+KO[c]+'</span></div>';
+      });
+      host.innerHTML=rows;
+      var af=document.getElementById('accFoot'); if(af) af.innerHTML = (tier==='high')
+        ? '네 부위 모두 착용경험으로 좁혀졌어요 — <b>가장 정확한 단계</b>예요'
+        : '상의·하의를 넣으면 각 부위가 <b>실측으로 좁혀져</b>요';
+    });
+  });
+  /* 결과 풀이(탭2) 헤더 — 유형 칩(사이즈코리아)+요약(profile[1])을 means 패널 헤더로 주입. 소스=#rtypeid(숨김) */
+  (function pulHeader(){
+    var tries=0, t=setInterval(function(){
+      var means=document.getElementById('means');
+      var korea=document.querySelector('#rtypeid .dtl-korea');
+      var desc=document.querySelector('#rtypeid .dtl-desc');
+      var kick=means && means.querySelector('.rkicker');
+      if(means && korea && desc && kick && !means.querySelector('.d-head')){
+        var head=document.createElement('div'); head.className='d-head';
+        kick.replaceWith(head); head.appendChild(kick);
+        var chip=document.createElement('span'); chip.className='d-korea'; chip.textContent=korea.textContent.trim();
+        head.appendChild(chip);
+        var b=desc.querySelector('b');
+        var p1=(b ? desc.textContent.replace(b.textContent,'') : desc.textContent).trim();
+        var s=document.createElement('div'); s.className='d-sum'; s.textContent=p1;
+        head.insertAdjacentElement('afterend', s);
+        clearInterval(t);
+      }
+      if(++tries>40) clearInterval(t);
+    },100);
+  })();
+
+  /* 해시 딥링크(#t2~#t4)로 특정 탭 열기 */
+  if(/^#t[1-4]$/.test(location.hash)){ window.addEventListener("load",function(){ goTab(+location.hash.slice(2)); }); }
+
+  /* ═══ iframe 임베드(마이>내진단결과) — 헤더 숨김 + 콘텐츠 높이를 부모로 전송(더블 스크롤 방지) ═══ */
+  (function(){
+    if(!/[?&]embed/.test(location.search)) return;
+    document.documentElement.classList.add('embed');
+    function postH(){ try{ parent.postMessage({ t:'fit-embed-h', h:Math.ceil(document.body.getBoundingClientRect().height) }, '*'); }catch(e){} }
+    window.addEventListener('load', function(){ postH(); setTimeout(postH,300); setTimeout(postH,1200); });
+    window.addEventListener('resize', postH);
+    if(window.ResizeObserver){ try{ new ResizeObserver(postH).observe(document.body); }catch(e){} }
+  })();
+
+  /* ═══ 진단 결과 피드백 — 토스트(rfbToast) + 정확도 검증 바(#rfb) 연동. 마이 embed에선 미노출 ═══ */
+  /* 진단 상태별 키 — 넣은 옷 수+완료 카테고리로 서명. 기본→상의→하의 매번 상태가 달라져 그때마다 토스트 재노출 */
+  function fbStateKey(){ try{ return 'fitting.result.fbToast.'+((nExp||0)+':'+Object.keys(doneCats||{}).sort().join(',')); }catch(e){ return 'fitting.result.fbToast'; } }
+  function fbToastHide(){ var t=document.getElementById('rfbToast'); if(!t) return; t.classList.remove('on'); setTimeout(function(){ t.hidden=true; }, 380); }
+  function fbToastThanks(){
+    var t=document.getElementById('rfbToast'); if(!t) return;
+    var ey=t.querySelector('.rfbtoast-ey'), q=t.querySelector('.rfbtoast-q'), sub=t.querySelector('.rfbtoast-sub'), b=document.getElementById('rfbToastBtns');
+    if(ey) ey.style.display='none'; if(sub) sub.style.display='none'; if(b) b.style.display='none';
+    if(q) q.textContent='소중한 의견 감사합니다!';
+    setTimeout(fbToastHide, 1300);
+  }
+  /* 한쪽에서 답하면 검증 바·토스트 양쪽에 반영 + fb()와 동일 스키마로 저장 */
+  function pickFeedback(val, from, el){
+    window._resultFb=val;
+    var map={'비슷':'ok','보통':'mid','다름':'no'};
+    document.querySelectorAll('#rfb .rseg .o').forEach(function(o){ o.classList.toggle('on', o.classList.contains(map[val])); });
+    try{
+      var vmap={'비슷':'맞음','보통':'보통','다름':'안맞음'};
+      var consent=FDATA.readConsent();
+      FDATA.saveFeedback({ ts:new Date().toISOString(), bodyType:cardType, verdict:vmap[val]||val, confidenceTier:confidenceTier, engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId });
+    }catch(e){}
+    try{ sessionStorage.setItem(fbStateKey(),'1'); }catch(e){}
+    if(from==='toast'){ fbToastThanks(); }   // 토스트에서 답 → '소중한 의견 감사합니다!' 후 닫힘
+    else { fbToastHide(); }                    // 검증 바에서 답하면 토스트 닫기
+  }
+  (function fbToastInit(){
+    if(/[?&]embed/.test(location.search)) return;   // 마이 내진단결과(embed)에선 토스트 없음
+    // 진단하고 결과로 들어올 때마다 노출(중복방지 없음). 페이지 로드 1회 = 토스트 1회.
+    function fire(){
+      var t=document.getElementById('rfbToast'); if(!t) return; t.hidden=false;
+      requestAnimationFrame(function(){ t.classList.add('on'); });
+    }
+    window.addEventListener('load', function(){ setTimeout(fire, 6000); });   // 결과 들어올 때마다 6초 뒤
+  })();

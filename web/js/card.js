@@ -73,6 +73,7 @@
       '<div class="hcbody">'+figHTML(d)+
         '<div class="code">'+d.code+'</div>'+
         '<div class="word">'+d.name+'</div>'+
+        ((d.signature&&d.signature.length)?'<div class="chash">'+d.signature.map(function(h){return '<span>'+String(h).replace(/^#/,'#')+'</span>';}).join('')+'</div>':'')+
         '<div class="tagline">'+((d.profile&&d.profile[0])||'')+'</div>'+
       '</div>'+
       (compact?'':'<div class="fliphint">'+HINT_F+'자세히 보기</div>')+
@@ -100,7 +101,17 @@
     '</div>';
     card.innerHTML='<div class="flip" id="flip">'+front+back+'</div>';
     var flip=document.getElementById('flip');
-    card.addEventListener('click', function(e){ if(e.target.closest('.cacts')) return; flip.classList.toggle('turned'); });   // 카드 클릭 = 뒤집기(저장·공유 버튼 제외)
+    card.addEventListener('click', function(e){ if(e.target.closest('.cacts')) return; peekCancel(); flip.classList.toggle('turned'); });   // 카드 클릭 = 뒤집기(저장·공유 버튼 제외)
+    // 뒤집을 수 있다는 힌트 — 3초간 안 만지면 살짝 엿보였다 복귀(1회). 만지면 취소.
+    var peekT, peeked=false;
+    function peekCancel(){ if(peekT){ clearTimeout(peekT); peekT=null; } card.classList.remove('peeking'); }
+    function schedulePeek(){ peekT=setTimeout(function(){
+      if(peeked || flip.classList.contains('turned')) return; peeked=true;
+      card.classList.add('peeking'); flip.classList.add('turned');
+      setTimeout(function(){ if(!card.classList.contains('peeking')) return; flip.classList.remove('turned'); card.classList.remove('peeking'); }, 1100);
+    }, 3000); }
+    ['click','pointerdown','touchstart'].forEach(function(ev){ card.addEventListener(ev, function(){ peeked=true; peekCancel(); }, {once:false}); });
+    schedulePeek();
     wireActions(d);
   }
 
