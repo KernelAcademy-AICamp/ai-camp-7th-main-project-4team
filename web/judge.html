@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=6e180040">
 <link rel="stylesheet" href="css/diag.css?v=c3a3f62c">
-<link rel="stylesheet" href="css/judge.css?v=e2383001">
+<link rel="stylesheet" href="css/judge.css?v=fb3294c4">
 <link rel="stylesheet" href="css/appnav.css?v=7d3c22bd">
 <script defer src="js/appnav.js?v=007ae564"></script>
 </head>
@@ -62,6 +62,8 @@
      <span class="jhowto-s"><span class="jhowto-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg></span>판정</span>
    </div>
    <div class="jsetup-cols">
+    <!-- 리셋(다른 옷 판정하기) 전환 로딩 — 2단 전체를 덮음(결과 패널만 도는 어색함 방지) -->
+    <div class="jcols-load" id="jcolsload" hidden><span class="jload-spin"></span><span class="jload-tx">새 판정을 준비하고 있어요<b>잠시만요…</b></span></div>
     <!-- 좌: 작업 -->
     <div class="jsetup-main">
       <!-- 입력부 = 번호 스텝 카드 하나로 묶음(①판정기준 ②옷종류 ③사이즈표). '뭐부터'가 번호로 자명. -->
@@ -136,6 +138,8 @@
     <aside class="jsetup-side">
       <!-- 판정 전 플레이스홀더 -->
       <div id="jaside">
+        <!-- 판정 진행 중 로딩 오버레이(결과 캔버스 위) — 판정 끝나면 결과로 교체 -->
+        <div class="jload" id="jload" hidden><span class="jload-spin"></span><span class="jload-tx">판정을 진행 중이에요<b>잠시만요…</b></span></div>
         <!-- 결과가 나올 자리(골격) — 판정하면 이 자리가 그대로 결과로 채워져요 -->
         <div class="jgh-hero">
           <span class="jgh-gauge">FIT</span>
@@ -199,8 +203,8 @@
 <script src="js/body-model.js?v=098c1c4f"></script>
 <script src="js/engine.js?v=e865d040"></script>
 <script src="js/config.js?v=53f50277"></script>
-<script src="js/data.js?v=0353494d"></script>
-<script src="js/judge.js?v=a9b65940"></script>
+<script src="js/data.js?v=177a2945"></script>
+<script src="js/judge.js?v=b54e1299"></script>
 <script src="js/a11y.js?v=1876c5ec"></script>
 </body>
 </html>

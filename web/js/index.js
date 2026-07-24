@@ -1497,16 +1497,16 @@
       var wl=document.createElement('div'); wl.id='stylistWaitlist'; wl.style.display='none';
       wl.innerHTML=
         '<div class="reqpage">'+
-        '<h1>스타일리스트 매칭,<br>곧 만나요</h1>'+
-        '<p class="lead">진단 결과에 딱 맞는 <b style="color:var(--ink)">검증된 스타일리스트</b>가 코디를 골라주는 기능을 준비하고 있어요 · 오픈 알림을 신청하며 <b style="color:var(--ink)">어떤 도움이 필요한지</b> 살짝만 알려주세요</p>'+
-        '<div style="font-size:13px;font-weight:800;color:var(--ink);margin:22px 0 9px;display:flex;gap:7px;align-items:center">어떤 도움이 필요하세요? <span style="font-size:11px;font-weight:700;color:var(--green);background:var(--green-soft);border-radius:5px;padding:1px 6px">선택</span></div>'+
+        '<h1>스타일리스트 매칭, 곧 만나요</h1>'+
+        '<p class="lead" style="line-height:1.65">진단 결과에 맞는 코디를<br><b style="color:var(--ink)">나에게 맞는 스타일리스트</b>가 제안해드려요<br>오픈 알림을 신청하고 <b style="color:var(--ink)">원하는 스타일</b>을 알려주세요</p>'+
+        '<div style="font-size:13px;font-weight:800;color:var(--ink);margin:34px 0 12px;display:flex;gap:7px;align-items:center">어떤 도움이 필요하세요? <span style="font-size:11px;font-weight:700;color:var(--green);background:var(--green-soft);border-radius:5px;padding:1px 6px">선택</span></div>'+
         '<div id="wlSvc" style="display:flex;flex-wrap:wrap;gap:7px">'+
           '<button type="button" class="chip" data-svc="online" onclick="wlPick(this)">온라인 코디 추천</button>'+
           '<button type="button" class="chip" data-svc="shopping" onclick="wlPick(this)">쇼핑 동행</button>'+
           '<button type="button" class="chip" data-svc="image" onclick="wlPick(this)">이미지 컨설팅</button>'+
           '<button type="button" class="chip" data-svc="undecided" onclick="wlPick(this)">아직 모르겠어요</button>'+
         '</div>'+
-        '<div style="font-size:13px;font-weight:800;color:var(--ink);margin:18px 0 9px;display:flex;gap:7px;align-items:center">어떤 상황이 많나요? <span style="font-size:11px;font-weight:700;color:var(--green);background:var(--green-soft);border-radius:5px;padding:1px 6px">선택</span></div>'+
+        '<div style="font-size:13px;font-weight:800;color:var(--ink);margin:30px 0 12px;display:flex;gap:7px;align-items:center">어떤 상황이 많나요? <span style="font-size:11px;font-weight:700;color:var(--green);background:var(--green-soft);border-radius:5px;padding:1px 6px">선택</span></div>'+
         '<div id="wlOcc" style="display:flex;flex-wrap:wrap;gap:7px">'+
           '<button type="button" class="chip" data-occ="데일리" onclick="wlPick(this)">데일리</button>'+
           '<button type="button" class="chip" data-occ="출근·면접" onclick="wlPick(this)">출근·면접</button>'+
@@ -1514,9 +1514,10 @@
           '<button type="button" class="chip" data-occ="행사·하객" onclick="wlPick(this)">행사·하객</button>'+
           '<button type="button" class="chip" data-occ="여행" onclick="wlPick(this)">여행</button>'+
         '</div>'+
-        '<input type="email" id="wlEmail" class="inp" autocomplete="email" inputmode="email" placeholder="이메일 주소" style="margin-top:20px;width:100%" onkeydown="if(event.key===\'Enter\')waitlistNotify()">'+
-        '<button class="btn full" id="wlBtn" style="margin-top:12px" onclick="waitlistNotify()">오픈 알림 신청</button>'+
-        '<p class="reqhint" id="wlHint">선택은 건너뛰어도 신청돼요 · 이메일은 오픈 알림에만 사용해요</p>'+
+        '<div style="font-size:13px;font-weight:800;color:var(--ink);margin:32px 0 12px">이메일 주소</div>'+
+        '<input type="email" id="wlEmail" class="inp" autocomplete="email" inputmode="email" placeholder="오픈 시 메일로 알림을 보내드려요" style="width:100%" onkeydown="if(event.key===\'Enter\')waitlistNotify()">'+
+        '<button class="btn full" id="wlBtn" style="margin-top:16px" onclick="waitlistNotify()">오픈 알림 신청</button>'+
+        '<p class="reqhint" id="wlHint" style="margin-top:14px">선택은 건너뛰어도 신청돼요 · 이메일은 오픈 알림에만 사용해요</p>'+
         '</div>';
       shopSec.appendChild(wl);
     }

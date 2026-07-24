@@ -27,7 +27,19 @@
       { label: 'L',  values: { chest: 56, shoulder: 47, sleeve: 64,   length: 72 } },
       { label: 'XL', values: { chest: 59, shoulder: 49, sleeve: 65.5, length: 74 } }
     ],
-    labeledCircumference: [], truncated: false, notes: '샘플(로컬 개발용) 사이즈표'
+    labeledCircumference: [], truncated: false, notes: '샘플(로컬 개발용) 상의 사이즈표'
+  };
+  // 하의 샘플 — 로컬 개발에서 하의 판정도 테스트 가능하게. 값은 단면(반접어 잰 값), 기장·밑위는 실측.
+  var SAMPLE_PARSED_BOTTOM = {
+    tableKind: 'garment', category: 'BOTTOM', unit: 'cm',
+    columns: ['허리단면', '엉덩이단면', '허벅지단면', '밑위', '총장'],
+    sizes: [
+      { label: 'S',  values: { waist: 36, hip: 50, thigh: 31, rise: 28, length: 98 } },
+      { label: 'M',  values: { waist: 38, hip: 52, thigh: 32, rise: 29, length: 100 } },
+      { label: 'L',  values: { waist: 40, hip: 54, thigh: 33, rise: 30, length: 102 } },
+      { label: 'XL', values: { waist: 42, hip: 56, thigh: 34, rise: 31, length: 104 } }
+    ],
+    labeledCircumference: [], truncated: false, notes: '샘플(로컬 개발용) 하의 사이즈표'
   };
 
   var FDATA = {
@@ -100,9 +112,10 @@
        사용자가 올린 상품 사이즈표 이미지를 서버(Claude 비전)가 구조화 JSON으로.
        api: POST {image:base64|dataURL} → {parsed, usage}. 키는 서버 전용(비노출).
        proto: 서버 없음 → null(호출부가 '직접 입력' 폴백 유도). */
-    parseSizeTable: function (imageDataUrl) {
+    parseSizeTable: function (imageDataUrl, category) {
       if (MODE === 'api') return postJSON('/api/parse-size-table', { image: imageDataUrl }).then(function (r) { return r.json(); });
-      return Promise.resolve({ parsed: SAMPLE_PARSED, usage: { mock: true }, model: 'dev-sample' });   // 로컬 화면 개발용 대표 표
+      var sample = category === 'BOTTOM' ? SAMPLE_PARSED_BOTTOM : SAMPLE_PARSED;   // 로컬 개발용: 고른 옷 종류에 맞는 대표 표
+      return new Promise(function (res) { setTimeout(function () { res({ parsed: sample, usage: { mock: true }, model: 'dev-sample' }); }, 900); });   // 실제 인식 지연 흉내(로딩 UI 확인용)
     },
 
     /* ── 사이즈표 제공(수집) = /api/submit-garment ────────────
