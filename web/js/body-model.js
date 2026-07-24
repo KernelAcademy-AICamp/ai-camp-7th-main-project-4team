@@ -59,6 +59,12 @@
     { key: "arm",       name: "팔길이" },
     { key: "upperArm",  name: "위팔둘레" },
     { key: "thigh",     name: "허벅지둘레" },  // 하의 판정 부위 — 0벌 사용자도 허벅지 병목을 보게(역산되면 덮어씀)
+    { key: "belly",     name: "배둘레" },     // 미표기 부위(브랜드 사이즈표에 없음) — r²0.85. 진단 '배' fit의 몸쪽 기준
+    // 미표기 병목(flag) 부위의 몸쪽 기준 — 페인 플래그를 '측정 축'으로 승격(A축 추정 토대, docs/6 §4).
+    //   결과카드엔 미표시(result.js MEAS 별도). 소매통=upperArm(위)에 대응.
+    { key: "neck",      name: "목둘레" },
+    { key: "armhole",   name: "겨드랑둘레" },
+    { key: "calf",      name: "장딴지둘레" },
     { key: "backLength", name: "등길이" },   // 세로축(상의 총장 판정용)
     { key: "legOuter",  name: "다리가쪽길이" }, // 세로축(하의 기장 판정용 — 허리옆~바닥)
     { key: "bodyRise",  name: "몸밑위" }        // 세로축(하의 밑위 판정용 — 허리높이−샅높이)

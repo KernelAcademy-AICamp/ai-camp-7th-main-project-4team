@@ -100,6 +100,50 @@
       "rmse_cm": 2.14,
       "n": 2319
     },
+    "belly": {
+      "label": "배둘레",
+      "bodyDimension": "bellyCircumference",
+      "a_height": -0.2743,
+      "b_weight": 0.7012,
+      "c_age": 0.1319,
+      "intercept": 79.104,
+      "r2": 0.844,
+      "rmse_cm": 3.13,
+      "n": 2319
+    },
+    "neck": {
+      "label": "목둘레",
+      "bodyDimension": "neckCircumference",
+      "a_height": -0.0767,
+      "b_weight": 0.1827,
+      "c_age": 0.0364,
+      "intercept": 36.278,
+      "r2": 0.675,
+      "rmse_cm": 1.32,
+      "n": 2319
+    },
+    "armhole": {
+      "label": "겨드랑둘레",
+      "bodyDimension": "armholeCircumference",
+      "a_height": -0.0076,
+      "b_weight": 0.2179,
+      "c_age": 0.0012,
+      "intercept": 28.934,
+      "r2": 0.691,
+      "rmse_cm": 1.61,
+      "n": 2319
+    },
+    "calf": {
+      "label": "장딴지둘레",
+      "bodyDimension": "calfCircumference",
+      "a_height": -0.0818,
+      "b_weight": 0.2272,
+      "c_age": -0.0183,
+      "intercept": 36.165,
+      "r2": 0.712,
+      "rmse_cm": 1.5,
+      "n": 2319
+    },
     "backLength": {
       "label": "등길이",
       "bodyDimension": "backLength",
@@ -221,6 +265,50 @@
       "intercept": 54.552,
       "r2": 0.719,
       "rmse_cm": 2.65,
+      "n": 2773
+    },
+    "belly": {
+      "label": "배둘레",
+      "bodyDimension": "bellyCircumference",
+      "a_height": -0.2598,
+      "b_weight": 0.835,
+      "c_age": 0.1534,
+      "intercept": 73.512,
+      "r2": 0.853,
+      "rmse_cm": 3.31,
+      "n": 2773
+    },
+    "neck": {
+      "label": "목둘레",
+      "bodyDimension": "neckCircumference",
+      "a_height": -0.0523,
+      "b_weight": 0.1834,
+      "c_age": 0.0193,
+      "intercept": 29.308,
+      "r2": 0.677,
+      "rmse_cm": 1.16,
+      "n": 2772
+    },
+    "armhole": {
+      "label": "겨드랑둘레",
+      "bodyDimension": "armholeCircumference",
+      "a_height": -0.0542,
+      "b_weight": 0.2714,
+      "c_age": 0.0146,
+      "intercept": 30.685,
+      "r2": 0.736,
+      "rmse_cm": 1.47,
+      "n": 2773
+    },
+    "calf": {
+      "label": "장딴지둘레",
+      "bodyDimension": "calfCircumference",
+      "a_height": -0.0412,
+      "b_weight": 0.26,
+      "c_age": -0.0312,
+      "intercept": 28.029,
+      "r2": 0.729,
+      "rmse_cm": 1.41,
       "n": 2773
     },
     "backLength": {
