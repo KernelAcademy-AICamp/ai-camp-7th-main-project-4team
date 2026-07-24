@@ -59,6 +59,13 @@
     { key: "arm",       name: "팔길이" },
     { key: "upperArm",  name: "위팔둘레" },
     { key: "thigh",     name: "허벅지둘레" },  // 하의 판정 부위 — 0벌 사용자도 허벅지 병목을 보게(역산되면 덮어씀)
+    { key: "belly",     name: "배둘레" },     // 미표기 부위(브랜드 사이즈표에 없음) — r²0.85. 진단 '배' fit의 몸쪽 기준
+    { key: "underbust", name: "가슴아래둘레" }, // 여성 전용(male엔 coef 없음→자동 스킵) — r²0.83. 브라 밴드둘레의 몸쪽 기준(재인 입력으로 덮어씀)
+    // 미표기 병목(flag) 부위의 몸쪽 기준 — 페인 플래그를 '측정 축'으로 승격(A축 추정 토대, docs/6 §4).
+    //   결과카드엔 미표시(result.js MEAS 별도). 소매통=upperArm(위)에 대응.
+    { key: "neck",      name: "목둘레" },
+    { key: "armhole",   name: "겨드랑둘레" },
+    { key: "calf",      name: "장딴지둘레" },
     { key: "backLength", name: "등길이" },   // 세로축(상의 총장 판정용)
     { key: "legOuter",  name: "다리가쪽길이" }, // 세로축(하의 기장 판정용 — 허리옆~바닥)
     { key: "bodyRise",  name: "몸밑위" }        // 세로축(하의 밑위 판정용 — 허리높이−샅높이)
@@ -77,6 +84,8 @@
 
     var coef = BASE[sex] || {}, dist = (DIST && DIST[sex]) || {};
     var parts = SHOW.map(function (s) {
+      // underbust는 여성 전용 축 — 성별 무입력이 female로 매핑되는 기본값을 타지 않게 명시 female만 통과.
+      if (s.key === "underbust" && basic.gender !== "female") return null;
       var c = coef[s.key]; if (!c) return null;
       var cm = c.a_height * h + c.b_weight * w + c.c_age * a + c.intercept;
       var out = { key: s.key, name: s.name, cm: Math.round(cm * 10) / 10, rmse: c.rmse_cm, r2: c.r2, pct: null };
