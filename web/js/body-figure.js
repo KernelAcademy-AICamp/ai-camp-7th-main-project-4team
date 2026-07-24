@@ -14,9 +14,10 @@
 
   function segIdx(pct){ return Math.max(0, Math.min(4, Math.floor((pct==null?50:pct)/20))); }
   function zoneLabel(i, L, R){ return i===0?L:(i===1?L+' 편':(i===2?'표준':(i===3?R+' 편':R))); }
-  /* 8유형 시그니처 색(라이트 배경용 보정 톤) — 아바타 라인 색에 사용 */
-  var TYPE_COLOR={STR:'#7E9BE8',TRI:'#3FB9A6',INV:'#8A93A8',HRG:'#B675E8',
-    BAL:'#5FBE7E',DIA:'#EA6EA0',RND:'#F0855A',TUB:'#9184E0'};
+  /* 8유형 시그니처 색 = bodytypes.json의 point와 동일값(진단 결과 카드 색과 통일).
+     ⚠ 바꿀 땐 bodytypes.json point와 함께 — 여기만 바꾸면 그림·결과 색이 다시 어긋남. */
+  var TYPE_COLOR={STR:'#9db8ff',TRI:'#76d6c6',INV:'#c2c7d0',HRG:'#cf9bff',
+    BAL:'#8fd6a8',DIA:'#ff9ec5',RND:'#ff9d7a',TUB:'#b6a8ff'};
   /* hex 선형 보간 — a에서 to로 t만큼. color-mix 미지원 대비 JS 계산 */
   function mixHex(hex,to,t){
     function p(h){ h=h.replace('#',''); return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)]; }
@@ -34,7 +35,7 @@
      좌: 슬림/표준/볼륨 태그(zoneLabel) · 우: 부위명 + 예상 cm(est) · 아래: 핏취향 칩.
      Catmull-Rom으로 몸통·다리 외곽선을 만들고, 팔은 스트로크. 세로 비율은 표준 템플릿 고정. cx=180 가운데정렬. */
   function bodySilhouette(m, bt, gender, est, conf){
-    var tc=TYPE_COLOR[(bt&&bt.code)||''] || '#57544C';   // 이 카드 유형색(태그 농도·라인 공용)
+    var tc=(bt&&bt.point) || TYPE_COLOR[(bt&&bt.code)||''] || '#57544C';   // 유형색 = 데이터 point 우선(결과 카드와 동일) · TYPE_COLOR는 폴백
     var cx=180, headCY=48, headRx=27, headRy=31, neckHalf=12;
     var neckY=88, shoulderY=110, chestY=172, waistY=240, hipY=300, crotchY=330, kneeY=422, ankleY=498;
     /* 백분위 50=표준 반폭, 0~100 → ±28%. shoulder=너비 / 나머지=둘레지만 시각 폭으로 통일 근사 */
