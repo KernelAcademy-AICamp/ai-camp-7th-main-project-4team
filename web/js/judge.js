@@ -42,20 +42,35 @@
       .then(function (j) { window._jbt = {}; j.types.forEach(function (x) { window._jbt[x.code] = x; }); apply(window._jbt[code]); })
       .catch(function () {});
   }
-  // 저장된 프로필로 우선 표시(있을 때만). 없으면 정적 폴백(예시) 유지 → 이후 세션값으로 덮어씀.
-  function renderMine() {
-    var user = {}; try { user = JSON.parse(localStorage.getItem("fitting.user") || "{}") || {}; } catch (e) {}
-    if (user.type) paintMine(user.type, user.gender);
+  // 유효한 8유형 코드 · 성별만 신뢰(잘못된 값이면 정본 무시하고 폴백 계속 — 빈 렌더·잘못된 성별 방지).
+  var TYPE_CODES = { STR:1, TRI:1, INV:1, HRG:1, BAL:1, DIA:1, RND:1, TUB:1 };
+  function validCode(c) { return !!(c && TYPE_CODES[c]); }
+  function validGender(g) { return g === "male" || g === "female"; }
+  function readDxType() {
+    try { var d = JSON.parse(sessionStorage.getItem("fitting.dxtype") || "null");
+      if (d && validCode(d.code) && validGender(d.gender)) return d; } catch (e) {}
+    return null;
   }
-  // 현재 세션 진단(추정된 몸)으로 8유형을 직접 분류해 판정기준을 최신화 — result.js와 같은 분류기.
+  // 판정기준 유형 표시. 우선순위:
+  //  1) 이번 세션 진단 정본(fitting.dxtype) — result가 착용경험까지 반영해 판정한 값(api=서버 eb 포함). 가장 정확.
+  //  2) 저장된 프로필(fitting.user.type) — 로그인 저장 시.
+  //  둘 다 없을 때만 basic 재분류(renderMineFromSession)로 폴백.
+  function renderMine() {
+    var d = readDxType(); if (d) { paintMine(d.code, d.gender); return; }
+    var user = {}; try { user = JSON.parse(localStorage.getItem("fitting.user") || "{}") || {}; } catch (e) {}
+    if (validCode(user.type)) paintMine(user.type, user.gender);
+  }
+  // 폴백: 유효한 진단 정본이 없을 때만 현재 세션 basic로 직접 분류. 정본이 있으면 덮지 않는다
+  // (judge는 키·몸무게만 보므로 착용경험 보정이 빠져 정본과 어긋날 수 있음 → 정본 우선).
   function renderMineFromSession(basic) {
+    if (readDxType()) return;   // 유효 정본 있으면 재분류로 덮지 않음(무효면 폴백 계속)
     if (!basic || !window.FitBodyType) return;
     var code = FitBodyType.classify({
       gender: state.sex, heightCm: basic.height, weightKg: basic.weight,
       chestFull: state.cm.chestFull, chestUpper: state.cm.chestUpper,
       waist: state.cm.waist, hip: state.cm.hip,
     });
-    if (code) paintMine(code, state.sex);   // 성별도 현재 세션 기준(아바타 성별 동기화 포함)
+    if (code) paintMine(code, state.sex);
   }
 
   /* ── 부팅: 체형 복원 ─────────────────────────────────────── */
