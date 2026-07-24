@@ -20,13 +20,15 @@
     catalog: null, gj: null  // gj=proto용 garments.json 캐시
   };
 
-  /* ── 판정 기준(내 체형) 표시 = 마이 진단카드와 동일 유형. localStorage fitting.user.type 기준.
-     기존엔 '시크 스트레이트(STR)'로 하드코딩돼 유형이 바뀌어도 안 변하던 버그 수정. ── */
-  function renderMine() {
-    var user = {}; try { user = JSON.parse(localStorage.getItem("fitting.user") || "{}") || {}; } catch (e) {}
-    var code = user.type; if (!code) return;   // 진단 전엔 정적 폴백(예시) 유지
-    var gender = (user.gender === "female") ? "female" : "male";
-    function paint(t) {
+  /* ── 판정 기준(내 체형) 표시 = 마이 진단카드와 동일 유형.
+     주의: fitting.user.type은 '결과 저장'(로그인) 때만 채워지고, 저장 안 하면 비거나 옛값이 남는다.
+     그래서 저장 프로필로 '먼저' 표시하되(빠름), 판정 엔진이 현재 세션(fitting.dx.basic)으로 몸을
+     추정하면 그 값으로 유형을 직접 분류해 '덮어쓴다'(renderMineFromSession) — 저장 여부와 무관하게
+     실제 판정과 같은 소스를 보게 해 '시크 스트레이트 고정' 표기 버그를 없앤다. ── */
+  function paintMine(code, gender) {
+    if (!code) return;
+    gender = (gender === "female") ? "female" : "male";
+    function apply(t) {
       if (!t) return;
       var box = document.querySelector(".jmine");
       var b = document.querySelector(".jmine-tx b");
@@ -35,10 +37,25 @@
       if (b) b.innerHTML = (t.name || "") + '<span class="jmine-code">' + t.code + "</span>";
       if (head) { head.classList.remove("male", "female"); head.classList.add(gender); }
     }
-    if (window._jbt) { paint(window._jbt[code]); return; }
+    if (window._jbt) { apply(window._jbt[code]); return; }
     fetch("data/bodytypes.json").then(function (r) { return r.json(); })
-      .then(function (j) { window._jbt = {}; j.types.forEach(function (x) { window._jbt[x.code] = x; }); paint(window._jbt[code]); })
+      .then(function (j) { window._jbt = {}; j.types.forEach(function (x) { window._jbt[x.code] = x; }); apply(window._jbt[code]); })
       .catch(function () {});
+  }
+  // 저장된 프로필로 우선 표시(있을 때만). 없으면 정적 폴백(예시) 유지 → 이후 세션값으로 덮어씀.
+  function renderMine() {
+    var user = {}; try { user = JSON.parse(localStorage.getItem("fitting.user") || "{}") || {}; } catch (e) {}
+    if (user.type) paintMine(user.type, user.gender);
+  }
+  // 현재 세션 진단(추정된 몸)으로 8유형을 직접 분류해 판정기준을 최신화 — result.js와 같은 분류기.
+  function renderMineFromSession(basic) {
+    if (!basic || !window.FitBodyType) return;
+    var code = FitBodyType.classify({
+      gender: state.sex, heightCm: basic.height, weightKg: basic.weight,
+      chestFull: state.cm.chestFull, chestUpper: state.cm.chestUpper,
+      waist: state.cm.waist, hip: state.cm.hip,
+    });
+    if (code) paintMine(code, state.sex);   // 성별도 현재 세션 기준(아바타 성별 동기화 포함)
   }
 
   /* ── 부팅: 체형 복원 ─────────────────────────────────────── */
@@ -68,6 +85,7 @@
       state.sex = est.sex;
       est.parts.forEach(function (p) { state.cm[p.key] = p.cm; if (p.rmse != null) state.err[p.key] = p.rmse; });
       state.ready = true;
+      renderMineFromSession(basic);   // 판정기준 유형 = 이번 세션 진단 기준(저장 안 해도 일치)
       refreshRun();   // 모델 준비 완료 → 입력이 갖춰졌으면 판정하기 활성
       var back = false; try { back = sessionStorage.getItem(RETURN_KEY) === "1"; sessionStorage.removeItem(RETURN_KEY); } catch (e) {}
       if (back) restoreJudge();   // '진단 수정'에서 이전으로 돌아온 경우에만 이전 판정 복원
