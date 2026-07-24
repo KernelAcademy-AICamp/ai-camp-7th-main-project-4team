@@ -53,15 +53,22 @@
     try { var qs = location.search || ""; if (/[?&]nodx=1/.test(qs)) sessionStorage.setItem(NODX_KEY, "1"); else if (/[?&]nodx=0/.test(qs)) sessionStorage.removeItem(NODX_KEY); } catch (e) {}
     var forceNoDx = false; try { forceNoDx = sessionStorage.getItem(NODX_KEY) === "1"; } catch (e) {}
     if (!window.BodyModel) return fail("체형 엔진을 불러오지 못했어요.");
+
+    // 화면부터 즉시 렌더 — 체형 모델은 뒤에서 로드(진입 시 '불러오는 중' 깜빡임 제거).
+    // 판정하기는 refreshRun의 state.ready 게이팅으로 모델 준비 전까지 잠겨 있어 안전.
+    var hasBasic = !!(basic && basic.height && basic.weight);
+    $("jloading").hidden = true;
+    if (forceNoDx || !hasBasic) showNeedDx();
+    else { $("jsetup").hidden = false; showCapture(); }
+
     BodyModel.load().then(function () {
+      if (forceNoDx || !hasBasic) return;   // 이미 '진단 필요' 화면 — 체형값 불필요
       var est = BodyModel.estimate(basic);
-      if (forceNoDx || !est || !est.ready) { showNeedDx(); return; }   // 진단 없는 신규 = 게이트 대신 ① 안에서 '진단 시작하기' 유도
+      if (!est || !est.ready) { showNeedDx(); return; }
       state.sex = est.sex;
       est.parts.forEach(function (p) { state.cm[p.key] = p.cm; if (p.rmse != null) state.err[p.key] = p.rmse; });
       state.ready = true;
-      $("jloading").hidden = true;
-      $("jsetup").hidden = false;
-      showCapture();
+      refreshRun();   // 모델 준비 완료 → 입력이 갖춰졌으면 판정하기 활성
       var back = false; try { back = sessionStorage.getItem(RETURN_KEY) === "1"; sessionStorage.removeItem(RETURN_KEY); } catch (e) {}
       if (back) restoreJudge();   // '진단 수정'에서 이전으로 돌아온 경우에만 이전 판정 복원
     }).catch(function (e) { fail("불러오는 중 문제가 생겼어요. 새로고침해 주세요."); });
@@ -99,7 +106,7 @@
   }
   // 사이즈표 넣기 탭(캡처 업로드 ↔ 직접 입력) 활성 표시 동기화
   function markTab(mode) { document.querySelectorAll(".jtab").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-tab") === mode); }); }
-  function showCapture() { showLoad(false); $("jcap").hidden = false; $("jcorrect").hidden = true; var m = $("jmiss"); if (m) m.hidden = true; var r = $("jrun"); if (r) r.disabled = true; state.parsed = null; state.manual = false; markTab("capture"); }
+  function showCapture() { showJudging(false); $("jcap").hidden = false; $("jcorrect").hidden = true; var m = $("jmiss"); if (m) m.hidden = true; var r = $("jrun"); if (r) r.disabled = true; state.parsed = null; state.manual = false; markTab("capture"); }
 
   // 붙여넣기/드롭/파일 → dataURL → 인식
   function onImageFile(file) {
@@ -113,7 +120,7 @@
     $("jcorrect").classList.remove("man");                          // 캡처 모드: 썸네일·다시올리기 노출
     var ru = $("jreupload"); if (ru) ru.hidden = false;
     var th = $("jcapthumb"); if (th) { th.src = dataUrl; th.hidden = false; }
-    $("jparsehint").innerHTML = "<span class='jspin-sm'></span>사이즈표를 읽는 중…"; $("jparsetable").innerHTML = ""; $("jrun").disabled = true;   // 인식 로딩 = 왼쪽(사진 올린 자리)
+    $("jparsehint").innerHTML = "<span class='jspin-sm'></span>사이즈표를 읽는 중…"; $("jparsetable").innerHTML = ""; $("jrun").disabled = true; setParsing(true);   // 인식 로딩 = 왼쪽(사진 올린 자리) + 입력 잠금
     if (!(window.FDATA && FDATA.parseSizeTable)) return parseUnavailable();
     FDATA.parseSizeTable(dataUrl, state.cat).then(function (resp) {   // 로컬 데모: 고른 옷 종류에 맞는 샘플 표를 받음
       if (!resp) return parseUnavailable();
@@ -121,16 +128,21 @@
       onParsed(resp.parsed);
     }).catch(function () { parseFailed(); });
   }
-  function showLoad(on, msg) {   // 오른쪽 캔버스 로딩 오버레이(판정 진행 / 리셋 전환). msg로 문구 교체.
-    var el = $("jload"); if (!el) return;
-    el.hidden = !on;
-    var tx = el.querySelector(".jload-tx");
-    if (on && tx) tx.innerHTML = msg || "판정을 진행 중이에요<b>잠시만요…</b>";
+  // 판정 중 = 결과 카드 자리(플레이스홀더 히어로)를 카드 뒷면 로딩으로 교체.
+  // 결과가 오면 #jresult의 #jflip이 같은 자리·같은 뒷면에서 그대로 뒤집혀 크기 점프가 없다.
+  // 사이즈표 인식 중 = 입력 카드 잠금(분석 도중 옷 종류·탭·재업로드 조작 방지)
+  function setParsing(on) { var c = document.querySelector(".jcard"); if (c) c.classList.toggle("parsing", !!on); }
+  function showJudging(on) {
+    var lc = $("jloadcard"), hero = $("jghhero"), aside = $("jaside");
+    if (lc) lc.hidden = !on;
+    if (hero) hero.hidden = !!on;
+    if (aside) aside.classList.toggle("judging", !!on);   // 아래 골격도 함께 반짝임(위만 도는 어색함 방지)
   }
-  function parseUnavailable() { $("jparsehint").innerHTML = "이 환경에선 자동 인식이 안 돼요. <a class='jlink' data-act='manual'>직접 입력</a>으로 진행하세요."; }
-  function parseFailed() { $("jparsehint").innerHTML = "표를 못 읽었어요. 더 또렷한 캡처로 다시 하거나 <a class='jlink' data-act='manual'>직접 입력</a>하세요."; }
+  function parseUnavailable() { setParsing(false); $("jparsehint").innerHTML = "이 환경에선 자동 인식이 안 돼요. <a class='jlink' data-act='manual'>직접 입력</a>으로 진행하세요."; }
+  function parseFailed() { setParsing(false); $("jparsehint").innerHTML = "표를 못 읽었어요. 더 또렷한 캡처로 다시 하거나 <a class='jlink' data-act='manual'>직접 입력</a>하세요."; }
 
   function onParsed(p) {
+    setParsing(false);
     state.parsed = p;
     // 옷 종류는 사용자가 고른 상의/하의가 기준 — 자동 인식이 이를 덮어쓰지 않음(하의 선택이 상의로 튕기던 버그)
     if (p.tableKind === "body_range") {
@@ -314,12 +326,12 @@
     if (!cell.length) return showMiss("판정할 값이 없어요. 구매하는 사이즈의 치수를 채워주세요.");
     state.lastCell = cell;
     $("jrun").disabled = true;
-    showLoad(true);   // 판정 시작 → 오른쪽 결과 캔버스에 '판정 진행 중' 표시
+    showJudging(true);   // 판정 시작 → 결과 카드 자리에 카드 뒷면 로딩(결과 오면 그대로 뒤집힘)
     var canvas = $("jaside");   // 판정 누른 순간 결과 캔버스로 스크롤 → '판정 중' 로딩이 바로 보이게(버튼이 아래라 안 보이던 문제)
     if (canvas) canvas.scrollIntoView({ behavior: "smooth", block: "center" });
     computeJudgment({ category: state.cat, sex: state.sex, cm: state.cm, experiences: state.exps, errors: errForEngine(), cell: cell })
-      .then(function (j) { showLoad(false); $("jrun").disabled = false; if (!j) return showMiss(); render(j); saveJudgeSnapshot(); })
-      .catch(function () { showLoad(false); $("jrun").disabled = false; showMiss(); });
+      .then(function (j) { showJudging(false); $("jrun").disabled = false; if (!j) return showMiss(); render(j); saveJudgeSnapshot(); var cs = $("jconsent"); if (cs && cs.checked) submitGarment(); })
+      .catch(function () { showJudging(false); $("jrun").disabled = false; showMiss(); });
   }
   // api=서버(/api/judge, cell 전달·실측 비노출) / proto=클라 로컬(garments로 역산 + 캡처셀 판정)
   function computeJudgment(q) {
@@ -399,17 +411,19 @@
 
     // 수집 opt-in 초기화(판정마다 리셋)
     state.lastPick = pickSize;
-    var cb = $("jconsent"), sub = $("jsubmit"), msg = $("jsharemsg");
-    if (cb) cb.checked = false; if (sub) sub.disabled = true;
-    if (msg) { msg.hidden = true; msg.textContent = ""; }
+    var msg = $("jsharemsg"); if (msg) { msg.hidden = true; msg.textContent = ""; }   // 동의 체크는 판정 전에 고른 값이라 유지
 
-    // 결과 노출 + 리빌(카드 뒷면 → 앞면 뒤집기)
+    // 결과 노출 + 리빌(카드 뒷면 → 앞면 뒤집기). 아래 패널은 카드에 이어 순서대로 올라옴(띡 하고 안 바뀌게)
     var aside = $("jaside"); if (aside) aside.hidden = true;
-    $("jresult").hidden = false;
+    var rs = $("jresult");
+    rs.hidden = false;
+    rs.classList.remove("reveal"); void rs.offsetWidth; rs.classList.add("reveal");
     var fl = $("jflip");
     if (fl) {
       fl.classList.remove("on"); void fl.offsetWidth;
-      fl.scrollIntoView({ behavior: "smooth", block: "center" });   // 판정 버튼이 아래라 위쪽 리빌이 안 보이던 문제 — 리빌로 시선 이동
+      // 판정 시작 때 이미 캔버스로 스크롤했으므로, 카드가 안 보일 때만 다시 이동(리빌 중 흔들림 방지)
+      var r = fl.getBoundingClientRect(), vh = window.innerHeight || document.documentElement.clientHeight;
+      if (r.top < 8 || r.bottom > vh - 8) fl.scrollIntoView({ behavior: "smooth", block: "center" });
       setTimeout(function () { fl.classList.add("on"); }, 240);
     } else {
       $("jresult").scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -663,7 +677,7 @@
     $("jmiss").hidden = false;
     $("jmiss").textContent = msg || "판정할 수 없어요. 값을 확인해주세요.";
   }
-  function fail(msg) { $("jloading").textContent = msg; }
+  function fail(msg) { var l = $("jloading"); if (l) { l.hidden = false; l.textContent = msg; } }   // 화면을 먼저 띄우므로 오류 시 로딩영역을 다시 노출
 
   /* ── 이벤트 ─────────────────────────────────────────────── */
   document.addEventListener("click", function (ev) {
@@ -692,7 +706,7 @@
     if (ev.target.closest("#jredo")) { resetJudge(); }
   });
   document.addEventListener("change", function (ev) {
-    if (ev.target.id === "jconsent" && ev.target.checked) submitGarment();   // 체크만으로 제공(버튼 없음)
+    if (ev.target.id === "jconsent" && ev.target.checked && state.lastCell) submitGarment();   // 판정 후 다시 체크한 경우
   });
   // 치수 입력 중 실시간으로 판정 버튼 활성/비활성 갱신
   document.addEventListener("input", function (ev) {
