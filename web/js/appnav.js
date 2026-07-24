@@ -40,11 +40,12 @@
     // 인증 상태 반영 — index.js applyAuthUI와 동일 규칙.
     var byId = function(id){ return document.getElementById(id); };
     var inA = loggedIn();
-    var au = byId('appnavAuth'), us = byId('appnavUser'), be = byId('appnavBell'), bd = byId('appnavBellDiv'), my = byId('appnavMy'), d0 = byId('appnavDiv0');
+    var au = byId('appnavAuth'), us = byId('appnavUser'), be = byId('appnavBell'), bd = byId('appnavBellDiv'), my = byId('appnavMy');
     if(isApi){
-      // 배포(MVP): 인증은 킬메트릭 대상 아님 + 소비자 로그인 목업 → 인증 표면 전체 숨김. 상단은 Home·Stylists·Fit + 스타일리스트 지원만.
-      //  선두 구분선(d0)도 숨김 — 뒤 요소가 전부 사라져 '스타일리스트 지원' 뒤에 홀로 남는 선을 없앤다.
-      [au, us, be, bd, my, d0].forEach(function(e){ if(e) e.style.display='none'; });
+      // 배포(MVP): 우측 영역 전체 숨김 — 인증(벨·유저·로그인)은 목업이고, 스타일리스트 지원(pro-signup)도
+      //  전화인증 등 미구현이라 노출하지 않는다. 상단은 Home·Stylists·Fit만(My 탭도 숨김).
+      var r = mount.querySelector('.appnav-r'); if(r) r.style.display = 'none';
+      if(my) my.style.display = 'none';
     } else {
       if(au) au.style.display = inA ? 'none' : 'inline-flex';   // 비로그인 시 로그인·회원가입 버튼
       if(us) us.style.display = inA ? 'flex' : 'none';          // 로그인 시 페르소나
