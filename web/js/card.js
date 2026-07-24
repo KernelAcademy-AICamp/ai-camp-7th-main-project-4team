@@ -102,14 +102,14 @@
     card.innerHTML='<div class="flip" id="flip">'+front+back+'</div>';
     var flip=document.getElementById('flip');
     card.addEventListener('click', function(e){ if(e.target.closest('.cacts')) return; peekCancel(); flip.classList.toggle('turned'); });   // 카드 클릭 = 뒤집기(저장·공유 버튼 제외)
-    // 뒤집을 수 있다는 힌트 — 5초간 안 만지면 살짝 엿보였다 복귀(1회). 만지면 취소.
+    // 뒤집을 수 있다는 힌트 — 3초간 안 만지면 살짝 엿보였다 복귀(1회). 만지면 취소.
     var peekT, peeked=false;
     function peekCancel(){ if(peekT){ clearTimeout(peekT); peekT=null; } card.classList.remove('peeking'); }
     function schedulePeek(){ peekT=setTimeout(function(){
       if(peeked || flip.classList.contains('turned')) return; peeked=true;
       card.classList.add('peeking'); flip.classList.add('turned');
       setTimeout(function(){ if(!card.classList.contains('peeking')) return; flip.classList.remove('turned'); card.classList.remove('peeking'); }, 1100);
-    }, 5000); }
+    }, 3000); }
     ['click','pointerdown','touchstart'].forEach(function(ev){ card.addEventListener(ev, function(){ peeked=true; peekCancel(); }, {once:false}); });
     schedulePeek();
     wireActions(d);

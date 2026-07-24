@@ -286,3 +286,132 @@
     .rwrap .subttl span{ display:block; }
     .rwrap .subttl .sep{ display:none; }
   }
+
+  /* ═══════ 결과 4탭 재구성 (내 핏 카드·체형 분석·체형 그림·결과 근거) ═══════ */
+  /* 탭 바 — 스크롤해도 위에 붙어 있게. 활성=잉크 글씨 + 딥그린 밑줄(채움 금지 원칙) */
+  .rtabs{ position:sticky; top:0; z-index:30; display:flex; gap:4px; margin:26px 0 0;
+    border-bottom:1.5px solid var(--line); background:var(--canvas,#FBFAF8); }
+  .rtab{ appearance:none; background:none; border:0; font-family:inherit; cursor:pointer;
+    padding:14px 20px 13px; font-size:17px; font-weight:700; letter-spacing:-.02em; color:var(--muted);
+    border-bottom:2.5px solid transparent; margin-bottom:-1.5px; white-space:nowrap; }
+  .rtab:hover{ color:var(--ink); }
+  .rtab.on{ color:var(--ink); font-weight:800; border-bottom-color:var(--accent); }
+  .rtab .n{ display:inline-block; font-size:13px; font-weight:800; color:var(--muted);
+    background:#EDECE8; border-radius:20px; padding:1px 8px; margin-right:8px;
+    font-family:var(--suit,inherit); font-feature-settings:'tnum'; }
+  .rtab.on .n{ color:#fff; background:var(--accent); }
+  /* 패널 — 한 번에 하나만 */
+  .rpane{ display:none; margin-top:26px; }
+  .rpane.on{ display:block; animation:rfade .22s ease both; }
+  @keyframes rfade{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
+  @media(prefers-reduced-motion:reduce){ .rpane.on{ animation:none; } }
+  /* 탭2·3 — 카드가 없으니 좌우 같은 폭 2단 */
+  .rgrid2{ display:grid; grid-template-columns:1fr 1fr; gap:34px; align-items:start; }
+  @media(max-width:840px){ .rgrid2{ grid-template-columns:1fr; gap:16px; } }
+  /* '이렇게 계산했어요' — 정확도 근거 */
+  .rhow .k{ font-size:19px; font-weight:800; color:var(--ink); }
+  .rhow-step{ display:flex; gap:12px; padding:15px 0; border-bottom:1px solid var(--line); }
+  .rhow-step:last-of-type{ border-bottom:0; padding-bottom:4px; }
+  .rhow-step .no{ flex:none; width:24px; height:24px; border-radius:8px; background:#ECEBE7; color:var(--sub2);
+    font-size:14px; font-weight:800; display:flex; align-items:center; justify-content:center;
+    font-family:var(--suit,inherit); font-feature-settings:'tnum'; }
+  .rhow-step b{ display:block; font-size:16px; font-weight:800; color:var(--ink); letter-spacing:-.02em; }
+  .rhow-step p{ margin:5px 0 0; font-size:14.5px; color:var(--muted); line-height:1.6; }
+  /* CTA는 탭 밖 공통 */
+  .rbottom{ margin-top:34px; padding-top:26px; border-top:1px solid var(--line); }
+  @media(max-width:640px){
+    .rtabs{ margin-top:18px; gap:0; overflow-x:auto; scrollbar-width:none; }
+    .rtabs::-webkit-scrollbar{ display:none; }
+    .rtab{ flex:1; padding:13px 8px 12px; font-size:15px; }
+    .rtab .n{ display:none; }
+    .rpane{ margin-top:18px; }
+    .rleft, .rcol{ display:flex !important; flex-direction:column; gap:14px; }
+    #cardslot,#rshare,#recs,#rtip,#rtypeid,#rfit,#meas,#means,.rcta-note{ order:0 !important; }
+    .rbottom{ margin-top:24px; padding-top:0; border-top:0; }
+  }
+  /* 카드가 이미 보여주는 조각 숨김 */
+  #rtypeid{ display:none; }
+  #rtypeinfo .dtl-code, #rtypeinfo .dtl-name{ display:none; }
+  #rtypeinfo .dtl-desc b{ display:none; }
+  #rtypeinfo .dtl-korea{ display:inline-block; font-size:13px; color:var(--muted); }
+  #rtypeinfo .dtl-desc{ margin-top:8px; font-size:15px; line-height:1.6; }
+  /* 결과 풀이(탭2) = 헤더(제목+유형 칩) → 요약 한 줄(왼쪽 선) → 라벨칩 리스트 */
+  #p2 #means .d-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  #p2 #means .d-korea{ flex:none; font-size:13px; font-weight:700; color:var(--g); background:var(--gs);
+    padding:6px 12px; border-radius:20px; white-space:nowrap; }
+  #p2 #means .d-sum{ margin-top:14px; display:flex; align-items:center; gap:11px;
+    font-size:15.5px; font-weight:800; line-height:1.45; letter-spacing:-.02em; color:var(--rink); }
+  #p2 #means .d-sum::before{ content:""; flex:none; width:4px; align-self:stretch; min-height:1.15em; border-radius:3px; background:var(--g); }
+  #p2 #means .rex{ display:flex; gap:12px; align-items:flex-start; margin:0; padding:14px 0; border-bottom:1px solid var(--line); }
+  #p2 #means .rex.plus{ margin-top:16px; border-top:1px solid var(--line); }
+  #p2 #means .rex.warn{ border-bottom:0; padding-bottom:2px; }
+  #p2 #means .rex .mk{ display:none; }
+  #p2 #means .rex .lbl{ flex:none; gap:0; margin-top:1px; font-size:11.5px; font-weight:800; padding:4px 10px; border-radius:7px; }
+  #p2 #means .rex.plus .lbl{ background:var(--gs); color:var(--g); }
+  #p2 #means .rex.eq .lbl{ background:#EDEEF1; color:var(--ink2); }
+  #p2 #means .rex.warn .lbl{ background:var(--wsoft); color:var(--rwarn); }
+  #p2 #means .rex p{ margin:0; font-size:14.5px; line-height:1.55; color:#3d3b35; }
+  /* 한 끗(팁) 해시태그 */
+  .dtl-tip .dtl-hash span{ font-size:12.5px; font-weight:700; color:#CBDDD2;
+    background:rgba(255,255,255,.09); padding:5px 11px; border-radius:20px; }
+  .dtl-hashbox{ display:flex; flex-wrap:wrap; gap:7px; }
+  .dtl-hashbox:empty{ display:none; }
+  /* 체형 아바타(탭3) = 공용 BodyFigure.svg. (추후 공용 css로 분리) */
+  .bodymap2{--fig-fill:#F3F1EC;--fig-line:#43403A;--guide:#CBC8C0;--pill-bg:#E7EFEA;
+    margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:18px}
+  .bodymap2 svg{width:100%;max-width:420px;height:auto;display:block}
+  .bodymap2 .g-name{font-size:11.5px;font-weight:700;fill:var(--sub)}
+  .bodymap2 .g-val{font-size:15px;font-weight:800;fill:var(--ink)}
+  .bodymap2 .g-unit{font-size:10px;font-weight:700;fill:var(--sub2)}
+  .bodymap2 .g-pm{font-size:10.5px;font-weight:700;fill:var(--sub2)}
+  .bodymap2 .g-tag{font-size:12px;font-weight:600}
+  .av-prefs{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+  .av-pref{display:flex;align-items:center;gap:9px}
+  .av-pref span{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--sub2)}
+  .av-pref b{font-size:12.5px;font-weight:800;color:#fff;background:var(--green,var(--g,#2E4A3B));padding:5px 12px;border-radius:20px}
+  .av-cap{font-size:11px;font-weight:600;color:var(--sub2);text-align:center;line-height:1.5;max-width:340px}
+  #p3 .rgrid2{ align-items:start; gap:16px; }
+  #p3 .av-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  #p3 .av-chip{ flex:none; font-size:13px; font-weight:700; color:var(--g); background:var(--gs); padding:6px 12px; border-radius:20px; white-space:nowrap; }
+  #p3 .part-list{ margin-top:12px; }
+  #p3 .part-it{ display:flex; gap:13px; align-items:flex-start; padding:13px 0; border-bottom:1px solid var(--line); }
+  #p3 .part-it:last-child{ border-bottom:0; padding-bottom:2px; }
+  #p3 .part-chip{ flex:none; width:52px; text-align:center; font-size:12.5px; font-weight:800; color:var(--g); background:var(--gs); padding:6px 0; border-radius:9px; }
+  #p3 .part-it p{ margin:0; font-size:14.5px; line-height:1.55; color:#3d3b35; padding-top:2px; } #p3 .part-it p b{ color:var(--ink); font-weight:800; }
+  #p3 .share-note{ margin-top:16px; padding-top:14px; border-top:1px solid var(--line); font-size:13px; color:var(--sub); line-height:1.6; } #p3 .share-note b{ color:var(--ink); font-weight:700; }
+  /* 결과 근거(탭4) — 데이터 기반. 높음=착용경험 역산만. acc-prow=diag.css .acc-row 충돌 회피 */
+  #p4 .av-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  #p4 .conf-badge{ font-size:13px; font-weight:800; padding:5px 13px; border-radius:20px; }
+  #p4 .conf-badge.low{ background:#F2ECE0; color:#8A7A52; } #p4 .conf-badge.mid{ background:#E7EFE7; color:#4A7A4A; } #p4 .conf-badge.high{ background:var(--rink); color:#fff; }
+  #p4 .acc-reason{ margin-top:13px; font-size:15px; line-height:1.6; color:var(--sub); } #p4 .acc-reason b{ color:var(--ink); font-weight:800; }
+  #p4 .acc-sub{ display:block; margin-top:5px; }
+  #p4 .tier-steps{ display:flex; gap:8px; margin-top:18px; }
+  #p4 .tier-step{ flex:1; text-align:center; padding:11px 6px 9px; border-radius:12px; border:1px solid var(--line); background:#fff; }
+  #p4 .tier-step .ts-b{ font-size:13px; font-weight:800; color:var(--sub2); } #p4 .tier-step .ts-c{ margin-top:3px; font-size:11.5px; color:var(--sub2); font-weight:600; }
+  #p4 .tier-step .ts-dot{ display:inline-block; width:6px; height:6px; border-radius:50%; background:#D8D5CE; margin-bottom:5px; }
+  #p4 .tier-step.on.low{ border-color:#D8C9A6; background:#FBF6EB; } #p4 .tier-step.on.low .ts-b{ color:#8A7A52; } #p4 .tier-step.on.low .ts-dot{ background:#C7A860; }
+  #p4 .tier-step.on.mid{ border-color:#BFD8BF; background:#F0F6F0; } #p4 .tier-step.on.mid .ts-b{ color:#4A7A4A; } #p4 .tier-step.on.mid .ts-dot{ background:#4A7A4A; }
+  #p4 .tier-step.on.high{ border-color:var(--rink); background:#F3F1EC; } #p4 .tier-step.on.high .ts-b{ color:var(--rink); } #p4 .tier-step.on.high .ts-dot{ background:var(--rink); }
+  #p4 .acc-parts{ margin-top:6px; }
+  #p4 .acc-prow{ display:flex; align-items:center; gap:12px; padding:14px 0; border-bottom:1px solid var(--line); }
+  #p4 .acc-prow:last-child{ border-bottom:0; padding-bottom:2px; }
+  #p4 .acc-name{ flex:none; width:46px; font-size:14.5px; font-weight:800; }
+  #p4 .acc-mid{ flex:1; min-width:0; }
+  #p4 .acc-src{ font-size:11.5px; font-weight:700; color:var(--sub2); } #p4 .acc-src.eb{ color:#4A7A4A; }
+  #p4 .acc-bar{ display:flex; gap:4px; margin-top:6px; } #p4 .acc-bar span{ flex:1; height:7px; border-radius:4px; background:#EDE9E0; }
+  #p4 .acc-bar.high span.on{ background:#4A7A4A; } #p4 .acc-bar.mid span.on{ background:#8FB08F; } #p4 .acc-bar.low span.on{ background:#C9A24B; }
+  #p4 .acc-pill{ flex:none; font-size:11.5px; font-weight:800; padding:3px 9px; border-radius:7px; }
+  #p4 .acc-pill.high{ background:#E7EFE7; color:#4A7A4A; } #p4 .acc-pill.mid{ background:#EDEEF1; color:#3A382F; } #p4 .acc-pill.low{ background:#F7EFDD; color:#8A6D2E; }
+  #p4 .acc-foot{ margin-top:15px; padding-top:13px; border-top:1px solid var(--line); font-size:14.5px; color:var(--sub); line-height:1.6; } #p4 .acc-foot b{ color:var(--ink); font-weight:700; }
+
+  /* iframe 임베드(마이>내진단결과): 자체 헤더·닫기 숨김 — 부모 SPA 내비가 대신함 */
+  html.embed .dhead{ display:none; }
+  html.embed body{ background:transparent; }
+  /* 부모(마이) '내 진단 결과' 제목과 좌측 라인 맞춤 — max-width·중앙정렬·좌우패딩 해제 */
+  html.embed .rwrap{ max-width:none; margin:0; padding:0 0 24px; }
+  /* 마이엔 이미 '내 진단 결과' 제목이 있어 iframe 안 제목·부제·STEP 배너는 중복 → 숨김 */
+  html.embed #rtitle,
+  html.embed .subttl,
+  html.embed #rupgrade,
+  html.embed .rbottom{ display:none !important; }   /* 하단 저장·스타일리스트·초기화 CTA는 마이에선 불필요(마이 자체 액션이 대신) */
+  html.embed .rtabs{ margin-top:4px; }
