@@ -40,7 +40,9 @@
 @media (max-width:640px){ .appnav-in{height:56px; gap:0; padding:0 16px;} .appnav-menu a{padding:8px 10px; font-size:14.5px;} }
 
 /* 하단 공용 푸터 — index .site-foot 정본 복제(Phase 1: judge만 로드, index.css와 미충돌). Phase 2에서 통폐합. */
-.site-foot{border-top:1px solid var(--line); flex:none;}
+/* 폰트·자간을 명시값으로 박음(헤더와 동일 원칙) — 페이지 body(fitting.css=자간 normal / tokens.css=-.02em)에
+   휘둘리지 않게. 안 박으면 자간 차로 카피가 420px를 넘겨 index와 달리 2줄로 접힘. */
+.site-foot{border-top:1px solid var(--line); flex:none; font-family:'Pretendard','Apple SD Gothic Neo',system-ui,sans-serif; letter-spacing:-.02em;}
 .site-foot .in{max-width:1240px; margin:0 auto; padding:30px 30px 40px; display:flex; flex-wrap:wrap; align-items:baseline; gap:12px 24px;}
 .site-foot .brand{font-size:17px; font-weight:800; letter-spacing:-.02em; color:var(--ink);}
 .site-foot .flinks{display:flex; gap:20px;}
