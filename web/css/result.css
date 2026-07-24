@@ -406,7 +406,7 @@
 
   /* iframe 임베드(마이>내진단결과): 자체 헤더·닫기 숨김 — 부모 SPA 내비가 대신함 */
   html.embed .dhead{ display:none; }
-  html.embed body{ background:transparent; }
+  html.embed body{ background:transparent; margin:0; overflow-x:hidden; }
   /* 부모(마이) '내 진단 결과' 제목과 좌측 라인 맞춤 — max-width·중앙정렬·좌우패딩 해제 */
   html.embed .rwrap{ max-width:none; margin:0; padding:0 0 24px; }
   /* 마이엔 이미 '내 진단 결과' 제목이 있어 iframe 안 제목·부제·STEP 배너는 중복 → 숨김 */
