@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=6e180040">
 <link rel="stylesheet" href="css/diag.css?v=c3a3f62c">
-<link rel="stylesheet" href="css/judge.css?v=42c6ebdb">
+<link rel="stylesheet" href="css/judge.css?v=9ea1142b">
 <link rel="stylesheet" href="css/appnav.css?v=7d3c22bd">
 <script defer src="js/appnav.js?v=007ae564"></script>
 </head>
@@ -63,7 +63,7 @@
    </div>
    <div class="jsetup-cols">
     <!-- 리셋(다른 옷 판정하기) 전환 로딩 — 2단 전체를 덮음(결과 패널만 도는 어색함 방지) -->
-    <div class="jcols-load" id="jcolsload" hidden><span class="jload-mk"><svg viewBox="0 0 66 66" fill="none"><circle class="trk" cx="33" cy="33" r="28" stroke-width="3"/><path class="arc" d="M33 5a28 28 0 0 1 24.2 14" stroke-width="3" stroke-linecap="round"/></svg><i>FIT</i></span><span class="jload-tx">새 판정을 준비하고 있어요…</span></div>
+    <div class="jcols-load" id="jcolsload" hidden><span class="jload-mk"><svg class="jload-ring" viewBox="0 0 140 140" fill="none"><circle class="trk" cx="70" cy="70" r="62" stroke-width="2.5"/><path class="arc" d="M70 8a62 62 0 0 1 53.7 31" stroke-width="2.5" stroke-linecap="round"/></svg><span class="jload-lg">Fit<i class="sq"></i></span></span><span class="jload-tx">새 판정을 준비하고 있어요…</span></div>
     <!-- 좌: 작업 -->
     <div class="jsetup-main">
       <!-- 입력부 = 번호 스텝 카드 하나로 묶음(①판정기준 ②옷종류 ③사이즈표). '뭐부터'가 번호로 자명. -->
@@ -125,6 +125,9 @@
           <div class="jf-line"><span class="jf-k">상품명</span><input class="jf-in" id="jprodin" placeholder="선택 · 예: 와이드 팬츠" autocomplete="off"></div>
         </div>
         <div id="jparsetable"></div>
+        <!-- 수집 opt-in — 판정 전에 한 줄 체크(동의 시 판정 직후 저장) -->
+        <label class="jconsent-row"><input type="checkbox" id="jconsent"><span>핏팅 판정을 <b>더 정확하게</b> 하기 위해 사이즈표를 활용할게요</span></label>
+        <div class="jshare-msg" id="jsharemsg" hidden></div>
         </div>
 
         </div>
@@ -140,7 +143,7 @@
       <div id="jaside">
         <!-- 판정 진행 중 로딩 오버레이(결과 캔버스 위) — 판정 끝나면 결과로 교체 -->
         <!-- 판정 중 = 결과 카드 자리에 카드 뒷면이 먼저 서서 로딩 → 결과 오면 그 카드가 그대로 뒤집힘(크기 점프 없음) -->
-        <div class="jloadcard" id="jloadcard" hidden><span class="jload-mk"><svg viewBox="0 0 66 66" fill="none"><circle class="trk" cx="33" cy="33" r="28" stroke-width="3"/><path class="arc" d="M33 5a28 28 0 0 1 24.2 14" stroke-width="3" stroke-linecap="round"/></svg><i>FIT</i></span><span class="jloadcard-tx">판정을 진행 중이에요…</span></div>
+        <div class="jloadcard" id="jloadcard" hidden><span class="jloadcard-in"><svg class="jloadcard-ring" viewBox="0 0 140 140" fill="none"><circle class="trk" cx="70" cy="70" r="62" stroke-width="2.5"/><path class="arc" d="M70 8a62 62 0 0 1 53.7 31" stroke-width="2.5" stroke-linecap="round"/></svg><span class="cblogo">Fit<i class="sq"></i></span></span><span class="jloadcard-tx">판정을 진행 중이에요…</span></div>
         <!-- 결과가 나올 자리(골격) — 판정하면 이 자리가 그대로 결과로 채워져요 -->
         <div class="jgh-hero" id="jghhero">
           <span class="jgh-gauge">FIT</span>
@@ -182,14 +185,6 @@
         </div>
 
 
-        <!-- 수집 opt-in — 이 표를 핏팅 개선에 제공(동의 시에만 저장) -->
-        <div class="jshare" id="jshare">
-          <label class="jshare-row">
-            <input type="checkbox" id="jconsent">
-            <span class="jshare-tx"><b>이 사이즈표를 핏팅 개선에 쓸게요</b><span>판정이 더 명확해져요</span></span>
-          </label>
-          <div class="jshare-msg" id="jsharemsg" hidden></div>
-        </div>
 
         <button class="jbtn jredo-btn" id="jredo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>다른 옷 판정하기</button>
       </section>
@@ -205,7 +200,7 @@
 <script src="js/engine.js?v=e865d040"></script>
 <script src="js/config.js?v=53f50277"></script>
 <script src="js/data.js?v=177a2945"></script>
-<script src="js/judge.js?v=ee18e4f7"></script>
+<script src="js/judge.js?v=8be1db7c"></script>
 <script src="js/a11y.js?v=1876c5ec"></script>
 </body>
 </html>

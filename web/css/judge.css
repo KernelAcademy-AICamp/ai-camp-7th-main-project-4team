@@ -183,14 +183,14 @@
 .jcorrect:not(.man) .jcorrect-top{background:var(--soft); border-radius:12px; padding:10px 12px;}
 .jcorrect.man .jcorrect-top{display:none;}
 /* 수집 opt-in 카드 (결과 하단) */
-.jshare{border:1px solid var(--gl); background:var(--gs); border-radius:16px; padding:16px 20px; display:flex; flex-direction:row; align-items:center; flex-wrap:wrap; gap:13px 16px;}
-.jshare-row{flex:1; min-width:220px; display:flex; align-items:flex-start; gap:11px; cursor:pointer;}
-.jshare-row input{margin-top:2px; width:18px; height:18px; accent-color:var(--g); flex:none; cursor:pointer;}
-.jshare-tx{display:flex; flex-direction:column; gap:3px;}
-.jshare-tx b{font-size:14.5px; font-weight:800; letter-spacing:-.02em; color:var(--ink);}
-.jshare-tx span{font-size:13px; color:var(--sub); line-height:1.5;}
-.jshare .jbtn{flex:none; align-self:center; margin-top:0; padding:11px 22px; white-space:nowrap;}
-.jshare-msg{flex-basis:100%; font-size:13px; font-weight:700; color:var(--g);}
+/* 수집 opt-in = 입력창 안 한 줄 체크(판정 전에 선택) */
+.jconsent-row{display:flex; align-items:center; gap:9px; margin-top:14px; cursor:pointer; font-size:13px; color:var(--sub); line-height:1.45;}
+.jconsent-row input{width:16px; height:16px; accent-color:var(--g); flex:none; cursor:pointer;}
+.jconsent-row b{color:var(--ink2); font-weight:700;}
+.jshare-msg{font-size:12.5px; font-weight:700; color:var(--g); margin-top:6px;}
+/* 사이즈표 인식 중 = 입력부 잠금(분석 도중 옷 종류·탭·재업로드 조작 방지) */
+.jcard.parsing{pointer-events:none;}
+.jcard.parsing .jstep:not(:last-child){opacity:.5; transition:opacity .2s;}
 
 .jmeta{padding-bottom:14px; border-bottom:1px solid var(--line);}
 /* 캡처 후 = 읽은 사이즈표 그대로 표로(행=사이즈, 열=부위) — 업로드한 표와 같은 모양 */
@@ -224,19 +224,40 @@
 
 /* 판정 전 = 아이콘 3스텝 한 줄 + 결과 골격(스켈레톤). 판정하면 #jaside→#jresult로 '같은 자리'가 채워져 갑작스런 전환을 줄임 */
 #jaside{display:flex; flex-direction:column; gap:14px; position:relative;}
+/* 판정 중 = 아래 골격도 함께 '만들어지는 중'으로 반짝임(위 카드만 도는 어색함 방지) */
+#jaside.judging .jgh-grid span, #jaside.judging .jgh-bar{position:relative; overflow:hidden;}
+#jaside.judging .jgh-grid span::after, #jaside.judging .jgh-bar::after{content:""; position:absolute; inset:0; transform:translateX(-100%);
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.85), transparent); animation:jshim 1.25s infinite;}
+@keyframes jshim{ to{ transform:translateX(100%); } }
+/* 결과 등장 = 카드가 열리기 시작한 뒤(≈.42s) 아래 패널이 뒤따라 살짝 떠오름 — 뒤집힘과 경쟁하지 않게 */
+.jresult.reveal > *:not(.jflip){opacity:0; transform:translateY(8px); animation:jrise .58s cubic-bezier(.16,.84,.28,1) forwards;}
+.jresult.reveal > *:nth-child(2){animation-delay:.42s} .jresult.reveal > *:nth-child(3){animation-delay:.54s}
+.jresult.reveal > *:nth-child(4){animation-delay:.64s} .jresult.reveal > *:nth-child(5){animation-delay:.72s}
+@keyframes jrise{ to{ opacity:1; transform:none; } }
+@media (prefers-reduced-motion: reduce){
+  #jaside.judging .jgh-grid span::after, #jaside.judging .jgh-bar::after{animation:none;}
+  .jresult.reveal > *:not(.jflip){opacity:1; transform:none; animation:none;}
+}
 /* 판정 중 = 결과 카드 자리에 카드 뒷면(.jflip-back과 동일)이 서서 로딩 → 결과가 오면 그 카드가 그대로 뒤집힘 */
-.jloadcard{height:200px; border-radius:20px; border:1px solid #22232a; display:flex; flex-direction:column; align-items:center; justify-content:center;
+/* 로고는 뒷면과 같은 자리·크기로 두고 링만 회전 → 카드로 넘어갈 때 내용이 안 바뀌어 이음새가 없음 */
+.jloadcard{height:200px; border-radius:20px; border:1px solid #22232a; position:relative;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;   /* 링+문구를 한 덩어리로 중앙정렬 */
   background:radial-gradient(ellipse 72% 34% at 50% 12%, rgba(156,193,174,.22), transparent 60%), linear-gradient(165deg,#191a1f,#0f1014);}
-.jloadcard .jload-mk i{color:var(--gl);}
-.jloadcard .jload-mk .trk{stroke:rgba(255,255,255,.16);}
-.jloadcard .jload-mk .arc{stroke:#9FD9B7;}
-.jloadcard-tx{font-size:13.5px; font-weight:700; color:rgba(255,255,255,.72); margin-top:12px;}
+.jloadcard-in{position:relative; width:118px; height:118px; display:grid; place-items:center;}
+.jloadcard-ring{position:absolute; inset:0; width:118px; height:118px; animation:jspin 1.4s cubic-bezier(.5,.1,.5,.9) infinite;}
+.jloadcard-ring .trk{stroke:rgba(255,255,255,.14);} .jloadcard-ring .arc{stroke:#9FD9B7;}
+.jloadcard .cblogo{font-size:52px; font-weight:800; letter-spacing:-.05em; line-height:1; color:#f3f4f2;}
+.jloadcard .cblogo .sq{display:inline-block; width:10px; height:10px; background:var(--gl); margin-left:4px; vertical-align:baseline;}
+.jloadcard-tx{text-align:center; font-size:12.5px; font-weight:700; color:rgba(255,255,255,.6);}   /* 절대배치 해제 → 링과 한 덩어리로 중앙 */
 @media (max-width:520px){ .jloadcard{height:212px;} }
 /* 로딩 모션 = 브랜드 링(FIT 마크 + 얇은 아크) — 결과 카드의 FIT 게이지와 이어지게 */
-.jload-mk{position:relative; width:66px; height:66px; display:grid; place-items:center;}
-.jload-mk svg{position:absolute; inset:0; width:66px; height:66px; animation:jspin 1.15s cubic-bezier(.5,.1,.5,.9) infinite;}
-.jload-mk .trk{stroke:var(--gs);} .jload-mk .arc{stroke:var(--g);}
-.jload-mk i{font-style:normal; font-size:13px; font-weight:800; letter-spacing:.08em; color:var(--g);}
+/* 리셋 로딩 마크 = 판정 카드와 같은 브랜드 모션(로고 + 링). 밝은 배경이라 딥그린.
+   ※ 박스에 링과 같은 크기를 줘야 문구가 링 위로 겹치지 않음(링은 절대배치라 높이에 안 잡힘) */
+.jload-mk{position:relative; width:132px; height:132px; display:grid; place-items:center;}
+.jload-ring{position:absolute; inset:0; width:132px; height:132px; animation:jspin 1.4s cubic-bezier(.5,.1,.5,.9) infinite;}
+.jload-ring .trk{stroke:var(--gs);} .jload-ring .arc{stroke:var(--g);}
+.jload-lg{font-size:42px; font-weight:800; letter-spacing:-.05em; line-height:1; color:var(--g);}
+.jload-lg .sq{display:inline-block; width:9px; height:9px; background:var(--gl); margin-left:4px; vertical-align:baseline;}
 @keyframes jspin{to{transform:rotate(360deg);}}
 .jload-tx{font-size:14.5px; font-weight:700; color:var(--sub); text-align:center; line-height:1.5;}
 /* 왼쪽 인식 로딩 = 힌트 옆 작은 스피너(사진 올린 자리) */
