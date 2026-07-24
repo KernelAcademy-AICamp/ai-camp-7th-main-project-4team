@@ -8,6 +8,8 @@
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=6e180040">
+<link rel="stylesheet" href="css/appnav.css?v=59e7bef2">
+<script defer src="js/appnav.js?v=67af68a1"></script>
 <style>
 /* 체형별 가이드 전용 (개발 1차 — 색·폰트는 fitting.css 변수만) */
 .btg-gender{display:flex;gap:8px;margin:22px 0 6px}
@@ -61,15 +63,9 @@
     </div>
   </section>
 
-  <footer class="foot">
-    <a href="about.html">서비스 소개</a>
-    <a href="body-type-guide.html">체형별 가이드</a>
-    <a href="faq.html">도움말</a>
-    <a href="terms.html">이용약관</a>
-    <a href="privacy.html">개인정보 처리방침</a>
-    <a href="index.html">홈</a>
-  </footer>
 </div>
+<!-- 공용 푸터 — appnav.js가 index .site-foot 정본 주입(단일 소스). -->
+<div id="appfoot"></div>
 
 <script>
   var TYPES=[], curG='female';
