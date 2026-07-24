@@ -1524,7 +1524,9 @@
   }catch(e){} }
 
   /* 외부 화면에서 #home·#shop·#my 로 돌아오면 해당 탭 열기 */
-  (function(){ var h=(location.hash||'').replace('#',''); if(['home','shop','my'].indexOf(h)>=0) go(h); })();
+  (function(){ var h=(location.hash||'').replace('#',''); if(!h) return; var p=h.split('/'); var top=p[0];
+    if(['home','shop','my'].indexOf(top)<0) return;
+    if(top==='my' && p[1]){ goMy(p[1]); } else { go(top); } })();
 
   render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagCard(); renderMyTypeBadge(); renderMyInsight(); renderMyDiagDetail(); renderSupport(); renderNotis(); renderPrivacy(); applyAuthUI();
 
@@ -1667,3 +1669,11 @@
       mObs.observe(home.querySelector('.connect'));   // 스크롤로 보이면 매칭 시작
     })();
   })();
+
+/* 마이>내진단결과 iframe(result.html?embed=1) 높이 자동 맞춤 — 더블 스크롤 방지 */
+window.addEventListener('message', function(e){
+  if(e && e.data && e.data.t==='fit-embed-h'){
+    var f=document.getElementById('myDiagFrame');
+    if(f && e.data.h>200){ f.style.height=e.data.h+'px'; }
+  }
+});

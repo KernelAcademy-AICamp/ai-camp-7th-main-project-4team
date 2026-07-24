@@ -21,8 +21,17 @@
   .cacts button:hover{background:rgba(255,255,255,.26);}
   .cacts button:disabled{opacity:.5; cursor:default;}
   .cacts button svg{width:16px; height:16px; display:block;}
-  .fliphint{width:100%; text-align:center; font-size:13px; font-weight:700; color:rgba(255,255,255,.6); padding:14px 0 2px; border-top:1px solid rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; gap:6px;}
-  .fliphint svg{width:15px; height:15px;}
+  .fliphint{width:100%; text-align:center; font-size:13px; font-weight:700; padding:14px 0 2px; border-top:1px solid rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; gap:6px;
+    color:rgba(255,255,255,.6);
+    /* '자세히 보기'가 뒤집을 수 있다는 신호 — 은은하게 빛나며 시선 끌기 */
+    background:linear-gradient(100deg, rgba(255,255,255,.5) 0%, #fff 45%, rgba(255,255,255,.5) 60%) no-repeat;
+    background-size:220% 100%; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+    animation:hintShine 3.4s ease-in-out infinite;}
+  .fliphint svg{width:15px; height:15px; -webkit-text-fill-color:currentColor; color:rgba(255,255,255,.55);}
+  @keyframes hintShine{ 0%,100%{ background-position:120% 0; } 50%{ background-position:-20% 0; } }
+  @media (prefers-reduced-motion: reduce){ .fliphint{ animation:none; -webkit-text-fill-color:rgba(255,255,255,.6); } }
+  /* 자동 엿보기 = 뒤집힘 전환을 조금 느긋하게(힌트답게) */
+  .peeking .flip{ transition-duration:.85s; }
 
   /* ── 앞면 = 온보딩 카드 ── */
   .front{padding:26px 26px 30px; background:radial-gradient(ellipse 70% 34% at 50% 11%, color-mix(in srgb, var(--tp) 17%, transparent), transparent 60%), linear-gradient(160deg,#191a1f,#0f1014);}
@@ -48,7 +57,10 @@
   .fig .body.tube{clip-path:polygon(43% 0,57% 0,57% 100%,43% 100%);}
   .code{margin-top:18px; font-size:14px; font-weight:800; letter-spacing:.22em; opacity:.92; color:var(--tp);}
   .word{margin-top:12px; font-size:34px; font-weight:800; letter-spacing:-.03em; line-height:1.1; text-align:center;}
-  .tagline{margin-top:16px; font-size:17px; line-height:1.5; opacity:.8; text-align:center; max-width:300px;}
+  /* 유형 해시태그 = 이름과 설명 사이(라안). 유형색 옅게 배경 + 밝은 글자 */
+  .chash{margin-top:13px; display:flex; flex-wrap:wrap; gap:6px; justify-content:center;}
+  .chash span{font-size:11.5px; font-weight:600; color:color-mix(in srgb, var(--tp) 55%, #fff); background:rgba(255,255,255,.09); padding:4px 10px; border-radius:20px;}
+  .tagline{margin-top:14px; font-size:17px; line-height:1.5; opacity:.8; text-align:center; max-width:300px;}
 
   /* ── 뒷면 = FIT INSIGHT · VS · 궁합 ── */
   .back{padding:28px 26px 26px; background:linear-gradient(165deg,#191a1f,#0f1014);}
