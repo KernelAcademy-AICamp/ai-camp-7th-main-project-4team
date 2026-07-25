@@ -137,6 +137,8 @@
   window.shareResult=shareResult;
   var cardType=null;   // 실엔진(FitBodyType.classify)이 채움 — 초기 null이라 가짜 유형 안 뜸
   var _diagId=null;    // api 모드: recordDiagnosis 후 diagnosis id 저장(피드백 FK)
+  var _ebKeys={};      // 착용경험으로 실제 역산된 부위 키 집합(chestFull·shoulder·waist·hip·thigh) — 탭4 결과 근거가 소비
+  var _ebCm={};        // 그 부위들의 역산된 cm 값 — 탭3 체형 그림 예상치수가 회귀 대신 이 값을 씀
   // 유형 정체성 / 잘맞·피할 FIT / 한 끗 — 마이 '내 진단결과' 디자인 통일 (8유형 동적)
   (function(){
     var okC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
@@ -310,13 +312,15 @@
       var EBMAP={chest:'chestFull',shoulder:'shoulder',waist:'waist',hip:'hip',thigh:'thigh'};
       Object.keys(EBMAP).forEach(function(k){
         if(eb[k]==null) return;
-        var key=EBMAP[k]; cm[key]=eb[k]; ebKeys[key]=1;
+        var key=EBMAP[k]; cm[key]=eb[k]; ebKeys[key]=1; _ebCm[key]=eb[k];
         var pc=BodyModel.pctOf(est.sex,key,eb[k]); if(pc!=null)pm[key]=pc;
         expUsed=true;
       });
       // 저신뢰 표시(.lo) — 회귀 설명력이 낮은 부위(어깨 r²0.42·등길이 0.28 등)는 단정하지 않게.
       //   단 착용경험으로 역산된 부위는 회귀보다 정확하므로 제외.
       function lowConf(key){ return !ebKeys[key] && r2m[key]!=null && r2m[key]<0.5; }
+      // 탭4 '결과 근거'가 실제 역산 부위를 반영하도록 노출 + 재렌더(초기 load 땐 빈 값이라 회귀로만 그려졌던 것 갱신).
+      _ebKeys=ebKeys; if(window._renderAcc) window._renderAcc();
       if(D.id) _diagId=D.id;
 
       // 8유형 판정 — 역산(상의:가슴 / 하의:허리·엉덩이)+회귀 폴백 몸으로 KS드롭 분류(bodytype.js). 스텁(mapToBodyType) 대체.
@@ -608,19 +612,24 @@
               bottom:{waist:pm.waist, hip:pm.hip},
               prefTop:FITPCT[prefs.TOP||'regular']||55, prefBottom:FITPCT[prefs.BOTTOM||'straight']||50 };
       function r(v){ return v==null?null:Math.round(v); }
+      function ebv(key, fallback){ return _ebCm[key]!=null ? _ebCm[key] : fallback; }   // 역산된 부위는 그 값, 아니면 회귀
       var estArr=[
-        {label:'어깨너비',   val:r(cm.shoulder),               pm:1},
-        {label:'가슴둘레',   val:r(cm.chestUpper||cm.chestFull), pm:3},
-        {label:'허리둘레',   val:r(cm.waist),                  pm:3},
-        {label:'엉덩이둘레', val:r(cm.hip),                    pm:3}
+        {label:'어깨너비',   val:r(ebv('shoulder', cm.shoulder)),               pm:1},
+        {label:'가슴둘레',   val:r(ebv('chestFull', cm.chestUpper||cm.chestFull)), pm:3},
+        {label:'허리둘레',   val:r(ebv('waist', cm.waist)),                     pm:3},
+        {label:'엉덩이둘레', val:r(ebv('hip', cm.hip)),                         pm:3}
       ].filter(function(x){ return x.val!=null; });
-      el.innerHTML=BodyFigure.svg(m, {code:code}, est.sex, estArr, '낮음 (키·몸무게만)');
+      // 신뢰도 라벨 = 실제 tier(0벌 낮음 / 1벌 보통 / 2벌+ 높음) — 고정 '낮음' 제거.
+      var nExpA=(payload.experiences||[]).length;
+      var confLabel = nExpA<=0 ? '낮음 (키·몸무게만)' : (nExpA===1 ? '보통 (일부 실측 보정)' : '높음 (착용경험 반영)');
+      el.innerHTML=BodyFigure.svg(m, {code:code}, est.sex, estArr, confLabel);
     });
   }
   window._drawAvatar=drawAvatar;                                   // 결과 카드가 유형 확정 후 같은 코드로 다시 그리게 노출
   window.addEventListener('load', function(){ drawAvatar(); });
-  /* 결과 근거(탭4) — 부위 r²로 종합/부위별 신뢰도. 높음=착용경험 역산만, 키·몸무게 추정=보통(≥.6)/낮음. (0벌 데모=eb 없음) */
-  window.addEventListener('load', function accReal(){
+  /* 결과 근거(탭4) — 부위 r²로 종합/부위별 신뢰도. 높음=착용경험 역산(_ebKeys), 키·몸무게 추정=보통(≥.6)/낮음.
+     _ebKeys는 메인 렌더(diagnoseSpecs)가 역산 후 채움 → 채워지면 window._renderAcc로 다시 그린다(초기 load 땐 회귀만). */
+  function renderAcc(){
     var host=document.getElementById('accParts'); if(!host || !window.BodyModel) return;
     var payload={}, basic={};
     try{ payload=JSON.parse(sessionStorage.getItem('fitting.dx')||'{}'); }catch(e){}
@@ -628,7 +637,7 @@
     if(!payload.basic || payload.basic.height==null) payload.basic=basic;
     var nExp=(payload.experiences||[]).length;
     var tier=nExp<=0?'low':(nExp===1?'mid':'high');
-    var KO={low:'낮음',mid:'보통',high:'높음'}, FILL={high:5,mid:3,low:2}, eb={};
+    var KO={low:'낮음',mid:'보통',high:'높음'}, FILL={high:5,mid:3,low:2};
     function cert(r2,isEb){ return isEb?'high':(r2>=0.6?'mid':'low'); }
     BodyModel.load().then(function(){
       var est=BodyModel.estimate(payload.basic||{}); if(!est||!est.ready) return;
@@ -642,7 +651,7 @@
       var ts=document.getElementById('tierSteps'); if(ts) ts.innerHTML=steps.map(function(s,i){ return '<div class="tier-step'+(i===si?' on '+s[2]:'')+'"><span class="ts-dot"></span><div class="ts-b">'+s[0]+'</div><div class="ts-c">'+s[1]+'</div></div>'; }).join('');
       var PARTS=[['shoulder','어깨'],['chestFull','가슴'],['waist','허리'],['hip','엉덩이']], rows='', weakest=null;
       PARTS.forEach(function(pp){
-        var p=byKey[pp[0]]||{}, isEb=!!eb[pp[0]], r2=p.r2!=null?p.r2:0.5, c=cert(r2,isEb);
+        var p=byKey[pp[0]]||{}, isEb=!!_ebKeys[pp[0]], r2=p.r2!=null?p.r2:0.5, c=cert(r2,isEb);
         if(!isEb && (!weakest||r2<weakest.r2)) weakest={ko:pp[1],c:c};
         var segs=''; for(var i=0;i<5;i++) segs+='<span class="'+(i<FILL[c]?'on':'')+'"></span>';
         rows+='<div class="acc-prow"><div class="acc-name">'+pp[1]+'</div><div class="acc-mid"><div class="acc-src'+(isEb?' eb':'')+'">'+(isEb?'착용경험 역산':'키·몸무게 추정')+'</div><div class="acc-bar '+c+'">'+segs+'</div></div><span class="acc-pill '+c+'">'+KO[c]+'</span></div>';
@@ -652,7 +661,9 @@
         ? '네 부위 모두 착용경험으로 좁혀졌어요 — <b>가장 정확한 단계</b>예요'
         : '상의·하의를 넣으면 각 부위가 <b>실측으로 좁혀져</b>요';
     });
-  });
+  }
+  window._renderAcc=renderAcc;                 // 메인 렌더가 _ebKeys 채운 뒤 다시 호출
+  window.addEventListener('load', renderAcc);  // 초기 1회(역산 전 = 회귀 기준)
   /* 결과 풀이(탭2) 헤더 — 유형 칩(사이즈코리아)+요약(profile[1])을 means 패널 헤더로 주입. 소스=#rtypeid(숨김) */
   (function pulHeader(){
     var tries=0, t=setInterval(function(){
