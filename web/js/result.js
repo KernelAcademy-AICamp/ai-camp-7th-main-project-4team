@@ -289,7 +289,7 @@
     return fetch('data/garments.json').then(function(r){return r.json();}).catch(function(){return null;}).then(function(gj){
       var specs=gj&&gj.specs;
       if(!specs) return { eb:{}, topRecs:[], botRecs:[], specsMissing:true };
-      var eb=(window.FitEngine&&FitEngine.bodyFromExperiences)?FitEngine.bodyFromExperiences(payload.experiences, specs):{};
+      var eb=(window.FitEngine&&FitEngine.bodyFromExperiences)?FitEngine.bodyFromExperiences(payload.experiences, specs, cm):{};  // cm=회귀 몸 → 밴딩 허리 앵커링(B-2)
       var mcm={}; Object.keys(cm).forEach(function(k){ mcm[k]=cm[k]; });
       var EB={chest:'chestFull',shoulder:'shoulder',waist:'waist',hip:'hip',thigh:'thigh'};
       Object.keys(EB).forEach(function(k){ if(eb[k]!=null) mcm[EB[k]]=eb[k]; });

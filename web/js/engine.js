@@ -135,8 +135,9 @@
   // 규칙④~⑧: 착용경험 → 부위별 인체 치수 역산.
   //   body = 의류축(단면×2 등) − ratingToEase(등급). 같은(브랜드·핏·사이즈) 제품 여럿=평균, 여러 경험=부위별 평균.
   //   카테고리별 역산 부위(CAT_PARTS): TOP=chest·shoulder / BOTTOM=waist·hip·thigh.
-  function bodyFromExperiences(experiences, specs) {
-    var acc = {};
+  //   regBody(선택) = 회귀 몸 {waist,hip,...} — 밴딩으로 허리 역산이 스킵됐을 때 엉덩이 편차로 허리를 앵커링(B-2).
+  function bodyFromExperiences(experiences, specs, regBody) {
+    var acc = {}, bandedWaist = false;
     (experiences || []).forEach(function (e) {
       var parts = CAT_PARTS[e.category];
       if (!parts || !e.fits) return;
@@ -159,7 +160,7 @@
           var banded = e.waistband === "banded" ? true
             : e.waistband === "none" ? false
             : m.some(function (s) { return s.waistband; });
-          if (banded) return;
+          if (banded) { bandedWaist = true; return; }   // 스킵하되, 뒤에서 엉덩이로 앵커링하도록 표시(B-2)
         }
         var flats = m.map(function (s) { return s.garmentCm[part]; }).filter(function (v) { return v != null; });
         if (!flats.length) return;
@@ -172,6 +173,13 @@
     Object.keys(acc).forEach(function (k) {
       if (acc[k].length) out[k] = Math.round((acc[k].reduce(function (a, b) { return a + b; }, 0) / acc[k].length) * 10) / 10;
     });
+    // B-2 밴딩 허리 앵커링: 밴딩으로 허리 역산이 스킵됐고(순수 회귀=상향드리프트) 엉덩이는 신뢰 역산됐으면,
+    //   엉덩이의 '측정−회귀' 편차를 허리에 보수적(50%)으로 전이 → hip 신호를 반영해 회귀 드리프트 완화.
+    //   계수 0.5는 휴리스틱(배·다리 체형 과전이 회피) — 하의 실피드백이 쌓이면 admin 캘리브레이션으로 재조정.
+    //   regBody 없이 부르면(골든·기존 호출) 앵커링 없음(하위호환).
+    if (regBody && bandedWaist && out.waist == null && out.hip != null && regBody.hip != null && regBody.waist != null) {
+      out.waist = Math.round((regBody.waist + (out.hip - regBody.hip) * 0.5) * 10) / 10;
+    }
     return out; // TOP:{chest?,shoulder?} / BOTTOM:{waist?,hip?,thigh?}
   }
 

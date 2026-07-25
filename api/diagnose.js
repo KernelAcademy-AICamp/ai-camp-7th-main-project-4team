@@ -70,7 +70,7 @@ module.exports = async function handler(req, res) {
   var exps = Array.isArray(b.experiences) ? b.experiences : [];
 
   // ① 역산: 착용경험 → 부위별 인체 cm(prior 덮어쓰기용). ② 추천은 병합 cm으로.
-  var eb = (FitEngine.bodyFromExperiences ? FitEngine.bodyFromExperiences(exps, SPECS) : {}) || {};
+  var eb = (FitEngine.bodyFromExperiences ? FitEngine.bodyFromExperiences(exps, SPECS, b.cm || {}) : {}) || {};  // b.cm=클라 회귀 몸 → 밴딩 허리 앵커링(B-2)
   var cm = {};
   var srcCm = b.cm || {};
   Object.keys(srcCm).forEach(function (k) { cm[k] = srcCm[k]; });     // 클라 추정 cm

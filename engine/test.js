@@ -86,6 +86,9 @@ const bandexp = [{ category: "BOTTOM", brandId: "m", fitLine: "loose", sizeLabel
   subtype: "long_pants", fits: { waist: "SNUG", hip: "SNUG", thigh: "SNUG" } }];
 eq(FitEngine.bodyFromExperiences(bandexp, bandspec), { hip: 97, thigh: 57.5 },
    "밴딩 바지 → 허리 역산 스킵(엉덩이·허벅지만)");
+// B-2 앵커링: regBody 주면, 밴딩으로 스킵된 허리를 엉덩이 편차의 50%로 앵커링 (74 + (97−94)×.5 = 75.5)
+eq(FitEngine.bodyFromExperiences(bandexp, bandspec, { waist: 74, hip: 94 }),
+   { hip: 97, thigh: 57.5, waist: 75.5 }, "밴딩 허리 앵커링 — 엉덩이 측정편차 50% 전이");
 // 사용자 응답(e.waistband) 우선: 있음→고정 그룹이어도 스킵 / 없음→밴딩 그룹이어도 사용
 eq(FitEngine.bodyFromExperiences([Object.assign({}, bexp[0], { waistband: "banded" })], bspec),
    { hip: 97, thigh: 57.5 }, "사용자 '밴딩 있음' → 허리 스킵(그룹 무관)");
