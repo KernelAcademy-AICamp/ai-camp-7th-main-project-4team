@@ -29,11 +29,24 @@
   function loginDone(){ saveLS('auth', true); closeAll(); applyAuthUI(); var cb=window._loginCb; window._loginCb=null; if(cb){ toast('로그인했어요 · 이어서 진행할게요'); cb(); } else toast('로그인했어요 · 결과가 계정에 저장됐어요'); }
 
   // ── 소비자 계정(api·ACCOUNTS_ENABLED) 실 인증 (Phase 0a) — proto/플래그off는 위 목업 유지 ──
-  var _authSession=null;
+  var _authSession=null, _acctEmail='';
+  // 로그인/세션복원 시 계정 profile로 USER 하이드레이트(기본정보 프리필·이름·이메일). renderProfile/아바타 갱신.
+  function hydrateAccount(){
+    if(!apiAccounts()) return;
+    FITAUTH.getProfile().then(function(p){
+      if(!p) return;
+      _acctEmail = p.email || '';
+      if(p.display_name){ USER.name=p.display_name; USER.initial=(String(p.display_name)[0]||USER.initial); }
+      var b=p.basic||{};
+      if(b.gender) USER.gender=(b.gender==='female'?'female':'male');
+      if(b.height) USER.height=+b.height; if(b.weight) USER.weight=+b.weight; if(b.age) USER.age=+b.age;
+      renderProfile(); renderMyAvatar();
+    });
+  }
   function apiAccounts(){ return !!(window.FDATA&&FDATA.mode==='api'&&window.ACCOUNTS_ENABLED&&window.FITAUTH&&FITAUTH.ready()); }
   function initAuth(){
     if(!apiAccounts()) return;
-    FITAUTH.getSession().then(function(s){ _authSession=s; applyAuthUI(); });
+    FITAUTH.getSession().then(function(s){ _authSession=s; applyAuthUI(); if(s) hydrateAccount(); });
     FITAUTH.onChange(function(e,s){ _authSession=s; applyAuthUI(); if(e==='SIGNED_IN') onSignedIn(); });
   }
   function onSignedIn(){
@@ -46,7 +59,7 @@
     try{ var patch={ display_name:FITAUTH.displayName(u) };
       var basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'null'); if(basic) patch.basic=basic;
       if(email) patch.email=email;
-      FITAUTH.upsertProfile(patch); }catch(e){}
+      FITAUTH.upsertProfile(patch).then(hydrateAccount); }catch(e){}
     closeAll(); applyAuthUI();
     if(!email) toast('이메일이 없어요 · 프로필에서 등록해 주세요');
     var cb=window._loginCb; window._loginCb=null;
@@ -348,9 +361,30 @@
   function safeParse(s){ try{ return s?JSON.parse(s):null; }catch(e){ return s; } }
   /* 엔진개선 동의 = 진단 결과화면(result.js)과 동일 키·포맷(sessionStorage fitting.consent) */
   function engineConsent(){ try{ return JSON.parse(ssGet('fitting.consent')||'{}').engineImprove===true; }catch(e){ return false; } }
+  function _dlJson(obj, name){
+    try{
+      var blob=new Blob([JSON.stringify(obj,null,2)], {type:'application/json'});
+      var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name||'fitting-my-data.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
+      toast('내 데이터를 내려받았어요');
+    }catch(e){ toast('내려받기에 실패했어요'); }
+  }
   function renderPrivacy(){
-    var t=document.getElementById('privConsent'); if(t) t.classList.toggle('on', engineConsent());
+    var t=document.getElementById('privConsent');
     var d=document.getElementById('privData'); if(!d) return;
+    if(apiAccounts()){   // 계정 모드 — 서버(profile·diagnosis)에서 상태 조회
+      FITAUTH.getProfile().then(function(p){
+        if(t) t.classList.toggle('on', !!(p&&p.engine_improve_consent));
+        FITAUTH.myDiagnoses(100).then(function(list){
+          d.innerHTML = (p||list.length)
+            ? '<div class="field"><span>계정</span><span class="v">'+esc((p&&(p.email||p.display_name))||'로그인됨')+'</span></div>'+
+              '<div class="field"><span>저장된 진단</span><span class="v">'+list.length+'건</span></div>'
+            : '<div class="note">아직 저장된 진단이 없어요 · 진단을 완료하면 계정에 저장돼요</div>';
+        });
+      });
+      return;
+    }
+    if(t) t.classList.toggle('on', engineConsent());
     var basic=ssGet('fitting.basic'), dx=ssGet('fitting.dx');
     d.innerHTML = (basic||dx)
       ? '<div class="field"><span>기본 정보(성별·키·몸무게)</span><span class="v">'+(basic?'저장됨':'없음')+'</span></div>'+
@@ -359,20 +393,24 @@
   }
   function toggleEngineConsent(){
     var on=!engineConsent();
-    try{ sessionStorage.setItem('fitting.consent', JSON.stringify({ engineImprove:on, ageAttested:on, at:new Date().toISOString() })); }catch(e){}
-    renderPrivacy(); toast(on?'엔진 개선 활용에 동의했어요':'엔진 개선 활용 동의를 철회했어요');
+    try{ sessionStorage.setItem('fitting.consent', JSON.stringify({ engineImprove:on, ageAttested:on, at:new Date().toISOString() })); }catch(e){}   // 로컬 미러(진단 저장에 사용)
+    if(apiAccounts()){ FITAUTH.upsertProfile({ engine_improve_consent:on, age_attested:on, agreed_at:new Date().toISOString() }).then(function(){ renderPrivacy(); }); }
+    else renderPrivacy();
+    toast(on?'엔진 개선 활용에 동의했어요':'엔진 개선 활용 동의를 철회했어요');
   }
   function downloadMyData(){
-    var data={ basic:safeParse(ssGet('fitting.basic')), dx:safeParse(ssGet('fitting.dx')), consent:safeParse(ssGet('fitting.consent')), exportedAt:new Date().toISOString() };
-    if(!data.basic && !data.dx){ toast('내려받을 진단 데이터가 없어요'); return; }
-    try{
-      var blob=new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
-      var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='fitting-my-data.json';
-      document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
-      toast('내 데이터를 내려받았어요');
-    }catch(e){ toast('내려받기에 실패했어요'); }
+    if(apiAccounts()){ FITAUTH.exportMyData().then(function(data){ if(!data){ toast('내려받을 데이터가 없어요'); return; } _dlJson(Object.assign({exportedAt:new Date().toISOString()}, data), 'fitting-my-data.json'); }); return; }
+    var d={ basic:safeParse(ssGet('fitting.basic')), dx:safeParse(ssGet('fitting.dx')), consent:safeParse(ssGet('fitting.consent')), exportedAt:new Date().toISOString() };
+    if(!d.basic && !d.dx){ toast('내려받을 진단 데이터가 없어요'); return; }
+    _dlJson(d, 'fitting-my-data.json');
   }
   function deleteMyData(){
+    if(apiAccounts()){
+      askConfirm('<b>내 계정 데이터를 삭제</b>할까요?<div class="cf-sub">프로필·진단·피드백이 모두 삭제돼요 · 되돌릴 수 없어요</div>', '삭제하기', function(){
+        FITAUTH.deleteMyData().then(function(r){ if(r&&r.ok){ renderPrivacy(); toast('데이터를 삭제했어요'); } else toast('삭제 실패 · 잠시 후 다시'); });
+      });
+      return;
+    }
     askConfirm('<b>진단 데이터를 삭제</b>할까요?<div class="cf-sub">신체·착용경험·결과·개선 이력이 모두 삭제돼요 · 되돌릴 수 없어요</div>', '삭제하기', function(){
       try{ ['fitting.dx','fitting.basic','fitting.consent'].forEach(function(k){ sessionStorage.removeItem(k); }); }catch(e){}
       try{ localStorage.removeItem('fitting.feedback'); }catch(e){}
@@ -440,6 +478,7 @@
         '<div class="mcard-hd">프로필 <span>· 매칭·진단 관리</span></div>'+
         '<div class="msub"><div class="subhead">신체 · 선호 정보</div>'+
           '<div class="field"><span>이름</span><span class="v">'+esc(U.name)+'</span></div>'+
+          (apiAccounts()?'<div class="field"><span>이메일</span><span class="v">'+esc(_acctEmail||'미등록')+'</span></div>':'')+
           '<div class="field"><span>성별 · 나이</span><span class="v">'+(U.gender==='female'?'여성':'남성')+' · <span class="num">'+U.age+'</span>세</span></div>'+
           '<div class="field"><span>키 · 몸무게</span><span class="v"><span class="num">'+U.height+'</span>cm · <span class="num">'+U.weight+'</span>kg</span></div>'+
           '<div class="field"><span>상의 핏 취향</span><span class="v">'+U.fitTop+'</span></div>'+
@@ -451,6 +490,7 @@
         '<div class="mcard-hd">프로필 <span>· 매칭·진단 관리</span></div>'+
         '<div class="msub"><div class="subhead">신체 · 선호 정보</div>'+
           '<div class="pedit"><label>이름</label><input class="inp" id="pName" value="'+esc(U.name)+'"></div>'+
+          (apiAccounts()?'<div class="pedit"><label>이메일'+(_acctEmail?'':' <b style="color:var(--warn)">(필수)</b>')+'</label><input class="inp" id="pEmail" type="email" value="'+esc(_acctEmail)+'" placeholder="you@example.com"></div>':'')+
           '<div class="pedit"><label>성별</label><div class="seg" id="pGender">'+['male','female'].map(function(g){return '<span class="o'+(U.gender===g?' on':'')+'" data-g="'+g+'" onclick="pPick(this)">'+(g==='male'?'남성':'여성')+'</span>';}).join('')+'</div></div>'+
           '<div class="pedit inrow3"><div><label>나이</label><input class="inp" id="pAge" type="number" value="'+U.age+'"></div><div><label>키(cm)</label><input class="inp" id="pHeight" type="number" value="'+U.height+'"></div><div><label>몸무게(kg)</label><input class="inp" id="pWeight" type="number" value="'+U.weight+'"></div></div>'+
           '<div class="pedit"><label>상의 핏 취향</label><div class="seg" id="pFitTop">'+FIT_OPTS.map(function(f){return '<span class="o'+(U.fitTop===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div>'+
@@ -469,6 +509,11 @@
     if(a&&a.value) USER.age=+a.value; if(h&&h.value) USER.height=+h.value; if(w&&w.value) USER.weight=+w.value;
     var ft=document.querySelector('#pFitTop .o.on'); if(ft) USER.fitTop=ft.dataset.fit;
     var fb=document.querySelector('#pFitBottom .o.on'); if(fb) USER.fitBottom=fb.dataset.fit;
+    if(apiAccounts()){   // 계정 모드: 신체정보·이름·이메일을 서버 profile에 저장
+      var em=document.getElementById('pEmail'); if(em) _acctEmail=em.value.trim();
+      FITAUTH.upsertProfile({ display_name:USER.name, email:_acctEmail||null,
+        basic:{ gender:USER.gender, height:USER.height, weight:USER.weight, age:USER.age } });
+    }
     _profEdit=false; renderProfile(); renderMyAvatar(); renderMyDiagDetail(); toast('프로필을 저장했어요');
   }
 
