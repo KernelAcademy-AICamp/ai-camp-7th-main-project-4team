@@ -577,8 +577,8 @@
   function accountsOn(){ return !!(FDATA.mode==='api' && window.ACCOUNTS_ENABLED && window.FITAUTH && FITAUTH.ready()); }
   var _sess=null;
   if(accountsOn()){
-    FITAUTH.getSession().then(function(s){ _sess=s; });
-    FITAUTH.onChange(function(e,s){ _sess=s; });
+    FITAUTH.getSession().then(function(s){ _sess=s; resumeSaveIntent(); });
+    FITAUTH.onChange(function(e,s){ _sess=s; if(e==='SIGNED_IN') resumeSaveIntent(); });
   }
   // 로그인 상태: 계정ON=실세션 / 그 외는 index.js loggedIn()과 동일(localStorage fitting.auth).
   function isAuthed(){ return accountsOn() ? !!_sess : FDATA.isAuthed(); }   // 어댑터(seam)
@@ -601,7 +601,7 @@
     // 계정ON: 로그인 없으면 여기가 '저장 시점 로그인' 게이트(킬메트릭 보호 — 진단 자체는 익명으로 이미 끝남).
     //   로그인돼 있으면 익명으로 기록된 이번 진단을 계정에 귀속(claim)하고 마이로 안내.
     if(accountsOn()){
-      if(!isAuthed()){ openRModal('login','my'); return; }
+      if(!isAuthed()){ openLoginSheet(); return; }
       try{ var sid=FDATA.sessionId?FDATA.sessionId():null; if(sid) FITAUTH.claimDiagnoses(sid); }catch(e){}
       openRModal('saved'); return;
     }
@@ -659,11 +659,35 @@
         '<h3 class="rmodal-t">'+title+'</h3><p class="rmodal-b">'+body+'</p>'+
         '<div class="rmodal-acts">'+
           '<button type="button" class="rmodal-btn ghost" onclick="closeRModal()">닫기</button>'+
-          '<a class="rmodal-btn primary" href="'+primaryHref+'">'+primaryLabel+'</a>'+
+          (primaryHref?'<a class="rmodal-btn primary" href="'+primaryHref+'">'+primaryLabel+'</a>':'')+
         '</div></div>';
     document.body.appendChild(wrap);
   }
   function closeRModal(){ var m=document.getElementById('rmodal'); if(m) m.remove(); }
+
+  /* ── 결과 화면 내 로그인(계정ON) ─────────────────────────────
+     provider로 나갔다 돌아오면 이 페이지가 새로 뜬다. '저장하려다 나갔다'는 의도를
+     sessionStorage에 남겨, 복귀 시 claim+저장완료까지 자동으로 이어붙인다. */
+  var SAVE_INTENT='fitting.saveIntent';
+  function markSaveIntent(){ try{ sessionStorage.setItem(SAVE_INTENT,'1'); }catch(e){} }
+  // 계정ON 로그인 = index와 같은 공용 바텀시트. 결과 화면을 떠나지 않고 그 자리에서 로그인한다.
+  //   OAuth 복귀 주소는 현재 URL이 기본값(auth.js)이라 돌아오면 결과가 그대로 있고, 저장을 이어서 끝낸다.
+  function openLoginSheet(){
+    if(!window.FITAUTHUI){ openRModal('login','my'); return; }   // 컴포넌트 미로드 시 기존 모달로 폴백
+    FITAUTHUI.openSheet({
+      title:'로그인하면 결과가 저장돼요',
+      desc:'진단은 이미 끝났어요 · 계정에 담아두면 언제든 다시 볼 수 있어요',
+      onBeforeRedirect:markSaveIntent
+    });
+  }
+  // 로그인 복귀 후: 저장 의도가 남아 있으면 claim까지 끝내고 '저장했어요'로 마무리.
+  function resumeSaveIntent(){
+    var want=false; try{ want=sessionStorage.getItem(SAVE_INTENT)==='1'; }catch(e){}
+    if(!want || !isAuthed()) return;
+    try{ sessionStorage.removeItem(SAVE_INTENT); }catch(e){}
+    try{ var sid=FDATA.sessionId?FDATA.sessionId():null; if(sid) FITAUTH.claimDiagnoses(sid); }catch(e){}
+    openRModal('saved');
+  }
 
   /* ═══════ 결과 4탭 재구성 — 탭 전환 · 체형 그림(아바타) · 결과 근거(신뢰도) · 결과 풀이 헤더 ═══════ */
   function goTab(n){

@@ -12,7 +12,8 @@
 
   /* ===== 공통 ===== */
   function scrim(on){ document.getElementById('scrim').classList.toggle('on', on); }
-  function closeAll(){ document.getElementById('drawer').classList.remove('on'); document.getElementById('sheet').classList.remove('on'); scrim(false); }
+  function closeAll(){ document.getElementById('drawer').classList.remove('on'); scrim(false);
+    if(window.FITAUTHUI) FITAUTHUI.closeSheet(); }   // 로그인 시트는 공용 컴포넌트가 자체 스크림과 함께 소유
   function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2000); }
 
   /* ===== 진단 = 별도 화면 플로우 (sangmin 실제 UI 이식) =====
@@ -25,7 +26,14 @@
   }
 
   /* ===== 로그인/가입 시트 ===== */
-  function openLogin(ctx, onDone){ window._loginCb=onDone||null; document.getElementById('loginTitle').textContent=(ctx?ctx+' — ':'')+'로그인하고 이어가기'; showEmailStep(false); document.getElementById('sheet').classList.add('on'); scrim(true); }
+  // 로그인 시트 = 공용 컴포넌트(껍데기까지). result의 로그인 화면과 문자 그대로 같은 시트를 쓴다.
+  function openLogin(ctx, onDone){ window._loginCb=onDone||null;
+    if(!window.FITAUTHUI) return;
+    FITAUTHUI.openSheet({
+      title:(ctx?ctx+' — ':'')+'로그인하고 이어가기',
+      desc:'스타일리스트 둘러보기는 비회원도 자유예요 · 견적 요청·결과 저장은 로그인 후 이어져요',
+      onMock:loginDone
+    }); }
   function loginDone(){ saveLS('auth', true); closeAll(); applyAuthUI(); var cb=window._loginCb; window._loginCb=null; if(cb){ toast('로그인했어요 · 이어서 진행할게요'); cb(); } else toast('로그인했어요 · 결과가 계정에 저장됐어요'); }
 
   // ── 소비자 계정(api·ACCOUNTS_ENABLED) 실 인증 (Phase 0a) — proto/플래그off는 위 목업 유지 ──
@@ -92,42 +100,7 @@
     toast('이메일만 등록하면 끝나요 · 프로필로 이동할게요');
     setTimeout(function(){ goMy('mp-profile'); }, 400);
   }
-  function loginWith(provider){
-    if(!apiAccounts()){ loginDone(); return; }    // proto/플래그off = 기존 목업
-    if(provider==='google'){ FITAUTH.signInGoogle(); return; }
-    if(provider==='kakao'){ FITAUTH.signInKakao(); return; }
-    if(provider==='email'){ showEmailStep(true); return; }   // 시트 안 이메일 단계로 전환(같은 시트에서 완결)
-    toast('준비 중이에요');                         // 네이버 등 미지원 provider
-  }
-  /* 이메일 매직링크 — 시트 안 2단계(소셜 목록 ↔ 이메일 입력). 네이티브 prompt를 쓰면 시트 스타일과
-     단절되고, 브라우저가 대화상자를 차단하면 아무 반응 없이 죽는다. 결과도 시트 안에서 보여준다. */
-  function showEmailStep(on){
-    var box=document.getElementById('emailBox'), soc=document.getElementById('loginSocial');
-    if(!box||!soc) return;
-    box.hidden=!on; soc.hidden=!!on;
-    setEmailMsg('비밀번호 없이, 메일로 받은 링크로 로그인해요', '');
-    var btn=document.getElementById('loginEmailSend');
-    if(btn){ btn.disabled=false; btn.textContent='로그인 링크 보내기'; }
-    if(on){ var i=document.getElementById('loginEmail'); if(i) setTimeout(function(){ i.focus(); }, 60); }
-  }
-  function setEmailMsg(text, kind){
-    var m=document.getElementById('loginEmailMsg'); if(!m) return;
-    m.textContent=text; m.className='emsg'+(kind?' '+kind:'');
-  }
-  function sendMagicLink(){
-    var i=document.getElementById('loginEmail'), btn=document.getElementById('loginEmailSend');
-    var em=(i&&i.value||'').trim();
-    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ setEmailMsg('이메일 주소를 다시 확인해 주세요', 'err'); if(i) i.focus(); return; }
-    if(!apiAccounts()){ loginDone(); return; }        // proto/플래그off = 기존 목업 로그인
-    if(btn){ btn.disabled=true; btn.textContent='보내는 중…'; }
-    setEmailMsg('전송 중이에요…', '');
-    FITAUTH.signInEmail(em).then(function(r){
-      if(btn){ btn.disabled=false; btn.textContent='다시 보내기'; }
-      if(r&&r.ok){ setEmailMsg(em+' 로 링크를 보냈어요 · 메일함(스팸함)을 확인해 주세요', 'ok'); return; }
-      try{ console.error('[fitting] signInEmail 실패:', r&&r.error); }catch(e){}
-      setEmailMsg('전송 실패 · '+((r&&r.error)||'알 수 없는 오류'), 'err');   // 원인을 삼키지 않고 노출
-    });
-  }
+  // provider 호출·이메일 매직링크 2단계·에러 표시는 전부 auth-ui.js(공용) 소유 — 여기선 시트만 연다.
   // proto(데모)=기본 로그인 가정 / api: 계정ON=실세션 / 계정OFF(MVP)=비로그인(인증 표면 숨김)
   function loggedIn(){ if(apiAccounts()) return !!_authSession; if(window.FDATA&&FDATA.mode==='api') return false; return loadLS('auth', true)!==false; }
   /* 헤더 auth 상태 반영 — 로그인=프로필·알림벨 / 비로그인=로그인·회원가입 버튼(메인화면 게이트) */

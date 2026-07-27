@@ -128,12 +128,15 @@
   #rmodal{ position:fixed; inset:0; z-index:1000; display:flex; align-items:center; justify-content:center; padding:24px; }
   .rmodal-scrim{ position:absolute; inset:0; background:rgba(20,18,16,.44); }
   .rmodal-box{ position:relative; width:100%; max-width:360px; background:#fff; border-radius:20px; padding:26px 24px 20px; box-shadow:0 24px 60px rgba(20,18,16,.28); text-align:center; }
-  .rmodal-t{ font-size:19px; font-weight:800; color:var(--rink); letter-spacing:-.02em; margin:0 0 8px; }
+  .rmodal-t{ font-size:19px; font-weight:800; color:var(--ink); letter-spacing:-.02em; margin:0 0 8px; }
   .rmodal-b{ font-size:14.5px; color:var(--muted); line-height:1.55; margin:0 0 20px; }
+  /* 계정ON 로그인은 #rmodal이 아니라 공용 바텀시트(auth-ui.css .authui-sheet)로 뜬다 — index와 같은 화면. */
   .rmodal-acts{ display:flex; gap:10px; }
   .rmodal-btn{ flex:1; text-align:center; padding:14px; border-radius:12px; font-size:15px; font-weight:800; text-decoration:none; cursor:pointer; border:none; font-family:inherit; }
   .rmodal-btn.ghost{ background:#F1F0EC; color:#3A382F; }
-  .rmodal-btn.primary{ background:var(--rink); color:#fff; }
+  /* ⚠ #rmodal은 body 직속이라 .rwrap 스코프의 --rink이 안 닿는다(값 없음 → 배경 투명 + 흰 글씨 = 버튼이 안 보임).
+     :root 토큰인 --ink를 쓸 것. (같은 함정: .rfbt-b.p 주석) */
+  .rmodal-btn.primary{ background:var(--ink); color:#fff; }
   .rcta-note{ text-align:center; font-size:14.5px; color:var(--sub2); margin-top:4px; }
   /* ── 마이 '내 진단결과'와 디자인 통일 — 유형 정체성 / 잘맞·피할 FIT / 한 끗 ── */
   .rwrap{ --soft:#EDEDEA; --gl:#9CC1AE; --gm:#5A7A68; }

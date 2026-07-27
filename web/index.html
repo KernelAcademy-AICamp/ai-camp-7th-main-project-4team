@@ -28,7 +28,8 @@
 <link rel="stylesheet" href="css/tokens.css?v=8e429c15">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/index.css?v=2cdab6f7">
+<link rel="stylesheet" href="css/auth-ui.css?v=3f72bdd7">
+<link rel="stylesheet" href="css/index.css?v=809c31cd">
 </head>
 <body>
 
@@ -526,26 +527,8 @@
   <div id="drawerBody"></div>
 </div>
 
-<!-- ===== 로그인 시트 ===== -->
-<div class="sheet" id="sheet">
-  <div class="grip"></div>
-  <h3 id="loginTitle">로그인하고 이어가기</h3>
-  <p class="ss">스타일리스트 둘러보기는 비회원도 자유예요 · 견적 요청·결과 저장은 로그인 후 이어져요</p>
-  <div class="social" id="loginSocial">
-    <button class="kakao" onclick="loginWith('kakao')">카카오로 계속하기</button>
-    <button class="naver" onclick="loginWith('naver')">네이버로 계속하기</button>
-    <button class="google" onclick="loginWith('google')">Google로 계속하기</button>
-    <button class="email" onclick="loginWith('email')">이메일로 계속하기</button>
-  </div>
-  <!-- 이메일 매직링크 단계 — 시트 안에서 완결(네이티브 prompt는 UX 단절·브라우저 차단 위험이라 미사용) -->
-  <div class="emailbox" id="emailBox" hidden>
-    <input class="inp" id="loginEmail" type="email" inputmode="email" autocomplete="email"
-           placeholder="you@example.com" aria-label="로그인 링크를 받을 이메일" onkeydown="if(event.key==='Enter')sendMagicLink()">
-    <p class="emsg" id="loginEmailMsg" role="status" aria-live="polite">비밀번호 없이, 메일로 받은 링크로 로그인해요</p>
-    <button class="send" id="loginEmailSend" onclick="sendMagicLink()">로그인 링크 보내기</button>
-    <button class="back" onclick="showEmailStep(false)">다른 방법으로 로그인</button>
-  </div>
-</div>
+<!-- 로그인 시트는 공용 컴포넌트(js/auth-ui.js FITAUTHUI.openSheet)가 통째로 그린다 — result와 같은 화면.
+     정적 마크업을 두면 두 페이지가 다시 갈라지므로 여기엔 두지 않는다. -->
 
 <!-- ===== 요청 상세 = 독립 전체 페이지(상단 nav 유지, 사이드바 없이 집중) ===== -->
 <div class="bids-overlay" id="bidsOverlay"><div class="bids-inner" id="bidsBody"></div></div>
@@ -602,7 +585,8 @@
 <script src="js/data.js?v=0b603d0c"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/auth.js?v=790fe0f0"></script>
-<script src="js/index.js?v=7fc63395"></script>
+<script src="js/auth-ui.js?v=78d5c083"></script>
+<script src="js/index.js?v=999c2943"></script>
 <script src="js/a11y.js?v=1876c5ec"></script>
 </body>
 </html>
