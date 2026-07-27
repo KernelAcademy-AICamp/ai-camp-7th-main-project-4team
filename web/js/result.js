@@ -572,8 +572,16 @@
   //  · 로그인: 저장 → '저장했어요' 모달 → 마이(#my)에 결과 표시 / 전문가 → 스타일리스트찾기(#shop)
   //  · 비로그인: 저장·전문가 모두 로그인 유도 모달
   //  · 공유(카드 🔗)는 로그인 무관(card.js shareInvite) — 여기서 다루지 않음
-  // 로그인 상태: index.js loggedIn()과 동일(localStorage fitting.auth, 명시적 로그아웃 시에만 false).
-  function isAuthed(){ return FDATA.isAuthed(); }   // 어댑터(seam)
+  // 계정 ON(api·ACCOUNTS_ENABLED) = 실 Supabase 세션이 로그인 상태의 정본. index.js apiAccounts()와 같은 판정.
+  //   OFF(MVP)면 기존대로 localStorage 목업(proto 데모용).
+  function accountsOn(){ return !!(FDATA.mode==='api' && window.ACCOUNTS_ENABLED && window.FITAUTH && FITAUTH.ready()); }
+  var _sess=null;
+  if(accountsOn()){
+    FITAUTH.getSession().then(function(s){ _sess=s; });
+    FITAUTH.onChange(function(e,s){ _sess=s; });
+  }
+  // 로그인 상태: 계정ON=실세션 / 그 외는 index.js loggedIn()과 동일(localStorage fitting.auth).
+  function isAuthed(){ return accountsOn() ? !!_sess : FDATA.isAuthed(); }   // 어댑터(seam)
   // 진단 유형·기본정보를 마이(#my)가 읽는 프로필로 저장 → 마이가 이 결과를 보여줌.
   function persistResultToProfile(){
     try{
@@ -590,7 +598,14 @@
     }catch(e){}
   }
   function saveResult(){
-    if(FDATA.mode==='api'){ openRModal('saved'); return; }   // MVP: 진단은 서버에 이미 기록됨 · 계정 저장/마이 없음
+    // 계정ON: 로그인 없으면 여기가 '저장 시점 로그인' 게이트(킬메트릭 보호 — 진단 자체는 익명으로 이미 끝남).
+    //   로그인돼 있으면 익명으로 기록된 이번 진단을 계정에 귀속(claim)하고 마이로 안내.
+    if(accountsOn()){
+      if(!isAuthed()){ openRModal('login','my'); return; }
+      try{ var sid=FDATA.sessionId?FDATA.sessionId():null; if(sid) FITAUTH.claimDiagnoses(sid); }catch(e){}
+      openRModal('saved'); return;
+    }
+    if(FDATA.mode==='api'){ openRModal('saved'); return; }   // MVP(계정OFF): 진단은 서버에 이미 기록됨 · 계정 저장/마이 없음
     if(!isAuthed()){ openRModal('login','my'); return; }
     // 상의만/하의만(정확히 한 쪽) = 8유형 미완성 → 유형 저장 안 하고 나머지 진단 유도(대칭).
     if(upperDone!==lowerDone){ openRModal('incomplete'); return; }
@@ -609,8 +624,9 @@
   // 결과 카드(iframe, ?host=result)의 🔖 저장 → 부모로 위임해 버튼과 동일 동작
   window.addEventListener('message', function(e){ if(e&&e.data&&e.data.type==='fitting:save') saveResult(); });
 
-  // MVP(api): 계정 저장/로그인 표면 숨김 — '결과 저장하기' 버튼·로그인 안내 문구 감추고 '스타일리스트 찾기'만 남김.
-  if(FDATA.mode==='api'){ try{
+  // MVP(api·계정OFF): 계정 저장/로그인 표면 숨김 — '결과 저장하기' 버튼·로그인 안내 문구 감추고 '스타일리스트 찾기'만.
+  //   계정ON이면 저장 버튼이 곧 로그인 게이트라 그대로 노출한다.
+  if(FDATA.mode==='api' && !accountsOn()){ try{
     var _saveBtn=document.querySelector('.rcta .rbtn.p'); if(_saveBtn) _saveBtn.style.display='none';
     var _ctaNote=document.querySelector('.rcta-note'); if(_ctaNote) _ctaNote.style.display='none';
   }catch(_e){} }
@@ -620,7 +636,7 @@
     closeRModal();
     var title, body, primaryLabel, primaryHref;
     if(kind==='saved'){
-      if(FDATA.mode==='api'){
+      if(FDATA.mode==='api' && !accountsOn()){
         title='결과가 기록됐어요'; body='진단 결과가 안전하게 기록됐어요 · 스타일리스트찾기로 이어가 보세요';
         primaryLabel='스타일리스트 찾기'; primaryHref='index.html#shop';
       } else {
@@ -843,7 +859,7 @@
         var needBot=upperDone;              // 상의 완료 → 하의 남음
         var href=needBot?'diag-fit.html?cat=bottom&reuse=1&have=top':'diag-fit.html?cat=top&reuse=1&have=bottom';
         rows = opt(true,href,null,ICU,(needBot?'하의':'상의')+'까지 하면 완성돼요','체형이 또렷해지고 추천도 정밀해져요','진단하기',false);
-        foot = (isApi?'':LOGIN);
+        foot = ((isApi && !accountsOn())?'':LOGIN);   // 계정ON이면 '로그인하면 저장돼요' 유도 복원
       } else {                              // 0벌(건너뜀) → 상·하의 고르는 진단 플로우로
         eyTxt='기본 결과';
         rows = opt(true,'diag-fit.html',null,ICU,'입어본 옷을 넣어볼까요?','키·몸무게 추정보다 훨씬 정확해져요','더 정확히',false);

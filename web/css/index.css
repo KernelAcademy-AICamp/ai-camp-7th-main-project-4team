@@ -715,6 +715,8 @@
   .social .email{background:var(--ink); color:#fff;}
   /* 이메일 매직링크 단계 — .social과 같은 리듬(간격·버튼 규격)으로 자리만 바꿔 끼움 */
   .sheet .emailbox{margin-top:22px; display:flex; flex-direction:column; gap:10px;}
+  /* display:flex가 UA의 [hidden]{display:none}을 덮어써서 두 단계가 동시에 보인다 → 명시적으로 되돌림 */
+  .sheet .social[hidden], .sheet .emailbox[hidden]{display:none;}
   .sheet .emailbox button{padding:14px; border-radius:13px; border:none; font-size:16px; font-weight:800; cursor:pointer; font-family:inherit;}
   .sheet .emailbox .send{background:var(--ink); color:#fff;}
   .sheet .emailbox .send:disabled{opacity:.5; cursor:default;}
