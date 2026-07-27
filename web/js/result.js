@@ -151,7 +151,7 @@
       if(!showCard) return;   // 카드가 나오면 유형 상세도 함께(부분도 노출 — 완성도는 신뢰도 배지로 구분)
       var t=(list||[]).filter(function(x){ return x.code===cardType; })[0]; if(!t) return;
       var tp=t.point||'#2E4A3B';
-      var p3=document.getElementById('p3'); if(p3) p3.style.setProperty('--tp',tp);   // 체형그림 탭 부위 뱃지도 유형색 따라감
+      var fd=document.getElementById('figdetail'); if(fd) fd.style.setProperty('--tp',tp);   // 체형그림(탭1 자세히보기) 부위 뱃지도 유형색 따라감
       var idEl=document.getElementById('rtypeid');
       if(idEl){ idEl.style.setProperty('--tp',tp);
           // 정체성 개인화 한 줄(스코프 A) — 유형 아래 볼륨×강도로 서술. 이름은 h2에 있으니 name=null(중복 방지).
@@ -219,10 +219,37 @@
       var pct=(r.fitScore!=null)?r.fitScore:0;
       var scoreTxt=(r.fitScore!=null)?r.fit+' '+r.fitScore+'%':r.fit;
       var loCls=(r.warn||(r.fitScore!=null&&r.fitScore<70))?' lo':'';
-      return '<div class="s2row'+loCls+'"><div class="s2fill" style="width:'+pct+'%"></div>'+
+      // 신뢰 근거 ② — 이 사이즈가 왜 나왔는지 한 줄(attachBasis가 r.basis 세팅, 실계산 추천에만)
+      var basis=r.basis?('<div class="s2basis"><span class="s2basis-ic">↳</span> '+r.basis+'</div>'):'';
+      return '<div class="s2item"><div class="s2row'+loCls+'"><div class="s2fill" style="width:'+pct+'%"></div>'+
         '<div class="s2in"><div class="b">'+r.brandName+'<small>'+note+'</small></div>'+
-        '<div class="r"><span class="sz">'+r.size+'</span><span class="p">'+scoreTxt+'</span></div></div></div>';
+        '<div class="r"><span class="sz">'+r.size+'</span><span class="p">'+scoreTxt+'</span></div></div></div>'+basis+'</div>';
     }).join('')+'</div>';
+  }
+  // 신뢰 근거 ② — 추천마다 '왜 이 사이즈인지' 근거 한 줄을 r.basis에 부착.
+  //  · 역산 치수(cm)는 그 부위가 착용경험으로 실제 역산됐을 때(ebKeys)만 표기 — 회귀 추정치는 '역산'이라 말하지 않음(지어내기 방지).
+  //  · 착용경험 없음(0벌)이면 '추정 기준'으로 정직하게. cat=이 추천 리스트의 카테고리('TOP'|'BOTTOM').
+  function attachBasis(recs, cat, cm, ebKeys){
+    if(!recs||!recs.length) return;
+    var BN2KEY={'어깨':'shoulder','가슴':'chestFull','허리':'waist','엉덩이':'hip','허벅지':'thigh'};
+    var BN2FIT={'어깨':'shoulder','가슴':'chest','허리':'waist','엉덩이':'hip','허벅지':'thigh'};
+    var FITKO={TIGHT:'끼임',SNUG:'딱맞음',RELAXED:'여유',BIG:'큼'};
+    var e0=(payload.experiences||[]).filter(function(e){ return e.category===cat; })[0];
+    // 착용 사이즈에서 상품코드 괄호는 뺌(예: 'S(620)'→'S') — 근거 한 줄 가독성.
+    var szl=e0?String(e0.sizeLabel||'').replace(/\s*\(.*?\)\s*$/,'').trim():'';
+    var worn=e0?((e0.brandName||'')+(szl?(' '+szl):'')):'';
+    var TO=' <span class="s2to">→</span> ';
+    recs.forEach(function(r){
+      var bnKey=BN2KEY[r.bottleneck]||null;
+      var cmv=(bnKey && ebKeys && ebKeys[bnKey] && cm[bnKey]!=null)?Math.round(cm[bnKey]):null;
+      var fk=BN2FIT[r.bottleneck]||null;
+      var feel=(e0 && e0.fits && fk && FITKO[e0.fits[fk]])?(r.bottleneck+' '+FITKO[e0.fits[fk]]):'';
+      var wornTxt=worn?('<b>'+worn+'</b>'+(feel?(' '+feel):'')):'';
+      // C안(간결 화살표): 입력 옷 → (역산 치수) → 결론. 역산 치수는 그 부위가 착용경험으로 실제 역산된 경우만.
+      if(wornTxt && cmv!=null) r.basis=wornTxt+TO+r.bottleneck+' <b>'+cmv+'</b>'+TO+'<b>'+r.size+'</b>';
+      else if(wornTxt)        r.basis=wornTxt+TO+'<b>'+r.size+'</b>';
+      else                    r.basis='키·몸무게 추정'+TO+'<b>'+r.size+'</b>';
+    });
   }
   // 단일 카테고리 추천(부분 완료)
   function renderRecs(recs, real){
@@ -398,13 +425,16 @@
         ? '어깨·가슴·허리·엉덩이 측정을 종합해 '+(btName?'<b style="color:var(--ink)">'+btName+'</b> ':'')+'유형으로 확정됐어요'
         : noneDone
         ? '키·몸무게로 어깨·가슴·허리·엉덩이를 추정한 <b style="color:var(--ink2)">기본 결과</b>예요 · 입어본 옷을 넣으면 정밀해져요'
-        : '부위는 <b style="color:var(--ink2)">카테고리별로 달라져요</b>. 카테고리별 진단을 모두 완료하면 전신 비율까지 확인할 수 있어요.';
+        : '부위는 <b style="color:var(--ink2)">카테고리별로 달라지며</b>,<br>카테고리별 진단을 모두 완료하면 전신 비율까지 확인할 수 있어요';
       var measChip = cardReady ? '전신 · 상·하의 완료' : noneDone ? '전신 · 기본 추정' : curLabel+(expUsed?' · 입어본 옷':' · 추정');
       document.getElementById('meas').innerHTML=
         '<div class="dtl-meas-h"><span class="k">내 체형 측정</span><span class="chip">'+measChip+'</span></div>'+
         body+
         '<div class="dtl-note">'+measNote+'</div>';
 
+      // 신뢰 근거 ② — 각 추천에 '왜 이 사이즈' 근거 한 줄 부착(실계산 TOP/BOTTOM에만, 역산 치수는 ebKeys 부위만)
+      attachBasis(D.topRecs, 'TOP', cm, ebKeys);
+      attachBasis(D.botRecs, 'BOTTOM', cm, ebKeys);
       // 추천 — proto/api가 계산한 topRecs/botRecs(D)를 렌더. specs 없으면 정직한 안내.
       if(fullBody && (isTop||curCat==='BOTTOM')){
         if(D.specsMissing) renderRecsError();
@@ -417,6 +447,9 @@
           else renderRecsError('이 입력만으로는 추천을 만들기 어려워요 — 착용 경험을 넣으면 정밀해져요');
         }
       }
+      // 신뢰 근거 ① 원리 배지 노출 — 실계산 추천 + 입어본 옷이 있을 때만(0벌은 '역산' 주장 불가)
+      var _hasReal=(fullBody||isTop||curCat==='BOTTOM') && !D.specsMissing && (((D.topRecs||[]).length)||((D.botRecs||[]).length));
+      if(_hasReal && nExp>0){ var _rp=document.getElementById('rprinciple'); if(_rp) _rp.hidden=false; }
       // 결과 풀이 — 이 사용자의 백분위(pm)·추천 병목(D)·핏취향(prefs)으로 케이스 분기.
       // 실데이터 카테고리(상의·하의·전신)만 구동, 파생(아우터·치마·원피스)은 카테고리 기본 문구.
       if(fullBody || isTop || curCat==='BOTTOM'){
@@ -561,6 +594,11 @@
     if(FDATA.mode!=='api' && !isAuthed()){ openRModal('login','shop'); return; }   // api(MVP)는 로그인 없이 바로 스타일리스트찾기(페이크도어)
     location.href='index.html#shop';
   }
+  // 판정(judge)도 로그인 필요 — 스타일리스트와 동일 게이트. api(MVP)는 바로 진입.
+  function goJudge(){
+    if(FDATA.mode!=='api' && !isAuthed()){ openRModal('login','judge'); return; }
+    location.href='judge.html';
+  }
   // 결과 카드(iframe, ?host=result)의 🔖 저장 → 부모로 위임해 버튼과 동일 동작
   window.addEventListener('message', function(e){ if(e&&e.data&&e.data.type==='fitting:save') saveResult(); });
 
@@ -606,7 +644,7 @@
 
   /* ═══════ 결과 4탭 재구성 — 탭 전환 · 체형 그림(아바타) · 결과 근거(신뢰도) · 결과 풀이 헤더 ═══════ */
   function goTab(n){
-    for(var i=1;i<=4;i++){
+    for(var i=1;i<=3;i++){
       var tab=document.getElementById('t'+i), pane=document.getElementById('p'+i);
       if(!tab||!pane) continue;
       var on=(i===n);
@@ -717,7 +755,7 @@
   })();
 
   /* 해시 딥링크(#t2~#t4)로 특정 탭 열기 */
-  if(/^#t[1-4]$/.test(location.hash)){ window.addEventListener("load",function(){ goTab(+location.hash.slice(2)); }); }
+  if(/^#t[1-3]$/.test(location.hash)){ window.addEventListener("load",function(){ goTab(+location.hash.slice(2)); }); }
 
   /* ═══ iframe 임베드(마이>내진단결과) — 헤더 숨김 + 콘텐츠 높이를 부모로 전송(더블 스크롤 방지) ═══ */
   (function(){
@@ -751,15 +789,65 @@
       FDATA.saveFeedback({ ts:new Date().toISOString(), bodyType:cardType, verdict:vmap[val]||val, confidenceTier:confidenceTier, engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId });
     }catch(e){}
     try{ sessionStorage.setItem(fbStateKey(),'1'); }catch(e){}
-    if(from==='toast'){ fbToastThanks(); }   // 토스트에서 답 → '소중한 의견 감사합니다!' 후 닫힘
-    else { fbToastHide(); }                    // 검증 바에서 답하면 토스트 닫기
+    if(from==='toast'){ fbToastThanks(); }   // (구)피드백 전용 토스트 — 답 후 닫힘
+    else if(from==='ctatoast'){ /* 결합 토스트: 답해도 닫지 않고 다음 단계 CTA 유지 */ }
+    else { fbToastHide(); }                    // 검증 바(탭③)에서 답하면 토스트 닫기
   }
+  // 결합 토스트의 정확도 피드백 답 처리 — 선택 표시 + 저장(pickFeedback) 후 문구만 감사로, CTA는 그대로.
+  function fbToastAnswer(val, el){
+    var box=document.getElementById('rfbToastFb');
+    if(box){ Array.prototype.forEach.call(box.querySelectorAll('.rfb-b'), function(b){ b.classList.toggle('sel', b===el); }); box.classList.add('answered'); }
+    pickFeedback(val, 'ctatoast');
+    var q=document.getElementById('rfbToastQ'), sub=document.getElementById('rfbToastSub');
+    if(q) q.textContent='답해주셔서 감사해요!';
+    if(sub) sub.textContent='다음 진단이 더 정확해져요';
+  }
+  /* 결과 토스트 — 정확도 피드백(항상)과 상태별 '다음 단계'를 한 토스트에.
+     피드백(비슷·보통·달라요)은 위에 고정, 아래 '다음'은 진단 상태별로 분기:
+       · 0벌(건너뜀)=상·하의 넣기 유도 / 부분(상의만·하의만)=나머지 진단 유도 / 완료(상+하)=판정·스타일리스트·로그인. */
   (function fbToastInit(){
     if(/[?&]embed/.test(location.search)) return;   // 마이 내진단결과(embed)에선 토스트 없음
-    // 진단하고 결과로 들어올 때마다 노출(중복방지 없음). 페이지 로드 1회 = 토스트 1회.
+    var isApi=(window.FDATA && FDATA.mode==='api');
+    var LOGIN='<div class="rfbt-login">로그인하면 이 결과가 저장돼요 · <a href="index.html?login=1&next=my">로그인</a></div>';
+    var ICJ='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>';
+    var ICS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20v-1a4 4 0 0 0-8 0v1"/><circle cx="12" cy="8" r="3.2"/></svg>';
+    var ICU='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg>';
+    var LOCK='<span class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>';
+    // 리치 CTA 행(A/V3): 시나리오(제목+설명)+우측 액션. href면 <a>, onclick이면 <button>. key=잉크블랙 강조. lock=로그인 필요 자물쇠.
+    function opt(key, href, onclick, ic, t, s, go, lock){
+      var tag=href?'a':'button';
+      var attr=href?(' href="'+href+'"'):(' type="button" onclick="'+onclick+'"');
+      return '<'+tag+' class="rfbt-opt'+(key?' key':'')+'"'+attr+'>'
+        +'<span class="rfbt-ic">'+ic+'</span>'
+        +'<span class="rfbt-tx"><span class="t">'+t+'</span><span class="s">'+s+'</span></span>'
+        +'<span class="rfbt-go">'+(lock?LOCK:'')+go+'</span></'+tag+'>';
+    }
+    function fill(){
+      var ey=document.getElementById('rfbToastEy'), acts=document.getElementById('rfbToastActs');
+      if(!acts) return;
+      var eyTxt, rows='', foot='';
+      if(cardReady){                       // 상+하 완료 → 판정 · 스타일리스트(둘 다 로그인 필요=자물쇠)
+        eyTxt='진단 완료';
+        var lk=!isApi;                     // api(MVP)는 로그인 없이 진행 → 자물쇠 없음
+        rows = opt(true,null,'goJudge()',ICJ,'사려는 옷이 따로 있나요?','사이즈표만 올리면 그 옷도 맞을지 판정','판정하기',lk)
+             + opt(false,null,'goExpert()',ICS,'뭘 입을지 막막하다면','내 체형에 맞는 코디를 스타일리스트가 제안','찾기',lk);
+        foot = lk ? '<div class="rfbt-login">누르면 로그인 후 바로 이어져요</div>' : '';
+      } else if(!noneDone){                 // 부분(상의만/하의만) → 나머지 진단(로그인 불필요)
+        eyTxt='거의 다 왔어요';
+        var needBot=upperDone;              // 상의 완료 → 하의 남음
+        var href=needBot?'diag-fit.html?cat=bottom&reuse=1&have=top':'diag-fit.html?cat=top&reuse=1&have=bottom';
+        rows = opt(true,href,null,ICU,(needBot?'하의':'상의')+'까지 하면 완성돼요','체형이 또렷해지고 추천도 정밀해져요','진단하기',false);
+        foot = (isApi?'':LOGIN);
+      } else {                              // 0벌(건너뜀) → 상·하의 고르는 진단 플로우로
+        eyTxt='기본 결과';
+        rows = opt(true,'diag-fit.html',null,ICU,'입어본 옷을 넣어볼까요?','키·몸무게 추정보다 훨씬 정확해져요','더 정확히',false);
+      }
+      if(ey) ey.textContent=eyTxt;
+      acts.innerHTML=rows + foot;
+    }
     function fire(){
-      var t=document.getElementById('rfbToast'); if(!t) return; t.hidden=false;
+      var t=document.getElementById('rfbToast'); if(!t) return; fill(); t.hidden=false;
       requestAnimationFrame(function(){ t.classList.add('on'); });
     }
-    window.addEventListener('load', function(){ setTimeout(fire, 6000); });   // 결과 들어올 때마다 6초 뒤
+    window.addEventListener('load', function(){ setTimeout(fire, 6000); });   // 결과 안착 후 6초 뒤
   })();

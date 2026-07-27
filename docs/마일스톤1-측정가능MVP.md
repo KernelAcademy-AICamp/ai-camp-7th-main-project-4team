@@ -14,6 +14,7 @@
 > - **DB 테이블**: `diagnosis` · `feedback` · **`lead`**(db/02) · **`garment`/`garment_meta`**(db/03·실측표=진단 런타임 소스, rev 캐시) · **`brand`**(db/04·노출순서). RLS admin, 서버는 service_role.
 > - **서버 엔진**: `/api/diagnose`가 `garment` 테이블로 역산+추천 계산(garments.json 클라 미노출=해자). 브랜드 노출순서 반영.
 > - **어드민 UI = In(수정)**: MVP 4메뉴 실배선 — 사이즈·데이터(garment CRUD)·진단·정확도(+추세)·전문가 수요·엔진 강화. Google OAuth 로그인. v2 섹션은 숨김·미배포. → 문서 초안의 "어드민 UI = Out"은 **철회**.
+> - **구매 판정(Fit) = In(추가 · 2026-07-22, D-19)**: 초안 In/Out에 없던 항목을 **의도적으로 추가**했다. 이유는 두 가지 — ① 측정 대상인 엔진을 **그대로 재사용**하므로 측정 경로를 늦추지 않고 ② 판정에 올라오는 사이즈표를 `garment_submission`으로 수집(→검수→정본 승격)해 **실측 커버리지 부족(측정의 최대 제약)을 사용자 힘으로 푼다.** 배선: `/api/judge`·`/api/parse-size-table`·`/api/submit-garment` + `admin-submissions`(db/08·10).
 
 ## 1. 스택 (확정 · 운영비 $0)
 
