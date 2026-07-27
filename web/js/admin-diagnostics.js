@@ -18,8 +18,8 @@
     return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())+' '+p2(d.getHours())+':'+p2(d.getMinutes()); }
   function localDay(ts){ if(!ts) return ''; var d=new Date(ts); if(isNaN(d.getTime())) return String(ts).slice(0,10);
     return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate()); }
-  function kpi(n,l,s){return '<div class="kpi"><div class="n">'+n+'</div><div class="l">'+l+'</div>'+(s?'<div class="s">'+s+'</div>':'')+'</div>';}
-  function bar(p){return '<span class="scorecell"><span class="bar"><span class="s2fill" style="width:'+p+'%"></span></span> '+p+'%</span>';}
+  function kpi(n,l,s){return '<div class="kpi"><div class="n">'+(typeof n==='number'?n.toLocaleString():n)+'</div><div class="l">'+l+'</div>'+(s?'<div class="s">'+s+'</div>':'')+'</div>';}
+  function bar(p){return '<span class="scorecell"><span class="bar"><span class="s2fill" style="width:'+Math.min(100,p)+'%"></span></span> '+p+'%</span>';}
 
   // ── 샘플(대표 응답 16건). 화면 완성용 — 실데이터 아님. ─────────────────
   var SAMPLE=[

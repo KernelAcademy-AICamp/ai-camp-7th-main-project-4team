@@ -27,7 +27,9 @@ var HIDDEN = ['pro.html', 'pro-login.html', 'pro-signup.html', 'pro-quote.html',
 
 // data/: garments.json(실측표=해자)만 제외 · js/: pro*.js(목업 포털 스크립트)만 제외
 var DATA_SKIP = ['garments.json'];
-var JS_SKIP = function (f) { return /^pro(-|\.)/.test(f); };   // pro.js, pro-login.js, pro-signup.js, pro-quote.js
+// 숨김(비배포) 화면의 짝 스크립트도 제외 — HTML이 배포 안 되는데 JS만 app/에 남으면 死배포(로드하는 페이지 없음).
+var HIDDEN_JS = HIDDEN.map(function (h) { return h.replace(/\.html$/, '.js'); });   // admin-members/business/api/ops.js + pro*.js
+var JS_SKIP = function (f) { return /^pro(-|\.)/.test(f) || HIDDEN_JS.indexOf(f) >= 0; };
 
 function rmrf(p) { if (fs.existsSync(p)) fs.rmSync(p, { recursive: true, force: true }); }
 function mkdirp(p) { fs.mkdirSync(p, { recursive: true }); }

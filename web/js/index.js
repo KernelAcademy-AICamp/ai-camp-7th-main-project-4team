@@ -706,8 +706,6 @@
   var DELIVER=[{src:'photos/folio1.jpg',label:'코디 1'},{src:'photos/folio2.jpg',label:'코디 2'},{src:'photos/folio3.jpg',label:'코디 3'}];
   var DELIVER_LINKS=[{brand:'유니클로', name:'라운드 니트', size:'M', price:39900},{brand:'무신사 스탠다드', name:'테이퍼드 슬랙스', size:'30', price:35900},{brand:'자라', name:'싱글 코트', size:'M', price:129000},{brand:'나이키', name:'레더 스니커즈', size:'270', price:119000},{brand:'스파오', name:'미니멀 벨트', size:'FREE', price:19900}];
   function reqMsgs(r){ return r.msgs || [{from:'shopper', text:'요청 주신 무드로 코디 3안 보내드려요 🙂 구매 링크도 함께 넣었어요!'}]; }
-  function sendReqMsg(i){ var inp=document.getElementById('reqMsgIn'); if(!inp) return; var t=(inp.value||'').trim(); if(!t) return;
-    var r=reqs[i]; r.msgs=reqMsgs(r).slice(); r.msgs.push({from:'me', text:t}); saveLS('reqs',reqs); renderReqDetail(); }
   /* 대화는 우측 드로어로 분리(쇼퍼와 동일) — 여기선 받은 결과물만. 서비스별로 다르게(온라인=코디/쇼핑=현장구매/이미지=리포트) */
   var DLV_COPY={
     shopping:{wt:'동행 쇼핑 준비 중', wh:'약속일에 함께 쇼핑해요 · 종료 후 구매 내역을 전달해드려요', gt:'현장 구매 완료', gh:'함께 구매한 상품이 도착했어요 · 확인하고 완료해주세요'},

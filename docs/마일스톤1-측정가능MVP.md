@@ -94,7 +94,7 @@ POST /api/feedback
 |---|---|---|
 | `web/js/engine.js`(정본) | `engine/`의 **TS 모듈이 정본**, API가 import | JS는 더 이상 손수 유지 X — TS 단일 정본. 골든테스트도 TS로 이관 |
 | `web/js/body-model.js` | TS 모듈 | 〃 |
-| `web/js/engine-mock.js` | `/api/diagnose` 안의 서버 스텁(서술·8유형 매핑) | 실LLM 전까지 스텁 유지 |
+| `web/js/bodytype.js` | 8유형 판정 실계산(KS 드롭+로우데이터) — 구 `engine-mock.js` 스텁 대체 | 카드 서술(`character`)만 LLM 자리로 잔존 |
 | `web/*.html` + `web/js/<화면>.js` | `app/`의 Next 페이지/컴포넌트 | 디자이너가 이식, `tokens.css`는 전역 스타일로 |
 | `web/data/*.json` | 서버에서 import(초기) → 이후 DB | garments·body 시드는 당분간 JSON import |
 

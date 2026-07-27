@@ -8,7 +8,7 @@
   var esc=function(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); };
   var SVCKO={online:'온라인 코디 추천',shopping:'쇼핑 동행',image:'이미지 컨설팅',stylist:'스타일리스트 매칭(미지정)',undecided:'아직 모르겠음'};
   function kpi(n,l,s){ return '<div class="kpi"><div class="n">'+(typeof n==='number'?n.toLocaleString():n)+'</div><div class="l">'+l+'</div>'+(s?'<div class="s">'+s+'</div>':'')+'</div>'; }
-  function bar(p){ return '<span class="scorecell"><span class="bar"><span class="s2fill" style="width:'+p+'%"></span></span> '+p+'%</span>'; }
+  function bar(p){ return '<span class="scorecell"><span class="bar"><span class="s2fill" style="width:'+Math.min(100,p)+'%"></span></span> '+p+'%</span>'; }
   function fmt(ts){ try{ var d=new Date(ts); return (d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }catch(e){ return ts||''; } }
   function day(ts){ return (ts||'').slice(0,10); }
   function isPostDiag(l, diagSet){ return !!(l.session_id && diagSet[l.session_id]); }

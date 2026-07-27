@@ -80,16 +80,6 @@
     isAuthed: function () { try { return localStorage.getItem('fitting.auth') !== 'false'; } catch (e) { return true; } },
     saveUser: function (u) { lsSet('fitting.user', u); },
 
-    /* ── 진단 기록(store) = /api/diagnose ────────────────────
-       클라이언트 계산 결과({session_id,category,input,result,engine_version})를 서버에
-       저장하고 diagnosis id 반환(→ 이후 saveFeedback의 diagnosis_id).
-       proto: 서버 미기록(클라 계산만) → null.
-       ※ 엔진을 서버에서 '계산'까지 하는 건 단계 D(이 함수 안으로 흡수). */
-    recordDiagnosis: function (d) {
-      if (MODE === 'api') return postJSON('/api/diagnose', d).then(function (r) { return r.json(); }).then(function (j) { return j && j.id; });
-      return Promise.resolve(null);
-    },
-
     /* ── 진단 계산+저장(단계 D) = /api/diagnose ───────────────
        api: 클라 추정 cm+착용경험을 서버로 → 서버가 specs(garments)로 역산·추천 계산.
             반환 {id, eb, topRecs, botRecs}. garments.json은 서버 전용(클라 미노출).
