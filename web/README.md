@@ -13,7 +13,10 @@ npm run serve      # 저장소 루트에서 → http://localhost:8000
 > `data/*.json`을 `fetch`하므로 반드시 로컬 서버로 열 것(file:// 더블클릭은 CORS로 로드 실패).
 
 ## 배포 (Vercel)
-빌드 없는 정적 사이트. Vercel 프로젝트에서 **Root Directory = `web`**, Framework Preset = **Other**로 설정하면 그대로 서빙된다(빌드 명령·output 불필요).
+`vercel.json`이 정본: **buildCommand = `npm run gen-app`**, **outputDirectory = `app`**. 공개 배포는 항상 `web/`(정본 소스)를 `app/`(큐레이트 빌드)로 변환한 결과를 서빙한다.
+
+> ⚠️ **불변식 — 공개 배포는 반드시 `app/`, 절대 `web/` 직접 아님.**
+> `app/`은 `garments.json`(브랜드 실측표=해자)을 제외하고(+빌드 시 FATAL 유출가드) config를 api 모드로 주입한다. `web/`를 직접 공개 서빙하면 proto 경로(result.js·judge.js)가 `garments.json`을 클라에 노출한다. `npm run serve`(web/ 직접)는 **로컬 개발·데모(proto) 전용** — 공개 배포에 쓰지 않는다.
 
 ## 구조
 ```

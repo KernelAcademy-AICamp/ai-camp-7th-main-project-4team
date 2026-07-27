@@ -144,7 +144,7 @@
   }
   window.__ssrc=function(s){ sSrc=s; renderSignals(); };
 
-  function bar2(p){return '<span class="scorecell"><span class="bar"><span class="s2fill" style="width:'+p+'%"></span></span> '+p+'%</span>';}
+  function bar2(p){return '<span class="scorecell"><span class="bar"><span class="s2fill" style="width:'+Math.min(100,p)+'%"></span></span> '+p+'%</span>';}
   function sigKpis(){
     var n=SIG.length;
     var open=SIG.filter(function(r){return r.open;});

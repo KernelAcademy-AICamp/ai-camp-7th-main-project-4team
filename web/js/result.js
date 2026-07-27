@@ -9,7 +9,7 @@
   var hasBasic=!!(payload.basic && payload.basic.height!=null);   // 진단 데이터 유무(없으면 가짜 결과 대신 가드)
   if(hasBasic){ try{ sessionStorage.setItem('fitting.done','1'); }catch(e){} }   // 진단 완료 표시 — 재진단 안내 배너(diag-basic) 조건
   var nExp=(payload.experiences||[]).length;
-  var confidenceTier=nExp<=0?'low':(nExp===1?'mid':'high');       // 0벌 low·1벌 mid·2벌+ high
+  var confidenceTier=nExp<=0?'low':(nExp===1?'mid':'high');       // POST /api/diagnose에 실어보내는 예비값(경험수 기반·역산 전). ※서버가 역산(eb) 후 부위기반 tier로 대체 저장(api/diagnose.js) — 표시·피드백(confTier)과 DB가 모두 부위기반으로 일치. proto는 서버 미저장이라 무관.
   // 8유형 성별 축: 구조필드(공유)+gender.{male,female} 콘텐츠 병합. 구 포맷(gender 없음)은 raw 폴백.
   function btResolve(t, g){
     if(!t) return t;
@@ -79,8 +79,8 @@
   function maybeHideLoading(){ if(_contentReady && (_cardPainted || !showCard)) hideRloading(); }
   setTimeout(hideRloading, 4000);   // 안전장치: 무슨 일이 있어도 4초 뒤엔 공개(카드 로드 실패 등)
   function cardNoteHTML(){
-    var tier=confidenceTier;
-    if(!cardReady && tier==='high') tier='mid'; // 완성 전엔 '높음' 아님
+    var tier=confTier();                          // 부위기반 단일 신호(전 지점 일치)
+    if(!cardReady && tier==='high') tier='mid'; // 완성 전엔 '높음' 아님(안전장치)
     var tierKo=tier==='high'?'높음':tier==='mid'?'보통':'낮음';
     // 업그레이드 유도 문구는 상단 배너(upgradeHTML)로 이동 — 여기선 정확도 배지만.
     return '<div class="rcardnote"><span class="rconf '+tier+'">정확도 '+tierKo+(tier==='low'?' · 기본 추정':'')+'</span></div>';
@@ -136,7 +136,17 @@
   }
   window.shareResult=shareResult;
   var cardType=null;   // 실엔진(FitBodyType.classify)이 채움 — 초기 null이라 가짜 유형 안 뜸
-  var _diagId=null;    // api 모드: recordDiagnosis 후 diagnosis id 저장(피드백 FK)
+  var _diagId=null;    // api 모드: FDATA.diagnose 후 diagnosis id 저장(피드백 FK)
+  var _ebKeys={};      // 착용경험으로 실제 역산된 부위 키 집합(chestFull·shoulder·waist·hip·thigh) — 탭4 결과 근거가 소비
+  var _ebCm={};        // 그 부위들의 역산된 cm 값 — 탭3 체형 그림 예상치수가 회귀 대신 이 값을 씀
+  var _pmG={};         // 부위 백분위(pm) 노출 — 정체성 개인화 서술(_renderType)이 강도 신호로 소비(탭2와 동일 신호)
+  // 신뢰도 단일 신호(부위기반) — 표시 4부위 중 실제 역산(_ebKeys)된 개수로 tier. 전 노출 지점(카드배지·아바타·탭4 종합)이 이걸 소비.
+  //   경험수(nExp)가 아니라 '표시 부위가 실제 실측됐나'를 봐서, 상의만 넣어도 하의를 '높음'으로 부풀리지 않음(false precision 회피).
+  //   _ebKeys는 역산 후(diagnoseSpecs) 채워지고 각 지점이 재렌더되므로, 채워지기 전엔 보수적으로 'low'(과소=안전 방향).
+  function confTier(){
+    var n=['shoulder','chestFull','waist','hip'].filter(function(k){ return _ebKeys[k]; }).length;
+    return n<=0 ? 'low' : (n<4 ? 'mid' : 'high');
+  }
   // 유형 정체성 / 잘맞·피할 FIT / 한 끗 — 마이 '내 진단결과' 디자인 통일 (8유형 동적)
   (function(){
     var okC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
@@ -151,9 +161,17 @@
       var fd=document.getElementById('figdetail'); if(fd) fd.style.setProperty('--tp',tp);   // 체형그림(탭1 자세히보기) 부위 뱃지도 유형색 따라감
       var idEl=document.getElementById('rtypeid');
       if(idEl){ idEl.style.setProperty('--tp',tp);
+          // 정체성 개인화 한 줄(스코프 A) — 유형 아래 볼륨×강도로 서술. 이름은 h2에 있으니 name=null(중복 방지).
+        // 신호는 탭2와 동일(_pmG·balanced<12), 약신호면 강도어 생략. 문안/신호 없으면 ''→정적 profile만.
+        var _lead='';
+        if(window.FitBodyType && FitBodyType.describe && window._btDesc && payload && payload.basic){
+          var _sig=FitBodyType.describe(t.code,(gender==='female'?'female':'male'),payload.basic.height,payload.basic.weight,_pmG);
+          _lead=FitBodyType.narrate(_sig,window._btDesc,null)||'';
+        }
+        var _descLines=(_lead?[_lead]:[]).concat(t.profile||[]);
         idEl.innerHTML='<span class="dtl-code">'+t.code+'</span><h2 class="dtl-name">'+t.name+'</h2>'+
           '<span class="dtl-korea">사이즈코리아 · '+t.sizeKorea+'</span>'+
-          '<p class="dtl-desc">'+(t.profile||[]).map(function(p,i){ return i===0?'<b>'+p+'</b>':p; }).join('<br>')+'</p>'+
+          '<p class="dtl-desc">'+_descLines.map(function(p,i){ return i===0?'<b>'+p+'</b>':p; }).join('<br>')+'</p>'+
           '<div class="dtl-hash">'+chips(t.signature)+'</div>'; }
       var fEl=document.getElementById('rfit');
       if(fEl){ fEl.style.setProperty('--tp',tp);
@@ -164,6 +182,7 @@
     };
     fetch('data/bodytypes.json').then(function(r){ return r.json(); }).then(function(j){
       var list=Array.isArray(j)?j:(j.types||Object.keys(j).map(function(k){ return j[k]; }));
+      window._btDesc=(j&&j.desc)||null;   // 정체성 개인화 문안 조각(sil·volume·intensity) — narrate 소비
       window._btList=list.map(function(t){ return btResolve(t, gender); });   // 성별별 콘텐츠 해석
       window._renderType(window._btList);
     }).catch(function(){});
@@ -302,6 +321,16 @@
   var FITPCT={skinny:20,slim:32,regular:55,loose:70,oversize:85,
     straight:50,tapered:45,wide:78,bootcut:62};
 
+  // 잔차공분산 1회 로드 후 엔진 주입(미관측 둘레 조건부추정용, proto 추천 경로). 실패해도 무해(imputeGirths가 {}).
+  var _corrP=null;
+  function _ensureCorr(){
+    if(_corrP) return _corrP;
+    _corrP=fetch('data/body-correlation.json').then(function(r){return r.json();})
+      .then(function(c){ if(window.FitEngine&&FitEngine.seedCorrelation) FitEngine.seedCorrelation(c); })
+      .catch(function(){});
+    return _corrP;
+  }
+
   // specs(garments) 의존 계산 — proto=클라 로컬(garments.json 직접) / api=서버(/api/diagnose, garments 비노출·해자 보호).
   // 반환 {eb, topRecs, botRecs, specsMissing, id}. 체형추정·8유형분류·렌더는 호출부(클라)가 공통 처리.
   function diagnoseSpecs(est, cm, prefsObj){
@@ -311,13 +340,18 @@
         confidenceTier:confidenceTier, engine_version:'server-1' })
         .then(function(resp){ resp=resp||{}; return { eb:resp.eb||{}, topRecs:resp.topRecs||[], botRecs:resp.botRecs||[], specsMissing:false, id:resp.id }; });
     }
-    return fetch('data/garments.json').then(function(r){return r.json();}).catch(function(){return null;}).then(function(gj){
-      var specs=gj&&gj.specs;
+    return Promise.all([
+      fetch('data/garments.json').then(function(r){return r.json();}).catch(function(){return null;}),
+      _ensureCorr()
+    ]).then(function(arr){
+      var gj=arr[0], specs=gj&&gj.specs;
       if(!specs) return { eb:{}, topRecs:[], botRecs:[], specsMissing:true };
-      var eb=(window.FitEngine&&FitEngine.bodyFromExperiences)?FitEngine.bodyFromExperiences(payload.experiences, specs):{};
+      var eb=(window.FitEngine&&FitEngine.bodyFromExperiences)?FitEngine.bodyFromExperiences(payload.experiences, specs, cm):{};  // cm=회귀 몸 → 밴딩 허리 앵커링(B-2)
       var mcm={}; Object.keys(cm).forEach(function(k){ mcm[k]=cm[k]; });
       var EB={chest:'chestFull',shoulder:'shoulder',waist:'waist',hip:'hip',thigh:'thigh'};
       Object.keys(EB).forEach(function(k){ if(eb[k]!=null) mcm[EB[k]]=eb[k]; });
+      // 미관측 둘레 조건부 추정 — 교차카테고리 추천 개선(서버 diagnose와 동일 규칙). 앵커/시드 없으면 무동작.
+      if(FitEngine.imputeGirths){ var imp=FitEngine.imputeGirths(cm, eb, est.sex); Object.keys(imp).forEach(function(k){ mcm[k]=imp[k]; }); }
       var topRecs=(mcm.chestFull!=null)?FitEngine.recommend({ chest:mcm.chestFull, shoulder:mcm.shoulder }, prefsObj.TOP||'regular', est.sex, 'long_sleeve', specs):[];
       var botRecs=(FitEngine.recommendBottom&&mcm.waist!=null)?FitEngine.recommendBottom({ waist:mcm.waist, hip:mcm.hip, thigh:mcm.thigh }, prefsObj.BOTTOM||'regular', est.sex, 'long_pants', specs):[];
       return { eb:eb, topRecs:topRecs, botRecs:botRecs, specsMissing:false };
@@ -329,6 +363,7 @@
     var est=BodyModel.estimate(payload.basic||{});
     if(!est.ready){ renderNoData(); hideRloading(); return; }
     var pm={}, cm={}, r2m={}; est.parts.forEach(function(p){ pm[p.key]=p.pct; cm[p.key]=p.cm; r2m[p.key]=p.r2; });
+    _pmG=pm; if(window._btList&&window._renderType) window._renderType(window._btList);   // 백분위 준비됨 → 정체성 개인화 줄 재렌더(신호=탭2와 동일)
     var pref=(payload.prefs&&payload.prefs[curCat])||'regular';
 
     // 역산+추천(specs 의존)은 diagnoseSpecs가 모드별로: proto=클라(garments 로드) / api=서버(/api/diagnose, garments 비노출).
@@ -337,13 +372,15 @@
       var EBMAP={chest:'chestFull',shoulder:'shoulder',waist:'waist',hip:'hip',thigh:'thigh'};
       Object.keys(EBMAP).forEach(function(k){
         if(eb[k]==null) return;
-        var key=EBMAP[k]; cm[key]=eb[k]; ebKeys[key]=1;
+        var key=EBMAP[k]; cm[key]=eb[k]; ebKeys[key]=1; _ebCm[key]=eb[k];
         var pc=BodyModel.pctOf(est.sex,key,eb[k]); if(pc!=null)pm[key]=pc;
         expUsed=true;
       });
       // 저신뢰 표시(.lo) — 회귀 설명력이 낮은 부위(어깨 r²0.42·등길이 0.28 등)는 단정하지 않게.
       //   단 착용경험으로 역산된 부위는 회귀보다 정확하므로 제외.
       function lowConf(key){ return !ebKeys[key] && r2m[key]!=null && r2m[key]<0.5; }
+      // 탭4 '결과 근거'가 실제 역산 부위를 반영하도록 노출 + 재렌더(초기 load 땐 빈 값이라 회귀로만 그려졌던 것 갱신).
+      _ebKeys=ebKeys; if(window._renderAcc) window._renderAcc();
       if(D.id) _diagId=D.id;
 
       // 8유형 판정 — 역산(상의:가슴 / 하의:허리·엉덩이)+회귀 폴백 몸으로 KS드롭 분류(bodytype.js). 스텁(mapToBodyType) 대체.
@@ -521,7 +558,7 @@
   function fb(el,verdict){
     [].forEach.call(el.parentElement.children,function(c){c.classList.remove('on');}); el.classList.add('on');
     var consent=FDATA.readConsent();   // 어댑터(seam)
-    var rec={ ts:new Date().toISOString(), bodyType:cardType, verdict:verdict, confidenceTier:confidenceTier, engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId };
+    var rec={ ts:new Date().toISOString(), bodyType:cardType, verdict:verdict, confidenceTier:confTier(), engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId };
     FDATA.saveFeedback(rec);   // 어댑터(seam): proto=localStorage / api=POST /api/feedback(diagnosis_id 포함)
   }
   // 진단 초기화 — 누적된 입력(dx·기본정보·동의·피드백)을 지우고 처음부터. (목업 테스트용)
@@ -649,41 +686,46 @@
               bottom:{waist:pm.waist, hip:pm.hip},
               prefTop:FITPCT[prefs.TOP||'regular']||55, prefBottom:FITPCT[prefs.BOTTOM||'straight']||50 };
       function r(v){ return v==null?null:Math.round(v); }
+      function ebv(key, fallback){ return _ebCm[key]!=null ? _ebCm[key] : fallback; }   // 역산된 부위는 그 값, 아니면 회귀
       var estArr=[
-        {label:'어깨너비',   val:r(cm.shoulder),               pm:1},
-        {label:'가슴둘레',   val:r(cm.chestUpper||cm.chestFull), pm:3},
-        {label:'허리둘레',   val:r(cm.waist),                  pm:3},
-        {label:'엉덩이둘레', val:r(cm.hip),                    pm:3}
+        {label:'어깨너비',   val:r(ebv('shoulder', cm.shoulder)),               pm:1},
+        {label:'가슴둘레',   val:r(ebv('chestFull', cm.chestUpper||cm.chestFull)), pm:3},
+        {label:'허리둘레',   val:r(ebv('waist', cm.waist)),                     pm:3},
+        {label:'엉덩이둘레', val:r(ebv('hip', cm.hip)),                         pm:3}
       ].filter(function(x){ return x.val!=null; });
-      el.innerHTML=BodyFigure.svg(m, {code:code}, est.sex, estArr, '낮음 (키·몸무게만)');
+      // 신뢰도 라벨 = 전 지점 단일 신호 confTier()(부위기반). 카드배지·탭4 종합과 일치(탭 간 모순 방지).
+      var _ct=confTier();
+      var confLabel = _ct==='low' ? '낮음 (키·몸무게만)' : (_ct==='mid' ? '보통 (일부 실측 보정)' : '높음 (착용경험 반영)');
+      el.innerHTML=BodyFigure.svg(m, {code:code}, est.sex, estArr, confLabel);
     });
   }
   window._drawAvatar=drawAvatar;                                   // 결과 카드가 유형 확정 후 같은 코드로 다시 그리게 노출
   window.addEventListener('load', function(){ drawAvatar(); });
-  /* 결과 근거(탭4) — 부위 r²로 종합/부위별 신뢰도. 높음=착용경험 역산만, 키·몸무게 추정=보통(≥.6)/낮음. (0벌 데모=eb 없음) */
-  window.addEventListener('load', function accReal(){
+  /* 결과 근거(탭4) — 부위 r²로 종합/부위별 신뢰도. 높음=착용경험 역산(_ebKeys), 키·몸무게 추정=보통(≥.6)/낮음.
+     _ebKeys는 메인 렌더(diagnoseSpecs)가 역산 후 채움 → 채워지면 window._renderAcc로 다시 그린다(초기 load 땐 회귀만). */
+  function renderAcc(){
     var host=document.getElementById('accParts'); if(!host || !window.BodyModel) return;
     var payload={}, basic={};
     try{ payload=JSON.parse(sessionStorage.getItem('fitting.dx')||'{}'); }catch(e){}
     try{ basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'{}'); }catch(e){}
     if(!payload.basic || payload.basic.height==null) payload.basic=basic;
-    var nExp=(payload.experiences||[]).length;
-    var tier=nExp<=0?'low':(nExp===1?'mid':'high');
-    var KO={low:'낮음',mid:'보통',high:'높음'}, FILL={high:5,mid:3,low:2}, eb={};
+    var tier=confTier();                          // 부위기반 단일 신호 — 카드배지·아바타 라벨과 일치 + 아래 부위별 행과 자기모순 제거
+    var KO={low:'낮음',mid:'보통',high:'높음'}, FILL={high:5,mid:3,low:2};
     function cert(r2,isEb){ return isEb?'high':(r2>=0.6?'mid':'low'); }
     BodyModel.load().then(function(){
       var est=BodyModel.estimate(payload.basic||{}); if(!est||!est.ready) return;
       var byKey={}; est.parts.forEach(function(p){ byKey[p.key]=p; });
       var cb=document.getElementById('confBadge'); if(cb){ cb.className='conf-badge '+tier; cb.textContent=KO[tier]; }
-      var cr=document.getElementById('confReason'); if(cr) cr.innerHTML = nExp<=0
-        ? '입어본 옷 <b>0벌</b> · 키·몸무게로만 추정한 <b>기본 단계</b>예요<span class="acc-sub">옷을 넣을수록 정확도가 올라가요</span>'
-        : (nExp===1 ? '입어본 옷 <b>1벌</b> 반영 · 일부 부위가 <b>실측으로 보정</b>됐어요<span class="acc-sub">하의를 넣으면 높음이 돼요</span>'
-                    : '입어본 옷 <b>'+nExp+'벌</b> 반영 · 대부분 부위가 실측으로 좁혀진 <b>정밀 단계</b>예요<span class="acc-sub">이 결과를 그대로 믿고 쓰셔도 돼요</span>');
-      var steps=[['낮음','옷 0벌','low'],['보통','옷 1벌','mid'],['높음','옷 2벌+','high']], si=(tier==='low'?0:tier==='mid'?1:2);
+      // TODO(디자이너): 문구·단계 라벨 톤 정리 — 종합 신뢰도를 '경험수(옷 N벌)'에서 '표시 부위 실측 개수'로 옮김(로직 정합). 여긴 factual 초안.
+      var cr=document.getElementById('confReason'); if(cr) cr.innerHTML = tier==='low'
+        ? '표시 부위를 아직 <b>키·몸무게로만</b> 추정했어요<span class="acc-sub">옷을 넣으면 그 부위가 실측으로 보정돼요</span>'
+        : (tier==='mid' ? '표시 4부위 중 <b>일부</b>가 착용경험으로 <b>실측 보정</b>됐어요<span class="acc-sub">나머지 부위를 넣으면 더 정밀해져요</span>'
+                        : '표시 <b>네 부위 모두</b> 착용경험으로 좁혀진 <b>정밀 단계</b>예요<span class="acc-sub">이 결과를 그대로 믿고 쓰셔도 돼요</span>');
+      var steps=[['낮음','0부위 실측','low'],['보통','일부 실측','mid'],['높음','4부위 실측','high']], si=(tier==='low'?0:tier==='mid'?1:2);
       var ts=document.getElementById('tierSteps'); if(ts) ts.innerHTML=steps.map(function(s,i){ return '<div class="tier-step'+(i===si?' on '+s[2]:'')+'"><span class="ts-dot"></span><div class="ts-b">'+s[0]+'</div><div class="ts-c">'+s[1]+'</div></div>'; }).join('');
       var PARTS=[['shoulder','어깨'],['chestFull','가슴'],['waist','허리'],['hip','엉덩이']], rows='', weakest=null;
       PARTS.forEach(function(pp){
-        var p=byKey[pp[0]]||{}, isEb=!!eb[pp[0]], r2=p.r2!=null?p.r2:0.5, c=cert(r2,isEb);
+        var p=byKey[pp[0]]||{}, isEb=!!_ebKeys[pp[0]], r2=p.r2!=null?p.r2:0.5, c=cert(r2,isEb);
         if(!isEb && (!weakest||r2<weakest.r2)) weakest={ko:pp[1],c:c};
         var segs=''; for(var i=0;i<5;i++) segs+='<span class="'+(i<FILL[c]?'on':'')+'"></span>';
         rows+='<div class="acc-prow"><div class="acc-name">'+pp[1]+'</div><div class="acc-mid"><div class="acc-src'+(isEb?' eb':'')+'">'+(isEb?'착용경험 역산':'키·몸무게 추정')+'</div><div class="acc-bar '+c+'">'+segs+'</div></div><span class="acc-pill '+c+'">'+KO[c]+'</span></div>';
@@ -693,7 +735,9 @@
         ? '네 부위 모두 착용경험으로 좁혀졌어요 — <b>가장 정확한 단계</b>예요'
         : '상의·하의를 넣으면 각 부위가 <b>실측으로 좁혀져</b>요';
     });
-  });
+  }
+  window._renderAcc=renderAcc;                 // 메인 렌더가 _ebKeys 채운 뒤 다시 호출
+  window.addEventListener('load', renderAcc);  // 초기 1회(역산 전 = 회귀 기준)
   /* 결과 풀이(탭2) 헤더 — 유형 칩(사이즈코리아)+요약(profile[1])을 means 패널 헤더로 주입. 소스=#rtypeid(숨김) */
   (function pulHeader(){
     var tries=0, t=setInterval(function(){
@@ -748,7 +792,7 @@
     try{
       var vmap={'비슷':'맞음','보통':'보통','다름':'안맞음'};
       var consent=FDATA.readConsent();
-      FDATA.saveFeedback({ ts:new Date().toISOString(), bodyType:cardType, verdict:vmap[val]||val, confidenceTier:confidenceTier, engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId });
+      FDATA.saveFeedback({ ts:new Date().toISOString(), bodyType:cardType, verdict:vmap[val]||val, confidenceTier:confTier(), engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId });
     }catch(e){}
     try{ sessionStorage.setItem(fbStateKey(),'1'); }catch(e){}
     if(from==='toast'){ fbToastThanks(); }   // (구)피드백 전용 토스트 — 답 후 닫힘
