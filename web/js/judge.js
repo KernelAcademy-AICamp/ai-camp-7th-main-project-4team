@@ -373,10 +373,13 @@
     if (window.FDATA && FDATA.mode === "api") {
       return FDATA.judge(q).then(function (resp) { return (resp && resp.covered) ? resp.judgment : null; });
     }
-    return loadGarments().then(function (specs) {
-      var eb = specs && E.bodyFromExperiences ? E.bodyFromExperiences(q.experiences, specs) : {};
+    return Promise.all([loadGarments(), loadCorr()]).then(function (arr) {
+      var specs = arr[0];
+      var eb = specs && E.bodyFromExperiences ? E.bodyFromExperiences(q.experiences, specs, q.cm || {}) : {};  // 3번째=회귀몸 → 밴딩 허리 앵커링(B-2), 추천(result.js)·판정 일관
       var mcm = {}; Object.keys(q.cm).forEach(function (k) { mcm[k] = q.cm[k]; });
       Object.keys(EBMAP).forEach(function (k) { if (eb[k] != null) mcm[EBMAP[k]] = eb[k]; });
+      // 미관측 둘레 조건부 추정 — 교차카테고리 판정 개선(서버 judge와 동일 규칙). 앵커/시드 없으면 무동작.
+      if (E.imputeGirths) { var imp = E.imputeGirths(q.cm || {}, eb, state.sex); Object.keys(imp).forEach(function (k) { mcm[k] = imp[k]; }); }
       var bodyVec = q.category === "BOTTOM"
         ? { waist: mcm.waist, hip: mcm.hip, thigh: mcm.thigh, length: mcm.legOuter, rise: mcm.bodyRise }  // length=다리가쪽길이(기장), rise=몸밑위
         : { chest: mcm.chestFull, shoulder: mcm.shoulder, waist: mcm.waist, length: mcm.backLength };     // length=등길이(총장)
@@ -388,6 +391,14 @@
     if (state.gj) return Promise.resolve(state.gj);
     return fetchJSON("data/garments.json").then(function (g) { state.gj = (g && g.specs) || null; return state.gj; })
       .catch(function () { return null; });
+  }
+  // 잔차공분산 1회 로드 후 엔진에 주입(미관측 둘레 조건부추정용). 실패해도 무해(imputeGirths가 {} 반환).
+  function loadCorr() {
+    if (state.corrDone) return Promise.resolve();
+    return fetchJSON("data/body-correlation.json").then(function (c) {
+      if (window.FitEngine && FitEngine.seedCorrelation) FitEngine.seedCorrelation(c);
+      state.corrDone = true;
+    }).catch(function () { state.corrDone = true; });
   }
 
   /* ── 렌더 ───────────────────────────────────────────────── */

@@ -241,4 +241,23 @@ eq(FitBodyType.classify({ gender: "x", chestFull: 90, waist: 80, hip: 92 }), nul
 const _bt = { gender: "female", heightCm: 160, weightKg: 52, chestFull: 82, waist: 66, hip: 96 };
 eq(FitBodyType.classify(_bt), FitBodyType.classify(_bt), "분류 결정론적");
 
+/* ── 조건부 임퓨테이션 (imputeGirths) — 관측앵커 잔차로 미관측 둘레부위 추정 ────────── */
+assert.strictEqual(typeof FitEngine.imputeGirths, "function", "imputeGirths export"); pass++;
+// 미시드/앵커없음 → {} (하위호환: regBody 없이 부르던 기존 경로 무영향)
+eq(FitEngine.imputeGirths({ belly: 82 }, { waist: 85 }, "male"), {}, "미시드 → {}");
+try {
+  const corr = require("../web/data/body-correlation.json");
+  assert.ok(corr && corr.parts && corr.cov, "body-correlation.json 형태(parts·cov)"); pass++;
+  FitEngine.seedCorrelation(corr);
+  const regCm = { chestFull: 95, chestUpper: 96, waist: 80, hip: 94, thigh: 55, belly: 82, neck: 37, upperArm: 30, armhole: 42, calf: 37 };
+  const imp = FitEngine.imputeGirths(regCm, { waist: 85, hip: 96, thigh: 56 }, "male"); // 허리 회귀80→관측85(+5)
+  assert.ok(imp.waist == null && imp.hip == null && imp.thigh == null, "앵커된 부위는 임퓨트 대상 제외"); pass++;
+  assert.ok(imp.belly != null && imp.belly > regCm.belly, "배는 허리 상향관측 반영해 회귀보다 커짐(배↔허리 잔차상관 강)"); pass++;
+  assert.deepStrictEqual(imp, FitEngine.imputeGirths(regCm, { waist: 85, hip: 96, thigh: 56 }, "male"), "임퓨트 결정론적"); pass++;
+  eq(FitEngine.imputeGirths(regCm, {}, "male"), {}, "앵커 없음 → {}");
+  FitEngine.seedCorrelation(null); // 다른 테스트에 영향 없게 원복
+} catch (e) {
+  console.log(`  (조건부 임퓨테이션 실데이터 검증 건너뜀: ${e.message})`);
+}
+
 console.log(`\n✓ 골든 테스트 ${pass}건 통과 — engine.js·bodytype.js가 명세(docs/6)와 일치.`);

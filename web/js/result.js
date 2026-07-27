@@ -136,7 +136,7 @@
   }
   window.shareResult=shareResult;
   var cardType=null;   // 실엔진(FitBodyType.classify)이 채움 — 초기 null이라 가짜 유형 안 뜸
-  var _diagId=null;    // api 모드: recordDiagnosis 후 diagnosis id 저장(피드백 FK)
+  var _diagId=null;    // api 모드: FDATA.diagnose 후 diagnosis id 저장(피드백 FK)
   var _ebKeys={};      // 착용경험으로 실제 역산된 부위 키 집합(chestFull·shoulder·waist·hip·thigh) — 탭4 결과 근거가 소비
   var _ebCm={};        // 그 부위들의 역산된 cm 값 — 탭3 체형 그림 예상치수가 회귀 대신 이 값을 씀
   // 유형 정체성 / 잘맞·피할 FIT / 한 끗 — 마이 '내 진단결과' 디자인 통일 (8유형 동적)
@@ -277,6 +277,16 @@
   var FITPCT={skinny:20,slim:32,regular:55,loose:70,oversize:85,
     straight:50,tapered:45,wide:78,bootcut:62};
 
+  // 잔차공분산 1회 로드 후 엔진 주입(미관측 둘레 조건부추정용, proto 추천 경로). 실패해도 무해(imputeGirths가 {}).
+  var _corrP=null;
+  function _ensureCorr(){
+    if(_corrP) return _corrP;
+    _corrP=fetch('data/body-correlation.json').then(function(r){return r.json();})
+      .then(function(c){ if(window.FitEngine&&FitEngine.seedCorrelation) FitEngine.seedCorrelation(c); })
+      .catch(function(){});
+    return _corrP;
+  }
+
   // specs(garments) 의존 계산 — proto=클라 로컬(garments.json 직접) / api=서버(/api/diagnose, garments 비노출·해자 보호).
   // 반환 {eb, topRecs, botRecs, specsMissing, id}. 체형추정·8유형분류·렌더는 호출부(클라)가 공통 처리.
   function diagnoseSpecs(est, cm, prefsObj){
@@ -286,13 +296,18 @@
         confidenceTier:confidenceTier, engine_version:'server-1' })
         .then(function(resp){ resp=resp||{}; return { eb:resp.eb||{}, topRecs:resp.topRecs||[], botRecs:resp.botRecs||[], specsMissing:false, id:resp.id }; });
     }
-    return fetch('data/garments.json').then(function(r){return r.json();}).catch(function(){return null;}).then(function(gj){
-      var specs=gj&&gj.specs;
+    return Promise.all([
+      fetch('data/garments.json').then(function(r){return r.json();}).catch(function(){return null;}),
+      _ensureCorr()
+    ]).then(function(arr){
+      var gj=arr[0], specs=gj&&gj.specs;
       if(!specs) return { eb:{}, topRecs:[], botRecs:[], specsMissing:true };
       var eb=(window.FitEngine&&FitEngine.bodyFromExperiences)?FitEngine.bodyFromExperiences(payload.experiences, specs, cm):{};  // cm=회귀 몸 → 밴딩 허리 앵커링(B-2)
       var mcm={}; Object.keys(cm).forEach(function(k){ mcm[k]=cm[k]; });
       var EB={chest:'chestFull',shoulder:'shoulder',waist:'waist',hip:'hip',thigh:'thigh'};
       Object.keys(EB).forEach(function(k){ if(eb[k]!=null) mcm[EB[k]]=eb[k]; });
+      // 미관측 둘레 조건부 추정 — 교차카테고리 추천 개선(서버 diagnose와 동일 규칙). 앵커/시드 없으면 무동작.
+      if(FitEngine.imputeGirths){ var imp=FitEngine.imputeGirths(cm, eb, est.sex); Object.keys(imp).forEach(function(k){ mcm[k]=imp[k]; }); }
       var topRecs=(mcm.chestFull!=null)?FitEngine.recommend({ chest:mcm.chestFull, shoulder:mcm.shoulder }, prefsObj.TOP||'regular', est.sex, 'long_sleeve', specs):[];
       var botRecs=(FitEngine.recommendBottom&&mcm.waist!=null)?FitEngine.recommendBottom({ waist:mcm.waist, hip:mcm.hip, thigh:mcm.thigh }, prefsObj.BOTTOM||'regular', est.sex, 'long_pants', specs):[];
       return { eb:eb, topRecs:topRecs, botRecs:botRecs, specsMissing:false };

@@ -507,11 +507,61 @@
              anyFit: clean.length > 0 };
   }
 
+  /* ── 조건부 임퓨테이션 — 관측앵커 잔차로 미관측 둘레부위 추정 ─────────────────
+     방법: 각 부위 잔차 = 실측−회귀(키·몸무게·나이). 잔차공분산 Σ로 E[r_U|r_O]=Σ_UO Σ_OO⁻¹ r_O.
+     최종 = 회귀예측 + 조건부잔차. 재료=body-correlation.json(seedCorrelation로 주입, 없으면 무동작).
+     검증(scratch LOO): 배↔허리 남31%·여15%, 여성 상↔하교차 10~15% RMSE↓. 잔차상관≈0인 곳은
+     자동으로 회귀로 수렴(무해) — 남성 허리↔엉덩이 잔차r 0.02라 교차전이 거의 0. B-2를 원리적으로 보완. */
+  var _corr = null;
+  function seedCorrelation(d) { _corr = (d && d.parts && d.cov) ? d : null; }
+  var EB2BODY = { chest: "chestFull", waist: "waist", hip: "hip", thigh: "thigh" }; // 앵커(engine키)→body-model 둘레키(shoulder=비둘레 제외)
+  // 소규모 대칭 선형계 A·z=b (증강행렬 A[m][m+1]) 부분피벗 가우스 소거. 해 z 또는 null(특이).
+  function _solveSym(A, m) {
+    for (var col = 0; col < m; col++) {
+      var piv = col, r;
+      for (r = col + 1; r < m; r++) if (Math.abs(A[r][col]) > Math.abs(A[piv][col])) piv = r;
+      if (Math.abs(A[piv][col]) < 1e-9) return null;
+      var t = A[col]; A[col] = A[piv]; A[piv] = t;
+      for (r = 0; r < m; r++) {
+        if (r === col) continue;
+        var f = A[r][col] / A[col][col];
+        for (var c = col; c <= m; c++) A[r][c] -= f * A[col][c];
+      }
+    }
+    var z = []; for (var i = 0; i < m; i++) z[i] = A[i][m] / A[i][i]; return z;
+  }
+  /** 관측앵커(eb, engine키)로 미관측 둘레부위를 조건부 추정.
+   *  regCm=회귀 몸(body-model키), eb=bodyFromExperiences 결과, sex='male'|'female'.
+   *  → {미관측 둘레키: 개선 cm}. 미시드/앵커없음/특이면 {}(하위호환). */
+  function imputeGirths(regCm, eb, sex) {
+    if (!_corr || !regCm || !eb) return {};
+    var parts = _corr.parts[sex], cov = _corr.cov[sex];
+    if (!parts || !cov) return {};
+    var obs = [], ro = [], oi = [];   // 관측 = eb에 역산된 둘레부위이고 회귀 베이스도 있는 것
+    Object.keys(EB2BODY).forEach(function (k) {
+      var bk = EB2BODY[k], pi = parts.indexOf(bk);
+      if (eb[k] != null && regCm[bk] != null && pi >= 0) { obs.push(bk); ro.push(eb[k] - regCm[bk]); oi.push(pi); }
+    });
+    if (!obs.length) return {};
+    var m = oi.length, A = [], i, j;
+    for (i = 0; i < m; i++) { A[i] = []; for (j = 0; j < m; j++) A[i][j] = cov[oi[i]][oi[j]]; A[i][m] = ro[i]; }
+    var z = _solveSym(A, m); if (!z) return {};
+    var anchored = {}; obs.forEach(function (p) { anchored[p] = 1; });
+    var out = {};
+    parts.forEach(function (U, ui) {
+      if (anchored[U] || regCm[U] == null) return;    // 앵커된·회귀없는 부위 제외(미관측만 채움)
+      var cr = 0; for (var k = 0; k < m; k++) cr += cov[ui][oi[k]] * z[k];
+      out[U] = Math.round((regCm[U] + cr) * 10) / 10;
+    });
+    return out;
+  }
+
   global.FitEngine = {
     recommend: recommend, recommendBottom: recommendBottom, judge: judge,
     ease: ease, chestRating: chestRating, easeToRating: easeToRating,
     ratingToEase: ratingToEase, bodyFromExperiences: bodyFromExperiences,
     judgeLength: judgeLength, lengthRating: lengthRating, judgeRise: judgeRise, braToBody: braToBody,
+    seedCorrelation: seedCorrelation, imputeGirths: imputeGirths,
     bands: BANDS, lenBands: LEN_BANDS, catParts: CAT_PARTS, partKo: PART_KO, _real: true
   };
 })(typeof window !== "undefined" ? window : this);
