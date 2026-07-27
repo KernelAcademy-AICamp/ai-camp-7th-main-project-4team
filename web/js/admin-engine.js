@@ -23,7 +23,7 @@
     ADMINAUTH.garments(),
     fetch('data/body-base-model.json').then(function(r){return r.json();}).catch(function(){return null;}),
     fetch('data/body-distribution.json').then(function(r){return r.json();}).catch(function(){return null;})
-  ]).then(function(a){ SPECS=a[0].specs||[]; BASE=a[1]; DIST=a[2]; buildInput(); run(); })
+  ]).then(function(a){ SPECS=a[0].specs||[]; BASE=a[1]; DIST=a[2]; buildInput(); run(); renderBandCalib(); })
    .catch(function(){ $('recTable').innerHTML='<tbody><tr><td>데이터 로드 실패</td></tr></tbody>'; });
 
   function val(id){var el=$(id);return el?el.value:'';}
@@ -161,6 +161,57 @@
         '<tr><td><b>핏지수 가중치</b></td><td class="num" colspan="3">허리 ×4 · 엉덩이 ×3.5 · 허벅지 ×2.5</td></tr>'+
         '<tr><td><b>밴딩 보정</b></td><td class="num" colspan="3">허리 밴딩 시 끼임 경계 −4cm 완화(신축)</td></tr>';
     $('paramPanel').innerHTML='<div class="tablewrap"><table class="dt"><thead><tr><th>파라미터</th><th colspan="3">값 (단위 cm)</th></tr></thead><tbody>'+bandRows+extra+'</tbody></table></div>'+
-      '<p class="subnote" style="margin-top:12px">이 값들이 <b>튜닝 레버</b>예요. 변경은 <span class="pill">engine.js</span>(정본)에서 — 하의 밴드는 아직 가설값이라 실피드백으로 조정 필요(3.A.2 수집 정확도 모니터링과 연결). 위 슬라이더는 목표여유만 임시로 바꿔 감도를 보는 what-if입니다(실엔진 미변경).</p>';
+      '<p class="subnote" style="margin-top:12px">이 값들이 <b>튜닝 레버</b>예요. 변경은 <span class="pill">engine.js</span>(정본)에서 — 하의 밴드는 아직 가설값이라 실피드백으로 조정 필요(아래 6번 캘리브레이션과 연결). 위 슬라이더는 목표여유만 임시로 바꿔 감도를 보는 what-if입니다(실엔진 미변경).</p>';
+  }
+
+  /* ── 6 · 하의 여유 밴드 캘리브레이션 (수집 데이터 기반, B-1 훅) ────────────────────
+     수집된 하의 착용경험의 여유(둘레 단면×2 − 회귀 몸)를 등급별로 모아 밴드 경계를 데이터로 제안.
+     지금은 표본이 얇아 대부분 '데이터 부족' 게이트. 규모(api 진단로그 input.experiences 집계) 후 채워짐.
+     ⚠ 정본 변경은 여전히 engine.js에서 수동 — 여긴 근거 제시일 뿐 자동 적용 아님(잘못된 밴드가 엔진 오염 방지). */
+  var CALIB_MIN=20;   // 등급 합계 최소 표본(부위별 4등급 합이 이 미만이면 제안 보류) — 게이트는 nAll(합계) 기준
+  function ageYears(s){ if(typeof s==='number') return s; var d=parseInt(s,10); return isNaN(d)?30:d+5; }
+  function collectBottomExp(){
+    var out=[];
+    // 현 세션(fitting.dx) + 로컬 피드백 로그 중 experiences 보유분. (api: Supabase 진단로그 집계 = 후속, admin-diagnostics dx-log 배선과 공유)
+    try{ var dx=JSON.parse(sessionStorage.getItem('fitting.dx')||'{}');
+      (dx.experiences||[]).forEach(function(e){ if(e.category==='BOTTOM'&&e.fits) out.push({e:e,basic:dx.basic||{}}); }); }catch(_){}
+    try{ (window.FDATA&&FDATA.loadFeedback?FDATA.loadFeedback():[]).forEach(function(r){
+      (r&&Array.isArray(r.experiences)?r.experiences:[]).forEach(function(e){ if(e&&e.category==='BOTTOM'&&e.fits) out.push({e:e,basic:(r.basic||{})}); }); }); }catch(_){}
+    return out;
+  }
+  function garmentPart(e, part){
+    var g=(e.basic&&e.basic.gender)||'female';   // e.basic 없을 때 대비(호출부에서 basic 병합)
+    var m=SPECS.filter(function(s){ return s.category==='BOTTOM'&&s.brandId===e.brandId&&s.sizeLabel===e.sizeLabel
+      && (s.gender===g||s.gender==='unisex') && (e.silhouette? s.silhouette===e.silhouette : s.fitLine===e.fitLine); });
+    var v=m.map(function(s){ return s.garmentCm&&s.garmentCm[part]; }).filter(function(x){ return x!=null; });
+    return v.length? v.reduce(function(a,b){return a+b;},0)/v.length : null;
+  }
+  function renderBandCalib(){
+    var host=$('bandCalib'); if(!host) return;
+    var recs=collectBottomExp();
+    var PARTS=[['waist','허리'],['hip','엉덩이'],['thigh','허벅지']], RTS=['TIGHT','SNUG','RELAXED','BIG'];
+    var bucket={}; PARTS.forEach(function(p){ bucket[p[0]]={TIGHT:[],SNUG:[],RELAXED:[],BIG:[]}; });
+    var total=0;
+    recs.forEach(function(r){ var e=r.e, b=r.basic||{}, g=b.gender||'female';
+      var h=+b.height, w=+b.weight, age=ageYears(b.age);
+      if(!(h>0&&w>0)) return;
+      PARTS.forEach(function(p){ var part=p[0], rating=e.fits[part]; if(!rating||!bucket[part][rating]) return;
+        var gf=garmentPart({brandId:e.brandId,sizeLabel:e.sizeLabel,silhouette:e.silhouette,fitLine:e.fitLine,basic:b}, part);
+        var body=estCm(g,part,h,w,age); if(gf==null||body==null) return;
+        bucket[part][rating].push(bodyAxis(part,gf)-body); total++;
+      });
+    });
+    function mean(a){ return a.length? a.reduce(function(x,y){return x+y;},0)/a.length : null; }
+    function mid(a,b){ return (a!=null&&b!=null)? Math.round(((a+b)/2)*10)/10 : '—'; }
+    var rows=PARTS.map(function(p){ var part=p[0], cur=BANDS['BOTTOM:'+part];
+      var M={}; RTS.forEach(function(r){ M[r]=mean(bucket[part][r]); });
+      var nAll=RTS.reduce(function(s,r){ return s+bucket[part][r].length; },0);
+      var sug=(nAll>=CALIB_MIN)
+        ? '끼임≤'+mid(M.TIGHT,M.SNUG)+' · 딱≤'+mid(M.SNUG,M.RELAXED)+' · 넉넉≤'+mid(M.RELAXED,M.BIG)
+        : '<span class="muted">데이터 부족</span>';
+      return '<tr><td><b>'+p[1]+'</b></td><td class="num">끼임≤'+cur.tight+' · 딱≤'+cur.snug+' · 넉넉≤'+cur.big+'</td><td class="num">'+sug+'</td><td class="num">'+nAll+' / '+CALIB_MIN+'</td></tr>';
+    }).join('');
+    host.innerHTML='<div class="tablewrap"><table class="dt"><thead><tr><th>부위</th><th>현재 밴드(가설)</th><th>데이터 제안(등급 사이 평균여유 중앙)</th><th>표본</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+      '<p class="subnote" style="margin-top:12px">수집된 하의 착용경험의 <b>여유(둘레 단면×2 − 회귀 몸)</b>를 등급별로 모아 밴드 경계를 제안합니다(인접 등급 평균여유의 중앙점). 등급 합계 <b>'+CALIB_MIN+'건</b> 이상이면 제안이 나오고 그 전엔 보류 — 현재 하의 관측 <b>'+total+'건</b>(부위×등급 합산, 경험 수 아님). 정본 변경은 <span class="pill">engine.js</span>에서 <b>수동</b>(여긴 근거 제시·자동적용 아님). 규모 후 api 진단로그(input.experiences) 집계로 채워집니다(3.A.2 dx-log 배선과 연결).</p>';
   }
 })();

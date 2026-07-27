@@ -53,6 +53,7 @@
   /** 사용자에게 보여줄 핵심 부위(라벨은 쉬운 말). base-model 키 → 표시명. */
   var SHOW = [
     { key: "chestFull", name: "가슴둘레" },
+    { key: "chestUpper", name: "윗가슴둘레" }, // 남성 전용 축 — 8유형 BW드롭 bustPart(bodytype.js CUT.male). 여성은 chestFull을 bust축으로 쓰므로 생산 스킵(estimate 가드) — 생산하면 result 가슴둘레 표시가 젖가슴→윗가슴으로 바뀜.
     { key: "waist",     name: "허리둘레" },
     { key: "hip",       name: "엉덩이둘레" },
     { key: "shoulder",  name: "어깨너비" },
@@ -86,6 +87,8 @@
     var parts = SHOW.map(function (s) {
       // underbust는 여성 전용 축 — 성별 무입력이 female로 매핑되는 기본값을 타지 않게 명시 female만 통과.
       if (s.key === "underbust" && basic.gender !== "female") return null;
+      // chestUpper는 남성 8유형(bustPart) 전용 축 — 여성은 chestFull을 bust축으로 써서 스킵(전엔 SHOW 누락으로 남성도 미생산→분류가 chestFull 폴백).
+      if (s.key === "chestUpper" && basic.gender !== "male") return null;
       var c = coef[s.key]; if (!c) return null;
       var cm = c.a_height * h + c.b_weight * w + c.c_age * a + c.intercept;
       var out = { key: s.key, name: s.name, cm: Math.round(cm * 10) / 10, rmse: c.rmse_cm, r2: c.r2, pct: null };

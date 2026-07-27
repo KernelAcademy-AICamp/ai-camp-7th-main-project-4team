@@ -26,10 +26,12 @@
 
 | 역할 | 소유 경로 |
 |---|---|
-| 팀장 | `data/**` · 생성물 JSON(`web/data/{garments,body-*,archetypes}.json`) |
+| 팀장 | `data/**` · 생성물 JSON(`web/data/{garments,body-*,archetypes,size-catalog}.json`) |
 | 디자이너 | `web/*.html`(마크업) · `web/css/**`(`tokens.css` 포함) · `web/data/bodytypes.json` |
-| 개발자 | `engine/**` · `web/js/**` |
+| 개발자 | `engine/**` · `web/js/**` · `api/**` · `db/**` · `scripts/**` |
 | 공동 | `docs/**` |
+
+> `web/data/size-catalog.json`은 `garments.json`에서 파생된 cm-free 생성물(`scripts/gen-catalog.js`) — 손수정 금지, 소스는 팀장 `garments`. `app/`은 배포 빌드 생성물(gitignore, `scripts/gen-app.js`) — 소유 없음.
 
 - 남의 소유 경로를 바꿔야 하면 그 소유자에게 알리고 PR 리뷰어로 넣는다.
 - 색·폰트·간격은 `web/css/tokens.css` 변수만 참조(하드코딩 금지). DOM `id`/`class`는 디자이너가 정의, JS가 참조 — 바꾸면 서로 알림.

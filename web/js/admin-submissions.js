@@ -6,7 +6,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
   function fmt(ts) { try { var d = new Date(ts); return (d.getMonth() + 1) + "/" + d.getDate() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2); } catch (e) { return ts || ""; } }
-  function kpi(n, l) { return '<div class="kpi"><div class="n">' + n + '</div><div class="l">' + l + "</div></div>"; }
+  function kpi(n, l) { return '<div class="kpi"><div class="n">' + (typeof n === 'number' ? n.toLocaleString() : n) + '</div><div class="l">' + l + "</div></div>"; }
 
   var CATKO = { TOP: "상의", BOTTOM: "하의" };
   var PARTKO = { chest: "가슴", shoulder: "어깨", waist: "허리", hip: "엉덩이", thigh: "허벅지", sleeve: "소매", length: "기장", rise: "밑위", hem: "밑단" };

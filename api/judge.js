@@ -10,6 +10,8 @@ var fetchT = require('./_fetch.js').fetchT;
 var GARMENTS = require('../web/data/garments.json');
 var SPECS_FILE = GARMENTS && GARMENTS.specs;
 var _specsCache = null, _specsRev = -1;
+var CORRELATION = require('../web/data/body-correlation.json');   // 잔차공분산 — 미관측 둘레 조건부추정
+if (FitEngine.seedCorrelation) FitEngine.seedCorrelation(CORRELATION);
 var EBMAP = { chest: 'chestFull', shoulder: 'shoulder', waist: 'waist', hip: 'hip', thigh: 'thigh' };
 
 // diagnose.js와 동일한 garment 테이블 조회(rev 캐시). 실패 시 번들 파일 폴백.
@@ -61,11 +63,16 @@ module.exports = async function handler(req, res) {
   var exps = Array.isArray(b.experiences) ? b.experiences : [];
 
   // ① 역산으로 prior 덮어쓰기(추천과 동일 규칙) → 판정에 쓸 인체 cm 확정.
-  var eb = (FitEngine.bodyFromExperiences ? FitEngine.bodyFromExperiences(exps, SPECS) : {}) || {};
+  var eb = (FitEngine.bodyFromExperiences ? FitEngine.bodyFromExperiences(exps, SPECS, b.cm || {}) : {}) || {};  // 3번째=클라 회귀몸 → 밴딩 허리 앵커링(B-2), 추천(diagnose.js)과 동일 규칙
   var cm = {};
   var srcCm = b.cm || {};
   Object.keys(srcCm).forEach(function (k) { cm[k] = srcCm[k]; });
   Object.keys(EBMAP).forEach(function (k) { if (eb[k] != null) cm[EBMAP[k]] = eb[k]; });
+  // 미관측 둘레 조건부 추정 — 교차카테고리 판정(예: 상의만 입어본 사용자의 하의 판정) 개선. 앵커/시드 없으면 무동작.
+  if (FitEngine.imputeGirths) {
+    var impj = FitEngine.imputeGirths(srcCm, eb, sex);
+    Object.keys(impj).forEach(function (k) { cm[k] = impj[k]; });
+  }
 
   var bodyVec = cat === 'BOTTOM'
     ? { waist: cm.waist, hip: cm.hip, thigh: cm.thigh }

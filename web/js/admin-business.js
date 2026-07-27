@@ -6,7 +6,7 @@
   var $=function(id){return document.getElementById(id);};
   function pct(n,d){return d?Math.round(n/d*100):0;}
   function kpi(n,l,s){return '<div class="kpi"><div class="n">'+n+'</div><div class="l">'+l+'</div>'+(s?'<div class="s">'+s+'</div>':'')+'</div>';}
-  function bar(p){return '<span class="scorecell"><span class="bar"><span class="s2fill" style="width:'+p+'%"></span></span> '+p+'%</span>';}
+  function bar(p){return '<span class="scorecell"><span class="bar"><span class="s2fill" style="width:'+Math.min(100,p)+'%"></span></span> '+p+'%</span>';}
 
   // 샘플 개요 지표(대표값). 실배선 전 화면 확인용.
   var OV={

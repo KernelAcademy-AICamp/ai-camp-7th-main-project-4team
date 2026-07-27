@@ -332,27 +332,6 @@
     if(_btCache){ paint(_btCache[USER.type]); return; }
     fetch('data/bodytypes.json').then(function(r){return r.json();}).then(function(j){ _btCache={}; j.types.forEach(function(x){_btCache[x.code]=x;}); paint(_btCache[USER.type]); }).catch(function(){});
   }
-  /* 내 진단 결과 카드(iframe) — USER의 유형·성별과 연동 (프로필 수정 시에도 반영) */
-  function renderMyDiagCard(){
-    var f=document.getElementById('myDiagCard'); if(!f) return;
-    var g=(USER.gender==='female'?'female':'male');
-    var src='card.html?type='+(USER.type||'STR')+'&g='+g;
-    if((f.getAttribute('src')||'')!==src) f.src=src;   // 값이 바뀐 경우에만 리로드
-  }
-  /* 진단 결과 상단 유형 배지 — 카드는 프로필로 옮겼으니 여기선 맥락 한 줄만(+프로필로 이동 링크). */
-  function renderMyTypeBadge(){
-    var el=document.getElementById('myTypeBadge'); if(!el) return;
-    if(!USER.type){ el.innerHTML=''; return; }
-    function paint(t){
-      el.innerHTML='<span class="c">'+USER.type+'</span>'+
-        (t&&t.name?'<span class="n">'+t.name+'</span>':'')+
-        '<a class="go" onclick="goMy(\'mp-profile\')">카드 보기 →</a>';
-    }
-    if(_btCache){ paint(_btCache[USER.type]); return; }
-    fetch('data/bodytypes.json').then(function(r){return r.json();})
-      .then(function(j){ _btCache={}; j.types.forEach(function(x){_btCache[x.code]=x;}); paint(_btCache[USER.type]); })
-      .catch(function(){ paint(null); });
-  }
   /* 프로필의 체형 카드 공유 — 결과 화면 shareResult()와 동일 규칙(index.html?from=CODE). */
   function shareMyCard(){
     var code=USER.type||''; if(!code){ toast('진단을 먼저 완료해 주세요'); return; }
@@ -366,18 +345,6 @@
         .then(function(){ toast('초대 링크를 복사했어요 · 친구에게 붙여넣기 해보세요'); })
         .catch(function(){ toast('링크: '+url); });
     } else { toast('링크: '+url); }
-  }
-  /* FITTING의 한 끗(#myTip) — 유형별 insight로 채움(카드와 같이 움직이게). 하드코딩 데모 대체. */
-  function renderMyInsight(){
-    var el=document.getElementById('myTip'); if(!el) return;
-    function paint(t){ if(!t) return;
-      var tp=t.point||'#2E4A3B'; el.style.setProperty('--tp',tp);
-      var g=(USER.gender==='female')?'female':'male';
-      var c=(t.gender&&(t.gender[g]||t.gender.female))||t;   // 성별별 콘텐츠 해석
-      el.innerHTML='<div class="k">FITTING의 한 끗</div><p>'+(c.insight||'')+'</p>';
-    }
-    if(_btCache){ paint(_btCache[USER.type]); return; }
-    fetch('data/bodytypes.json').then(function(r){return r.json();}).then(function(j){ _btCache={}; j.types.forEach(function(x){_btCache[x.code]=x;}); paint(_btCache[USER.type]); }).catch(function(){});
   }
   /* 진단 결과 상세(유형 정체성·잘맞/피할 FIT) — 카드/팁과 달리 정적 HTML(STR 고정)이라 유형이 바뀌어도
      '시크 스트레이트'로 남던 버그 수정. result.js와 동일하게 USER.type + 성별로 동적 렌더. */
@@ -444,7 +411,7 @@
     if(a&&a.value) USER.age=+a.value; if(h&&h.value) USER.height=+h.value; if(w&&w.value) USER.weight=+w.value;
     var ft=document.querySelector('#pFitTop .o.on'); if(ft) USER.fitTop=ft.dataset.fit;
     var fb=document.querySelector('#pFitBottom .o.on'); if(fb) USER.fitBottom=fb.dataset.fit;
-    _profEdit=false; renderProfile(); renderMyAvatar(); renderMyDiagCard(); renderMyInsight(); renderMyDiagDetail(); toast('프로필을 저장했어요');
+    _profEdit=false; renderProfile(); renderMyAvatar(); renderMyDiagDetail(); toast('프로필을 저장했어요');
   }
 
   /* 마이페이지 · 즐겨찾기 렌더 */
@@ -706,8 +673,6 @@
   var DELIVER=[{src:'photos/folio1.jpg',label:'코디 1'},{src:'photos/folio2.jpg',label:'코디 2'},{src:'photos/folio3.jpg',label:'코디 3'}];
   var DELIVER_LINKS=[{brand:'유니클로', name:'라운드 니트', size:'M', price:39900},{brand:'무신사 스탠다드', name:'테이퍼드 슬랙스', size:'30', price:35900},{brand:'자라', name:'싱글 코트', size:'M', price:129000},{brand:'나이키', name:'레더 스니커즈', size:'270', price:119000},{brand:'스파오', name:'미니멀 벨트', size:'FREE', price:19900}];
   function reqMsgs(r){ return r.msgs || [{from:'shopper', text:'요청 주신 무드로 코디 3안 보내드려요 🙂 구매 링크도 함께 넣었어요!'}]; }
-  function sendReqMsg(i){ var inp=document.getElementById('reqMsgIn'); if(!inp) return; var t=(inp.value||'').trim(); if(!t) return;
-    var r=reqs[i]; r.msgs=reqMsgs(r).slice(); r.msgs.push({from:'me', text:t}); saveLS('reqs',reqs); renderReqDetail(); }
   /* 대화는 우측 드로어로 분리(쇼퍼와 동일) — 여기선 받은 결과물만. 서비스별로 다르게(온라인=코디/쇼핑=현장구매/이미지=리포트) */
   var DLV_COPY={
     shopping:{wt:'동행 쇼핑 준비 중', wh:'약속일에 함께 쇼핑해요 · 종료 후 구매 내역을 전달해드려요', gt:'현장 구매 완료', gh:'함께 구매한 상품이 도착했어요 · 확인하고 완료해주세요'},
@@ -1531,7 +1496,7 @@
     if(['home','shop','my'].indexOf(top)<0) return;
     if(top==='my' && p[1]){ goMy(p[1]); } else { go(top); } })();
 
-  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagCard(); renderMyTypeBadge(); renderMyInsight(); renderMyDiagDetail(); renderSupport(); renderNotis(); renderPrivacy(); applyAuthUI();
+  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagDetail(); renderSupport(); renderNotis(); renderPrivacy(); applyAuthUI();
 
   /* 새로고침 시 보던 화면 복원 — 쿼리 딥링크(?from/?login/?my/?ctx)나 해시가 없을 때만(그건 각각 처리) */
   (function(){ try{ var q=new URLSearchParams(location.search);

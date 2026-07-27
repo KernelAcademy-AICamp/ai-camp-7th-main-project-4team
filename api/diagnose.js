@@ -9,6 +9,8 @@ var FitBodyType = require('../web/js/bodytype.js').FitBodyType;   // 8유형 분
 var fetchT = require('./_fetch.js').fetchT;
 var GARMENTS = require('../web/data/garments.json');
 var SPECS_FILE = GARMENTS && GARMENTS.specs;   // 폴백(garment 테이블 조회 실패 시)
+var CORRELATION = require('../web/data/body-correlation.json');   // 잔차공분산 — 미관측 둘레 조건부추정
+if (FitEngine.seedCorrelation) FitEngine.seedCorrelation(CORRELATION);
 var _specsCache = null, _specsRev = -1;
 var EBMAP = { chest: 'chestFull', shoulder: 'shoulder', waist: 'waist', hip: 'hip', thigh: 'thigh' };
 
@@ -70,11 +72,21 @@ module.exports = async function handler(req, res) {
   var exps = Array.isArray(b.experiences) ? b.experiences : [];
 
   // ① 역산: 착용경험 → 부위별 인체 cm(prior 덮어쓰기용). ② 추천은 병합 cm으로.
-  var eb = (FitEngine.bodyFromExperiences ? FitEngine.bodyFromExperiences(exps, SPECS) : {}) || {};
+  var eb = (FitEngine.bodyFromExperiences ? FitEngine.bodyFromExperiences(exps, SPECS, b.cm || {}) : {}) || {};  // b.cm=클라 회귀 몸 → 밴딩 허리 앵커링(B-2)
   var cm = {};
   var srcCm = b.cm || {};
   Object.keys(srcCm).forEach(function (k) { cm[k] = srcCm[k]; });     // 클라 추정 cm
   Object.keys(EBMAP).forEach(function (k) { if (eb[k] != null) cm[EBMAP[k]] = eb[k]; });  // 역산 덮어쓰기
+  // 미관측 둘레부위 조건부 추정(앵커 잔차→상관) — 교차카테고리 추천·배 신호 개선. 앵커/시드 없으면 무동작.
+  if (FitEngine.imputeGirths) {
+    var imp = FitEngine.imputeGirths(srcCm, eb, sex);
+    Object.keys(imp).forEach(function (k) { cm[k] = imp[k]; });
+  }
+
+  // 신뢰도 tier = 표시 4부위(가슴·어깨·허리·엉덩이) 중 실제 역산(eb)된 개수 — 클라 result.js confTier와 동일 규칙(부위기반).
+  //   클라가 POST한 b.confidenceTier는 역산 전(경험수 기반)이라 부풀 수 있어, 서버 역산 결과로 정직화해 대체(표시·피드백과 일치).
+  var ebShown = ['chest', 'shoulder', 'waist', 'hip'].filter(function (k) { return eb[k] != null; }).length;
+  var confidenceTier = ebShown <= 0 ? 'low' : (ebShown < 4 ? 'mid' : 'high');
 
   // 8유형 분류 = 저장 시점에 서버가 계산(전엔 클라가 POST 이후 계산 → result.card null "?"). 클라와 동일 입력.
   var card = null;
@@ -99,7 +111,7 @@ module.exports = async function handler(req, res) {
     session_id: b.session_id || ('anon-' + Date.now().toString(36)),
     category: b.category || 'TOP',
     input: b.input != null ? b.input : { basic: b.basic, prefs: prefs, experiences: exps },
-    result: { card: b.card || card || null, confidenceTier: b.confidenceTier || null, recs: { top: topRecs, bottom: botRecs } },
+    result: { card: b.card || card || null, confidenceTier: confidenceTier, recs: { top: topRecs, bottom: botRecs } },
     engine_version: b.engine_version || 'server-1'
   };
   var r;

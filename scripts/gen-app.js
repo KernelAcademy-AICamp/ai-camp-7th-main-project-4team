@@ -25,9 +25,12 @@ var PAGES = [
 var HIDDEN = ['pro.html', 'pro-login.html', 'pro-signup.html', 'pro-quote.html', '_reset.html',
   'admin-members.html', 'admin-business.html', 'admin-api.html', 'admin-ops.html'];
 
-// data/: garments.json(실측표=해자)만 제외 · js/: pro*.js(목업 포털 스크립트)만 제외
-var DATA_SKIP = ['garments.json'];
-var JS_SKIP = function (f) { return /^pro(-|\.)/.test(f); };   // pro.js, pro-login.js, pro-signup.js, pro-quote.js
+// data/: garments.json(실측표=해자) 제외 · archetypes.json 제외(소비자 0 死생성물 — 8유형은 bodytype.js threshold로 분류,
+//   nearest-archetype 라벨role 미배선. 데이터가 표준38+비만32 이중구조라 실배선 부적합. 원본은 data/ 유지=팀장 판단) · js/: pro*.js 제외
+var DATA_SKIP = ['garments.json', 'archetypes.json'];
+// 숨김(비배포) 화면의 짝 스크립트도 제외 — HTML이 배포 안 되는데 JS만 app/에 남으면 死배포(로드하는 페이지 없음).
+var HIDDEN_JS = HIDDEN.map(function (h) { return h.replace(/\.html$/, '.js'); });   // admin-members/business/api/ops.js + pro*.js
+var JS_SKIP = function (f) { return /^pro(-|\.)/.test(f) || HIDDEN_JS.indexOf(f) >= 0; };
 
 function rmrf(p) { if (fs.existsSync(p)) fs.rmSync(p, { recursive: true, force: true }); }
 function mkdirp(p) { fs.mkdirSync(p, { recursive: true }); }

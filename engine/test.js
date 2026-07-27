@@ -86,6 +86,9 @@ const bandexp = [{ category: "BOTTOM", brandId: "m", fitLine: "loose", sizeLabel
   subtype: "long_pants", fits: { waist: "SNUG", hip: "SNUG", thigh: "SNUG" } }];
 eq(FitEngine.bodyFromExperiences(bandexp, bandspec), { hip: 97, thigh: 57.5 },
    "밴딩 바지 → 허리 역산 스킵(엉덩이·허벅지만)");
+// B-2 앵커링: regBody 주면, 밴딩으로 스킵된 허리를 엉덩이 편차의 50%로 앵커링 (74 + (97−94)×.5 = 75.5)
+eq(FitEngine.bodyFromExperiences(bandexp, bandspec, { waist: 74, hip: 94 }),
+   { hip: 97, thigh: 57.5, waist: 75.5 }, "밴딩 허리 앵커링 — 엉덩이 측정편차 50% 전이");
 // 사용자 응답(e.waistband) 우선: 있음→고정 그룹이어도 스킵 / 없음→밴딩 그룹이어도 사용
 eq(FitEngine.bodyFromExperiences([Object.assign({}, bexp[0], { waistband: "banded" })], bspec),
    { hip: 97, thigh: 57.5 }, "사용자 '밴딩 있음' → 허리 스킵(그룹 무관)");
@@ -237,5 +240,51 @@ eq(FitBodyType.classify({ gender: "male" }), null, "측정 부족 → null");
 eq(FitBodyType.classify({ gender: "x", chestFull: 90, waist: 80, hip: 92 }), null, "미지 성별 → null");
 const _bt = { gender: "female", heightCm: 160, weightKg: 52, chestFull: 82, waist: 66, hip: 96 };
 eq(FitBodyType.classify(_bt), FitBodyType.classify(_bt), "분류 결정론적");
+
+/* ── 조건부 임퓨테이션 (imputeGirths) — 관측앵커 잔차로 미관측 둘레부위 추정 ────────── */
+assert.strictEqual(typeof FitEngine.imputeGirths, "function", "imputeGirths export"); pass++;
+// 미시드/앵커없음 → {} (하위호환: regBody 없이 부르던 기존 경로 무영향)
+eq(FitEngine.imputeGirths({ belly: 82 }, { waist: 85 }, "male"), {}, "미시드 → {}");
+try {
+  const corr = require("../web/data/body-correlation.json");
+  assert.ok(corr && corr.parts && corr.cov, "body-correlation.json 형태(parts·cov)"); pass++;
+  FitEngine.seedCorrelation(corr);
+  const regCm = { chestFull: 95, chestUpper: 96, waist: 80, hip: 94, thigh: 55, belly: 82, neck: 37, upperArm: 30, armhole: 42, calf: 37 };
+  const imp = FitEngine.imputeGirths(regCm, { waist: 85, hip: 96, thigh: 56 }, "male"); // 허리 회귀80→관측85(+5)
+  assert.ok(imp.waist == null && imp.hip == null && imp.thigh == null, "앵커된 부위는 임퓨트 대상 제외"); pass++;
+  assert.ok(imp.belly != null && imp.belly > regCm.belly, "배는 허리 상향관측 반영해 회귀보다 커짐(배↔허리 잔차상관 강·R²≥.30)"); pass++;
+  // R² 게이트: 앵커가 명확히 설명 못하는 부위는 채우지 않는다(false precision 회피).
+  assert.ok(imp.chestFull == null && imp.neck == null && imp.calf == null,
+    "하의앵커로 약상관 부위(가슴·목·종아리 R²<.30)는 임퓨트 안 함 → 회귀 유지"); pass++;
+  const impT = FitEngine.imputeGirths(regCm, { chest: 96, shoulder: 44 }, "male"); // 상의앵커(가슴)
+  assert.ok(impT.chestUpper != null, "상의앵커 → chestUpper는 채움(R²0.59 명확)"); pass++;
+  assert.ok(impT.waist == null && impT.belly == null && impT.hip == null,
+    "상의앵커로 교차둘레(허리·배·엉덩이 R²≤.07)는 안 채움 → 추천은 회귀 그대로"); pass++;
+  assert.deepStrictEqual(imp, FitEngine.imputeGirths(regCm, { waist: 85, hip: 96, thigh: 56 }, "male"), "임퓨트 결정론적"); pass++;
+  eq(FitEngine.imputeGirths(regCm, {}, "male"), {}, "앵커 없음 → {}");
+  FitEngine.seedCorrelation(null); // 다른 테스트에 영향 없게 원복
+} catch (e) {
+  console.log(`  (조건부 임퓨테이션 실데이터 검증 건너뜀: ${e.message})`);
+}
+
+/* ── 정체성 자연어 서술 (describe/narrate) — 스코프 A ─────────────────────── */
+assert.strictEqual(typeof FitBodyType.describe, "function", "describe export"); pass++;
+assert.strictEqual(typeof FitBodyType.narrate, "function", "narrate export"); pass++;
+// volume 버킷(BMI) · intensity 버킷(pm |dev|): balanced<12 / strong≥25 / 그외 mild
+const dLean = FitBodyType.describe("STR", "male", 180, 58, { chestFull: 50, waist: 50, hip: 50, shoulder: 50, thigh: 50 });
+eq(dLean.volume, "lean", "저BMI → lean"); eq(dLean.intensity, "balanced", "편차<12 → balanced");
+const dStr = FitBodyType.describe("INV", "male", 178, 74, { shoulder: 82, chestFull: 60, waist: 45, hip: 48, thigh: 50 });
+eq(dStr.intensity, "strong", "편차≥25 → strong");
+const dMid = FitBodyType.describe("TRI", "female", 162, 55, { hip: 65, chestFull: 50, waist: 48, shoulder: 50, thigh: 55 });
+eq(dMid.intensity, "mild", "12≤편차<25 → mild");
+// narrate 조합 + 신뢰가드: strong만 강도어, balanced/mild는 강도어 생략
+const DESC = { sil: { STR: "직선 라인", INV: "V라인", TUB: "슬림 라인", RND: "둥근 실루엣" }, volume: { lean: "슬림한", standard: "표준 볼륨의", volume: "볼륨감 있는" }, intensity: { strong: "뚜렷한", mild: "" } };
+eq(FitBodyType.narrate({ code: "INV", volume: "standard", intensity: "strong" }, DESC, null), "표준 볼륨의 뚜렷한 V라인이에요.", "strong → 강도어 포함");
+eq(FitBodyType.narrate({ code: "STR", volume: "standard", intensity: "balanced" }, DESC, null), "표준 볼륨의 직선 라인이에요.", "balanced → 강도어 생략(과신 금지)");
+eq(FitBodyType.narrate({ code: "TUB", volume: "lean", intensity: "mild" }, DESC, null), "슬림 라인이에요.", "TUB → 볼륨어 중복 제거");
+eq(FitBodyType.narrate({ code: "BAL", volume: "standard", intensity: "strong" }, { sil: { BAL: "균형 잡힌 라인" }, volume: { standard: "표준 볼륨의" }, intensity: { strong: "뚜렷한", mild: "" } }, null), "표준 볼륨의 균형 잡힌 라인이에요.", "BAL은 strong이어도 강도어 미적용('뚜렷한 균형' 모순 방지)");
+eq(FitBodyType.narrate({ code: "STR", volume: "standard", intensity: "strong" }, DESC, "시크 스트레이트"), "시크 스트레이트 — 표준 볼륨의 뚜렷한 직선 라인이에요.", "name 접두");
+eq(FitBodyType.narrate({ code: "STR", volume: "standard", intensity: "strong" }, null, null), "", "문안 없으면 ''(정적 profile 폴백)");
+eq(FitBodyType.narrate(null, DESC, null), "", "신호 없으면 ''");
 
 console.log(`\n✓ 골든 테스트 ${pass}건 통과 — engine.js·bodytype.js가 명세(docs/6)와 일치.`);
