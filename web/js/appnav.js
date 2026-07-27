@@ -11,6 +11,9 @@
   // 배포(gen-app이 'api' 주입) — config.js(body 하단)가 defer된 이 스크립트보다 먼저 실행돼 값 준비됨. 미정의면 proto.
   var isApi = window.FITTING_MODE === 'api';
   function loggedIn(){ return lget('auth', !isApi) !== false; }   // proto 기본=로그인(김도현) · api 기본=비로그인
+  // 소비자 계정 ON = api + ACCOUNTS_ENABLED + auth 클라 준비. index.js apiAccounts()·result.js accountsOn()과 같은 판정.
+  //   이게 없으면 계정을 켜고 로그인해도 이 6페이지만 비로그인처럼 보인다(사용자에게 드러나는 모순).
+  function accountsOn(){ return !!(isApi && window.ACCOUNTS_ENABLED && window.FITAUTH && window.FITAUTH.ready()); }
 
   var mount = document.getElementById('appnav');
   if(mount){
@@ -41,8 +44,19 @@
     var byId = function(id){ return document.getElementById(id); };
     var inA = loggedIn();
     var au = byId('appnavAuth'), us = byId('appnavUser'), be = byId('appnavBell'), bd = byId('appnavBellDiv'), my = byId('appnavMy');
-    if(isApi){
-      // 배포(MVP): 우측 영역 전체 숨김 — 인증(벨·유저·로그인)은 목업이고, 스타일리스트 지원(pro-signup)도
+    if(accountsOn()){
+      // 계정 ON: 실 세션 기준으로 로그인 표면 노출(index.js applyAuthUI 계정ON 분기와 동일 규칙).
+      //   벨=이벤트 소스 없음 / 스타일리스트 지원=마켓 미구현 → 숨김.
+      var ra = mount.querySelector('.appnav-r');
+      var sup = ra && ra.querySelector('.sup'); if(sup) sup.style.display = 'none';
+      var d0 = byId('appnavDiv0'); if(d0) d0.style.display = 'none';
+      if(be) be.style.display = 'none';
+      if(bd) bd.style.display = 'none';
+      applyAcct(null);                                        // 세션 응답 전엔 비로그인으로(깜빡임 대신 보수적으로)
+      window.FITAUTH.getSession().then(applyAcct);
+      window.FITAUTH.onChange(function(e, s){ applyAcct(s); });
+    } else if(isApi){
+      // 배포(MVP·계정OFF): 우측 영역 전체 숨김 — 인증(벨·유저·로그인)은 목업이고, 스타일리스트 지원(pro-signup)도
       //  전화인증 등 미구현이라 노출하지 않는다. 상단은 Home·Stylists·Fit만(My 탭도 숨김).
       var r = mount.querySelector('.appnav-r'); if(r) r.style.display = 'none';
       if(my) my.style.display = 'none';
@@ -60,10 +74,10 @@
         dot.style.display = unread > 0 ? 'block' : 'none'; }
     }
 
-    // 아바타 = 결과 카드 캐릭터 얼굴(index #myAv와 동일 김도현). 로그인(proto)일 때만 존재.
+    // 아바타 = 결과 카드 캐릭터 얼굴(index #myAv와 동일 김도현). proto 데모 페르소나 — 실계정에선 이름 첫 글자.
     var AVA = { gender: 'male', color: '#9db8ff' };   // color = bodytypes.json STR point (유형 바뀌면 같이 바꿀 것)
     var av = byId('appnavAv');
-    if(av){
+    if(av && !accountsOn()){
       av.style.background = AVA.color;
       av.innerHTML = '<div class="head '+AVA.gender+'">'+(AVA.gender==='female'?'<span class="longhair"></span>':'')+'<span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div>';
     }
@@ -78,8 +92,30 @@
     if(lo) lo.addEventListener('click', function(e){
       e.preventDefault();
       if(!confirm('로그아웃할까요? 둘러보기는 로그인 없이 이어갈 수 있어요.')) return;
+      if(accountsOn()){ window.FITAUTH.signOut().then(function(){ location.reload(); }); return; }   // 실 세션 종료
       lset('auth', false); location.href = 'index.html';
     });
+
+    // 계정 ON: 로그인 버튼은 index로 보내지 않고 이 페이지에서 공용 시트를 연다(index·result와 같은 화면).
+    //   OAuth 복귀 주소가 현재 URL이라 로그인 후 보던 문서로 돌아온다.
+    if(au) au.addEventListener('click', function(e){
+      if(!accountsOn() || !window.FITAUTHUI) return;   // 계정OFF/컴포넌트 미로드 → href(index.html#my) 그대로
+      e.preventDefault();
+      window.FITAUTHUI.openSheet({ title:'로그인하고 이어가기', desc:'진단·둘러보기는 로그인 없이도 자유예요 · 결과 저장은 로그인 후 이어져요' });
+    });
+
+    // 계정ON 세션 반영 — 로그인 버튼 ↔ 유저·My 토글 + 이름·이니셜.
+    function applyAcct(s){
+      var inA = !!s;
+      if(au) au.style.display = inA ? 'none' : 'inline-flex';
+      if(us) us.style.display = inA ? 'flex' : 'none';
+      if(my) my.style.display = inA ? '' : 'none';
+      if(!inA) return;
+      var dn = window.FITAUTH.displayName(s.user);
+      var nm = mount.querySelector('#appnavUser .navname'); if(nm) nm.textContent = dn + ' 님';
+      var a2 = byId('appnavAv');
+      if(a2){ a2.style.background = ''; a2.textContent = (dn[0] || '회'); }   // 데모 페르소나 얼굴 대신 이니셜
+    }
   }
 
   // 하단 푸터 — index .site-foot와 동일(전역 공용 푸터).
