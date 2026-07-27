@@ -646,8 +646,10 @@
         {label:'엉덩이둘레', val:r(ebv('hip', cm.hip)),                         pm:3}
       ].filter(function(x){ return x.val!=null; });
       // 신뢰도 라벨 = 실제 tier(0벌 낮음 / 1벌 보통 / 2벌+ 높음) — 고정 '낮음' 제거.
-      var nExpA=(payload.experiences||[]).length;
-      var confLabel = nExpA<=0 ? '낮음 (키·몸무게만)' : (nExpA===1 ? '보통 (일부 실측 보정)' : '높음 (착용경험 반영)');
+      // 신뢰도 라벨 = 표시되는 4개 부위 중 실제 역산된 개수(_ebKeys) 기준 — 탭4 renderAcc와 동일 신호(탭 간 모순 방지).
+      //   전 경험수(nExpA)로 산정하면 상의만 입어도 하의(회귀값)가 '높음'으로 오표기됨(코드래빗 #97).
+      var ebShown=['shoulder','chestFull','waist','hip'].filter(function(k){ return _ebKeys[k]; }).length;
+      var confLabel = ebShown<=0 ? '낮음 (키·몸무게만)' : (ebShown<4 ? '보통 (일부 실측 보정)' : '높음 (착용경험 반영)');
       el.innerHTML=BodyFigure.svg(m, {code:code}, est.sex, estArr, confLabel);
     });
   }

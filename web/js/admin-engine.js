@@ -168,7 +168,7 @@
      수집된 하의 착용경험의 여유(둘레 단면×2 − 회귀 몸)를 등급별로 모아 밴드 경계를 데이터로 제안.
      지금은 표본이 얇아 대부분 '데이터 부족' 게이트. 규모(api 진단로그 input.experiences 집계) 후 채워짐.
      ⚠ 정본 변경은 여전히 engine.js에서 수동 — 여긴 근거 제시일 뿐 자동 적용 아님(잘못된 밴드가 엔진 오염 방지). */
-  var CALIB_MIN=20;   // 등급별 최소 표본(그 미만이면 제안 보류)
+  var CALIB_MIN=20;   // 등급 합계 최소 표본(부위별 4등급 합이 이 미만이면 제안 보류) — 게이트는 nAll(합계) 기준
   function ageYears(s){ if(typeof s==='number') return s; var d=parseInt(s,10); return isNaN(d)?30:d+5; }
   function collectBottomExp(){
     var out=[];
@@ -212,6 +212,6 @@
       return '<tr><td><b>'+p[1]+'</b></td><td class="num">끼임≤'+cur.tight+' · 딱≤'+cur.snug+' · 넉넉≤'+cur.big+'</td><td class="num">'+sug+'</td><td class="num">'+nAll+' / '+CALIB_MIN+'</td></tr>';
     }).join('');
     host.innerHTML='<div class="tablewrap"><table class="dt"><thead><tr><th>부위</th><th>현재 밴드(가설)</th><th>데이터 제안(등급 사이 평균여유 중앙)</th><th>표본</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
-      '<p class="subnote" style="margin-top:12px">수집된 하의 착용경험의 <b>여유(둘레 단면×2 − 회귀 몸)</b>를 등급별로 모아 밴드 경계를 제안합니다(인접 등급 평균여유의 중앙점). 등급 합계 <b>'+CALIB_MIN+'건</b> 이상이면 제안이 나오고 그 전엔 보류 — 현재 하의 표본 <b>'+total+'건</b>. 정본 변경은 <span class="pill">engine.js</span>에서 <b>수동</b>(여긴 근거 제시·자동적용 아님). 규모 후 api 진단로그(input.experiences) 집계로 채워집니다(3.A.2 dx-log 배선과 연결).</p>';
+      '<p class="subnote" style="margin-top:12px">수집된 하의 착용경험의 <b>여유(둘레 단면×2 − 회귀 몸)</b>를 등급별로 모아 밴드 경계를 제안합니다(인접 등급 평균여유의 중앙점). 등급 합계 <b>'+CALIB_MIN+'건</b> 이상이면 제안이 나오고 그 전엔 보류 — 현재 하의 관측 <b>'+total+'건</b>(부위×등급 합산, 경험 수 아님). 정본 변경은 <span class="pill">engine.js</span>에서 <b>수동</b>(여긴 근거 제시·자동적용 아님). 규모 후 api 진단로그(input.experiences) 집계로 채워집니다(3.A.2 dx-log 배선과 연결).</p>';
   }
 })();
