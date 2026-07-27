@@ -825,5 +825,5 @@
       var t=document.getElementById('rfbToast'); if(!t) return; fill(); t.hidden=false;
       requestAnimationFrame(function(){ t.classList.add('on'); });
     }
-    window.addEventListener('load', function(){ setTimeout(fire, 6000); });   // 결과 안착 후 6초 뒤
+    window.addEventListener('load', function(){ setTimeout(fire, 15000); });   // 결과 안착 후 15초 뒤
   })();

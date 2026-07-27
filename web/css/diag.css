@@ -1,3 +1,7 @@
+/* 스크롤바 자리 항상 확보 — 폼 길이가 다른 화면(진단 입력↔진단 중)을 오갈 때 스크롤바 유무로 폭이 바뀌어
+   가운데 정렬된 1·2·3 스텝바가 살짝 옮겨 보이던 것 방지. 스크롤 여부와 무관하게 폭 고정. */
+html{ scrollbar-gutter: stable; overflow-y: scroll; }
+
 /* 페이지 이동을 부드러운 크로스페이드로 — 교차문서 View Transition (미지원 브라우저는 기존 즉시 이동) */
 @view-transition{ navigation: auto; }
 ::view-transition-old(root),::view-transition-new(root){ animation-duration:.32s; animation-timing-function:cubic-bezier(.2,.8,.2,1); }
@@ -192,7 +196,7 @@ html.skipcat #w-cat + .wstep{ display:block; }
 .lruler .marker::after{ content:""; position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:11px; height:11px; border-radius:50%; background:var(--green); box-shadow:0 2px 6px rgba(46,74,59,.4); }
 .loading-wrap .lpct{ font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:12px; font-weight:700; color:var(--green); margin-top:14px; letter-spacing:.02em; }
 /* 동그란 Fit 로딩(judge .jload-* 이식) — 스피너 링 + Fit 로고 */
-.loading-wrap .dl-mk{ position:relative; width:132px; height:132px; display:grid; place-items:center; margin:6px auto 4px; }
+.dl-mk{ position:relative; width:132px; height:132px; display:grid; place-items:center; margin:6px auto 4px; }   /* 진단중·판정·결과 로딩 공통 'Fit' 링 (unscope — result #rloading도 사용) */
 .dl-ring{ position:absolute; inset:0; width:132px; height:132px; animation:jspin 1.4s cubic-bezier(.5,.1,.5,.9) infinite; }
 .dl-ring .trk{ stroke:var(--green-soft); }
 .dl-ring .arc{ stroke:var(--green); }

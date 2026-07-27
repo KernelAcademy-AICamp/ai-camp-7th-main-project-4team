@@ -7,19 +7,21 @@
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
-<link rel="stylesheet" href="css/diag.css?v=900e1078">
+<link rel="stylesheet" href="css/diag.css?v=c86b6818">
 <style>
-  /* 마무리 단계 질문형(v3, 가로 2분할) — 나머지 카테고리 남았을 때 render가 .vq 노출 */
+  /* 마무리 단계 — '하의도 이어서'는 본문 강조 카드, '상의 더'는 링크. 결정 주버튼(지금 결과 보기)·이전은 푸터(모든 단계 동일) */
   .vq{ margin-top:2px; }
-  .split2{ display:flex; gap:9px; }
-  .split2 button{ flex:1; padding:15px 8px; border-radius:13px; font-family:inherit; font-weight:800; font-size:14px; letter-spacing:-.02em; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:3px; }
-  .split2 .v2no{ background:#fff; border:1.5px solid var(--field-line); color:var(--ink); }
-  .split2 .v2no:hover{ border-color:var(--ink); }
-  .split2 .v2no s{ text-decoration:none; font-weight:600; font-size:11px; color:var(--muted); }
-  .split2 .v2yes{ background:var(--ink); border:1.5px solid var(--ink); color:#fff; }
-  .split2 .v2yes:hover{ background:#000; }
-  .split2 .v2yes s{ text-decoration:none; font-weight:600; font-size:11px; color:rgba(255,255,255,.72); }
-  .vq-link{ margin-top:14px; text-align:center; }
+  .vq-cont{ display:flex; align-items:center; gap:12px; width:100%; box-sizing:border-box; padding:14px 15px;
+    border:1.5px solid var(--green-line,#CBDDD2); border-radius:14px; background:var(--green-soft); text-align:left; font-family:inherit; cursor:pointer; transition:.14s; }
+  .vq-cont:hover{ border-color:var(--green); }
+  .vq-ic{ width:38px; height:38px; flex:none; border-radius:11px; background:#fff; display:flex; align-items:center; justify-content:center; color:var(--green); }
+  .vq-ic svg{ width:19px; height:19px; }
+  .vq-tx{ flex:1; min-width:0; }
+  .vq-tx b{ display:block; font-size:15px; font-weight:800; letter-spacing:-.02em; color:var(--ink); white-space:nowrap; }
+  .vq-tx b span{ display:inline; }
+  .vq-tx s{ display:block; text-decoration:none; font-size:12px; color:var(--gm,#5a7a68); margin-top:1px; }
+  .vq-go{ flex:none; color:var(--green); font-weight:800; }
+  .vq-link{ margin-top:12px; text-align:center; }
   .vq-link a{ font-size:13px; color:var(--muted); text-decoration:underline; text-underline-offset:2px; cursor:pointer; }
   .vq-link a b{ color:var(--ink); font-weight:700; }
 </style>
@@ -146,10 +148,11 @@
       <button class="add-garment" onclick="next()">+ 다른 핏의 <span class="catword">상의</span> 추가하기</button>
       <!-- 나머지 카테고리 남았을 때 render가 노출 — 질문형(가로 2분할) -->
       <div class="vq" hidden>
-        <div class="split2">
-          <button type="button" class="v2no" onclick="footerAction()">아니요<s>지금 결과</s></button>
-          <button type="button" class="v2yes" onclick="footerActionAlso()">네, <span class="v2-other">하의</span>도<s>전신 완성 · 2분</s></button>
-        </div>
+        <button type="button" class="vq-cont" onclick="footerActionAlso()">
+          <span class="vq-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h9l3 3v13H6z"/><path d="M9 12h6M9 16h6"/></svg></span>
+          <span class="vq-tx"><b><span class="v2-other">하의</span>도 이어서 진단하기</b><s>전신 체형까지 완성 · 2분</s></span>
+          <span class="vq-go">›</span>
+        </button>
         <div class="vq-link"><a onclick="next()">또는 <b><span class="catword">상의</span>를 한 벌 더</b> 넣기 +</a></div>
       </div>
     </div>
@@ -209,10 +212,11 @@
       <button class="add-garment" onclick="toast('프로토타입 · 같은 카테고리 옷을 한 벌 더 추가하면 정보·느낌 2단계가 더 생겨요 (최대 3벌)')">+ <span class="catword">상의</span> 더 추가하기</button>
       <!-- 나머지 카테고리 남았을 때 render가 노출 — 질문형(가로 2분할) -->
       <div class="vq" hidden>
-        <div class="split2">
-          <button type="button" class="v2no" onclick="footerAction()">아니요<s>지금 결과</s></button>
-          <button type="button" class="v2yes" onclick="footerActionAlso()">네, <span class="v2-other">하의</span>도<s>전신 완성 · 2분</s></button>
-        </div>
+        <button type="button" class="vq-cont" onclick="footerActionAlso()">
+          <span class="vq-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h9l3 3v13H6z"/><path d="M9 12h6M9 16h6"/></svg></span>
+          <span class="vq-tx"><b><span class="v2-other">하의</span>도 이어서 진단하기</b><s>전신 체형까지 완성 · 2분</s></span>
+          <span class="vq-go">›</span>
+        </button>
         <div class="vq-link"><a onclick="toast('프로토타입 · 같은 카테고리 옷을 한 벌 더 추가하면 정보·느낌 2단계가 더 생겨요 (최대 3벌)')">또는 <b><span class="catword">상의</span>를 한 벌 더</b> 넣기 +</a></div>
       </div>
       <div class="notice mt-16">입력은 자동 저장돼요. 결과 화면에서 언제든 수정·재진단할 수 있어요</div>
@@ -297,7 +301,7 @@
   /* 안내 토스트 — 브라우저 기본 alert 대체 (diag-fit.js와 독립) */
   function toast(m){ var t=document.getElementById('toast'); if(!t) return; t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2600); }
 </script>
-<script src="js/diag-fit.js?v=a193f821"></script>
+<script src="js/diag-fit.js?v=4a2535e7"></script>
 <script>
   /* diag-fit.js가 실제 활성 스텝(선호핏)을 세팅한 뒤 skipcat 해제 —
      그래야 이후 '이전'을 눌러 카테고리 선택(idx0)으로 내려가 편집할 수 있음. */
