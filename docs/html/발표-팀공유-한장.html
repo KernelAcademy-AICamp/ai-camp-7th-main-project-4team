@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>핏팅 발표 — 팀 공유 한 장</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+<style>
+  :root{
+    --green:#2E4A3B; --green-mid:#5A7A68; --green-soft:#E7EFEA; --green-line:#CBDDD2;
+    --clay:#B0553F; --clay-soft:#F7ECE8; --clay-bg:#FBF4F1; --clay-line:#E8CFC7;
+    --ink:#16140F; --sub:#6E6B63; --sub2:#A6A29A;
+    --line:#E6E5E1; --soft:#EDEDEA; --wash:#F6F6F5;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{font-family:'Pretendard','Malgun Gothic',sans-serif; color:var(--ink); background:#8E938E;
+    -webkit-font-smoothing:antialiased; word-break:keep-all; padding:24px 0; letter-spacing:-.02em}
+  .num{font-family:'SUIT Variable','Pretendard',sans-serif; font-feature-settings:'tnum'; letter-spacing:0}
+  .page{width:13.333in; height:7.5in; padding:0.42in 0.5in; background:#fff; position:relative;
+    margin:0 auto 22px; box-shadow:0 6px 30px rgba(0,0,0,.22); display:flex; flex-direction:column;
+    page-break-after:always; overflow:hidden}
+  @media print{ body{background:#fff; padding:0} .page{margin:0; box-shadow:none} }
+
+  .hd{display:flex; align-items:flex-end; gap:14px; border-bottom:2px solid var(--ink); padding-bottom:10px}
+  .hd .eb{font-size:10px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--sub2)}
+  .hd h1{font-size:24px; font-weight:800; letter-spacing:-.03em; margin-top:3px; line-height:1.2}
+  .hd h1 b{color:var(--green)}
+  .hd .who{margin-left:auto; font-size:11px; color:var(--sub); text-align:right; line-height:1.6}
+  .hd .who b{color:var(--ink)}
+
+  .spine{background:var(--green); color:#fff; border-radius:12px; padding:13px 18px; margin-top:12px;
+    display:flex; align-items:center; gap:14px}
+  .spine .lb{font-size:10px; font-weight:800; letter-spacing:.14em; color:#9CC1AE; white-space:nowrap}
+  .spine .tx{font-size:19px; font-weight:800; letter-spacing:-.025em}
+
+  .grid{display:grid; grid-template-columns:1.32fr 1fr; gap:16px; flex:1; min-height:0; margin-top:13px}
+  .col{display:flex; flex-direction:column; gap:12px; min-height:0}
+  .sec{border:1px solid var(--line); border-radius:12px; padding:13px 15px; background:#fff}
+  .sec .st{font-size:10px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:var(--sub2); margin-bottom:9px}
+
+  table.m{width:100%; border-collapse:collapse; font-size:12px}
+  table.m th{background:var(--soft); font-size:9.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--sub); padding:6px 9px; border:1px solid var(--line); text-align:left}
+  table.m td{border:1px solid var(--line); padding:8px 9px; line-height:1.45; color:var(--sub); vertical-align:top}
+  table.m td b{color:var(--ink); font-weight:800}
+  table.m .p{background:var(--clay-bg); color:var(--clay); font-weight:800; width:36px; text-align:center; font-size:14px}
+  table.m .s{background:var(--green-soft)}
+  table.m .s b{color:var(--green)}
+  table.m .ev{font-size:10.5px; color:var(--sub2)}
+
+  .bars{display:flex; flex-direction:column; gap:7px}
+  .bar{display:grid; grid-template-columns:96px 1fr 66px; align-items:center; gap:9px}
+  .bar .bl{font-size:11.5px; font-weight:700; color:var(--ink); text-align:right; line-height:1.3}
+  .bar .bt{height:14px; background:var(--wash); border:1px solid var(--line); border-radius:7px; overflow:hidden}
+  .bar .bf{height:100%; background:var(--green-mid); border-radius:7px 0 0 7px}
+  .bar .bf.hi{background:var(--green)}
+  .bar .bf.lo{background:var(--clay)}
+  .bar .bv{font-size:11.5px; font-weight:800; color:var(--green); text-align:right}
+  .bar .bv.lo{color:var(--clay)}
+  .bar .bv span{font-size:9.5px; color:var(--sub2); font-weight:700}
+
+  .split2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .kbox{border-radius:10px; padding:11px 13px; font-size:11.5px; line-height:1.55}
+  .kbox.keep{background:var(--green-soft); border:1px solid var(--green-line)}
+  .kbox.open{background:var(--clay-bg); border:1px solid var(--clay-line)}
+  .kbox .kt{font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; margin-bottom:6px}
+  .kbox.keep .kt{color:var(--green)} .kbox.open .kt{color:var(--clay)}
+  .kbox ul{padding-left:14px; margin:0}
+  .kbox li{margin-bottom:4px; color:var(--sub)}
+  .kbox li b{color:var(--ink); font-weight:700}
+  .kbox li:last-child{margin-bottom:0}
+
+  .qs{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+  .q{border:1px solid var(--line); border-radius:10px; padding:11px 13px; background:var(--wash)}
+  .q .qn{width:20px; height:20px; border-radius:50%; background:var(--ink); color:#fff; font-size:11px;
+    font-weight:800; display:flex; align-items:center; justify-content:center}
+  .q .qt{font-size:12.5px; font-weight:800; margin-top:7px; line-height:1.35}
+  .q .qd{font-size:11px; color:var(--sub); margin-top:5px; line-height:1.5}
+
+  .note{font-size:10.5px; color:var(--sub); background:var(--wash); border-left:3px solid var(--sub2);
+    border-radius:0 8px 8px 0; padding:8px 11px; line-height:1.55}
+  .note b{color:var(--clay); font-weight:800}
+  .foot{margin-top:auto; padding-top:9px; border-top:1px solid var(--line); font-size:10px; color:var(--sub2);
+    display:flex; justify-content:space-between}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="hd">
+    <div>
+      <div class="eb">Fitting · 최종 발표 · 팀 정렬용</div>
+      <h1>발표 뼈대 — <b>문제 3 : 해결 3</b></h1>
+    </div>
+    <div class="who">
+      회의 시작할 때 <b>이 장부터</b> 띄우기<br>
+      슬라이드 디테일은 <b>뼈대 합의 후</b>에
+    </div>
+  </div>
+
+  <div class="spine">
+    <span class="lb">ONE LINE</span>
+    <span class="tx">사이즈를 모르면 <b style="color:#9CC1AE">악순환</b>이 돈다 — 우리는 그 고리를 <b style="color:#9CC1AE">세 지점</b>에서 끊는다</span>
+  </div>
+
+  <div class="grid">
+    <!-- 좌 -->
+    <div class="col">
+      <div class="sec" style="flex:none">
+        <div class="st">발표의 척추 · 이 번호가 끝까지 따라감</div>
+        <table class="m">
+          <tr><th style="width:36px">#</th><th style="width:30%">문제 (As-is)</th><th style="width:30%">우리가 만든 것</th><th>근거</th></tr>
+          <tr>
+            <td class="p">1</td>
+            <td><b>내 사이즈를 모른다</b><br><span class="ev">브랜드마다 M이 다름</span></td>
+            <td class="s"><b>체형 진단</b><br><span class="ev">착용 경험 2벌 → 9개 브랜드로 번역</span></td>
+            <td class="ev">설문 <b style="color:var(--ink)">38%</b><br>커뮤니티 문의 다수</td>
+          </tr>
+          <tr>
+            <td class="p">2</td>
+            <td><b>감으로 사고 → 안 맞고 → 옷장에 쌓임</b><br><span class="ev">그리고 반복된다 (악순환)</span></td>
+            <td class="s"><b>구매 판정 (Fit)</b><br><span class="ev">결제 직전, 그 옷 사이즈표로 판정</span></td>
+            <td class="ev">설문 <b style="color:var(--ink)">45%</b> "매번 반복"<br><b style="color:var(--ink)">87%</b> 막막했던 경험</td>
+          </tr>
+          <tr>
+            <td class="p">3</td>
+            <td><b>뭐가 어울리는지 모른다</b><br><span class="ev">계산으로 안 풀림</span></td>
+            <td class="s"><b>스타일리스트 연결</b><br><span class="ev">체형이 요청서에 자동 첨부</span></td>
+            <td class="ev">설문 <b style="color:var(--ink)">40%</b>(1위)<br><b style="color:var(--ink)">90%</b> 전문가 경험 없음</td>
+          </tr>
+        </table>
+        <div class="note" style="margin-top:10px">
+          <b>왜 셋인가에 대한 답</b> — ①은 고리의 <b style="color:var(--ink)">시작</b>, ②는 고리가 <b style="color:var(--ink)">닫히는 지점</b>, ③은 <b style="color:var(--ink)">다른 축</b>. 기능 개수가 아니라 <b style="color:var(--ink)">고리의 어디를 끊느냐</b>로 설명한다.
+        </div>
+      </div>
+
+      <div class="split2" style="flex:1; min-height:0">
+        <div class="kbox keep">
+          <div class="kt">✓ 안 바꿨으면 하는 것</div>
+          <ul>
+            <li><b>문제 3 : 해결 3 구조</b> — 시연 순서까지 여기 묶여 있음</li>
+            <li><b>②를 별도로 세우는 것</b> — 악순환이 닫히는 지점이라 뺄 수 없음</li>
+            <li><b>기능 소개를 앞에 두는 것</b>(3장) — 심사 대상이 "뭘 만들었나"</li>
+            <li><b>UT를 있는 그대로 말하는 것</b> — 약점(실사용 3.38)을 숨기지 않음</li>
+          </ul>
+        </div>
+        <div class="kbox open">
+          <div class="kt">↔ 같이 정하고 싶은 것</div>
+          <ul>
+            <li><b>페르소나</b>를 발표에 넣을지 — 문서엔 1명, 러프안엔 2명</li>
+            <li><b>시연 방식</b> — GIF vs 라이브 (백업 포함)</li>
+            <li><b>판정 화면 재캡처</b> — 누가, 언제까지</li>
+            <li><b>비즈니스 모델</b> 장을 넣을지 (지금 로드맵에만 있음)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 우 -->
+    <div class="col">
+      <div class="sec" style="flex:none">
+        <div class="st">UT 11명 — 기능별 만족도 <span style="text-transform:none; letter-spacing:0; font-weight:600; color:var(--sub)">(1~5점 · 괄호=100점 환산)</span></div>
+        <div class="bars">
+          <div class="bar"><div class="bl">진단 과정<br><span style="font-size:9.5px; color:var(--sub2)">입력·로딩</span></div>
+            <div class="bt"><div class="bf hi" style="width:91.2%"></div></div><div class="bv num">4.56 <span>91점</span></div></div>
+          <div class="bar"><div class="bl">구매 판정</div>
+            <div class="bt"><div class="bf hi" style="width:84.8%"></div></div><div class="bv num">4.24 <span>85점</span></div></div>
+          <div class="bar"><div class="bl">전체 인상</div>
+            <div class="bt"><div class="bf" style="width:80.6%"></div></div><div class="bv num">4.03 <span>81점</span></div></div>
+          <div class="bar"><div class="bl">스타일리스트<br>찾기</div>
+            <div class="bt"><div class="bf lo" style="width:77.8%"></div></div><div class="bv num lo">3.89 <span>78점</span></div></div>
+          <div class="bar"><div class="bl">진단 결과<br>화면</div>
+            <div class="bt"><div class="bf lo" style="width:77.6%"></div></div><div class="bv num lo">3.88 <span>78점</span></div></div>
+        </div>
+        <div class="note" style="margin-top:10px">
+          <b>발표에서 이렇게 말한다</b> — "만드는 과정은 잘했고(<b style="color:var(--ink)">91점</b>), <b style="color:var(--ink)">판정이 결과 화면보다 높습니다</b>(85 vs 78). 약한 건 마지막 화면이고, 원인은 신뢰입니다."
+        </div>
+      </div>
+
+      <div class="sec" style="flex:none">
+        <div class="st">숨기지 말고 먼저 말할 숫자</div>
+        <table class="m">
+          <tr><th>지표</th><th style="width:64px">값</th><th>의미</th></tr>
+          <tr><td>결과를 <b>이해</b>했다</td><td class="num" style="color:var(--green); font-weight:800">4.38</td><td class="ev">전달은 됐다</td></tr>
+          <tr><td><b>실제로 쓸</b> 것 같다</td><td class="num" style="color:var(--clay); font-weight:800">3.38</td><td class="ev">갭 <b style="color:var(--clay)">−1.0</b> · 이번 UT 핵심</td></tr>
+          <tr><td>결과를 <b>신뢰</b>한다</td><td class="num" style="color:var(--clay); font-weight:800">3.38</td><td class="ev">"사진 없이 진단해서"</td></tr>
+          <tr><td>추천 의향 (0~10)</td><td class="num" style="font-weight:800">8.4</td><td class="ev">부정 0명 · <b style="color:var(--ink)">NPS는 18</b></td></tr>
+        </table>
+      </div>
+
+      <div class="note" style="border-left-color:var(--clay); margin-top:auto">
+        <b>수치 쓸 때 주의 2가지</b><br>
+        ① <b>"NPS 8.4"는 틀린 표현</b> — 8.4는 0~10 평균, NPS는 <b style="color:var(--ink)">18</b>(추천3·중립7·비추1). 둘을 섞어 쓰지 말 것.<br>
+        ② 100점 환산은 <b>평균÷5</b>일 뿐 "도움됐다 응답 비율"이 아님. 비율(Top-2 Box)을 쓰려면 <b style="color:var(--ink)">구글폼 원본 응답</b>에서 4~5점 개수를 세야 함.
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>근거 · 자체 설문 31명(2026.06) · UT 11명(2026.07.24) · docs/fitting-UT-개선리스트.md</span>
+    <span>발표 자료 · docs/html/발표-최종-v3.html</span>
+  </div>
+</div>
+
+<div class="page">
+  <div class="hd">
+    <div>
+      <div class="eb">Fitting · 최종 발표 · 팀 정렬용</div>
+      <h1>회의에서 <b>이 순서로</b> 말하면 됩니다</h1>
+    </div>
+    <div class="who">17장 · 15분 기준<br>장당 <b>약 50초</b></div>
+  </div>
+
+  <div class="grid" style="grid-template-columns:1fr 1fr">
+    <div class="col">
+      <div class="sec" style="flex:none">
+        <div class="st">말하는 순서 (5분이면 정렬됨)</div>
+        <div class="qs" style="grid-template-columns:1fr; gap:9px">
+          <div class="q"><div class="qn">1</div>
+            <div class="qt">"제가 잡은 뼈대는 이겁니다"</div>
+            <div class="qd">앞 장의 <b>3:3 표</b>만 보여줍니다. 슬라이드는 아직 안 엽니다.</div></div>
+          <div class="q"><div class="qn">2</div>
+            <div class="qt">"왜 이렇게 잡았냐면…"</div>
+            <div class="qd">악순환 고리 설명 → <b>①은 시작, ②는 닫히는 지점, ③은 다른 축</b>. 여기서 기능 개수가 정당화됩니다.</div></div>
+          <div class="q"><div class="qn">3</div>
+            <div class="qt">"여기는 지키고 싶고, 여기는 같이 정하고 싶어요"</div>
+            <div class="qd"><b>이게 제일 중요합니다.</b> 말 안 하면 팀원은 전부 열려 있다고 보고 다 건드립니다.</div></div>
+          <div class="q"><div class="qn">4</div>
+            <div class="qt">그다음에 슬라이드를 엽니다</div>
+            <div class="qd">뼈대가 합의된 뒤라야 "이 장 순서"가 논의됩니다.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sec" style="flex:none">
+        <div class="st">나올 법한 반박 · 미리 준비한 답</div>
+        <table class="m">
+          <tr><th style="width:42%">반박</th><th>답</th></tr>
+          <tr>
+            <td><b>"판정이 왜 별도 문제야? 사이즈 문제 아냐?"</b></td>
+            <td>고민은 둘이 맞다. 다만 사이즈 고민은 <b>악순환을 만들고</b>, 진단은 고리의 시작을, 판정은 <b>닫히는 지점</b>을 끊는다. UT에서도 판정 <b>4.24</b> &gt; 결과 화면 <b>3.88</b>.</td>
+          </tr>
+          <tr>
+            <td><b>"못 입는 옷 쌓인다는 근거 있어?"</b></td>
+            <td>설문 <b>45%</b>가 "쇼핑할 때마다 반복"이라고 답했다. 그게 악순환의 근거다.</td>
+          </tr>
+          <tr>
+            <td><b>"기능 소개를 왜 앞에 넣어? 문제부터 가야지."</b></td>
+            <td>IR이면 그렇다. 이건 <b>부트캠프 최종 발표</b>라 심사 대상이 "뭘 만들었나"다. 먼저 보여주고 근거를 대는 게 안전하다.</td>
+          </tr>
+          <tr>
+            <td><b>"UT 약점을 왜 발표에 넣어?"</b></td>
+            <td>11명으로 전환율은 측정 불가라 <b>숨겨도 질문이 온다.</b> 먼저 말하고 <b>대응까지 보여주는</b> 쪽이 점수가 난다.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="sec" style="flex:1; min-height:0">
+        <div class="st">발표 전 반드시 끝내야 할 3가지</div>
+        <div class="qs" style="grid-template-columns:1fr; gap:9px">
+          <div class="q" style="background:var(--clay-bg); border-color:var(--clay-line)">
+            <div class="qt" style="color:var(--clay)">판정 화면 실캡처</div>
+            <div class="qd">지금 덱의 판정 화면은 <b>목업</b>입니다. 실화면 캡처로 교체 필요.</div></div>
+          <div class="q" style="background:var(--clay-bg); border-color:var(--clay-line)">
+            <div class="qt" style="color:var(--clay)">진단 캡처 재촬영</div>
+            <div class="qd">현재 캡처는 <b>7/22본</b> — 결과 3탭 개편 전 화면입니다.</div></div>
+          <div class="q" style="background:var(--clay-bg); border-color:var(--clay-line)">
+            <div class="qt" style="color:var(--clay)">설문 세부 수치를 문서에 반영</div>
+            <div class="qd"><b>87·77·45·90·42%</b>가 아직 기획 문서에 없습니다(아티팩트에만). 발표에 쓰려면 <b>1_제품정의.md §3</b>에 넣어야 정본이 됩니다.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>핏팅 · 강건형 · 이상민 · 이소희</span>
+    <span>2026.07</span>
+  </div>
+</div>
+
+</body>
+</html>

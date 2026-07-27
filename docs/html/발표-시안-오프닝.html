@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>핏팅 — 오프닝(구매 과정 · 문제) 디자인 시안 3종</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --green:#2E4A3B; --green-mid:#5A7A68; --green-soft:#E7EFEA;
+    --clay:#B0553F; --clay-soft:#F7ECE8; --clay-bg:#FBF4F1;
+    --ink:#16140F; --sub:#6E6B63; --sub2:#A6A29A;
+    --line:#E6E5E1; --wash:#F6F6F5;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{font-family:'Pretendard','Malgun Gothic',sans-serif; color:var(--ink); background:#8E938E;
+    -webkit-font-smoothing:antialiased; word-break:keep-all; padding:24px 0;}
+  .slide{width:13.333in; height:7.5in; padding:0.5in 0.55in; background:#fff; position:relative;
+    page-break-after:always; display:flex; flex-direction:column; overflow:hidden;
+    margin:0 auto 10px; box-shadow:0 6px 30px rgba(0,0,0,.22);}
+  @media print{ body{background:#fff; padding:0} .slide{margin:0; box-shadow:none} .banner{display:none} }
+
+  .banner{width:13.333in; margin:26px auto 10px; color:#fff; display:flex; align-items:baseline; gap:12px}
+  .banner .bn{font-size:22px; font-weight:800; letter-spacing:-.02em}
+  .banner .bd{font-size:13px; opacity:.85}
+
+  .shead{display:flex; align-items:flex-end; gap:14px; margin-bottom:3px}
+  .eyebrow{font-size:10.5px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--sub2)}
+  h1{font-size:27px; font-weight:800; letter-spacing:-.022em; line-height:1.15}
+  h1 b{color:var(--green)} h1 i{font-style:normal; color:var(--clay)}
+  .pchip{margin-left:auto; display:flex; gap:6px}
+  .pchip span{font-size:11.5px; font-weight:700; color:var(--sub); background:#EDEDEA;
+    border:1px solid var(--line); border-radius:20px; padding:5px 12px; white-space:nowrap}
+  .pchip b{color:var(--ink); font-weight:800}
+  .lead{font-size:12.5px; color:var(--sub); margin-top:6px; line-height:1.5}
+  .lead em{font-style:normal; color:var(--clay); font-weight:800}
+  .lead b{color:var(--green); font-weight:800}
+  .body{flex:1; display:flex; flex-direction:column; min-height:0; margin-top:14px}
+  .pageno{position:absolute; right:0.55in; bottom:0.3in; font-size:10px; color:var(--sub2); font-weight:700}
+
+  .foot{margin-top:11px; display:flex; gap:10px}
+  .fbox{flex:1; border:1px solid var(--line); border-left:3px solid var(--clay);
+    border-radius:8px; padding:9px 12px; background:#FAF9F7}
+  .fbox.g{border-left-color:var(--green); background:var(--green-soft); border-color:#CBDDD2}
+  .fbox .k{font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--sub2)}
+  .fbox .v{font-size:12.5px; font-weight:700; color:var(--ink); margin-top:3px; line-height:1.42}
+  .fbox.g .v{color:var(--green)}
+
+  /* ══════ A안 · 시간 타임라인 ══════ */
+  .tl{flex:1; display:flex; flex-direction:column; justify-content:center; position:relative}
+  .tlaxis{position:relative; height:2px; background:var(--line); margin:0 30px}
+  .tlfill{position:absolute; left:0; top:0; height:2px; background:var(--green-mid)}
+  .tlnodes{display:grid; grid-template-columns:repeat(6,1fr); margin:0 30px; position:relative; top:-1px}
+  .tln{display:flex; flex-direction:column; align-items:center; position:relative}
+  .tldot{width:13px; height:13px; border-radius:50%; background:#fff; border:2.5px solid var(--green-mid); margin-top:-7px}
+  .tldot.hot{border-color:var(--clay); background:var(--clay); width:17px; height:17px; margin-top:-9px;
+    box-shadow:0 0 0 5px rgba(176,85,63,.14)}
+  .tlnum{position:absolute; top:-31px; left:50%; transform:translateX(-50%);
+    width:20px; height:20px; border-radius:50%; background:var(--clay); color:#fff;
+    font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 2px 6px rgba(176,85,63,.3)}
+  .tltime{font-size:11px; font-weight:800; color:var(--green-mid); margin-top:9px; letter-spacing:-.01em}
+  .tltime.hot{color:var(--clay)}
+  .tlcard{margin-top:8px; text-align:center; padding:0 6px}
+  .tlcard .t{font-size:14px; font-weight:800; letter-spacing:-.01em}
+  .tlcard .d{font-size:11px; color:var(--sub); margin-top:5px; line-height:1.45}
+  .tlcard .q{font-size:11px; color:var(--ink); font-style:italic; margin-top:7px; opacity:.8}
+  .tlcard.hot .t{color:var(--clay)}
+  .tlband{position:absolute; top:-9px; height:calc(100% + 18px); background:var(--clay-bg);
+    border:1px dashed #E3C8BF; border-radius:10px; z-index:-1}
+  .tlsum{position:absolute; right:0; top:-2px; text-align:right}
+  .tlsum .n{font-size:34px; font-weight:800; letter-spacing:-.04em; color:var(--clay); line-height:1}
+  .tlsum .l{font-size:11px; font-weight:700; color:var(--sub); margin-top:4px}
+  .tlhead{display:flex; align-items:flex-end; justify-content:space-between; margin:0 30px 38px}
+  .tlhead .s{font-size:10.5px; font-weight:800; letter-spacing:.1em; color:var(--sub2)}
+  .flag{position:absolute; top:-64px; left:50%; transform:translateX(-50%); width:170px;
+    background:var(--clay); color:#fff; border-radius:9px; padding:8px 10px; text-align:left}
+  .flag .fn{font-size:9.5px; font-weight:800; letter-spacing:.1em; opacity:.85}
+  .flag .ft{font-size:12px; font-weight:800; margin-top:2px; line-height:1.35}
+  .flag:after{content:''; position:absolute; left:50%; bottom:-6px; transform:translateX(-50%) rotate(45deg);
+    width:11px; height:11px; background:var(--clay)}
+
+  /* ══════ B안 · 브라우저 탭 ══════ */
+  .brw{flex:1; display:grid; grid-template-columns:1.55fr 1fr; gap:16px; min-height:0}
+  .win{border:1px solid var(--line); border-radius:11px; overflow:hidden; display:flex; flex-direction:column;
+    background:#fff; box-shadow:0 8px 24px rgba(22,20,15,.07)}
+  .wtabs{display:flex; background:#EDEDEA; padding:7px 8px 0; gap:3px; border-bottom:1px solid var(--line)}
+  .wtab{font-size:10.5px; font-weight:700; color:var(--sub); background:#DAD8D2; border-radius:7px 7px 0 0;
+    padding:6px 10px; white-space:nowrap; display:flex; align-items:center; gap:5px}
+  .wtab.on{background:#fff; color:var(--ink); font-weight:800}
+  .wtab i{width:7px; height:7px; border-radius:2px; background:var(--sub2); font-style:normal; flex:none}
+  .wtab.on i{background:var(--green)}
+  .wtab .x{color:var(--sub2); font-size:11px; margin-left:2px}
+  .wmore{font-size:10.5px; font-weight:800; color:var(--clay); padding:6px 8px; align-self:center}
+  .wurl{display:flex; align-items:center; gap:8px; padding:8px 11px; border-bottom:1px solid var(--line)}
+  .wurl .dots{display:flex; gap:4px} .wurl .dots i{width:8px; height:8px; border-radius:50%; background:#DAD8D2; font-style:normal}
+  .wurl .u{flex:1; background:var(--wash); border:1px solid var(--line); border-radius:20px;
+    font-size:10.5px; color:var(--sub); padding:4px 11px}
+  .wbody{flex:1; padding:14px 16px; min-height:0; display:flex; flex-direction:column; gap:11px; overflow:hidden}
+  .wsz{width:100%; border-collapse:collapse; font-size:11px}
+  .wsz th,.wsz td{border:1px solid var(--line); padding:5px 7px; text-align:center}
+  .wsz th{background:var(--wash); font-weight:800; color:var(--sub); font-size:10px}
+  .wsz td:first-child,.wsz th:first-child{text-align:left; font-weight:700}
+  .wq{position:absolute; font-size:12.5px; font-weight:800; color:var(--clay); background:#fff;
+    border:1.5px solid var(--clay); border-radius:20px; padding:5px 12px; box-shadow:0 4px 12px rgba(176,85,63,.2)}
+  .wrev{border:1px solid var(--line); border-radius:9px; padding:9px 11px; font-size:11.5px; color:var(--sub); line-height:1.5}
+  .wrev b{color:var(--ink)}
+  .wrev + .wrev{margin-top:-3px}
+  .side{display:flex; flex-direction:column; gap:10px}
+  .kpi{border:1px solid var(--line); border-radius:11px; padding:13px 15px}
+  .kpi.hot{background:var(--clay-bg); border-color:#E8CFC7}
+  .kpi .n{font-size:30px; font-weight:800; letter-spacing:-.035em; color:var(--green); line-height:1}
+  .kpi.hot .n{color:var(--clay)}
+  .kpi .u{font-size:12px; font-weight:700; color:var(--sub); margin-left:4px}
+  .kpi .l{font-size:11.5px; color:var(--sub); margin-top:7px; line-height:1.5}
+  .kpi .l b{color:var(--ink); font-weight:700}
+  .stamp{border:2px dashed var(--clay); color:var(--clay); border-radius:10px; padding:11px 13px;
+    font-size:13px; font-weight:800; text-align:center; line-height:1.45; background:var(--clay-bg)}
+
+  /* ══════ C안 · 저니맵 통합 ══════ */
+  .jm{flex:1; display:grid; grid-template-columns:70px repeat(6,1fr); border-top:2px solid var(--green); margin-top:10px}
+  .rlab{font-size:10px; font-weight:800; color:var(--sub2); letter-spacing:.04em; display:flex; align-items:center;
+    padding:0 8px 0 2px; border-right:1px solid var(--line); border-bottom:1px solid var(--line)}
+  .cell{padding:7px 8px; border-right:1px solid var(--line); border-bottom:1px solid var(--line);
+    font-size:10.5px; line-height:1.45; color:var(--sub)}
+  .cell:last-child{border-right:none} .cell b{color:var(--ink); font-weight:700}
+  .st{padding:8px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--green-soft)}
+  .st .no{font-size:9.5px; font-weight:800; color:var(--green-mid); letter-spacing:.06em}
+  .st .nm{font-size:13px; font-weight:800; color:var(--green); margin-top:2px}
+  .st:last-child{border-right:none}
+  .hot2{background:var(--clay-soft) !important}
+  .st.hot2 .no,.st.hot2 .nm{color:var(--clay)}
+  .cell.hot2{background:#FBF4F1} .cell.hot2 b{color:var(--clay)}
+  .think{color:var(--ink); font-style:italic}
+  .emo{grid-column:2 / -1; border-bottom:1px solid var(--line); padding:0}
+  .emo svg{display:block; width:100%; height:84px}
+  .star{color:var(--clay); font-weight:800}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="banner"><div class="bn">A안 · 시간 타임라인</div>
+  <div class="bd">"이만큼을 합니다"를 <b>시간</b>으로 체감시킨다 — 35분이 눈금 위에 쌓이고, 문제 구간이 그 위에 덮인다 (2장 구성)</div></div>
+
+<!-- A-1 · 과정 -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">The Everyday Journey</div>
+      <h1>온라인에서 옷 한 벌 사는 데, <b>40분이 듭니다</b></h1>
+    </div>
+    <div class="pchip"><span>시나리오 <b>2주 뒤 여행, 입고 갈 옷</b></span></div>
+  </div>
+  <p class="lead">특별한 사람의 이야기가 아닙니다. <b>지금 이 자리 모두가 지난 여행 전에 했던 과정</b>을, 시간 눈금 위에 그대로 올려봤습니다. 붉은 점 <em>세 곳</em>이 다음 장에서 짚을 문제 지점입니다.</p>
+
+  <div class="body">
+    <div class="tl">
+      <div class="tlhead">
+        <div class="s">0분 · 쇼핑 시작</div>
+        <div class="s">40분 · 그래도 확신은 없음</div>
+      </div>
+      <div class="tlaxis"><div class="tlfill" style="width:100%"></div></div>
+      <div class="tlnodes">
+        <div class="tln"><div class="tldot"></div><div class="tltime">2분</div>
+          <div class="tlcard"><div class="t">검색</div><div class="d">"여행룩" 검색<br>사진 잘 나올 셔츠 발견</div><div class="q">“이거 예쁜데?”</div></div></div>
+        <div class="tln"><div class="tlnum">1</div><div class="tldot hot"></div><div class="tltime hot">5분</div>
+          <div class="tlcard hot"><div class="t">사이즈표 확인</div><div class="d">가슴단면 52 · 어깨 45<br>총장 72cm…</div><div class="q">“이게 큰 건가?”</div></div></div>
+        <div class="tln"><div class="tlnum">2</div><div class="tldot hot"></div><div class="tltime hot">25분</div>
+          <div class="tlcard hot"><div class="t">후기 뒤지기</div><div class="d">"175/70인데 L 맞아요"<br>비슷한 체형 후기 수십 개<br>블로그 착용샷까지</div><div class="q">“이 사람 체형이 나랑 같나?”</div></div></div>
+        <div class="tln"><div class="tldot"></div><div class="tltime">6분</div>
+          <div class="tlcard"><div class="t">고민</div><div class="d">추천은 L, 예전엔 M<br>최근 살은 좀 쪘고<br>담았다 뺐다 반복</div><div class="q">“결국 뭘 골라야 하지”</div></div></div>
+        <div class="tln"><div class="tlnum">3</div><div class="tldot hot"></div><div class="tltime hot">2분</div>
+          <div class="tlcard hot"><div class="t">주문</div><div class="d">확신 없이<br>한 치수 크게</div><div class="q">“걍 주문하자”</div></div></div>
+        <div class="tln"><div class="tldot"></div><div class="tltime">+3일</div>
+          <div class="tlcard"><div class="t">수령 · 반품</div><div class="d">어깨는 맞는데 배가 낀다<br>반품 접수</div><div class="q">“출국은 다음 주인데…”</div></div></div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div class="fbox"><div class="k">한 벌에 40분</div><div class="v">그중 <b>25분이 "남의 후기 읽기"</b>입니다 — 정작 내 몸 얘기는 한 줄도 없는데</div></div>
+      <div class="fbox"><div class="k">그런데 반복</div><div class="v">이 40분을 <b>새 브랜드로 갈 때마다</b> 처음부터 다시 씁니다</div></div>
+      <div class="fbox g"><div class="k">결론</div><div class="v">그래서 결국 <b>늘 사던 브랜드의 비슷한 옷</b>만 다시 삽니다</div></div>
+    </div>
+  </div>
+  <div class="pageno">A-1</div>
+</section>
+
+<!-- A-2 · 문제 -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">Where It Breaks</div>
+      <h1>그 35분이 <i>세 번</i> 헛도는 지점이 있습니다</h1>
+    </div>
+    <div class="pchip"><span>막히는 지점 <b>3곳</b></span></div>
+  </div>
+  <p class="lead">시간을 많이 써서 문제가 아니라, <b>쓴 시간이 확신으로 바뀌지 않아서</b> 문제입니다. 같은 눈금 위에 그 구간을 덮어보면 이렇습니다.</p>
+
+  <div class="body">
+    <div class="tl" style="justify-content:flex-start; padding-top:66px">
+      <div class="tlaxis"><div class="tlfill" style="width:100%; background:var(--line)"></div></div>
+      <div class="tlnodes">
+        <div class="tln"><div class="tldot" style="border-color:var(--line)"></div><div class="tltime" style="color:var(--sub2)">검색</div></div>
+        <div class="tln"><div class="tldot hot"></div><div class="tltime hot">사이즈표</div>
+          <div class="flag"><div class="fn">PROBLEM 01</div><div class="ft">비교할 <b>내 몸 치수</b>가 없다</div></div></div>
+        <div class="tln"><div class="tldot hot"></div><div class="tltime hot">후기</div>
+          <div class="flag"><div class="fn">PROBLEM 02</div><div class="ft">브랜드마다 M이 다르고<br><b>남의 체형</b>은 내 기준이 아니다</div></div></div>
+        <div class="tln"><div class="tldot" style="border-color:var(--line)"></div><div class="tltime" style="color:var(--sub2)">고민</div></div>
+        <div class="tln"><div class="tldot hot"></div><div class="tltime hot">주문</div>
+          <div class="flag"><div class="fn">PROBLEM 03</div><div class="ft">끝까지 확신이 없어<br><b>감으로</b> 결제한다</div></div></div>
+        <div class="tln"><div class="tldot" style="border-color:var(--line)"></div><div class="tltime" style="color:var(--sub2)">반품</div></div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:26px">
+      <div style="border:1px solid #E8CFC7; background:var(--clay-bg); border-radius:11px; padding:13px 15px">
+        <div style="font-size:9.5px; font-weight:800; letter-spacing:.12em; color:var(--sub2)">PROBLEM 01</div>
+        <div style="font-size:16.5px; font-weight:800; color:var(--clay); margin-top:5px">내 몸 치수를 모른다</div>
+        <p style="font-size:12px; color:var(--sub); line-height:1.55; margin-top:8px">사이즈표는 <b style="color:var(--ink)">'옷의 치수'</b>일 뿐입니다. 비교할 내 몸 치수가 있어야 읽히는데, 줄자는 번거롭고 체중이 변하면 예전 값도 못 믿습니다.</p>
+      </div>
+      <div style="border:1px solid #E8CFC7; background:var(--clay-bg); border-radius:11px; padding:13px 15px">
+        <div style="font-size:9.5px; font-weight:800; letter-spacing:.12em; color:var(--sub2)">PROBLEM 02</div>
+        <div style="font-size:16.5px; font-weight:800; color:var(--clay); margin-top:5px">브랜드마다 M이 다르다</div>
+        <p style="font-size:12px; color:var(--sub); line-height:1.55; margin-top:8px">같은 M이라도 실제 치수가 다릅니다. <b style="color:var(--ink)">안 입어본 브랜드</b>는 감이 아예 없고, 후기는 체형이 달라 그대로 못 씁니다.</p>
+      </div>
+      <div style="border:1px solid #E8CFC7; background:var(--clay-bg); border-radius:11px; padding:13px 15px">
+        <div style="font-size:9.5px; font-weight:800; letter-spacing:.12em; color:var(--sub2)">PROBLEM 03</div>
+        <div style="font-size:16.5px; font-weight:800; color:var(--clay); margin-top:5px">끝까지 답이 없다</div>
+        <p style="font-size:12px; color:var(--sub); line-height:1.55; margin-top:8px">40분을 썼는데도 결제 버튼 앞에서 모릅니다. 결국 <b style="color:var(--ink)">감으로</b> 고르고, 확신은 옷이 도착한 뒤에야 생깁니다 — 그때는 이미 늦습니다.</p>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">A-2</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="banner"><div class="bn">B안 · 브라우저 탭</div>
+  <div class="bd">청중이 <b>자기 화면을 보는 듯한</b> 리얼함 — 탭 12개를 띄워놓고도 답을 못 찾는 장면을 그대로 재현 (2장 구성)</div></div>
+
+<!-- B-1 · 과정 -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">The Everyday Journey</div>
+      <h1>옷 한 벌 사려고, <b>탭을 12개 열었습니다</b></h1>
+    </div>
+    <div class="pchip"><span>시나리오 <b>2주 뒤 여행, 입고 갈 옷</b></span></div>
+  </div>
+  <p class="lead">다들 이러시죠. 상품 페이지, 사이즈표, 후기, 블로그, 그리고 예전에 산 옷 주문내역까지 — <b>답을 찾으려고 화면을 늘립니다.</b></p>
+
+  <div class="body">
+    <div class="brw">
+      <div class="win" style="position:relative">
+        <div class="wtabs">
+          <div class="wtab"><i></i>여행룩 셔츠</div>
+          <div class="wtab on"><i></i>사이즈 정보<span class="x">×</span></div>
+          <div class="wtab"><i></i>상품 후기 1.2천</div>
+          <div class="wtab"><i></i>블로그 "175/70 후기"</div>
+          <div class="wmore">+8</div>
+        </div>
+        <div class="wurl"><div class="dots"><i></i><i></i><i></i></div><div class="u">shop.example.com/product/1027#size</div></div>
+        <div class="wbody">
+          <div style="font-size:13px; font-weight:800">사이즈 정보 <span style="font-weight:600; color:var(--sub2); font-size:11px">(단위 cm · 단면 실측)</span></div>
+          <table class="wsz">
+            <tr><th>사이즈</th><th>총장</th><th>어깨</th><th>가슴</th><th>소매</th></tr>
+            <tr><td>S</td><td>70</td><td>43</td><td>50</td><td>60</td></tr>
+            <tr><td>M</td><td>72</td><td>45</td><td>52</td><td>61.5</td></tr>
+            <tr><td>L</td><td>74</td><td>47</td><td>54</td><td>63</td></tr>
+            <tr><td>XL</td><td>76</td><td>49</td><td>56</td><td>64.5</td></tr>
+          </table>
+          <div class="wrev">★★★★☆ <b>키 175 / 몸무게 70</b> · "평소 L 입는데 이건 M도 괜찮아요"</div>
+          <div class="wrev">★★★☆☆ <b>키 173 / 몸무게 68</b> · "어깨가 좀 좁아요, L 추천"</div>
+          <div class="wrev">★★★★★ <b>키 178 / 몸무게 72</b> · "오버핏이라 M이 딱"</div>
+        </div>
+        <div class="wq" style="right:26px; top:150px">그래서, <b>나</b>는?</div>
+      </div>
+
+      <div class="side">
+        <div class="kpi hot">
+          <div><span class="n">35</span><span class="u">분</span></div>
+          <div class="l">옷 한 벌 고르는 데 쓴 시간. 그중 <b>20분이 남의 후기 읽기</b>였습니다.</div>
+        </div>
+        <div class="kpi hot">
+          <div><span class="n">12</span><span class="u">개 탭</span></div>
+          <div class="l">상품 · 사이즈표 · 후기 · 블로그 · 주문내역까지 열었는데, <b>내 몸 치수를 알려주는 탭은 하나도 없습니다.</b></div>
+        </div>
+        <div class="kpi">
+          <div><span class="n" style="color:var(--sub2)">0</span><span class="u">개</span></div>
+          <div class="l">그래서 확신은 <b>0</b>. 결국 <b>한 치수 크게</b> 주문하고 무료반품 여부부터 확인합니다.</div>
+        </div>
+        <div class="stamp" style="margin-top:auto">“안 맞으면 반품하지 뭐”<br><span style="font-size:11px; font-weight:700; opacity:.8">— 확신이 아니라 <u>보험</u>으로 사는 중</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">B-1</div>
+</section>
+
+<!-- B-2 · 문제 -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">Where It Breaks</div>
+      <h1>탭을 아무리 늘려도, <i>이 셋</i>은 안 나옵니다</h1>
+    </div>
+    <div class="pchip"><span>막히는 지점 <b>3곳</b></span></div>
+  </div>
+  <p class="lead">화면이 부족한 게 아닙니다. <b>어느 탭에도 '내 몸'이 없어서</b>, 정보를 아무리 모아도 결론이 안 납니다.</p>
+
+  <div class="body">
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px; flex:1; min-height:0">
+
+      <div style="display:flex; flex-direction:column">
+        <div class="win" style="flex:1; min-height:0">
+          <div class="wtabs"><div class="wtab on"><i></i>사이즈 정보</div></div>
+          <div class="wbody" style="justify-content:center">
+            <table class="wsz">
+              <tr><th>사이즈</th><th>어깨</th><th>가슴</th></tr>
+              <tr><td>M</td><td>45</td><td>52</td></tr>
+              <tr><td>L</td><td>47</td><td>54</td></tr>
+            </table>
+            <div style="text-align:center; font-size:12px; font-weight:800; color:var(--clay); margin-top:4px">↑ 옷의 치수는 있는데<br>내 어깨·가슴은 <u>몇 cm?</u></div>
+          </div>
+        </div>
+        <div style="border:1px solid #E8CFC7; background:var(--clay-bg); border-radius:11px; padding:12px 14px; margin-top:11px">
+          <div style="font-size:9.5px; font-weight:800; letter-spacing:.12em; color:var(--sub2)">PROBLEM 01</div>
+          <div style="font-size:16px; font-weight:800; color:var(--clay); margin-top:4px">내 몸 치수를 모른다</div>
+          <p style="font-size:11.5px; color:var(--sub); line-height:1.5; margin-top:6px">줄자는 번거롭고 부정확하며, 체중이 변하면 예전 값도 못 믿습니다.</p>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column">
+        <div class="win" style="flex:1; min-height:0">
+          <div class="wtabs"><div class="wtab on"><i></i>상품 후기 1.2천</div></div>
+          <div class="wbody" style="justify-content:center; gap:7px">
+            <div class="wrev">175/70 · "M도 괜찮아요"</div>
+            <div class="wrev">173/68 · "어깨 좁아요, L"</div>
+            <div class="wrev">178/72 · "M이 딱"</div>
+            <div style="text-align:center; font-size:12px; font-weight:800; color:var(--clay); margin-top:2px">↑ 다 다른 말<br><u>많이 볼수록 더 헷갈림</u></div>
+          </div>
+        </div>
+        <div style="border:1px solid #E8CFC7; background:var(--clay-bg); border-radius:11px; padding:12px 14px; margin-top:11px">
+          <div style="font-size:9.5px; font-weight:800; letter-spacing:.12em; color:var(--sub2)">PROBLEM 02</div>
+          <div style="font-size:16px; font-weight:800; color:var(--clay); margin-top:4px">브랜드마다 M이 다르다</div>
+          <p style="font-size:11.5px; color:var(--sub); line-height:1.5; margin-top:6px">같은 키·몸무게여도 체형이 달라, 남의 후기는 내 기준이 되지 못합니다.</p>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column">
+        <div class="win" style="flex:1; min-height:0">
+          <div class="wtabs"><div class="wtab on"><i></i>주문서</div></div>
+          <div class="wbody" style="justify-content:center">
+            <div style="border:1px solid var(--line); border-radius:9px; padding:11px; font-size:11.5px; line-height:1.7">
+              여행룩 셔츠 · <b>L</b> (한 치수 크게)<br>
+              <span style="color:var(--sub)">무료 반품 가능 ✓</span><br>
+              <span style="color:var(--sub)">교환 배송비 0원 ✓</span>
+            </div>
+            <div style="text-align:center; font-size:12px; font-weight:800; color:var(--clay); margin-top:8px">↑ 먼저 확인한 게<br><u>사이즈가 아니라 반품 정책</u></div>
+          </div>
+        </div>
+        <div style="border:1px solid #E8CFC7; background:var(--clay-bg); border-radius:11px; padding:12px 14px; margin-top:11px">
+          <div style="font-size:9.5px; font-weight:800; letter-spacing:.12em; color:var(--sub2)">PROBLEM 03</div>
+          <div style="font-size:16px; font-weight:800; color:var(--clay); margin-top:4px">끝까지 답이 없다</div>
+          <p style="font-size:11.5px; color:var(--sub); line-height:1.5; margin-top:6px">확신은 옷이 도착한 뒤에야 생기고, 그때는 여행이 코앞입니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">B-2</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="banner"><div class="bn">C안 · 저니맵 통합 (2장 → 1장)</div>
+  <div class="bd">과정과 문제를 <b>한 장에</b> — 감정 곡선이 떨어지는 지점이 곧 문제 지점. 발표 시간을 1분 아껴 데모에 쓸 수 있다</div></div>
+
+<!-- C · 통합 -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">User Journey · As-is</div>
+      <h1>옷 한 벌 사는 과정, <b>어디서 무너지나</b></h1>
+    </div>
+    <div class="pchip"><span>시나리오 <b>2주 뒤 여행, 입고 갈 옷</b></span></div>
+  </div>
+  <p class="lead">기대감으로 시작한 구매가 <em>③ 후기 뒤지기</em>에서 꺾여 끝까지 회복되지 않습니다. <b>감정이 떨어진 자리가 곧 우리가 풀 문제</b>입니다.</p>
+
+  <div class="body" style="margin-top:8px">
+    <div class="jm">
+      <div class="rlab" style="border-top:none"></div>
+      <div class="st"><div class="no">STEP 01</div><div class="nm">검색</div></div>
+      <div class="st hot2"><div class="no">STEP 02 ★</div><div class="nm">사이즈표</div></div>
+      <div class="st hot2"><div class="no">STEP 03 ★</div><div class="nm">후기 뒤지기</div></div>
+      <div class="st"><div class="no">STEP 04</div><div class="nm">고민</div></div>
+      <div class="st hot2"><div class="no">STEP 05 ★</div><div class="nm">주문</div></div>
+      <div class="st"><div class="no">STEP 06</div><div class="nm">수령 · 반품</div></div>
+
+      <div class="rlab">행동</div>
+      <div class="cell">"여행룩" 검색<br>셔츠 발견</div>
+      <div class="cell hot2"><b>가슴 52 · 어깨 45</b><br>숫자만 확인</div>
+      <div class="cell hot2"><b>비슷한 체형 후기</b><br>20분간 검색</div>
+      <div class="cell">추천 L vs 예전 M<br>고민</div>
+      <div class="cell hot2">한 치수 크게<br><b>반품 정책부터 확인</b></div>
+      <div class="cell">배가 낀다<br>반품 접수</div>
+
+      <div class="rlab">생각</div>
+      <div class="cell think">“이거 예쁜데?”</div>
+      <div class="cell hot2 think">“이게 큰 건가<br>작은 건가”</div>
+      <div class="cell hot2 think">“이 사람 체형이<br>나랑 같나?”</div>
+      <div class="cell think">“모르겠다,<br>그냥 크게”</div>
+      <div class="cell hot2 think">“안 맞으면<br>반품하지 뭐”</div>
+      <div class="cell think">“출국은<br>다음 주인데…”</div>
+
+      <div class="rlab">감정</div>
+      <div class="emo">
+        <svg viewBox="0 0 600 84" preserveAspectRatio="none">
+          <line x1="0" y1="42" x2="600" y2="42" stroke="#E6E5E1" stroke-width="1" stroke-dasharray="4 4"/>
+          <polyline points="50,24 150,42 250,74 350,58 450,66 550,74" fill="none" stroke="#5A7A68"
+            stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+          <circle cx="50" cy="24" r="5" fill="#fff" stroke="#5A7A68" stroke-width="2.5"/>
+          <circle cx="150" cy="42" r="5" fill="#fff" stroke="#5A7A68" stroke-width="2.5"/>
+          <circle cx="250" cy="74" r="8" fill="#B0553F" stroke="#fff" stroke-width="2.5"/>
+          <circle cx="350" cy="58" r="5" fill="#fff" stroke="#5A7A68" stroke-width="2.5"/>
+          <circle cx="450" cy="66" r="5" fill="#fff" stroke="#5A7A68" stroke-width="2.5"/>
+          <circle cx="550" cy="74" r="5" fill="#fff" stroke="#5A7A68" stroke-width="2.5"/>
+          <text x="50" y="16" font-size="10.5" font-weight="700" fill="#6E6B63" text-anchor="middle">+1</text>
+          <text x="150" y="34" font-size="10.5" font-weight="700" fill="#6E6B63" text-anchor="middle">0</text>
+          <text x="250" y="64" font-size="11.5" font-weight="800" fill="#B0553F" text-anchor="middle">−2 최저</text>
+          <text x="350" y="50" font-size="10.5" font-weight="700" fill="#6E6B63" text-anchor="middle">−1</text>
+          <text x="450" y="58" font-size="10.5" font-weight="700" fill="#6E6B63" text-anchor="middle">−1</text>
+          <text x="550" y="64" font-size="10.5" font-weight="700" fill="#6E6B63" text-anchor="middle">−2</text>
+        </svg>
+      </div>
+
+      <div class="rlab">문제</div>
+      <div class="cell">—</div>
+      <div class="cell hot2"><span class="star">①</span> <b>비교할 내 몸<br>치수가 없다</b></div>
+      <div class="cell hot2"><span class="star">②</span> <b>남의 체형은<br>내 기준이 아니다</b></div>
+      <div class="cell">기준이 없으니<br>감으로</div>
+      <div class="cell hot2"><span class="star">③</span> <b>반품을 전제로<br>결제한다</b></div>
+      <div class="cell">시간 · 비용<br>소모</div>
+    </div>
+
+    <div class="foot">
+      <div class="fbox"><div class="k">걸린 시간</div><div class="v">한 벌에 <b>35분</b> · 그중 <b>20분이 남의 후기 읽기</b></div></div>
+      <div class="fbox"><div class="k">반복</div><div class="v">새 브랜드로 갈 때마다 <b>처음부터 다시</b></div></div>
+      <div class="fbox g"><div class="k">결론</div><div class="v">그래서 결국 <b>늘 사던 브랜드</b>만 다시 산다</div></div>
+    </div>
+  </div>
+  <div class="pageno">C</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="banner"><div class="bn">피그마 재현 스펙 · A안</div>
+  <div class="bd">피그마에서 다시 그릴 때 쓰는 값 — 색은 <b>핏팅 디자인 가이드 정본</b>(web/css/tokens.css)과 동일</div></div>
+
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">Figma Spec</div>
+      <h1>A안 타임라인 <b>재현 스펙</b></h1>
+    </div>
+    <div class="pchip"><span>프레임 <b>1920 × 1080</b></span><span>또는 <b>13.333 × 7.5 in</b></span></div>
+  </div>
+
+  <div class="body" style="margin-top:12px">
+    <div style="display:grid; grid-template-columns:1.25fr 1fr; gap:16px; flex:1; min-height:0">
+
+      <div style="display:flex; flex-direction:column; gap:12px; min-height:0">
+        <div>
+          <div class="eyebrow" style="margin-bottom:8px">색 — 정본 토큰 (그대로 복사)</div>
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px">
+            <div style="border:1px solid var(--line); border-radius:9px; overflow:hidden">
+              <div style="height:34px; background:#F6F6F5; border-bottom:1px solid var(--line)"></div>
+              <div style="padding:7px 9px"><div style="font-size:11px; font-weight:800">배경</div><div style="font-size:10.5px; color:var(--sub)">#F6F6F5</div></div></div>
+            <div style="border:1px solid var(--line); border-radius:9px; overflow:hidden">
+              <div style="height:34px; background:#FFFFFF; border-bottom:1px solid var(--line)"></div>
+              <div style="padding:7px 9px"><div style="font-size:11px; font-weight:800">카드 면</div><div style="font-size:10.5px; color:var(--sub)">#FFFFFF</div></div></div>
+            <div style="border:1px solid var(--line); border-radius:9px; overflow:hidden">
+              <div style="height:34px; background:#16140F"></div>
+              <div style="padding:7px 9px"><div style="font-size:11px; font-weight:800">본문·제목</div><div style="font-size:10.5px; color:var(--sub)">#16140F</div></div></div>
+            <div style="border:1px solid var(--line); border-radius:9px; overflow:hidden">
+              <div style="height:34px; background:#6E6B63"></div>
+              <div style="padding:7px 9px"><div style="font-size:11px; font-weight:800">보조 글</div><div style="font-size:10.5px; color:var(--sub)">#6E6B63</div></div></div>
+            <div style="border:1px solid var(--line); border-radius:9px; overflow:hidden">
+              <div style="height:34px; background:#2E4A3B"></div>
+              <div style="padding:7px 9px"><div style="font-size:11px; font-weight:800">딥그린 강조</div><div style="font-size:10.5px; color:var(--sub)">#2E4A3B</div></div></div>
+            <div style="border:1px solid var(--line); border-radius:9px; overflow:hidden">
+              <div style="height:34px; background:#5A7A68"></div>
+              <div style="padding:7px 9px"><div style="font-size:11px; font-weight:800">타임라인 선·점</div><div style="font-size:10.5px; color:var(--sub)">#5A7A68</div></div></div>
+            <div style="border:1px solid var(--line); border-radius:9px; overflow:hidden">
+              <div style="height:34px; background:#E7EFEA; border-bottom:1px solid var(--line)"></div>
+              <div style="padding:7px 9px"><div style="font-size:11px; font-weight:800">초록 연배경</div><div style="font-size:10.5px; color:var(--sub)">#E7EFEA</div></div></div>
+            <div style="border:1px solid var(--line); border-radius:9px; overflow:hidden">
+              <div style="height:34px; background:#B0553F"></div>
+              <div style="padding:7px 9px"><div style="font-size:11px; font-weight:800">문제 강조</div><div style="font-size:10.5px; color:var(--sub)">#B0553F</div></div></div>
+          </div>
+          <p style="font-size:11px; color:var(--sub); margin-top:8px; line-height:1.5">
+            보조: 연한 문제 배경 <b>#FBF4F1</b> · 문제 테두리 <b>#E8CFC7</b> · 경계선 <b>#E6E5E1</b> · 아주 옅은 회색 <b>#A6A29A</b>
+          </p>
+        </div>
+
+        <div>
+          <div class="eyebrow" style="margin-bottom:8px">타이포 — Pretendard 단일 (숫자만 SUIT)</div>
+          <table class="wsz" style="font-size:11px">
+            <tr><th style="text-align:left">역할</th><th>크기</th><th>굵기</th><th>자간</th><th>색</th></tr>
+            <tr><td>슬라이드 제목 h1</td><td>27</td><td>800</td><td>−0.022em</td><td>#16140F</td></tr>
+            <tr><td>눈썹(Eyebrow)</td><td>10.5</td><td>800</td><td>+0.16em</td><td>#A6A29A</td></tr>
+            <tr><td>리드 문장</td><td>12.5</td><td>400</td><td>−0.02em</td><td>#6E6B63</td></tr>
+            <tr><td>단계 제목</td><td>14</td><td>800</td><td>−0.01em</td><td>#16140F</td></tr>
+            <tr><td>단계 설명</td><td>11</td><td>400</td><td>−0.02em</td><td>#6E6B63</td></tr>
+            <tr><td>대사(이탤릭)</td><td>11</td><td>400</td><td>−0.02em</td><td>#16140F 80%</td></tr>
+            <tr><td>시간 라벨</td><td>11</td><td>800</td><td>−0.01em</td><td>#5A7A68 / #B0553F</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:12px">
+        <div>
+          <div class="eyebrow" style="margin-bottom:8px">타임라인 부품 치수</div>
+          <table class="wsz" style="font-size:11px">
+            <tr><th style="text-align:left">부품</th><th>값</th></tr>
+            <tr><td>가로 축 선</td><td>높이 2 · #E6E5E1 위에 #5A7A68 덮기</td></tr>
+            <tr><td>기본 점</td><td>지름 13 · 테두리 2.5 #5A7A68 · 면 흰색</td></tr>
+            <tr><td>문제 점</td><td>지름 17 · 면 #B0553F · 바깥 글로우 5 (14% 투명)</td></tr>
+            <tr><td>번호 뱃지</td><td>지름 20 · 면 #B0553F · 흰 글씨 11/800 · 점 위 31</td></tr>
+            <tr><td>단계 간격</td><td>6등분 · 좌우 여백 30</td></tr>
+            <tr><td>말풍선(문제 장)</td><td>폭 170 · 라운드 9 · 꼬리 11×11 회전 45°</td></tr>
+            <tr><td>하단 인사이트 박스</td><td>라운드 8 · 왼쪽 굵은 선 3 · 안여백 9×12</td></tr>
+          </table>
+        </div>
+
+        <div>
+          <div class="eyebrow" style="margin-bottom:8px">여백 · 형태</div>
+          <table class="wsz" style="font-size:11px">
+            <tr><th style="text-align:left">항목</th><th>값</th></tr>
+            <tr><td>슬라이드 안여백</td><td>상하 0.5in · 좌우 0.55in</td></tr>
+            <tr><td>제목 ↔ 리드</td><td>6</td></tr>
+            <tr><td>리드 ↔ 본문</td><td>14</td></tr>
+            <tr><td>라운드</td><td>버튼·입력 12 · 칩 20 · 카드 18 · 작은 박스 8~11</td></tr>
+            <tr><td>테두리</td><td>카드 1 · 입력/강조 1.5</td></tr>
+          </table>
+        </div>
+
+        <div class="fbox g" style="margin-top:auto">
+          <div class="k">피그마에서 지킬 것</div>
+          <div class="v" style="font-weight:600; font-size:11.5px; line-height:1.55">
+            <b>초록은 포인트로만</b> — 버튼·큰 면적 채움 금지(정본 규칙).<br>
+            <b>문제색(#B0553F)은 세 곳에만</b> — 늘리면 "다 문제"처럼 보여 강조가 죽어요.<br>
+            <b>폰트는 Pretendard 하나</b> · 숫자(분·cm·%)만 SUIT.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">SPEC</div>
+</section>
+
+</body>
+</html>

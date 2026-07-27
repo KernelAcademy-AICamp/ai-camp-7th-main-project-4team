@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>핏팅 — 최종 발표 v2 (17장 · 15분)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+<style>
+  :root{
+    --green:#2E4A3B; --green-mid:#5A7A68; --green-soft:#E7EFEA;
+    --clay:#B0553F; --clay-soft:#F7ECE8; --clay-bg:#FBF4F1;
+    --ink:#16140F; --sub:#6E6B63; --sub2:#A6A29A;
+    --line:#E6E5E1; --bg:#FFFFFF; --wash:#F6F6F5;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{font-family:'Pretendard','Malgun Gothic',sans-serif; color:var(--ink); background:#8E938E;
+    -webkit-font-smoothing:antialiased; word-break:keep-all; padding:24px 0;}
+  .slide{width:13.333in; height:7.5in; padding:0.5in 0.55in; background:#fff; position:relative;
+    page-break-after:always; display:flex; flex-direction:column; overflow:hidden;
+    margin:0 auto 22px; box-shadow:0 6px 30px rgba(0,0,0,.22);}
+  .slide:last-child{page-break-after:auto}
+  @media print{ body{background:#fff; padding:0} .slide{margin:0; box-shadow:none} }
+
+  /* ── 공통 헤더 ── */
+  .shead{display:flex; align-items:flex-end; gap:14px; margin-bottom:3px}
+  .eyebrow{font-size:10.5px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--sub2)}
+  h1{font-size:27px; font-weight:800; letter-spacing:-.022em; line-height:1.15}
+  h1 b{color:var(--green)}
+  h1 i{font-style:normal; color:var(--clay)}
+  .pchip{margin-left:auto; display:flex; gap:6px; align-items:center}
+  .pchip span{font-size:11.5px; font-weight:700; color:var(--sub); background:#EDEDEA;
+    border:1px solid var(--line); border-radius:20px; padding:5px 12px; white-space:nowrap}
+  .pchip b{color:var(--ink); font-weight:800}
+  .lead{font-size:12.5px; color:var(--sub); margin-top:6px; line-height:1.5}
+  .lead em{font-style:normal; color:var(--clay); font-weight:800}
+  .lead b{color:var(--green); font-weight:800}
+  .pageno{position:absolute; right:0.55in; bottom:0.3in; font-size:10px; color:var(--sub2); font-weight:700}
+  .body{flex:1; display:flex; flex-direction:column; min-height:0; margin-top:12px}
+
+  /* ── 표지 ── */
+  .cover{justify-content:center; background:linear-gradient(160deg,#FFFFFF 0%,#F1F2F0 58%,#E7EFEA 100%)}
+  .cover .bigmark{font-size:82px; font-weight:800; letter-spacing:-.05em; color:var(--green); line-height:1}
+  .cover .bigmark i{display:inline-block; width:15px; height:15px; background:var(--clay);
+    margin-left:9px; vertical-align:8px; font-style:normal; border-radius:2px}
+  .cover .tagline{font-size:27px; font-weight:800; letter-spacing:-.03em; color:var(--sub); margin-top:24px}
+  .cover .tagline b{color:var(--ink)}
+  .cover .sub{font-size:16px; color:var(--sub); line-height:1.65; font-weight:500}
+  .cover .sub b{color:var(--green); font-weight:800}
+  .cover .meta{position:absolute; left:0.55in; bottom:0.5in; display:flex; gap:26px; align-items:baseline}
+  .cover .meta .k{font-size:10px; font-weight:800; letter-spacing:.12em; color:var(--sub2); text-transform:uppercase}
+  .cover .meta .v{font-size:13px; font-weight:700; color:var(--ink); margin-top:3px}
+  .cover .rule{width:54px; height:4px; background:var(--clay); margin-top:28px; border-radius:2px}
+
+  /* ── 질문(훅) ── */
+  .ask{background:var(--green); justify-content:center}
+  .ask .askmark{position:absolute; left:0.55in; top:0.5in; font-size:14px; font-weight:800;
+    letter-spacing:.16em; color:rgba(255,255,255,.55); text-transform:uppercase}
+  .ask .askmark i{display:inline-block; width:7px; height:7px; background:var(--clay);
+    margin-left:5px; vertical-align:2px; font-style:normal}
+  .askbody{display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; text-align:center}
+  .askq{font-size:76px; font-weight:800; letter-spacing:-.05em; line-height:1.16; color:rgba(255,255,255,.72)}
+  .askq b{color:#fff}
+  .asksub{font-size:16.5px; color:rgba(255,255,255,.62); margin-top:34px; line-height:1.7; font-weight:500}
+
+  /* ── 가로 스텝 플로우 ── */
+  .flow{display:grid; grid-template-columns:repeat(6,1fr); gap:9px; margin-top:4px}
+  .flow.f5{grid-template-columns:repeat(5,1fr)}
+  .fstep{border:1px solid var(--line); border-radius:10px; padding:11px 11px 12px; background:#fff;
+    display:flex; flex-direction:column; position:relative; min-height:112px}
+  .fstep .n{font-size:9.5px; font-weight:800; letter-spacing:.1em; color:var(--sub2)}
+  .fstep .t{font-size:14px; font-weight:800; margin-top:4px; letter-spacing:-.01em}
+  .fstep .d{font-size:11px; color:var(--sub); margin-top:6px; line-height:1.45}
+  .fstep .q{font-size:11px; color:var(--ink); font-style:italic; margin-top:auto; padding-top:8px; opacity:.85}
+  .fstep.bad{border-color:#E8CFC7; background:var(--clay-bg)}
+  .fstep.bad .t{color:var(--clay)}
+  .fstep.good{border-color:#CBDDD2; background:var(--green-soft)}
+  .fstep.good .t{color:var(--green)}
+  .pin{position:absolute; top:-9px; right:9px; width:22px; height:22px; border-radius:50%;
+    background:var(--clay); color:#fff; font-size:11px; font-weight:800; display:flex;
+    align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(176,85,63,.35)}
+  .arrows{display:grid; grid-template-columns:repeat(6,1fr); margin-top:-4px}
+  .arrows span{text-align:center; font-size:13px; color:var(--sub2)}
+
+  /* ── 카드 3분할 ── */
+  .cols{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; flex:1; min-height:0}
+  .cols.c2{grid-template-columns:repeat(2,1fr)}
+  .cols.c4{grid-template-columns:repeat(4,1fr)}
+  .card{border:1px solid var(--line); border-radius:11px; padding:14px 15px; background:#fff;
+    display:flex; flex-direction:column}
+  .card .kk{font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--sub2)}
+  .card h3{font-size:16.5px; font-weight:800; letter-spacing:-.015em; margin-top:5px; line-height:1.3}
+  .card p{font-size:12px; color:var(--sub); line-height:1.55; margin-top:8px}
+  .card p b{color:var(--ink); font-weight:700}
+  .card .tag{margin-top:auto; padding-top:10px; font-size:11px; font-weight:800; color:var(--clay)}
+  .card .tag.g{color:var(--green)}
+  .card.hot{border-color:#E8CFC7; background:var(--clay-bg)} .card.hot h3{color:var(--clay)}
+  .card.ok{border-color:#CBDDD2; background:var(--green-soft)} .card.ok h3{color:var(--green)}
+  .card.dark{background:var(--green); border-color:var(--green)}
+  .card.dark h3,.card.dark .kk{color:#fff} .card.dark p{color:#CBDDD2}
+  .num{font-size:30px; font-weight:800; letter-spacing:-.03em; color:var(--green); line-height:1}
+  .num.c{color:var(--clay)}
+  .unit{font-size:12px; font-weight:700; color:var(--sub); margin-left:3px}
+
+  /* ── 인용 ── */
+  .quotes{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+  .quote{border-left:3px solid var(--clay); background:var(--clay-bg); border-radius:0 8px 8px 0;
+    padding:11px 13px}
+  .quote .q{font-size:12.5px; font-weight:700; line-height:1.5; color:var(--ink)}
+  .quote .s{font-size:10.5px; color:var(--sub2); margin-top:7px; font-weight:700}
+
+  /* ── 막대 ── */
+  .bars{display:flex; flex-direction:column; gap:9px; margin-top:2px}
+  .bar{display:grid; grid-template-columns:118px 1fr 52px; align-items:center; gap:11px}
+  .bar .bl{font-size:12px; font-weight:700; color:var(--ink); text-align:right}
+  .bar .bt{height:15px; background:var(--wash); border-radius:8px; overflow:hidden; border:1px solid var(--line)}
+  .bar .bf{height:100%; background:var(--green-mid); border-radius:8px 0 0 8px}
+  .bar .bf.c{background:var(--clay)}
+  .bar .bf.soft{background:#BFCEC4}
+  .bar .bv{font-size:12.5px; font-weight:800; color:var(--green); text-align:right}
+  .bar .bv.c{color:var(--clay)}
+
+  /* ── 매칭 표(3:3) ── */
+  .match{display:grid; grid-template-columns:1fr 46px 1fr; gap:0 12px; row-gap:11px; align-items:stretch; flex:1}
+  .mhd{font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--sub2); padding-bottom:2px}
+  .mbox{border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; justify-content:center}
+  .mbox.as{background:var(--clay-bg); border-color:#E8CFC7}
+  .mbox.to{background:var(--green-soft); border-color:#CBDDD2}
+  .mbox .mk{font-size:10px; font-weight:800; letter-spacing:.1em; color:var(--sub2)}
+  .mbox .mt{font-size:15px; font-weight:800; margin-top:4px; line-height:1.3; letter-spacing:-.015em}
+  .mbox.as .mt{color:var(--clay)} .mbox.to .mt{color:var(--green)}
+  .mbox .md{font-size:11.5px; color:var(--sub); margin-top:6px; line-height:1.5}
+  .mbox .md b{color:var(--ink); font-weight:700}
+  .marrow{display:flex; align-items:center; justify-content:center; font-size:19px; color:var(--sub2); font-weight:700}
+
+  /* ── 데모(브라우저 목업) ── */
+  .demo{display:grid; grid-template-columns:1.15fr 1fr; gap:16px; flex:1; min-height:0}
+  .shot{border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--wash);
+    display:flex; flex-direction:column}
+  .shot .cap{font-size:10.5px; font-weight:800; color:var(--sub2); padding:7px 10px; border-bottom:1px solid var(--line); background:#fff; letter-spacing:.02em}
+  .shot img{width:100%; height:100%; object-fit:cover; object-position:top center; display:block; flex:1; min-height:0}
+  .shots{display:grid; grid-template-columns:repeat(3,1fr); gap:9px; flex:1; min-height:0}
+  .steps{display:flex; flex-direction:column; gap:9px}
+  .stp{border:1px solid var(--line); border-radius:10px; padding:11px 13px; display:flex; gap:11px; align-items:flex-start}
+  .stp .sn{width:21px; height:21px; border-radius:50%; background:var(--green); color:#fff; font-size:11px;
+    font-weight:800; display:flex; align-items:center; justify-content:center; flex:none; margin-top:1px}
+  .stp .st{font-size:13.5px; font-weight:800; letter-spacing:-.01em}
+  .stp .sd{font-size:11.5px; color:var(--sub); margin-top:4px; line-height:1.5}
+  .stp .sd b{color:var(--ink); font-weight:700}
+
+  /* 판정 화면 목업 */
+  .mock{border:1px solid var(--line); border-radius:10px; background:#fff; display:flex; flex-direction:column; overflow:hidden}
+  .mock .mtop{background:var(--wash); border-bottom:1px solid var(--line); padding:6px 10px; font-size:10px; font-weight:700; color:var(--sub2)}
+  .mock .mbd{flex:1; display:grid; grid-template-columns:1fr 1.05fr; gap:9px; padding:10px; min-height:0}
+  .mrow{border:1px solid var(--line); border-radius:7px; padding:7px 9px; font-size:11px; margin-bottom:6px; background:#fff}
+  .mrow .mn{display:inline-flex; width:15px; height:15px; border-radius:50%; background:var(--green); color:#fff;
+    font-size:9px; font-weight:800; align-items:center; justify-content:center; margin-right:6px; vertical-align:1px}
+  .mrow b{font-weight:800}
+  .mbtn{background:var(--ink); color:#fff; border-radius:7px; text-align:center; font-size:11.5px; font-weight:800; padding:8px}
+  .mtbl{width:100%; border-collapse:collapse; font-size:10.5px}
+  .mtbl th,.mtbl td{border:1px solid var(--line); padding:4px 5px; text-align:center}
+  .mtbl th{background:var(--wash); font-weight:800; color:var(--sub)}
+  .mtbl .fit{background:var(--green-soft); color:var(--green); font-weight:800}
+  .mtbl .tight{background:var(--clay-bg); color:var(--clay); font-weight:700}
+  .mverd{background:var(--green); color:#fff; border-radius:8px; padding:9px 11px; font-size:12px; font-weight:800; margin-bottom:7px}
+  .mverd span{display:block; font-size:10px; font-weight:600; color:#CBDDD2; margin-top:3px}
+
+  /* ── 하단 인사이트 ── */
+  .foot{margin-top:11px; display:flex; gap:10px; align-items:stretch}
+  .fbox{flex:1; border:1px solid var(--line); border-left:3px solid var(--clay);
+    border-radius:8px; padding:9px 12px; background:#FAF9F7}
+  .fbox.g{border-left-color:var(--green); background:var(--green-soft); border-color:#CBDDD2}
+  .fbox .k{font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--sub2)}
+  .fbox .v{font-size:12.5px; font-weight:700; color:var(--ink); margin-top:3px; line-height:1.42}
+  .fbox.g .v{color:var(--green)}
+
+  /* ── 한 문장 강조 ── */
+  .oneline{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center}
+  .oneline .hmw{font-size:11px; font-weight:800; letter-spacing:.18em; color:var(--clay); text-transform:uppercase}
+  .oneline .big{font-size:38px; font-weight:800; letter-spacing:-.035em; line-height:1.32; margin-top:16px; max-width:10.4in}
+  .oneline .big b{color:var(--green)}
+  .oneline .bsub{font-size:13.5px; color:var(--sub); margin-top:18px; line-height:1.6}
+  .oneline .bsub b{color:var(--ink); font-weight:800}
+
+  /* ── 테이블(UT 대응) ── */
+  .tb{width:100%; border-collapse:collapse; font-size:11.5px}
+  .tb th{background:var(--wash); font-size:10px; font-weight:800; letter-spacing:.08em; color:var(--sub);
+    text-transform:uppercase; padding:7px 9px; border:1px solid var(--line); text-align:left}
+  .tb td{border:1px solid var(--line); padding:8px 9px; vertical-align:top; line-height:1.45; color:var(--sub)}
+  .tb td b{color:var(--ink); font-weight:700}
+  .tb .pill{display:inline-block; font-size:10px; font-weight:800; padding:2px 7px; border-radius:20px; white-space:nowrap}
+  .pill.now{background:var(--green-soft); color:var(--green)}
+  .pill.chk{background:#FBF3E4; color:#8A6A24}
+  .pill.str{background:#EAF0F7; color:#3A5B84}
+  .pill.no{background:#F1F1EF; color:var(--sub)}
+
+  /* ── 로드맵 ── */
+  .road{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+  .rd{border:1px solid var(--line); border-radius:11px; padding:13px 15px; position:relative}
+  .rd .when{font-size:10px; font-weight:800; letter-spacing:.12em; color:var(--sub2); text-transform:uppercase}
+  .rd h4{font-size:15px; font-weight:800; margin-top:5px; letter-spacing:-.015em}
+  .rd ul{margin-top:8px; padding-left:14px}
+  .rd li{font-size:11.5px; color:var(--sub); line-height:1.6}
+  .rd.on{border-color:var(--green); background:var(--green-soft)} .rd.on h4{color:var(--green)}
+  /* ── v2 추가 ── */
+  .whatis{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; flex:1; min-height:0}
+  .wi{border:1px solid var(--line); border-radius:14px; padding:18px 19px; display:flex; flex-direction:column;
+    background:#fff; position:relative}
+  .wi .wn{width:26px; height:26px; border-radius:50%; background:var(--green); color:#fff; font-size:13px;
+    font-weight:800; display:flex; align-items:center; justify-content:center}
+  .wi h3{font-size:19px; font-weight:800; letter-spacing:-.02em; margin-top:12px; line-height:1.28}
+  .wi p{font-size:12.5px; color:var(--sub); line-height:1.6; margin-top:9px}
+  .wi p b{color:var(--ink); font-weight:700}
+  .wi .st{margin-top:auto; padding-top:12px; font-size:11px; font-weight:800; color:var(--green)}
+  .wi .st.wip{color:var(--sub2)}
+
+  /* 옷장 */
+  .closet{display:grid; grid-template-columns:repeat(5,1fr); gap:12px; flex:1; min-height:0}
+  .cl{border:1px solid var(--line); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; background:#fff}
+  .cl .img{flex:1; background:var(--wash); border-bottom:1px solid var(--line); display:flex;
+    align-items:center; justify-content:center; color:#CFCEC8; min-height:0}
+  .cl .img svg{width:52%; height:52%}
+  .cl .cap{padding:10px 11px}
+  .cl .cap .nm{font-size:12.5px; font-weight:800}
+  .cl .cap .rs{font-size:11px; color:var(--clay); font-weight:700; margin-top:4px; line-height:1.4}
+  .cl.dim{opacity:.55}
+
+  /* 근거 자리 표시 */
+  .todo{border:2px dashed var(--clay); background:var(--clay-bg); border-radius:11px; padding:12px 15px}
+  .todo .tk{font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--clay)}
+  .todo .tv{font-size:12.5px; color:var(--ink); margin-top:5px; line-height:1.55; font-weight:600}
+  .todo .tv b{color:var(--clay)}
+
+  /* 문제 3분류 */
+  .p3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; flex:1; min-height:0}
+  .pb{border:1px solid #E8CFC7; background:var(--clay-bg); border-radius:14px; padding:18px 19px;
+    display:flex; flex-direction:column}
+  .pb .pn{width:26px; height:26px; border-radius:50%; background:var(--clay); color:#fff; font-size:13px;
+    font-weight:800; display:flex; align-items:center; justify-content:center}
+  .pb h3{font-size:19px; font-weight:800; letter-spacing:-.02em; margin-top:12px; line-height:1.3; color:var(--clay)}
+  .pb .q{font-size:12.5px; color:var(--ink); font-style:italic; margin-top:10px; line-height:1.55}
+  .pb .ev{margin-top:auto; padding-top:12px; font-size:11px; font-weight:800; color:var(--sub)}
+  .pb .ev b{color:var(--clay)}
+
+</style>
+</head>
+<body>
+
+<!-- ═══ 01 · 표지 ═══ -->
+<section class="slide cover">
+  <div class="bigmark">Fitting<i></i></div>
+  <div class="rule"></div>
+  <div class="tagline">안 입어본 브랜드도, <b>내 사이즈로 딱</b></div>
+  <div class="sub" style="margin-top:12px">
+    평소 입던 옷의 착용 경험으로<br>브랜드를 가로질러 <b>내 사이즈를 번역</b>하는 서비스
+  </div>
+  <div class="meta">
+    <div><div class="k">Team</div><div class="v">강건형 · 이상민 · 이소희</div></div>
+    <div><div class="k">Product</div><div class="v">핏팅(Fitting)</div></div>
+    <div><div class="k">Date</div><div class="v">2026. 07</div></div>
+  </div>
+</section>
+
+<!-- ═══ 02 · 훅 ═══ -->
+<section class="slide ask">
+  <div class="askmark">Fitting<i></i></div>
+  <div class="askbody">
+    <div class="askq">이 옷,<br><b>나한테 맞을까?</b></div>
+    <div class="asksub">온라인으로 옷을 살 때마다 —<br>우리는 매번 이 질문 앞에서 멈춥니다.</div>
+  </div>
+  <div class="pageno" style="color:rgba(255,255,255,.45)">02</div>
+</section>
+
+<!-- ═══ 03 · 핏팅은 이런 서비스 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">What We Built</div>
+      <h1>핏팅은 <b>이 질문에 답하는 서비스</b>입니다</h1>
+    </div>
+    <div class="pchip"><span>세 가지 기능 <b>모두 구현 · 배포</b></span></div>
+  </div>
+  <p class="lead">먼저 <b>무엇을 만들었는지</b> 보여드리고, 그다음 <b>왜 만들었는지</b> 말씀드리겠습니다.</p>
+
+  <div class="body">
+    <div class="whatis">
+      <div class="wi">
+        <div class="wn">1</div>
+        <h3>체형 진단</h3>
+        <p>줄자 없이, <b>평소 입던 옷 2벌</b>의 착용 경험만으로 내 몸 치수와 8체형을 계산합니다. 그리고 <b>안 입어본 브랜드의 내 사이즈</b>까지 번역해요.</p>
+        <div class="st">구현 · 배포 완료</div>
+      </div>
+      <div class="wi">
+        <div class="wn">2</div>
+        <h3>구매 판정 (Fit)</h3>
+        <p>지금 <b>사려는 그 옷</b>의 사이즈표를 올리면, 내 체형에 대보고 사이즈별로 맞을지 판정합니다. 우리 DB에 <b>없는 브랜드여도</b> 캡처 한 장이면 돼요.</p>
+        <div class="st">구현 · 배포 완료</div>
+      </div>
+      <div class="wi">
+        <div class="wn">3</div>
+        <h3>스타일리스트 연결</h3>
+        <p>사이즈가 아니라 <b>"뭐가 어울리는지"</b>가 고민이라면, 내 체형 정보를 그대로 들고 전문가에게 갑니다.</p>
+        <div class="st wip">화면 구현 완료 · 수요 검증 단계</div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div class="fbox g" style="border-left-width:4px">
+        <div class="k">왜 세 개인가</div>
+        <div class="v">사람들이 옷을 살 때 막히는 지점이 <b>세 군데</b>였기 때문입니다 — 지금부터 그 세 군데를 보여드릴게요</div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">03</div>
+</section>
+
+<!-- ═══ 04 · 6단계 여정 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">The Everyday Journey</div>
+      <h1>온라인에서 옷 한 벌을 사기 위해, <b>우리는 6가지 과정을 거칩니다</b></h1>
+    </div>
+    <div class="pchip"><span>시나리오 <b>3주 뒤 여행룩 온라인 쇼핑</b></span></div>
+  </div>
+  <p class="lead">특별한 사람의 이야기가 아니라, <b>지금 이 자리 모두가 지난 여행 전에 했던 과정</b>입니다.</p>
+
+  <div class="body">
+    <div class="flow">
+      <div class="fstep">
+        <div class="n">STEP 01</div><div class="t">검색</div>
+        <div class="d">여행룩 검색<br>마음에 드는 셔츠 발견</div>
+        <div class="q">“이거 괜찮은데?”</div>
+      </div>
+      <div class="fstep">
+        <div class="n">STEP 02</div><div class="t">사이즈표 확인</div>
+        <div class="d">가슴단면 52 · 어깨 45<br>· 총장 72cm…</div>
+        <div class="q">“이게 나한테 맞는 건가?”</div>
+      </div>
+      <div class="fstep">
+        <div class="n">STEP 03</div><div class="t">후기 뒤지기</div>
+        <div class="d">"175/70인데 L 맞아요"<br>비슷한 체형 후기 검색</div>
+        <div class="q">“근데 이 사람 체형이 나랑 같나?”</div>
+      </div>
+      <div class="fstep">
+        <div class="n">STEP 04</div><div class="t">고민</div>
+        <div class="d">추천 사이즈는 L,<br>후기는 M도 많고…</div>
+        <div class="q">“모르겠다. 그냥 크게 살까”</div>
+      </div>
+      <div class="fstep">
+        <div class="n">STEP 05</div><div class="t">주문</div>
+        <div class="d">한 치수 크게 주문</div>
+        <div class="q">“모르겠다. 일단 주문하자”</div>
+      </div>
+      <div class="fstep bad">
+        <div class="n">STEP 06</div><div class="t">수령 · 반품</div>
+        <div class="d">입어보니<br>어깨는 맞는데 배가 낀다</div>
+        <div class="q">“하… 또 반품해야 하네.”</div>
+      </div>
+    </div>
+
+    <div class="foot" style="margin-top:auto">
+      <div class="fbox g" style="border-left-width:4px">
+        <div class="k">여섯 칸 내내 한 번도 안 나온 것</div>
+        <div class="v" style="font-size:15px"><b>'내 몸'</b> 이야기입니다 — 옷의 치수와 남의 후기만 있었을 뿐</div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">04</div>
+</section>
+
+<!-- ═══ 05 · 못 입는 옷 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">What's Left Behind</div>
+      <h1>그리고 옷장엔, <i>못 입는 옷</i>이 쌓입니다</h1>
+    </div>
+    <div class="pchip"><span>반품 기한 <b>7일</b></span></div>
+  </div>
+  <p class="lead">반품이라도 하면 다행입니다. 바빠서 · 귀찮아서 · 기한이 지나서 — <b>그냥 옷장에 남는 옷</b>이 더 많습니다.</p>
+
+  <div class="body">
+    <div class="closet">
+      <div class="cl">
+        <div class="img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M8 3l4 2 4-2 4 4-3 2v12H7V9L4 7z"/></svg></div>
+        <div class="cap"><div class="nm">셔츠 · L</div><div class="rs">배가 껴서 못 입음<br>반품 기한 지남</div></div>
+      </div>
+      <div class="cl">
+        <div class="img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M6 3h12l-1 8v10H7V11z"/><path d="M10 3v3h4V3"/></svg></div>
+        <div class="cap"><div class="nm">니트 · M</div><div class="rs">소매가 짧아<br>한 번 입고 안 입음</div></div>
+      </div>
+      <div class="cl">
+        <div class="img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M8 3h8v6l2 12h-5l-1-9-1 9H6L8 9z"/></svg></div>
+        <div class="cap"><div class="nm">슬랙스 · 32</div><div class="rs">허벅지가 껴서<br>택도 안 뗌</div></div>
+      </div>
+      <div class="cl dim">
+        <div class="img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M8 3l4 2 4-2 4 4-3 2v12H7V9L4 7z"/></svg></div>
+        <div class="cap"><div class="nm">자켓 · 100</div><div class="rs">어깨가 커서<br>결국 안 입음</div></div>
+      </div>
+      <div class="cl dim">
+        <div class="img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M6 3h12l-1 8v10H7V11z"/><path d="M10 3v3h4V3"/></svg></div>
+        <div class="cap"><div class="nm">맨투맨 · XL</div><div class="rs">너무 커서<br>잠옷이 됨</div></div>
+      </div>
+    </div>
+
+    <div class="foot" style="margin-top:14px">
+      <div class="todo" style="flex:1">
+        <div class="tk">근거 채우기 — 발표 전 필수</div>
+        <div class="tv">이 장은 <b>숫자 근거가 아직 없습니다.</b> 셋 중 하나를 채우세요 —
+          ① 팀 설문에 "안 맞아서 못 입는 옷" 문항 추가 · ② 공개 통계(온라인 의류 반품률 · 사이즈 미스 비율) 인용 · ③ UT 참가자 인터뷰 한 마디</div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">05</div>
+</section>
+
+<!-- ═══ 06 · 직접 물어봤습니다 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">Validation</div>
+      <h1>우리 얘기만이 아니었습니다 — <b>직접 물어봤습니다</b></h1>
+    </div>
+    <div class="pchip"><span>자체 설문 <b>31명</b></span><span>조사 <b>2026.06</b></span></div>
+  </div>
+  <p class="lead">"새 옷을 살 때 가장 막히는 것"을 물었더니, 답은 <b>두 갈래</b>였고 거의 반반이었습니다.</p>
+
+  <div class="body">
+    <div style="display:grid; grid-template-columns:1.05fr 1fr; gap:18px; flex:1; min-height:0">
+      <div style="display:flex; flex-direction:column">
+        <div class="card" style="flex:none">
+          <div class="kk">가장 큰 고민 · n=31</div>
+          <div class="bars" style="margin-top:12px">
+            <div class="bar"><div class="bl">스타일 어울림</div><div class="bt"><div class="bf soft" style="width:100%"></div></div><div class="bv" style="color:var(--sub)">40%</div></div>
+            <div class="bar"><div class="bl">사이즈 적합</div><div class="bt"><div class="bf c" style="width:95%"></div></div><div class="bv c">38%</div></div>
+            <div class="bar"><div class="bl">가격 · 기타</div><div class="bt"><div class="bf soft" style="width:55%"></div></div><div class="bv" style="color:var(--sub)">22%</div></div>
+          </div>
+        </div>
+
+        <div class="cols" style="margin-top:12px; flex:none">
+          <div class="card" style="padding:13px 15px"><div class="num c" style="font-size:26px">87%</div>
+            <p style="margin-top:6px; font-size:11.5px">옷 살 때 <b>막막했던 경험</b><br><span style="color:var(--sub2)">31명 중 27명</span></p></div>
+          <div class="card" style="padding:13px 15px"><div class="num c" style="font-size:26px">77%</div>
+            <p style="margin-top:6px; font-size:11.5px">결국 <b>혼자 검색</b>으로 해결<br><span style="color:var(--sub2)">31명 중 24명</span></p></div>
+          <div class="card" style="padding:13px 15px"><div class="num c" style="font-size:26px">45%</div>
+            <p style="margin-top:6px; font-size:11.5px">쇼핑할 때마다 <b>반복</b><br><span style="color:var(--sub2)">31명 중 14명</span></p></div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; min-height:0">
+        <div class="eyebrow" style="margin-bottom:9px">실제 커뮤니티 · 쇼핑몰에서 수집한 목소리</div>
+        <div style="display:flex; flex-direction:column; gap:10px">
+          <div class="quote">
+            <div class="q">“키 175, 몸무게 68. 국내 상의 보통 100 입는데 사이즈 어떻게 가는 게 좋을까요?”</div>
+            <div class="s">출처 · 무신사 상품 문의</div>
+          </div>
+          <div class="quote">
+            <div class="q">“팔뚝을 가리려고 가디건을 샀는데 전혀 가려지지 않는 우람한 팔뚝이삼”</div>
+            <div class="s">출처 · 에이블리 구매 리뷰</div>
+          </div>
+          <div class="quote">
+            <div class="q">“키 172, 68이면 사이즈 몇 입어야 하나요?”</div>
+            <div class="s">출처 · 네이버 쇼핑 문의</div>
+          </div>
+        </div>
+        <p class="lead" style="margin-top:auto">사람들은 이미 <em>모르는 사람에게</em> 자기 키·몸무게를 적어 물어보고 있습니다. <b>답해줄 도구가 없어서요.</b></p>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">06</div>
+</section>
+
+<!-- ═══ 07 · 고민은 세 가지 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">Problem Definition</div>
+      <h1>정리하면, 고민은 <i>세 가지</i>였습니다</h1>
+    </div>
+    <div class="pchip"><span>이 번호가 <b>끝까지 따라갑니다</b></span></div>
+  </div>
+  <p class="lead">설문과 실제 목소리를 모으면 세 덩어리로 갈립니다. <b>성질이 다르니 푸는 방법도 달라야 합니다.</b></p>
+
+  <div class="body">
+    <div class="p3">
+      <div class="pb">
+        <div class="pn">1</div>
+        <h3>내 사이즈를<br>모른다</h3>
+        <div class="q">“브랜드마다 M이 다른데, 나는 뭘 입어야 하지?”</div>
+        <div class="ev">근거 · 자체 설문 <b>38%</b> · 커뮤니티 문의 다수</div>
+      </div>
+      <div class="pb">
+        <div class="pn">2</div>
+        <h3>이 옷이 맞을지<br>몰라 잘못 산다</h3>
+        <div class="q">“일단 주문했는데… 반품도 못 하고 옷장에 쌓였다”</div>
+        <div class="ev" style="color:var(--clay)">근거 · <b>05장에서 채울 것</b></div>
+      </div>
+      <div class="pb">
+        <div class="pn">3</div>
+        <h3>나한테 뭐가<br>어울리는지 모른다</h3>
+        <div class="q">“유튜브 보고 샀더니 안 어울린대요”</div>
+        <div class="ev">근거 · 자체 설문 <b>40%</b> (가장 큰 응답)</div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div class="fbox"><div class="k">①②는 사이즈 축</div><div class="v">정답이 <b>있는</b> 문제 — 계산으로 풉니다</div></div>
+      <div class="fbox"><div class="k">③은 스타일 축</div><div class="v">정답이 <b>없는</b> 문제 — 사람이 풉니다</div></div>
+      <div class="fbox g"><div class="k">그래서</div><div class="v">우리가 만든 것도 <b>정확히 세 개</b>입니다</div></div>
+    </div>
+  </div>
+  <div class="pageno">07</div>
+</section>
+
+
+<!-- ═══ 08 · 기존 서비스 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">Existing Solutions</div>
+      <h1>이미 나와 있는 해결책들, <b>이렇게 작동합니다</b></h1>
+    </div>
+    <div class="pchip"><span>조사 대상 <b>몰 추천 · 리뷰 · 사이즈표</b></span></div>
+  </div>
+  <p class="lead">아무도 이 문제를 방치한 게 아닙니다. 세 가지 방식이 이미 쓰이고 있고, <b>각각 실제로 효과가 있습니다.</b></p>
+
+  <div class="body">
+    <div class="cols">
+      <div class="card">
+        <div class="kk">Solution A</div>
+        <h3>몰 자체 사이즈 추천</h3>
+        <p>무신사 등은 <b>내 구매 이력</b>을 근거로 "당신은 이 상품 L"을 알려줍니다. 이력이 쌓인 사용자에겐 꽤 정확합니다.</p>
+        <p style="margin-top:auto; padding-top:10px; font-size:11px; color:var(--sub2)">작동 원리 · 같은 몰에서 산 옷의 사이즈 패턴</p>
+      </div>
+      <div class="card">
+        <div class="kk">Solution B</div>
+        <h3>비슷한 체형 리뷰</h3>
+        <p>"175/70인데 L이 딱 맞아요" 같은 <b>체형 후기</b>를 참고합니다. 사람이 직접 쓴 실착 정보라 신뢰감이 있습니다.</p>
+        <p style="margin-top:auto; padding-top:10px; font-size:11px; color:var(--sub2)">작동 원리 · 나와 비슷한 사람의 경험 대입</p>
+      </div>
+      <div class="card">
+        <div class="kk">Solution C</div>
+        <h3>상세 사이즈표(cm)</h3>
+        <p>브랜드가 <b>부위별 실측치</b>를 공개합니다. 숫자가 있으니 이론상 가장 정확한 정보입니다.</p>
+        <p style="margin-top:auto; padding-top:10px; font-size:11px; color:var(--sub2)">작동 원리 · 옷의 실제 치수 공개</p>
+      </div>
+    </div>
+    <div class="foot">
+      <div class="fbox g"><div class="k">공통점</div><div class="v">셋 다 <b>"옷 쪽 정보"이거나 "남의 몸 정보"</b>입니다 — 정작 <b>내 몸</b>은 아무도 모릅니다</div></div>
+    </div>
+  </div>
+  <div class="pageno">08</div>
+</section>
+
+<!-- ═══ 09 · 한계 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">The Limits · Root Cause</div>
+      <h1>그런데 <i>새 브랜드로 넘어가는 순간</i>, 셋 다 멈춥니다</h1>
+    </div>
+    <div class="pchip"><span>5 Whys <b>근본원인</b></span></div>
+  </div>
+  <p class="lead">왜 안 되는지 다섯 번 파고들었더니, 세 해결책의 한계가 <b>한 지점으로 모였습니다.</b></p>
+
+  <div class="body">
+    <div class="cols">
+      <div class="card hot">
+        <div class="kk">Limit A</div>
+        <h3>그 몰 안에서만 작동</h3>
+        <p><b>구매 이력이 있어야</b> 추천이 나옵니다. 처음 가는 몰·처음 보는 브랜드에서는 아무것도 나오지 않습니다. 정작 그때가 제일 불안한데도요.</p>
+        <div class="tag">이력 없음 = 추천 없음</div>
+      </div>
+      <div class="card hot">
+        <div class="kk">Limit B</div>
+        <h3>남의 체형은 내 기준이 아니다</h3>
+        <p>같은 175/70이어도 어깨·가슴·배 비율이 다릅니다. 그래서 후기마다 말이 갈리고, <b>많이 볼수록 더 혼란</b>스러워집니다.</p>
+        <div class="tag">표본이 늘어도 확신은 안 늘어남</div>
+      </div>
+      <div class="card hot">
+        <div class="kk">Limit C</div>
+        <h3>숫자는 있는데 대조군이 없다</h3>
+        <p>사이즈표는 정확하지만 <b>내 몸 치수를 모르면 읽을 수 없습니다.</b> "가슴단면 52cm"가 나에게 큰지 작은지 판단할 기준이 없습니다.</p>
+        <div class="tag">읽을 줄 몰라서 못 씀</div>
+      </div>
+    </div>
+
+    <div class="foot" style="margin-top:13px">
+      <div class="fbox g" style="border-left-width:4px">
+        <div class="k">Root Cause</div>
+        <div class="v" style="font-size:15px">브랜드를 <b>가로질러</b>, <b>지금 내 몸</b>을 기준으로 번역해주는 곳이 없다</div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">09</div>
+</section>
+
+<!-- ═══ 10 · 문제 정의 한 문장 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">Problem Definition</div>
+      <h1>우리가 푸는 문제를 <b>한 문장</b>으로</h1>
+    </div>
+  </div>
+
+  <div class="oneline">
+    <div class="hmw">How Might We</div>
+    <div class="big">치수를 재지 않고도,<br><b>안 입어본 브랜드에서 내 사이즈를</b> 알 수 있을까?</div>
+    <div class="bsub">
+      설문 → 저니맵 → 5 Whys가 전부 이 한 문장으로 모입니다.<br>
+      <b>사이즈(①②)는 정답이 있어 도구로 풀고</b>, <b>스타일(③)은 정답이 없어 사람이 풉니다.</b>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="fbox"><div class="k">왜 사이즈 먼저인가</div><div class="v">정답이 있어서 <b>맞았는지 검증</b>할 수 있습니다 — 그래야 개선이 가능합니다</div></div>
+    <div class="fbox"><div class="k">순서가 있다</div><div class="v">진단 결과(내 체형)가 <b>스타일 축의 입력값</b>이 됩니다</div></div>
+    <div class="fbox g"><div class="k">성공 기준</div><div class="v">추천 사이즈 정확도 동의율 <b>≥ 65%</b> (미달 시 엔진 교체)</div></div>
+  </div>
+  <div class="pageno">10</div>
+</section>
+
+<!-- ═══ 11 · 3:3 매칭 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">As-is → To-be</div>
+      <h1>세 가지 고민을, <b>세 가지로 정면에서 풉니다</b></h1>
+    </div>
+    <div class="pchip"><span>07장의 <b>①②③</b>과 1:1</span></div>
+  </div>
+  <p class="lead">문제 번호가 그대로 기능 번호가 되고, <b>바로 다음 장부터 순서대로 시연</b>합니다.</p>
+
+  <div class="body">
+    <div class="match">
+      <div class="mhd">As-is · 지금의 고민</div>
+      <div></div>
+      <div class="mhd">To-be · 핏팅이 만든 것</div>
+
+      <div class="mbox as">
+        <div class="mk">Problem 01</div>
+        <div class="mt">내 사이즈를 모른다</div>
+        <div class="md">줄자는 번거롭고, 브랜드마다 M이 다르다</div>
+      </div>
+      <div class="marrow">→</div>
+      <div class="mbox to">
+        <div class="mk">Solution 01 · 체형 진단</div>
+        <div class="mt">평소 입던 옷 2벌로 역산</div>
+        <div class="md">착용 경험에서 <b>부위별 몸 치수와 8체형</b>을 계산 → <b>9개 브랜드</b>의 내 사이즈로 번역. 2분, 줄자 없이</div>
+      </div>
+
+      <div class="mbox as">
+        <div class="mk">Problem 02</div>
+        <div class="mt">이 옷이 맞을지 몰라 잘못 산다</div>
+        <div class="md">반품도 못 하고 못 입는 옷이 쌓인다</div>
+      </div>
+      <div class="marrow">→</div>
+      <div class="mbox to">
+        <div class="mk">Solution 02 · 구매 판정(Fit)</div>
+        <div class="mt">사려는 그 옷 사이즈표를 올리면 즉답</div>
+        <div class="md">우리 DB에 <b>없는 브랜드여도</b> 캡처 한 장이면 사이즈별 판정 — <b>결제 버튼 앞에서</b> 쓰는 기능</div>
+      </div>
+
+      <div class="mbox as">
+        <div class="mk">Problem 03</div>
+        <div class="mt">나한테 뭐가 어울리는지 모른다</div>
+        <div class="md">취향·상황이 섞여 정답이 하나로 안 나온다</div>
+      </div>
+      <div class="marrow">→</div>
+      <div class="mbox to">
+        <div class="mk">Solution 03 · 스타일리스트 연결</div>
+        <div class="mt">사람에게 연결한다</div>
+        <div class="md">진단 결과(체형·핏 취향)가 <b>요청서에 자동 첨부</b> — 전문가가 체형을 모르는 채 시작하지 않는다</div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div class="fbox g"><div class="k">①②가 이어지는 이유</div><div class="v">판정은 <b>진단 결과를 기준</b>으로 돌아갑니다 — 한 번 진단하면 살 때마다 재사용</div></div>
+      <div class="fbox"><div class="k">부수 효과</div><div class="v">판정에 올라온 사이즈표가 쌓입니다 — <b>쓸수록 브랜드 커버리지가 늘어나는 구조</b></div></div>
+    </div>
+  </div>
+  <div class="pageno">11</div>
+</section>
+
+<!-- ═══ 12 · 시연 ① 진단 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">Demo 01 · Size Diagnosis</div>
+      <h1>시연 ① — 착용 경험만으로 <b>내 체형과 브랜드 사이즈까지</b></h1>
+    </div>
+    <div class="pchip"><span>문제 <b>①에 대한 답</b></span><span>소요 <b>약 2분</b></span></div>
+  </div>
+  <p class="lead">몸을 재서 옷을 찾는 게 아니라, <b>평소 잘 맞는 옷에서 몸을 거꾸로 계산</b>합니다.</p>
+
+  <div class="body">
+    <div class="demo">
+      <div style="display:flex; flex-direction:column; min-height:0">
+        <div class="shots">
+          <div class="shot"><div class="cap">① 착용 경험 입력</div><img src="../발표-데모/04-진단-착용경험.png" alt="착용경험 입력"></div>
+          <div class="shot"><div class="cap">② 8체형 진단 결과</div><img src="../발표-데모/05-결과-체형카드.png" alt="체형 카드"></div>
+          <div class="shot"><div class="cap">③ 브랜드별 추천 사이즈</div><img src="../발표-데모/07-결과-브랜드추천.png" alt="브랜드 추천"></div>
+        </div>
+      </div>
+
+      <div class="steps">
+        <div class="stp"><div class="sn">1</div><div>
+          <div class="st">"유니클로 오버핏 S를 입어요"</div>
+          <div class="sd">기본 정보 4개 + 평소 입던 옷 <b>1~3벌</b>과 부위별 느낌(끼임/딱맞음/여유/큼). <b>이 착용 경험이 줄자를 대신합니다.</b></div>
+        </div></div>
+        <div class="stp"><div class="sn">2</div><div>
+          <div class="st">내 몸을 거꾸로 계산</div>
+          <div class="sd">그 옷의 실측치에서 <b>여유(옷−몸)</b>를 역산 → 부위별 몸 치수 → <b>8체형</b>으로 분류. 근거는 <b>사이즈코리아 제8차 인체치수조사</b> 회귀 모델입니다.</div>
+        </div></div>
+        <div class="stp"><div class="sn">3</div><div>
+          <div class="st">안 입어본 브랜드로 번역</div>
+          <div class="sd">계산된 몸을 <b>9개 브랜드 · 1,679행</b> 실측표에 대입 — 브랜드마다 다른 사이즈가 <b>'딱맞음 %'와 병목 부위</b>까지 함께 나옵니다.</div>
+        </div></div>
+        <div class="stp" style="border-color:#CBDDD2; background:var(--green-soft)"><div class="sn" style="background:var(--clay)">✓</div><div>
+          <div class="st" style="color:var(--green)">정확도 검증 루프</div>
+          <div class="sd">결과 화면의 <b>"맞아요 / 보통 / 안 맞아요"</b>를 진단 ID와 함께 DB에 적재 — 킬 메트릭(<b>동의율 65%</b>)을 실측합니다.</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">12</div>
+</section>
+
+<!-- ═══ 13 · 시연 ② 판정 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">Demo 02 · Purchase Judgement (Fit)</div>
+      <h1>시연 ② — <i>사려는 그 옷</i>의 사이즈표를 올리면, 바로 판정</h1>
+    </div>
+    <div class="pchip"><span>문제 <b>②에 대한 답</b></span><span>구현 · <b>배포 완료</b></span></div>
+  </div>
+  <p class="lead">진단이 <b>"내 몸"</b>에 답한다면, 판정은 <b>"이 옷 한 벌"</b>에 답합니다. <em>우리 DB에 없는 브랜드여도</em> 캡처 한 장이면 됩니다.</p>
+
+  <div class="body">
+    <div class="demo" style="grid-template-columns:1.25fr 1fr">
+      <div class="mock">
+        <div class="mtop">fitting.app/judge — 구매 판정(Fit)</div>
+        <div class="mbd">
+          <div>
+            <div class="mrow"><span class="mn">1</span>판정 기준 · <b>시크 스트레이트 STR</b><br><span style="color:var(--sub2); font-size:10px; margin-left:21px">내 진단 결과가 자동으로 들어옴</span></div>
+            <div class="mrow"><span class="mn">2</span>옷 종류 · <b>하의</b></div>
+            <div class="mrow"><span class="mn">3</span>사이즈표 &nbsp;<b style="color:var(--green)">[캡처 업로드]</b> <span style="color:var(--sub2)">[직접 입력]</span>
+              <div style="border:1px dashed var(--line); border-radius:6px; padding:12px; text-align:center; color:var(--sub2); font-size:10.5px; margin-top:6px">
+                🖼 상품 사이즈표 이미지<br>붙여넣기 · 드래그 · 눌러서 선택
+              </div>
+            </div>
+            <div class="mrow" style="font-size:10.5px">☐ 사이즈표를 핏팅 개선에 활용할게요 <span style="color:var(--sub2)">(선택)</span></div>
+            <div class="mbtn">판정하기</div>
+          </div>
+          <div>
+            <div class="mverd">M · FIT 92 — 지금 이 사이즈로 사면 돼요
+              <span>총장 · 밑위는 길이라 점수에 넣지 않고 참고로만 알려드려요</span></div>
+            <table class="mtbl">
+              <tr><th>부위</th><th>S</th><th>M</th><th>L</th></tr>
+              <tr><td>허리</td><td class="tight">끼임</td><td class="fit">딱맞음</td><td>여유</td></tr>
+              <tr><td>엉덩이</td><td class="tight">끼임</td><td class="fit">딱맞음</td><td>여유</td></tr>
+              <tr><td>허벅지</td><td class="tight">끼임</td><td class="fit">딱맞음</td><td>여유</td></tr>
+              <tr><td>밑위</td><td colspan="3" style="color:var(--sub2)">길이 — 참고 정보</td></tr>
+            </table>
+            <div style="font-size:10px; color:var(--sub2); margin-top:6px; line-height:1.5">
+              "몇 사이즈?"가 아니라 <b style="color:var(--ink)">"어디가 걸리나"</b>를 보여줍니다
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="steps">
+        <div class="stp"><div class="sn">1</div><div>
+          <div class="st">진단 결과가 그대로 기준</div>
+          <div class="sd">고를 것이 없습니다. 진단을 안 했으면 판정 대신 <b>진단부터 하도록</b> 유도합니다.</div>
+        </div></div>
+        <div class="stp"><div class="sn">2</div><div>
+          <div class="st">캡처를 AI가 읽는다</div>
+          <div class="sd">사이즈표는 대부분 이미지입니다. 붙여넣기·드래그로 올리면 <b>표를 인식</b>하고, 틀린 숫자는 그 자리에서 고칩니다.</div>
+        </div></div>
+        <div class="stp"><div class="sn">3</div><div>
+          <div class="st">모르면 모른다고 한다</div>
+          <div class="sd">핵심 부위 치수가 없으면 <b>"판정할 수 없어요"</b>로 끝냅니다. 근거 없이 "잘 맞아요"라고 하지 않습니다 — <b>틀린 긍정은 침묵보다 비쌉니다.</b></div>
+        </div></div>
+        <div class="stp" style="border-color:#CBDDD2; background:var(--green-soft)"><div class="sn" style="background:var(--clay)">↑</div><div>
+          <div class="st" style="color:var(--green)">그리고 데이터가 쌓인다</div>
+          <div class="sd">동의한 사용자의 사이즈표는 <b>검수 후 정본 실측 DB로 승격</b>됩니다. 손으로 모으던 데이터가 <b>쓸수록 늘어나는 구조</b>로 바뀝니다.</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">13</div>
+</section>
+
+<!-- ═══ 14 · 시연 ③ 매칭 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">Demo 03 · Stylist Matching</div>
+      <h1>시연 ③ — 정답이 없는 <b>스타일은 사람에게</b> 연결합니다</h1>
+    </div>
+    <div class="pchip"><span>문제 <b>③에 대한 답</b></span><span>실매칭 <b>수요 검증 단계</b></span></div>
+  </div>
+  <p class="lead">5 Whys가 <em>'취향'</em>에서 멈췄기 때문입니다. 규칙으로 계산되지 않는 것은 규칙으로 풀지 않습니다.</p>
+
+  <div class="body">
+    <div class="demo">
+      <div class="shots" style="grid-template-columns:repeat(2,1fr)">
+        <div class="shot"><div class="cap">① 스타일리스트 찾기 · 견적 요청</div><img src="../발표-데모/08-스타일리스트-찾기.png" alt="스타일리스트 찾기"></div>
+        <div class="shot"><div class="cap">② 견적서에 체형이 자동 첨부</div><img src="../발표-데모/10-쇼퍼-견적서-체형카드.png" alt="쇼퍼 견적서"></div>
+      </div>
+
+      <div class="steps">
+        <div class="stp" style="border-color:#CBDDD2; background:var(--green-soft)"><div class="sn">★</div><div>
+          <div class="st" style="color:var(--green)">①②와 ③을 잇는 고리</div>
+          <div class="sd">진단 결과(<b>8체형 · 부위별 예상 치수 · 상하의 핏 취향</b>)가 견적서에 그대로 실립니다. 스타일리스트가 <b>체형을 모르는 채 시작하지 않습니다.</b></div>
+        </div></div>
+        <div class="stp"><div class="sn">1</div><div>
+          <div class="st">지금은 수요부터 측정합니다</div>
+          <div class="sd">공급자를 먼저 모으면 <b>콜드 스타트</b>에 빠집니다. 그래서 배포본은 <b>페이크도어</b> — "오픈 알림 신청(이메일)"으로 전환 신호만 받습니다. <b>목표 25% 이상.</b></div>
+        </div></div>
+        <div class="stp"><div class="sn">2</div><div>
+          <div class="st">뒤쪽은 이미 만들어 두었습니다</div>
+          <div class="sd">요청 → 견적 → <b>안전결제</b> → 결과물 전달 → 정산 → 분쟁까지 데모로 동작합니다. 수요가 확인되면 <b>여는 것</b>만 남습니다.</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">14</div>
+</section>
+
+<!-- ═══ 15 · 화면 뒤 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">Behind the Screen</div>
+      <h1>화면 뒤에는 <b>정확도를 측정하고 키우는 구조</b>가 있습니다</h1>
+    </div>
+    <div class="pchip"><span>운영 콘솔 <b>Supabase 실배선</b></span></div>
+  </div>
+  <p class="lead">"정확하다"는 말은 증명해야 하는 주장입니다. 그래서 <b>측정 → 원인 분해 → 개선</b>까지를 제품 안에 넣었습니다.</p>
+
+  <div class="body">
+    <div class="cols c4">
+      <div class="card">
+        <div class="kk">Step 01 · 측정</div>
+        <h3>킬 메트릭 집계</h3>
+        <p>모든 진단과 피드백이 <b>진단 ID로 묶여</b> DB에 쌓입니다. "맞음/애매/틀림" 비율이 곧 <b>동의율</b>입니다.</p>
+        <div class="tag g">목표 ≥ 65%</div>
+      </div>
+      <div class="card">
+        <div class="kk">Step 02 · 분해</div>
+        <h3>어디서 틀렸나</h3>
+        <p>정확도를 <b>신뢰도 × 8체형 × 브랜드 × 부위</b>로 쪼갭니다. <b>"확신했는데 틀린 것"</b>이 1순위 수정 대상입니다.</p>
+        <div class="tag g">캘리브레이션 히트맵</div>
+      </div>
+      <div class="card">
+        <div class="kk">Step 03 · 개선</div>
+        <h3>엔진 강화 작업목록</h3>
+        <p>진단 로그(불편했던 부위·자유서술)를 <b>사람이 할 일 목록</b>으로 바꿉니다 — 실측 보정 · 규칙 튜닝 · 데이터 수집.</p>
+        <div class="tag g">자동 학습이 아니라 우선순위</div>
+      </div>
+      <div class="card ok">
+        <div class="kk">Step 04 · 성장</div>
+        <h3>데이터가 스스로 는다</h3>
+        <p>판정에 올라온 사이즈표를 <b>검수 후 정본으로 승격</b> → 바로 다음 진단에 반영. <b>쓸수록 커버리지가 넓어집니다.</b></p>
+        <div class="tag g">사용자 → 검수 → 정본 DB</div>
+      </div>
+    </div>
+
+    <div class="foot" style="margin-top:13px">
+      <div class="fbox"><div class="k">엔진 정책</div><div class="v">사이즈 <b>숫자는 규칙</b>으로(검증 가능), <b>설명 문장만 AI</b>로 — 추천을 AI에 맡기면 맞았는지 확인할 방법이 없습니다</div></div>
+      <div class="fbox g"><div class="k">회귀 방지</div><div class="v">엔진 규칙은 <b>골든 테스트</b>로 잠가 두어, 고치다 예전 계산이 깨지면 즉시 드러납니다</div></div>
+    </div>
+  </div>
+  <div class="pageno">15</div>
+</section>
+
+<!-- ═══ 16 · UT ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">Usability Test</div>
+      <h1>실제 사용자 <b>11명</b>에게 붙여봤습니다</h1>
+    </div>
+    <div class="pchip"><span>일시 <b>2026.07.24</b></span><span>방식 <b>정량 1~5 + 자유서술</b></span></div>
+  </div>
+  <p class="lead">"우리끼리 좋다"는 검증이 아닙니다. 화면을 주고 <b>혼자 써보게 한 뒤</b> 단계별로 점수를 받았습니다.</p>
+
+  <div class="body">
+    <div style="display:grid; grid-template-columns:1.1fr 1fr; gap:18px; flex:1; min-height:0">
+      <div>
+        <div class="eyebrow" style="margin-bottom:9px">단계별 만족도 (5점 만점 · n=8)</div>
+        <div class="bars">
+          <div class="bar"><div class="bl">진단 로딩</div><div class="bt"><div class="bf" style="width:97.6%"></div></div><div class="bv">4.88</div></div>
+          <div class="bar"><div class="bl">착용 경험 입력</div><div class="bt"><div class="bf" style="width:89.2%"></div></div><div class="bv">4.46</div></div>
+          <div class="bar"><div class="bl">기본 정보 입력</div><div class="bt"><div class="bf" style="width:88.8%"></div></div><div class="bv">4.44</div></div>
+          <div class="bar"><div class="bl">진단 시작</div><div class="bt"><div class="bf" style="width:87.6%"></div></div><div class="bv">4.38</div></div>
+          <div class="bar"><div class="bl">구매 판정(Fit)</div><div class="bt"><div class="bf" style="width:85%"></div></div><div class="bv">4.25</div></div>
+          <div class="bar"><div class="bl">스타일리스트 찾기</div><div class="bt"><div class="bf c" style="width:78.8%"></div></div><div class="bv c">3.94</div></div>
+          <div class="bar"><div class="bl">진단 결과 화면</div><div class="bt"><div class="bf c" style="width:77.6%"></div></div><div class="bv c">3.88</div></div>
+        </div>
+        <div class="foot" style="margin-top:14px">
+          <div class="fbox g" style="flex:none; padding:9px 15px"><div class="k">추천 의향(NPS)</div><div class="v"><span class="num" style="font-size:26px">8.4</span><span class="unit">/ 10 · 부정 0명</span></div></div>
+          <div class="fbox"><div class="k">해석</div><div class="v">과정은 잘 만들었습니다. <b>문제는 마지막 화면 — 결과</b>입니다</div></div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; min-height:0">
+        <div class="card hot" style="flex:none">
+          <div class="kk">가장 중요한 발견</div>
+          <h3>이해는 되는데, 쓸지는 모르겠다</h3>
+          <div style="display:flex; gap:22px; margin-top:12px; align-items:flex-end">
+            <div><div class="num" style="font-size:26px; color:var(--sub)">4.38</div><div style="font-size:11px; color:var(--sub); font-weight:700; margin-top:3px">서비스 이해</div></div>
+            <div style="font-size:20px; color:var(--clay); font-weight:800; padding-bottom:6px">→</div>
+            <div><div class="num c" style="font-size:26px">3.38</div><div style="font-size:11px; color:var(--clay); font-weight:800; margin-top:3px">실제 사용 의향</div></div>
+            <div style="margin-left:auto; text-align:right"><div class="num c" style="font-size:26px">−1.0</div><div style="font-size:11px; color:var(--clay); font-weight:800; margin-top:3px">갭</div></div>
+          </div>
+          <p style="margin-top:12px">원인은 <b>신뢰(3.38)</b>였습니다 — <b>"사진도 없이 진단하는데 믿어도 되나"</b>. 기능이 부족한 게 아니라, <b>내 몸이 반영됐다는 느낌</b>이 부족했습니다.</p>
+        </div>
+
+        <div class="quotes" style="grid-template-columns:1fr; gap:8px; margin-top:11px">
+          <div class="quote"><div class="q">“사진 없이 진단해서 신뢰가 낮아요. 아바타로 보여주면 좋겠어요.”</div><div class="s">신뢰 · 다수 언급</div></div>
+          <div class="quote"><div class="q">“체형 진단이 주력인지 매칭이 주력인지 헷갈려요.”</div><div class="s">정체성 · 정확히 찌른 지적</div></div>
+          <div class="quote"><div class="q">“결과 화면에 갑자기 너무 많은 정보가 들어와서 당황했어요.”</div><div class="s">결과 화면 정보 과부하 · 2명</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">16</div>
+</section>
+
+<!-- ═══ 17 · 팀 · 로드맵 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">Team &amp; Next</div>
+      <h1>3명이 이렇게 굴렸고, <b>다음은 이렇습니다</b></h1>
+    </div>
+    <div class="pchip"><span>기간 <b>2026.06 ~ 07</b></span></div>
+  </div>
+
+  <div class="body">
+    <div class="cols" style="flex:none">
+      <div class="card">
+        <div class="kk">Team · 역할</div>
+        <h3>3인 · 소유가 겹치지 않게</h3>
+        <p><b>강건형</b> 팀장 · 데이터/엔진 &nbsp;|&nbsp; <b>이상민</b> 개발 &nbsp;|&nbsp; <b>이소희</b> 디자인</p>
+        <p style="margin-top:6px"><b>"한 파일 = 한 역할"</b> 소유 규칙과 역할별 브랜치로 충돌을 구조적으로 없앴습니다.</p>
+      </div>
+      <div class="card">
+        <div class="kk">Process · 협업</div>
+        <h3>문서를 코드 옆에 두었습니다</h3>
+        <p>기획 문서·화면 정의·의사결정 기록을 <b>같은 저장소</b>에 두고, 화면 현황판은 <b>코드에서 자동 생성</b>합니다.</p>
+        <p style="margin-top:6px">방향이 바뀐 결정은 <b>이유까지 기록</b>해, 나중에 "왜 이렇게 됐지"를 다시 묻지 않습니다.</p>
+      </div>
+      <div class="card">
+        <div class="kk">Stack · 운영비</div>
+        <h3>운영비 $0으로 실서비스 구조</h3>
+        <p>정적 프론트 + 서버 API + <b>Supabase(Postgres)</b>. 브랜드 실측표는 <b>서버에만</b> 두어 노출되지 않게 했습니다.</p>
+        <p style="margin-top:6px">진단·판정 계산도 서버에서 — 데이터가 곧 자산이기 때문입니다.</p>
+      </div>
+    </div>
+
+    <div class="road" style="margin-top:13px">
+      <div class="rd on">
+        <div class="when">Now · MVP</div>
+        <h4>정확도를 증명한다</h4>
+        <ul>
+          <li>킬 메트릭 <b>동의율 65%</b> 실측</li>
+          <li>UT 지적 즉시 반영(브랜드·결과 화면)</li>
+          <li>신뢰 문제 = 실측 직접 입력 검토</li>
+        </ul>
+      </div>
+      <div class="rd">
+        <div class="when">Next · v2</div>
+        <h4>매칭을 실제로 연다</h4>
+        <ul>
+          <li>수요(오픈 알림) 확인되면 실매칭 오픈</li>
+          <li>스타일리스트 매칭 수수료 = 첫 수익</li>
+          <li>브랜드 커버리지 확대(판정 수집 루프)</li>
+        </ul>
+      </div>
+      <div class="rd">
+        <div class="when">Later · v3</div>
+        <h4>데이터를 판다</h4>
+        <ul>
+          <li>축적된 사이즈 데이터를 <b>B2B API</b>로</li>
+          <li>쇼핑몰 반품률 절감이 가치 제안</li>
+          <li>상황별(면접·하객·여행) 확장</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot" style="margin-top:auto">
+      <div class="fbox g" style="border-left-width:4px; padding:12px 16px">
+        <div class="k">Fitting</div>
+        <div class="v" style="font-size:17px">이 옷, 나한테 맞을까 — <b>이제 물어볼 곳이 생겼습니다</b></div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">17</div>
+</section>
+
+
+</body>
+</html>
