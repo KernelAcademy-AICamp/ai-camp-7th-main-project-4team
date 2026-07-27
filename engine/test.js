@@ -252,7 +252,14 @@ try {
   const regCm = { chestFull: 95, chestUpper: 96, waist: 80, hip: 94, thigh: 55, belly: 82, neck: 37, upperArm: 30, armhole: 42, calf: 37 };
   const imp = FitEngine.imputeGirths(regCm, { waist: 85, hip: 96, thigh: 56 }, "male"); // 허리 회귀80→관측85(+5)
   assert.ok(imp.waist == null && imp.hip == null && imp.thigh == null, "앵커된 부위는 임퓨트 대상 제외"); pass++;
-  assert.ok(imp.belly != null && imp.belly > regCm.belly, "배는 허리 상향관측 반영해 회귀보다 커짐(배↔허리 잔차상관 강)"); pass++;
+  assert.ok(imp.belly != null && imp.belly > regCm.belly, "배는 허리 상향관측 반영해 회귀보다 커짐(배↔허리 잔차상관 강·R²≥.30)"); pass++;
+  // R² 게이트: 앵커가 명확히 설명 못하는 부위는 채우지 않는다(false precision 회피).
+  assert.ok(imp.chestFull == null && imp.neck == null && imp.calf == null,
+    "하의앵커로 약상관 부위(가슴·목·종아리 R²<.30)는 임퓨트 안 함 → 회귀 유지"); pass++;
+  const impT = FitEngine.imputeGirths(regCm, { chest: 96, shoulder: 44 }, "male"); // 상의앵커(가슴)
+  assert.ok(impT.chestUpper != null, "상의앵커 → chestUpper는 채움(R²0.59 명확)"); pass++;
+  assert.ok(impT.waist == null && impT.belly == null && impT.hip == null,
+    "상의앵커로 교차둘레(허리·배·엉덩이 R²≤.07)는 안 채움 → 추천은 회귀 그대로"); pass++;
   assert.deepStrictEqual(imp, FitEngine.imputeGirths(regCm, { waist: 85, hip: 96, thigh: 56 }, "male"), "임퓨트 결정론적"); pass++;
   eq(FitEngine.imputeGirths(regCm, {}, "male"), {}, "앵커 없음 → {}");
   FitEngine.seedCorrelation(null); // 다른 테스트에 영향 없게 원복

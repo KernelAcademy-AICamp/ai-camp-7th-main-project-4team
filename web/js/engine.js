@@ -507,50 +507,59 @@
              anyFit: clean.length > 0 };
   }
 
-  /* ── 조건부 임퓨테이션 — 관측앵커 잔차로 미관측 둘레부위 추정 ─────────────────
-     방법: 각 부위 잔차 = 실측−회귀(키·몸무게·나이). 잔차공분산 Σ로 E[r_U|r_O]=Σ_UO Σ_OO⁻¹ r_O.
-     최종 = 회귀예측 + 조건부잔차. 재료=body-correlation.json(seedCorrelation로 주입, 없으면 무동작).
-     검증(scratch LOO): 배↔허리 남31%·여15%, 여성 상↔하교차 10~15% RMSE↓. 잔차상관≈0인 곳은
-     자동으로 회귀로 수렴(무해) — 남성 허리↔엉덩이 잔차r 0.02라 교차전이 거의 0. B-2를 원리적으로 보완. */
+  /* ── 조건부 임퓨테이션 — 관측앵커가 '명확히 결정하는' 미관측 둘레만 추정 ─────────
+     방법: 각 부위 잔차 = 실측−회귀(키·몸무게·나이). 잔차공분산 Σ로 E[r_U|r_O]=Σ_UO Σ_OO⁻¹ r_O,
+     최종=회귀예측+조건부잔차. 재료=body-correlation.json(seedCorrelation 주입, 없으면 무동작).
+     ★ 핵심 원칙: 억지로 다 채우지 않는다. 조건부 설명력 R²≥0.30(앵커가 그 부위 잔차분산의 30%↑ 설명)
+       인 부위만 채우고, 나머지는 정직하게 회귀 유지 — false precision 회피 + 약상관 극단전파 차단.
+     실측(KS 8차 LOO/공분산): 통과=배(하의앵커 R²0.52·RMSE31%↓)·chestUpper(0.46~0.59)·underbust(여상의0.34).
+       탈락=교차둘레(top→허리 R²0.02·bottom→가슴 0.09 등, 이득 임계이하) → 추천/판정은 회귀 그대로. B-2 보완. */
   var _corr = null;
   function seedCorrelation(d) { _corr = (d && d.parts && d.cov) ? d : null; }
   var EB2BODY = { chest: "chestFull", waist: "waist", hip: "hip", thigh: "thigh" }; // 앵커(engine키)→body-model 둘레키(shoulder=비둘레 제외)
-  // 소규모 대칭 선형계 A·z=b (증강행렬 A[m][m+1]) 부분피벗 가우스 소거. 해 z 또는 null(특이).
-  function _solveSym(A, m) {
-    for (var col = 0; col < m; col++) {
-      var piv = col, r;
-      for (r = col + 1; r < m; r++) if (Math.abs(A[r][col]) > Math.abs(A[piv][col])) piv = r;
-      if (Math.abs(A[piv][col]) < 1e-9) return null;
-      var t = A[col]; A[col] = A[piv]; A[piv] = t;
-      for (r = 0; r < m; r++) {
-        if (r === col) continue;
-        var f = A[r][col] / A[col][col];
-        for (var c = col; c <= m; c++) A[r][c] -= f * A[col][c];
-      }
+  var IMPUTE_MIN_R2 = 0.30; // 조건부 설명력 임계 — 앵커가 부위 잔차분산의 30%↑ 설명할 때만 채움.
+  //   아니면 회귀 유지: 억지 추정(false precision) 회피 + 약상관 부위로의 극단전파 차단. [[anchor-input-flow-principles]]
+  //   임계 통과(실측): 배(하의앵커 R²0.52)·chestUpper(상의 0.46~0.59)·underbust(여상의 0.34). 교차둘레(허리·엉덩이 등 R²≤0.29)는 탈락.
+  // 소규모 대칭행렬 역행렬(증강 가우스-조던). null=특이.
+  function _invSym(A, m) {
+    var M = [], i, j, col, r;
+    for (i = 0; i < m; i++) { M[i] = []; for (j = 0; j < m; j++) M[i][j] = A[i][j]; for (j = 0; j < m; j++) M[i][m + j] = (i === j ? 1 : 0); }
+    for (col = 0; col < m; col++) {
+      var piv = col;
+      for (r = col + 1; r < m; r++) if (Math.abs(M[r][col]) > Math.abs(M[piv][col])) piv = r;
+      if (Math.abs(M[piv][col]) < 1e-9) return null;
+      var t = M[col]; M[col] = M[piv]; M[piv] = t;
+      var d = M[col][col];
+      for (j = 0; j < 2 * m; j++) M[col][j] /= d;
+      for (r = 0; r < m; r++) { if (r === col) continue; var f = M[r][col]; for (j = 0; j < 2 * m; j++) M[r][j] -= f * M[col][j]; }
     }
-    var z = []; for (var i = 0; i < m; i++) z[i] = A[i][m] / A[i][i]; return z;
+    var inv = []; for (i = 0; i < m; i++) { inv[i] = []; for (j = 0; j < m; j++) inv[i][j] = M[i][m + j]; } return inv;
   }
-  /** 관측앵커(eb, engine키)로 미관측 둘레부위를 조건부 추정.
+  /** 관측앵커(eb, engine키)로 미관측 둘레부위를 조건부 추정 — 단, 앵커가 명확히 설명하는 부위만(R²≥IMPUTE_MIN_R2).
    *  regCm=회귀 몸(body-model키), eb=bodyFromExperiences 결과, sex='male'|'female'.
-   *  → {미관측 둘레키: 개선 cm}. 미시드/앵커없음/특이면 {}(하위호환). */
+   *  → {명확한 미관측 둘레키: 개선 cm}. 미시드/앵커없음/특이/저설명력이면 해당 부위 제외(→회귀 유지). */
   function imputeGirths(regCm, eb, sex) {
     if (!_corr || !regCm || !eb) return {};
     var parts = _corr.parts[sex], cov = _corr.cov[sex];
     if (!parts || !cov) return {};
-    var obs = [], ro = [], oi = [];   // 관측 = eb에 역산된 둘레부위이고 회귀 베이스도 있는 것
+    var oi = [], ro = [], i, j;   // 관측 = eb에 역산된 둘레부위이고 회귀 베이스도 있는 것
     Object.keys(EB2BODY).forEach(function (k) {
       var bk = EB2BODY[k], pi = parts.indexOf(bk);
-      if (eb[k] != null && regCm[bk] != null && pi >= 0) { obs.push(bk); ro.push(eb[k] - regCm[bk]); oi.push(pi); }
+      if (eb[k] != null && regCm[bk] != null && pi >= 0) { oi.push(pi); ro.push(eb[k] - regCm[bk]); }
     });
-    if (!obs.length) return {};
-    var m = oi.length, A = [], i, j;
-    for (i = 0; i < m; i++) { A[i] = []; for (j = 0; j < m; j++) A[i][j] = cov[oi[i]][oi[j]]; A[i][m] = ro[i]; }
-    var z = _solveSym(A, m); if (!z) return {};
-    var anchored = {}; obs.forEach(function (p) { anchored[p] = 1; });
+    var m = oi.length; if (!m) return {};
+    var Soo = []; for (i = 0; i < m; i++) { Soo[i] = []; for (j = 0; j < m; j++) Soo[i][j] = cov[oi[i]][oi[j]]; }
+    var inv = _invSym(Soo, m); if (!inv) return {};
+    var z = []; for (i = 0; i < m; i++) { var s = 0; for (j = 0; j < m; j++) s += inv[i][j] * ro[j]; z[i] = s; }  // z=Σoo⁻¹ r_o
+    var anchored = {}; oi.forEach(function (pi) { anchored[parts[pi]] = 1; });
     var out = {};
     parts.forEach(function (U, ui) {
-      if (anchored[U] || regCm[U] == null) return;    // 앵커된·회귀없는 부위 제외(미관측만 채움)
-      var cr = 0; for (var k = 0; k < m; k++) cr += cov[ui][oi[k]] * z[k];
+      if (anchored[U] || regCm[U] == null) return;    // 앵커된·회귀없는 부위 제외
+      // 조건부 설명력 R² = Σuo Σoo⁻¹ Σou / Σuu — 앵커가 이 부위를 얼마나 명확히 결정하나.
+      var w = [], k; for (i = 0; i < m; i++) { var sw = 0; for (j = 0; j < m; j++) sw += inv[i][j] * cov[oi[j]][ui]; w[i] = sw; }
+      var r2 = 0; for (i = 0; i < m; i++) r2 += cov[ui][oi[i]] * w[i]; r2 /= cov[ui][ui];
+      if (r2 < IMPUTE_MIN_R2) return;                 // 명확하지 않으면 회귀 유지(억지로 안 채움)
+      var cr = 0; for (k = 0; k < m; k++) cr += cov[ui][oi[k]] * z[k];
       out[U] = Math.round((regCm[U] + cr) * 10) / 10;
     });
     return out;
