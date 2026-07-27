@@ -7,7 +7,7 @@
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
-<link rel="stylesheet" href="css/diag.css?v=c3a3f62c">
+<link rel="stylesheet" href="css/diag.css?v=900e1078">
 <script>
   /* 결과화면 '상의/하의 진단하기'(?cat=top|bottom)로 들어오면 첫 페인트부터 카테고리 선택(idx0) 대신
      선호핏(idx1)이 보이게 — idx0가 잠깐 떴다 넘어가는 깜빡임 방지. 문서 끝(diag-fit.js 실행 후)에서 skipcat 해제. */
@@ -190,7 +190,9 @@
   <div class="wnav">
     <button class="btn-line" onclick="prev()">이전</button>
     <span class="spacer"></span>
+    <!-- 진단 완료 단계에서 상/하의 한쪽만 했고 다른 쪽이 남았으면 nextbtn='OO만 진단' + alsobtn='OO도 진단하기'로 나란히 -->
     <button class="btn-primary" id="nextbtn" onclick="footerAction()" disabled>다음</button>
+    <button class="btn-primary" id="alsobtn" onclick="footerActionAlso()" style="display:none">하의도 진단하기</button>
   </div>
 
   <!-- ===== 파생 카테고리 · 선호핏만 (빠른 경로) — 기반(상/하의)이 체형을 잠근 뒤 진입 ===== -->
@@ -262,7 +264,7 @@
   /* 안내 토스트 — 브라우저 기본 alert 대체 (diag-fit.js와 독립) */
   function toast(m){ var t=document.getElementById('toast'); if(!t) return; t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2600); }
 </script>
-<script src="js/diag-fit.js?v=00277193"></script>
+<script src="js/diag-fit.js?v=d0931b78"></script>
 <script>
   /* diag-fit.js가 실제 활성 스텝(선호핏)을 세팅한 뒤 skipcat 해제 —
      그래야 이후 '이전'을 눌러 카테고리 선택(idx0)으로 내려가 편집할 수 있음. */
