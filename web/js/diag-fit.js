@@ -167,15 +167,24 @@
     // 옷 정보 입력을 '다 마친' 단계(DIAGNOSE_AT: 한 벌만으로도/2벌 완료)에서만 노출 — 카테고리 선택·선호핏 등
     // 이른 단계에선 절대 안 뜬다(데이터 없어 선호핏만 받는 prefOnly 카테고리 포함). 상/하의 나머지가 남았을 때만.
     var pair = !!DIAGNOSE_AT[cur] && !!otherBaseCat() && !otherDone();
-    // v2: 푸터는 '진단하기' 하나 — alsobtn(푸터)은 항상 숨김. 이어가기는 본문 '더 정확히 하려면' 카드로.
-    if(also) also.style.display='none';
-    // '하의(상의)도 이어서 진단' 강조 카드는 나머지 카테고리가 남은 완료단계(pair)에서만 노출
-    var stepEl=steps[cur], cont=stepEl?stepEl.querySelector('.mopt-cont'):null;
-    if(cont){
-      if(pair){ var other=(target==='top'?'하의':'상의');
-        var ot=cont.querySelector('.mopt-other'); if(ot) ot.textContent=other;
-        cont.style.display=''; }
-      else cont.style.display='none';
+    // 나머지 카테고리 남은 완료단계(pair) → 질문형(가로 2분할). 제목=질문 / 본문 .vq(아니요·네 + 상의추가 링크) 노출 /
+    //   푸터 '진단하기'·'같은옷 추가' 버튼은 숨김. 그 외엔 원래 문구·푸터 진단하기.
+    if(also) also.style.display='none';   // 푸터 alsobtn 미사용
+    var stepEl=steps[cur], vq=stepEl?stepEl.querySelector('.vq'):null;
+    if(pair && vq){
+      var other=(target==='top'?'하의':'상의'), curKo=(target==='top'?'상의':'하의');
+      var head=stepEl.querySelector('.qhead'); if(head){ if(!head.dataset.orig) head.dataset.orig=head.innerHTML; head.textContent=other+'까지 진단하시겠어요?'; }
+      var hlp=stepEl.querySelector('.qhelp'); if(hlp){ if(!hlp.dataset.orig) hlp.dataset.orig=hlp.innerHTML; hlp.innerHTML=curKo+'만으로도 결과가 나와요 · '+other+'까지 하면 <b>전신 체형</b>이 완성돼요'; }
+      [].forEach.call(vq.querySelectorAll('.v2-other'),function(e){e.textContent=other;});
+      vq.hidden=false;
+      var addb=stepEl.querySelector('.add-garment'); if(addb) addb.style.display='none';
+      btn.style.display='none';
+    } else {
+      btn.style.display='';
+      if(vq){ vq.hidden=true;
+        var addb2=stepEl.querySelector('.add-garment'); if(addb2) addb2.style.display='';
+        var head2=stepEl.querySelector('.qhead'); if(head2&&head2.dataset.orig) head2.innerHTML=head2.dataset.orig;
+        var hlp2=stepEl.querySelector('.qhelp'); if(hlp2&&hlp2.dataset.orig) hlp2.innerHTML=hlp2.dataset.orig; }
     }
     updateNext();
     window.scrollTo(0,0);
