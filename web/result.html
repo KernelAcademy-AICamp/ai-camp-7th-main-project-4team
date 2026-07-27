@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
 <link rel="stylesheet" href="css/diag.css?v=c3a3f62c">
-<link rel="stylesheet" href="css/result.css?v=a8c96242">
+<link rel="stylesheet" href="css/result.css?v=ca15fbf4">
 </head>
 <body>
 
@@ -32,8 +32,7 @@
   <div class="rtabs" role="tablist" aria-label="진단 결과 보기">
     <button type="button" class="rtab on" role="tab" aria-selected="true"  aria-controls="p1" id="t1" onclick="goTab(1)"><span class="n">1</span>내 핏 카드</button>
     <button type="button" class="rtab"    role="tab" aria-selected="false" aria-controls="p2" id="t2" onclick="goTab(2)"><span class="n">2</span>체형 분석</button>
-    <button type="button" class="rtab"    role="tab" aria-selected="false" aria-controls="p3" id="t3" onclick="goTab(3)"><span class="n">3</span>체형 그림</button>
-    <button type="button" class="rtab"    role="tab" aria-selected="false" aria-controls="p4" id="t4" onclick="goTab(4)"><span class="n">4</span>결과 근거</button>
+    <button type="button" class="rtab"    role="tab" aria-selected="false" aria-controls="p3" id="t3" onclick="goTab(3)"><span class="n">3</span>결과 근거</button>
   </div>
 
   <!-- 탭1 — 카드 + 브랜드 추천 -->
@@ -53,43 +52,59 @@
       </div>
       <div class="rcol">
         <div id="rtip" class="dtl-tip"></div>
+
+        <!-- 신뢰 근거 ① 원리 — 한 문장형(E안). 입어본 옷이 있는 실계산 결과일 때만 result.js가 노출 -->
+        <div id="rprinciple" class="rprin" hidden>
+          <span class="rprin-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> 추측 아님 · 역산</span>
+          <p class="rprin-sent"><b>입어본 옷의 느낌</b>으로 체형을 <b>역산</b>해, 안 입어본 <b>브랜드 사이즈</b>로 번역했어요</p>
+        </div>
+
         <div id="recs" class="rpanel"></div>
       </div>
     </div>
   </section>
 
-  <!-- 탭2 — 체형 분석(측정 + 결과 풀이) -->
+  <!-- 탭2 — 체형 분석. 측정|결과풀이 2단 유지 + 체형 그림 자세히보기는 결과풀이(오른쪽 칸) 아래 -->
   <section class="rpane" id="p2" role="tabpanel" aria-labelledby="t2">
     <div class="rgrid2" style="gap:16px">
       <div class="rcol"><div id="meas" class="rpanel"></div></div>
-      <div class="rcol"><div id="means" class="rpanel"></div></div>
-    </div>
-  </section>
+      <div class="rcol">
+        <div id="means" class="rpanel"></div>
 
-  <!-- 탭3 — 체형 그림(스타일리스트와 동일 실루엣) + 부위 해설 -->
-  <section class="rpane" id="p3" role="tabpanel" aria-labelledby="t3">
-    <div class="rgrid2">
-      <div class="rcol"><div class="rpanel">
-        <div class="av-head"><span class="rkicker">내 체형 그림</span><span class="av-chip">전신 · 기본 추정</span></div>
-        <div class="rnote">재보지 않아도 이 정도로 <b>예상</b>돼요 · 진단을 더 하면 범위가 좁아져요</div>
-        <div id="ravatar" style="margin-top:8px"></div>
-      </div></div>
-      <div class="rcol"><div class="rpanel">
-        <div class="av-head"><span class="rkicker">부위별로 이렇게 봐요</span><span class="av-chip" style="background:transparent;color:var(--sub2);font-weight:600">옷 고를 때</span></div>
-        <div class="rnote">부위별 비율이 옷 선택에서 각각 이런 의미예요</div>
-        <div class="part-list">
-          <div class="part-it"><span class="part-chip">어깨</span><p><b>상의 품·재킷 어깨선</b>이 여기서 갈려요 · 넓으면 오버핏이 자연스러워요</p></div>
-          <div class="part-it"><span class="part-chip">가슴</span><p><b>셔츠·니트 사이즈</b>를 좌우해요 · 슬림하면 여유 있는 핏도 잘 어울려요</p></div>
-          <div class="part-it"><span class="part-chip">허리</span><p><b>팬츠·벨트 라인</b> 기준 · 슬림한 허리는 실루엣을 잡아주는 강점이에요</p></div>
-          <div class="part-it"><span class="part-chip">엉덩이</span><p><b>팬츠·스커트 실루엣</b>에 영향 · 라인이 도는 정도를 결정해요</p></div>
+    <!-- 체형 그림 — 결과 풀이 아래 인라인 '자세히 보기'로 편입(구 탭3). 스타일리스트와 동일 실루엣 + 부위 해설 -->
+    <details class="figdetail" id="figdetail">
+      <summary class="figdetail-sum">
+        <span class="figdetail-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.4"/><path d="M12 7.5v6M12 9l-4 2M12 9l4 2M9.5 13.5 8 21M14.5 13.5 16 21"/></svg></span>
+        <span class="figdetail-tx"><b>내 체형 그림 자세히 보기</b><span>부위별 비율과 옷 고를 때 의미까지</span></span>
+        <span class="figdetail-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+      </summary>
+      <div class="figdetail-body">
+        <div class="rgrid2">
+          <div class="rcol"><div class="rpanel">
+            <div class="av-head"><span class="rkicker">내 체형 그림</span><span class="av-chip">전신 · 기본 추정</span></div>
+            <div class="rnote">재보지 않아도 이 정도로 <b>예상</b>돼요 · 진단을 더 하면 범위가 좁아져요</div>
+            <div id="ravatar" style="margin-top:8px"></div>
+          </div></div>
+          <div class="rcol"><div class="rpanel">
+            <div class="av-head"><span class="rkicker">부위별로 이렇게 봐요</span><span class="av-chip" style="background:transparent;color:var(--sub2);font-weight:600">옷 고를 때</span></div>
+            <div class="rnote">부위별 비율이 옷 선택에서 각각 이런 의미예요</div>
+            <div class="part-list">
+              <div class="part-it"><span class="part-chip">어깨</span><p><b>상의 품·재킷 어깨선</b>이 여기서 갈려요 · 넓으면 오버핏이 자연스러워요</p></div>
+              <div class="part-it"><span class="part-chip">가슴</span><p><b>셔츠·니트 사이즈</b>를 좌우해요 · 슬림하면 여유 있는 핏도 잘 어울려요</p></div>
+              <div class="part-it"><span class="part-chip">허리</span><p><b>팬츠·벨트 라인</b> 기준 · 슬림한 허리는 실루엣을 잡아주는 강점이에요</p></div>
+              <div class="part-it"><span class="part-chip">엉덩이</span><p><b>팬츠·스커트 실루엣</b>에 영향 · 라인이 도는 정도를 결정해요</p></div>
+            </div>
+            <div class="share-note"><b>스타일리스트 매칭</b>을 신청하면 이 체형이 전달돼 딱 맞는 코디를 제안받아요</div>
+          </div></div>
         </div>
-        <div class="share-note"><b>스타일리스트 매칭</b>을 신청하면 이 체형이 전달돼 딱 맞는 코디를 제안받아요</div>
-      </div></div>
+      </div>
+    </details>
+      </div>
     </div>
   </section>
 
-  <!-- 탭4 — 결과 근거(데이터 기반 신뢰도 + 계산 방법 + 판정하기) -->
-  <section class="rpane" id="p4" role="tabpanel" aria-labelledby="t4">
+  <!-- 탭3 — 결과 근거(데이터 기반 신뢰도 + 계산 방법 + 판정하기) -->
+  <section class="rpane" id="p3" role="tabpanel" aria-labelledby="t3">
     <div class="rgrid2" style="gap:16px">
       <!-- 왼쪽: 정확도 데이터 -->
       <div class="rcol">
@@ -133,17 +148,13 @@
   </div>
 </div>
 
-<!-- 진단 결과 피드백 토스트(1회) — 진단 플로우 결과에서만. 마이 embed에선 CSS로 숨김. id=rfbToast(result.js rToast의 #rtoast와 충돌 회피) -->
-<div class="rfbtoast" id="rfbToast" role="dialog" aria-label="결과 피드백" hidden>
+<!-- 다음 단계 유도 토스트 — 진단 완료(높음) 시 결과 화면에서만. 마이 embed에선 CSS로 숨김. 내용은 result.js fbToastInit이 상태별로 채움 -->
+<div class="rfbtoast" id="rfbToast" role="dialog" aria-label="다음 단계" hidden>
   <button class="rfbtoast-x" id="rfbToastX" aria-label="닫기" onclick="fbToastHide()">&times;</button>
-  <div class="rfbtoast-ey">잠깐, 한 가지만</div>
-  <div class="rfbtoast-q">이 결과, 평소 내 사이즈랑 비슷한가요?</div>
-  <div class="rfbtoast-sub">답해주시면 다음 진단이 더 정확해져요</div>
-  <div class="rfbtoast-btns" id="rfbToastBtns">
-    <button class="rfb-b" onclick="pickFeedback('비슷','toast',this)">비슷해요</button>
-    <button class="rfb-b" onclick="pickFeedback('보통','toast',this)">보통</button>
-    <button class="rfb-b" onclick="pickFeedback('다름','toast',this)">달라요</button>
-  </div>
+  <div class="rfbtoast-ey" id="rfbToastEy">진단 완료</div>
+  <div class="rfbtoast-q" id="rfbToastQ">다음은 뭘 해볼까요?</div>
+  <div class="rfbtoast-sub" id="rfbToastSub">진단 결과 그대로 이어서 할 수 있어요</div>
+  <div class="rfbtoast-acts" id="rfbToastActs"></div>
 </div>
 
 <script src="js/demo-session.js?v=f0075c36"></script>
@@ -153,7 +164,7 @@
 <script src="js/config.js?v=53f50277"></script>
 <script src="js/data.js?v=177a2945"></script>
 <script src="js/body-figure.js?v=b613013e"></script>
-<script src="js/result.js?v=fa37d6b7"></script>
+<script src="js/result.js?v=605d7d46"></script>
 <script src="js/a11y.js?v=1876c5ec"></script>
 </body>
 </html>
