@@ -182,7 +182,7 @@
   /* ── 신뢰 근거(show your work) — ① 원리 배지 · ② 추천 근거줄 · ③ 추천 피드백 ── */
   /* ① 원리 배지 (한 끗 아래·추천 위) — about.html '3단계 원리' 재활용 */
   /* 원리 — 한 문장형(E안). 흰색 카드 + '추측 아님·역산' 태그 + 초록 하이라이트 밑줄 */
-  .rprin{ margin:0; background:#fff; border:1px solid var(--rline); border-radius:14px; padding:14px 15px; }
+  .rprin{ margin:0; background:#fff; border:1px solid var(--rline); border-radius:14px; padding:14px 24px; }   /* 좌우 24px = 한 끗(dtl-tip)·추천 패널과 글자 시작선 정렬 */
   .rprin-badge{ display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:800; letter-spacing:.03em; color:var(--gm); background:var(--gs); border-radius:20px; padding:4px 10px; margin-bottom:10px; }
   .rprin-badge svg{ width:13px; height:13px; }
   .rprin-sent{ margin:0; font-size:15.5px; line-height:1.6; letter-spacing:-.02em; font-weight:600; color:var(--rink); }
