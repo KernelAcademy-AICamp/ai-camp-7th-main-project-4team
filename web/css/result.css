@@ -322,6 +322,11 @@
     border-bottom:2.5px solid transparent; margin-bottom:-1.5px; white-space:nowrap; }
   .rtab:hover{ color:var(--ink); }
   .rtab.on{ color:var(--ink); font-weight:800; border-bottom-color:var(--accent); }
+  /* 정확도 평가 미답변 표시 — 토스트를 닫은 사람에게 검증 바(탭3)가 여기 있다고 알리는 점 */
+  .rtab.fb-pending{ position:relative; }
+  .rtab.fb-pending::after{ content:""; position:absolute; top:11px; right:9px; width:6px; height:6px;
+    border-radius:50%; background:var(--warn); }
+  @media (max-width:640px){ .rtab.fb-pending::after{ top:8px; right:4px; } }
   .rtab .n{ display:inline-block; font-size:13px; font-weight:800; color:var(--muted);
     background:#EDECE8; border-radius:20px; padding:1px 8px; margin-right:8px;
     font-family:var(--suit,inherit); font-feature-settings:'tnum'; }

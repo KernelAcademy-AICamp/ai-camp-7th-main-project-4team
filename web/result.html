@@ -151,7 +151,7 @@
 
 <!-- 결과 토스트 — 정확도 피드백(항상) + 상태별 다음 단계. 결과 화면에서만(마이 embed는 CSS로 숨김). 다음 단계는 result.js fbToastInit이 상태별로 채움 -->
 <div class="rfbtoast" id="rfbToast" role="dialog" aria-label="진단 결과" hidden>
-  <button class="rfbtoast-x" id="rfbToastX" aria-label="닫기" onclick="fbToastHide()">&times;</button>
+  <button class="rfbtoast-x" id="rfbToastX" aria-label="닫기" onclick="fbToastDismiss()">&times;</button>
   <div class="rfbtoast-ey" id="rfbToastEy">진단 완료</div>
   <div class="rfbtoast-q" id="rfbToastQ">이 결과, 평소 내 사이즈랑 비슷한가요?</div>
   <div class="rfbtoast-sub" id="rfbToastSub">답해주시면 다음 진단이 더 정확해져요</div>

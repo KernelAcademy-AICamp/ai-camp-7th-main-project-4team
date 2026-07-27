@@ -563,7 +563,7 @@
   }
   // 진단 초기화 — 누적된 입력(dx·기본정보·동의·피드백)을 지우고 처음부터. (목업 테스트용)
   function resetDiag(){
-    try{ ['fitting.dx','fitting.basic','fitting.consent'].forEach(function(k){ sessionStorage.removeItem(k); }); }catch(e){}
+    try{ ['fitting.dx','fitting.basic','fitting.consent','fitting.dxRun'].forEach(function(k){ sessionStorage.removeItem(k); }); }catch(e){}
     FDATA.clearFeedback();
     location.href='diag-basic.html';
   }
@@ -815,8 +815,30 @@
 
   /* ═══ 진단 결과 피드백 — 토스트(rfbToast) + 정확도 검증 바(#rfb) 연동. 마이 embed에선 미노출 ═══ */
   /* 진단 상태별 키 — 넣은 옷 수+완료 카테고리로 서명. 기본→상의→하의 매번 상태가 달라져 그때마다 토스트 재노출 */
-  function fbStateKey(){ try{ return 'fitting.result.fbToast.'+((nExp||0)+':'+Object.keys(doneCats||{}).sort().join(',')); }catch(e){ return 'fitting.result.fbToast'; } }
+  /* 피드백 상태 키 — '이 진단 실행' 단위(diag-loading이 찍는 fitting.dxRun).
+     진단 '모양'(경험수:카테고리)으로 묶으면 같은 조합으로 다시 진단했을 때 키가 겹쳐,
+     이전 진단에서 답했다는 이유로 새 진단의 정확도 질문이 안 뜬다. dxRun이 없으면(구 세션·데모) 모양으로 폴백. */
+  function fbStateKey(){
+    var run=''; try{ run=sessionStorage.getItem('fitting.dxRun')||''; }catch(e){}
+    if(run) return 'fitting.result.fbToast.run.'+run;
+    try{ return 'fitting.result.fbToast.'+((nExp||0)+':'+Object.keys(doneCats||{}).sort().join(',')); }catch(e){ return 'fitting.result.fbToast'; }
+  }
   function fbToastHide(){ var t=document.getElementById('rfbToast'); if(!t) return; t.classList.remove('on'); setTimeout(function(){ t.hidden=true; }, 380); }
+  function fbAnswered(){ try{ return sessionStorage.getItem(fbStateKey())==='1'; }catch(e){ return false; } }
+  // 닫기(×)는 '지금 치워달라'이지 '다시 묻지 말라'가 아니다 — 지금 화면에서만 감춘다.
+  //   미답변이면 새로고침·재방문 때 다시 뜬다. 억제를 남기는 건 답변했을 때뿐.
+  function fbToastDismiss(){
+    fbToastHide();
+    if(!fbAnswered()){                       // 닫으면 평가 경로를 모르게 되니 정본(탭3)을 알려준다
+      rToast('정확도 평가는 ‘결과 근거’ 탭에서 언제든 할 수 있어요');
+      markFbPending(true);
+    }
+  }
+  // 미답변 표시 — 탭3 라벨의 작은 점. 새 표면을 만들지 않고 이미 있는 검증 바로 유도한다.
+  function markFbPending(on){
+    var t3=document.getElementById('t3'); if(!t3) return;
+    t3.classList.toggle('fb-pending', !!on && !fbAnswered());
+  }
   function fbToastThanks(){
     var t=document.getElementById('rfbToast'); if(!t) return;
     var ey=t.querySelector('.rfbtoast-ey'), q=t.querySelector('.rfbtoast-q'), sub=t.querySelector('.rfbtoast-sub'), b=document.getElementById('rfbToastBtns');
@@ -835,6 +857,7 @@
       FDATA.saveFeedback({ ts:new Date().toISOString(), bodyType:cardType, verdict:vmap[val]||val, confidenceTier:confTier(), engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId });
     }catch(e){}
     try{ sessionStorage.setItem(fbStateKey(),'1'); }catch(e){}
+    markFbPending(false);                      // 답했으면 탭3 미답변 점 해제
     if(from==='toast'){ fbToastThanks(); }   // (구)피드백 전용 토스트 — 답 후 닫힘
     else if(from==='ctatoast'){ /* 결합 토스트: 답해도 닫지 않고 다음 단계 CTA 유지 */ }
     else { fbToastHide(); }                    // 검증 바(탭③)에서 답하면 토스트 닫기
@@ -854,7 +877,6 @@
   (function fbToastInit(){
     if(/[?&]embed/.test(location.search)) return;   // 마이 내진단결과(embed)에선 토스트 없음
     var isApi=(window.FDATA && FDATA.mode==='api');
-    var LOGIN='<div class="rfbt-login">로그인하면 이 결과가 저장돼요 · <a href="index.html?login=1&next=my">로그인</a></div>';
     var ICJ='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>';
     var ICS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20v-1a4 4 0 0 0-8 0v1"/><circle cx="12" cy="8" r="3.2"/></svg>';
     var ICU='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg>';
@@ -883,7 +905,8 @@
         var needBot=upperDone;              // 상의 완료 → 하의 남음
         var href=needBot?'diag-fit.html?cat=bottom&reuse=1&have=top':'diag-fit.html?cat=top&reuse=1&have=bottom';
         rows = opt(true,href,null,ICU,(needBot?'하의':'상의')+'까지 하면 완성돼요','체형이 또렷해지고 추천도 정밀해져요','진단하기',false);
-        foot = ((isApi && !accountsOn())?'':LOGIN);   // 계정ON이면 '로그인하면 저장돼요' 유도 복원
+        // 로그인 유도는 붙이지 않는다 — 이 상태의 할 일은 '나머지 진단' 하나이고,
+        // 8체형이 아직 미완성이라 지금 저장할 결과도 반쪽이다. 저장 유도는 완료 후 결과 CTA가 맡는다.
       } else {                              // 0벌(건너뜀) → 상·하의 고르는 진단 플로우로
         eyTxt='기본 결과';
         rows = opt(true,'diag-fit.html',null,ICU,'입어본 옷을 넣어볼까요?','키·몸무게 추정보다 훨씬 정확해져요','더 정확히',false);
@@ -892,6 +915,10 @@
       acts.innerHTML=rows + foot;
     }
     function fire(){
+      // 억제 조건은 '이 진단에 이미 답함' 하나뿐 — 답한 사람에게 또 묻지 않는다(응답 오염·신뢰 하락).
+      //   닫기만 한 경우는 억제하지 않는다: 새로고침·재방문이면 다시 묻는다.
+      //   ※ 이전엔 fbStateKey를 쓰기만 하고 읽지 않아, 답해도 새로고침마다 6초 뒤 다시 떴다.
+      if(fbAnswered()){ markFbPending(false); return; }
       var t=document.getElementById('rfbToast'); if(!t) return; fill(); t.hidden=false;
       requestAnimationFrame(function(){ t.classList.add('on'); });
     }
