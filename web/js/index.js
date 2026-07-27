@@ -43,6 +43,24 @@
       renderProfile(); renderMyAvatar();
     });
   }
+  // mp-diag(내 진단 결과) embed는 sessionStorage(fitting.dx)를 읽는다. 계정 모드에서:
+  //   ① 현 세션 진단을 계정에 귀속(claim — 로그인 상태로 진단하면 user_id null로 저장되므로) ②
+  //   이번 세션 진단이 없으면(다른 기기·재방문) 계정 최신 진단을 세션에 하이드레이트해 embed가 그리게.
+  function hydrateLatestDiag(){
+    if(!apiAccounts()) return;
+    var read=function(){
+      var has=false; try{ has=!!sessionStorage.getItem('fitting.dx'); }catch(e){}
+      if(has) return;   // 이번 세션 진단 있음 → embed 그대로
+      FITAUTH.myDiagnoses(1).then(function(list){
+        var d=list&&list[0], input=d&&d.input; if(!input) return;
+        try{ sessionStorage.setItem('fitting.dx', JSON.stringify(input));
+          if(input.basic) sessionStorage.setItem('fitting.basic', JSON.stringify(input.basic)); }catch(e){}
+        var f=document.getElementById('myDiagFrame'); if(f) f.src=f.src;   // 리로드
+      });
+    };
+    var sid=(window.FDATA&&FDATA.sessionId)?FDATA.sessionId():null;
+    if(sid) FITAUTH.claimDiagnoses(sid).then(read); else read();
+  }
   function apiAccounts(){ return !!(window.FDATA&&FDATA.mode==='api'&&window.ACCOUNTS_ENABLED&&window.FITAUTH&&FITAUTH.ready()); }
   function initAuth(){
     if(!apiAccounts()) return;
@@ -133,6 +151,7 @@
     var m=document.querySelectorAll('#smenu a'); for(var i=0;i<m.length;i++) m[i].classList.remove('on'); el.classList.add('on');
     var ps=document.querySelectorAll('#my .mpanel'); for(var j=0;j<ps.length;j++) ps[j].classList.remove('on');
     document.getElementById(el.dataset.p).classList.add('on');
+    if(el.dataset.p==='mp-diag') hydrateLatestDiag();   // 계정 모드: 최신 진단 embed 하이드레이트(+귀속)
     window.scrollTo(0, 0);   // 마이 사이드 패널 전환 시에도 맨 위(패널 헤딩 '프로필·계정' 등)부터 보이게
     saveNav();
   }

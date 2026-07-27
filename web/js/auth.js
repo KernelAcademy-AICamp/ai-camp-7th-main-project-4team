@@ -66,7 +66,7 @@
     myDiagnoses: async function (limit) {
       if (!client) return [];
       try {
-        var r = await client.from('diagnosis').select('id,created_at,category,result')
+        var r = await client.from('diagnosis').select('id,created_at,category,input,result')
           .order('created_at', { ascending: false }).limit(limit || 50);
         return r.data || [];
       } catch (e) { return []; }
