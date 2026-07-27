@@ -19,16 +19,25 @@
   if(mount){
     var active = (mount.getAttribute('data-active') || '').toLowerCase();
     var on = function(k){ return active === k ? ' class="on"' : ''; };
+    // 헤더에 페이지별 전환 링크는 두지 않는다 — 콘텐츠 3종 모두 본문 하단에 같은 역할의 버튼이 이미 있다.
+    /* 메뉴 범위 — data-menu="home"처럼 쉼표로 지정하면 그 항목만 노출(미지정=전체).
+       약관·처리방침 같은 법적 문서는 Home만 둔다: 서비스 기능(마켓·판정·마이)으로 유도할 자리가 아니다. */
+    var MENU = [
+      { k:'home', href:'index.html#home', label:'Home' },
+      { k:'shop', href:'index.html#shop', label:'Stylists' },
+      { k:'fit',  href:'judge.html',      label:'Fit' },
+      { k:'my',   href:'index.html#my',   label:'My', id:'appnavMy' }
+    ];
+    var allow = (mount.getAttribute('data-menu') || '').toLowerCase().split(',')
+                  .map(function(s){ return s.trim(); }).filter(Boolean);
+    var menuHTML = MENU.filter(function(m){ return !allow.length || allow.indexOf(m.k) >= 0; })
+      .map(function(m){ return '<a' + on(m.k) + (m.id ? ' id="' + m.id + '"' : '') + ' href="' + m.href + '">' + m.label + '</a>'; })
+      .join('');
     var bell = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 4.6-1.9 6-1.9 6h15.8s-1.9-1.4-1.9-6z"/><path d="M10.2 18.5a2 2 0 0 0 3.6 0"/></svg>';
     mount.innerHTML =
       '<header class="appnav-hd"><div class="appnav-in">' +
         '<a class="appnav-logo" href="index.html">Fitting<i class="sq"></i></a>' +
-        '<nav class="appnav-menu">' +
-          '<a' + on('home') + ' href="index.html#home">Home</a>' +
-          '<a' + on('shop') + ' href="index.html#shop">Stylists</a>' +
-          '<a' + on('fit') + ' href="judge.html">Fit</a>' +
-          '<a' + on('my') + ' id="appnavMy" href="index.html#my">My</a>' +
-        '</nav>' +
+        '<nav class="appnav-menu">' + menuHTML + '</nav>' +
         '<div class="appnav-r">' +
           '<a class="sup" href="pro-signup.html">스타일리스트 지원</a>' +
           '<span class="navdiv" id="appnavDiv0"></span>' +
