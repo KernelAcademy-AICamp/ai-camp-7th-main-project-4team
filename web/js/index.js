@@ -1558,8 +1558,8 @@
 
   /* 결과 페이지의 로그인 게이트로 유입(index.html?login=1&next=my|shop) — 로그인 시트를 열고, 완료 시 해당 탭으로 */
   (function(){ try{ var q=new URLSearchParams(location.search); if(q.get('login')!=='1') return;
-    var toShop=(q.get('next')==='shop');
-    openLogin(toShop?'전문가 매칭':'결과 저장', function(){ if(toShop) go('shop'); else goMy('mp-diag'); });
+    var nx=q.get('next'), toShop=(nx==='shop'), toJudge=(nx==='judge');
+    openLogin(toJudge?'옷 판정':toShop?'전문가 매칭':'결과 저장', function(){ if(toJudge) location.href='judge.html'; else if(toShop) go('shop'); else goMy('mp-diag'); });
   }catch(e){} })();
 
   /* 결과 저장 후 '마이에서 보기'(index.html?my=mp-diag) — 마이의 해당 서브패널(내 진단결과)로 바로 이동 */
