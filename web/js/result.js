@@ -561,6 +561,11 @@
     if(FDATA.mode!=='api' && !isAuthed()){ openRModal('login','shop'); return; }   // api(MVP)는 로그인 없이 바로 스타일리스트찾기(페이크도어)
     location.href='index.html#shop';
   }
+  // 판정(judge)도 로그인 필요 — 스타일리스트와 동일 게이트. api(MVP)는 바로 진입.
+  function goJudge(){
+    if(FDATA.mode!=='api' && !isAuthed()){ openRModal('login','judge'); return; }
+    location.href='judge.html';
+  }
   // 결과 카드(iframe, ?host=result)의 🔖 저장 → 부모로 위임해 버튼과 동일 동작
   window.addEventListener('message', function(e){ if(e&&e.data&&e.data.type==='fitting:save') saveResult(); });
 
@@ -743,27 +748,61 @@
       FDATA.saveFeedback({ ts:new Date().toISOString(), bodyType:cardType, verdict:vmap[val]||val, confidenceTier:confidenceTier, engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId });
     }catch(e){}
     try{ sessionStorage.setItem(fbStateKey(),'1'); }catch(e){}
-    if(from==='toast'){ fbToastThanks(); }   // 토스트에서 답 → '소중한 의견 감사합니다!' 후 닫힘
-    else { fbToastHide(); }                    // 검증 바에서 답하면 토스트 닫기
+    if(from==='toast'){ fbToastThanks(); }   // (구)피드백 전용 토스트 — 답 후 닫힘
+    else if(from==='ctatoast'){ /* 결합 토스트: 답해도 닫지 않고 다음 단계 CTA 유지 */ }
+    else { fbToastHide(); }                    // 검증 바(탭③)에서 답하면 토스트 닫기
   }
-  /* 다음 단계 유도 토스트 — 진단 완료(상+하, 정확도 높음) 시에만 노출. 미완료는 상단 배너(rupgrade)가 이어가기를 이미 유도하므로 토스트는 안 띄움(중복 회피).
-     완료 시: 판정하기 · 스타일리스트 찾기 · (api 아니면) 로그인해 저장 순으로 다음 플로우를 제시 → 재방문 동기. */
+  // 결합 토스트의 정확도 피드백 답 처리 — 선택 표시 + 저장(pickFeedback) 후 문구만 감사로, CTA는 그대로.
+  function fbToastAnswer(val, el){
+    var box=document.getElementById('rfbToastFb');
+    if(box){ Array.prototype.forEach.call(box.querySelectorAll('.rfb-b'), function(b){ b.classList.toggle('sel', b===el); }); box.classList.add('answered'); }
+    pickFeedback(val, 'ctatoast');
+    var q=document.getElementById('rfbToastQ'), sub=document.getElementById('rfbToastSub');
+    if(q) q.textContent='답해주셔서 감사해요!';
+    if(sub) sub.textContent='다음 진단이 더 정확해져요';
+  }
+  /* 결과 토스트 — 정확도 피드백(항상)과 상태별 '다음 단계'를 한 토스트에.
+     피드백(비슷·보통·달라요)은 위에 고정, 아래 '다음'은 진단 상태별로 분기:
+       · 0벌(건너뜀)=상·하의 넣기 유도 / 부분(상의만·하의만)=나머지 진단 유도 / 완료(상+하)=판정·스타일리스트·로그인. */
   (function fbToastInit(){
     if(/[?&]embed/.test(location.search)) return;   // 마이 내진단결과(embed)에선 토스트 없음
-    if(!cardReady) return;                            // 상+하 완료(높음)에서만 — 그 외엔 상단 배너가 안내
     var isApi=(window.FDATA && FDATA.mode==='api');
+    var LOGIN='<div class="rfbt-login">로그인하면 이 결과가 저장돼요 · <a href="index.html?login=1&next=my">로그인</a></div>';
+    var ICJ='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>';
+    var ICS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20v-1a4 4 0 0 0-8 0v1"/><circle cx="12" cy="8" r="3.2"/></svg>';
+    var ICU='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg>';
+    var LOCK='<span class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>';
+    // 리치 CTA 행(A/V3): 시나리오(제목+설명)+우측 액션. href면 <a>, onclick이면 <button>. key=잉크블랙 강조. lock=로그인 필요 자물쇠.
+    function opt(key, href, onclick, ic, t, s, go, lock){
+      var tag=href?'a':'button';
+      var attr=href?(' href="'+href+'"'):(' type="button" onclick="'+onclick+'"');
+      return '<'+tag+' class="rfbt-opt'+(key?' key':'')+'"'+attr+'>'
+        +'<span class="rfbt-ic">'+ic+'</span>'
+        +'<span class="rfbt-tx"><span class="t">'+t+'</span><span class="s">'+s+'</span></span>'
+        +'<span class="rfbt-go">'+(lock?LOCK:'')+go+'</span></'+tag+'>';
+    }
     function fill(){
-      var ey=document.getElementById('rfbToastEy'), q=document.getElementById('rfbToastQ'),
-          sub=document.getElementById('rfbToastSub'), acts=document.getElementById('rfbToastActs');
+      var ey=document.getElementById('rfbToastEy'), acts=document.getElementById('rfbToastActs');
       if(!acts) return;
-      if(ey) ey.textContent='진단 완료';
-      if(q) q.textContent='다음은 뭘 해볼까요?';
-      if(sub) sub.textContent='진단 결과 그대로 바로 이어서 할 수 있어요';
-      var html=''
-        +'<a class="rfbt-b p" href="judge.html">사려는 옷이 맞을지 판정하기<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>'
-        +'<button type="button" class="rfbt-b" onclick="goExpert()">스타일리스트 찾기</button>';
-      if(!isApi) html+='<a class="rfbt-b lite" href="index.html?login=1&next=my">로그인하면 이 결과가 저장돼요<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>';
-      acts.innerHTML=html;
+      var eyTxt, rows='', foot='';
+      if(cardReady){                       // 상+하 완료 → 판정 · 스타일리스트(둘 다 로그인 필요=자물쇠)
+        eyTxt='진단 완료';
+        var lk=!isApi;                     // api(MVP)는 로그인 없이 진행 → 자물쇠 없음
+        rows = opt(true,null,'goJudge()',ICJ,'사려는 옷이 따로 있나요?','사이즈표만 올리면 그 옷도 맞을지 판정','판정하기',lk)
+             + opt(false,null,'goExpert()',ICS,'뭘 입을지 막막하다면','내 체형에 맞는 코디를 스타일리스트가 제안','찾기',lk);
+        foot = lk ? '<div class="rfbt-login">누르면 로그인 후 바로 이어져요</div>' : '';
+      } else if(!noneDone){                 // 부분(상의만/하의만) → 나머지 진단(로그인 불필요)
+        eyTxt='거의 다 왔어요';
+        var needBot=upperDone;              // 상의 완료 → 하의 남음
+        var href=needBot?'diag-fit.html?cat=bottom&reuse=1&have=top':'diag-fit.html?cat=top&reuse=1&have=bottom';
+        rows = opt(true,href,null,ICU,(needBot?'하의':'상의')+'까지 하면 완성돼요','체형이 또렷해지고 추천도 정밀해져요','진단하기',false);
+        foot = (isApi?'':LOGIN);
+      } else {                              // 0벌(건너뜀) → 상·하의 고르는 진단 플로우로
+        eyTxt='기본 결과';
+        rows = opt(true,'diag-fit.html',null,ICU,'입어본 옷을 넣어볼까요?','키·몸무게 추정보다 훨씬 정확해져요','더 정확히',false);
+      }
+      if(ey) ey.textContent=eyTxt;
+      acts.innerHTML=rows + foot;
     }
     function fire(){
       var t=document.getElementById('rfbToast'); if(!t) return; fill(); t.hidden=false;

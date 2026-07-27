@@ -461,8 +461,8 @@
   /* 진단 결과 피드백 토스트 — 진단 플로우 결과 화면에만(마이 embed에선 숨김). 10초 뒤 하단서 슬쩍, 1회. id=rtoast(result.js rToast)와 충돌 피해 rfbToast/.rfbtoast 사용 */
   .rfbtoast{ --g:#2E4A3B; --gs:#E7EFEA; --ink:#16140F; --sub:#6E6B63; --sub2:#A6A29A; --line:#E6E5E1; --line2:#E0DED8;
     position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(20px); z-index:2000;
-    width:min(440px,calc(100% - 32px)); background:#fff; border:1px solid var(--line); border-radius:16px;
-    box-shadow:0 12px 40px rgba(20,18,14,.16); padding:18px 20px 16px; opacity:0; transition:opacity .35s ease, transform .35s ease; }
+    width:min(500px,calc(100% - 32px)); background:#fff; border:1px solid var(--line); border-radius:18px;
+    box-shadow:0 14px 44px rgba(20,18,14,.17); padding:20px 22px 18px; opacity:0; transition:opacity .35s ease, transform .35s ease; }
   .rfbtoast.on{ opacity:1; transform:translateX(-50%) translateY(0); }
   .rfbtoast-x{ position:absolute; top:11px; right:11px; width:26px; height:26px; border:0; background:none; cursor:pointer; color:var(--sub2); font-size:18px; line-height:1; border-radius:8px; }
   .rfbtoast-x:hover{ background:#F1F0EC; }
@@ -470,20 +470,40 @@
   .rfbtoast-q{ font-size:16px; font-weight:800; letter-spacing:-.02em; color:var(--ink); padding-right:24px; }
   .rfbtoast-sub{ margin-top:5px; font-size:13px; color:var(--sub); }
   /* 다음 단계 유도 토스트 — 세로 액션 스택(판정하기·스타일리스트·로그인) */
-  .rfbtoast-acts{ display:flex; flex-direction:column; gap:8px; margin-top:14px; }
+  .rfbtoast-acts{ display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+  /* 리치 CTA 행(A안) — 시나리오 + 우측 액션. 행 전체가 버튼 */
+  .rfbt-opt{ display:flex; align-items:center; gap:12px; width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid var(--line); border-radius:13px; background:#fff; text-align:left; text-decoration:none; color:inherit; font-family:inherit; cursor:pointer; transition:.14s; }
+  .rfbt-opt:hover{ border-color:var(--g); background:var(--gs); }
+  .rfbt-opt.key{ background:var(--ink); border-color:var(--ink); }
+  .rfbt-opt.key:hover{ background:#000; border-color:#000; }
+  .rfbt-ic{ width:38px; height:38px; flex:none; border-radius:10px; background:var(--gs); display:flex; align-items:center; justify-content:center; color:var(--g); }
+  .rfbt-ic svg{ width:19px; height:19px; }
+  .rfbt-opt.key .rfbt-ic{ background:rgba(255,255,255,.12); color:#fff; }
+  .rfbt-tx{ flex:1; min-width:0; }
+  .rfbt-tx .t{ display:block; font-size:14.5px; font-weight:800; letter-spacing:-.02em; color:var(--ink); }
+  .rfbt-tx .s{ display:block; margin-top:1px; font-size:12px; color:var(--sub); }
+  .rfbt-opt.key .rfbt-tx .t{ color:#fff; } .rfbt-opt.key .rfbt-tx .s{ color:rgba(255,255,255,.72); }
+  .rfbt-go{ flex:none; display:flex; align-items:center; gap:4px; font-size:13px; font-weight:800; color:var(--g); white-space:nowrap; }
+  .rfbt-go .lk{ display:inline-flex; opacity:.8; } .rfbt-go .lk svg{ width:12px; height:12px; }
+  .rfbt-opt.key .rfbt-go{ color:#fff; }
+  .rfbt-login{ margin-top:10px; font-size:12.5px; color:var(--sub); text-align:center; }
+  .rfbt-login a{ color:var(--ink); font-weight:700; }
   .rfbt-b{ display:flex; align-items:center; justify-content:center; gap:7px; width:100%; box-sizing:border-box;
     padding:12px 14px; border:1px solid var(--line2,#E0DED8); border-radius:11px; background:#fff;
     font-family:inherit; font-size:14.5px; font-weight:800; letter-spacing:-.01em; color:var(--ink); text-decoration:none; cursor:pointer; transition:.14s; }
   .rfbt-b svg{ width:16px; height:16px; flex:none; }
   .rfbt-b:hover{ border-color:var(--g); background:var(--gs); color:var(--g); }
-  .rfbt-b.p{ background:var(--g); border-color:var(--g); color:#fff; }
-  .rfbt-b.p:hover{ background:#26402F; border-color:#26402F; color:#fff; }
+  .rfbt-b.p{ background:var(--ink); border-color:var(--ink); color:#fff; }   /* --ink=잉크블랙(토스트 스코프 정의값) · --rink은 .rwrap 밖이라 무효라서 안 씀 */
+  .rfbt-b.p:hover{ background:#000; border-color:#000; color:#fff; }
   .rfbt-b.lite{ border:0; padding:6px 4px 2px; font-size:13px; font-weight:700; color:var(--sub); }
   .rfbt-b.lite:hover{ background:none; color:var(--g); }
   .rfbtoast-btns{ display:flex; gap:8px; margin-top:14px; }
   .rfb-b{ flex:1; padding:11px 6px; border:1px solid var(--line2,#E0DED8); border-radius:11px; background:#fff; font-family:inherit; font-size:14px; font-weight:700; color:var(--ink); cursor:pointer; transition:.14s; }
   .rfb-b:hover{ border-color:var(--g); background:var(--gs); color:var(--g); }
-  .rfb-b.sel{ background:var(--g); border-color:var(--g); color:#fff; }
+  .rfb-b.sel{ background:var(--gs); border-color:var(--g); color:var(--g); font-weight:800; }   /* 선택 = 연한초록 채움 + 딥그린 라인·글자 */
   .rfbtoast-btns.answered .rfb-b:not(.sel){ opacity:.45; }
+  /* 결합 토스트 구분선 — 위 정확도 피드백과 아래 다음 단계 사이 'ㅡ 다음은 ㅡ' */
+  .rfbtoast-div{ display:flex; align-items:center; gap:10px; margin:16px 0 2px; font-size:11.5px; font-weight:800; letter-spacing:.02em; color:var(--sub2); }
+  .rfbtoast-div::before, .rfbtoast-div::after{ content:""; flex:1; height:1px; background:var(--line2); }
   /* 마이 embed에선 결과 피드백(토스트·검증 바) 숨김 — 진단 플로우 결과에서만 노출 */
   html.embed #rfb, html.embed .rfbtoast{ display:none !important; }

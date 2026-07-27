@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
 <link rel="stylesheet" href="css/diag.css?v=c3a3f62c">
-<link rel="stylesheet" href="css/result.css?v=de107811">
+<link rel="stylesheet" href="css/result.css?v=74acdde0">
 </head>
 <body>
 
@@ -148,12 +148,18 @@
   </div>
 </div>
 
-<!-- 다음 단계 유도 토스트 — 진단 완료(높음) 시 결과 화면에서만. 마이 embed에선 CSS로 숨김. 내용은 result.js fbToastInit이 상태별로 채움 -->
-<div class="rfbtoast" id="rfbToast" role="dialog" aria-label="다음 단계" hidden>
+<!-- 결과 토스트 — 정확도 피드백(항상) + 상태별 다음 단계. 결과 화면에서만(마이 embed는 CSS로 숨김). 다음 단계는 result.js fbToastInit이 상태별로 채움 -->
+<div class="rfbtoast" id="rfbToast" role="dialog" aria-label="진단 결과" hidden>
   <button class="rfbtoast-x" id="rfbToastX" aria-label="닫기" onclick="fbToastHide()">&times;</button>
   <div class="rfbtoast-ey" id="rfbToastEy">진단 완료</div>
-  <div class="rfbtoast-q" id="rfbToastQ">다음은 뭘 해볼까요?</div>
-  <div class="rfbtoast-sub" id="rfbToastSub">진단 결과 그대로 이어서 할 수 있어요</div>
+  <div class="rfbtoast-q" id="rfbToastQ">이 결과, 평소 내 사이즈랑 비슷한가요?</div>
+  <div class="rfbtoast-sub" id="rfbToastSub">답해주시면 다음 진단이 더 정확해져요</div>
+  <div class="rfbtoast-btns" id="rfbToastFb">
+    <button class="rfb-b" onclick="fbToastAnswer('비슷',this)">비슷해요</button>
+    <button class="rfb-b" onclick="fbToastAnswer('보통',this)">보통</button>
+    <button class="rfb-b" onclick="fbToastAnswer('다름',this)">달라요</button>
+  </div>
+  <div class="rfbtoast-div"><span id="rfbToastDivLbl">다음은</span></div>
   <div class="rfbtoast-acts" id="rfbToastActs"></div>
 </div>
 
@@ -164,7 +170,7 @@
 <script src="js/config.js?v=53f50277"></script>
 <script src="js/data.js?v=177a2945"></script>
 <script src="js/body-figure.js?v=b613013e"></script>
-<script src="js/result.js?v=605d7d46"></script>
+<script src="js/result.js?v=65a482c6"></script>
 <script src="js/a11y.js?v=1876c5ec"></script>
 </body>
 </html>
