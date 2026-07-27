@@ -158,7 +158,7 @@
   function render(){
     steps.forEach((s,k)=>s.classList.toggle('active',k===cur));
     var wf=document.getElementById('wfill'); if(wf) wf.style.width=((cur+1)/steps.length*100)+'%';
-    document.querySelectorAll('#qconn span').forEach(function(el,k){ el.classList.toggle('on', k<=cur); });  // 질문 진행(연결선)
+    // 상단 1·2·3 스텝바는 '착용경험(2)' 단계 내내 고정 — 하위 스텝마다 2→3 연결선이 조금씩 차서 움직이던 것 제거(요청).
     const btn=document.getElementById('nextbtn');
     const also=document.getElementById('alsobtn');
     if(isPrefOnlyBase() && cur===1) btn.textContent='진단하기';
@@ -167,11 +167,16 @@
     // 옷 정보 입력을 '다 마친' 단계(DIAGNOSE_AT: 한 벌만으로도/2벌 완료)에서만 노출 — 카테고리 선택·선호핏 등
     // 이른 단계에선 절대 안 뜬다(데이터 없어 선호핏만 받는 prefOnly 카테고리 포함). 상/하의 나머지가 남았을 때만.
     var pair = !!DIAGNOSE_AT[cur] && !!otherBaseCat() && !otherDone();
-    // 주의: hidden 속성은 .btn-primary의 display 규칙에 무력화됨 → style.display로 직접 제어.
-    if(pair){
-      btn.textContent = (target==='top'?'상의':'하의')+'만 진단';
-      if(also){ also.textContent=(target==='top'?'하의':'상의')+'도 진단하기'; also.style.display=''; }
-    } else if(also){ also.style.display='none'; }
+    // v2: 푸터는 '진단하기' 하나 — alsobtn(푸터)은 항상 숨김. 이어가기는 본문 '더 정확히 하려면' 카드로.
+    if(also) also.style.display='none';
+    // '하의(상의)도 이어서 진단' 강조 카드는 나머지 카테고리가 남은 완료단계(pair)에서만 노출
+    var stepEl=steps[cur], cont=stepEl?stepEl.querySelector('.mopt-cont'):null;
+    if(cont){
+      if(pair){ var other=(target==='top'?'하의':'상의');
+        var ot=cont.querySelector('.mopt-other'); if(ot) ot.textContent=other;
+        cont.style.display=''; }
+      else cont.style.display='none';
+    }
     updateNext();
     window.scrollTo(0,0);
   }

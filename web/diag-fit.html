@@ -8,6 +8,23 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
 <link rel="stylesheet" href="css/diag.css?v=900e1078">
+<style>
+  /* v2 — 마무리 단계 '더 정확히 하려면(선택)' 카드 묶음. 푸터는 진단하기 하나, 이어가기·추가는 본문 카드 */
+  .more-h{ font-size:12px; font-weight:800; letter-spacing:.02em; color:var(--faint); margin:2px 2px 9px; }
+  .more{ display:flex; flex-direction:column; gap:9px; }
+  .mopt{ display:flex; align-items:center; gap:12px; width:100%; box-sizing:border-box; padding:13px 14px;
+    border:1px solid var(--line); border-radius:13px; background:#fff; text-align:left; font-family:inherit; cursor:pointer; transition:.14s; }
+  .mopt:hover{ border-color:var(--green); background:var(--green-soft); }
+  .mopt.cont{ border-color:var(--green-line,#CBDDD2); background:var(--green-soft); }   /* 하의도 이어서 = 연초록 강조 */
+  .mic{ width:36px; height:36px; flex:none; border-radius:10px; background:var(--green-soft); display:flex; align-items:center; justify-content:center; color:var(--green); }
+  .mopt.cont .mic{ background:#fff; }
+  .mic svg{ width:18px; height:18px; }
+  .mtx{ flex:1; min-width:0; }
+  .mtx b{ display:block; font-size:14px; font-weight:800; letter-spacing:-.02em; color:var(--ink); white-space:nowrap; }
+  .mtx b .catword, .mtx b .mopt-other{ white-space:nowrap; }
+  .mtx span{ display:block; font-size:12px; color:var(--muted); margin-top:1px; }
+  .mgo{ flex:none; color:var(--faint); font-weight:800; }
+</style>
 <script>
   /* 결과화면 '상의/하의 진단하기'(?cat=top|bottom)로 들어오면 첫 페인트부터 카테고리 선택(idx0) 대신
      선호핏(idx1)이 보이게 — idx0가 잠깐 떴다 넘어가는 깜빡임 방지. 문서 끝(diag-fit.js 실행 후)에서 skipcat 해제. */
@@ -127,7 +144,20 @@
           <div class="acc-row"><span class="l">2~3벌</span><span class="r">정확 — 권장</span></div>
         </div>
       </div>
-      <button class="add-garment" onclick="next()">+ 다른 핏의 <span class="catword">상의</span> 추가하기</button>
+      <!-- v2 '더 정확히 하려면' 묶음 — 하의도 이어서(강조, render가 pair일 때만 노출) + 같은 카테고리 추가 -->
+      <div class="more-h">더 정확히 하려면 (선택)</div>
+      <div class="more">
+        <button type="button" class="mopt cont mopt-cont" onclick="footerActionAlso()" style="display:none">
+          <span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h9l3 3v13H6z"/><path d="M9 12h6M9 16h6"/></svg></span>
+          <span class="mtx"><b><span class="mopt-other">하의</span>도 이어서 진단</b><span>전신 체형까지 완성돼요 · 2분</span></span>
+          <span class="mgo">›</span>
+        </button>
+        <button type="button" class="mopt" onclick="next()">
+          <span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          <span class="mtx"><b>다른 핏의 <span class="catword">상의</span> 추가</b><span>핏이 다른 옷일수록 더 정밀해져요</span></span>
+          <span class="mgo">›</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -181,7 +211,20 @@
           <div class="acc-row now"><span class="l">2벌 · 지금<span class="cur">현재</span></span><span class="r">정확 — 권장</span></div>
         </div>
       </div>
-      <button class="add-garment" onclick="toast('프로토타입 · 같은 카테고리 옷을 한 벌 더 추가하면 정보·느낌 2단계가 더 생겨요 (최대 3벌)')">+ <span class="catword">상의</span> 더 추가하기</button>
+      <!-- v2 '더 정확히 하려면' 묶음 -->
+      <div class="more-h">더 정확히 하려면 (선택)</div>
+      <div class="more">
+        <button type="button" class="mopt cont mopt-cont" onclick="footerActionAlso()" style="display:none">
+          <span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h9l3 3v13H6z"/><path d="M9 12h6M9 16h6"/></svg></span>
+          <span class="mtx"><b><span class="mopt-other">하의</span>도 이어서 진단</b><span>전신 체형까지 완성돼요 · 2분</span></span>
+          <span class="mgo">›</span>
+        </button>
+        <button type="button" class="mopt" onclick="toast('프로토타입 · 같은 카테고리 옷을 한 벌 더 추가하면 정보·느낌 2단계가 더 생겨요 (최대 3벌)')">
+          <span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          <span class="mtx"><b><span class="catword">상의</span> 더 추가</b><span>같은 카테고리를 더 넣으면 정확도가 올라가요</span></span>
+          <span class="mgo">›</span>
+        </button>
+      </div>
       <div class="notice mt-16">입력은 자동 저장돼요. 결과 화면에서 언제든 수정·재진단할 수 있어요</div>
     </div>
   </div>
@@ -190,9 +233,9 @@
   <div class="wnav">
     <button class="btn-line" onclick="prev()">이전</button>
     <span class="spacer"></span>
-    <!-- 진단 완료 단계에서 상/하의 한쪽만 했고 다른 쪽이 남았으면 nextbtn='OO만 진단' + alsobtn='OO도 진단하기'로 나란히 -->
-    <button class="btn-primary" id="nextbtn" onclick="footerAction()" disabled>다음</button>
+    <!-- v2: 푸터는 '진단하기' 하나(무조건 결과로). alsobtn은 미사용(render가 항상 숨김) — 이어가기는 본문 카드로 -->
     <button class="btn-primary" id="alsobtn" onclick="footerActionAlso()" style="display:none">하의도 진단하기</button>
+    <button class="btn-primary" id="nextbtn" onclick="footerAction()" disabled>다음</button>
   </div>
 
   <!-- ===== 파생 카테고리 · 선호핏만 (빠른 경로) — 기반(상/하의)이 체형을 잠근 뒤 진입 ===== -->
@@ -264,7 +307,7 @@
   /* 안내 토스트 — 브라우저 기본 alert 대체 (diag-fit.js와 독립) */
   function toast(m){ var t=document.getElementById('toast'); if(!t) return; t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2600); }
 </script>
-<script src="js/diag-fit.js?v=d0931b78"></script>
+<script src="js/diag-fit.js?v=6167d12e"></script>
 <script>
   /* diag-fit.js가 실제 활성 스텝(선호핏)을 세팅한 뒤 skipcat 해제 —
      그래야 이후 '이전'을 눌러 카테고리 선택(idx0)으로 내려가 편집할 수 있음. */
