@@ -9,7 +9,7 @@
   var hasBasic=!!(payload.basic && payload.basic.height!=null);   // 진단 데이터 유무(없으면 가짜 결과 대신 가드)
   if(hasBasic){ try{ sessionStorage.setItem('fitting.done','1'); }catch(e){} }   // 진단 완료 표시 — 재진단 안내 배너(diag-basic) 조건
   var nExp=(payload.experiences||[]).length;
-  var confidenceTier=nExp<=0?'low':(nExp===1?'mid':'high');       // 진단 생성(POST /api/diagnose) 시점 신호 — 경험수 기반(역산 전이라 부위기반 불가). ※표시·피드백 저장은 confTier()(부위기반)로 정직화. TODO: 서버가 역산 후 부위기반 tier 저장하면 이 값도 대체.
+  var confidenceTier=nExp<=0?'low':(nExp===1?'mid':'high');       // POST /api/diagnose에 실어보내는 예비값(경험수 기반·역산 전). ※서버가 역산(eb) 후 부위기반 tier로 대체 저장(api/diagnose.js) — 표시·피드백(confTier)과 DB가 모두 부위기반으로 일치. proto는 서버 미저장이라 무관.
   // 8유형 성별 축: 구조필드(공유)+gender.{male,female} 콘텐츠 병합. 구 포맷(gender 없음)은 raw 폴백.
   function btResolve(t, g){
     if(!t) return t;

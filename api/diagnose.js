@@ -83,6 +83,11 @@ module.exports = async function handler(req, res) {
     Object.keys(imp).forEach(function (k) { cm[k] = imp[k]; });
   }
 
+  // 신뢰도 tier = 표시 4부위(가슴·어깨·허리·엉덩이) 중 실제 역산(eb)된 개수 — 클라 result.js confTier와 동일 규칙(부위기반).
+  //   클라가 POST한 b.confidenceTier는 역산 전(경험수 기반)이라 부풀 수 있어, 서버 역산 결과로 정직화해 대체(표시·피드백과 일치).
+  var ebShown = ['chest', 'shoulder', 'waist', 'hip'].filter(function (k) { return eb[k] != null; }).length;
+  var confidenceTier = ebShown <= 0 ? 'low' : (ebShown < 4 ? 'mid' : 'high');
+
   // 8유형 분류 = 저장 시점에 서버가 계산(전엔 클라가 POST 이후 계산 → result.card null "?"). 클라와 동일 입력.
   var card = null;
   if (FitBodyType && FitBodyType.classify) {
@@ -106,7 +111,7 @@ module.exports = async function handler(req, res) {
     session_id: b.session_id || ('anon-' + Date.now().toString(36)),
     category: b.category || 'TOP',
     input: b.input != null ? b.input : { basic: b.basic, prefs: prefs, experiences: exps },
-    result: { card: b.card || card || null, confidenceTier: b.confidenceTier || null, recs: { top: topRecs, bottom: botRecs } },
+    result: { card: b.card || card || null, confidenceTier: confidenceTier, recs: { top: topRecs, bottom: botRecs } },
     engine_version: b.engine_version || 'server-1'
   };
   var r;
