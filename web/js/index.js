@@ -40,8 +40,16 @@
       var b=p.basic||{};
       if(b.gender) USER.gender=(b.gender==='female'?'female':'male');
       if(b.height) USER.height=+b.height; if(b.weight) USER.weight=+b.weight; if(b.age) USER.age=+b.age;
-      renderProfile(); renderMyAvatar();
+      renderProfile(); renderMyAvatar(); renderAcctCard();
     });
+  }
+  // 계정카드 '연결 계정' — 계정ON·로그인 상태에서만 실 세션(provider+email)으로 대체.
+  // proto/플래그off는 정적 목업(index.html) 그대로 — 프로덕션 무변경 원칙.
+  function renderAcctCard(){
+    var el=document.getElementById('acctConn'); if(!el) return;
+    if(!apiAccounts() || !_authSession || !_authSession.user) return;
+    var u=_authSession.user, em=_acctEmail || u.email || '';
+    el.textContent = FITAUTH.providerLabel(u) + ' · ' + (em || '이메일 미등록');
   }
   // mp-diag(내 진단 결과) embed는 sessionStorage(fitting.dx)를 읽는다. 계정 모드에서:
   //   ① 현 세션 진단을 계정에 귀속(claim — 로그인 상태로 진단하면 user_id null로 저장되므로) ②
@@ -116,6 +124,7 @@
           var nm=document.querySelector('#navUser .navname'); if(nm) nm.textContent=dn+' 님';
           var av=document.getElementById('myAv'); if(av) av.textContent=(dn[0]||'회');
         }
+        renderAcctCard();
         applyMyPanelGating();
         return;
       }
@@ -532,6 +541,7 @@
       var em=document.getElementById('pEmail'); if(em) _acctEmail=em.value.trim();
       FITAUTH.upsertProfile({ display_name:USER.name, email:_acctEmail||null,
         basic:{ gender:USER.gender, height:USER.height, weight:USER.weight, age:USER.age } });
+      renderAcctCard();   // 프로필에서 이메일을 고치면 계정카드도 같이 갱신
     }
     _profEdit=false; renderProfile(); renderMyAvatar(); renderMyDiagDetail(); toast('프로필을 저장했어요');
   }

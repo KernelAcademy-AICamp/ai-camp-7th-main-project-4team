@@ -34,6 +34,11 @@
       return m.name || m.full_name || m.nickname || m.user_name || m.preferred_username
         || (user.email ? String(user.email).split('@')[0] : null) || '회원';
     },
+    // 연결 계정 표시용 provider 라벨 — app_metadata.provider(google/kakao/email) 기준. 모르면 원문/'계정'.
+    providerLabel: function (user) {
+      var p = (user && user.app_metadata && user.app_metadata.provider) || '';
+      return { google: '구글', kakao: '카카오', email: '이메일' }[p] || p || '계정';
+    },
     signOut: function () { return client ? client.auth.signOut() : Promise.resolve(); },
     getSession: async function () { try { var r = await client.auth.getSession(); return r.data.session; } catch (e) { return null; } },
     user: async function () { var s = await A.getSession(); return s && s.user; },
