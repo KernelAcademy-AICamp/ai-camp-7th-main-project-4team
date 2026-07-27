@@ -267,4 +267,24 @@ try {
   console.log(`  (조건부 임퓨테이션 실데이터 검증 건너뜀: ${e.message})`);
 }
 
+/* ── 정체성 자연어 서술 (describe/narrate) — 스코프 A ─────────────────────── */
+assert.strictEqual(typeof FitBodyType.describe, "function", "describe export"); pass++;
+assert.strictEqual(typeof FitBodyType.narrate, "function", "narrate export"); pass++;
+// volume 버킷(BMI) · intensity 버킷(pm |dev|): balanced<12 / strong≥25 / 그외 mild
+const dLean = FitBodyType.describe("STR", "male", 180, 58, { chestFull: 50, waist: 50, hip: 50, shoulder: 50, thigh: 50 });
+eq(dLean.volume, "lean", "저BMI → lean"); eq(dLean.intensity, "balanced", "편차<12 → balanced");
+const dStr = FitBodyType.describe("INV", "male", 178, 74, { shoulder: 82, chestFull: 60, waist: 45, hip: 48, thigh: 50 });
+eq(dStr.intensity, "strong", "편차≥25 → strong");
+const dMid = FitBodyType.describe("TRI", "female", 162, 55, { hip: 65, chestFull: 50, waist: 48, shoulder: 50, thigh: 55 });
+eq(dMid.intensity, "mild", "12≤편차<25 → mild");
+// narrate 조합 + 신뢰가드: strong만 강도어, balanced/mild는 강도어 생략
+const DESC = { sil: { STR: "직선 라인", INV: "V라인", TUB: "슬림 라인", RND: "둥근 실루엣" }, volume: { lean: "슬림한", standard: "표준 볼륨의", volume: "볼륨감 있는" }, intensity: { strong: "뚜렷한", mild: "" } };
+eq(FitBodyType.narrate({ code: "INV", volume: "standard", intensity: "strong" }, DESC, null), "표준 볼륨의 뚜렷한 V라인이에요.", "strong → 강도어 포함");
+eq(FitBodyType.narrate({ code: "STR", volume: "standard", intensity: "balanced" }, DESC, null), "표준 볼륨의 직선 라인이에요.", "balanced → 강도어 생략(과신 금지)");
+eq(FitBodyType.narrate({ code: "TUB", volume: "lean", intensity: "mild" }, DESC, null), "슬림 라인이에요.", "TUB → 볼륨어 중복 제거");
+eq(FitBodyType.narrate({ code: "BAL", volume: "standard", intensity: "strong" }, { sil: { BAL: "균형 잡힌 라인" }, volume: { standard: "표준 볼륨의" }, intensity: { strong: "뚜렷한", mild: "" } }, null), "표준 볼륨의 균형 잡힌 라인이에요.", "BAL은 strong이어도 강도어 미적용('뚜렷한 균형' 모순 방지)");
+eq(FitBodyType.narrate({ code: "STR", volume: "standard", intensity: "strong" }, DESC, "시크 스트레이트"), "시크 스트레이트 — 표준 볼륨의 뚜렷한 직선 라인이에요.", "name 접두");
+eq(FitBodyType.narrate({ code: "STR", volume: "standard", intensity: "strong" }, null, null), "", "문안 없으면 ''(정적 profile 폴백)");
+eq(FitBodyType.narrate(null, DESC, null), "", "신호 없으면 ''");
+
 console.log(`\n✓ 골든 테스트 ${pass}건 통과 — engine.js·bodytype.js가 명세(docs/6)와 일치.`);

@@ -7,6 +7,12 @@
   "secondaryTag": "frame: L(롱) / C(컴팩트) — 키·비율 보조 태그",
   "gender": "여성/남성 — 캐릭터 머리만 다름(MVP). 추천 분기는 v2(여성 원피스·치마 등)"
  },
+ "desc": {
+  "_todo": "체형 정체성 개인화 한 줄 문안 — 초안(개발 스캐폴드). 디자이너 톤·문구 확정 필요. FitBodyType.narrate가 '{name} — {volume} {intensity} {sil}이에요' 로 조합. intensity.mild는 빈 문자열(약신호 침묵). 성별 분기 필요 시 sil/volume을 gender별로 확장.",
+  "sil": { "STR": "직선 라인", "TRI": "A라인", "INV": "V라인", "HRG": "X라인", "BAL": "균형 잡힌 라인", "RND": "둥근 실루엣", "DIA": "다이아 실루엣", "TUB": "슬림 라인" },
+  "volume": { "lean": "슬림한", "standard": "표준 볼륨의", "volume": "볼륨감 있는" },
+  "intensity": { "strong": "뚜렷한", "mild": "" }
+ },
  "types": [
   {
    "code": "STR",

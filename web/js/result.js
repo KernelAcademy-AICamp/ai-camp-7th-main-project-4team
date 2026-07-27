@@ -139,6 +139,7 @@
   var _diagId=null;    // api 모드: FDATA.diagnose 후 diagnosis id 저장(피드백 FK)
   var _ebKeys={};      // 착용경험으로 실제 역산된 부위 키 집합(chestFull·shoulder·waist·hip·thigh) — 탭4 결과 근거가 소비
   var _ebCm={};        // 그 부위들의 역산된 cm 값 — 탭3 체형 그림 예상치수가 회귀 대신 이 값을 씀
+  var _pmG={};         // 부위 백분위(pm) 노출 — 정체성 개인화 서술(_renderType)이 강도 신호로 소비(탭2와 동일 신호)
   // 유형 정체성 / 잘맞·피할 FIT / 한 끗 — 마이 '내 진단결과' 디자인 통일 (8유형 동적)
   (function(){
     var okC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
@@ -153,9 +154,17 @@
       var p3=document.getElementById('p3'); if(p3) p3.style.setProperty('--tp',tp);   // 체형그림 탭 부위 뱃지도 유형색 따라감
       var idEl=document.getElementById('rtypeid');
       if(idEl){ idEl.style.setProperty('--tp',tp);
+          // 정체성 개인화 한 줄(스코프 A) — 유형 아래 볼륨×강도로 서술. 이름은 h2에 있으니 name=null(중복 방지).
+        // 신호는 탭2와 동일(_pmG·balanced<12), 약신호면 강도어 생략. 문안/신호 없으면 ''→정적 profile만.
+        var _lead='';
+        if(window.FitBodyType && FitBodyType.describe && window._btDesc && payload && payload.basic){
+          var _sig=FitBodyType.describe(t.code,(gender==='female'?'female':'male'),payload.basic.height,payload.basic.weight,_pmG);
+          _lead=FitBodyType.narrate(_sig,window._btDesc,null)||'';
+        }
+        var _descLines=(_lead?[_lead]:[]).concat(t.profile||[]);
         idEl.innerHTML='<span class="dtl-code">'+t.code+'</span><h2 class="dtl-name">'+t.name+'</h2>'+
           '<span class="dtl-korea">사이즈코리아 · '+t.sizeKorea+'</span>'+
-          '<p class="dtl-desc">'+(t.profile||[]).map(function(p,i){ return i===0?'<b>'+p+'</b>':p; }).join('<br>')+'</p>'+
+          '<p class="dtl-desc">'+_descLines.map(function(p,i){ return i===0?'<b>'+p+'</b>':p; }).join('<br>')+'</p>'+
           '<div class="dtl-hash">'+chips(t.signature)+'</div>'; }
       var fEl=document.getElementById('rfit');
       if(fEl){ fEl.style.setProperty('--tp',tp);
@@ -166,6 +175,7 @@
     };
     fetch('data/bodytypes.json').then(function(r){ return r.json(); }).then(function(j){
       var list=Array.isArray(j)?j:(j.types||Object.keys(j).map(function(k){ return j[k]; }));
+      window._btDesc=(j&&j.desc)||null;   // 정체성 개인화 문안 조각(sil·volume·intensity) — narrate 소비
       window._btList=list.map(function(t){ return btResolve(t, gender); });   // 성별별 콘텐츠 해석
       window._renderType(window._btList);
     }).catch(function(){});
@@ -319,6 +329,7 @@
     var est=BodyModel.estimate(payload.basic||{});
     if(!est.ready){ renderNoData(); hideRloading(); return; }
     var pm={}, cm={}, r2m={}; est.parts.forEach(function(p){ pm[p.key]=p.pct; cm[p.key]=p.cm; r2m[p.key]=p.r2; });
+    _pmG=pm; if(window._btList&&window._renderType) window._renderType(window._btList);   // 백분위 준비됨 → 정체성 개인화 줄 재렌더(신호=탭2와 동일)
     var pref=(payload.prefs&&payload.prefs[curCat])||'regular';
 
     // 역산+추천(specs 의존)은 diagnoseSpecs가 모드별로: proto=클라(garments 로드) / api=서버(/api/diagnose, garments 비노출).

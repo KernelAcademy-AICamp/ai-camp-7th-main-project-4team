@@ -57,5 +57,42 @@
     return "BAL";                    // 표준
   }
 
-  global.FitBodyType = { classify: classify, CODES: CODES, _cut: CUT };
+  /* ── 정체성 자연어 서술 신호 — 스코프 A(정체성 개인화) ──────────────────────
+     신뢰 가드: ① 탭2 결과풀이와 같은 신호(부위 |pct−50| 최대·balanced<12 임계)에서 강도 산출 → 모순 불가.
+                ② 약신호(balanced/mild)면 강도어 생략(과신 금지). volume=BMI 버킷(CUT 재사용). */
+  function describe(code, sex, heightCm, weightKg, pm) {
+    var c = CUT[sex]; if (!c || !code) return null;
+    var volume = "standard";
+    if (heightCm && weightKg) {
+      var bmi = weightKg / Math.pow(heightCm / 100, 2);
+      volume = bmi >= c.bmiRnd ? "volume" : (bmi <= c.bmiTub ? "lean" : "standard");
+    }
+    var intensity = "mild";
+    if (pm) {
+      var dev = -1;
+      ["shoulder", "chestFull", "waist", "hip", "thigh"].forEach(function (k) {   // 탭2 renderMeans와 동일 부위셋
+        if (pm[k] == null) return; var d = Math.abs(pm[k] - 50); if (d > dev) dev = d;
+      });
+      intensity = dev < 0 ? "mild" : (dev < 12 ? "balanced" : (dev >= 25 ? "strong" : "mild"));  // balanced<12=탭2 임계
+    }
+    return { code: code, volume: volume, intensity: intensity };
+  }
+  var _VOLTYPE = { RND: 1, DIA: 1, TUB: 1 };   // 볼륨/슬림이 실루엣어에 이미 함의된 유형
+  /** 서술 신호 + 문안 조각(bodytypes.json desc) → 한 줄. 조각/신호 없으면 ''(호출부가 정적 profile 폴백). */
+  function narrate(sig, desc, name) {
+    if (!sig || !desc || !desc.sil) return "";
+    var sil = desc.sil[sig.code]; if (!sil) return "";
+    var vol = (desc.volume && desc.volume[sig.volume]) || "";
+    var phrase;
+    if (sig.code === "TUB") phrase = sil;                       // '슬림한 슬림 라인' 중복 제거 → 실루엣어만
+    else if (_VOLTYPE[sig.code] || sig.code === "BAL") phrase = [vol, sil].filter(Boolean).join(" ");   // 볼륨형(RND/DIA)·균형형(BAL): 방향성 없음 → 강도어 미적용('뚜렷한 균형' 모순 방지)
+    else {                                                       // 방향성 유형(STR/TRI/INV/HRG)만: 볼륨 + (강할 때만)강도 + 실루엣
+      var intens = (sig.intensity === "strong" && desc.intensity) ? desc.intensity.strong : "";
+      phrase = [vol, intens, sil].filter(Boolean).join(" ");
+    }
+    if (!phrase) return "";
+    return name ? name + " — " + phrase + "이에요." : phrase + "이에요.";
+  }
+
+  global.FitBodyType = { classify: classify, CODES: CODES, _cut: CUT, describe: describe, narrate: narrate };
 })(typeof window !== "undefined" ? window : this);
