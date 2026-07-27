@@ -140,14 +140,38 @@
   })();
   // 실측 데이터 없는 기반 카테고리(구조적 예외): 선호핏(idx1) 단계에서 착용경험 없이 바로 진단.
   function isPrefOnlyBase(){ return CATS[target] && CATS[target].kind==='base' && !hasData(target); }
+  // ── '하의도 이어서 진단' 배선 ──
+  // 진단 완료 단계에서 상/하의 한쪽만 했고 다른 쪽이 남았으면 두 번째 버튼으로 바로 이어가게 한다
+  // (결과 화면을 거치지 않고 diag-fit?cat=<나머지>&reuse=1&have=<현재>로 재진입 — 결과 배너와 같은 경로).
+  function otherBaseCat(){ return target==='top'?'bottom':target==='bottom'?'top':null; }  // 파생(아우터·원피스 등)이면 null
+  function otherDone(){
+    var other=otherBaseCat(); if(!other) return true;
+    var have=(new URLSearchParams(location.search).get('have')||'').split(',').filter(Boolean);
+    if(have.indexOf(other)>=0) return true;
+    try{ var dx=JSON.parse(sessionStorage.getItem('fitting.dx')||'{}');
+      var oc=other==='top'?'TOP':'BOTTOM';
+      if((dx.experiences||[]).some(function(e){return e.category===oc;})) return true;
+      if(dx.prefs && dx.prefs[oc]) return true;
+    }catch(e){}
+    return false;
+  }
   function render(){
     steps.forEach((s,k)=>s.classList.toggle('active',k===cur));
     var wf=document.getElementById('wfill'); if(wf) wf.style.width=((cur+1)/steps.length*100)+'%';
     document.querySelectorAll('#qconn span').forEach(function(el,k){ el.classList.toggle('on', k<=cur); });  // 질문 진행(연결선)
     const btn=document.getElementById('nextbtn');
+    const also=document.getElementById('alsobtn');
     if(isPrefOnlyBase() && cur===1) btn.textContent='진단하기';
     else if(DIAGNOSE_AT[cur]) btn.textContent='진단하기';
     else btn.textContent = cur===0 ? '시작하기' : '다음';
+    // 옷 정보 입력을 '다 마친' 단계(DIAGNOSE_AT: 한 벌만으로도/2벌 완료)에서만 노출 — 카테고리 선택·선호핏 등
+    // 이른 단계에선 절대 안 뜬다(데이터 없어 선호핏만 받는 prefOnly 카테고리 포함). 상/하의 나머지가 남았을 때만.
+    var pair = !!DIAGNOSE_AT[cur] && !!otherBaseCat() && !otherDone();
+    // 주의: hidden 속성은 .btn-primary의 display 규칙에 무력화됨 → style.display로 직접 제어.
+    if(pair){
+      btn.textContent = (target==='top'?'상의':'하의')+'만 진단';
+      if(also){ also.textContent=(target==='top'?'하의':'상의')+'도 진단하기'; also.style.display=''; }
+    } else if(also){ also.style.display='none'; }
     updateNext();
     window.scrollTo(0,0);
   }
@@ -161,6 +185,15 @@
     if(isPrefOnlyBase() && cur===1){ collectPrefOnly(); location.href='diag-loading.html?cat='+target; return; }
     if(DIAGNOSE_AT[cur]){ collectExp(); location.href='diag-loading.html?g='+DIAGNOSE_AT[cur]+'&cat='+target; }
     else next();
+  }
+  // '하의(상의)도 진단하기' — 현재 카테고리 저장 후 결과를 거치지 않고 나머지 카테고리 진단으로 재진입.
+  function footerActionAlso(){
+    if(!stepDone()) return;
+    if(isPrefOnlyBase() && cur===1) collectPrefOnly();
+    else if(DIAGNOSE_AT[cur]) collectExp();
+    else return;
+    var other=otherBaseCat(); if(!other) return;
+    location.href='diag-fit.html?cat='+other+'&reuse=1&have='+target;   // 현재 카테고리 유지, 나머지 진단 → 완료 시 전신 결과
   }
   function pick(el){[...el.parentElement.children].forEach(c=>c.classList.remove('on'));el.classList.add('on');updateNext();}
   // ── 선택 게이팅: 첫 진입엔 미선택 → '다음' 비활성, 화면별 선택이 차야 활성 ──
@@ -188,7 +221,9 @@
       default: return true;   // 5·9 입력 점검 등 — 입력 없음
     }
   }
-  function updateNext(){ var b=document.getElementById('nextbtn'); if(b) b.disabled=!stepDone(); }
+  function updateNext(){ var d=!stepDone();
+    var b=document.getElementById('nextbtn'); if(b) b.disabled=d;
+    var a=document.getElementById('alsobtn'); if(a) a.disabled=d; }
 
   /* 착용경험 수집 → sessionStorage(fitting.dx). 결과 화면(result.html)이 엔진 계약(diagnose)에 넘긴다.
      부위 라벨→스키마 key, 선택 라벨→값(FitRating/PainVerdict/LengthPref). 레이어는 옵션 수로 판별(4=fit·2=flag·3=pref). */

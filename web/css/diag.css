@@ -191,6 +191,15 @@ html.skipcat #w-cat + .wstep{ display:block; }
 .lruler .marker{ position:absolute; top:18px; bottom:0; width:2.5px; border-radius:2px; background:var(--green); left:0; box-shadow:0 0 0 4px rgba(46,74,59,.1); }
 .lruler .marker::after{ content:""; position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:11px; height:11px; border-radius:50%; background:var(--green); box-shadow:0 2px 6px rgba(46,74,59,.4); }
 .loading-wrap .lpct{ font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:12px; font-weight:700; color:var(--green); margin-top:14px; letter-spacing:.02em; }
+/* 동그란 Fit 로딩(judge .jload-* 이식) — 스피너 링 + Fit 로고 */
+.loading-wrap .dl-mk{ position:relative; width:132px; height:132px; display:grid; place-items:center; margin:6px auto 4px; }
+.dl-ring{ position:absolute; inset:0; width:132px; height:132px; animation:jspin 1.4s cubic-bezier(.5,.1,.5,.9) infinite; }
+.dl-ring .trk{ stroke:var(--green-soft); }
+.dl-ring .arc{ stroke:var(--green); }
+.dl-lg{ font-size:42px; font-weight:800; letter-spacing:-.05em; line-height:1; color:var(--green); }
+.dl-lg .sq{ display:inline-block; width:9px; height:9px; background:#CBDDD2; margin-left:4px; vertical-align:baseline; }
+@keyframes jspin{ to{ transform:rotate(360deg); } }
+@media(prefers-reduced-motion:reduce){ .dl-ring{ animation:none; } }
 .loading-wrap .step-h{ margin:28px 0 2px; }
 .loading-wrap .lsub{ font-size:14px; color:var(--muted); margin-top:13px; max-width:320px; }   /* 제목과 간격 */
 .loading-wrap .load-steps{ margin-top:26px; align-items:flex-start; }   /* 항목=왼쪽(아이콘 세로 정렬), 목록 블록=화면 중앙(inline-flex) */
