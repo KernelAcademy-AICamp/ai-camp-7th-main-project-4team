@@ -27,8 +27,42 @@
   /* ===== 로그인/가입 시트 ===== */
   function openLogin(ctx, onDone){ window._loginCb=onDone||null; document.getElementById('loginTitle').textContent=(ctx?ctx+' — ':'')+'로그인하고 이어가기'; document.getElementById('sheet').classList.add('on'); scrim(true); }
   function loginDone(){ saveLS('auth', true); closeAll(); applyAuthUI(); var cb=window._loginCb; window._loginCb=null; if(cb){ toast('로그인했어요 · 이어서 진행할게요'); cb(); } else toast('로그인했어요 · 결과가 계정에 저장됐어요'); }
-  // proto(데모)=기본 로그인 가정 / api(프로덕션)=기본 로그아웃(신규 방문자는 비로그인 — My·알림·프로필 숨김)
-  function loggedIn(){ return loadLS('auth', !(window.FDATA&&FDATA.mode==='api'))!==false; }
+
+  // ── 소비자 계정(api·ACCOUNTS_ENABLED) 실 인증 (Phase 0a) — proto/플래그off는 위 목업 유지 ──
+  var _authSession=null;
+  function apiAccounts(){ return !!(window.FDATA&&FDATA.mode==='api'&&window.ACCOUNTS_ENABLED&&window.FITAUTH&&FITAUTH.ready()); }
+  function initAuth(){
+    if(!apiAccounts()) return;
+    FITAUTH.getSession().then(function(s){ _authSession=s; applyAuthUI(); });
+    FITAUTH.onChange(function(e,s){ _authSession=s; applyAuthUI(); if(e==='SIGNED_IN') onSignedIn(); });
+  }
+  function onSignedIn(){
+    var u=_authSession&&_authSession.user, email=u&&u.email;
+    if(!email){                                   // 카카오 무이메일 → 필수 이메일 수집(이메일 없이는 연락 불가)
+      email=(prompt('알림·계정 확인용 이메일을 입력해 주세요 (필수)')||'').trim();
+      if(email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ toast('이메일 형식을 확인해 주세요'); email=''; }
+    }
+    try{ var sid=(FDATA.sessionId)?FDATA.sessionId():null; if(sid) FITAUTH.claimDiagnoses(sid); }catch(e){}   // 익명 진단 → 계정 귀속
+    try{ var patch={ display_name:FITAUTH.displayName(u) };
+      var basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'null'); if(basic) patch.basic=basic;
+      if(email) patch.email=email;
+      FITAUTH.upsertProfile(patch); }catch(e){}
+    closeAll(); applyAuthUI();
+    if(!email) toast('이메일이 없어요 · 프로필에서 등록해 주세요');
+    var cb=window._loginCb; window._loginCb=null;
+    if(cb){ toast('로그인했어요 · 이어서 진행할게요'); cb(); } else if(email) toast('로그인했어요 · 진단이 계정에 저장돼요');
+  }
+  function loginWith(provider){
+    if(!apiAccounts()){ loginDone(); return; }    // proto/플래그off = 기존 목업
+    if(provider==='google'){ FITAUTH.signInGoogle(); return; }
+    if(provider==='kakao'){ FITAUTH.signInKakao(); return; }
+    if(provider==='email'){ var em=(prompt('로그인 링크를 받을 이메일')||'').trim();
+      if(!em) return; if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ toast('이메일 형식을 확인해 주세요'); return; }
+      FITAUTH.signInEmail(em).then(function(r){ toast(r&&r.ok ? (em+' 로 로그인 링크를 보냈어요 · 메일함 확인') : '전송 실패 · 잠시 후 다시'); }); return; }
+    toast('준비 중이에요');                         // 네이버 등 미지원 provider
+  }
+  // proto(데모)=기본 로그인 가정 / api: 계정ON=실세션 / 계정OFF(MVP)=비로그인(인증 표면 숨김)
+  function loggedIn(){ if(apiAccounts()) return !!_authSession; if(window.FDATA&&FDATA.mode==='api') return false; return loadLS('auth', true)!==false; }
   /* 헤더 auth 상태 반영 — 로그인=프로필·알림벨 / 비로그인=로그인·회원가입 버튼(메인화면 게이트) */
   function applyAuthUI(){
     var inA=loggedIn();
@@ -36,10 +70,27 @@
     // MVP(api): 인증은 측정 대상 아님(진단=킬메트릭·수요=lead) + 소비자 로그인 목업 → 인증 표면 전체 숨김.
     // 상단은 Home + Stylists만. 진단·수요수집은 로그인 불필요.
     if(window.FDATA && FDATA.mode==='api'){
-      // 우측 전체 숨김 — 인증(벨·유저·로그인) 목업 + 스타일리스트 지원(pro-signup, 전화인증 등 미구현)까지.
-      //  '스타일리스트 지원' 뒤에 뜬 구분선이 남지 않도록 개별 요소가 아니라 .navr 컨테이너를 통째로 숨긴다.
-      var navr=document.querySelector('header .navr'); if(navr) navr.style.display='none';
-      if(my) my.style.display='none';   // My 탭(메뉴 안)은 별도로 숨김
+      var navr=document.querySelector('header .navr');
+      var sup=navr&&navr.querySelector('.sup');
+      if(apiAccounts()){
+        // 계정 ON: 로그인 표면 노출(로그인 전=버튼 / 후=유저·My). 벨=이벤트소스 없음·스타일리스트지원=마켓 → 숨김.
+        if(navr) navr.style.display='';
+        if(sup) sup.style.display='none';
+        if(a) a.style.display=inA?'none':'inline-flex';
+        if(u) u.style.display=inA?'inline-flex':'none';
+        if(b) b.style.display='none'; if(bd) bd.style.display='none';
+        if(my) my.style.display=inA?'':'none';
+        if(inA && _authSession && _authSession.user){
+          var dn=FITAUTH.displayName(_authSession.user);
+          var nm=document.querySelector('#navUser .navname'); if(nm) nm.textContent=dn+' 님';
+          var av=document.getElementById('myAv'); if(av) av.textContent=(dn[0]||'회');
+        }
+        applyMyPanelGating();
+        return;
+      }
+      // 계정 OFF(MVP 기본·ACCOUNTS_ENABLED=false): 인증 표면 전체 숨김(기존 동작).
+      if(navr) navr.style.display='none';
+      if(my) my.style.display='none';
       return;   // Stylists 탭(메뉴)은 유지 — 클릭 시 '준비 중 · 알림' 웨이트리스트로(리텐션)
     }
     if(a) a.style.display=inA?'none':'inline-flex';
@@ -48,7 +99,14 @@
     if(bd) bd.style.display=inA?'inline-block':'none';
     if(my) my.style.display=inA?'':'none';   // 비로그인 시 My(개인 데이터·진단·요청) 숨김
   }
+  // 계정ON(api): 마켓·지원·알림 패널은 백엔드 없어 숨김(개인화 3패널만 — 빈 화면 방지=정직).
+  function applyMyPanelGating(){
+    ['mp-req','mp-fav','mp-support','mp-noti'].forEach(function(p){
+      var el=document.querySelector('#smenu a[data-p="'+p+'"]'); if(el) el.style.display='none';
+    });
+  }
   function doLogout(){ if(!confirm('로그아웃할까요? 둘러보기는 로그인 없이 이어갈 수 있어요.')) return;
+    if(apiAccounts()){ FITAUTH.signOut().then(function(){ _authSession=null; applyAuthUI(); go('home'); toast('로그아웃했어요'); }); return; }
     saveLS('auth', false); applyAuthUI(); go('home'); toast('로그아웃했어요'); }
   function doQuit(){ if(!confirm('정말 회원 탈퇴할까요? 진단·요청·저장 데이터가 모두 삭제돼요.')) return;
     ['user','reqs','favs','support','notis'].forEach(function(k){ try{ localStorage.removeItem('fitting.'+k); }catch(e){} });
@@ -1496,7 +1554,7 @@
     if(['home','shop','my'].indexOf(top)<0) return;
     if(top==='my' && p[1]){ goMy(p[1]); } else { go(top); } })();
 
-  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagDetail(); renderSupport(); renderNotis(); renderPrivacy(); applyAuthUI();
+  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagDetail(); renderSupport(); renderNotis(); renderPrivacy(); applyAuthUI(); initAuth();
 
   /* 새로고침 시 보던 화면 복원 — 쿼리 딥링크(?from/?login/?my/?ctx)나 해시가 없을 때만(그건 각각 처리) */
   (function(){ try{ var q=new URLSearchParams(location.search);

@@ -533,10 +533,10 @@
   <h3 id="loginTitle">로그인하고 이어가기</h3>
   <p class="ss">스타일리스트 둘러보기는 비회원도 자유예요 · 견적 요청·결과 저장은 로그인 후 이어져요</p>
   <div class="social">
-    <button class="kakao" onclick="loginDone()">카카오로 계속하기</button>
-    <button class="naver" onclick="loginDone()">네이버로 계속하기</button>
-    <button class="google" onclick="loginDone()">Google로 계속하기</button>
-    <button class="email" onclick="loginDone()">이메일로 계속하기</button>
+    <button class="kakao" onclick="loginWith('kakao')">카카오로 계속하기</button>
+    <button class="naver" onclick="loginWith('naver')">네이버로 계속하기</button>
+    <button class="google" onclick="loginWith('google')">Google로 계속하기</button>
+    <button class="email" onclick="loginWith('email')">이메일로 계속하기</button>
   </div>
 </div>
 
@@ -591,9 +591,11 @@
 <div class="toast" id="toast"></div>
 
 <!-- sangmin 모듈(⑥): 진단 입력 설문(M1) + 엔진 계약 목업(M2) -->
-<script src="js/config.js?v=53f50277"></script>
+<script src="js/config.js?v=b5ef93a5"></script>
 <script src="js/data.js?v=0b603d0c"></script>
-<script src="js/index.js?v=f0108b0b"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/auth.js?v=ae76f51f"></script>
+<script src="js/index.js?v=56bc22ba"></script>
 <script src="js/a11y.js?v=1876c5ec"></script>
 </body>
 </html>

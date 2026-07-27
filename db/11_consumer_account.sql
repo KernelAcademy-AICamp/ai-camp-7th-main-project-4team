@@ -24,6 +24,7 @@
 create table profile (
   id                     uuid primary key references auth.users(id) on delete cascade,
   display_name           text,
+  email                  text,                               -- 필수 연락처. provider가 주면 그 값, 카카오 무이메일이면 로그인 시 입력받아 저장. (식별은 email 아니라 id=auth.uid)
   basic                  jsonb,                              -- {gender, height, weight, age} — 재진단 프리필
   engine_improve_consent boolean not null default false,     -- 진단 개선 활용 동의(opt-in) — 계정 단위 1회
   age_attested           boolean not null default false,     -- 만 14세↑/법정대리인 확인
@@ -31,6 +32,8 @@ create table profile (
   created_at             timestamptz not null default now(),
   updated_at             timestamptz not null default now()
 );
+-- 이미 profile을 적용한 DB에 email 컬럼 추가(멱등) — 신규 설치는 위 create에 이미 있어 no-op.
+alter table profile add column if not exists email text;
 
 -- updated_at 자동 갱신
 create or replace function touch_updated_at() returns trigger
