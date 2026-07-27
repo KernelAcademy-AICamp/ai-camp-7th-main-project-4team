@@ -9,7 +9,7 @@
   var hasBasic=!!(payload.basic && payload.basic.height!=null);   // 진단 데이터 유무(없으면 가짜 결과 대신 가드)
   if(hasBasic){ try{ sessionStorage.setItem('fitting.done','1'); }catch(e){} }   // 진단 완료 표시 — 재진단 안내 배너(diag-basic) 조건
   var nExp=(payload.experiences||[]).length;
-  var confidenceTier=nExp<=0?'low':(nExp===1?'mid':'high');       // 0벌 low·1벌 mid·2벌+ high
+  var confidenceTier=nExp<=0?'low':(nExp===1?'mid':'high');       // 진단 생성(POST /api/diagnose) 시점 신호 — 경험수 기반(역산 전이라 부위기반 불가). ※표시·피드백 저장은 confTier()(부위기반)로 정직화. TODO: 서버가 역산 후 부위기반 tier 저장하면 이 값도 대체.
   // 8유형 성별 축: 구조필드(공유)+gender.{male,female} 콘텐츠 병합. 구 포맷(gender 없음)은 raw 폴백.
   function btResolve(t, g){
     if(!t) return t;
@@ -79,8 +79,8 @@
   function maybeHideLoading(){ if(_contentReady && (_cardPainted || !showCard)) hideRloading(); }
   setTimeout(hideRloading, 4000);   // 안전장치: 무슨 일이 있어도 4초 뒤엔 공개(카드 로드 실패 등)
   function cardNoteHTML(){
-    var tier=confidenceTier;
-    if(!cardReady && tier==='high') tier='mid'; // 완성 전엔 '높음' 아님
+    var tier=confTier();                          // 부위기반 단일 신호(전 지점 일치)
+    if(!cardReady && tier==='high') tier='mid'; // 완성 전엔 '높음' 아님(안전장치)
     var tierKo=tier==='high'?'높음':tier==='mid'?'보통':'낮음';
     // 업그레이드 유도 문구는 상단 배너(upgradeHTML)로 이동 — 여기선 정확도 배지만.
     return '<div class="rcardnote"><span class="rconf '+tier+'">정확도 '+tierKo+(tier==='low'?' · 기본 추정':'')+'</span></div>';
@@ -140,6 +140,13 @@
   var _ebKeys={};      // 착용경험으로 실제 역산된 부위 키 집합(chestFull·shoulder·waist·hip·thigh) — 탭4 결과 근거가 소비
   var _ebCm={};        // 그 부위들의 역산된 cm 값 — 탭3 체형 그림 예상치수가 회귀 대신 이 값을 씀
   var _pmG={};         // 부위 백분위(pm) 노출 — 정체성 개인화 서술(_renderType)이 강도 신호로 소비(탭2와 동일 신호)
+  // 신뢰도 단일 신호(부위기반) — 표시 4부위 중 실제 역산(_ebKeys)된 개수로 tier. 전 노출 지점(카드배지·아바타·탭4 종합)이 이걸 소비.
+  //   경험수(nExp)가 아니라 '표시 부위가 실제 실측됐나'를 봐서, 상의만 넣어도 하의를 '높음'으로 부풀리지 않음(false precision 회피).
+  //   _ebKeys는 역산 후(diagnoseSpecs) 채워지고 각 지점이 재렌더되므로, 채워지기 전엔 보수적으로 'low'(과소=안전 방향).
+  function confTier(){
+    var n=['shoulder','chestFull','waist','hip'].filter(function(k){ return _ebKeys[k]; }).length;
+    return n<=0 ? 'low' : (n<4 ? 'mid' : 'high');
+  }
   // 유형 정체성 / 잘맞·피할 FIT / 한 끗 — 마이 '내 진단결과' 디자인 통일 (8유형 동적)
   (function(){
     var okC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
@@ -551,7 +558,7 @@
   function fb(el,verdict){
     [].forEach.call(el.parentElement.children,function(c){c.classList.remove('on');}); el.classList.add('on');
     var consent=FDATA.readConsent();   // 어댑터(seam)
-    var rec={ ts:new Date().toISOString(), bodyType:cardType, verdict:verdict, confidenceTier:confidenceTier, engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId };
+    var rec={ ts:new Date().toISOString(), bodyType:cardType, verdict:verdict, confidenceTier:confTier(), engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId };
     FDATA.saveFeedback(rec);   // 어댑터(seam): proto=localStorage / api=POST /api/feedback(diagnosis_id 포함)
   }
   // 진단 초기화 — 누적된 입력(dx·기본정보·동의·피드백)을 지우고 처음부터. (목업 테스트용)
@@ -686,10 +693,9 @@
         {label:'허리둘레',   val:r(ebv('waist', cm.waist)),                     pm:3},
         {label:'엉덩이둘레', val:r(ebv('hip', cm.hip)),                         pm:3}
       ].filter(function(x){ return x.val!=null; });
-      // 신뢰도 라벨 = 표시되는 4개 부위 중 실제 역산된 개수(_ebKeys) 기준 — 탭4 부위별 신호와 일치(탭 간 모순 방지).
-      //   전 경험수(nExpA)로 산정하면 상의만 입어도 하의(회귀값)가 '높음'으로 오표기됨(코드래빗 #97).
-      var ebShown=['shoulder','chestFull','waist','hip'].filter(function(k){ return _ebKeys[k]; }).length;
-      var confLabel = ebShown<=0 ? '낮음 (키·몸무게만)' : (ebShown<4 ? '보통 (일부 실측 보정)' : '높음 (착용경험 반영)');
+      // 신뢰도 라벨 = 전 지점 단일 신호 confTier()(부위기반). 카드배지·탭4 종합과 일치(탭 간 모순 방지).
+      var _ct=confTier();
+      var confLabel = _ct==='low' ? '낮음 (키·몸무게만)' : (_ct==='mid' ? '보통 (일부 실측 보정)' : '높음 (착용경험 반영)');
       el.innerHTML=BodyFigure.svg(m, {code:code}, est.sex, estArr, confLabel);
     });
   }
@@ -703,19 +709,19 @@
     try{ payload=JSON.parse(sessionStorage.getItem('fitting.dx')||'{}'); }catch(e){}
     try{ basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'{}'); }catch(e){}
     if(!payload.basic || payload.basic.height==null) payload.basic=basic;
-    var nExp=(payload.experiences||[]).length;
-    var tier=nExp<=0?'low':(nExp===1?'mid':'high');
+    var tier=confTier();                          // 부위기반 단일 신호 — 카드배지·아바타 라벨과 일치 + 아래 부위별 행과 자기모순 제거
     var KO={low:'낮음',mid:'보통',high:'높음'}, FILL={high:5,mid:3,low:2};
     function cert(r2,isEb){ return isEb?'high':(r2>=0.6?'mid':'low'); }
     BodyModel.load().then(function(){
       var est=BodyModel.estimate(payload.basic||{}); if(!est||!est.ready) return;
       var byKey={}; est.parts.forEach(function(p){ byKey[p.key]=p; });
       var cb=document.getElementById('confBadge'); if(cb){ cb.className='conf-badge '+tier; cb.textContent=KO[tier]; }
-      var cr=document.getElementById('confReason'); if(cr) cr.innerHTML = nExp<=0
-        ? '입어본 옷 <b>0벌</b> · 키·몸무게로만 추정한 <b>기본 단계</b>예요<span class="acc-sub">옷을 넣을수록 정확도가 올라가요</span>'
-        : (nExp===1 ? '입어본 옷 <b>1벌</b> 반영 · 일부 부위가 <b>실측으로 보정</b>됐어요<span class="acc-sub">하의를 넣으면 높음이 돼요</span>'
-                    : '입어본 옷 <b>'+nExp+'벌</b> 반영 · 대부분 부위가 실측으로 좁혀진 <b>정밀 단계</b>예요<span class="acc-sub">이 결과를 그대로 믿고 쓰셔도 돼요</span>');
-      var steps=[['낮음','옷 0벌','low'],['보통','옷 1벌','mid'],['높음','옷 2벌+','high']], si=(tier==='low'?0:tier==='mid'?1:2);
+      // TODO(디자이너): 문구·단계 라벨 톤 정리 — 종합 신뢰도를 '경험수(옷 N벌)'에서 '표시 부위 실측 개수'로 옮김(로직 정합). 여긴 factual 초안.
+      var cr=document.getElementById('confReason'); if(cr) cr.innerHTML = tier==='low'
+        ? '표시 부위를 아직 <b>키·몸무게로만</b> 추정했어요<span class="acc-sub">옷을 넣으면 그 부위가 실측으로 보정돼요</span>'
+        : (tier==='mid' ? '표시 4부위 중 <b>일부</b>가 착용경험으로 <b>실측 보정</b>됐어요<span class="acc-sub">나머지 부위를 넣으면 더 정밀해져요</span>'
+                        : '표시 <b>네 부위 모두</b> 착용경험으로 좁혀진 <b>정밀 단계</b>예요<span class="acc-sub">이 결과를 그대로 믿고 쓰셔도 돼요</span>');
+      var steps=[['낮음','0부위 실측','low'],['보통','일부 실측','mid'],['높음','4부위 실측','high']], si=(tier==='low'?0:tier==='mid'?1:2);
       var ts=document.getElementById('tierSteps'); if(ts) ts.innerHTML=steps.map(function(s,i){ return '<div class="tier-step'+(i===si?' on '+s[2]:'')+'"><span class="ts-dot"></span><div class="ts-b">'+s[0]+'</div><div class="ts-c">'+s[1]+'</div></div>'; }).join('');
       var PARTS=[['shoulder','어깨'],['chestFull','가슴'],['waist','허리'],['hip','엉덩이']], rows='', weakest=null;
       PARTS.forEach(function(pp){
@@ -786,7 +792,7 @@
     try{
       var vmap={'비슷':'맞음','보통':'보통','다름':'안맞음'};
       var consent=FDATA.readConsent();
-      FDATA.saveFeedback({ ts:new Date().toISOString(), bodyType:cardType, verdict:vmap[val]||val, confidenceTier:confidenceTier, engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId });
+      FDATA.saveFeedback({ ts:new Date().toISOString(), bodyType:cardType, verdict:vmap[val]||val, confidenceTier:confTier(), engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId });
     }catch(e){}
     try{ sessionStorage.setItem(fbStateKey(),'1'); }catch(e){}
     if(from==='toast'){ fbToastThanks(); }   // (구)피드백 전용 토스트 — 답 후 닫힘
