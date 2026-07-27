@@ -368,13 +368,16 @@
         // 취향은 상·하의가 다를 수 있어 각 그룹 끝에 따로 표시(상의=여유축, 하의=형태축).
         var prefTopKey=(payload.prefs&&payload.prefs.TOP)||'regular';
         var prefBotKey=(payload.prefs&&payload.prefs.BOTTOM)||'straight';
+        // 저신뢰(.lo)는 실제 데이터 상태로 — 착용경험 역산된 부위면 신뢰, 회귀추정(r²<0.5)만 낮음.
+        //   기존엔 어깨=false·허리·엉덩이=true로 하드코딩돼, 어깨 착용감을 넣어도/안 넣어도 표시가 고정이고
+        //   하의 역산된 허리·엉덩이도 부당하게 항상 낮음이었음 → 부분 진단 경로(lowConf)와 규칙 통일.
         body='<div class="dtl-grp up" style="margin-top:8px">상체 — 상의 진단</div>'+
-             specRow('좁은 어깨',pm.shoulder,'넓은 어깨','어깨',false)+
-             specRow('슬림한 가슴',pm.chestFull,'볼륨 있는 가슴','가슴',false)+
+             specRow('좁은 어깨',pm.shoulder,'넓은 어깨','어깨',lowConf('shoulder'))+
+             specRow('슬림한 가슴',pm.chestFull,'볼륨 있는 가슴','가슴',lowConf('chestFull'))+
              specRow('타이트',FITPCT[prefTopKey]||55,'여유','핏 취향',false)+
              '<div class="dtl-grp lo">하체 — 하의 진단</div>'+
-             specRow('슬림한 허리',pm.waist,'볼륨 있는 허리','허리',true)+
-             specRow('슬림한 엉덩이',pm.hip,'볼륨 있는 엉덩이','엉덩이',true)+
+             specRow('슬림한 허리',pm.waist,'볼륨 있는 허리','허리',lowConf('waist'))+
+             specRow('슬림한 엉덩이',pm.hip,'볼륨 있는 엉덩이','엉덩이',lowConf('hip'))+
              specRow('슬림',FITPCT[prefBotKey]||50,'와이드','핏 취향',true);
       } else {
         var grpLabel=(curCat==='TOP'?'상체 — 상의 진단':lowerCat?'하체 — '+curLabel+' 진단':'상체 — '+curLabel+' 진단');
@@ -645,8 +648,7 @@
         {label:'허리둘레',   val:r(ebv('waist', cm.waist)),                     pm:3},
         {label:'엉덩이둘레', val:r(ebv('hip', cm.hip)),                         pm:3}
       ].filter(function(x){ return x.val!=null; });
-      // 신뢰도 라벨 = 실제 tier(0벌 낮음 / 1벌 보통 / 2벌+ 높음) — 고정 '낮음' 제거.
-      // 신뢰도 라벨 = 표시되는 4개 부위 중 실제 역산된 개수(_ebKeys) 기준 — 탭4 renderAcc와 동일 신호(탭 간 모순 방지).
+      // 신뢰도 라벨 = 표시되는 4개 부위 중 실제 역산된 개수(_ebKeys) 기준 — 탭4 부위별 신호와 일치(탭 간 모순 방지).
       //   전 경험수(nExpA)로 산정하면 상의만 입어도 하의(회귀값)가 '높음'으로 오표기됨(코드래빗 #97).
       var ebShown=['shoulder','chestFull','waist','hip'].filter(function(k){ return _ebKeys[k]; }).length;
       var confLabel = ebShown<=0 ? '낮음 (키·몸무게만)' : (ebShown<4 ? '보통 (일부 실측 보정)' : '높음 (착용경험 반영)');
