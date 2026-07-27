@@ -47,7 +47,8 @@
       if(p.display_name){ USER.name=p.display_name; USER.initial=(String(p.display_name)[0]||USER.initial); }
       var b=p.basic||{};
       if(b.gender) USER.gender=(b.gender==='female'?'female':'male');
-      if(b.height) USER.height=+b.height; if(b.weight) USER.weight=+b.weight; if(b.age) USER.age=+b.age;
+      // age는 '30대' 같은 연령대 문자열 — 숫자로 캐스팅하면 NaN이 된다(그대로 둘 것).
+      if(b.height) USER.height=+b.height; if(b.weight) USER.weight=+b.weight; if(b.age) USER.age=String(b.age);
       renderProfile(); renderMyAvatar(); renderAcctCard();
     });
   }
@@ -302,7 +303,9 @@
   function addReq(r){ reqs.unshift(r); saveLS('reqs', reqs); renderReqs(); }
 
   /* 마이페이지 · 프로필 아바타 — 진단 전=잉크블랙+이니셜 / 진단 후=결과 카드 캐릭터 얼굴 + 유형 색(bodytypes.json 단일 출처) */
-  var USER={ name:'김도현', initial:'김', gender:'male', age:33, height:172, weight:68, fitTop:'슬림', fitBottom:'와이드', type:'STR' };   // type:null = 진단 전 / 핏취향은 상·하의 별도
+  // age = 진단(diag-basic)에서 받는 '연령대' 문자열('30대' 등). 정확한 나이는 물은 적이 없으니 나이인 척하지 않는다.
+  var AGE_BANDS=['10대','20대','30대','40대','50대','60대 이상'];   // diag-basic.js AGE와 동일 — 바꾸면 같이 바꿀 것
+  var USER={ name:'김도현', initial:'김', gender:'male', age:'30대', height:172, weight:68, fitTop:'슬림', fitBottom:'와이드', type:'STR' };   // type:null = 진단 전 / 핏취향은 상·하의 별도
   // 결과 페이지에서 '결과 저장' 시 기록한 진단 프로필(fitting.user)을 병합 → 마이가 실제 진단 결과를 보여줌.
   (function(){ try{ var s=JSON.parse(localStorage.getItem('fitting.user')||'null'); if(s&&typeof s==='object') Object.assign(USER, s); }catch(e){} })();
   /* ===== 고객센터 · 1:1 문의 (1.9 / G.2) ===== */
@@ -508,7 +511,7 @@
         '<div class="msub"><div class="subhead">신체 · 선호 정보</div>'+
           '<div class="field"><span>이름</span><span class="v">'+esc(U.name)+'</span></div>'+
           (apiAccounts()?'<div class="field"><span>이메일</span><span class="v">'+esc(_acctEmail||'미등록')+'</span></div>':'')+
-          '<div class="field"><span>성별 · 나이</span><span class="v">'+(U.gender==='female'?'여성':'남성')+' · <span class="num">'+U.age+'</span>세</span></div>'+
+          '<div class="field"><span>성별 · 연령대</span><span class="v">'+(U.gender==='female'?'여성':'남성')+' · '+esc(U.age||'미입력')+'</span></div>'+
           '<div class="field"><span>키 · 몸무게</span><span class="v"><span class="num">'+U.height+'</span>cm · <span class="num">'+U.weight+'</span>kg</span></div>'+
           '<div class="field"><span>상의 핏 취향</span><span class="v">'+U.fitTop+'</span></div>'+
           '<div class="field"><span>하의 핏 취향</span><span class="v">'+U.fitBottom+'</span></div>'+
@@ -521,7 +524,10 @@
           '<div class="pedit"><label>이름</label><input class="inp" id="pName" value="'+esc(U.name)+'"></div>'+
           (apiAccounts()?'<div class="pedit"><label>이메일'+(_acctEmail?'':' <b style="color:var(--warn)">(필수)</b>')+'</label><input class="inp" id="pEmail" type="email" value="'+esc(_acctEmail)+'" placeholder="you@example.com"></div>':'')+
           '<div class="pedit"><label>성별</label><div class="seg" id="pGender">'+['male','female'].map(function(g){return '<span class="o'+(U.gender===g?' on':'')+'" data-g="'+g+'" onclick="pPick(this)">'+(g==='male'?'남성':'여성')+'</span>';}).join('')+'</div></div>'+
-          '<div class="pedit inrow3"><div><label>나이</label><input class="inp" id="pAge" type="number" value="'+U.age+'"></div><div><label>키(cm)</label><input class="inp" id="pHeight" type="number" value="'+U.height+'"></div><div><label>몸무게(kg)</label><input class="inp" id="pWeight" type="number" value="'+U.weight+'"></div></div>'+
+          // 나이는 진단에서 연령대로만 받는다 → 여기서도 같은 선택지로(숫자 입력이면 진단 입력과 형식이 어긋난다)
+          '<div class="pedit inrow3"><div><label>연령대</label><select class="inp" id="pAge">'+
+            AGE_BANDS.map(function(a){ return '<option value="'+a+'"'+(U.age===a?' selected':'')+'>'+a+'</option>'; }).join('')+
+          '</select></div><div><label>키(cm)</label><input class="inp" id="pHeight" type="number" value="'+U.height+'"></div><div><label>몸무게(kg)</label><input class="inp" id="pWeight" type="number" value="'+U.weight+'"></div></div>'+
           '<div class="pedit"><label>상의 핏 취향</label><div class="seg" id="pFitTop">'+FIT_OPTS.map(function(f){return '<span class="o'+(U.fitTop===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div>'+
           '<div class="pedit"><label>하의 핏 취향</label><div class="seg" id="pFitBottom">'+FIT_OPTS_BOTTOM.map(function(f){return '<span class="o'+(U.fitBottom===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div>'+
           '<div class="note" style="color:var(--warn)">⚠️ 신체정보를 바꾸면 재진단을 추천해요</div></div>'+
@@ -535,7 +541,8 @@
     var nm=document.getElementById('pName'); if(nm&&nm.value.trim()) USER.name=nm.value.trim();
     var g=document.querySelector('#pGender .o.on'); if(g) USER.gender=g.dataset.g;
     var a=document.getElementById('pAge'), h=document.getElementById('pHeight'), w=document.getElementById('pWeight');
-    if(a&&a.value) USER.age=+a.value; if(h&&h.value) USER.height=+h.value; if(w&&w.value) USER.weight=+w.value;
+    if(a&&a.value) USER.age=a.value;   // 연령대 문자열 그대로
+    if(h&&h.value) USER.height=+h.value; if(w&&w.value) USER.weight=+w.value;
     var ft=document.querySelector('#pFitTop .o.on'); if(ft) USER.fitTop=ft.dataset.fit;
     var fb=document.querySelector('#pFitBottom .o.on'); if(fb) USER.fitBottom=fb.dataset.fit;
     if(apiAccounts()){   // 계정 모드: 신체정보·이름·이메일을 서버 profile에 저장
