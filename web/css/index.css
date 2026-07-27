@@ -713,6 +713,15 @@
   .social .naver{background:#03C75A; color:#fff;}
   .social .google{background:#fff; color:var(--ink); border:1.5px solid var(--line2);}
   .social .email{background:var(--ink); color:#fff;}
+  /* 이메일 매직링크 단계 — .social과 같은 리듬(간격·버튼 규격)으로 자리만 바꿔 끼움 */
+  .sheet .emailbox{margin-top:22px; display:flex; flex-direction:column; gap:10px;}
+  .sheet .emailbox button{padding:14px; border-radius:13px; border:none; font-size:16px; font-weight:800; cursor:pointer; font-family:inherit;}
+  .sheet .emailbox .send{background:var(--ink); color:#fff;}
+  .sheet .emailbox .send:disabled{opacity:.5; cursor:default;}
+  .sheet .emailbox .back{background:transparent; color:var(--sub); font-size:14px; font-weight:700; padding:4px;}
+  .sheet .emsg{font-size:13px; line-height:1.5; color:var(--sub); text-align:center; min-height:20px;}
+  .sheet .emsg.err{color:var(--warn);}
+  .sheet .emsg.ok{color:var(--green);}
 
   /* ===== 마이페이지 (좌측 사이드 네비) ===== */
   #my .mwrap{display:grid; grid-template-columns:268px 1fr; gap:30px; align-items:start; margin-top:14px;}   /* 전체폭 — 스타일리스트 목록과 좌우 통일 */

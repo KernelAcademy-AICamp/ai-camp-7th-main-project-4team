@@ -15,7 +15,9 @@
     signInEmail: function (email, redirectTo) {   // 이메일 매직링크(비밀번호 없음)
       if (!client) return Promise.resolve({ ok: false, error: 'auth 미초기화' });
       return client.auth.signInWithOtp({ email: email, options: { emailRedirectTo: redirectTo || location.href } })
-        .then(function (r) { return { ok: !r.error, error: r.error && r.error.message }; });
+        .then(function (r) { return { ok: !r.error, error: r.error && r.error.message }; })
+        // reject(네트워크·CORS·SDK 예외)까지 잡아 항상 {ok:false,error}로 귀결 — 안 잡으면 호출부 토스트가 통째로 안 뜬다(무반응).
+        .catch(function (e) { return { ok: false, error: (e && e.message) || String(e) }; });
     },
     signInGoogle: function (redirectTo) {
       if (!client) return Promise.resolve({ ok: false });

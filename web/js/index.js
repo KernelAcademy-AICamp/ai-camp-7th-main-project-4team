@@ -25,7 +25,7 @@
   }
 
   /* ===== 로그인/가입 시트 ===== */
-  function openLogin(ctx, onDone){ window._loginCb=onDone||null; document.getElementById('loginTitle').textContent=(ctx?ctx+' — ':'')+'로그인하고 이어가기'; document.getElementById('sheet').classList.add('on'); scrim(true); }
+  function openLogin(ctx, onDone){ window._loginCb=onDone||null; document.getElementById('loginTitle').textContent=(ctx?ctx+' — ':'')+'로그인하고 이어가기'; showEmailStep(false); document.getElementById('sheet').classList.add('on'); scrim(true); }
   function loginDone(){ saveLS('auth', true); closeAll(); applyAuthUI(); var cb=window._loginCb; window._loginCb=null; if(cb){ toast('로그인했어요 · 이어서 진행할게요'); cb(); } else toast('로그인했어요 · 결과가 계정에 저장됐어요'); }
 
   // ── 소비자 계정(api·ACCOUNTS_ENABLED) 실 인증 (Phase 0a) — proto/플래그off는 위 목업 유지 ──
@@ -77,28 +77,56 @@
   }
   function onSignedIn(){
     var u=_authSession&&_authSession.user, email=u&&u.email;
-    if(!email){                                   // 카카오 무이메일 → 필수 이메일 수집(이메일 없이는 연락 불가)
-      email=(prompt('알림·계정 확인용 이메일을 입력해 주세요 (필수)')||'').trim();
-      if(email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ toast('이메일 형식을 확인해 주세요'); email=''; }
-    }
+    // 카카오 무이메일 → 프로필의 이메일 칸((필수) 표시)으로 안내한다. 로그인 직후 네이티브 prompt를
+    // 띄우면 리다이렉트 복귀 화면과 단절되고, 브라우저가 차단하면 수집 자체가 조용히 실패한다.
     try{ var sid=(FDATA.sessionId)?FDATA.sessionId():null; if(sid) FITAUTH.claimDiagnoses(sid); }catch(e){}   // 익명 진단 → 계정 귀속
     try{ var patch={ display_name:FITAUTH.displayName(u) };
       var basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'null'); if(basic) patch.basic=basic;
       if(email) patch.email=email;
       FITAUTH.upsertProfile(patch).then(hydrateAccount); }catch(e){}
     closeAll(); applyAuthUI();
-    if(!email) toast('이메일이 없어요 · 프로필에서 등록해 주세요');
     var cb=window._loginCb; window._loginCb=null;
-    if(cb){ toast('로그인했어요 · 이어서 진행할게요'); cb(); } else if(email) toast('로그인했어요 · 진단이 계정에 저장돼요');
+    if(cb){ toast('로그인했어요 · 이어서 진행할게요'); cb(); return; }   // 하던 일이 있으면 그게 우선(이메일 안내는 토스트로)
+    if(email){ toast('로그인했어요 · 진단이 계정에 저장돼요'); return; }
+    // 이메일 미제공(카카오) → 안내만 하면 이탈하니 프로필 이메일 칸까지 데려간다.
+    toast('이메일만 등록하면 끝나요 · 프로필로 이동할게요');
+    setTimeout(function(){ goMy('mp-profile'); }, 400);
   }
   function loginWith(provider){
     if(!apiAccounts()){ loginDone(); return; }    // proto/플래그off = 기존 목업
     if(provider==='google'){ FITAUTH.signInGoogle(); return; }
     if(provider==='kakao'){ FITAUTH.signInKakao(); return; }
-    if(provider==='email'){ var em=(prompt('로그인 링크를 받을 이메일')||'').trim();
-      if(!em) return; if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ toast('이메일 형식을 확인해 주세요'); return; }
-      FITAUTH.signInEmail(em).then(function(r){ toast(r&&r.ok ? (em+' 로 로그인 링크를 보냈어요 · 메일함 확인') : '전송 실패 · 잠시 후 다시'); }); return; }
+    if(provider==='email'){ showEmailStep(true); return; }   // 시트 안 이메일 단계로 전환(같은 시트에서 완결)
     toast('준비 중이에요');                         // 네이버 등 미지원 provider
+  }
+  /* 이메일 매직링크 — 시트 안 2단계(소셜 목록 ↔ 이메일 입력). 네이티브 prompt를 쓰면 시트 스타일과
+     단절되고, 브라우저가 대화상자를 차단하면 아무 반응 없이 죽는다. 결과도 시트 안에서 보여준다. */
+  function showEmailStep(on){
+    var box=document.getElementById('emailBox'), soc=document.getElementById('loginSocial');
+    if(!box||!soc) return;
+    box.hidden=!on; soc.hidden=!!on;
+    setEmailMsg('비밀번호 없이, 메일로 받은 링크로 로그인해요', '');
+    var btn=document.getElementById('loginEmailSend');
+    if(btn){ btn.disabled=false; btn.textContent='로그인 링크 보내기'; }
+    if(on){ var i=document.getElementById('loginEmail'); if(i) setTimeout(function(){ i.focus(); }, 60); }
+  }
+  function setEmailMsg(text, kind){
+    var m=document.getElementById('loginEmailMsg'); if(!m) return;
+    m.textContent=text; m.className='emsg'+(kind?' '+kind:'');
+  }
+  function sendMagicLink(){
+    var i=document.getElementById('loginEmail'), btn=document.getElementById('loginEmailSend');
+    var em=(i&&i.value||'').trim();
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ setEmailMsg('이메일 주소를 다시 확인해 주세요', 'err'); if(i) i.focus(); return; }
+    if(!apiAccounts()){ loginDone(); return; }        // proto/플래그off = 기존 목업 로그인
+    if(btn){ btn.disabled=true; btn.textContent='보내는 중…'; }
+    setEmailMsg('전송 중이에요…', '');
+    FITAUTH.signInEmail(em).then(function(r){
+      if(btn){ btn.disabled=false; btn.textContent='다시 보내기'; }
+      if(r&&r.ok){ setEmailMsg(em+' 로 링크를 보냈어요 · 메일함(스팸함)을 확인해 주세요', 'ok'); return; }
+      try{ console.error('[fitting] signInEmail 실패:', r&&r.error); }catch(e){}
+      setEmailMsg('전송 실패 · '+((r&&r.error)||'알 수 없는 오류'), 'err');   // 원인을 삼키지 않고 노출
+    });
   }
   // proto(데모)=기본 로그인 가정 / api: 계정ON=실세션 / 계정OFF(MVP)=비로그인(인증 표면 숨김)
   function loggedIn(){ if(apiAccounts()) return !!_authSession; if(window.FDATA&&FDATA.mode==='api') return false; return loadLS('auth', true)!==false; }
