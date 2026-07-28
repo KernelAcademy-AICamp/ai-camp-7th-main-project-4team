@@ -18,9 +18,14 @@
     <p>잠시 후 처음 상태로 앱이 열려요…</p>
   </div>
   <script>
+    /* localStorage(프로필·요청 등)와 sessionStorage(진단 입력·결과) 둘 다 지운다.
+       세션 쪽을 빼먹었더니 demo-session.js가 '이미 있으면 안 심는다'는 규칙에 걸려
+       초기화해도 옛 시드값(연령대 33 등)이 계속 살아남았다. */
     try{
-      Object.keys(localStorage).filter(function(k){ return k.indexOf('fitting.')===0; })
-        .forEach(function(k){ localStorage.removeItem(k); });
+      [localStorage, sessionStorage].forEach(function(store){
+        Object.keys(store).filter(function(k){ return k.indexOf('fitting.')===0; })
+          .forEach(function(k){ store.removeItem(k); });
+      });
     }catch(e){}
     setTimeout(function(){ location.replace('/'); }, 600);
   </script>

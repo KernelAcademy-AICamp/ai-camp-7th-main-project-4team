@@ -11,7 +11,9 @@
   //   api에서 진단을 안 한 사용자는 정직하게 '진단 없음'으로 보여야 한다.
   if (window.FDATA ? window.FDATA.mode === "api" : window.FITTING_MODE === "api") return;
 
-  var BASIC = { gender: "male", age: 33, height: 172, weight: 68 };   // = index.js USER
+  // age는 '30대' 같은 **연령대 문자열**이다(diag-basic.js AGE = index.js AGE_BANDS).
+  // 예전엔 숫자 33을 심어, 연령대로 바뀐 뒤에도 프로필·내려받기에 '연령대 33'으로 새어 나왔다.
+  var BASIC = { gender: "male", age: "30대", height: 172, weight: 68 };   // = index.js USER
   try {
     if (!sessionStorage.getItem("fitting.basic")) {
       sessionStorage.setItem("fitting.basic", JSON.stringify(BASIC));
