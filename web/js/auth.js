@@ -81,7 +81,39 @@
 
     // ── 개인정보 (db/11 RPC) ──
     exportMyData: async function () { if (!client) return null; try { var r = await client.rpc('export_my_data'); return r.data || null; } catch (e) { return null; } },
-    deleteMyData: async function () { if (!client) return { ok: false }; try { var r = await client.rpc('delete_my_data'); return { ok: !r.error, error: r.error && r.error.message }; } catch (e) { return { ok: false, error: String(e) }; } }
+    deleteMyData: async function () { if (!client) return { ok: false }; try { var r = await client.rpc('delete_my_data'); return { ok: !r.error, error: r.error && r.error.message }; } catch (e) { return { ok: false, error: String(e) }; } },
+
+    /* 회원 탈퇴 — 세 단계를 순서대로. 중간에 실패하면 거기서 멈추고 사실대로 알린다
+       (예전엔 아무것도 안 하고 '완료됐어요'만 띄웠다).
+         ① rpc('withdraw_account')  개인정보(profile) 파기 + 진단 비식별화(db/12)
+         ② POST /api/withdraw       auth 계정 삭제 — service_role이 필요해 서버에서만 가능
+         ③ signOut                  로컬 세션 정리
+       ②가 실패해도 ①은 이미 끝났다(개인정보는 파기됨) → partial로 구분해 알린다. */
+    withdraw: async function () {
+      if (!client) return { ok: false, error: 'auth 미초기화' };
+      var anonymized = 0;
+      try {
+        var r = await client.rpc('withdraw_account');
+        if (r.error) return { ok: false, error: r.error.message };
+        if (r.data && r.data.ok === false) return { ok: false, error: r.data.error || 'withdraw_account 실패' };
+        anonymized = (r.data && r.data.anonymized) || 0;
+      } catch (e) { return { ok: false, error: String(e) }; }
+
+      var s = await A.getSession();
+      var token = s && s.access_token;
+      if (!token) return { ok: false, partial: true, anonymized: anonymized, error: '세션이 없어 계정 삭제를 못 했어요' };
+
+      try {
+        var resp = await fetch('/api/withdraw', { method: 'POST', headers: { Authorization: 'Bearer ' + token } });
+        if (!resp.ok) {
+          var detail = ''; try { detail = (await resp.json()).error || ''; } catch (e2) {}
+          return { ok: false, partial: true, anonymized: anonymized, error: detail || ('계정 삭제 실패(' + resp.status + ')') };
+        }
+      } catch (e) { return { ok: false, partial: true, anonymized: anonymized, error: String(e) }; }
+
+      try { await client.auth.signOut(); } catch (e) {}
+      return { ok: true, anonymized: anonymized };
+    }
   };
 
   w.FITAUTH = A;

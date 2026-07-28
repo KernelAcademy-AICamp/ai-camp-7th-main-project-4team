@@ -147,14 +147,56 @@
       var el=document.querySelector('#smenu a[data-p="'+p+'"]'); if(el) el.style.display='none';
     });
   }
-  function doLogout(){ if(!confirm('로그아웃할까요? 둘러보기는 로그인 없이 이어갈 수 있어요.')) return;
-    if(apiAccounts()){ FITAUTH.signOut().then(function(){ _authSession=null; applyAuthUI(); go('home'); toast('로그아웃했어요'); }); return; }
-    saveLS('auth', false); applyAuthUI(); go('home'); toast('로그아웃했어요'); }
-  function doQuit(){ if(!confirm('정말 회원 탈퇴할까요? 진단·요청·저장 데이터가 모두 삭제돼요.')) return;
-    ['user','reqs','favs','support','notis'].forEach(function(k){ try{ localStorage.removeItem('fitting.'+k); }catch(e){} });
+  // 확인은 공용 모달(askConfirm)로 — 네이티브 confirm은 화면과 단절되고, 브라우저가 대화상자를
+  //   차단하면 조용히 죽는다(되돌릴 수 없는 탈퇴에서 특히 위험). 이메일 prompt를 걷어낸 것과 같은 이유.
+  function doLogout(){
+    askConfirm('<b>로그아웃</b>할까요?<div class="cf-sub">둘러보기는 로그인 없이 이어갈 수 있어요</div>', '로그아웃', function(){
+      if(apiAccounts()){ FITAUTH.signOut().then(function(){ _authSession=null; applyAuthUI(); go('home'); toast('로그아웃했어요'); }); return; }
+      saveLS('auth', false); applyAuthUI(); go('home'); toast('로그아웃했어요');
+    });
+  }
+  /* 로컬 흔적 정리 — 탈퇴의 일부다. 여기서 남기면 서버를 지워도 되살아난다.
+     ★ 특히 익명 세션 id(fitting.session, localStorage): 이게 남으면 재로그인 시
+       claim_diagnoses가 그 세션의 옛 익명 진단을 새 계정에 다시 붙이고, onSignedIn이
+       프로필까지 재생성한다(실제로 그렇게 되살아났다).
+     키를 하나씩 나열하지 않는다 — 새 키가 생길 때마다 새는 구멍이 된다. */
+  function wipeLocal(){
+    try{
+      var rm=[]; for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k&&k.indexOf('fitting.')===0) rm.push(k); }
+      rm.forEach(function(k){ try{ localStorage.removeItem(k); }catch(e){} });
+    }catch(e){}
+    // sessionStorage는 진단 캐시(dx·dxRun)라 통째로 비우되, 모드·계정 스위치는 되살린다
+    //   (사용자 데이터가 아니라 이 탭이 어느 모드로 열렸는지를 가리키는 값 — 지우면 proto로 튕긴다).
+    var mode=null, acc=null;
+    try{ mode=sessionStorage.getItem('fitting.mode'); acc=sessionStorage.getItem('fitting.accounts'); }catch(e){}
     try{ sessionStorage.clear(); }catch(e){}
     saveLS('auth', false);   // 기본값이 true라 '제거'가 아닌 false 저장해야 탈퇴 후 비로그인 유지
-    applyAuthUI(); toast('회원 탈퇴가 완료됐어요'); setTimeout(function(){ location.reload(); }, 900); }
+  }
+  /* 회원 탈퇴 — 계정 모드에선 실제로 서버를 지운다.
+     예전엔 localStorage만 비우고 '완료됐어요'를 띄웠다(서버 데이터·계정 모두 그대로 남는 거짓 성공).
+     정책: 개인정보(계정·이메일·프로필)는 파기, 진단 데이터는 비식별 처리해 보존(db/12). */
+  function doQuit(){
+    if(!apiAccounts()){       // proto/플래그off = 기존 목업 동작
+      askConfirm('<b>회원 탈퇴</b>할까요?<div class="cf-sub">진단·요청·저장 데이터가 모두 삭제돼요</div>', '탈퇴하기', function(){
+        wipeLocal(); applyAuthUI(); toast('회원 탈퇴가 완료됐어요'); setTimeout(function(){ location.reload(); }, 900);
+      });
+      return;
+    }
+    // 세부는 '지금 결정하는 사람'에게만 필요하다 — 가입 시점으로 끌어올리지 않는다.
+    askConfirm('<b>회원 탈퇴</b>할까요?<div class="cf-sub">계정과 개인정보는 삭제돼요 · 진단 기록은 누구인지 알 수 없게 처리한 뒤 사이즈 정확도 개선에만 쓰여요</div>', '탈퇴하기', quitNow);
+  }
+  function quitNow(){
+    toast('탈퇴를 처리하고 있어요…');
+    FITAUTH.withdraw().then(function(r){
+      if(r&&r.ok){ wipeLocal(); toast('탈퇴가 완료됐어요'); setTimeout(function(){ location.href='index.html'; }, 900); return; }
+      try{ console.error('[fitting] 탈퇴 실패:', r&&r.error); }catch(e){}
+      // 부분 성공을 성공으로 포장하지 않는다 — 개인정보는 지워졌지만 계정이 남은 상태.
+      //   다만 로컬 흔적은 이때도 지운다: 개인정보 파기는 이미 끝났으므로, 세션 id를 남겨두면
+      //   재로그인 때 옛 익명 진단이 다시 귀속된다(파기의 취지가 무너짐).
+      if(r&&r.partial){ wipeLocal(); toast('개인정보는 삭제됐지만 계정 삭제에 실패했어요 · 고객센터로 문의해 주세요'); return; }
+      toast('탈퇴 실패 · '+((r&&r.error)||'알 수 없는 오류'));
+    });
+  }
 
   /* ===== 마이페이지 사이드 네비 ===== */
   function myNav(el){
