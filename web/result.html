@@ -128,9 +128,9 @@
         <!-- 정확도 검증 바 — 결과 피드백(토스트와 동일 카피·연동). 마이 embed에선 CSS로 숨김 -->
         <div class="rpanel" id="rfb"><div class="rfbq">이 결과, 평소 내 사이즈랑 비슷한가요? <span>· 진단 개선에 반영</span></div>
           <div class="rseg"><div class="o ok" data-val="비슷" onclick="pickFeedback('비슷','tab4')"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> 비슷해요</div><div class="o mid" data-val="보통" onclick="pickFeedback('보통','tab4')"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg> 보통</div><div class="o no" data-val="다름" onclick="pickFeedback('다름','tab4')"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg> 달라요</div></div>
-          <label class="rconsent"><input type="checkbox" id="eiConsent" onchange="setEngineConsent(this.checked)">
-            <span class="rconsent-txt"><b>익명으로 진단 개선</b>에 활용하는 데 동의하며, <b>만 14세 이상</b> 또는 법정대리인 동의를 확인했어요 (선택)
-            </span></label></div>
+          <!-- 엔진 활용 동의 체크박스 제거 — 진단 기록은 비식별로 보존·활용된다고 약관·처리방침에 명시했고,
+               비식별 정보는 동의 대상이 아니다. 무거운 쪽은 그냥 쓰면서 평가 한 줄만 허락을 구하면 오히려 불신을 부른다.
+               연령 확인도 여기가 아니다 — 비로그인 진단은 개인정보를 수집하지 않는다. 회원가입 시점(로그인 시트)으로 옮겼다. --></div>
         <a class="rjudge" href="judge.html">
           <span class="rjudge-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/><circle cx="8" cy="6" r="1.6" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="1.6" fill="currentColor" stroke="none"/></svg></span>
           <span class="rjudge-tx"><b>사려는 옷이 따로 있나요?</b><span>사이즈표를 올리면 그 옷도 맞을지 판정해요</span></span>

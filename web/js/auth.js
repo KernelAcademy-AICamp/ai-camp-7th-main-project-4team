@@ -61,7 +61,7 @@
       try { var r = await client.from('profile').select('*').eq('id', u.id).maybeSingle(); return r.data || null; }
       catch (e) { return null; }
     },
-    upsertProfile: async function (patch) {   // {display_name?, basic?, engine_improve_consent?, age_attested?, agreed_at?}
+    upsertProfile: async function (patch) {   // {display_name?, email?, basic?}
       if (!client) return { ok: false };
       var u = await A.user(); if (!u) return { ok: false, error: '로그인 필요' };
       var row = Object.assign({ id: u.id }, patch || {});

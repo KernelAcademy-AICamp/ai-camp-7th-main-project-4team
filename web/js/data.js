@@ -54,14 +54,14 @@
     },
 
     /* ── 피드백 (킬 메트릭 원천) ───────────────────────────────
-       rec(canonical): {verdict, engineImprove, ageAttested, diagnosisId, bodyType, confidenceTier, ts}
+       rec(canonical): {verdict, diagnosisId, bodyType, confidenceTier, ts}
+       ※ 엔진 개선 '동의' 필드는 걷어냈다 — 비식별 보존·활용을 고지로 일원화(약관 제4조의2). DB 컬럼은 기본값으로 남는다.
        proto: 동기 localStorage push / api: /api/feedback 로 매핑 POST(diagnosis_id 필수) */
     saveFeedback: function (rec) {
       if (MODE === 'api') {
         if (!rec.diagnosisId) return;   // 진단 미기록 시 스킵(안전)
         postJSON('/api/feedback', {
-          diagnosis_id: rec.diagnosisId, verdict: rec.verdict, aware_brand: true,
-          engine_improve_consent: !!rec.engineImprove, age_attested: !!rec.ageAttested
+          diagnosis_id: rec.diagnosisId, verdict: rec.verdict, aware_brand: true
         });
         return;
       }

@@ -446,7 +446,6 @@
   function ssGet(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } }
   function safeParse(s){ try{ return s?JSON.parse(s):null; }catch(e){ return s; } }
   /* 엔진개선 동의 = 진단 결과화면(result.js)과 동일 키·포맷(sessionStorage fitting.consent) */
-  function engineConsent(){ try{ return JSON.parse(ssGet('fitting.consent')||'{}').engineImprove===true; }catch(e){ return false; } }
   function _dlJson(obj, name){
     try{
       var blob=new Blob([JSON.stringify(obj,null,2)], {type:'application/json'});
@@ -456,7 +455,6 @@
     }catch(e){ toast('내려받기에 실패했어요'); }
   }
   function renderPrivacy(){
-    var t=document.getElementById('privConsent');
     var d=document.getElementById('privData'); if(!d) return;
     if(apiAccounts()){   // 계정 모드 — 서버(profile·diagnosis)에서 상태 조회
       FITAUTH.getProfile().then(function(p){
@@ -470,38 +468,17 @@
       });
       return;
     }
-    if(t) t.classList.toggle('on', engineConsent());
     var basic=ssGet('fitting.basic'), dx=ssGet('fitting.dx');
     d.innerHTML = (basic||dx)
       ? '<div class="field"><span>기본 정보(성별·키·몸무게)</span><span class="v">'+(basic?'저장됨':'없음')+'</span></div>'+
         '<div class="field"><span>착용 경험·진단 입력</span><span class="v">'+(dx?'저장됨':'없음')+'</span></div>'
       : '<div class="note">아직 저장된 진단 데이터가 없어요 · 진단을 완료하면 여기 표시돼요</div>';
   }
-  function toggleEngineConsent(){
-    var on=!engineConsent();
-    try{ sessionStorage.setItem('fitting.consent', JSON.stringify({ engineImprove:on, ageAttested:on, at:new Date().toISOString() })); }catch(e){}   // 로컬 미러(진단 저장에 사용)
-    if(apiAccounts()){ FITAUTH.upsertProfile({ engine_improve_consent:on, age_attested:on, agreed_at:new Date().toISOString() }).then(function(){ renderPrivacy(); }); }
-    else renderPrivacy();
-    toast(on?'엔진 개선 활용에 동의했어요':'엔진 개선 활용 동의를 철회했어요');
-  }
   function downloadMyData(){
     if(apiAccounts()){ FITAUTH.exportMyData().then(function(data){ if(!data){ toast('내려받을 데이터가 없어요'); return; } _dlJson(Object.assign({exportedAt:new Date().toISOString()}, data), 'fitting-my-data.json'); }); return; }
     var d={ basic:safeParse(ssGet('fitting.basic')), dx:safeParse(ssGet('fitting.dx')), consent:safeParse(ssGet('fitting.consent')), exportedAt:new Date().toISOString() };
     if(!d.basic && !d.dx){ toast('내려받을 진단 데이터가 없어요'); return; }
     _dlJson(d, 'fitting-my-data.json');
-  }
-  function deleteMyData(){
-    if(apiAccounts()){
-      askConfirm('<b>내 계정 데이터를 삭제</b>할까요?<div class="cf-sub">프로필·진단·피드백이 모두 삭제돼요 · 되돌릴 수 없어요</div>', '삭제하기', function(){
-        FITAUTH.deleteMyData().then(function(r){ if(r&&r.ok){ renderPrivacy(); toast('데이터를 삭제했어요'); } else toast('삭제 실패 · 잠시 후 다시'); });
-      });
-      return;
-    }
-    askConfirm('<b>진단 데이터를 삭제</b>할까요?<div class="cf-sub">신체·착용경험·결과·개선 이력이 모두 삭제돼요 · 되돌릴 수 없어요</div>', '삭제하기', function(){
-      try{ ['fitting.dx','fitting.basic','fitting.consent'].forEach(function(k){ sessionStorage.removeItem(k); }); }catch(e){}
-      try{ localStorage.removeItem('fitting.feedback'); }catch(e){}
-      renderPrivacy(); toast('진단 데이터를 삭제했어요');
-    });
   }
 
   var _btCache=null;
