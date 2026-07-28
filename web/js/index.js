@@ -96,7 +96,13 @@
     FITAUTH.getSession().then(function(s){ _authSession=s; applyAuthUI(); if(s) hydrateAccount(); });
     FITAUTH.onChange(function(e,s){ _authSession=s; applyAuthUI(); if(e==='SIGNED_IN') onSignedIn(); });
   }
+  /* 로그인 '직후'에만 도는 환영 처리. SIGNED_IN은 실제 로그인뿐 아니라 다른 페이지에서 돌아와
+     세션이 복원될 때도 발생한다 → 마커(auth-ui가 provider로 떠나기 직전에 남김)가 있을 때만 실행한다.
+     이게 없으면 홈에 들를 때마다 토스트가 뜨고, claim·프로필 upsert까지 매번 다시 돈다. */
   function onSignedIn(){
+    var fresh=false;
+    try{ fresh=sessionStorage.getItem('fitting.loginPending')==='1'; sessionStorage.removeItem('fitting.loginPending'); }catch(e){}
+    if(!fresh){ hydrateAccount(); return; }   // 세션 복원 = 조용히 계정 데이터만 반영
     var u=_authSession&&_authSession.user, email=u&&u.email;
     // 카카오 무이메일 → 프로필의 이메일 칸((필수) 표시)으로 안내한다. 로그인 직후 네이티브 prompt를
     // 띄우면 리다이렉트 복귀 화면과 단절되고, 브라우저가 차단하면 수집 자체가 조용히 실패한다.
@@ -182,6 +188,7 @@
     var mode=null, acc=null;
     try{ mode=sessionStorage.getItem('fitting.mode'); acc=sessionStorage.getItem('fitting.accounts'); }catch(e){}
     try{ sessionStorage.clear(); }catch(e){}
+    try{ if(mode) sessionStorage.setItem('fitting.mode', mode); if(acc) sessionStorage.setItem('fitting.accounts', acc); }catch(e){}
     saveLS('auth', false);   // 기본값이 true라 '제거'가 아닌 false 저장해야 탈퇴 후 비로그인 유지
   }
   /* 회원 탈퇴 — 계정 모드에선 실제로 서버를 지운다.
@@ -458,7 +465,6 @@
     var d=document.getElementById('privData'); if(!d) return;
     if(apiAccounts()){   // 계정 모드 — 서버(profile·diagnosis)에서 상태 조회
       FITAUTH.getProfile().then(function(p){
-        if(t) t.classList.toggle('on', !!(p&&p.engine_improve_consent));
         FITAUTH.myDiagnoses(100).then(function(list){
           d.innerHTML = (p||list.length)
             ? '<div class="field"><span>계정</span><span class="v">'+esc((p&&(p.email||p.display_name))||'로그인됨')+'</span></div>'+
@@ -543,7 +549,6 @@
           '<div class="field"><span>이름</span><span class="v">'+esc(U.name)+'</span></div>'+
           (apiAccounts()?'<div class="field"><span>이메일</span><span class="v">'+esc(_acctEmail||'미등록')+'</span></div>':'')+
           // 값이 없으면 '미입력' — 없는 값을 목업으로 메우면 남의 정보처럼 보인다
-            (U.age?'':'<option value="" selected>선택</option>')+   // 미입력이면 아무거나 고른 척하지 않는다
           '<div class="field"><span>성별 · 연령대</span><span class="v">'+(U.gender?(U.gender==='female'?'여성':'남성'):'미입력')+' · '+esc(U.age||'미입력')+'</span></div>'+
           '<div class="field"><span>키 · 몸무게</span><span class="v">'+
             (U.height?('<span class="num">'+U.height+'</span>cm'):'미입력')+' · '+
@@ -561,6 +566,7 @@
           '<div class="pedit"><label>성별</label><div class="seg" id="pGender">'+['male','female'].map(function(g){return '<span class="o'+(U.gender===g?' on':'')+'" data-g="'+g+'" onclick="pPick(this)">'+(g==='male'?'남성':'여성')+'</span>';}).join('')+'</div></div>'+
           // 나이는 진단에서 연령대로만 받는다 → 여기서도 같은 선택지로(숫자 입력이면 진단 입력과 형식이 어긋난다)
           '<div class="pedit inrow3"><div><label>연령대</label><select class="inp" id="pAge">'+
+            (U.age?'':'<option value="" selected>선택</option>')+   // 미입력이면 아무거나 고른 척하지 않는다
             AGE_BANDS.map(function(a){ return '<option value="'+a+'"'+(U.age===a?' selected':'')+'>'+a+'</option>'; }).join('')+
           '</select></div><div><label>키(cm)</label><input class="inp" id="pHeight" type="number" value="'+(U.height||'')+'" placeholder="예: 172"></div>'+
           '<div><label>몸무게(kg)</label><input class="inp" id="pWeight" type="number" value="'+(U.weight||'')+'" placeholder="예: 68"></div></div>'+

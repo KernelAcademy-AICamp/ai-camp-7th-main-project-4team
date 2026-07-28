@@ -40,6 +40,11 @@
   font-size:16px; font-family:inherit; background:#fff; color:var(--au-ink);}   /* 16px 미만이면 iOS가 포커스 시 확대 */
 .authui-inp:focus{outline:none; border-color:var(--au-ok);}
 
+/* 가입 사전 고지 — 읽히긴 해야 하나 로그인 수단보다 앞서면 안 된다(작게, 아래에) */
+.authui-notice{margin:14px 0 0; font-size:12px; line-height:1.6; color:var(--au-sub); text-align:center;}
+.authui-notice a{color:var(--au-ink); font-weight:700;}
+.authui-notice b{color:var(--au-ink); font-weight:700;}
+
 .authui-msg{font-size:13px; line-height:1.5; color:var(--au-sub); text-align:center; margin:0; min-height:20px;}
 .authui-msg.err{color:var(--au-warn);}
 .authui-msg.ok{color:var(--au-ok);}

@@ -64,7 +64,13 @@
       say(HINT, ''); send.disabled = false; send.textContent = '로그인 링크 보내기';
       if (toEmail) setTimeout(function () { input.focus(); }, 60);
     }
-    function leaving() { try { if (opts.onBeforeRedirect) opts.onBeforeRedirect(); } catch (e) {} }
+    /* 이 페이지를 떠나 provider로 가기 직전. '사용자가 방금 로그인을 시작했다'를 남긴다.
+       복귀 후 SIGNED_IN이 뜨는데, 그 이벤트는 **페이지를 새로 열 때 세션이 복원돼도** 발생한다.
+       마커 없이 환영 처리를 하면 홈에 들를 때마다 토스트·프로필 upsert·claim이 다시 돈다. */
+    function leaving() {
+      try { sessionStorage.setItem('fitting.loginPending', '1'); } catch (e) {}
+      try { if (opts.onBeforeRedirect) opts.onBeforeRedirect(); } catch (e) {}
+    }
 
     el.addEventListener('click', function (ev) {
       var b = ev.target.closest ? ev.target.closest('button') : null;
