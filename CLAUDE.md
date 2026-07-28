@@ -36,6 +36,18 @@
 - 남의 소유 경로를 바꿔야 하면 그 소유자에게 알리고 PR 리뷰어로 넣는다.
 - 색·폰트·간격은 `web/css/tokens.css` 변수만 참조(하드코딩 금지). DOM `id`/`class`는 디자이너가 정의, JS가 참조 — 바꾸면 서로 알림.
 
+## 개발 환경
+
+- **Node 버전 정본은 [.nvmrc](.nvmrc)** (현재 `24`). CI도 이 파일을 읽어 같은 버전으로 돈다.
+- 이 저장소에서 `npm`·`node` 명령을 처음 쓰기 전에 **`node -v`가 `.nvmrc`와 메이저 버전이 같은지 확인**한다.
+  다르면 조용히 진행하지 말고 사용자에게 알리고 이걸 안내한다.
+  - 맥·리눅스: 저장소 루트에서 `nvm install && nvm use` (`.nvmrc`를 자동으로 읽는다)
+  - 윈도우: `nvm install 24 && nvm use 24` (nvm-windows는 `.nvmrc` 자동 인식을 기대하지 말 것)
+  - nvm이 없으면: 맥은 `brew install nvm`, 윈도우는 [nvm-windows](https://github.com/coreybutler/nvm-windows/releases)
+- `package.json`의 `engines.node`(`>=18`)는 **배포 런타임 하한**이라 `.nvmrc`와 역할이 다르다. Vercel은 `engines`를 따르고 `.nvmrc`는 안 읽는다 — 둘을 같은 값으로 맞추려 하지 말 것.
+- **`.nvmrc` 변경은 팀 전원에게 영향**을 준다. 임의로 고치지 말고 사용자에게 확인받는다.
+- Python 스크립트(`npm run screens`·`stamp-assets`, pre-commit 훅)는 맥에서 `python3`, 윈도우에서 `py -3`으로 자동 해석된다([scripts/py.js](scripts/py.js)). 직접 `python3`을 새로 박지 말 것.
+
 ## 검증
 
 - **엔진 변경** → `npm test` (무의존성 골든 테스트, 초록불 확인).
