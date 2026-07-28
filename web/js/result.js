@@ -797,21 +797,72 @@
        저장 경계가 잡히면 접을 게 없어지므로 이 처리는 그대로 둬도 무해하다. */
   (function(){
     if(!/[?&]embed/.test(location.search)) return;
-    var box=document.getElementById('rhist'), val=document.getElementById('rhistVal');
-    if(!box || !val || !accountsOn() || !FITAUTH.myDiagnoses) return;
+    var box=document.getElementById('rhist'), val=document.getElementById('rhistVal'), listEl=document.getElementById('rhistList');
+    if(!box || !val || !listEl || !accountsOn() || !FITAUTH.myDiagnoses) return;
+    var CATNM={TOP:'상의', BOTTOM:'하의', OUTER:'아우터', SKIRT:'치마', DRESS:'원피스'};
+    var TIERNM={high:'높음', mid:'보통', low:'낮음'};
+    function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+    function typeName(code){
+      var t=(window._btList||[]).filter(function(x){ return x.code===code; })[0];
+      return t ? t.name : (code||'');
+    }
+    /* 저장된 결과만으로 그린다 — 재계산도, 저장도 하지 않는다(보기 전용).
+       result.recs는 브랜드×사이즈만 담고 실측표는 없다([[no-public-raw-size-tables]] 준수). */
+    function detailHTML(d){
+      var res=d.result||{}, recs=(res.recs&&(res.recs.top||[])) || [];
+      if(d.category==='BOTTOM' && res.recs && (res.recs.bottom||[]).length) recs=res.recs.bottom;
+      var top=recs.filter(function(r){ return (r.fitScore||0)>=60; })
+                  .sort(function(a,b){ return (a.order==null?9999:a.order)-(b.order==null?9999:b.order) || (b.fitScore||0)-(a.fitScore||0); })
+                  .slice(0,4);
+      var i=d.input||{}, n=(i.experiences||[]).length;
+      var h='<div class="rhist-meta">'+
+        '<span>체형 <b>'+esc(typeName(res.card)||'—')+'</b></span>'+
+        '<span>신뢰도 <b>'+esc(TIERNM[res.confidenceTier]||'—')+'</b></span>'+
+        '<span>입어본 옷 <b>'+n+'벌</b></span></div>';
+      h += top.length
+        ? '<div class="rhist-recs">'+top.map(function(r){
+            return '<span class="rhist-rec"><b>'+esc(r.brandName||r.brandId||'')+'</b> '+esc(r.size||'')+'</span>';
+          }).join('')+'</div>'
+        : '<div class="rhist-none">추천 사이즈가 저장되지 않은 진단이에요</div>';
+      return h;
+    }
     FITAUTH.myDiagnoses(100).then(function(list){
       list=list||[]; if(!list.length) return;
-      var seen={}, n=0, latest='';
+      /* 같은 입력은 한 건으로 접는다 — 저장 경계(db/13) 이전에 렌더마다 쌓인 행이 남아 있다.
+         그걸 그대로 세면 사용자가 한 적 없는 횟수가 나온다. */
+      var seen={}, uniq=[];
       list.forEach(function(d){
         var i=d.input||{};
         var k=JSON.stringify([d.category, i.basic, (i.experiences||[]).length, i.prefs]);
-        if(seen[k]) return;
-        seen[k]=1; n++;
-        if(String(d.created_at||'') > latest) latest=String(d.created_at||'');
+        if(seen[k]) return; seen[k]=1; uniq.push(d);
       });
-      if(!n) return;
-      var ym=latest.slice(0,7).replace('-','.');
-      val.textContent=(ym?ym+' · ':'')+n+'건';
+      if(!uniq.length) return;
+      uniq.sort(function(a,b){ return String(b.created_at||'').localeCompare(String(a.created_at||'')); });
+      var ym=String(uniq[0].created_at||'').slice(0,7).replace('-','.');
+      val.textContent=(ym?ym+' · ':'')+uniq.length+'건';
+
+      listEl.innerHTML = uniq.slice(0,10).map(function(d,idx){
+        var dt=String(d.created_at||'').slice(0,10).replace(/-/g,'.');
+        return '<div class="rhist-it" data-i="'+idx+'">'+
+          '<button type="button" class="rhist-hd" aria-expanded="false">'+
+            '<span class="rhist-dt">'+esc(dt)+'</span>'+
+            '<span class="rhist-cat">'+esc(CATNM[d.category]||d.category||'')+'</span>'+
+            '<span class="rhist-ty">'+esc(typeName((d.result||{}).card)||'—')+'</span>'+
+            '<span class="rhist-chev" aria-hidden="true">›</span>'+
+          '</button>'+
+          '<div class="rhist-body" hidden></div></div>';
+      }).join('') + (uniq.length>10 ? '<div class="rhist-more">최근 10건만 표시</div>' : '');
+
+      /* 펼치기 = 표시뿐. 지금 결과·Fit 판정 기준(fitting.dxtype)은 건드리지 않는다. */
+      [].forEach.call(listEl.querySelectorAll('.rhist-hd'), function(btn){
+        btn.addEventListener('click', function(){
+          var it=btn.parentNode, body=it.querySelector('.rhist-body');
+          var open=!body.hidden;
+          if(open){ body.hidden=true; btn.setAttribute('aria-expanded','false'); it.classList.remove('on'); return; }
+          if(!body.innerHTML) body.innerHTML=detailHTML(uniq[+it.getAttribute('data-i')]);
+          body.hidden=false; btn.setAttribute('aria-expanded','true'); it.classList.add('on');
+        });
+      });
       box.hidden=false;
     }).catch(function(){});
   })();
