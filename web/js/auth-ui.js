@@ -66,9 +66,15 @@
     }
     /* 이 페이지를 떠나 provider로 가기 직전. '사용자가 방금 로그인을 시작했다'를 남긴다.
        복귀 후 SIGNED_IN이 뜨는데, 그 이벤트는 **페이지를 새로 열 때 세션이 복원돼도** 발생한다.
-       마커 없이 환영 처리를 하면 홈에 들를 때마다 토스트·프로필 upsert·claim이 다시 돈다. */
+       마커 없이 환영 처리를 하면 홈에 들를 때마다 토스트·프로필 upsert·claim이 다시 돈다.
+
+       저장소가 sessionStorage면 **매직링크가 깨진다**: 메일의 링크는 새 탭에서 열리고,
+       sessionStorage는 탭 단위라 그 탭엔 마커가 없다 → '세션 복원'으로 오인되어
+       익명 진단 귀속(claim)·프로필 생성·하던 일 이어가기가 전부 건너뛰어진다.
+       localStorage(탭 공유)에 **시각**을 남기고 소비하는 쪽에서 유효기간을 본다 —
+       '1'만 남기면 오래된 마커가 다음 세션 복원 때 환영 처리를 다시 트리거한다. */
     function leaving() {
-      try { sessionStorage.setItem('fitting.loginPending', '1'); } catch (e) {}
+      try { localStorage.setItem('fitting.loginPending', String(Date.now())); } catch (e) {}
       try { if (opts.onBeforeRedirect) opts.onBeforeRedirect(); } catch (e) {}
     }
 
