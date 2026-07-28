@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
 <link rel="stylesheet" href="css/diag.css?v=c86b6818">
 <link rel="stylesheet" href="css/auth-ui.css?v=dcc9663e">
-<link rel="stylesheet" href="css/result.css?v=1c273b92">
+<link rel="stylesheet" href="css/result.css?v=67c1b69e">
 </head>
 <body>
 
@@ -130,7 +130,10 @@
              박스째 숨긴다 — 예시값('2026.06 · 1건')을 남겨두면 화면이 사실이 아닌 말을 한다. -->
         <div class="rpanel rhist" id="rhist" hidden>
           <div class="k">진단 이력</div>
-          <div class="rhist-row"><span>과거 진단 목록·비교</span><b id="rhistVal">—</b></div>
+          <div class="rhist-row"><span>지난 진단 다시 보기</span><b id="rhistVal">—</b></div>
+          <!-- 목록·펼침 내용은 result.js가 계정의 실제 진단으로 채운다. 보기 전용 —
+               지난 진단을 눌러도 지금 결과·정본은 바뀌지 않는다(저장·재계산 없음). -->
+          <div class="rhist-list" id="rhistList"></div>
         </div>
         <!-- 정확도 검증 바 — 결과 피드백(토스트와 동일 카피·연동). 마이 embed에선 CSS로 숨김 -->
         <div class="rpanel" id="rfb"><div class="rfbq">이 결과, 평소 내 사이즈랑 비슷한가요? <span>· 진단 개선에 반영</span></div>
@@ -182,7 +185,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/auth.js?v=e6065d3b"></script>
 <script src="js/auth-ui.js?v=b94dfdf8"></script>
-<script src="js/result.js?v=62ffdd00"></script>
+<script src="js/result.js?v=03b0d4be"></script>
 <script src="js/a11y.js?v=1876c5ec"></script>
 </body>
 </html>
