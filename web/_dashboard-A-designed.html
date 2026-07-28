@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>대시보드 A · 디자인 시안</title>
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;-webkit-font-smoothing:antialiased;padding:34px 22px 120px}
+  .page{max-width:860px;margin:0 auto}
+  .ptitle{font-size:16px;font-weight:800;color:var(--green);margin:0 0 4px}
+  .pdesc{font-size:13px;color:var(--sub);margin:0 0 26px;line-height:1.6}
+  .vlabel{margin:46px 0 16px}
+  .vlabel .vn{display:inline-block;font-size:12.5px;font-weight:800;color:#fff;background:var(--green);border-radius:20px;padding:5px 13px}
+  .vlabel .vd{font-size:13px;color:var(--sub);margin-top:9px;line-height:1.55}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 6px 18px rgba(20,18,16,.05)}
+  .ic{width:40px;height:40px;border-radius:12px;background:var(--soft);color:var(--ink-soft);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex:none}
+  .ic svg{width:19px;height:19px}
+  .ureq{display:flex;align-items:center;gap:13px;padding:14px 0;border-bottom:1px solid var(--line)} .ureq:last-child{border:none}
+  .l{flex:1;min-width:0}.t{font-size:14.5px;font-weight:800;letter-spacing:-.01em}.m{font-size:12px;color:var(--sub);font-weight:600;margin-top:2px}
+  .st{font-size:12px;font-weight:800;padding:5px 11px;border-radius:20px;white-space:nowrap;margin-left:auto;flex:none}
+  .st.nw{background:var(--ink);color:#fff}.st.prog{background:var(--green-soft);color:var(--green)}.st.warn{background:var(--warn,#b0553f);color:#fff}
+  .chev{color:var(--line2);flex:none}
+  .mono{width:20px;height:20px}
+
+  /* ===== 공통 섹션 헤더(디자인형) ===== */
+  .shead{display:flex;align-items:center;gap:11px;padding:18px 22px 14px;border-bottom:1px solid var(--line)}
+  .shead .si{width:34px;height:34px;border-radius:10px;background:var(--green-soft);color:var(--green);display:flex;align-items:center;justify-content:center;flex:none}
+  .shead .si svg{width:18px;height:18px}
+  .shead .stx{flex:1;min-width:0}
+  .shead .stx b{display:block;font-size:15px;font-weight:800}
+  .shead .stx small{font-size:12px;color:var(--sub);font-weight:600}
+  .shead .more{font-size:12.5px;font-weight:700;color:var(--sub);white-space:nowrap;cursor:pointer}
+  .shead .more:hover{color:var(--green)}
+  .clist{padding:2px 22px 10px}
+
+  /* ===== A1: KPI 아이콘 카드 ===== */
+  .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+  .kc{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 6px 18px rgba(20,18,16,.05);cursor:pointer;transition:.15s}
+  .kc:hover{border-color:var(--green);transform:translateY(-2px)}
+  .kc .ki{width:34px;height:34px;border-radius:10px;background:var(--green-soft);color:var(--green);display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+  .kc .ki svg{width:18px;height:18px}
+  .kc b{display:block;font-family:var(--num);font-size:26px;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
+  .kc small{font-size:12.5px;color:var(--sub2);font-weight:700}
+  .kc .arr{float:right;color:var(--line2);font-weight:800}
+
+  /* ===== A2: 수익 강조 히어로 + 3 미니 ===== */
+  .kpi2{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+  .kc2{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 6px 18px rgba(20,18,16,.05);cursor:pointer;transition:.15s}
+  .kc2:hover{border-color:var(--green);transform:translateY(-2px)}
+  .kc2 small{font-size:12px;color:var(--sub2);font-weight:700;display:block;margin-bottom:6px}
+  .kc2 b{font-family:var(--num);font-size:24px;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
+  .kc2.hero{background:linear-gradient(135deg,#1f3d2e,#2f5f45);border:none;color:#fff}
+  .kc2.hero small{color:rgba(255,255,255,.7)}
+  .kc2.hero b{color:#fff;font-size:30px}
+  .kc2.hero .trend{font-size:12px;color:#bfe3cd;font-weight:700;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="ptitle">대시보드 A · 디자인 시안</p>
+  <p class="pdesc">A 구조(스탯 → 응답 필요 → 진행 중) 위에 디자인을 얹은 2가지. 섹션 헤더에 아이콘·"모두 보기", 스탯에 아이콘을 넣어 정돈했어요.</p>
+
+  <!-- ============ A1 ============ -->
+  <div class="vlabel"><span class="vn">A1 · KPI 아이콘 + 정돈된 섹션</span><div class="vd">스탯 4칸에 아이콘을 얹어 지표답게, 숫자는 잉크블랙·아이콘은 딥그린. 섹션 헤더엔 아이콘 칩 + 부제 + "모두 보기".</div></div>
+  <div class="kpi">
+    <div class="kc"><span class="arr">›</span><div class="ki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><b>60,000원</b><small>이번 달 수익</small></div>
+    <div class="kc"><span class="arr">›</span><div class="ki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4M8 11l4 4 4-4M12 3v11"/></svg></div><b>3</b><small>신규 요청</small></div>
+    <div class="kc"><span class="arr">›</span><div class="ki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><b>3</b><small>진행 중</small></div>
+    <div class="kc"><span class="arr">›</span><div class="ki"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4 L14.1 9.6 20.1 9.9 15.4 13.6 17 19.4 12 16.1 7 19.4 8.6 13.6 3.9 9.9 9.9 9.6Z"/></svg></div><b>5.0</b><small>평점</small></div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="shead"><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg></span><div class="stx"><b>지금 응답이 필요해요</b><small>신규 요청 3건 · 빠를수록 성사율↑</small></div><span class="more">요청 내역 ›</span></div>
+    <div class="clist">
+      <div class="ureq"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 20h8M12 17v3"/></svg></span><div class="l"><div class="t">온라인 스타일링 · 데일리</div><div class="m">한서준 님 · 26.07.14 · 예산 5~10만</div></div><span class="st nw">신규</span><span class="chev">›</span></div>
+      <div class="ureq"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 20h8M12 17v3"/></svg></span><div class="l"><div class="t">온라인 스타일링 · 소개팅</div><div class="m">김도현 님 · 26.07.02 · 예산 5~10만</div></div><span class="st nw">신규</span><span class="chev">›</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="shead"><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div class="stx"><b>진행 중인 코디</b><small>수락·상담·결제 대기 3건</small></div><span class="more">요청 내역 ›</span></div>
+    <div class="clist">
+      <div class="ureq"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 20h8M12 17v3"/></svg></span><div class="l"><div class="t">온라인 스타일링 · 결혼식 하객</div><div class="m">박지우 님 · 진행 중</div></div><span class="st prog">수락됨</span><span class="chev">›</span></div>
+      <div class="ureq"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 20h8M12 17v3"/></svg></span><div class="l"><div class="t">온라인 스타일링 · 데이트룩</div><div class="m">윤채원 님 · 결제 확인 중</div></div><span class="st prog">결제대기</span><span class="chev">›</span></div>
+    </div>
+  </div>
+
+  <!-- ============ A2 ============ -->
+  <div class="vlabel"><span class="vn">A2 · 수익 강조 히어로 + 미니 지표</span><div class="vd">이번 달 수익을 <b>딥그린 히어로 카드</b>로 크게(가장 궁금한 지표), 나머지 3개는 미니 카드. 섹션은 A1과 동일. 임팩트가 큼.</div></div>
+  <div class="kpi2">
+    <div class="kc2 hero"><small>이번 달 수익</small><b>60,000원</b><div class="trend">거래 1건 완료</div></div>
+    <div class="kc2"><small>신규 요청</small><b>3</b></div>
+    <div class="kc2"><small>진행 중</small><b>3</b></div>
+    <div class="kc2"><small>평점</small><b>★ 5.0</b></div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="shead"><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg></span><div class="stx"><b>지금 응답이 필요해요</b><small>신규 요청 3건</small></div><span class="more">요청 내역 ›</span></div>
+    <div class="clist">
+      <div class="ureq"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 20h8M12 17v3"/></svg></span><div class="l"><div class="t">온라인 스타일링 · 데일리</div><div class="m">한서준 님 · 26.07.14</div></div><span class="st nw">신규</span><span class="chev">›</span></div>
+      <div class="ureq"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 20h8M12 17v3"/></svg></span><div class="l"><div class="t">동행 쇼핑 · 일상 코디</div><div class="m">정예린 님 · 26.07.01</div></div><span class="st nw">신규</span><span class="chev">›</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="shead"><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div class="stx"><b>진행 중인 코디</b><small>3건</small></div><span class="more">요청 내역 ›</span></div>
+    <div class="clist">
+      <div class="ureq"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 20h8M12 17v3"/></svg></span><div class="l"><div class="t">온라인 스타일링 · 결혼식 하객</div><div class="m">박지우 님</div></div><span class="st prog">수락됨</span><span class="chev">›</span></div>
+      <div class="ureq"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 20h8M12 17v3"/></svg></span><div class="l"><div class="t">온라인 스타일링 · 소개팅</div><div class="m">한지민 님 · 소명 필요</div></div><span class="st warn">분쟁</span><span class="chev">›</span></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

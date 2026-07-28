@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>줄자 시안 — 세련·글로우 버전 고르기 (버리는 파일)</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<style>
+/* ==========================================================================
+   _tape-variants.html — "왼→오 진한 선 찡" 측정 줄자의 세련·글로우 시안 모음.
+   버리는 파일(커밋 안 함). 마음에 드는 번호만 _home-deck.html의 .scan에 이식.
+   전부 딥그린(--green) 기반. '빛남'은 선두 글로우 점 + 지나가는 하이라이트로.
+   ========================================================================== */
+:root{
+  --glow:rgba(46,74,59,.42);      /* 딥그린 소프트 글로우 */
+  --glow2:rgba(46,74,59,.20);
+  --shine:rgba(140,193,174,.95);  /* --green-light 계열 밝은 하이라이트(빛) */
+}
+*{box-sizing:border-box; margin:0; padding:0}
+body{background:var(--bg); color:var(--ink); font-family:var(--sans); letter-spacing:var(--ls-body); padding:40px 0 80px}
+.wrap{max-width:860px; margin:0 auto; padding:0 32px}
+.head{margin-bottom:8px}
+.head h1{font-size:24px; font-weight:800; letter-spacing:-.04em}
+.head p{font-size:14px; color:var(--sub); margin-top:8px; line-height:1.6}
+.grid{margin-top:34px; display:flex; flex-direction:column; gap:14px}
+.card{background:var(--surface,#fff); border:1px solid var(--green-line); border-radius:16px; padding:22px 26px 26px}
+.lab{display:flex; align-items:baseline; gap:10px; margin-bottom:6px}
+.lab b{font-size:15px; font-weight:800; letter-spacing:-.02em}
+.lab .num{font-family:var(--num,monospace); font-size:12px; font-weight:800; color:var(--green);
+  background:var(--green-soft); border-radius:6px; padding:2px 7px}
+.lab span{font-size:12.5px; color:var(--sub)}
+
+/* ── 공통 줄자 무대 ─────────────────────────────────────────────────── */
+.tp{position:relative; height:52px; margin-top:12px}
+.tp .track{position:absolute; left:0; right:0; top:25px; height:2px; border-radius:3px; background:var(--green-line)}
+.tp .ticks{position:absolute; left:0; right:0; top:17px; height:18px; opacity:0;
+  background-image:repeating-linear-gradient(90deg, var(--sub2) 0 1.4px, transparent 1.4px 15px);
+  animation:ticksIn 3.6s ease infinite}
+@keyframes ticksIn{0%{opacity:0}12%{opacity:.5}80%{opacity:.5}92%{opacity:0}100%{opacity:0}}
+
+/* 공통: 왼→오로 그어지는 진한 선(width 0→100%) */
+.tp .line{position:absolute; left:0; top:24px; height:4px; border-radius:3px; background:var(--green); width:0}
+
+/* ── 1) 글로우 코멧 — 얇은 선 + 빛나는 선두 점 ──────────────────────── */
+.v1 .line{animation:drawW 3.6s cubic-bezier(.4,.85,.25,1) infinite; box-shadow:0 0 8px var(--glow2)}
+.v1 .dot{position:absolute; top:21px; left:0; width:10px; height:10px; margin-left:-5px; border-radius:50%;
+  background:var(--green); box-shadow:0 0 6px 1px var(--glow), 0 0 14px 3px var(--shine); opacity:0;
+  animation:dotX 3.6s cubic-bezier(.4,.85,.25,1) infinite}
+
+/* ── 2) 그라데이션 빔 — 꼬리는 투명, 선두로 갈수록 진하고 밝게 ──────── */
+.v2 .line{height:4px; background:linear-gradient(90deg, transparent, var(--green) 62%, var(--shine));
+  box-shadow:0 0 10px var(--glow); animation:drawW 3.6s cubic-bezier(.35,.9,.3,1) infinite}
+
+/* ── 3) 메탈 샤인 — 다 그어진 뒤 흰 광택이 스윽 지나감 ──────────────── */
+.v3 .line{animation:drawW 3.6s cubic-bezier(.4,.85,.25,1) infinite}
+.v3 .glint{position:absolute; top:24px; left:0; height:4px; width:64px; border-radius:3px; opacity:0;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.95), transparent);
+  mix-blend-mode:screen; animation:glint 3.6s ease infinite}
+
+/* ── 4) 정밀 캘리퍼 — 얇은 이중 헤어라인 + 빛나는 끝 캡(미니멀·프리미엄) ─ */
+.v4 .track{opacity:.5}
+.v4 .line{height:1.5px; top:22px; background:var(--green); animation:drawW 3.6s cubic-bezier(.5,.85,.2,1) infinite}
+.v4 .line2{position:absolute; left:0; top:29px; height:1.5px; border-radius:3px; background:var(--green); width:0;
+  animation:drawW 3.6s cubic-bezier(.5,.85,.2,1) infinite}
+.v4 .cap{position:absolute; top:18px; left:0; width:2px; height:16px; border-radius:2px; background:var(--green);
+  box-shadow:0 0 7px 1px var(--shine); opacity:0; animation:dotX 3.6s cubic-bezier(.5,.85,.2,1) infinite}
+
+/* ── 5) 레이저 블룸 — 얇고 밝은 선 + 아래 번지는 블룸 ──────────────── */
+.v5 .line{height:2px; top:25px; background:var(--shine); box-shadow:0 0 4px var(--shine);
+  animation:drawW 3.6s cubic-bezier(.4,.85,.25,1) infinite}
+.v5 .bloom{position:absolute; left:0; top:22px; height:8px; width:0; border-radius:6px;
+  background:var(--green); filter:blur(6px); opacity:.5;
+  animation:drawW 3.6s cubic-bezier(.4,.85,.25,1) infinite}
+.v5 .dot{position:absolute; top:22px; left:0; width:8px; height:8px; margin-left:-4px; border-radius:50%;
+  background:#fff; box-shadow:0 0 8px 2px var(--shine), 0 0 16px 4px var(--glow); opacity:0;
+  animation:dotX 3.6s cubic-bezier(.4,.85,.25,1) infinite}
+
+/* ── 6) 눈금 러너 — 고운 눈금 위를 빛 점이 지나며 선을 남김 ─────────── */
+.v6 .ticks{background-image:repeating-linear-gradient(90deg, var(--green-line) 0 1.2px, transparent 1.2px 10px); animation:ticksIn 3.6s ease infinite}
+.v6 .line{height:3px; animation:drawW 3.6s cubic-bezier(.45,.85,.25,1) infinite}
+.v6 .dot{position:absolute; top:20px; left:0; width:12px; height:12px; margin-left:-6px; border-radius:50%;
+  background:radial-gradient(circle, #fff 0 30%, var(--green) 70%);
+  box-shadow:0 0 8px 2px var(--shine); opacity:0; animation:dotX 3.6s cubic-bezier(.45,.85,.25,1) infinite}
+
+/* ── ★ 2+3 믹스 — 그라데이션 빔이 그어지고, 다 그어지면 흰 광택이 지나감 ─ */
+.v23 .line{height:4px; background:linear-gradient(90deg, transparent, var(--green-mid) 55%, var(--green));
+  box-shadow:0 0 10px var(--glow); animation:drawW 3.6s cubic-bezier(.35,.9,.3,1) infinite}
+.v23 .glint{position:absolute; top:24px; left:-64px; height:4px; width:64px; border-radius:3px; opacity:0;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.95), transparent);
+  mix-blend-mode:screen; animation:glint2 3.6s ease infinite}
+
+/* ── 공통 키프레임 ──────────────────────────────────────────────────── */
+@keyframes drawW{0%{width:0}30%{width:100%}78%{width:100%}90%{width:100%; opacity:1}100%{width:100%; opacity:0}}
+@keyframes dotX{0%{left:0; opacity:0}3%{opacity:1}30%{left:100%; opacity:1}42%{opacity:0}100%{opacity:0}}
+@keyframes glint{0%,44%{transform:translateX(-64px); opacity:0}48%{opacity:1}70%{transform:translateX(680px); opacity:1}76%{opacity:0}100%{opacity:0}}
+@keyframes glint2{0%,42%{left:-64px; opacity:0}46%{opacity:1}70%{left:100%; opacity:1}77%{opacity:0}100%{left:100%; opacity:0}}
+@media(prefers-reduced-motion:reduce){*{animation:none !important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <h1>줄자 시안 — 세련·글로우 버전</h1>
+    <p>"왼→오 진한 선 찡" 측정 획을 여러 톤으로 뽑았어요. 전부 딥그린 기반이고 3.6초마다 반복 재생돼요.<br>마음에 드는 번호를 알려주시면 <b>_home-deck.html의 줄자(.scan)</b>에 그 버전만 이식할게요.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card" style="border-color:var(--green); box-shadow:0 4px 18px var(--glow2)">
+      <div class="lab"><span class="num">2+3</span><b>믹스 — 그라데이션 빔 + 메탈 샤인</b><span>그라데이션으로 그어진 뒤 흰 광택이 스윽 지나감</span></div>
+      <div class="tp v23"><div class="ticks"></div><div class="track"></div><div class="line"></div><div class="glint"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="lab"><span class="num">1</span><b>글로우 코멧</b><span>얇은 선 + 빛나는 선두 점(혜성 꼬리 느낌)</span></div>
+      <div class="tp v1"><div class="ticks"></div><div class="track"></div><div class="line"></div><div class="dot"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="lab"><span class="num">2</span><b>그라데이션 빔</b><span>꼬리는 투명, 선두로 갈수록 진하고 밝게</span></div>
+      <div class="tp v2"><div class="ticks"></div><div class="track"></div><div class="line"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="lab"><span class="num">3</span><b>메탈 샤인</b><span>다 그어진 뒤 흰 광택이 스윽 지나감</span></div>
+      <div class="tp v3"><div class="ticks"></div><div class="track"></div><div class="line"></div><div class="glint"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="lab"><span class="num">4</span><b>정밀 캘리퍼</b><span>얇은 이중 헤어라인 + 빛나는 끝 캡(미니멀·프리미엄)</span></div>
+      <div class="tp v4"><div class="ticks"></div><div class="track"></div><div class="line"></div><div class="line2"></div><div class="cap"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="lab"><span class="num">5</span><b>레이저 블룸</b><span>밝은 얇은 선 + 아래 번지는 블룸(가장 "빛나는")</span></div>
+      <div class="tp v5"><div class="ticks"></div><div class="track"></div><div class="bloom"></div><div class="line"></div><div class="dot"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="lab"><span class="num">6</span><b>눈금 러너</b><span>고운 눈금 위를 빛 점이 지나며 선을 남김(측정기 느낌)</span></div>
+      <div class="tp v6"><div class="ticks"></div><div class="track"></div><div class="line"></div><div class="dot"></div></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>다른 옷 판정하기 버튼 색 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
+<link rel="stylesheet" href="css/diag.css?v=c86b6818">
+<link rel="stylesheet" href="css/judge.css?v=33125101">
+<style>
+  body{background:#F6F6F5;font-family:'Pretendard',sans-serif;margin:0;padding:32px 30px 80px;color:#16140F;}
+  .wrap{max-width:760px;margin:0 auto;}
+  .htop{font-size:20px;font-weight:800;letter-spacing:-.03em;}
+  .hsub{margin:8px 0 24px;font-size:13.5px;color:#6E6B63;line-height:1.6;}
+  .case{margin-bottom:20px;padding:16px 18px;background:#fff;border:1px solid #E6E5E1;border-radius:16px;}
+  .lab{display:inline-block;font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:20px;}
+  .nm{font-size:14px;font-weight:800;margin:6px 0 2px;letter-spacing:-.02em;}
+  .ds{font-size:12.5px;color:#6E6B63;margin:0 0 12px;}
+  /* 결과 하단 맥락 흉내 — 동의 줄 아래 버튼 */
+  .ctx{font-size:12.5px;color:#6E6B63;margin-bottom:12px;}
+  /* 후보별 오버라이드 */
+  #A .jredo-btn{background:var(--gs); color:var(--g); border:1.5px solid var(--gl);}
+  #A .jredo-btn:hover{background:#DDEAE1;}
+  #B .jredo-btn{background:var(--surface); color:var(--g); border:1.5px solid var(--g);}
+  #B .jredo-btn:hover{background:var(--gs);}
+  #C .jredo-btn{background:var(--surface); color:var(--ink); border:1.5px solid var(--ink);}
+  #C .jredo-btn:hover{background:var(--soft);}
+  #D .jredo-btn{background:var(--soft); color:var(--ink2); border:1.5px solid transparent;}
+  #D .jredo-btn:hover{background:#E4E3DE;}
+  #E .jredo-btn{background:var(--ink); color:#fff; border:1.5px solid var(--ink);}
+  #E .jredo-btn:hover{background:#2a261d;}
+</style></head><body>
+<main class="jwrap" style="padding:0;max-width:none">
+<div class="wrap">
+  <div class="htop">"다른 옷 판정하기" 버튼 색 시안</div>
+  <div class="hsub">결과 화면 맨 아래, 새 판정을 시작하는 버튼이에요. <b>주 액션은 왼쪽 "판정하기"(검정)</b>이라, 이건 보조 성격이 자연스러워요.</div>
+  <div id="out"></div>
+</div>
+</main>
+<script>
+  var ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>';
+  var C=[
+    ['현재','cur','흰 배경 + 회색 테두리','가장 조용함 · 살짝 밋밋할 수 있음'],
+    ['A','A','연한 초록 채움','브랜드 톤 · 부드럽게 눈에 띔'],
+    ['B','B','흰 배경 + 딥그린 테두리·글씨','또렷하면서 초록 아이덴티티 유지 (추천)'],
+    ['C','C','흰 배경 + 먹색 테두리·글씨','대비 강함 · 초록 안 씀'],
+    ['D','D','연회색 채움(테두리 없음)','버튼감은 있고 아주 조용함'],
+    ['E','E','잉크 꽉 채움','가장 강함 · 위 "판정하기"와 무게가 같아져 경합']
+  ];
+  document.getElementById('out').innerHTML=C.map(function(c){
+    return '<div class="case" id="'+c[1]+'">'+
+      '<span class="lab"'+(c[0]==='현재'?' style="color:#6E6B63;background:#EDEDEA;border:1px solid #DAD8D2"':' style="color:#2E4A3B;background:#E7EFEA;border:1px solid #CBDDD2"')+'>'+c[0]+'</span>'+
+      '<p class="nm">'+c[2]+'</p><p class="ds">'+c[3]+'</p>'+
+      '<div class="ctx">☐ 핏팅 판정을 더 정확하게 하기 위해 사이즈표를 활용할게요</div>'+
+      '<button class="jbtn jredo-btn" style="width:100%;margin-top:0">'+ICON+'다른 옷 판정하기</button>'+
+      '</div>';
+  }).join('');
+</script>
+</body></html>

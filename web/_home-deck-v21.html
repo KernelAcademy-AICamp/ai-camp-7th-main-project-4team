@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>메인 프로토타입 v18 — 인트로 → 간단카드 촤라락 → 모여서 카피·CTA</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<style>
+/* ==========================================================================
+   _home-deck.html v18 — 메인 히어로 (버리는 파일 · 커밋 안 함).
+   v14에서 인트로 카피·마지막 카피는 살리고:
+     - 실물 결과카드(iframe) → 캐릭터+유형명+한줄설명만 담은 '간단 카드'를 직접 렌더(블러·자물쇠 없음)
+     - '펼쳐서 모아서 하나씩 뽑기' → 촤라락 펼침만(하나씩 뽑기 제거)
+   스토리: ① "당신의 체형…" → "FITTING에서 알려드립니다" → ② 간단카드 촤라락 펼침(다 보임) →
+           ③ 가운데로 모여 페이드 → "안 입어본 브랜드도 내 사이즈로 딱 FIT" + [내 체형 진단하러 가기 →]
+   카드 내용은 bodytypes.json 단일 출처. 순환은 CSS @keyframes. 연출 (B) 감각적.
+   ========================================================================== */
+*{box-sizing:border-box; margin:0; padding:0}
+body{background:var(--bg); color:var(--ink); font-family:var(--sans); letter-spacing:var(--ls-body);
+  -webkit-user-select:none; user-select:none; overflow-x:hidden}
+.wrap{max-width:1440px; margin:0 auto; padding:0 44px}
+@media(max-width:900px){ .wrap{padding:0 20px} }
+.note{background:var(--surface); border-bottom:var(--bd); padding:11px 20px; font-size:12.5px; color:var(--sub); text-align:center}
+.note b{color:var(--ink)}
+
+/* ── 히어로 ────────────────────────────────────────────────────────── */
+.hero{position:relative; overflow:hidden}
+.hero::before{content:""; position:absolute; left:50%; top:-22%; width:920px; height:920px; margin-left:-460px;
+  background:radial-gradient(circle at 50% 50%, var(--green-soft), transparent 62%); opacity:.7; pointer-events:none}
+.heroin{position:relative; padding:44px 0 30px; text-align:center}
+.kick{display:inline-flex; align-items:center; gap:7px; font-size:var(--fs-label); font-weight:var(--w-x);
+  letter-spacing:var(--ls-label); color:var(--green); background:var(--green-soft); padding:7px 14px; border-radius:var(--r-chip)}
+.kick .dot{width:5px; height:5px; border-radius:50%; background:var(--green); animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+
+.stage{position:relative; height:520px; margin-top:20px}
+
+/* ① 인트로 카피 */
+.intro{position:absolute; left:50%; top:44%; transform:translate(-50%,-50%); width:88%; pointer-events:none}
+.intro .l{position:absolute; left:50%; top:0; transform:translate(-50%,-50%); width:100%;
+  font-size:clamp(28px,3.6vw,46px); font-weight:var(--w-x); letter-spacing:-.05em; line-height:1.3; opacity:0; white-space:nowrap}
+/* 카피는 전부 잉크블랙(딥그린 없음). 로고 워드마크만 딥그린 — 헤더 .logo와 동일 */
+.intro .l .lg{color:var(--green); font-weight:800; letter-spacing:-.05em}
+.intro .l .lg i{display:inline-block; width:.13em; height:.13em; border-radius:1px; background:var(--green); margin-left:.05em; vertical-align:baseline}
+/* l2는 문구로만 노출 후 페이드아웃 → 아래 .lock(로고 락업)으로 교대 */
+
+/* 로고 락업 : 문장 속 "Fitting" 로고가 '그 자리에서' 이 위치로 실제 이동(JS FLIP)해 오고, 로고 아래로 긴 밑줄 줄자가 씽씽(왼→오) */
+.lock{position:absolute; left:50%; top:40%; transform:translate(-50%,-50%); width:min(600px,84%); text-align:center; pointer-events:none}
+.lock .lgbig{display:inline-block; font-size:clamp(38px,5vw,64px); font-weight:800; letter-spacing:-.05em; color:var(--green); line-height:1; visibility:hidden}  /* 이동 목표 위치·크기 측정용(투명) */
+.lock .lgbig i{display:inline-block; width:.12em; height:.12em; border-radius:1px; background:var(--green); margin-left:.05em; vertical-align:baseline}
+.lock .uline{position:relative; height:22px; margin-top:30px}   /* 로고와 간격. 락업 폭(≈600px) 전체 긴 밑줄 */
+.lock .uline .ticks{position:absolute; left:0; right:0; top:2px; height:18px;
+  background-image:repeating-linear-gradient(90deg, var(--line2) 0 1.6px, transparent 1.6px 15px); clip-path:inset(0 100% 0 0)}  /* 줄자 눈금(연회색) — 선을 위아래로 가로지름, draw와 함께 왼→오로 */
+.lock .uline .fill{position:absolute; left:0; right:0; top:9px; height:4px; border-radius:3px;
+  background:linear-gradient(90deg, transparent, var(--ink-soft) 46%, var(--ink));
+  box-shadow:0 0 10px rgba(22,20,15,.22); clip-path:inset(0 100% 0 0)}
+.lock .uline .umk{position:absolute; top:0; left:0; width:3px; height:22px; border-radius:2px; background:var(--ink);
+  box-shadow:0 0 8px 1px rgba(22,20,15,.4); opacity:0}
+.lock .uline .glint{position:absolute; top:9px; left:-70px; width:70px; height:4px; border-radius:3px; opacity:0; pointer-events:none;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.95), transparent)}  /* 다 그어지면 오른쪽 끝에서 흰 광택 한 번 */
+/* 문장 속에서 락업으로 이동하는 로고 + 뒤 꼬리 문구 */
+#mlogo{display:inline-block; line-height:1; vertical-align:baseline; transform-origin:center center; will-change:transform}
+#tail{transition:opacity .45s ease}
+
+/* ② 메인 전용 카드 — 실물 iframe·블러 없이 캐릭터(.fig)+유형명+한 줄 설명. 다크 톤(실물카드 톤 유지).
+   내용은 실물카드처럼 392×664로 그린 뒤 .hc를 통째로 축소(비율 유지). fig CSS는 card.css에서 가져옴. */
+.deck{position:absolute; left:50%; top:150px; width:0; height:340px}
+.card{position:absolute; left:-100px; top:0; width:200px; height:339px; border-radius:17px; opacity:0;
+  overflow:hidden; background:#16171b; box-shadow:0 14px 34px rgba(10,11,14,.22);
+  -webkit-mask-image:-webkit-radial-gradient(#fff,#000); mask-image:radial-gradient(#fff,#000);  /* 회전 시 라운드 모서리 흰선(AA 심) 제거 */
+  transform-origin:50% 560px; will-change:transform, opacity; backface-visibility:hidden}  /* 부채꼴 회전 피벗 = 카드 아래(가운데) */
+.card .hc{position:absolute; top:0; left:0; width:392px; height:664px; transform:scale(.5102); transform-origin:top left;
+  color:#fff; display:flex; flex-direction:column; align-items:center; padding:26px 26px 30px; background:#16171b; overflow:hidden}
+.card .hc .ctop{width:100%; display:flex; justify-content:flex-start}
+.card .hc .clogo{font-size:20px; font-weight:800; letter-spacing:-.05em}
+.card .hc .clogo .sq{display:inline-block; width:6px; height:6px; background:currentColor; margin-left:2px; vertical-align:baseline}
+.card .hc .hcbody{flex:1; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center}
+.card .hc .fig{position:relative; width:120px; height:184px; margin-bottom:6px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; animation:bob 3.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) scale(.85)} 50%{transform:translateY(-6px) scale(.85)}}
+.card .hc .fig .head{width:32px; height:36px; margin-bottom:-3px; z-index:2; position:relative}
+.card .hc .fig .head .face{position:absolute; inset:0; border-radius:10px 10px 8px 8px; background:#ecd9c9; z-index:2;
+  background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px),repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px)}
+.card .hc .fig .head .cap{position:absolute; top:-3px; left:-3px; right:-3px; height:13px; border-radius:10px 10px 45% 45%; background:#2a2b30; z-index:3}
+.card .hc .fig .head.female .cap{background:#9a7350}
+.card .hc .fig .head .longhair{position:absolute; top:-5px; left:-7px; right:-7px; bottom:1px; background:#9a7350; border-radius:50% 50% 36% 36% / 46% 46% 30% 30%; z-index:1}
+.card .hc .fig .head .ey{position:absolute; top:18px; width:4px; height:5px; border-radius:50%; background:#2a2b30; z-index:4}
+.card .hc .fig .head .ey.l{left:9px} .card .hc .fig .head .ey.r{right:9px}
+.card .hc .fig .body{width:120px; position:relative; image-rendering:pixelated;
+  background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 8px),repeating-linear-gradient(90deg,rgba(0,0,0,.16) 0 1px,transparent 1px 8px)}
+.card .hc .fig .body.straight{clip-path:polygon(38% 0,62% 0,62% 64%,64% 100%,36% 100%,38% 64%)}
+.card .hc .fig .body.aline{clip-path:polygon(40% 0,60% 0,60% 30%,88% 100%,12% 100%,40% 30%)}
+.card .hc .fig .body.vline{clip-path:polygon(13% 0,87% 0,64% 40%,60% 100%,40% 100%,36% 40%)}
+.card .hc .fig .body.xline{clip-path:polygon(17% 0,83% 0,57% 46%,87% 100%,13% 100%,43% 46%)}
+.card .hc .fig .body.balance{clip-path:polygon(33% 0,67% 0,60% 50%,67% 100%,33% 100%,40% 50%)}
+.card .hc .fig .body.diamond{clip-path:polygon(37% 0,63% 0,85% 50%,61% 100%,39% 100%,15% 50%)}
+.card .hc .fig .body.round{clip-path:ellipse(45% 47% at 50% 53%)}
+.card .hc .fig .body.tube{clip-path:polygon(43% 0,57% 0,57% 100%,43% 100%)}
+.card .hc .code{margin-top:18px; font-size:14px; font-weight:800; letter-spacing:.22em; opacity:.92}
+.card .hc .word{margin-top:12px; font-size:34px; font-weight:800; letter-spacing:-.03em; line-height:1.1; text-align:center}
+.card .hc .tagline{margin-top:16px; font-size:17px; line-height:1.5; opacity:.8; text-align:center; max-width:300px}
+
+/* ③ 마무리 카피 + CTA (v14 살림 · 줄자 없음) */
+.finale{position:absolute; left:50%; top:47%; transform:translate(-50%,-50%); width:88%; text-align:center; opacity:0; pointer-events:none; z-index:50}
+.finale.show{pointer-events:auto}
+.fcopy{font-size:clamp(26px,3.2vw,42px); font-weight:var(--w-x); letter-spacing:-.05em; line-height:1.24}
+.fcopy b{color:var(--green)}
+.fbtn{display:inline-flex; align-items:center; gap:8px; margin-top:26px;
+  font-family:var(--sans); font-size:16px; font-weight:var(--w-bold); padding:16px 26px; border-radius:var(--r-btn);
+  background:var(--green-soft); color:var(--green); border:1px solid var(--green-line); cursor:pointer; transition:.14s}
+.fbtn:hover{background:#DDE9E2; transform:translateY(-1px)}
+
+.downhint{text-align:center; font-size:13px; color:var(--sub2); font-weight:var(--w-med); padding:22px 0 40px}
+.downhint .arr{display:inline-block; margin-left:6px; animation:bob 1.7s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+
+/* ── 서비스 소개 (유지) ─────────────────────────────────────────────── */
+.svc{background:var(--surface); border-top:var(--bd); position:relative}
+.svcin{padding:84px 0 90px}
+.shead{text-align:center; max-width:660px; margin:0 auto}
+.eyebrow{font-size:var(--fs-label); font-weight:var(--w-x); letter-spacing:var(--ls-label); text-transform:uppercase; color:var(--sub2)}
+h2{font-size:clamp(28px,3vw,42px); font-weight:var(--w-x); letter-spacing:-.05em; line-height:1.26; margin-top:12px}
+h2 b{color:var(--green)}
+.lead{font-size:16px; color:var(--sub); margin-top:13px; line-height:1.62}
+.how{display:grid; grid-template-columns:64px minmax(0,1fr); gap:34px; margin-top:56px; align-items:start}
+.vtape{position:relative; height:100%; min-height:520px; justify-self:center; width:34px}
+.vtape .rail{position:absolute; left:50%; margin-left:-.5px; top:0; bottom:0; width:1px; background:var(--line2)}
+.vtape .tk{position:absolute; left:50%; margin-left:-.5px; top:0; bottom:0; width:1px;
+  background:repeating-linear-gradient(180deg, var(--line2) 0 1px, transparent 1px 12px)}
+.vtape .vfill{position:absolute; left:50%; margin-left:-1.5px; top:0; width:3px; height:0; background:var(--green); border-radius:3px}
+.vtape .vhead{position:absolute; left:50%; margin-left:-7px; top:0; width:14px; height:14px; border-radius:50%;
+  background:var(--green); border:3px solid var(--surface); box-shadow:0 0 0 1px var(--green-line)}
+.steps{display:flex; flex-direction:column; gap:22px}
+.step{display:grid; grid-template-columns:56px minmax(0,1fr) auto; gap:20px; align-items:center;
+  background:var(--bg); border:var(--bd); border-radius:var(--r-card); padding:26px 28px;
+  opacity:0; transform:translateY(26px); transition:opacity .6s, transform .6s cubic-bezier(.2,.8,.3,1)}
+.step.on{opacity:1; transform:none}
+.step .ic{width:56px; height:56px; border-radius:15px; background:var(--green-soft); color:var(--green);
+  display:flex; align-items:center; justify-content:center; flex:none}
+.step .ic svg{width:26px; height:26px}
+.step .no{font-family:var(--num); font-size:11px; font-weight:var(--w-x); letter-spacing:var(--ls-label); color:var(--green)}
+.step h3{font-size:20px; font-weight:var(--w-x); letter-spacing:-.035em; margin-top:5px}
+.step p{font-size:14px; color:var(--sub); margin-top:6px; line-height:1.6; max-width:520px}
+.step .big{text-align:right; flex:none}
+.step .big b{display:block; font-family:var(--num); font-size:34px; font-weight:var(--w-x); letter-spacing:-.04em; color:var(--green)}
+.step .big span{font-size:12px; color:var(--sub2); font-weight:var(--w-bold)}
+@media(max-width:900px){
+  .heroin{padding-top:30px}
+  .stage{height:470px} .deck{top:120px}
+  .card{width:158px; height:268px; left:-79px} .card .hc{transform:scale(.4031)}
+  .intro .l{white-space:normal}
+  .how{grid-template-columns:1fr; gap:18px} .vtape{display:none}
+  .step{grid-template-columns:46px minmax(0,1fr); gap:14px; padding:20px}
+  .step .big{grid-column:1/-1; text-align:left}
+}
+@media(prefers-reduced-motion:reduce){
+  .card,.intro .l,.lock{display:none}
+  .finale{opacity:1 !important; animation:none !important}
+}
+</style>
+</head>
+<body>
+
+<div class="note"><b>프로토타입 v18</b> — 인트로 → 문장 속 "Fitting" 로고가 제자리서 위로 이동·확대 + 아래 긴 밑줄 줄자 씽씽 → <b>실물 결과카드</b> 촤라락 → 모여서 카피+CTA</div>
+
+<!-- ── 히어로 ── -->
+<section class="hero"><div class="wrap heroin">
+
+  <div class="stage" id="stage">
+    <div class="intro" id="intro">
+      <div class="l" id="l1">당신의 체형, 아직도 모르시나요?</div>
+      <div class="l" id="l2"><span class="lg" id="mlogo">Fitting<i></i></span><span class="tail" id="tail">에서 알려드립니다</span></div>
+    </div>
+    <div class="lock" id="lock">
+      <div class="lgbig" id="lgtarget">Fitting<i></i></div>
+      <div class="uline"><span class="ticks"></span><span class="fill"></span><span class="glint"></span><span class="umk"></span></div>
+    </div>
+    <div class="deck" id="deck"></div>
+    <div class="finale" id="finale">
+      <div class="fcopy">안 입어본 브랜드도<br><b>내 사이즈로 딱 FIT</b></div>
+      <button class="fbtn" id="startBtn">내 체형 진단하러 가기 →</button>
+    </div>
+  </div>
+
+</div>
+<div class="downhint">그런데 체형은 어떻게 알아낼까요?<span class="arr">↓</span></div>
+</section>
+
+<!-- ── 서비스 소개 (유지) ── -->
+<section class="svc"><div class="wrap svcin">
+  <div class="shead">
+    <span class="eyebrow">How it works</span>
+    <h2>착용 경험을 <b>사이즈로 번역</b>해요</h2>
+    <p class="lead">복잡한 신체 치수 입력 없이, 평소 옷의 느낌만으로 3단계면 끝나요</p>
+  </div>
+
+  <div class="how" id="how">
+    <div class="vtape">
+      <div class="rail"></div><div class="tk"></div>
+      <div class="vfill" id="vfill"></div><div class="vhead" id="vhead"></div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></div>
+        <div><div class="no">STEP 01</div><h3>착용 경험 입력</h3>
+          <p>평소 입는 옷의 브랜드·핏·부위별 느낌을 알려주세요. 치수 대신 '경험'으로 시작해요</p></div>
+        <div class="big"><b class="cnt" data-to="2">0</b><span>분이면 충분</span></div>
+      </div>
+      <div class="step">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8L12 3z"/><path d="M19 14.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6.6-1.6z"/></svg></div>
+        <div><div class="no">STEP 02</div><h3>AI 체형 진단</h3>
+          <p>8가지 체형 유형 중 내 유형을 판정하고, 공유용 캐릭터 카드로 보여드려요</p></div>
+        <div class="big"><b class="cnt" data-to="8">0</b><span>체형으로 분류</span></div>
+      </div>
+      <div class="step">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15.6 2.3l6.1 6.1a1 1 0 0 1 0 1.4L9.8 21.7a1 1 0 0 1-1.4 0l-6.1-6.1a1 1 0 0 1 0-1.4L14.2 2.3a1 1 0 0 1 1.4 0z"/><path d="M14 5l2 2M11 8l2 2M8 11l2 2M5 14l2 2"/></svg></div>
+        <div><div class="no">STEP 03</div><h3>브랜드별 사이즈 번역</h3>
+          <p>안 입어본 브랜드도 내 몸 기준으로 사이즈를 환산해, 반품 없이 한 번에 맞춰요</p></div>
+        <div class="big"><b class="cnt" data-to="0" data-from="9">9</b><span>반품을 목표로</span></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<script>
+(function(){
+  var G='female';
+  var SHOW_CARDS=true;    // 인트로 확정(v20). 이제 카드 파트 작업
+  var PREVIEW_CARDS=true; // 카드 파트부터 바로 재생(인트로 건너뜀·숨김). 전체 재생하려면 false
+  var CODES=['TRI','INV','HRG','STR','BAL','DIA','RND','TUB'];
+  var N=CODES.length, mid=(N-1)/2;
+  var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var stage=document.getElementById('stage'), deck=document.getElementById('deck'), finaleEl=document.getElementById('finale');
+
+  /* ── 타임라인(ms) · 1회 재생 ─────────────────────────────────────── */
+  var T={
+    introA: 500, introB: 2550, introDur: 2050,   // ① 인트로 2줄(조금 더 느긋하게)
+    lockAt: 4600,                                 // ★ 꼬리 문구 페이드 + "Fitting" 로고가 이 위치로 실제 이동(JS FLIP) 시작
+    drawAt: 5350, drawDur: 800,                   // ★ 로고 안착 후 아래 긴 밑줄 줄자 씽씽(왼→오)
+    spStep: 90, spDur: 640,                       // ② 촤라락: 카드당 등장 간격 / 각 카드 펼침 시간
+    holdAll: 2600                                 // 부채꼴로 펼친 뒤 유지(모으기·피날레는 다음 단계)
+  };
+  T.drawEnd   = T.drawAt + T.drawDur;
+  T.spreadAt  = T.drawEnd + 550;                  // 줄자 그어짐(광택 동반) 뒤 카드 촤라락 시작
+  T.spreadEnd = T.spreadAt + (N-1)*T.spStep + T.spDur;
+  T.total     = T.spreadEnd + T.holdAll;          // 펼쳐서 유지하고 끝
+  var PREVIEW_FROM = PREVIEW_CARDS ? Math.max(0, T.spreadAt-400) : 0;   // 카드 시작 직전으로 점프(음수 animation-delay)
+  var EASE_OUT='cubic-bezier(.22,.9,.28,1)', EASE_IO='cubic-bezier(.5,0,.3,1)';
+
+  var GAP_X, STEP, cardW;
+  function layout(){
+    var stageW=stage.clientWidth;
+    cardW=window.innerWidth<=900?158:200;
+    STEP=window.innerWidth<=900?4.6:7;
+    var spreadW=Math.min(640, stageW - cardW - 46);
+    GAP_X=spreadW/(N-1);
+  }
+  var FAN_ANGLE=7;   // 카드당 부채 각도(도). 가운데 기준 좌우 대칭 부채꼴(아래 피벗 중심 회전)
+  function CSTACK(i){ return 'rotate(0deg)'; }                              // 가운데에 곧게 모임(겹쳐 쌓임)
+  function FANC(i){ return 'rotate('+((i-mid)*FAN_ANGLE).toFixed(2)+'deg)'; }   // 가운데 기준 좌우로 펼침
+
+  function kf(name, stops){
+    return '@keyframes '+name+'{\n'+stops.map(function(s){
+      return (s[0]/T.total*100).toFixed(3)+'%{'+s[1]+(s[2]?';animation-timing-function:'+s[2]:'')+'}';
+    }).join('\n')+'\n}';
+  }
+
+  function dealCSS(){
+    layout();
+    var out=[];
+    for(var i=0;i<N;i++){
+      var spA=T.spreadAt+i*T.spStep, spB=spA+T.spDur;
+      // 중앙에 모여 등장(살짝 튐) → 부채꼴로 펼침 → 그대로 유지 (모으기·페이드는 다음 단계)
+      out.push(kf('deal'+i, [
+        [0,             'transform:'+CSTACK(i)+';opacity:0;z-index:'+i],
+        [T.spreadAt-120,'transform:'+CSTACK(i)+';opacity:0;z-index:'+i],
+        [spA,           'transform:'+CSTACK(i)+' translateY(8px);opacity:1;z-index:'+i, 'cubic-bezier(.34,1.4,.5,1)'],   // 살짝 튀어오르는 등장
+        [spB,           'transform:'+FANC(i)+';opacity:1;z-index:'+i],
+        [T.total,       'transform:'+FANC(i)+';opacity:1;z-index:'+i]
+      ]));
+      out.push('.stage.run .card[data-i="'+i+'"]{animation:deal'+i+' '+T.total+'ms forwards}');
+    }
+    out.push(kf('introA', [
+      [0,'opacity:0'], [T.introA,'opacity:0'], [T.introA+400,'opacity:1'],
+      [T.introA+T.introDur-450,'opacity:1'], [T.introA+T.introDur,'opacity:0'], [T.total,'opacity:0']
+    ]));
+    out.push(kf('introB', [                        // 문구 노출 → 로고는 JS로 이동, 컨테이너(=로고)는 spreadAt까지 유지 후 페이드
+      [0,'opacity:0'], [T.introB,'opacity:0'], [T.introB+400,'opacity:1'],
+      [T.spreadAt,'opacity:1'], [T.spreadAt+450,'opacity:0'], [T.total,'opacity:0']
+    ]));
+    out.push('.stage.run #l1{animation:introA '+T.total+'ms forwards}');
+    out.push('.stage.run #l2{animation:introB '+T.total+'ms forwards}');
+    // ★ 로고 아래 긴 밑줄 줄자 씽씽(fill clip 왼→오) + 선두 마커. 락업 컨테이너는 spreadAt에 페이드아웃
+    out.push(kf('lockFade', [
+      [0,'opacity:1'], [T.spreadAt,'opacity:1'], [T.spreadAt+450,'opacity:0'], [T.total,'opacity:0']
+    ]));
+    out.push(kf('uDraw', [
+      [0,'clip-path:inset(0 100% 0 0)'], [T.drawAt,'clip-path:inset(0 100% 0 0)','cubic-bezier(.3,.85,.25,1)'],
+      [T.drawEnd,'clip-path:inset(0 0 0 0)'], [T.total,'clip-path:inset(0 0 0 0)']
+    ]));
+    out.push(kf('uMk', [
+      [0,'left:0;opacity:0'], [T.drawAt,'left:0;opacity:0','cubic-bezier(.3,.85,.25,1)'], [T.drawAt+70,'left:0;opacity:1'],
+      [T.drawEnd,'left:100%;opacity:1'], [T.drawEnd+260,'left:100%;opacity:0'], [T.total,'left:100%;opacity:0']
+    ]));
+    out.push(kf('uGlint', [                        // 그어지는 선두 엣지와 함께 흰 광택이 같이 달림(왼→오, draw와 동일 이징)
+      [0,'left:-30px;opacity:0'], [T.drawAt,'left:-30px;opacity:1','cubic-bezier(.3,.85,.25,1)'],
+      [T.drawEnd,'left:100%;opacity:1'], [T.drawEnd+180,'left:100%;opacity:0'], [T.total,'left:100%;opacity:0']
+    ]));
+    out.push('.stage.run #lock{animation:lockFade '+T.total+'ms forwards}');
+    out.push('.stage.run #lock .ticks{animation:uDraw '+T.total+'ms forwards}');
+    out.push('.stage.run #lock .fill{animation:uDraw '+T.total+'ms forwards}');
+    out.push('.stage.run #lock .glint{animation:uGlint '+T.total+'ms forwards}');
+    out.push('.stage.run #lock .umk{animation:uMk '+T.total+'ms forwards}');
+    // (피날레 카피·CTA는 다음 단계에서 다시 붙임 — 지금은 부채꼴 펼침에 집중)
+    if(PREVIEW_CARDS){
+      out.push('.stage.run #l1,.stage.run #l2,.stage.run #lock{display:none}');            // 미리보기: 인트로 숨김
+      out.push('.stage.run *{animation-delay:-'+PREVIEW_FROM+'ms !important}');            // 미리보기: 카드 시작으로 점프
+    }
+    return out.join('\n');
+  }
+
+  // 메인 전용 카드 — 캐릭터(.fig)+유형명+한 줄 설명(profile[0]). 실물 iframe·블러 없음, 다크 톤 유지
+  function figHTML(silhouette, point){
+    var head='<div class="head '+G+'">'+(G==='female'?'<span class="longhair"></span>':'')+
+      '<span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div>';
+    return '<div class="fig">'+head+'<div class="body '+silhouette+'" style="background-color:'+point+'; height:150px"></div></div>';
+  }
+  function buildCard(i, code, t){
+    var g=(t.gender&&(t.gender[G]||t.gender.female))||{};
+    var tag=(g.profile&&g.profile[0])||'';
+    var el=document.createElement('div'); el.className='card'; el.dataset.i=i; el.dataset.code=code;
+    el.innerHTML='<div class="hc" style="background:radial-gradient(ellipse 70% 34% at 50% 11%, '+t.point+'2b, transparent 60%), linear-gradient(160deg,#191a1f,#0f1014)">'+
+      '<div class="ctop"><span class="clogo">Fitting<i class="sq"></i></span></div>'+
+      '<div class="hcbody">'+figHTML(t.silhouette, t.point)+
+        '<div class="code" style="color:'+t.point+'">'+code+'</div>'+
+        '<div class="word">'+t.name+'</div>'+
+        '<div class="tagline">'+tag+'</div></div></div>';
+    deck.appendChild(el);
+  }
+  function buildCards(cb){
+    if(!SHOW_CARDS){ cb(); return; }
+    fetch('data/bodytypes.json').then(function(r){ return r.json(); }).then(function(j){
+      var map={}; j.types.forEach(function(t){ map[t.code]=t; });
+      CODES.forEach(function(code,i){ if(map[code]) buildCard(i, code, map[code]); });
+    }).catch(function(e){}).then(cb);
+  }
+
+  var style=document.createElement('style'); style.textContent=dealCSS(); document.head.appendChild(style);
+
+  // 문장 속 로고(#mlogo)를 락업 목표(#lgtarget) 위치·크기로 '실제 이동'(FLIP). 꼬리 문구는 페이드아웃
+  function moveLogo(){
+    var ml=document.getElementById('mlogo'), tg=document.getElementById('lgtarget'), tail=document.getElementById('tail');
+    if(!ml||!tg) return;
+    var r1=ml.getBoundingClientRect(), r2=tg.getBoundingClientRect();
+    var s=r2.height/r1.height;
+    var dx=(r2.left+r2.width/2)-(r1.left+r1.width/2);
+    var dy=(r2.top +r2.height/2)-(r1.top +r1.height/2);
+    if(tail) tail.style.opacity='0';
+    ml.style.transition='transform .82s cubic-bezier(.2,.8,.3,1)';
+    ml.style.transform='translate('+dx+'px,'+dy+'px) scale('+s+')';
+  }
+
+  var started=false;
+  function startObserver(){
+    new IntersectionObserver(function(en,ob){
+      en.forEach(function(x){
+        if(!x.isIntersecting || started) return;
+        started=true;
+        if(RM){ finaleEl.classList.add('show'); ob.disconnect(); return; }
+        stage.classList.add('run');   // 인트로·밑줄줄자·카드·피날레는 keyframe(.stage.run)로 자동 재생
+        if(!PREVIEW_CARDS) setTimeout(moveLogo, T.lockAt);                           // 로고를 락업 위치로 실제 이동 + 꼬리 문구 페이드
+        ob.disconnect();
+      });
+    },{threshold:.2}).observe(stage);
+  }
+  buildCards(startObserver);   // 카드 먼저 그린 뒤 관찰자 시작(애니 동기 보장)
+
+  document.getElementById('startBtn').addEventListener('click', function(){
+    alert('데모 — 실제로는 진단 플로우(diag-basic.html)로 이동해요.');
+  });
+
+  var rz=null;
+  addEventListener('resize', function(){ clearTimeout(rz); rz=setTimeout(function(){ style.textContent=dealCSS(); }, 220); });
+
+  /* ── 서비스 소개(유지): 스텝 등장 · 카운트업 · 세로 줄자 스크롤 1:1 ── */
+  var so=new IntersectionObserver(function(en){
+    en.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add('on'); so.unobserve(x.target); } });
+  },{threshold:.35});
+  [].forEach.call(document.querySelectorAll('.step'), function(s,i){ s.style.transitionDelay=(i*90)+'ms'; so.observe(s); });
+
+  function countTo(el){
+    var to=+el.dataset.to, from=el.dataset.from?+el.dataset.from:0, t0=null;
+    function step(ts){ if(!t0) t0=ts; var p=Math.min(1,(ts-t0)/1100), e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(from+(to-from)*e); if(p<1) requestAnimationFrame(step); }
+    requestAnimationFrame(step);
+  }
+  var co=new IntersectionObserver(function(en){
+    en.forEach(function(x){ if(x.isIntersecting){ countTo(x.target); co.unobserve(x.target); } });
+  },{threshold:.6});
+  [].forEach.call(document.querySelectorAll('.cnt'), function(el){ co.observe(el); });
+
+  var how=document.getElementById('how'), vfill=document.getElementById('vfill'), vhead=document.getElementById('vhead'), tick=false;
+  function upd(){ tick=false;
+    var r=how.getBoundingClientRect(), vh=window.innerHeight;
+    var prog=(vh*0.55 - r.top)/(r.height*1.02); prog=Math.max(0,Math.min(1,prog));
+    var pct=(prog*100).toFixed(2)+'%'; vfill.style.height=pct; vhead.style.top=pct;
+  }
+  addEventListener('scroll', function(){ if(!tick){ tick=true; requestAnimationFrame(upd); } }, {passive:true});
+  addEventListener('resize', upd); upd();
+})();
+</script>
+</body>
+</html>

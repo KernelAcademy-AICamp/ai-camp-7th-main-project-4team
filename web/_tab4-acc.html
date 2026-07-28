@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>탭4 정확도 근거 — 데이터 기반 시안</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
+<link rel="stylesheet" href="css/diag.css?v=c86b6818">
+<link rel="stylesheet" href="css/result.css?v=49d3ba32">
+<style>
+  body{background:#F1F1EF;margin:0;padding:32px 30px 90px;font-family:'Pretendard',sans-serif;color:var(--ink);}
+  .wrap{max-width:1120px;margin:0 auto;}
+  .htop{font-size:19px;font-weight:800;letter-spacing:-.03em;} .hsub{margin:7px 0 26px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .lead{font-size:15.5px;color:var(--muted);margin:0 0 16px;}
+  .rgrid2{ display:grid; grid-template-columns:1.05fr .95fr; gap:16px; align-items:start; }
+  .rcol{ display:flex; flex-direction:column; gap:16px; }
+  .av-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+
+  /* 종합 신뢰도 카드 */
+  .acc-sum{ }
+  .conf-badge{font-size:13px;font-weight:800;padding:5px 13px;border-radius:20px;}
+  .conf-badge.low{background:#F2ECE0;color:#8A7A52;} .conf-badge.mid{background:#E7EFE7;color:#4A7A4A;} .conf-badge.high{background:var(--rink,#16140F);color:#fff;}
+  .acc-reason{margin-top:13px;font-size:15px;line-height:1.6;color:var(--sub);} .acc-reason b{color:var(--ink);font-weight:800;}
+  .tier-steps{display:flex;gap:8px;margin-top:18px;}
+  .tier-step{flex:1;text-align:center;padding:11px 6px 9px;border-radius:12px;border:1px solid var(--line);background:#fff;}
+  .tier-step.on{border-color:#D8C9A6;background:#FBF6EB;}
+  .tier-step .ts-b{font-size:13px;font-weight:800;color:var(--sub2);} .tier-step.on .ts-b{color:#8A7A52;}
+  .tier-step .ts-c{margin-top:3px;font-size:11.5px;color:var(--sub2);font-weight:600;}
+  .tier-step .ts-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--line2,#D8D5CE);margin-bottom:5px;}
+  .tier-step.on .ts-dot{background:#C7A860;}
+
+  /* 부위별 신뢰도 */
+  .acc-parts{margin-top:6px;}
+  .acc-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);}
+  .acc-row:last-child{border-bottom:0;padding-bottom:2px;}
+  .acc-name{flex:none;width:46px;font-size:14.5px;font-weight:800;}
+  .acc-mid{flex:1;min-width:0;}
+  .acc-src{font-size:11.5px;font-weight:700;color:var(--sub2);}
+  .acc-bar{display:flex;gap:4px;margin-top:6px;} .acc-bar span{flex:1;height:7px;border-radius:4px;background:#EDE9E0;}
+  .acc-bar.high span.on{background:#4A7A4A;} .acc-bar.mid span.on{background:#8FB08F;} .acc-bar.low span.on{background:#C9A24B;}
+  .acc-right{flex:none;text-align:right;}
+  .acc-pill{font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:7px;}
+  .acc-pill.high{background:#E7EFE7;color:#4A7A4A;} .acc-pill.mid{background:#EDEEF1;color:#3A382F;} .acc-pill.low{background:#F7EFDD;color:#8A6D2E;}
+  .acc-pm{display:block;margin-top:5px;font-size:12px;font-weight:700;color:var(--sub2);}
+  .acc-foot{margin-top:15px;padding-top:13px;border-top:1px solid var(--line);font-size:13px;color:var(--sub);line-height:1.6;} .acc-foot b{color:var(--ink);font-weight:700;}
+
+  /* 우측 계산방법 */
+  .rhow .k{ font-size:18px; font-weight:800; color:var(--ink); }
+  .rhow-step{ display:flex; gap:12px; padding:14px 0; border-bottom:1px solid var(--line); }
+  .rhow-step:last-of-type{ border-bottom:0; padding-bottom:2px; }
+  .rhow-step .no{ flex:none; width:24px; height:24px; border-radius:8px; background:#E7EFEA; color:var(--g,#2E4A3B); font-size:14px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+  .rhow-step b{ display:block; font-size:15px; font-weight:800; }
+  .rhow-step p{ margin:4px 0 0; font-size:13.5px; color:var(--muted); line-height:1.55; }
+</style></head>
+<body>
+<div class="wrap">
+  <div class="htop">탭4 "정확도 근거" — 데이터 기반 시안</div>
+  <div class="hsub">일반 카피 대신 이 사용자의 실제 정확도(종합 신뢰도 + 부위별 r²·범위)를 보여줌. 데모=0벌.</div>
+
+  <p class="lead">이 결과를 얼마나 믿을 수 있는지, 부위별로 어디가 확실한지 보여드려요</p>
+  <div class="rgrid2">
+    <!-- 왼쪽: 데이터(주연) -->
+    <div class="rcol">
+      <div class="rpanel acc-sum">
+        <div class="av-head"><span class="rkicker">종합 신뢰도</span><span class="conf-badge" id="confBadge">—</span></div>
+        <div class="acc-reason" id="confReason">—</div>
+        <div class="tier-steps" id="tierSteps"></div>
+      </div>
+      <div class="rpanel">
+        <div class="av-head"><span class="rkicker">부위별 신뢰도</span><span class="acc-src" style="font-weight:600">지금 근거</span></div>
+        <div class="acc-parts" id="accParts"></div>
+        <div class="acc-foot" id="accFoot">—</div>
+      </div>
+    </div>
+    <!-- 오른쪽: 방법 + 피드백 -->
+    <div class="rcol">
+      <div class="rpanel rhow">
+        <div class="k">이렇게 계산했어요</div>
+        <div class="rhow-step"><span class="no">1</span><div><b>키·몸무게로 부위 추정</b><p>사이즈코리아 인체치수 회귀식으로 어깨·가슴·허리·엉덩이를 추정해요</p></div></div>
+        <div class="rhow-step"><span class="no">2</span><div><b>입어본 옷으로 역산·보정</b><p>브랜드 사이즈표 실측 + 착용감(딱·조임·남음)으로 그 부위 범위를 좁혀요</p></div></div>
+        <div class="rhow-step"><span class="no">3</span><div><b>8가지 체형 유형에 대조</b><p>부위 비율을 8유형 기준과 견줘 가장 가까운 유형으로 분류해요</p></div></div>
+        <div class="rhow-step"><span class="no">4</span><div><b>브랜드별 사이즈 대조</b><p>브랜드마다 다른 실측치에 내 치수를 대입해 가장 잘 맞는 사이즈를 골라요</p></div></div>
+      </div>
+      <div class="rpanel" id="rfb"><div class="rfbq">추천 결과가 잘 맞나요? <span>· 정확도 검증</span></div>
+        <div class="rseg"><div class="o ok"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> 맞아요</div><div class="o mid"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg> 보통</div><div class="o no"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg> 안 맞아요</div></div>
+        <label class="rconsent"><input type="checkbox"><span class="rconsent-txt"><b>익명으로 진단 개선</b>에 활용하는 데 동의하며, <b>만 14세 이상</b> 또는 법정대리인 동의를 확인했어요 (선택)</span></label></div>
+    </div>
+  </div>
+</div>
+<script src="js/demo-session.js?v=f0075c36"></script>
+<script src="js/body-model.js?v=8fe572dd"></script>
+<script src="js/engine.js?v=de45a879"></script>
+<script src="js/bodytype.js?v=f6e75dd3"></script>
+<script src="js/config.js?v=5f55324e"></script>
+<script src="js/data.js?v=0b603d0c"></script>
+<script>
+  window.addEventListener('load', function(){
+    if(!window.BodyModel) return;
+    var payload={}, basic={};
+    try{ payload=JSON.parse(sessionStorage.getItem('fitting.dx')||'{}'); }catch(e){}
+    try{ basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'{}'); }catch(e){}
+    if(!payload.basic || payload.basic.height==null) payload.basic=basic;
+    var nExp=(payload.experiences||[]).length;
+    var tier=nExp<=0?'low':(nExp===1?'mid':'high');
+    var TIERKO={low:'낮음',mid:'보통',high:'높음'};
+    BodyModel.load().then(function(){
+      var est=BodyModel.estimate(payload.basic||{}); if(!est||!est.ready) return;
+      var byKey={}; est.parts.forEach(function(p){ byKey[p.key]=p; });
+      // 종합 신뢰도
+      document.getElementById('confBadge').className='conf-badge '+tier;
+      document.getElementById('confBadge').textContent=TIERKO[tier];
+      var reason = nExp<=0
+        ? '입어본 옷 <b>0벌</b> · 키·몸무게로만 추정한 <b>기본 단계</b>예요. 옷을 넣을수록 정확도가 올라가요.'
+        : (nExp===1 ? '입어본 옷 <b>1벌</b> 반영 · 일부 부위가 실측으로 보정됐어요.'
+                    : '입어본 옷 <b>'+nExp+'벌</b> 반영 · 대부분 부위가 실측으로 좁혀진 <b>정밀 단계</b>예요.');
+      document.getElementById('confReason').innerHTML=reason;
+      var steps=[['낮음','옷 0벌'],['보통','옷 1벌'],['높음','옷 2벌+']];
+      document.getElementById('tierSteps').innerHTML=steps.map(function(s,i){
+        var on=(i===(tier==='low'?0:tier==='mid'?1:2));
+        return '<div class="tier-step'+(on?' on':'')+'"><span class="ts-dot"></span><div class="ts-b">'+s[0]+'</div><div class="ts-c">'+s[1]+'</div></div>';
+      }).join('');
+      // 부위별 신뢰도
+      var PARTS=[['shoulder','어깨'],['chestFull','가슴'],['waist','허리'],['hip','엉덩이']];
+      function cert(r2){ return r2>=0.7?'high':(r2>=0.5?'mid':'low'); }
+      var CKO={high:'높음',mid:'보통',low:'낮음'};
+      var weakest=null;
+      document.getElementById('accParts').innerHTML=PARTS.map(function(pp){
+        var p=byKey[pp[0]]||{}; var r2=p.r2!=null?p.r2:0.5; var c=cert(r2); if(!weakest||r2<weakest.r2) weakest={ko:pp[1],r2:r2};
+        var fill=Math.max(1,Math.round(r2*5));
+        var segs=''; for(var i=0;i<5;i++) segs+='<span class="'+(i<fill?'on':'')+'"></span>';
+        return '<div class="acc-row"><div class="acc-name">'+pp[1]+'</div>'
+          +'<div class="acc-mid"><div class="acc-src">키·몸무게 추정</div><div class="acc-bar '+c+'">'+segs+'</div></div>'
+          +'<div class="acc-right"><span class="acc-pill '+c+'">'+CKO[c]+'</span><span class="acc-pm">±'+(p.rmse!=null?p.rmse:'—')+'cm</span></div></div>';
+      }).join('');
+      document.getElementById('accFoot').innerHTML= weakest
+        ? '<b>'+weakest.ko+'</b>가 지금 가장 불확실해요 — 상의/하의를 넣으면 이 부위가 실측으로 좁혀져요.'
+        : '옷을 넣으면 각 부위가 실측으로 좁혀져요.';
+    });
+  });
+</script>
+</body></html>

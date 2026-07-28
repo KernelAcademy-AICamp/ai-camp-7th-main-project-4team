@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>리셋 로딩 통일 비교</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
+<link rel="stylesheet" href="css/diag.css?v=c86b6818">
+<link rel="stylesheet" href="css/judge.css?v=33125101">
+<style>
+  body{background:#F6F6F5;font-family:'Pretendard',sans-serif;margin:0;padding:34px 30px 80px;color:#16140F;}
+  .wrap{max-width:1000px;margin:0 auto;}
+  .htop{font-size:21px;font-weight:800;letter-spacing:-.03em;}
+  .hsub{margin:8px 0 26px;font-size:14px;color:#6E6B63;line-height:1.6;}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;}
+  @media(max-width:800px){.cols{grid-template-columns:1fr;}}
+  .lab{display:inline-block;font-size:12px;font-weight:800;padding:3px 10px;border-radius:20px;}
+  .nm{font-size:15px;font-weight:800;margin:7px 0 3px;letter-spacing:-.02em;}
+  .ds{font-size:13px;color:#6E6B63;margin:0 0 13px;line-height:1.5;}
+  /* 리셋 로딩이 덮는 2단 영역 흉내 */
+  .stage{position:relative;height:300px;border-radius:18px;overflow:hidden;
+         display:grid;grid-template-columns:150px 1fr;gap:14px;background:#F6F6F5;padding:6px;}
+  .col{border:1px solid #E6E5E1;border-radius:14px;background:#fff;padding:14px;}
+  .col i{display:block;height:11px;border-radius:6px;background:#EDEDEA;margin-bottom:9px;}
+  .col i.s{width:60%}
+  .ovl{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;
+       background:rgba(246,246,245,.86);backdrop-filter:blur(2px);border-radius:18px;}
+  .tx{font-size:14.5px;font-weight:700;color:#6E6B63;text-align:center;margin-top:14px;}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  /* 현재 — 작은 FIT 아크 마크 */
+  .mkA{position:relative;width:66px;height:66px;display:grid;place-items:center;}
+  .mkA svg{position:absolute;inset:0;width:66px;height:66px;animation:sp 1.15s cubic-bezier(.5,.1,.5,.9) infinite;}
+  .mkA i{font-style:normal;font-size:13px;font-weight:800;letter-spacing:.08em;color:#2E4A3B;}
+  /* 통일안 — Fit 로고 + 링 회전(판정 카드와 동일 모션, 밝은 배경용 색) */
+  .mkB{position:relative;display:grid;place-items:center;}
+  .mkB .ring{position:absolute;width:132px;height:132px;animation:sp 1.4s cubic-bezier(.5,.1,.5,.9) infinite;}
+  .mkB .ring .trk{stroke:#E7EFEA;} .mkB .ring .arc{stroke:#2E4A3B;}
+  .mkB .lg{font-size:44px;font-weight:800;letter-spacing:-.05em;line-height:1;color:#2E4A3B;}
+  .mkB .lg em{display:inline-block;width:9px;height:9px;background:#9CC1AE;margin-left:4px;font-style:normal;vertical-align:baseline;}
+</style></head><body>
+<div class="wrap">
+  <div class="htop">"새 판정을 준비하고 있어요" 로딩 — 통일하면?</div>
+  <div class="hsub">다른 옷 판정하기를 누르면 2단 전체를 덮는 로딩이에요. 오른쪽이 <b>판정 로딩과 같은 모션</b>으로 맞춘 안이에요.</div>
+  <div class="cols">
+    <div>
+      <span class="lab" style="color:#6E6B63;background:#EDEDEA;border:1px solid #DAD8D2">현재</span>
+      <p class="nm">작은 FIT 아크 마크</p>
+      <p class="ds">판정 로딩(로고형)과 모양이 달라요</p>
+      <div class="stage">
+        <div class="col"><i></i><i class="s"></i><i></i><i class="s"></i></div>
+        <div class="col"><i></i><i class="s"></i><i></i></div>
+        <div class="ovl"><div class="mkA"><svg viewBox="0 0 66 66" fill="none"><circle cx="33" cy="33" r="28" stroke="#E7EFEA" stroke-width="3"/><path d="M33 5a28 28 0 0 1 24.2 14" stroke="#2E4A3B" stroke-width="3" stroke-linecap="round"/></svg><i>FIT</i></div><div class="tx">새 판정을 준비하고 있어요…</div></div>
+      </div>
+    </div>
+    <div>
+      <span class="lab" style="color:#2E4A3B;background:#E7EFEA;border:1px solid #CBDDD2">통일안</span>
+      <p class="nm">Fit 로고 + 링 회전 (판정 로딩과 동일)</p>
+      <p class="ds">밝은 배경이라 로고·링만 딥그린으로 · 브랜드 모션이 하나로</p>
+      <div class="stage">
+        <div class="col"><i></i><i class="s"></i><i></i><i class="s"></i></div>
+        <div class="col"><i></i><i class="s"></i><i></i></div>
+        <div class="ovl"><div class="mkB"><svg class="ring" viewBox="0 0 140 140" fill="none"><circle class="trk" cx="70" cy="70" r="62" stroke-width="2.5"/><path class="arc" d="M70 8a62 62 0 0 1 53.7 31" stroke-width="2.5" stroke-linecap="round"/></svg><span class="lg">Fit<em></em></span></div><div class="tx">새 판정을 준비하고 있어요…</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body></html>

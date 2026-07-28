@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>탭4 정확도 3단계 시안</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
+<link rel="stylesheet" href="css/diag.css?v=c86b6818">
+<link rel="stylesheet" href="css/result.css?v=49d3ba32">
+<style>
+  body{background:#F1F1EF;margin:0;padding:32px 30px 90px;font-family:'Pretendard',sans-serif;color:var(--ink);}
+  .wrap{max-width:640px;margin:0 auto;}
+  .htop{font-size:19px;font-weight:800;letter-spacing:-.03em;} .hsub{margin:7px 0 26px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .case{margin-bottom:40px;} .lab{display:inline-block;font-size:12px;font-weight:800;color:var(--g);background:var(--gs);border:1px solid var(--gl,#CBDDD2);padding:3px 12px;border-radius:20px;margin-bottom:12px;}
+  .rcol{display:flex;flex-direction:column;gap:16px;}
+  .av-head{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+
+  .conf-badge{font-size:13px;font-weight:800;padding:5px 13px;border-radius:20px;}
+  .conf-badge.low{background:#F2ECE0;color:#8A7A52;} .conf-badge.mid{background:#E7EFE7;color:#4A7A4A;} .conf-badge.high{background:var(--rink,#16140F);color:#fff;}
+  .acc-reason{margin-top:13px;font-size:15px;line-height:1.6;color:var(--sub);} .acc-reason b{color:var(--ink);font-weight:800;}
+  .tier-steps{display:flex;gap:8px;margin-top:18px;}
+  .tier-step{flex:1;text-align:center;padding:11px 6px 9px;border-radius:12px;border:1px solid var(--line);background:#fff;}
+  .tier-step .ts-b{font-size:13px;font-weight:800;color:var(--sub2);} .tier-step .ts-c{margin-top:3px;font-size:11.5px;color:var(--sub2);font-weight:600;}
+  .tier-step .ts-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#D8D5CE;margin-bottom:5px;}
+  .tier-step.on.low{border-color:#D8C9A6;background:#FBF6EB;} .tier-step.on.low .ts-b{color:#8A7A52;} .tier-step.on.low .ts-dot{background:#C7A860;}
+  .tier-step.on.mid{border-color:#BFD8BF;background:#F0F6F0;} .tier-step.on.mid .ts-b{color:#4A7A4A;} .tier-step.on.mid .ts-dot{background:#4A7A4A;}
+  .tier-step.on.high{border-color:var(--rink,#16140F);background:#F3F1EC;} .tier-step.on.high .ts-b{color:var(--rink,#16140F);} .tier-step.on.high .ts-dot{background:var(--rink,#16140F);}
+
+  .acc-parts{margin-top:6px;}
+  .acc-prow{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);}
+  .acc-prow:last-child{border-bottom:0;padding-bottom:2px;}
+  .acc-name{flex:none;width:46px;font-size:14.5px;font-weight:800;}
+  .acc-mid{flex:1;min-width:0;}
+  .acc-src{font-size:11.5px;font-weight:700;color:var(--sub2);}
+  .acc-src.eb{color:#4A7A4A;}
+  .acc-bar{display:flex;gap:4px;margin-top:6px;} .acc-bar span{flex:1;height:7px;border-radius:4px;background:#EDE9E0;}
+  .acc-bar.high span.on{background:#4A7A4A;} .acc-bar.mid span.on{background:#8FB08F;} .acc-bar.low span.on{background:#C9A24B;}
+  .acc-pill{flex:none;font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:7px;}
+  .acc-pill.high{background:#E7EFE7;color:#4A7A4A;} .acc-pill.mid{background:#EDEEF1;color:#3A382F;} .acc-pill.low{background:#F7EFDD;color:#8A6D2E;}
+  .acc-foot{margin-top:15px;padding-top:13px;border-top:1px solid var(--line);font-size:13px;color:var(--sub);line-height:1.6;} .acc-foot b{color:var(--ink);font-weight:700;}
+</style></head>
+<body>
+<div class="wrap">
+  <div class="htop">탭4 "정확도 근거" — 3단계 시안 (r² 기준 · ±cm 제거)</div>
+  <div class="hsub">단계가 오를수록 부위가 '키·몸무게 추정' → '착용경험 역산(정확)'으로 바뀌어요. 오른쪽 계산방법·피드백은 3단계 공통이라 생략.</div>
+
+  <div class="case"><span class="lab">① 낮음 — 옷 0벌</span>
+    <div class="rcol" data-nexp="0" data-eb=""></div>
+  </div>
+  <div class="case"><span class="lab">② 보통 — 옷 1벌(상의)</span>
+    <div class="rcol" data-nexp="1" data-eb="shoulder,chestFull"></div>
+  </div>
+  <div class="case"><span class="lab">③ 높음 — 옷 2벌+(상·하의)</span>
+    <div class="rcol" data-nexp="2" data-eb="shoulder,chestFull,waist,hip"></div>
+  </div>
+</div>
+<script src="js/demo-session.js?v=f0075c36"></script>
+<script src="js/body-model.js?v=8fe572dd"></script>
+<script src="js/engine.js?v=de45a879"></script>
+<script src="js/bodytype.js?v=f6e75dd3"></script>
+<script src="js/config.js?v=5f55324e"></script>
+<script src="js/data.js?v=0b603d0c"></script>
+<script>
+  window.addEventListener('load', function(){
+    if(!window.BodyModel) return;
+    var payload={}, basic={};
+    try{ payload=JSON.parse(sessionStorage.getItem('fitting.dx')||'{}'); }catch(e){}
+    try{ basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'{}'); }catch(e){}
+    if(!payload.basic || payload.basic.height==null) payload.basic=basic;
+    var TIERKO={low:'낮음',mid:'보통',high:'높음'};
+    var PARTS=[['shoulder','어깨'],['chestFull','가슴'],['waist','허리'],['hip','엉덩이']];
+    // 높음 = 착용경험 역산(실측)만. 키·몸무게 추정은 최대 보통(r²로 보통/낮음 구분).
+    function cert(r2,isEb){ return isEb?'high':(r2>=0.6?'mid':'low'); }
+    var CKO={high:'높음',mid:'보통',low:'낮음'};
+    var FILL={high:5,mid:3,low:2};
+    BodyModel.load().then(function(){
+      var est=BodyModel.estimate(payload.basic||{}); if(!est||!est.ready) return;
+      var byKey={}; est.parts.forEach(function(p){ byKey[p.key]=p; });
+      document.querySelectorAll('.rcol[data-nexp]').forEach(function(col){
+        var nExp=+col.getAttribute('data-nexp');
+        var eb={}; (col.getAttribute('data-eb')||'').split(',').filter(Boolean).forEach(function(k){ eb[k]=1; });
+        var tier=nExp<=0?'low':(nExp===1?'mid':'high');
+        var reason = nExp<=0
+          ? '입어본 옷 <b>0벌</b> · 키·몸무게로만 추정한 <b>기본 단계</b>예요. 옷을 넣을수록 정확도가 올라가요.'
+          : (nExp===1 ? '입어본 옷 <b>1벌</b> 반영 · 상의 부위가 <b>실측으로 보정</b>됐어요. 하의를 넣으면 높음이 돼요.'
+                      : '입어본 옷 <b>'+nExp+'벌</b> 반영 · 대부분 부위가 실측으로 좁혀진 <b>정밀 단계</b>예요.');
+        var steps=[['낮음','옷 0벌','low'],['보통','옷 1벌','mid'],['높음','옷 2벌+','high']];
+        var stepIdx=(tier==='low'?0:tier==='mid'?1:2);
+        // 부위별
+        var rows='', weakest=null;
+        PARTS.forEach(function(pp){
+          var p=byKey[pp[0]]||{}; var isEb=!!eb[pp[0]];
+          var r2=p.r2!=null?p.r2:0.5;
+          var c=cert(r2,isEb);
+          if(!isEb && (!weakest||r2<weakest.r2)) weakest={ko:pp[1],r2:r2,c:c};
+          var fill=FILL[c];
+          var segs=''; for(var i=0;i<5;i++) segs+='<span class="'+(i<fill?'on':'')+'"></span>';
+          rows+='<div class="acc-prow"><div class="acc-name">'+pp[1]+'</div>'
+            +'<div class="acc-mid"><div class="acc-src'+(isEb?' eb':'')+'">'+(isEb?'착용경험 역산':'키·몸무게 추정')+'</div><div class="acc-bar '+c+'">'+segs+'</div></div>'
+            +'<span class="acc-pill '+c+'">'+CKO[c]+'</span></div>';
+        });
+        var foot = (weakest && weakest.c==='low')
+          ? '<b>'+weakest.ko+'</b>가 지금 가장 불확실해요 — 상의/하의를 넣으면 이 부위가 실측으로 좁혀져요.'
+          : (tier==='high' ? '네 부위 모두 착용경험으로 좁혀졌어요 — <b>가장 정확한 단계</b>예요.'
+                           : '하의까지 넣으면 남은 부위도 실측으로 좁혀져 <b>높음</b>이 돼요.');
+        col.innerHTML=
+          '<div class="rpanel"><div class="av-head"><span class="rkicker">종합 신뢰도</span><span class="conf-badge '+tier+'">'+TIERKO[tier]+'</span></div>'
+          +'<div class="acc-reason">'+reason+'</div>'
+          +'<div class="tier-steps">'+steps.map(function(s,i){ return '<div class="tier-step'+(i===stepIdx?' on '+s[2]:'')+'"><span class="ts-dot"></span><div class="ts-b">'+s[0]+'</div><div class="ts-c">'+s[1]+'</div></div>'; }).join('')+'</div></div>'
+          +'<div class="rpanel"><div class="av-head"><span class="rkicker">부위별 신뢰도</span><span class="acc-src" style="font-weight:600">지금 근거</span></div>'
+          +'<div class="acc-parts">'+rows+'</div><div class="acc-foot">'+foot+'</div></div>';
+      });
+    });
+  });
+</script>
+</body></html>

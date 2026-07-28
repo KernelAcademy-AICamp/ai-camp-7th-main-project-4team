@@ -12,7 +12,8 @@
 
   /* ===== 공통 ===== */
   function scrim(on){ document.getElementById('scrim').classList.toggle('on', on); }
-  function closeAll(){ document.getElementById('drawer').classList.remove('on'); document.getElementById('sheet').classList.remove('on'); scrim(false); }
+  function closeAll(){ document.getElementById('drawer').classList.remove('on'); scrim(false);
+    if(window.FITAUTHUI) FITAUTHUI.closeSheet(); }   // 로그인 시트는 공용 컴포넌트가 자체 스크림과 함께 소유
   function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2000); }
 
   /* ===== 진단 = 별도 화면 플로우 (sangmin 실제 UI 이식) =====
@@ -25,10 +26,83 @@
   }
 
   /* ===== 로그인/가입 시트 ===== */
-  function openLogin(ctx, onDone){ window._loginCb=onDone||null; document.getElementById('loginTitle').textContent=(ctx?ctx+' — ':'')+'로그인하고 이어가기'; document.getElementById('sheet').classList.add('on'); scrim(true); }
+  // 로그인 시트 = 공용 컴포넌트(껍데기까지). result의 로그인 화면과 문자 그대로 같은 시트를 쓴다.
+  function openLogin(ctx, onDone){ window._loginCb=onDone||null;
+    if(!window.FITAUTHUI) return;
+    FITAUTHUI.openSheet({
+      title:(ctx?ctx+' — ':'')+'로그인하고 이어가기',
+      desc:'스타일리스트 둘러보기는 비회원도 자유예요 · 견적 요청·결과 저장은 로그인 후 이어져요',
+      onMock:loginDone
+    }); }
   function loginDone(){ saveLS('auth', true); closeAll(); applyAuthUI(); var cb=window._loginCb; window._loginCb=null; if(cb){ toast('로그인했어요 · 이어서 진행할게요'); cb(); } else toast('로그인했어요 · 결과가 계정에 저장됐어요'); }
-  // proto(데모)=기본 로그인 가정 / api(프로덕션)=기본 로그아웃(신규 방문자는 비로그인 — My·알림·프로필 숨김)
-  function loggedIn(){ return loadLS('auth', !(window.FDATA&&FDATA.mode==='api'))!==false; }
+
+  // ── 소비자 계정(api·ACCOUNTS_ENABLED) 실 인증 (Phase 0a) — proto/플래그off는 위 목업 유지 ──
+  var _authSession=null, _acctEmail='';
+  // 로그인/세션복원 시 계정 profile로 USER 하이드레이트(기본정보 프리필·이름·이메일). renderProfile/아바타 갱신.
+  function hydrateAccount(){
+    if(!apiAccounts()) return;
+    FITAUTH.getProfile().then(function(p){
+      if(!p) return;
+      _acctEmail = p.email || '';
+      if(p.display_name){ USER.name=p.display_name; USER.initial=(String(p.display_name)[0]||USER.initial); }
+      var b=p.basic||{};
+      if(b.gender) USER.gender=(b.gender==='female'?'female':'male');
+      if(b.height) USER.height=+b.height; if(b.weight) USER.weight=+b.weight; if(b.age) USER.age=+b.age;
+      renderProfile(); renderMyAvatar(); renderAcctCard();
+    });
+  }
+  // 계정카드 '연결 계정' — 계정ON·로그인 상태에서만 실 세션(provider+email)으로 대체.
+  // proto/플래그off는 정적 목업(index.html) 그대로 — 프로덕션 무변경 원칙.
+  function renderAcctCard(){
+    var el=document.getElementById('acctConn'); if(!el) return;
+    if(!apiAccounts() || !_authSession || !_authSession.user) return;
+    var u=_authSession.user, em=_acctEmail || u.email || '';
+    el.textContent = FITAUTH.providerLabel(u) + ' · ' + (em || '이메일 미등록');
+  }
+  // mp-diag(내 진단 결과) embed는 sessionStorage(fitting.dx)를 읽는다. 계정 모드에서:
+  //   ① 현 세션 진단을 계정에 귀속(claim — 로그인 상태로 진단하면 user_id null로 저장되므로) ②
+  //   이번 세션 진단이 없으면(다른 기기·재방문) 계정 최신 진단을 세션에 하이드레이트해 embed가 그리게.
+  function hydrateLatestDiag(){
+    if(!apiAccounts()) return;
+    var read=function(){
+      var has=false; try{ has=!!sessionStorage.getItem('fitting.dx'); }catch(e){}
+      if(has) return;   // 이번 세션 진단 있음 → embed 그대로
+      FITAUTH.myDiagnoses(1).then(function(list){
+        var d=list&&list[0], input=d&&d.input; if(!input) return;
+        try{ sessionStorage.setItem('fitting.dx', JSON.stringify(input));
+          if(input.basic) sessionStorage.setItem('fitting.basic', JSON.stringify(input.basic)); }catch(e){}
+        var f=document.getElementById('myDiagFrame'); if(f) f.src=f.src;   // 리로드
+      });
+    };
+    var sid=(window.FDATA&&FDATA.sessionId)?FDATA.sessionId():null;
+    if(sid) FITAUTH.claimDiagnoses(sid).then(read); else read();
+  }
+  function apiAccounts(){ return !!(window.FDATA&&FDATA.mode==='api'&&window.ACCOUNTS_ENABLED&&window.FITAUTH&&FITAUTH.ready()); }
+  function initAuth(){
+    if(!apiAccounts()) return;
+    FITAUTH.getSession().then(function(s){ _authSession=s; applyAuthUI(); if(s) hydrateAccount(); });
+    FITAUTH.onChange(function(e,s){ _authSession=s; applyAuthUI(); if(e==='SIGNED_IN') onSignedIn(); });
+  }
+  function onSignedIn(){
+    var u=_authSession&&_authSession.user, email=u&&u.email;
+    // 카카오 무이메일 → 프로필의 이메일 칸((필수) 표시)으로 안내한다. 로그인 직후 네이티브 prompt를
+    // 띄우면 리다이렉트 복귀 화면과 단절되고, 브라우저가 차단하면 수집 자체가 조용히 실패한다.
+    try{ var sid=(FDATA.sessionId)?FDATA.sessionId():null; if(sid) FITAUTH.claimDiagnoses(sid); }catch(e){}   // 익명 진단 → 계정 귀속
+    try{ var patch={ display_name:FITAUTH.displayName(u) };
+      var basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'null'); if(basic) patch.basic=basic;
+      if(email) patch.email=email;
+      FITAUTH.upsertProfile(patch).then(hydrateAccount); }catch(e){}
+    closeAll(); applyAuthUI();
+    var cb=window._loginCb; window._loginCb=null;
+    if(cb){ toast('로그인했어요 · 이어서 진행할게요'); cb(); return; }   // 하던 일이 있으면 그게 우선(이메일 안내는 토스트로)
+    if(email){ toast('로그인했어요 · 진단이 계정에 저장돼요'); return; }
+    // 이메일 미제공(카카오) → 안내만 하면 이탈하니 프로필 이메일 칸까지 데려간다.
+    toast('이메일만 등록하면 끝나요 · 프로필로 이동할게요');
+    setTimeout(function(){ goMy('mp-profile'); }, 400);
+  }
+  // provider 호출·이메일 매직링크 2단계·에러 표시는 전부 auth-ui.js(공용) 소유 — 여기선 시트만 연다.
+  // proto(데모)=기본 로그인 가정 / api: 계정ON=실세션 / 계정OFF(MVP)=비로그인(인증 표면 숨김)
+  function loggedIn(){ if(apiAccounts()) return !!_authSession; if(window.FDATA&&FDATA.mode==='api') return false; return loadLS('auth', true)!==false; }
   /* 헤더 auth 상태 반영 — 로그인=프로필·알림벨 / 비로그인=로그인·회원가입 버튼(메인화면 게이트) */
   function applyAuthUI(){
     var inA=loggedIn();
@@ -36,10 +110,28 @@
     // MVP(api): 인증은 측정 대상 아님(진단=킬메트릭·수요=lead) + 소비자 로그인 목업 → 인증 표면 전체 숨김.
     // 상단은 Home + Stylists만. 진단·수요수집은 로그인 불필요.
     if(window.FDATA && FDATA.mode==='api'){
-      // 우측 전체 숨김 — 인증(벨·유저·로그인) 목업 + 스타일리스트 지원(pro-signup, 전화인증 등 미구현)까지.
-      //  '스타일리스트 지원' 뒤에 뜬 구분선이 남지 않도록 개별 요소가 아니라 .navr 컨테이너를 통째로 숨긴다.
-      var navr=document.querySelector('header .navr'); if(navr) navr.style.display='none';
-      if(my) my.style.display='none';   // My 탭(메뉴 안)은 별도로 숨김
+      var navr=document.querySelector('header .navr');
+      var sup=navr&&navr.querySelector('.sup');
+      if(apiAccounts()){
+        // 계정 ON: 로그인 표면 노출(로그인 전=버튼 / 후=유저·My). 벨=이벤트소스 없음·스타일리스트지원=마켓 → 숨김.
+        if(navr) navr.style.display='';
+        if(sup) sup.style.display='none';
+        if(a) a.style.display=inA?'none':'inline-flex';
+        if(u) u.style.display=inA?'inline-flex':'none';
+        if(b) b.style.display='none'; if(bd) bd.style.display='none';
+        if(my) my.style.display=inA?'':'none';
+        if(inA && _authSession && _authSession.user){
+          var dn=FITAUTH.displayName(_authSession.user);
+          var nm=document.querySelector('#navUser .navname'); if(nm) nm.textContent=dn+' 님';
+          var av=document.getElementById('myAv'); if(av) av.textContent=(dn[0]||'회');
+        }
+        renderAcctCard();
+        applyMyPanelGating();
+        return;
+      }
+      // 계정 OFF(MVP 기본·ACCOUNTS_ENABLED=false): 인증 표면 전체 숨김(기존 동작).
+      if(navr) navr.style.display='none';
+      if(my) my.style.display='none';
       return;   // Stylists 탭(메뉴)은 유지 — 클릭 시 '준비 중 · 알림' 웨이트리스트로(리텐션)
     }
     if(a) a.style.display=inA?'none':'inline-flex';
@@ -48,7 +140,14 @@
     if(bd) bd.style.display=inA?'inline-block':'none';
     if(my) my.style.display=inA?'':'none';   // 비로그인 시 My(개인 데이터·진단·요청) 숨김
   }
+  // 계정ON(api): 마켓·지원·알림 패널은 백엔드 없어 숨김(개인화 3패널만 — 빈 화면 방지=정직).
+  function applyMyPanelGating(){
+    ['mp-req','mp-fav','mp-support','mp-noti'].forEach(function(p){
+      var el=document.querySelector('#smenu a[data-p="'+p+'"]'); if(el) el.style.display='none';
+    });
+  }
   function doLogout(){ if(!confirm('로그아웃할까요? 둘러보기는 로그인 없이 이어갈 수 있어요.')) return;
+    if(apiAccounts()){ FITAUTH.signOut().then(function(){ _authSession=null; applyAuthUI(); go('home'); toast('로그아웃했어요'); }); return; }
     saveLS('auth', false); applyAuthUI(); go('home'); toast('로그아웃했어요'); }
   function doQuit(){ if(!confirm('정말 회원 탈퇴할까요? 진단·요청·저장 데이터가 모두 삭제돼요.')) return;
     ['user','reqs','favs','support','notis'].forEach(function(k){ try{ localStorage.removeItem('fitting.'+k); }catch(e){} });
@@ -62,6 +161,7 @@
     var m=document.querySelectorAll('#smenu a'); for(var i=0;i<m.length;i++) m[i].classList.remove('on'); el.classList.add('on');
     var ps=document.querySelectorAll('#my .mpanel'); for(var j=0;j<ps.length;j++) ps[j].classList.remove('on');
     document.getElementById(el.dataset.p).classList.add('on');
+    if(el.dataset.p==='mp-diag') hydrateLatestDiag();   // 계정 모드: 최신 진단 embed 하이드레이트(+귀속)
     window.scrollTo(0, 0);   // 마이 사이드 패널 전환 시에도 맨 위(패널 헤딩 '프로필·계정' 등)부터 보이게
     saveNav();
   }
@@ -290,9 +390,30 @@
   function safeParse(s){ try{ return s?JSON.parse(s):null; }catch(e){ return s; } }
   /* 엔진개선 동의 = 진단 결과화면(result.js)과 동일 키·포맷(sessionStorage fitting.consent) */
   function engineConsent(){ try{ return JSON.parse(ssGet('fitting.consent')||'{}').engineImprove===true; }catch(e){ return false; } }
+  function _dlJson(obj, name){
+    try{
+      var blob=new Blob([JSON.stringify(obj,null,2)], {type:'application/json'});
+      var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name||'fitting-my-data.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
+      toast('내 데이터를 내려받았어요');
+    }catch(e){ toast('내려받기에 실패했어요'); }
+  }
   function renderPrivacy(){
-    var t=document.getElementById('privConsent'); if(t) t.classList.toggle('on', engineConsent());
+    var t=document.getElementById('privConsent');
     var d=document.getElementById('privData'); if(!d) return;
+    if(apiAccounts()){   // 계정 모드 — 서버(profile·diagnosis)에서 상태 조회
+      FITAUTH.getProfile().then(function(p){
+        if(t) t.classList.toggle('on', !!(p&&p.engine_improve_consent));
+        FITAUTH.myDiagnoses(100).then(function(list){
+          d.innerHTML = (p||list.length)
+            ? '<div class="field"><span>계정</span><span class="v">'+esc((p&&(p.email||p.display_name))||'로그인됨')+'</span></div>'+
+              '<div class="field"><span>저장된 진단</span><span class="v">'+list.length+'건</span></div>'
+            : '<div class="note">아직 저장된 진단이 없어요 · 진단을 완료하면 계정에 저장돼요</div>';
+        });
+      });
+      return;
+    }
+    if(t) t.classList.toggle('on', engineConsent());
     var basic=ssGet('fitting.basic'), dx=ssGet('fitting.dx');
     d.innerHTML = (basic||dx)
       ? '<div class="field"><span>기본 정보(성별·키·몸무게)</span><span class="v">'+(basic?'저장됨':'없음')+'</span></div>'+
@@ -301,20 +422,24 @@
   }
   function toggleEngineConsent(){
     var on=!engineConsent();
-    try{ sessionStorage.setItem('fitting.consent', JSON.stringify({ engineImprove:on, ageAttested:on, at:new Date().toISOString() })); }catch(e){}
-    renderPrivacy(); toast(on?'엔진 개선 활용에 동의했어요':'엔진 개선 활용 동의를 철회했어요');
+    try{ sessionStorage.setItem('fitting.consent', JSON.stringify({ engineImprove:on, ageAttested:on, at:new Date().toISOString() })); }catch(e){}   // 로컬 미러(진단 저장에 사용)
+    if(apiAccounts()){ FITAUTH.upsertProfile({ engine_improve_consent:on, age_attested:on, agreed_at:new Date().toISOString() }).then(function(){ renderPrivacy(); }); }
+    else renderPrivacy();
+    toast(on?'엔진 개선 활용에 동의했어요':'엔진 개선 활용 동의를 철회했어요');
   }
   function downloadMyData(){
-    var data={ basic:safeParse(ssGet('fitting.basic')), dx:safeParse(ssGet('fitting.dx')), consent:safeParse(ssGet('fitting.consent')), exportedAt:new Date().toISOString() };
-    if(!data.basic && !data.dx){ toast('내려받을 진단 데이터가 없어요'); return; }
-    try{
-      var blob=new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
-      var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='fitting-my-data.json';
-      document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
-      toast('내 데이터를 내려받았어요');
-    }catch(e){ toast('내려받기에 실패했어요'); }
+    if(apiAccounts()){ FITAUTH.exportMyData().then(function(data){ if(!data){ toast('내려받을 데이터가 없어요'); return; } _dlJson(Object.assign({exportedAt:new Date().toISOString()}, data), 'fitting-my-data.json'); }); return; }
+    var d={ basic:safeParse(ssGet('fitting.basic')), dx:safeParse(ssGet('fitting.dx')), consent:safeParse(ssGet('fitting.consent')), exportedAt:new Date().toISOString() };
+    if(!d.basic && !d.dx){ toast('내려받을 진단 데이터가 없어요'); return; }
+    _dlJson(d, 'fitting-my-data.json');
   }
   function deleteMyData(){
+    if(apiAccounts()){
+      askConfirm('<b>내 계정 데이터를 삭제</b>할까요?<div class="cf-sub">프로필·진단·피드백이 모두 삭제돼요 · 되돌릴 수 없어요</div>', '삭제하기', function(){
+        FITAUTH.deleteMyData().then(function(r){ if(r&&r.ok){ renderPrivacy(); toast('데이터를 삭제했어요'); } else toast('삭제 실패 · 잠시 후 다시'); });
+      });
+      return;
+    }
     askConfirm('<b>진단 데이터를 삭제</b>할까요?<div class="cf-sub">신체·착용경험·결과·개선 이력이 모두 삭제돼요 · 되돌릴 수 없어요</div>', '삭제하기', function(){
       try{ ['fitting.dx','fitting.basic','fitting.consent'].forEach(function(k){ sessionStorage.removeItem(k); }); }catch(e){}
       try{ localStorage.removeItem('fitting.feedback'); }catch(e){}
@@ -382,6 +507,7 @@
         '<div class="mcard-hd">프로필 <span>· 매칭·진단 관리</span></div>'+
         '<div class="msub"><div class="subhead">신체 · 선호 정보</div>'+
           '<div class="field"><span>이름</span><span class="v">'+esc(U.name)+'</span></div>'+
+          (apiAccounts()?'<div class="field"><span>이메일</span><span class="v">'+esc(_acctEmail||'미등록')+'</span></div>':'')+
           '<div class="field"><span>성별 · 나이</span><span class="v">'+(U.gender==='female'?'여성':'남성')+' · <span class="num">'+U.age+'</span>세</span></div>'+
           '<div class="field"><span>키 · 몸무게</span><span class="v"><span class="num">'+U.height+'</span>cm · <span class="num">'+U.weight+'</span>kg</span></div>'+
           '<div class="field"><span>상의 핏 취향</span><span class="v">'+U.fitTop+'</span></div>'+
@@ -393,6 +519,7 @@
         '<div class="mcard-hd">프로필 <span>· 매칭·진단 관리</span></div>'+
         '<div class="msub"><div class="subhead">신체 · 선호 정보</div>'+
           '<div class="pedit"><label>이름</label><input class="inp" id="pName" value="'+esc(U.name)+'"></div>'+
+          (apiAccounts()?'<div class="pedit"><label>이메일'+(_acctEmail?'':' <b style="color:var(--warn)">(필수)</b>')+'</label><input class="inp" id="pEmail" type="email" value="'+esc(_acctEmail)+'" placeholder="you@example.com"></div>':'')+
           '<div class="pedit"><label>성별</label><div class="seg" id="pGender">'+['male','female'].map(function(g){return '<span class="o'+(U.gender===g?' on':'')+'" data-g="'+g+'" onclick="pPick(this)">'+(g==='male'?'남성':'여성')+'</span>';}).join('')+'</div></div>'+
           '<div class="pedit inrow3"><div><label>나이</label><input class="inp" id="pAge" type="number" value="'+U.age+'"></div><div><label>키(cm)</label><input class="inp" id="pHeight" type="number" value="'+U.height+'"></div><div><label>몸무게(kg)</label><input class="inp" id="pWeight" type="number" value="'+U.weight+'"></div></div>'+
           '<div class="pedit"><label>상의 핏 취향</label><div class="seg" id="pFitTop">'+FIT_OPTS.map(function(f){return '<span class="o'+(U.fitTop===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div>'+
@@ -411,6 +538,12 @@
     if(a&&a.value) USER.age=+a.value; if(h&&h.value) USER.height=+h.value; if(w&&w.value) USER.weight=+w.value;
     var ft=document.querySelector('#pFitTop .o.on'); if(ft) USER.fitTop=ft.dataset.fit;
     var fb=document.querySelector('#pFitBottom .o.on'); if(fb) USER.fitBottom=fb.dataset.fit;
+    if(apiAccounts()){   // 계정 모드: 신체정보·이름·이메일을 서버 profile에 저장
+      var em=document.getElementById('pEmail'); if(em) _acctEmail=em.value.trim();
+      FITAUTH.upsertProfile({ display_name:USER.name, email:_acctEmail||null,
+        basic:{ gender:USER.gender, height:USER.height, weight:USER.weight, age:USER.age } });
+      renderAcctCard();   // 프로필에서 이메일을 고치면 계정카드도 같이 갱신
+    }
     _profEdit=false; renderProfile(); renderMyAvatar(); renderMyDiagDetail(); toast('프로필을 저장했어요');
   }
 
@@ -1496,7 +1629,7 @@
     if(['home','shop','my'].indexOf(top)<0) return;
     if(top==='my' && p[1]){ goMy(p[1]); } else { go(top); } })();
 
-  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagDetail(); renderSupport(); renderNotis(); renderPrivacy(); applyAuthUI();
+  render(); renderFavs(); renderReqs(); renderMyAvatar(); renderProfile(); renderMyDiagDetail(); renderSupport(); renderNotis(); renderPrivacy(); applyAuthUI(); initAuth();
 
   /* 새로고침 시 보던 화면 복원 — 쿼리 딥링크(?from/?login/?my/?ctx)나 해시가 없을 때만(그건 각각 처리) */
   (function(){ try{ var q=new URLSearchParams(location.search);

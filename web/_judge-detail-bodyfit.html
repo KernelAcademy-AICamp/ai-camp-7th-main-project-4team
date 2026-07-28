@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>자세히 · 체형 위 옷 테두리(E안)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --bg:#F6F6F5; --surface:#fff; --ink:#16140F; --ink2:#3A382F; --sub:#6E6B63; --sub2:#A6A29A;
+    --line:#E6E5E1; --line2:#DAD8D2; --soft:#EDEDEA; --g:#2E4A3B; --gm:#5A7A68; --gs:#E7EFEA; --gl:#CBDDD2; --warn:#B0553F; --wsoft:#F7ECE8;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Pretendard',sans-serif; -webkit-font-smoothing:antialiased;}
+  .page{max-width:640px; margin:0 auto; padding:38px 26px 90px;}
+  .ph{font-size:24px; font-weight:800; letter-spacing:-.03em;}
+  .psub{margin:8px 0 26px; font-size:14.5px; color:var(--sub); line-height:1.6;}
+  .jpanel{border:1px solid var(--line); border-radius:18px; padding:24px; background:var(--surface);}
+  .jpt{font-size:18px; font-weight:800; letter-spacing:-.035em;}
+  .jpd{font-size:13.5px; color:var(--sub); margin:4px 0 18px;}
+
+  .bf{display:flex; gap:22px; align-items:center; flex-wrap:wrap;}
+  .bf-fig{flex:none; width:220px;}
+  .bf-fig svg{width:100%; display:block; overflow:visible;}
+  .bf-leg{flex:1; min-width:170px; display:flex; flex-direction:column; gap:14px;}
+  .bf-item{display:flex; align-items:flex-start; gap:12px;}
+  .bf-dot{flex:none; width:12px; height:12px; border-radius:50%; margin-top:3px;}
+  .bf-dot.g{background:var(--g);} .bf-dot.gm{background:var(--gm);} .bf-dot.w{background:var(--warn);}
+  .bf-tx b{font-size:15px; font-weight:800;}
+  .bf-tx .st{font-size:12.5px; font-weight:800; margin-left:7px;}
+  .bf-tx .st.g{color:var(--g);} .bf-tx .st.w{color:var(--warn);}
+  .bf-tx p{margin:3px 0 0; font-size:12.5px; color:var(--sub); font-feature-settings:"tnum";}
+  .bf-key{display:flex; gap:16px; margin-top:20px; padding-top:16px; border-top:1px solid var(--line); font-size:12px; color:var(--sub); flex-wrap:wrap;}
+  .bf-key span{display:flex; align-items:center; gap:6px;}
+  .bf-key i{width:16px; height:0; border-top:2px solid var(--g); display:inline-block;}
+  .bf-key i.body{border-top:none; width:12px; height:12px; background:var(--line2); border-radius:3px;}
+</style>
+</head><body>
+<div class="page">
+  <div class="ph">자세히 · <b>체형 위에 옷 테두리</b> (E안 프로토타입)</div>
+  <div class="psub">회색 = 내 체형, 초록 실선 = 추천 사이즈 옷 테두리. <b>둘 사이 간격이 여유</b>예요. 어깨는 붙고(딱), 가슴·허리는 떠요(여유).</div>
+
+  <div class="jpanel">
+    <div class="jpt">추천 M, 부위별로 이렇게 맞아요</div>
+    <div class="jpd">초록선이 몸에서 뜬 만큼이 여유예요</div>
+    <div class="bf">
+      <div class="bf-fig">
+        <svg viewBox="0 0 200 250">
+          <!-- 내 체형(실루엣) -->
+          <g>
+            <circle cx="100" cy="30" r="20" fill="#E4E3DE"/>
+            <path d="M100 50 L112 58
+                     L150 74 L142 92
+                     L136 96 Q136 150 130 200 Q100 210 70 200 Q64 150 64 96
+                     L58 92 L50 74 L88 58 Z" fill="#E4E3DE"/>
+          </g>
+          <!-- 추천 옷 테두리(초록 실선) — 어깨 붙고 가슴·허리 뜸 -->
+          <path d="M100 47 L116 56
+                   L158 72 L149 96
+                   L143 100 Q146 152 141 206 Q100 220 59 206 Q54 152 57 100
+                   L51 96 L42 72 L84 56 Z"
+                fill="none" stroke="#2E4A3B" stroke-width="2.4" stroke-linejoin="round"/>
+          <!-- 부위 포인트 -->
+          <circle cx="52" cy="82" r="4.5" fill="#2E4A3B" stroke="#fff" stroke-width="2"/>   <!-- 어깨 -->
+          <circle cx="143" cy="120" r="4.5" fill="#5A7A68" stroke="#fff" stroke-width="2"/> <!-- 가슴 -->
+          <circle cx="141" cy="185" r="4.5" fill="#5A7A68" stroke="#fff" stroke-width="2"/> <!-- 허리 -->
+        </svg>
+      </div>
+      <div class="bf-leg">
+        <div class="bf-item"><span class="bf-dot g"></span><div class="bf-tx"><b>어깨</b><span class="st g">딱</span><p>내 44 · 옷 45 · 여유 +1cm</p></div></div>
+        <div class="bf-item"><span class="bf-dot gm"></span><div class="bf-tx"><b>가슴</b><span class="st g">여유</span><p>내 96 · 옷 99 · 여유 +3cm</p></div></div>
+        <div class="bf-item"><span class="bf-dot gm"></span><div class="bf-tx"><b>허리</b><span class="st g">여유</span><p>내 80 · 옷 86 · 여유 +6cm</p></div></div>
+      </div>
+    </div>
+    <div class="bf-key">
+      <span><i class="body"></i> 내 체형</span>
+      <span><i></i> 추천 옷(M) 테두리</span>
+      <span>선이 뜰수록 여유</span>
+    </div>
+  </div>
+
+  <p style="font-size:13px; color:#6E6B63; line-height:1.6; margin-top:22px">
+    ※ 실루엣·간격은 체형(가슴·어깨·허리 cm)으로 그린 <b>스타일화된 그림</b>이라 감을 주는 용도 — 정확한 수치는 오른쪽 숫자로. 끼임이면 그 부위 선을 <b style="color:#B0553F">빨강</b>으로, 여유면 초록으로 처리 가능.
+  </p>
+</div>
+</body></html>

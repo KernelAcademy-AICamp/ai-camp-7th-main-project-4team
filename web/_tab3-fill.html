@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>탭3 채우기 시안 — 방향 1·2</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
+<link rel="stylesheet" href="css/diag.css?v=c86b6818">
+<link rel="stylesheet" href="css/result.css?v=49d3ba32">
+<style>
+  body{background:#F1F1EF;margin:0;padding:32px 30px 90px;font-family:'Pretendard',sans-serif;color:var(--ink);}
+  .wrap{max-width:1120px;margin:0 auto;}
+  .htop{font-size:19px;font-weight:800;letter-spacing:-.03em;} .hsub{margin:7px 0 30px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .case{margin-bottom:44px;}
+  .lab{display:inline-block;font-size:11px;font-weight:800;color:var(--g);background:var(--gs);border:1px solid var(--gl,#CBDDD2);padding:2px 10px;border-radius:20px;margin-bottom:4px;}
+  .cds{font-size:12.5px;color:var(--sub);margin:0 0 14px;}
+  .lead{font-size:15.5px;color:var(--muted);margin:0 0 16px;}
+  .rgrid2{ display:grid; grid-template-columns:1.05fr .95fr; gap:16px; align-items:stretch; }
+  .rcol{ display:flex; flex-direction:column; gap:16px; }
+  .d-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  .d-chip{ flex:none; font-size:13px; font-weight:700; color:var(--g); background:var(--gs); padding:6px 12px; border-radius:20px; white-space:nowrap; }
+
+  /* 아바타 CSS(pro-quote.css 이식) */
+  .bodymap2{--fig-fill:#F3F1EC;--fig-line:#43403A;--guide:#CBC8C0;--pill-bg:#E7EFEA;
+    margin-top:6px;display:flex;flex-direction:column;align-items:center;gap:16px}
+  .bodymap2 svg{width:100%;max-width:400px;height:auto;display:block}
+  .bodymap2 .g-name{font-size:11.5px;font-weight:700;fill:var(--sub)}
+  .bodymap2 .g-val{font-size:15px;font-weight:800;fill:var(--ink)}
+  .bodymap2 .g-unit{font-size:10px;font-weight:700;fill:var(--sub2)}
+  .bodymap2 .g-pm{font-size:10.5px;font-weight:700;fill:var(--sub2)}
+  .bodymap2 .g-tag{font-size:12px;font-weight:600}
+  .av-prefs{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+  .av-pref{display:flex;align-items:center;gap:9px}
+  .av-pref span{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--sub2)}
+  .av-pref b{font-size:12.5px;font-weight:800;color:#fff;background:var(--g);padding:5px 12px;border-radius:20px}
+  .av-cap{font-size:11px;font-weight:600;color:var(--sub2);text-align:center;line-height:1.5;max-width:340px}
+
+  /* 방향1 — 정밀도 유도 */
+  .prec-body{font-size:15px;color:var(--sub);line-height:1.65;margin-top:12px;}
+  .prec-body b{color:var(--ink);font-weight:800;}
+  .prec-bar{margin-top:18px;}
+  .prec-top{display:flex;justify-content:space-between;font-size:12px;font-weight:800;color:var(--sub2);margin-bottom:7px;}
+  .prec-segs{display:flex;gap:5px;} .prec-segs span{flex:1;height:9px;border-radius:4px;background:var(--gs);}
+  .prec-segs span.on{background:var(--g);}
+  .prec-note2{margin-top:9px;font-size:12.5px;color:var(--sub);}
+  .prec-cta{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px;width:100%;
+    padding:14px;border:0;border-radius:14px;background:var(--ink);color:#fff;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:-.01em;}
+  .share-note{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--sub);line-height:1.6;}
+  .share-note b{color:var(--ink);font-weight:700;}
+
+  /* 방향2 — 정보 보강 */
+  .part-list{margin-top:12px;flex:1;display:flex;flex-direction:column;justify-content:space-around;}
+  .part-it{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--line);}
+  .part-it:last-child{border-bottom:0;}
+  .part-chip{flex:none;width:54px;text-align:center;font-size:12.5px;font-weight:800;color:var(--g);background:var(--gs);padding:7px 0;border-radius:9px;}
+  .part-it p{margin:0;font-size:14.5px;line-height:1.6;color:#3d3b35;padding-top:3px;} .part-it p b{color:var(--ink);font-weight:800;}
+  .rcol{height:100%;} .rcol > .rpanel{display:flex;flex-direction:column;height:100%;}
+</style></head>
+<body>
+<div class="wrap">
+  <div class="htop">탭3 "체형 자세히 보기" — 방향 1+2 합침</div>
+  <div class="hsub">아바타(왼) + 오른쪽에 위: 정밀도 올리기(유도) · 아래: 부위별 해설(정보). 아바타 높이만큼 채움. 거짓 프라이버시 문구 제거.</div>
+
+  <div class="case">
+    <p class="lead">내 몸이 어떤 실루엣인지, 부위별로 얼마나 될지 그림으로 봐요</p>
+    <div class="rgrid2">
+      <div class="rcol"><div class="rpanel">
+        <div class="d-head"><span class="rkicker">내 체형 아바타</span><span class="d-chip">전신 · 기본 추정</span></div>
+        <div class="rnote">재보지 않아도 이 정도로 <b>예상</b>돼요 · 진단을 더 하면 범위가 좁아져요</div>
+        <div id="av1"></div>
+      </div></div>
+      <div class="rcol">
+        <div class="rpanel" style="height:100%">
+          <div class="d-head"><span class="rkicker">부위별로 이렇게 봐요</span><span class="d-chip" style="background:transparent;color:var(--sub2);font-weight:600">옷 고를 때</span></div>
+          <div class="rnote">부위별 비율이 옷 선택에서 각각 이런 의미예요</div>
+          <div class="part-list">
+            <div class="part-it"><span class="part-chip">어깨</span><p><b>상의 품·재킷 어깨선</b>이 여기서 갈려요 · 넓으면 오버핏이 자연스러워요</p></div>
+            <div class="part-it"><span class="part-chip">가슴</span><p><b>셔츠·니트 사이즈</b>를 좌우해요 · 슬림하면 여유 있는 핏도 잘 어울려요</p></div>
+            <div class="part-it"><span class="part-chip">허리</span><p><b>팬츠·벨트 라인</b> 기준 · 슬림한 허리는 실루엣을 잡아주는 강점이에요</p></div>
+            <div class="part-it"><span class="part-chip">엉덩이</span><p><b>팬츠·스커트 실루엣</b>에 영향 · 라인이 도는 정도를 결정해요</p></div>
+          </div>
+          <div class="share-note"><b>스타일리스트 매칭</b>을 신청하면 이 체형이 전달돼 딱 맞는 코디를 제안받아요</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script src="js/demo-session.js?v=f0075c36"></script>
+<script src="js/body-model.js?v=8fe572dd"></script>
+<script src="js/engine.js?v=de45a879"></script>
+<script src="js/bodytype.js?v=f6e75dd3"></script>
+<script src="js/config.js?v=5f55324e"></script>
+<script src="js/data.js?v=0b603d0c"></script>
+<script src="js/body-figure.js?v=b613013e"></script>
+<script>
+  window.addEventListener('load', function(){
+    if(!window.BodyModel || !window.BodyFigure) return;
+    var payload={}, basic={};
+    try{ payload=JSON.parse(sessionStorage.getItem('fitting.dx')||'{}'); }catch(e){}
+    try{ basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'{}'); }catch(e){}
+    if(!payload.basic || payload.basic.height==null) payload.basic=basic;
+    var prefs=payload.prefs||{};
+    var FITPCT={skinny:20,slim:32,regular:55,loose:70,oversize:85,straight:50,wide:78,tight:30};
+    BodyModel.load().then(function(){
+      var est=BodyModel.estimate(payload.basic||{}); if(!est||!est.ready) return;
+      var pm={}, cm={}; est.parts.forEach(function(p){ pm[p.key]=p.pct; cm[p.key]=p.cm; });
+      var code=window.FitBodyType?(FitBodyType.classify({ gender:est.sex,
+        heightCm:payload.basic.height, weightKg:payload.basic.weight,
+        chestFull:cm.chestFull, chestUpper:cm.chestUpper, waist:cm.waist, hip:cm.hip })||''):'';
+      var m={ top:{shoulder:pm.shoulder,chestFull:pm.chestFull}, bottom:{waist:pm.waist,hip:pm.hip},
+              prefTop:FITPCT[prefs.TOP||'regular']||55, prefBottom:FITPCT[prefs.BOTTOM||'straight']||50 };
+      function r(v){ return v==null?null:Math.round(v); }
+      var estArr=[{label:'어깨너비',val:r(cm.shoulder),pm:1},{label:'가슴둘레',val:r(cm.chestUpper||cm.chestFull),pm:3},
+        {label:'허리둘레',val:r(cm.waist),pm:3},{label:'엉덩이둘레',val:r(cm.hip),pm:3}].filter(function(x){return x.val!=null;});
+      var svg=BodyFigure.svg(m, {code:code}, est.sex, estArr, '낮음 (키·몸무게만)');
+      ['av1','av2'].forEach(function(id){ var e=document.getElementById(id); if(e) e.innerHTML=svg; });
+    });
+  });
+</script>
+</body></html>

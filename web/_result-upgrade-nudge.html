@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>후보 · 진단 완성 유도 배너</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --bg:#F6F6F5; --ink:#16140F; --sub:#6E6B63; --sub2:#A6A29A; --line:#E6E5E1; --soft:#EDEDEA;
+    --g:#2E4A3B; --gs:#E7EFEA; --gline:#CBDDD2; --glight:#9CC1AE; --warn:#B0553F; --wsoft:#F7ECE8;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; padding:36px 22px 90px;}
+  .head{max-width:880px; margin:0 auto 30px;}
+  .head h1{font-size:23px; font-weight:800; letter-spacing:-.03em;}
+  .head p{font-size:14px; color:var(--sub); margin-top:8px; line-height:1.6;}
+
+  .stack{max-width:880px; margin:0 auto; display:flex; flex-direction:column; gap:40px;}
+  .cand{}
+  .lab{font-size:15px; font-weight:800; margin-bottom:6px;} .lab .desc{display:block; font-size:13px; color:var(--sub); font-weight:600; margin-top:3px;}
+  .frame{background:#fff; border:1px solid var(--line); border-radius:20px; padding:26px 26px 28px; box-shadow:0 6px 20px rgba(20,18,16,.05); margin-top:12px;}
+  .rtitle{font-size:26px; font-weight:800; letter-spacing:-.03em;}
+  .rsub{font-size:14px; color:var(--sub); margin-top:8px;}
+  svg.i{width:1em; height:1em; vertical-align:-2px;}
+  .cardthumb{width:120px; height:170px; border-radius:14px; background:linear-gradient(160deg,#191a1f,#0f1014); flex:none; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; gap:8px;}
+  .cardthumb .dot{width:38px; height:54px; background:#ff9ec5; clip-path:polygon(37% 0,63% 0,85% 50%,61% 100%,39% 100%,15% 50%);}
+  .cardthumb small{font-size:11px; letter-spacing:.2em; opacity:.8;}
+
+  /* ═══════ A. 정확도 진행 배너 ═══════ */
+  .a-banner{margin-top:18px; background:var(--gs); border:1px solid var(--gline); border-radius:16px; padding:16px 18px; display:flex; align-items:center; gap:16px;}
+  .a-banner .txt{flex:1;}
+  .a-banner .t1{font-size:15px; font-weight:800; color:var(--g);}
+  .a-banner .t2{font-size:13px; color:#4a6a58; margin-top:3px;}
+  .a-prog{display:flex; gap:5px; margin-top:9px;}
+  .a-prog i{height:6px; flex:1; border-radius:3px; background:#cfe0d6;}
+  .a-prog i.on{background:var(--g);}
+  .a-btn{flex:none; background:var(--g); color:#fff; border:none; border-radius:11px; padding:12px 18px; font-size:14px; font-weight:800; cursor:pointer; white-space:nowrap;}
+
+  /* ═══════ B. 스텝 도트 + 인라인 ═══════ */
+  .b-wrap{margin-top:18px; display:flex; align-items:center; gap:18px; padding:6px 2px;}
+  .b-steps{display:flex; align-items:center; gap:10px;}
+  .b-step{display:flex; align-items:center; gap:7px; font-size:14px; font-weight:800;}
+  .b-num{width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px;}
+  .b-step.done .b-num{background:var(--g); color:#fff;} .b-step.done{color:var(--g);}
+  .b-step.todo .b-num{background:#fff; border:1.6px solid var(--line); color:var(--sub2);} .b-step.todo{color:var(--sub);}
+  .b-line{width:26px; height:1.6px; background:var(--line);}
+  .b-msg{flex:1; font-size:14px; color:var(--sub);} .b-msg b{color:var(--ink);}
+  .b-btn{flex:none; background:transparent; color:var(--g); border:1.6px solid var(--gline); border-radius:11px; padding:10px 15px; font-size:13.5px; font-weight:800; cursor:pointer;}
+
+  /* ═══════ C. 카드 상단 리본 ═══════ */
+  .c-row{display:flex; gap:20px; align-items:flex-start; margin-top:18px;}
+  .c-cardwrap{position:relative;}
+  .c-ribbon{position:absolute; top:-11px; left:50%; transform:translateX(-50%); white-space:nowrap; background:var(--g); color:#fff; font-size:12.5px; font-weight:800; padding:7px 14px; border-radius:999px; box-shadow:0 6px 16px rgba(46,74,59,.32); display:flex; align-items:center; gap:6px;}
+  .c-note{flex:1; align-self:center;}
+  .c-note .t1{font-size:15px; font-weight:800;}
+  .c-note .t2{font-size:13.5px; color:var(--sub); margin-top:5px; line-height:1.5;}
+  .c-note .link{display:inline-flex; align-items:center; gap:5px; margin-top:12px; font-size:14px; font-weight:800; color:var(--g); cursor:pointer;}
+
+  /* ═══════ D. 주의 알림 배너(강조) ═══════ */
+  .d-banner{margin-top:18px; background:#fff; border:1.6px solid var(--gline); border-radius:16px; padding:0; overflow:hidden; display:flex;}
+  .d-accent{width:6px; background:var(--g); flex:none;}
+  .d-in{padding:16px 18px; display:flex; align-items:center; gap:14px; flex:1;}
+  .d-ic{width:40px; height:40px; border-radius:12px; background:var(--gs); color:var(--g); display:flex; align-items:center; justify-content:center; flex:none; font-size:20px;}
+  .d-txt{flex:1;} .d-txt .t1{font-size:15px; font-weight:800;} .d-txt .t1 em{font-style:normal; color:var(--g);}
+  .d-txt .t2{font-size:13px; color:var(--sub); margin-top:3px;}
+  .d-btn{flex:none; background:var(--g); color:#fff; border:none; border-radius:11px; padding:11px 17px; font-size:14px; font-weight:800; cursor:pointer; white-space:nowrap;}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>진단 완성 유도 배너 — 상단 노출 후보</h1>
+  <p>지금은 "1/2 완료 · 하의까지 하면 또렷해져요"가 카드 <b>아래</b>에 작게 있어 안 보임 · 이걸 <b>상단</b>으로 올려 완성을 유도 · (예: 상의만 완료 → 하의 남음)</p>
+</div>
+
+<div class="stack">
+
+  <!-- A -->
+  <div class="cand">
+    <div class="lab">A. 정확도 진행 배너<span class="desc">제목 아래 가로 배너 · 프로그레스 2칸 + CTA. 진행률이 한눈에</span></div>
+    <div class="frame">
+      <div class="rtitle">내 핏 타입이 나왔어요</div>
+      <div class="a-banner">
+        <div class="txt">
+          <div class="t1">체형 정확도 · 1/2 완료</div>
+          <div class="t2">하의까지 진단하면 체형이 또렷해져요</div>
+          <div class="a-prog"><i class="on"></i><i></i></div>
+        </div>
+        <button class="a-btn">하의까지 진단 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="cand">
+    <div class="lab">B. 스텝 도트 + 인라인<span class="desc">상의 ✓ / 하의 ○ 스텝을 시각화 · 가볍고 명확</span></div>
+    <div class="frame">
+      <div class="rtitle">내 핏 타입이 나왔어요</div>
+      <div class="b-wrap">
+        <div class="b-steps">
+          <div class="b-step done"><span class="b-num">✓</span>상의</div>
+          <div class="b-line"></div>
+          <div class="b-step todo"><span class="b-num">2</span>하의</div>
+        </div>
+        <div class="b-msg"><b>하의까지 하면</b> 체형이 또렷해져요</div>
+        <button class="b-btn">하의 진단하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="cand">
+    <div class="lab">C. 카드 상단 리본<span class="desc">카드에 얹힌 띠 + 옆 설명 · 카드와 딱 붙어 맥락 명확</span></div>
+    <div class="frame">
+      <div class="rtitle">내 핏 타입이 나왔어요</div>
+      <div class="c-row">
+        <div class="c-cardwrap">
+          <div class="c-ribbon">🔓 지금은 1/2</div>
+          <div class="cardthumb"><div class="dot"></div><small>DIA</small></div>
+        </div>
+        <div class="c-note">
+          <div class="t1">아직 절반만 분석됐어요</div>
+          <div class="t2">상의만으로 추정한 결과예요.<br>하의까지 진단하면 체형·사이즈가 또렷해져요</div>
+          <span class="link">하의까지 진단하기
+            <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- D -->
+  <div class="cand">
+    <div class="lab">D. 주의 알림 배너(강조)<span class="desc">색 액센트 바 + 아이콘 · 가장 눈에 띔. 놓치기 어려움</span></div>
+    <div class="frame">
+      <div class="rtitle">내 핏 타입이 나왔어요</div>
+      <div class="d-banner">
+        <div class="d-accent"></div>
+        <div class="d-in">
+          <div class="d-ic">⚡</div>
+          <div class="d-txt">
+            <div class="t1">지금은 <em>절반만</em> 분석됐어요 · 1/2 완료</div>
+            <div class="t2">하의까지 진단하면 정확도가 올라가고 사이즈 추천이 정교해져요</div>
+          </div>
+          <button class="d-btn">하의까지 진단 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

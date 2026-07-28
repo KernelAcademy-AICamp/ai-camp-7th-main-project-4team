@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>후보 · 유도 배너 박스 색</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{ --bg:#F6F6F5; --ink:#16140F; --ink2:#3A382F; --sub:#6E6B63; --sub2:#A6A29A; --line:#E6E5E1; --line2:#DAD8D2; --soft:#EDEDEA; }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; padding:36px 30px 90px;}
+  .head{max-width:1120px; margin:0 auto 26px;}
+  .head h1{font-size:22px; font-weight:800; letter-spacing:-.03em;}
+  .head p{font-size:14px; color:var(--sub); margin-top:8px; line-height:1.6;}
+  .stack{max-width:1120px; margin:0 auto; display:flex; flex-direction:column; gap:30px;}
+  .lab{font-size:14.5px; font-weight:800; margin-bottom:10px;} .lab span{color:var(--sub); font-weight:600; font-size:13px; margin-left:6px;}
+  .demo-sub{ font-size:16px; color:var(--sub); margin-bottom:14px; }
+
+  /* 공통 배너 */
+  .rup{ display:flex; align-items:center; gap:15px; flex-wrap:wrap; border-radius:18px; padding:12px 24px; }
+  .rup-steps{ display:flex; align-items:center; gap:9px; flex:none; }
+  .rup-step{ display:inline-flex; align-items:center; gap:6px; font-size:14px; font-weight:800; line-height:1; }
+  .rup-num{ width:21px; height:21px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:11.5px; font-weight:800; flex:none; }
+  .rup-line{ width:22px; height:1.6px; }
+  .rup-msg{ flex:1; min-width:150px; font-size:14.5px; line-height:1.3; }
+  .rup-btn{ flex:none; border-radius:11px; padding:9px 16px; font-size:13.5px; font-weight:800; white-space:nowrap; cursor:pointer; text-decoration:none; border:1.6px solid transparent; }
+
+  /* ① 화이트 (아래 박스와 동일 스펙) */
+  .w{ background:#fff; border:1px solid var(--line); box-shadow:0 6px 18px rgba(20,18,16,.05); }
+  .w .rup-step.todo{color:var(--sub);} .w .rup-step.todo .rup-num{background:#fff;border:1.6px solid var(--line2);color:var(--sub2);}
+  .w .rup-line{background:var(--line2);} .w .rup-msg{color:var(--sub);} .w .rup-msg b{color:var(--ink);}
+  .w .rup-btn{background:var(--ink);color:#fff;}
+
+  /* ② 연회색 (현재) */
+  .g1{ background:#ECEBE7; border:1px solid var(--line2); box-shadow:0 6px 18px rgba(20,18,16,.04); }
+  .g1 .rup-step.todo{color:var(--sub);} .g1 .rup-step.todo .rup-num{background:#fff;border:1.6px solid var(--line2);color:var(--sub2);}
+  .g1 .rup-line{background:var(--line2);} .g1 .rup-msg{color:var(--sub);} .g1 .rup-msg b{color:var(--ink);}
+  .g1 .rup-btn{background:var(--ink);color:#fff;}
+
+  /* ③ 진회색 */
+  .g2{ background:#DEDCD6; border:1px solid #CFCCC4; }
+  .g2 .rup-step.todo{color:var(--ink2);} .g2 .rup-step.todo .rup-num{background:#fff;border:1.6px solid #C4C1B8;color:var(--sub);}
+  .g2 .rup-line{background:#C4C1B8;} .g2 .rup-msg{color:var(--ink2);} .g2 .rup-msg b{color:var(--ink);}
+  .g2 .rup-btn{background:var(--ink);color:#fff;}
+
+  /* ④ 잉크블랙 (다크) */
+  .k{ background:#1B1915; border:1px solid #1B1915; }
+  .k .rup-step.todo{color:rgba(255,255,255,.72);} .k .rup-step.todo .rup-num{background:rgba(255,255,255,.12);border:1.6px solid rgba(255,255,255,.3);color:#fff;}
+  .k .rup-line{background:rgba(255,255,255,.24);} .k .rup-msg{color:rgba(255,255,255,.75);} .k .rup-msg b{color:#fff;}
+  .k .rup-btn{background:#fff;color:var(--ink);}
+
+  /* ⑤ 차콜(웜 다크그레이) */
+  .c{ background:#3A382F; border:1px solid #3A382F; }
+  .c .rup-step.todo{color:rgba(255,255,255,.72);} .c .rup-step.todo .rup-num{background:rgba(255,255,255,.14);border:1.6px solid rgba(255,255,255,.32);color:#fff;}
+  .c .rup-line{background:rgba(255,255,255,.26);} .c .rup-msg{color:rgba(255,255,255,.78);} .c .rup-msg b{color:#fff;}
+  .c .rup-btn{background:#fff;color:var(--ink);}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>완성 유도 배너 — 박스 색 후보</h1>
+  <p>회색 / 잉크블랙 / 화이트 계열 5종 · 0벌 상태 기준 · 버튼은 박스에 맞춰 자동 대비</p>
+</div>
+
+<div class="stack" id="stack"></div>
+
+<script>
+var INNER =
+  '<div class="rup-steps">'+
+    '<div class="rup-step todo"><span class="rup-num">1</span>상의</div>'+
+    '<div class="rup-line"></div>'+
+    '<div class="rup-step todo"><span class="rup-num">2</span>하의</div>'+
+  '</div>'+
+  '<div class="rup-msg"><b>상의·하의를 넣으면</b> 체형이 또렷해져요</div>'+
+  '<a class="rup-btn">진단 시작하기</a>';
+var LIST = [
+  ['① 화이트', '아래 결과·추천 박스와 완전히 동일한 스펙(흰 카드+그림자)', 'w'],
+  ['② 연회색 (현재)', '웜 라이트그레이 · 은은', 'g1'],
+  ['③ 진회색', '한 톤 진한 회색 · 존재감 ↑', 'g2'],
+  ['④ 잉크블랙', '다크 박스 + 흰 글씨/버튼 · 가장 강조', 'k'],
+  ['⑤ 차콜', '웜 다크그레이 · 검정보다 부드러움', 'c']
+];
+document.getElementById('stack').innerHTML = LIST.map(function(x){
+  return '<div><div class="lab">'+x[0]+'<span>'+x[1]+'</span></div>'+
+    '<div class="demo-sub">평소 입던 옷으로 분석한 결과예요 · 저장하고 브랜드별 추천 사이즈도 확인해보세요</div>'+
+    '<div class="rup '+x[2]+'">'+INNER+'</div></div>';
+}).join('');
+</script>
+</body>
+</html>

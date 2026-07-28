@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>후기 본문 강조 · 방식 비교</title>
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;-webkit-font-smoothing:antialiased;padding:40px 20px 120px}
+  .page{max-width:720px;margin:0 auto}
+  .ptitle{font-size:15px;font-weight:800;color:var(--green);margin:0 0 4px}
+  .pdesc{font-size:13px;color:var(--sub);margin:0 0 30px;line-height:1.55}
+
+  .vlabel{margin:30px 0 12px}
+  .vlabel .vn{display:inline-block;font-size:12px;font-weight:800;color:#fff;background:var(--green);border-radius:20px;padding:4px 12px}
+  .vlabel .vd{font-size:12.5px;color:var(--sub);margin-top:8px;line-height:1.5}
+  .cur{background:var(--line2)!important}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:8px 24px;box-shadow:0 6px 18px rgba(20,18,16,.05)}
+  .req{padding:18px 0}
+  .reqtop{display:flex;align-items:center;gap:14px}
+  .av{width:44px;height:44px;border-radius:12px;flex:none;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--green),var(--green-mid,#3f6b52));color:#fff;font-weight:800}
+  .info b{font-size:14.5px} .info small{display:block;font-size:12.5px;color:var(--sub);letter-spacing:1px;margin-top:3px}
+  .star{color:var(--ink)} .star.off{color:var(--line2)}
+  .replybtn{margin-top:12px}
+  .tinybtn{font-size:12.5px;font-weight:700;padding:7px 14px;border-radius:9px;border:1px solid var(--green);background:#fff;color:var(--green);cursor:pointer}
+
+  /* 현재(A) 초록 좌측 라인 */
+  .qA{margin:13px 0 0;font-size:15.5px;font-weight:600;line-height:1.6;color:var(--ink);padding-left:15px;border-left:3px solid var(--green)}
+
+  /* B 틴트 하이라이트 박스 */
+  .qB{margin:13px 0 0;font-size:15px;font-weight:600;line-height:1.6;color:var(--ink);background:var(--green-soft);border-radius:12px;padding:14px 16px}
+
+  /* C 큰 따옴표 장식 */
+  .qC{margin:15px 0 0;position:relative;padding-left:34px}
+  .qC::before{content:"\201C";position:absolute;left:0;top:-6px;font-size:42px;line-height:1;font-weight:800;color:var(--green);opacity:.85;font-family:Georgia,serif}
+  .qC p{margin:0;font-size:15.5px;font-weight:600;line-height:1.6;color:var(--ink)}
+
+  /* D 순수 타이포(강조선 없음) */
+  .qD{margin:14px 0 2px;font-size:16.5px;font-weight:700;line-height:1.55;letter-spacing:-.02em;color:var(--ink)}
+
+  /* E 상하 헤어라인 풀쿼트 */
+  .qE{margin:15px 0 0;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center;font-size:16px;font-weight:600;line-height:1.55;color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="ptitle">후기 본문 강조 · 방식 비교</p>
+  <p class="pdesc">같은 후기를 5가지 방식으로. A가 지금 서버에 들어간 방식(초록 좌측 라인)이고, 나머지 B~E가 대안이에요. 마음에 드는 걸 골라주세요.</p>
+
+  <div class="vlabel"><span class="vn">A · 현재(초록 좌측 라인)</span><div class="vd">지금 적용된 방식. 이건 빼고 다른 걸 보고 싶다고 하셨죠.</div></div>
+  <div class="card"><div class="req">
+    <div class="reqtop"><div class="av">최</div><div class="info"><b>최민준 님 · 데일리</b><small><span class="star">★★★★★</span></small></div></div>
+    <p class="qA">"취향 저격이었어요! 반품 없이 한 번에 성공"</p>
+    <div class="replybtn"><button class="tinybtn">답글 달기</button></div>
+  </div></div>
+
+  <div class="vlabel"><span class="vn">B · 틴트 하이라이트 박스</span><div class="vd">연한 딥그린 배경 박스 안에 본문. 후기가 한눈에 "쏙" 분리돼 보임. 따뜻하고 눈에 잘 들어옴.</div></div>
+  <div class="card"><div class="req">
+    <div class="reqtop"><div class="av">최</div><div class="info"><b>최민준 님 · 데일리</b><small><span class="star">★★★★★</span></small></div></div>
+    <div class="qB">"취향 저격이었어요! 반품 없이 한 번에 성공"</div>
+    <div class="replybtn"><button class="tinybtn">답글 달기</button></div>
+  </div></div>
+
+  <div class="vlabel"><span class="vn">C · 큰 따옴표 장식</span><div class="vd">큰 딥그린 따옴표(“)로 인용문 느낌 강조. 에디토리얼하고 후기다움이 살아남.</div></div>
+  <div class="card"><div class="req">
+    <div class="reqtop"><div class="av">최</div><div class="info"><b>최민준 님 · 데일리</b><small><span class="star">★★★★★</span></small></div></div>
+    <div class="qC"><p>취향 저격이었어요! 반품 없이 한 번에 성공</p></div>
+    <div class="replybtn"><button class="tinybtn">답글 달기</button></div>
+  </div></div>
+
+  <div class="vlabel"><span class="vn">D · 순수 타이포(강조선 없음)</span><div class="vd">장식 없이 글씨만 더 크고(16.5px) 굵게. 가장 담백·모던. 여백으로 승부.</div></div>
+  <div class="card"><div class="req">
+    <div class="reqtop"><div class="av">최</div><div class="info"><b>최민준 님 · 데일리</b><small><span class="star">★★★★★</span></small></div></div>
+    <p class="qD">"취향 저격이었어요! 반품 없이 한 번에 성공"</p>
+    <div class="replybtn"><button class="tinybtn">답글 달기</button></div>
+  </div></div>
+
+  <div class="vlabel"><span class="vn">E · 상하 헤어라인 풀쿼트</span><div class="vd">위아래 얇은 선 사이에 가운데 정렬. 대표 후기처럼 격식 있게.</div></div>
+  <div class="card"><div class="req">
+    <div class="reqtop"><div class="av">최</div><div class="info"><b>최민준 님 · 데일리</b><small><span class="star">★★★★★</span></small></div></div>
+    <div class="qE">"취향 저격이었어요! 반품 없이 한 번에 성공"</div>
+    <div class="replybtn" style="text-align:center"><button class="tinybtn">답글 달기</button></div>
+  </div></div>
+
+</div>
+</body>
+</html>

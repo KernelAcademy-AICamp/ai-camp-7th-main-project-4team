@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>메인 아래 섹션 리디자인 — ② 결과카드 쇼케이스</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<style>
+/* _home-sec2.html — ② 결과카드 쇼케이스 리디자인 시안(버리는 파일). 히어로 톤(딥그린·브랜드 사각점) 맞춤. */
+*{box-sizing:border-box; margin:0; padding:0}
+body{background:var(--bg); color:var(--ink); font-family:var(--sans); letter-spacing:var(--ls-body)}
+.note{background:var(--surface,#fff); border-bottom:1px solid var(--line); padding:11px 20px; font-size:12.5px; color:var(--sub); text-align:center}
+.note b{color:var(--ink)}
+.wrap{max-width:1160px; margin:0 auto; padding:0 28px}
+.blk{padding:76px 0}
+.eyebrow{display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:800; letter-spacing:.12em; color:var(--sub2); text-transform:uppercase}
+.eyebrow .sq{width:7px; height:7px; border-radius:2px; background:var(--green)}
+.hsec{font-size:clamp(28px,3.4vw,38px); font-weight:800; letter-spacing:-.045em; line-height:1.22; margin-top:15px}
+.hsec b{color:var(--green)}
+.lead{font-size:16.5px; color:var(--sub); margin-top:13px; line-height:1.62; max-width:520px}
+
+/* 큰 패널 제거 → 섹션 배경 위 2열(정돈·경량) */
+.show-in{display:grid; grid-template-columns:1fr 360px; gap:60px; align-items:center; margin-top:44px}
+
+/* 8유형 선택 칩 */
+.types{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:26px; max-width:440px}
+.types .ty{font-family:var(--num,monospace); font-size:13.5px; font-weight:800; letter-spacing:.1em; color:var(--sub); background:var(--surface,#fff); border:1.5px solid var(--line2); padding:10px 0; border-radius:12px; cursor:pointer; transition:.22s; text-align:center}
+.types .ty:hover{border-color:var(--green-line); color:var(--green)}
+.types .ty.on{color:#fff; background:var(--green); border-color:var(--green); box-shadow:0 6px 16px rgba(46,74,59,.22)}
+.tyname{margin-top:20px; font-size:15px; color:var(--sub); line-height:1.55; min-height:44px} .tyname b{color:var(--ink); font-weight:800}
+.tyname .tag{display:inline-flex; align-items:center; gap:5px} .tyname .sq{width:6px; height:6px; border-radius:2px; background:var(--green)}
+
+.stats{display:flex; gap:12px; margin-top:26px; max-width:440px}
+.stat{flex:1; background:var(--surface,#fff); border:1px solid var(--line); border-radius:15px; padding:18px 16px}
+.stat b{display:block; font-family:var(--num,monospace); font-feature-settings:'tnum'; font-size:28px; font-weight:800; letter-spacing:-.03em; color:var(--green); line-height:1}
+.stat small{display:block; font-size:12.5px; color:var(--sub2); font-weight:700; margin-top:6px}
+
+/* 결과카드 미리보기 — 히어로 미스터리 톤(블러 + 잠금) */
+.showcard{justify-self:center}
+.cardprev{position:relative; width:326px; height:552px; border-radius:26px; overflow:hidden; background:#16171b;
+  box-shadow:0 28px 60px rgba(10,11,14,.26); clip-path:inset(0 round 26px)}
+.cardprev .cf{position:absolute; top:0; left:0; width:392px; height:664px; border:0; transform:scale(.8316); transform-origin:top left; pointer-events:none; opacity:0; transition:opacity .5s ease; filter:blur(8px) saturate(.92)}
+.cardprev .cf.on{opacity:1}
+.cardprev .veil{position:absolute; inset:0; z-index:3; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:14px; padding:28px; color:#fff;
+  background:radial-gradient(ellipse 80% 50% at 50% 42%, rgba(18,19,24,.25), rgba(18,19,24,.62))}
+.cardprev .veil .ic{width:54px; height:54px; border-radius:16px; background:rgba(156,193,174,.16); border:1px solid rgba(156,193,174,.32); display:flex; align-items:center; justify-content:center; color:var(--green-light,#9CC1AE)}
+.cardprev .veil .ic svg{width:24px; height:24px}
+.cardprev .veil b{font-size:19px; font-weight:800; letter-spacing:-.03em}
+.cardprev .veil b .sq{display:inline-block; width:6px; height:6px; border-radius:2px; background:var(--green-light,#9CC1AE); margin-left:3px; vertical-align:baseline}
+.cardprev .veil p{font-size:13.5px; color:rgba(255,255,255,.82); line-height:1.55}
+.cardprev .veil .go{margin-top:4px; background:#fff; color:#16171b; font-weight:800; font-size:14px; padding:12px 24px; border-radius:24px; border:none; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.cardprev .veil .go:hover{background:var(--green-soft)}
+
+@media(max-width:900px){ .show-in{grid-template-columns:1fr; gap:36px} .showcard{order:-1} .types,.stats,.tyname{max-width:none} }
+</style>
+</head>
+<body>
+<div class="note"><b>② 결과카드 쇼케이스</b> — 히어로 톤 맞춤(딥그린·브랜드 사각점) · 실물 비교: <b>http://localhost:8000/index.html</b></div>
+
+<section class="blk"><div class="wrap">
+  <span class="eyebrow"><span class="sq"></span> Result card</span>
+  <div class="show-in">
+    <div>
+      <h2 class="hsec">8가지 체형,<br><b>당신</b>은 어디에?</h2>
+      <p class="lead">평소 옷의 느낌만으로 3분이면 내 유형이 나와요. 진단을 마치면 내 결과 카드가 열려요</p>
+      <div class="types" id="types"></div>
+      <div class="tyname" id="tyname"></div>
+      <div class="stats">
+        <div class="stat"><b>8</b><small>체형 유형</small></div>
+        <div class="stat"><b>3분</b><small>진단 소요</small></div>
+        <div class="stat"><b>0</b><small>반품 목표</small></div>
+      </div>
+    </div>
+    <div class="showcard">
+      <div class="cardprev" id="cardprev">
+        <iframe class="cf on" id="frameA" src="card.html?type=STR&g=female" scrolling="no" tabindex="-1" title="결과 카드 미리보기"></iframe>
+        <div class="veil">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></div>
+          <b>진단하면 열려요<span class="sq"></span></b>
+          <p>내 체형 결과 카드는<br>진단을 마치면 확인할 수 있어요</p>
+          <button class="go">바로 진단하기 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<script>
+(function(){
+  var CODES=['TRI','INV','HRG','STR','BAL','DIA','RND','TUB'], G='female', cur='STR';
+  var typesEl=document.getElementById('types'), tyname=document.getElementById('tyname'), frame=document.getElementById('frameA');
+  var MAP={};
+  CODES.forEach(function(c){ var b=document.createElement('button'); b.className='ty'+(c===cur?' on':''); b.textContent=c; b.dataset.c=c; typesEl.appendChild(b); });
+  typesEl.addEventListener('click', function(e){ var b=e.target.closest('.ty'); if(!b) return; cur=b.dataset.c;
+    [].forEach.call(typesEl.children, function(x){ x.classList.toggle('on', x.dataset.c===cur); });
+    frame.src='card.html?type='+cur+'&g='+G; render(); });
+  function render(){ var t=MAP[cur]; if(!t){ tyname.innerHTML=''; return; }
+    var g=(t.gender&&(t.gender[G]||t.gender.female))||{}; var tag=(g.profile&&g.profile[0])||'';
+    tyname.innerHTML='<span class="tag"><span class="sq"></span> <b>'+t.name+'</b></span> · '+tag; }
+  fetch('data/bodytypes.json').then(function(r){return r.json();}).then(function(j){ j.types.forEach(function(t){ MAP[t.code]=t; }); render(); }).catch(function(){});
+})();
+</script>
+</body>
+</html>

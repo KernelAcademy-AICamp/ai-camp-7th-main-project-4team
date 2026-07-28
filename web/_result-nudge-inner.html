@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>후보 · 유도 배너 내부 디자인</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{ --bg:#F6F6F5; --ink:#16140F; --ink2:#3A382F; --sub:#6E6B63; --sub2:#A6A29A; --line:#E6E5E1; --line2:#DAD8D2; --soft:#EDEDEA;
+    --g:#2E4A3B; --gm:#5A7A68; --gs:#E7EFEA; --gl:#9CC1AE; --warn:#B0553F; --wsoft:#F7ECE8; }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; padding:36px 30px 90px;}
+  .head{max-width:1120px; margin:0 auto 26px;}
+  .head h1{font-size:22px; font-weight:800; letter-spacing:-.03em;}
+  .head p{font-size:14px; color:var(--sub); margin-top:8px; line-height:1.6;}
+  .stack{max-width:1120px; margin:0 auto; display:flex; flex-direction:column; gap:26px;}
+  .lab{font-size:14.5px; font-weight:800; margin-bottom:10px;} .lab span{color:var(--sub); font-weight:600; font-size:13px; margin-left:6px;}
+
+  /* 박스(고정 = 화이트) */
+  .box{ background:#fff; border:1px solid var(--line); border-radius:18px; box-shadow:0 6px 18px rgba(20,18,16,.05); padding:12px 24px; display:flex; align-items:center; gap:15px; flex-wrap:wrap; }
+  .box .msg{ flex:1; min-width:150px; font-size:14.5px; color:var(--sub); } .box .msg b{ color:var(--ink); }
+  .box .btn{ flex:none; background:var(--ink); color:#fff; border:none; border-radius:11px; padding:9px 16px; font-size:13.5px; font-weight:800; white-space:nowrap; cursor:pointer; text-decoration:none; }
+
+  .steps{ display:flex; align-items:center; gap:9px; flex:none; }
+  .step{ display:flex; align-items:center; gap:6px; font-size:14px; font-weight:800; }
+  .num{ width:21px; height:21px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11.5px; font-weight:800; line-height:1; flex:none; }
+  .ln{ width:22px; height:1.6px; background:var(--line2); }
+
+  /* ① 딥그린 숫자 */
+  .a .num{ background:var(--g); color:#fff; } .a .step{ color:var(--g); } .a .ln{ background:var(--gl); }
+  /* ② 연초록 숫자(소프트) */
+  .b .num{ background:var(--gs); color:var(--g); border:1.4px solid var(--gl); } .b .step{ color:var(--gm); } .b .ln{ background:var(--gl); }
+  /* ③ 테라코타(웜) 숫자 */
+  .c .num{ background:var(--wsoft); color:var(--warn); border:1.4px solid #e6c3b8; } .c .step{ color:var(--warn); } .c .ln{ background:#e6c3b8; }
+
+  /* ④ 프로그레스 게이지 (스텝 제거) */
+  .gauge{ display:flex; align-items:center; gap:11px; flex:none; }
+  .gauge .gt{ font-size:13px; font-weight:800; color:var(--g); white-space:nowrap; }
+  .gbar{ width:120px; height:7px; border-radius:4px; background:var(--soft); overflow:hidden; }
+  .gbar i{ display:block; height:100%; width:0%; background:var(--g); border-radius:4px; }
+
+  /* ⑤ 1/2 뱃지 (미니멀) */
+  .badge{ flex:none; font-size:13px; font-weight:800; color:var(--g); background:var(--gs); border:1px solid var(--gl); padding:6px 12px; border-radius:999px; white-space:nowrap; }
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>유도 배너 — 내부 디자인 후보 (박스는 화이트 고정)</h1>
+  <p>0벌(상·하의 둘 다 안 함) 기준 · 박스/버튼은 그대로, 안쪽 구성·글씨색만 다르게</p>
+</div>
+
+<div class="stack">
+
+  <!-- ① -->
+  <div>
+    <div class="lab">① 딥그린 숫자<span>숫자 원을 딥그린 채움 · 또렷+브랜드</span></div>
+    <div class="box a">
+      <div class="steps"><div class="step"><span class="num">1</span>상의</div><div class="ln"></div><div class="step"><span class="num">2</span>하의</div></div>
+      <div class="msg"><b>상의·하의를 넣으면</b> 체형이 또렷해져요</div>
+      <a class="btn">진단 시작하기</a>
+    </div>
+  </div>
+
+  <!-- ② -->
+  <div>
+    <div class="lab">② 연초록 숫자<span>연초록 채움 + 딥그린 글씨 · 은은하고 예쁨</span></div>
+    <div class="box b">
+      <div class="steps"><div class="step"><span class="num">1</span>상의</div><div class="ln"></div><div class="step"><span class="num">2</span>하의</div></div>
+      <div class="msg"><b>상의·하의를 넣으면</b> 체형이 또렷해져요</div>
+      <a class="btn">진단 시작하기</a>
+    </div>
+  </div>
+
+  <!-- ③ -->
+  <div>
+    <div class="lab">③ 테라코타 숫자<span>웜 테라코타 톤 · 따뜻한 포인트</span></div>
+    <div class="box c">
+      <div class="steps"><div class="step"><span class="num">1</span>상의</div><div class="ln"></div><div class="step"><span class="num">2</span>하의</div></div>
+      <div class="msg"><b>상의·하의를 넣으면</b> 체형이 또렷해져요</div>
+      <a class="btn">진단 시작하기</a>
+    </div>
+  </div>
+
+  <!-- ④ -->
+  <div>
+    <div class="lab">④ 프로그레스 게이지<span>숫자 대신 진행 바 · "0/2" 채움 시각화</span></div>
+    <div class="box">
+      <div class="gauge"><span class="gt">진행 0/2</span><span class="gbar"><i style="width:0%"></i></span></div>
+      <div class="msg"><b>상의·하의를 넣으면</b> 체형이 또렷해져요</div>
+      <a class="btn">진단 시작하기</a>
+    </div>
+  </div>
+
+  <!-- ⑤ -->
+  <div>
+    <div class="lab">⑤ 1/2 뱃지 (미니멀)<span>스텝 대신 작은 뱃지 · 가장 깔끔</span></div>
+    <div class="box">
+      <span class="badge">STEP 0 / 2</span>
+      <div class="msg"><b>상의·하의를 넣으면</b> 체형이 또렷해져요</div>
+      <a class="btn">진단 시작하기</a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

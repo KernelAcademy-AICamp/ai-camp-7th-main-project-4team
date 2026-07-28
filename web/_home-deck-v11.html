@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>메인 프로토타입 v11 — 클릭해서 카드 뽑기(감각적)</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<style>
+/* ==========================================================================
+   _home-deck.html v11 — 메인 히어로: 클릭해서 카드 뽑기 (버리는 파일 · 커밋 안 함).
+   v10(자동 루프)과 다름 — 사용자 클릭으로 랜덤 1장 뽑기. 상태 전환이라 CSS transition이 정석
+   (자동 루프에서 삐그덕대던 setTimeout 지휘가 없음 → 상태는 사용자 이벤트로만 바뀜).
+   카드 = 실물 card.html(디자인·마크업 유지). 배치·애니메이션만 추가. 연출 (B) 감각적.
+   ========================================================================== */
+*{box-sizing:border-box; margin:0; padding:0}
+body{background:var(--bg); color:var(--ink); font-family:var(--sans); letter-spacing:var(--ls-body);
+  -webkit-user-select:none; user-select:none; overflow-x:hidden}
+.wrap{max-width:1440px; margin:0 auto; padding:0 44px}
+@media(max-width:900px){ .wrap{padding:0 20px} }
+.note{background:var(--surface); border-bottom:var(--bd); padding:11px 20px; font-size:12.5px; color:var(--sub); text-align:center}
+.note b{color:var(--ink)}
+
+/* ── 히어로 ────────────────────────────────────────────────────────── */
+.hero{position:relative; overflow:hidden}
+.hero::before{content:""; position:absolute; left:50%; top:-22%; width:920px; height:920px; margin-left:-460px;
+  background:radial-gradient(circle at 50% 50%, var(--green-soft), transparent 62%); opacity:.75; pointer-events:none}
+.heroin{position:relative; padding:52px 0 26px; text-align:center}
+.kick{display:inline-flex; align-items:center; gap:7px; font-size:var(--fs-label); font-weight:var(--w-x);
+  letter-spacing:var(--ls-label); color:var(--green); background:var(--green-soft); padding:7px 14px; border-radius:var(--r-chip)}
+.kick .dot{width:5px; height:5px; border-radius:50%; background:var(--green); animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+h1{font-size:clamp(40px,5vw,68px); font-weight:var(--w-x); letter-spacing:-.06em; line-height:1.1; margin-top:16px}
+h1 b{color:var(--green)}
+.hsub{font-size:17px; color:var(--sub); margin:15px auto 0; line-height:1.6; max-width:540px}
+
+/* 무대 — 카드 origin은 아래 먼 점(부채 아치) */
+.stage{position:relative; height:490px; margin-top:8px}
+.glow{position:absolute; left:50%; top:44%; width:440px; height:440px; margin:-220px 0 0 -220px;
+  background:radial-gradient(circle, rgba(46,74,59,.24), transparent 62%);
+  opacity:0; transition:opacity .6s ease; pointer-events:none}
+.stage.revealed .glow{opacity:1}
+.deck{position:absolute; left:50%; top:150px; width:0; height:340px}
+.card{position:absolute; left:-100px; top:0; width:200px; height:339px; border-radius:17px;
+  overflow:hidden; background:#16171b; border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 14px 34px rgba(10,11,14,.22);
+  transform-origin:50% 230%;                 /* 아래 먼 점 → rotate만으로 아치 부채. 뽑을 땐 rotate 0으로 중앙 위 */
+  transform:translateY(46px) rotate(0deg) scale(.96); opacity:0;   /* 로드 전 초기값(아래에서 미끄러져 등장) */
+  will-change:transform, filter, opacity; backface-visibility:hidden; cursor:pointer;
+  transition:transform .62s cubic-bezier(.22,.9,.28,1), filter .5s ease, opacity .5s ease, box-shadow .5s ease}
+.card .cf{position:absolute; top:0; left:0; width:392px; height:664px; border:0;
+  transform:scale(.5102); transform-origin:top left; pointer-events:none}
+/* 로드 후 부채 배치 — JS가 각 카드 --rot(회전각) 지정 */
+.deck.dealt .card{transform:rotate(var(--rot)) translateY(0) scale(1); opacity:1; filter:blur(2.5px)}
+.deck.dealt .card:hover{filter:blur(1px); box-shadow:0 20px 44px rgba(10,11,14,.30)}
+/* 뽑힌 카드 — 중앙 위로 쑥 + 확대 + 선명 + 글로우 */
+.deck.picked .card.pick{transform:rotate(0deg) translateY(-118px) scale(1.16); filter:blur(0);
+  box-shadow:0 34px 74px rgba(10,11,14,.4), 0 0 0 1px var(--green-line); z-index:40; cursor:default}
+/* 나머지 — 뒤로 흐릿하게 물러남 */
+.deck.picked .card.rest{transform:rotate(var(--rot)) translateY(30px) scale(.9); filter:blur(7px); opacity:.42; cursor:default}
+
+/* 결과 — 뽑힌 카드 아래 */
+.result{margin-top:6px; opacity:0; transform:translateY(12px); pointer-events:none;
+  transition:opacity .5s ease .15s, transform .5s cubic-bezier(.2,.8,.3,1) .15s}
+.stage.revealed ~ .result{opacity:1; transform:none; pointer-events:auto}
+.result .rcode{font-family:var(--num); font-size:13px; font-weight:var(--w-x); letter-spacing:var(--ls-code); color:var(--green)}
+.result .rword{font-size:clamp(26px,3vw,36px); font-weight:var(--w-x); letter-spacing:-.045em; margin-top:5px}
+.result .rword em{font-style:normal; color:var(--green)}
+.result .rdesc{font-size:14.5px; color:var(--sub); margin-top:9px; line-height:1.6; max-width:460px; margin-left:auto; margin-right:auto}
+
+.cta{display:flex; gap:10px; justify-content:center; margin-top:22px; flex-wrap:wrap}
+.btn{font-family:var(--sans); font-size:15px; font-weight:var(--w-bold); padding:15px 22px;
+  border-radius:var(--r-btn); border:none; cursor:pointer; transition:.14s}
+.btn.p{background:var(--green-soft); color:var(--green); border:1px solid var(--green-line)}
+.btn.p:hover{background:#DDE9E2; transform:translateY(-1px)}
+.btn.g{background:transparent; color:var(--ink); border:var(--bd-input)}
+.btn.g:hover{background:var(--soft)}
+.hidden{display:none !important}
+.downhint{text-align:center; font-size:13px; color:var(--sub2); font-weight:var(--w-med); padding:24px 0 40px}
+.downhint .arr{display:inline-block; margin-left:6px; animation:bob 1.7s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+
+/* ── 서비스 소개 (v10 그대로 유지) ─────────────────────────────────── */
+.svc{background:var(--surface); border-top:var(--bd); position:relative}
+.svcin{padding:84px 0 90px}
+.shead{text-align:center; max-width:660px; margin:0 auto}
+.eyebrow{font-size:var(--fs-label); font-weight:var(--w-x); letter-spacing:var(--ls-label); text-transform:uppercase; color:var(--sub2)}
+h2{font-size:clamp(28px,3vw,42px); font-weight:var(--w-x); letter-spacing:-.05em; line-height:1.26; margin-top:12px}
+h2 b{color:var(--green)}
+.lead{font-size:16px; color:var(--sub); margin-top:13px; line-height:1.62}
+.how{display:grid; grid-template-columns:64px minmax(0,1fr); gap:34px; margin-top:56px; align-items:start}
+.vtape{position:relative; height:100%; min-height:520px; justify-self:center; width:34px}
+.vtape .rail{position:absolute; left:50%; margin-left:-.5px; top:0; bottom:0; width:1px; background:var(--line2)}
+.vtape .tk{position:absolute; left:50%; margin-left:-.5px; top:0; bottom:0; width:1px;
+  background:repeating-linear-gradient(180deg, var(--line2) 0 1px, transparent 1px 12px)}
+.vtape .vfill{position:absolute; left:50%; margin-left:-1.5px; top:0; width:3px; height:0; background:var(--green); border-radius:3px}
+.vtape .vhead{position:absolute; left:50%; margin-left:-7px; top:0; width:14px; height:14px; border-radius:50%;
+  background:var(--green); border:3px solid var(--surface); box-shadow:0 0 0 1px var(--green-line)}
+.steps{display:flex; flex-direction:column; gap:22px}
+.step{display:grid; grid-template-columns:56px minmax(0,1fr) auto; gap:20px; align-items:center;
+  background:var(--bg); border:var(--bd); border-radius:var(--r-card); padding:26px 28px;
+  opacity:0; transform:translateY(26px); transition:opacity .6s, transform .6s cubic-bezier(.2,.8,.3,1)}
+.step.on{opacity:1; transform:none}
+.step .ic{width:56px; height:56px; border-radius:15px; background:var(--green-soft); color:var(--green);
+  display:flex; align-items:center; justify-content:center; flex:none}
+.step .ic svg{width:26px; height:26px}
+.step .no{font-family:var(--num); font-size:11px; font-weight:var(--w-x); letter-spacing:var(--ls-label); color:var(--green)}
+.step h3{font-size:20px; font-weight:var(--w-x); letter-spacing:-.035em; margin-top:5px}
+.step p{font-size:14px; color:var(--sub); margin-top:6px; line-height:1.6; max-width:520px}
+.step .big{text-align:right; flex:none}
+.step .big b{display:block; font-family:var(--num); font-size:34px; font-weight:var(--w-x); letter-spacing:-.04em; color:var(--green)}
+.step .big span{font-size:12px; color:var(--sub2); font-weight:var(--w-bold)}
+@media(max-width:900px){
+  .heroin{padding-top:34px}
+  .stage{height:420px} .deck{top:120px}
+  .card{width:150px; height:254px; left:-75px} .card .cf{transform:scale(.3827)}
+  .how{grid-template-columns:1fr; gap:18px} .vtape{display:none}
+  .step{grid-template-columns:46px minmax(0,1fr); gap:14px; padding:20px}
+  .step .big{grid-column:1/-1; text-align:left}
+}
+/* 모션 최소화 — 미끄러짐·확대 최소화(상태 전환은 즉시) */
+@media(prefers-reduced-motion:reduce){
+  .card{transition:opacity .2s ease, filter .2s ease}
+  .glow,.downhint .arr,.kick .dot{animation:none !important}
+}
+</style>
+</head>
+<body>
+
+<div class="note"><b>프로토타입 v11</b> — 클릭해서 카드 뽑기(감각적 B) · 카드 or "카드 뽑기" 클릭 → 랜덤 1장 중앙 확대 · "다시 뽑기"로 리셋</div>
+
+<!-- ── 히어로 ── -->
+<section class="hero"><div class="wrap heroin">
+
+  <span class="kick"><span class="dot"></span> 체형·사이즈 진단</span>
+  <h1><b>당신의 핏</b></h1>
+  <p class="hsub">안 입어본 브랜드도 내 사이즈로 딱 FIT하고, 페이드로 끝내기</p>
+
+  <div class="stage" id="stage">
+    <div class="glow"></div>
+    <div class="deck" id="deck"></div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="rcode" id="rcode">YOUR FIT</div>
+    <div class="rword" id="rword">당신의 핏은 <em>?</em></div>
+    <div class="rdesc" id="rdesc">카드를 뽑으면 8가지 체형 중 하나가 나와요</div>
+  </div>
+
+  <div class="cta">
+    <button class="btn p" id="drawBtn">카드 뽑기 →</button>
+    <button class="btn g hidden" id="againBtn">다시 뽑기</button>
+    <button class="btn g" id="startBtn">내 체형 진단 시작하기</button>
+  </div>
+
+</div>
+<div class="downhint">그런데 체형은 어떻게 알아낼까요?<span class="arr">↓</span></div>
+</section>
+
+<!-- ── 서비스 소개 (유지) ── -->
+<section class="svc"><div class="wrap svcin">
+  <div class="shead">
+    <span class="eyebrow">How it works</span>
+    <h2>착용 경험을 <b>사이즈로 번역</b>해요</h2>
+    <p class="lead">복잡한 신체 치수 입력 없이, 평소 옷의 느낌만으로 3단계면 끝나요</p>
+  </div>
+
+  <div class="how" id="how">
+    <div class="vtape">
+      <div class="rail"></div><div class="tk"></div>
+      <div class="vfill" id="vfill"></div><div class="vhead" id="vhead"></div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></div>
+        <div><div class="no">STEP 01</div><h3>착용 경험 입력</h3>
+          <p>평소 입는 옷의 브랜드·핏·부위별 느낌을 알려주세요. 치수 대신 '경험'으로 시작해요</p></div>
+        <div class="big"><b class="cnt" data-to="2">0</b><span>분이면 충분</span></div>
+      </div>
+      <div class="step">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8L12 3z"/><path d="M19 14.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6.6-1.6z"/></svg></div>
+        <div><div class="no">STEP 02</div><h3>AI 체형 진단</h3>
+          <p>8가지 체형 유형 중 내 유형을 판정하고, 공유용 캐릭터 카드로 보여드려요</p></div>
+        <div class="big"><b class="cnt" data-to="8">0</b><span>체형으로 분류</span></div>
+      </div>
+      <div class="step">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15.6 2.3l6.1 6.1a1 1 0 0 1 0 1.4L9.8 21.7a1 1 0 0 1-1.4 0l-6.1-6.1a1 1 0 0 1 0-1.4L14.2 2.3a1 1 0 0 1 1.4 0z"/><path d="M14 5l2 2M11 8l2 2M8 11l2 2M5 14l2 2"/></svg></div>
+        <div><div class="no">STEP 03</div><h3>브랜드별 사이즈 번역</h3>
+          <p>안 입어본 브랜드도 내 몸 기준으로 사이즈를 환산해, 반품 없이 한 번에 맞춰요</p></div>
+        <div class="big"><b class="cnt" data-to="0" data-from="9">9</b><span>반품을 목표로</span></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<script>
+(function(){
+  var G='female';
+  var CODES=['TRI','INV','HRG','STR','BAL','DIA','RND','TUB'];
+  var N=CODES.length, mid=(N-1)/2;
+  var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  var stage=document.getElementById('stage'), deck=document.getElementById('deck');
+  var drawBtn=document.getElementById('drawBtn'), againBtn=document.getElementById('againBtn'), startBtn=document.getElementById('startBtn');
+  var rcode=document.getElementById('rcode'), rword=document.getElementById('rword'), rdesc=document.getElementById('rdesc');
+  var NAMES={}, cards=[], picked=-1;
+
+  // 부채 각도 — 화면 폭에 맞춰(모바일은 겹침 폭 축소)
+  var STEP=6.4;
+  function applyFan(){
+    STEP = window.innerWidth<=900 ? 4.4 : 6.4;
+    cards.forEach(function(el,i){ el.style.setProperty('--rot', ((i-mid)*STEP).toFixed(2)+'deg'); });
+  }
+
+  CODES.forEach(function(code,i){
+    var el=document.createElement('div');
+    el.className='card'; el.dataset.i=i; el.dataset.code=code;
+    el.innerHTML='<iframe class="cf" src="card.html?type='+code+'&g='+G+'" scrolling="no" tabindex="-1" title="결과 카드 '+code+'"></iframe>';
+    el.addEventListener('click', function(){ if(picked<0) draw(); });   // 카드 클릭도 뽑기
+    deck.appendChild(el); cards.push(el);
+
+    // 카드 안 캐릭터 흔들림 정지(8장 iframe이면 프레임 갉아먹음)
+    var f=el.querySelector('.cf');
+    f.addEventListener('load', function(){
+      try{ var doc=f.contentDocument; if(!doc) return;
+        var st=doc.createElement('style'); st.textContent='.fig{animation:none!important}'; doc.head.appendChild(st);
+      }catch(e){}
+    });
+  });
+  applyFan();
+
+  // 로드 시 stagger로 미끄러져 들어오며 펼침
+  function deal(){
+    deck.classList.add('dealt');
+    cards.forEach(function(el,i){ el.style.transitionDelay=(i*55)+'ms'; });
+    // 등장 끝나면 delay 제거(뽑기 전환이 지연 없이 즉각 반응하도록)
+    setTimeout(function(){ cards.forEach(function(el){ el.style.transitionDelay='0ms'; }); }, N*55+700);
+  }
+  if(RM){ deck.classList.add('dealt'); cards.forEach(function(el){ el.style.filter='blur(2.5px)'; }); }
+  else requestAnimationFrame(function(){ requestAnimationFrame(deal); });
+
+  function draw(){
+    if(picked>=0) return;
+    picked=Math.floor(Math.random()*N);
+    cards.forEach(function(el,i){ el.classList.add(i===picked?'pick':'rest'); });
+    deck.classList.add('picked');
+    stage.classList.add('revealed');
+
+    var n=NAMES[cards[picked].dataset.code], code=cards[picked].dataset.code;
+    rcode.textContent=code+' · YOUR FIT';
+    rword.innerHTML='당신의 핏은 <em>'+(n?n.name:code)+'</em>';
+    rdesc.textContent=n?n.desc:'';
+
+    drawBtn.classList.add('hidden');
+    againBtn.classList.remove('hidden');
+  }
+  function reset(){
+    deck.classList.remove('picked');
+    stage.classList.remove('revealed');
+    cards.forEach(function(el){ el.classList.remove('pick','rest'); });
+    picked=-1;
+    rcode.textContent='YOUR FIT';
+    rword.innerHTML='당신의 핏은 <em>?</em>';
+    rdesc.textContent='카드를 뽑으면 8가지 체형 중 하나가 나와요';
+    againBtn.classList.add('hidden');
+    drawBtn.classList.remove('hidden');
+  }
+
+  drawBtn.addEventListener('click', draw);
+  againBtn.addEventListener('click', reset);
+  startBtn.addEventListener('click', function(){ alert('데모 — 실제로는 진단 플로우(diag-basic.html)로 이동해요.'); });
+
+  var rz=null;
+  addEventListener('resize', function(){ clearTimeout(rz); rz=setTimeout(applyFan, 200); });
+
+  // 이름·설명은 bodytypes.json 단일 출처에서(card.html과 같은 원칙 — 하드코딩 금지)
+  fetch('data/bodytypes.json').then(function(r){ return r.json(); }).then(function(d){
+    (d.types||[]).forEach(function(t){
+      var g=(t.gender&&t.gender[G])||{};
+      NAMES[t.code]={ name:t.name, desc:(g.profile&&g.profile[0])||t.sizeKorea||'' };
+    });
+  }).catch(function(){});
+
+  /* ── 서비스 소개(유지): 스텝 등장 · 카운트업 · 세로 줄자 스크롤 1:1 ── */
+  var so=new IntersectionObserver(function(en){
+    en.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add('on'); so.unobserve(x.target); } });
+  },{threshold:.35});
+  [].forEach.call(document.querySelectorAll('.step'), function(s,i){ s.style.transitionDelay=(i*90)+'ms'; so.observe(s); });
+
+  function countTo(el){
+    var to=+el.dataset.to, from=el.dataset.from?+el.dataset.from:0, t0=null;
+    function step(ts){ if(!t0) t0=ts; var p=Math.min(1,(ts-t0)/1100), e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(from+(to-from)*e); if(p<1) requestAnimationFrame(step); }
+    requestAnimationFrame(step);
+  }
+  var co=new IntersectionObserver(function(en){
+    en.forEach(function(x){ if(x.isIntersecting){ countTo(x.target); co.unobserve(x.target); } });
+  },{threshold:.6});
+  [].forEach.call(document.querySelectorAll('.cnt'), function(el){ co.observe(el); });
+
+  var how=document.getElementById('how'), vfill=document.getElementById('vfill'), vhead=document.getElementById('vhead'), tick=false;
+  function upd(){ tick=false;
+    var r=how.getBoundingClientRect(), vh=window.innerHeight;
+    var prog=(vh*0.55 - r.top)/(r.height*1.02); prog=Math.max(0,Math.min(1,prog));
+    var pct=(prog*100).toFixed(2)+'%'; vfill.style.height=pct; vhead.style.top=pct;
+  }
+  addEventListener('scroll', function(){ if(!tick){ tick=true; requestAnimationFrame(upd); } }, {passive:true});
+  addEventListener('resize', upd); upd();
+})();
+</script>
+</body>
+</html>

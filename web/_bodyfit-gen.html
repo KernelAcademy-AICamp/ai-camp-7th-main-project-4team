@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bodyfit 생성 검증</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{--bg:#F6F6F5;--surface:#fff;--ink:#16140F;--ink2:#3A382F;--sub:#6E6B63;--sub2:#A6A29A;--line:#E6E5E1;--soft:#EDEDEA;--g:#2E4A3B;--gm:#5A7A68;--gs:#E7EFEA;--gl:#CBDDD2;--warn:#B0553F;--wsoft:#F7ECE8;--bodyfill:#E4E3DE;}
+  *{box-sizing:border-box;} body{margin:0;background:var(--bg);color:var(--ink);font-family:'Pretendard',sans-serif;padding:30px;}
+  .grid{display:flex;gap:20px;flex-wrap:wrap;}
+  .jpanel{border:1px solid var(--line);border-radius:18px;padding:22px;background:var(--surface);width:360px;}
+  .jpt{font-size:17px;font-weight:800;letter-spacing:-.035em;} .jpd{font-size:13px;color:var(--sub);margin:4px 0 16px;}
+  .bf{display:flex;gap:18px;align-items:center;flex-wrap:wrap;}
+  .bf-fig{flex:none;width:150px;} .bf-fig svg{width:100%;display:block;overflow:visible;}
+  .bf-leg{flex:1;min-width:140px;display:flex;flex-direction:column;gap:11px;}
+  .bf-item{display:flex;align-items:flex-start;gap:10px;}
+  .bf-dot{flex:none;width:11px;height:11px;border-radius:50%;margin-top:3px;}
+  .bf-tx b{font-size:14px;font-weight:800;} .bf-tx .st{font-size:12px;font-weight:800;margin-left:6px;}
+  .bf-tx p{margin:2px 0 0;font-size:12px;color:var(--sub);font-feature-settings:"tnum";}
+</style></head><body>
+<div class="grid" id="root"></div>
+<script>
+// ─── 판정 데이터 → 체형+옷테두리 SVG 생성 ───
+function off(e){ return Math.max(-9, Math.min(14, e*2.1)); }  // ease cm → px 오프셋
+function col(tight){ return tight ? "var(--warn)" : "var(--g)"; }
+function dotc(tight){ return tight ? "#B0553F" : "#2E4A3B"; }
+
+function bodyFitSVG(category, parts){
+  var map={}; parts.forEach(function(p){ map[p.key]=p; });
+  var anyTight = parts.some(function(p){return p.tight;});
+  var gStroke = anyTight ? "#B0553F" : "#2E4A3B";
+  var svg, legendOrder;
+  if(category==="BOTTOM"){
+    var w=off((map.waist||{}).ease||0), h=off((map.hip||{}).ease||0), t=off((map.thigh||{}).ease||0);
+    // 고정 하체 실루엣
+    var body='<path d="M70 24 L130 24 L144 78 L128 262 L106 262 L100 120 L94 262 L72 262 L56 78 Z" fill="var(--bodyfill)"/>';
+    // 바지 테두리(offset)
+    var WT=30+w, HP=44+h, TH_o=128, TH_i=106; // 다리 바깥/안쪽
+    var pants='<path d="M'+(100-WT)+' 20 L'+(100+WT)+' 20 L'+(150+h)+' 80 '+
+      'L'+(TH_o+t)+' 250 L'+(TH_i)+' 250 L100 122 L'+(94)+' 250 L'+(72-t)+' 250 L'+(50-h)+' 80 Z" '+
+      'fill="none" stroke="'+gStroke+'" stroke-width="2.4" stroke-linejoin="round"/>';
+    var hem='<line x1="'+(50-h)+'" y1="250" x2="98" y2="250" stroke="'+gStroke+'" stroke-width="2.4"/>'+
+            '<line x1="102" y1="250" x2="'+(TH_o+t)+'" y2="250" stroke="'+gStroke+'" stroke-width="2.4"/>';
+    var dots='<circle cx="132" cy="44" r="4.5" fill="'+dotc((map.waist||{}).tight)+'" stroke="#fff" stroke-width="2"/>'+
+             '<circle cx="'+(148)+'" cy="82" r="4.5" fill="'+dotc((map.hip||{}).tight)+'" stroke="#fff" stroke-width="2"/>'+
+             '<circle cx="127" cy="150" r="4.5" fill="'+dotc((map.thigh||{}).tight)+'" stroke="#fff" stroke-width="2"/>';
+    svg='<svg viewBox="0 0 200 280">'+body+pants+hem+dots+'</svg>';
+    legendOrder=["waist","hip","thigh"];
+  } else {
+    var sh=off((map.shoulder||{}).ease||0), ch=off((map.chest||{}).ease||0), ws=off((map.waist||{}).ease||0);
+    var SH=46, CH=40, WS=36;
+    var body='<circle cx="100" cy="30" r="20" fill="var(--bodyfill)"/>'+
+      '<path d="M100 50 L112 58 L'+(100+SH)+' 64 L'+(100+CH)+' 92 L'+(100+WS)+' 196 Q100 206 '+(100-WS)+' 196 L'+(100-CH)+' 92 L'+(100-SH)+' 64 L88 58 Z" fill="var(--bodyfill)"/>';
+    var gSH=SH+sh, gCH=CH+ch, gWS=WS+ws;
+    var top='<path d="M100 47 L114 56 L'+(100+gSH)+' 62 L'+(100+gCH)+' 90 L'+(100+gWS)+' 204 Q100 216 '+(100-gWS)+' 204 L'+(100-gCH)+' 90 L'+(100-gSH)+' 62 L86 56 Z" '+
+      'fill="none" stroke="'+gStroke+'" stroke-width="2.4" stroke-linejoin="round"/>';
+    var dots='<circle cx="'+(100-SH)+'" cy="66" r="4.5" fill="'+dotc((map.shoulder||{}).tight)+'" stroke="#fff" stroke-width="2"/>'+
+             '<circle cx="'+(100+CH)+'" cy="112" r="4.5" fill="'+dotc((map.chest||{}).tight)+'" stroke="#fff" stroke-width="2"/>'+
+             '<circle cx="'+(100+WS)+'" cy="176" r="4.5" fill="'+dotc((map.waist||{}).tight)+'" stroke="#fff" stroke-width="2"/>';
+    svg='<svg viewBox="0 0 200 250">'+body+top+dots+'</svg>';
+    legendOrder=["shoulder","chest","waist"];
+  }
+  var leg=legendOrder.filter(function(k){return map[k];}).map(function(k){
+    var p=map[k], e=p.ease, sign=e>=0?"+":"";
+    var st=p.tight?"끼임":(p.fit||"");
+    return '<div class="bf-item"><span class="bf-dot" style="background:'+dotc(p.tight)+'"></span>'+
+      '<div class="bf-tx"><b>'+p.ko+'</b><span class="st" style="color:'+col(p.tight)+'">'+st+'</span>'+
+      '<p>여유 '+sign+e+'cm</p></div></div>';
+  }).join("");
+  return {svg:svg, legend:leg};
+}
+
+// 검증 케이스
+var cases=[
+  {t:"상의 · 여유(추천 M)", cat:"TOP", parts:[{key:"shoulder",ko:"어깨",ease:1,fit:"딱",tight:false},{key:"chest",ko:"가슴",ease:3,fit:"여유",tight:false},{key:"waist",ko:"허리",ease:6,fit:"여유",tight:false}]},
+  {t:"상의 · 끼임", cat:"TOP", parts:[{key:"shoulder",ko:"어깨",ease:-2,fit:"끼임",tight:true},{key:"chest",ko:"가슴",ease:-3,fit:"끼임",tight:true},{key:"waist",ko:"허리",ease:2,fit:"여유",tight:false}]},
+  {t:"하의 · 여유(추천 M)", cat:"BOTTOM", parts:[{key:"waist",ko:"허리",ease:1,fit:"딱",tight:false},{key:"hip",ko:"엉덩이",ease:3,fit:"여유",tight:false},{key:"thigh",ko:"허벅지",ease:2,fit:"여유",tight:false}]}
+];
+document.getElementById('root').innerHTML=cases.map(function(c){
+  var r=bodyFitSVG(c.cat,c.parts);
+  return '<div class="jpanel"><div class="jpt">'+c.t+'</div><div class="jpd">몸(회색) 위 옷 테두리(초록), 뜬 만큼 여유</div>'+
+    '<div class="bf"><div class="bf-fig">'+r.svg+'</div><div class="bf-leg">'+r.legend+'</div></div></div>';
+}).join("");
+</script>
+</body></html>

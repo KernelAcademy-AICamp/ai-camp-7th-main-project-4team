@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>받은 후기 · UI 시안 모음</title>
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;-webkit-font-smoothing:antialiased;padding:40px 20px 120px}
+  a{color:inherit;text-decoration:none}
+  .page{max-width:760px;margin:0 auto}
+  .ptitle{font-size:15px;font-weight:800;color:var(--green);margin:0 0 4px}
+  .pdesc{font-size:13px;color:var(--sub);margin:0 0 34px}
+
+  /* 시안 라벨 */
+  .vlabel{position:sticky;top:0;z-index:5;background:var(--bg);padding:26px 0 12px;margin-top:22px}
+  .vlabel .vn{display:inline-block;font-size:12px;font-weight:800;color:#fff;background:var(--green);border-radius:20px;padding:4px 12px;letter-spacing:.02em}
+  .vlabel .vd{font-size:13px;color:var(--sub);margin-top:9px;line-height:1.5}
+
+  /* 공통 카드/리스트 (pro.css 미러) */
+  .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:6px 24px;box-shadow:0 6px 18px rgba(20,18,16,.05)}
+  .subhead{font-size:15px;font-weight:800;margin:20px 0 8px}
+  .req{padding:16px 0;border-bottom:1px solid var(--line)} .req:last-child{border:none}
+  .reqtop{display:flex;align-items:center;gap:14px}
+  .av{width:42px;height:42px;border-radius:13px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--green);color:#fff;font-weight:800;font-size:15px}
+  .info b{font-size:14px;font-weight:800} .info small{display:block;letter-spacing:1px;margin-top:3px}
+  .reqnote{display:block;font-size:13.5px;color:var(--ink-soft);margin-top:12px;line-height:1.5}
+  .tinybtn{font-size:12.5px;font-weight:700;padding:7px 14px;border-radius:9px;border:1px solid var(--green);background:var(--green);color:#fff;cursor:pointer}
+  .tinybtn.ghost{background:#fff;color:var(--green)}
+  .rvreply{margin-top:10px;padding:11px 13px;background:var(--green-soft);border-radius:10px;font-size:13px;color:var(--ink-soft)}
+  .rvreply b{color:var(--green)}
+  .star{color:var(--ink)} .star.off{color:var(--line2)}
+
+  /* V1/V2 요약 헤더 */
+  .revsum{display:flex;gap:30px;align-items:center;flex-wrap:wrap;padding:22px 24px}
+  .revsum .rs-score{flex:none;min-width:110px;text-align:center}
+  .revsum .rs-avg{font-family:var(--num);font-feature-settings:'tnum';font-size:46px;font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--green)}
+  .revsum .rs-stars{font-size:15px;letter-spacing:2px;margin-top:7px}
+  .revsum .rs-count{font-size:12.5px;font-weight:600;color:var(--sub);margin-top:7px}
+  .revsum .rs-dist{flex:1;min-width:210px;display:flex;flex-direction:column;gap:7px}
+  .revsum .rs-row{display:flex;align-items:center;gap:11px}
+  .revsum .rs-lab{width:26px;flex:none;font-size:12px;font-weight:700;color:var(--ink-soft)}
+  .revsum .rs-bar{flex:1;height:7px;border-radius:20px;background:var(--line);overflow:hidden}
+  .revsum .rs-fill{height:100%;border-radius:20px;background:var(--green)}
+  .revsum .rs-n{width:22px;flex:none;text-align:right;font-family:var(--num);font-size:12px;font-weight:700;color:var(--ink-soft)}
+  /* V2 답글률 배지 */
+  .rs-reply{margin-left:auto;text-align:center;flex:none;padding-left:20px;border-left:1px solid var(--line)}
+  .rs-reply .n{font-family:var(--num);font-size:26px;font-weight:800;color:var(--ink)}
+  .rs-reply .l{font-size:11.5px;color:var(--sub);margin-top:3px}
+
+  /* V3 스탯 3칸 */
+  .rstats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+  .rstat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 16px;box-shadow:0 6px 18px rgba(20,18,16,.05)}
+  .rstat b{display:block;font-family:var(--num);font-feature-settings:'tnum';font-size:28px;font-weight:800;letter-spacing:-.02em;color:var(--green);line-height:1}
+  .rstat span{display:block;font-size:12.5px;color:var(--sub);margin-top:8px}
+  .rstat .s2{font-size:13px;letter-spacing:1px;margin-top:6px}
+
+  /* V4 탭 */
+  .rtabs{display:flex;gap:8px;margin-bottom:14px}
+  .rtab{font-size:13px;font-weight:700;padding:9px 16px;border-radius:11px;border:1px solid var(--line2);background:#fff;color:var(--sub);cursor:pointer}
+  .rtab.on{background:var(--green-soft);border-color:var(--green-soft);color:var(--green);font-weight:800}
+  .rtab .b{font-family:var(--num);margin-left:5px}
+  .sumline{font-size:13px;color:var(--sub);margin-bottom:12px}
+  .sumline b{font-family:var(--num);color:var(--ink);font-size:15px}
+  .req.need{position:relative;padding-left:14px}
+  .req.need::before{content:"";position:absolute;left:0;top:20px;width:5px;height:5px;border-radius:50%;background:var(--green)}
+  .needtag{font-size:11px;font-weight:800;color:var(--green);background:var(--green-soft);border-radius:20px;padding:3px 9px;margin-left:8px}
+
+  /* V5 컴팩트 한 줄 */
+  .crow{display:flex;align-items:center;gap:13px;padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer} .crow:last-child{border:none}
+  .crow .av{width:34px;height:34px;border-radius:11px;font-size:13px}
+  .crow .cnm{font-size:13.5px;font-weight:700}
+  .crow .cst{margin-left:auto;letter-spacing:1px;font-size:13px}
+  .crow .cchev{color:var(--line2);font-size:12px;width:14px;text-align:center}
+  .cbody{padding:2px 0 16px 47px;border-bottom:1px solid var(--line)}
+  .cbody .q{font-size:13.5px;color:var(--ink-soft);line-height:1.5}
+  .cbody .rb{margin-top:10px}
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="ptitle">받은 후기 · UI 시안 모음</p>
+  <p class="pdesc">같은 데이터(후기 6개 · 평균 4.5 · 답글 3/6)로 5가지 레이아웃을 비교해요. 마음에 드는 번호 알려주세요.</p>
+
+  <!-- ===================== V1 ===================== -->
+  <div class="vlabel"><span class="vn">V1 · 현재 적용본</span><div class="vd">요약 헤더(평균·분포 막대) + 리스트. 지금 pro.html에 들어가 있는 버전이에요.</div></div>
+  <div class="card revsum">
+    <div class="rs-score">
+      <div class="rs-avg">4.5</div>
+      <div class="rs-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star off">★</span></div>
+      <div class="rs-count">후기 6개</div>
+    </div>
+    <div class="rs-dist">
+      <div class="rs-row"><span class="rs-lab">5★</span><span class="rs-bar"><span class="rs-fill" style="width:67%"></span></span><span class="rs-n">4</span></div>
+      <div class="rs-row"><span class="rs-lab">4★</span><span class="rs-bar"><span class="rs-fill" style="width:17%"></span></span><span class="rs-n">1</span></div>
+      <div class="rs-row"><span class="rs-lab">3★</span><span class="rs-bar"><span class="rs-fill" style="width:17%"></span></span><span class="rs-n">1</span></div>
+      <div class="rs-row"><span class="rs-lab">2★</span><span class="rs-bar"><span class="rs-fill" style="width:0%"></span></span><span class="rs-n">0</span></div>
+      <div class="rs-row"><span class="rs-lab">1★</span><span class="rs-bar"><span class="rs-fill" style="width:0%"></span></span><span class="rs-n">0</span></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="subhead">후기</div>
+    <div class="req">
+      <div class="reqtop"><div class="av">최</div><div class="info"><b>최민준 님 · 데일리</b><small><span class="star">★★★★★</span></small></div></div>
+      <span class="reqnote">"취향 저격이었어요! 반품 없이 한 번에 성공"</span>
+      <div class="rvreply"><b>스타일리스트 답글</b><br>믿고 맡겨주셔서 감사해요. 다음에도 잘 챙겨드릴게요</div>
+    </div>
+    <div class="req">
+      <div class="reqtop"><div class="av">김</div><div class="info"><b>김서연 님 · 하객룩</b><small><span class="star">★★★★★</span></small></div></div>
+      <span class="reqnote">"핏이 완벽했어요, 다음에 또 부탁드려요"</span>
+      <div style="margin-top:10px"><button class="tinybtn ghost">답글 달기</button></div>
+    </div>
+  </div>
+
+  <!-- ===================== V2 ===================== -->
+  <div class="vlabel"><span class="vn">V2 · 분포 + 답글률</span><div class="vd">V1에 <b>답글률</b> 지표를 오른쪽에 추가. 별점 분포 막대는 5★일수록 진하게(그라데이션).</div></div>
+  <div class="card revsum">
+    <div class="rs-score">
+      <div class="rs-avg">4.5</div>
+      <div class="rs-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star off">★</span></div>
+      <div class="rs-count">후기 6개</div>
+    </div>
+    <div class="rs-dist">
+      <div class="rs-row"><span class="rs-lab">5★</span><span class="rs-bar"><span class="rs-fill" style="width:67%;background:var(--green)"></span></span><span class="rs-n">4</span></div>
+      <div class="rs-row"><span class="rs-lab">4★</span><span class="rs-bar"><span class="rs-fill" style="width:17%;background:#5c8a6f"></span></span><span class="rs-n">1</span></div>
+      <div class="rs-row"><span class="rs-lab">3★</span><span class="rs-bar"><span class="rs-fill" style="width:17%;background:#93b3a2"></span></span><span class="rs-n">1</span></div>
+      <div class="rs-row"><span class="rs-lab">2★</span><span class="rs-bar"><span class="rs-fill" style="width:0%;background:#bfd2c8"></span></span><span class="rs-n">0</span></div>
+      <div class="rs-row"><span class="rs-lab">1★</span><span class="rs-bar"><span class="rs-fill" style="width:0%;background:#d9e3dd"></span></span><span class="rs-n">0</span></div>
+    </div>
+    <div class="rs-reply"><div class="n">50%</div><div class="l">답글률<br>3 / 6</div></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="subhead">후기</div>
+    <div class="req">
+      <div class="reqtop"><div class="av">최</div><div class="info"><b>최민준 님 · 데일리</b><small><span class="star">★★★★★</span></small></div></div>
+      <span class="reqnote">"취향 저격이었어요! 반품 없이 한 번에 성공"</span>
+      <div class="rvreply"><b>스타일리스트 답글</b><br>믿고 맡겨주셔서 감사해요. 다음에도 잘 챙겨드릴게요</div>
+    </div>
+  </div>
+
+  <!-- ===================== V3 ===================== -->
+  <div class="vlabel"><span class="vn">V3 · 스탯 3칸</span><div class="vd">대시보드 통계처럼 <b>평균·후기 수·답글률</b>을 3칸 타일로. 분포 막대 대신 담백하게, 대시보드와 톤 통일.</div></div>
+  <div class="rstats">
+    <div class="rstat"><b>4.5</b><div class="s2"><span class="star">★★★★</span><span class="star off">★</span></div><span>평균 별점</span></div>
+    <div class="rstat"><b>6</b><span>받은 후기</span></div>
+    <div class="rstat"><b>50%</b><span>답글률 · 3 / 6</span></div>
+  </div>
+  <div class="card">
+    <div class="subhead">후기</div>
+    <div class="req">
+      <div class="reqtop"><div class="av">최</div><div class="info"><b>최민준 님 · 데일리</b><small><span class="star">★★★★★</span></small></div></div>
+      <span class="reqnote">"취향 저격이었어요! 반품 없이 한 번에 성공"</span>
+      <div class="rvreply"><b>스타일리스트 답글</b><br>믿고 맡겨주셔서 감사해요. 다음에도 잘 챙겨드릴게요</div>
+    </div>
+    <div class="req">
+      <div class="reqtop"><div class="av">김</div><div class="info"><b>김서연 님 · 하객룩</b><small><span class="star">★★★★★</span></small></div></div>
+      <span class="reqnote">"핏이 완벽했어요, 다음에 또 부탁드려요"</span>
+      <div style="margin-top:10px"><button class="tinybtn ghost">답글 달기</button></div>
+    </div>
+  </div>
+
+  <!-- ===================== V4 ===================== -->
+  <div class="vlabel"><span class="vn">V4 · 답글 필요 탭</span><div class="vd">요약은 한 줄로 압축 + <b>[전체 / 답글 필요]</b> 탭. 답글 안 단 후기를 먼저 처리하도록 유도(할 일 중심).</div></div>
+  <div class="sumline">평균 <b>4.5</b> · 후기 <b>6</b>개 · 답글률 <b>50%</b></div>
+  <div class="rtabs">
+    <div class="rtab">전체 <span class="b">6</span></div>
+    <div class="rtab on">답글 필요 <span class="b">3</span></div>
+  </div>
+  <div class="card">
+    <div class="req need">
+      <div class="reqtop"><div class="av">김</div><div class="info"><b>김서연 님 · 하객룩 <span class="needtag">답글 필요</span></b><small><span class="star">★★★★★</span></small></div></div>
+      <span class="reqnote">"핏이 완벽했어요, 다음에 또 부탁드려요"</span>
+      <div style="margin-top:10px"><button class="tinybtn">답글 달기</button></div>
+    </div>
+    <div class="req need">
+      <div class="reqtop"><div class="av">이</div><div class="info"><b>이도현 님 · 데이트룩 <span class="needtag">답글 필요</span></b><small><span class="star">★★★★★</span></small></div></div>
+      <span class="reqnote">"분위기가 완전 바뀌었어요"</span>
+      <div style="margin-top:10px"><button class="tinybtn">답글 달기</button></div>
+    </div>
+    <div class="req need">
+      <div class="reqtop"><div class="av">한</div><div class="info"><b>한지민 님 · 데일리 <span class="needtag">답글 필요</span></b><small><span class="star">★★★</span><span class="star off">★★</span></small></div></div>
+      <span class="reqnote">"괜찮았지만 색이 예상과 조금 달랐어요"</span>
+      <div style="margin-top:10px"><button class="tinybtn">답글 달기</button></div>
+    </div>
+  </div>
+
+  <!-- ===================== V5 ===================== -->
+  <div class="vlabel"><span class="vn">V5 · 컴팩트 한 줄</span><div class="vd">한 후기 = 한 줄(이름·상황·별점). 클릭하면 펼쳐서 인용문·답글. 후기 많을 때 스캔이 빠름.</div></div>
+  <div class="sumline">평균 <b>4.5</b> · 후기 <b>6</b>개 · 답글률 <b>50%</b></div>
+  <div class="card">
+    <div class="subhead">후기</div>
+    <div class="crow"><div class="av">최</div><div class="cnm">최민준 · 데일리</div><span class="cst"><span class="star">★★★★★</span></span><span class="cchev">▾</span></div>
+    <div class="cbody">
+      <div class="q">"취향 저격이었어요! 반품 없이 한 번에 성공"</div>
+      <div class="rvreply" style="margin-top:10px"><b>스타일리스트 답글</b><br>믿고 맡겨주셔서 감사해요. 다음에도 잘 챙겨드릴게요</div>
+    </div>
+    <div class="crow"><div class="av">김</div><div class="cnm">김서연 · 하객룩</div><span class="cst"><span class="star">★★★★★</span></span><span class="cchev">▸</span></div>
+    <div class="crow"><div class="av">박</div><div class="cnm">박지후 · 면접룩</div><span class="cst"><span class="star">★★★★</span><span class="star off">★</span></span><span class="cchev">▸</span></div>
+    <div class="crow"><div class="av">이</div><div class="cnm">이도현 · 데이트룩</div><span class="cst"><span class="star">★★★★★</span></span><span class="cchev">▸</span></div>
+    <div class="crow"><div class="av">한</div><div class="cnm">한지민 · 데일리</div><span class="cst"><span class="star">★★★</span><span class="star off">★★</span></span><span class="cchev">▸</span></div>
+  </div>
+
+</div>
+</body>
+</html>

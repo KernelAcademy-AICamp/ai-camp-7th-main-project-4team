@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>내 프로필 · 기본 정보 다듬기 후보</title>
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;-webkit-font-smoothing:antialiased;padding:36px 20px 120px}
+  .page{max-width:720px;margin:0 auto}
+  .ptitle{font-size:16px;font-weight:800;color:var(--green);margin:0 0 4px}
+  .pdesc{font-size:13px;color:var(--sub);margin:0 0 30px;line-height:1.6}
+  .vlabel{margin:38px 0 12px}
+  .vlabel .vn{display:inline-block;font-size:12.5px;font-weight:800;color:#fff;background:var(--green);border-radius:20px;padding:5px 13px}
+  .vlabel .vd{font-size:13px;color:var(--sub);margin-top:9px;line-height:1.55}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 6px 18px rgba(20,18,16,.05)}
+  .sectitle{font-size:17px;font-weight:800;color:var(--ink);margin-bottom:16px}
+  .chip{display:inline-block;font-size:12.5px;font-weight:700;background:var(--soft);color:#5b584f;padding:6px 12px;border-radius:20px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .lab{font-size:11.5px;font-weight:800;letter-spacing:.03em;color:var(--sub2);text-transform:uppercase;margin-bottom:8px}
+
+  /* A: 아이덴티티 히어로(틴트) */
+  .A .hero{background:linear-gradient(180deg,var(--green-soft),#fff 90%);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .A .nk{font-size:22px;font-weight:800;letter-spacing:-.02em}
+  .A .role{font-size:13px;color:var(--green);font-weight:700;margin-top:4px}
+  .A .grp{margin-top:16px}
+
+  /* B: 이름 헤더 + 칩 그룹(무배경) */
+  .B .nk{font-size:20px;font-weight:800}
+  .B .role{font-size:13px;color:var(--sub);font-weight:600;margin-top:3px}
+  .B .grp{margin-top:18px}
+  .B .grp+.grp{margin-top:16px}
+
+  /* C: 칩 통합 한 줄 요약 */
+  .C .nk{font-size:20px;font-weight:800;margin-bottom:12px}
+  .C .allchips .chip.style{background:var(--green-soft);color:var(--green)}
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="ptitle">내 프로필 · 기본 정보 다듬기 후보</p>
+  <p class="pdesc">닉네임·전문 분야·전문 스타일이 비어 보이지 않게 채운 3가지. 같은 정보, 다른 밀도예요.</p>
+
+  <!-- A -->
+  <div class="vlabel"><span class="vn">A · 아이덴티티 히어로</span><div class="vd">닉네임+역할을 살짝 틴트된 박스에 얹고 그 아래 칩. 박스가 생겨 "비어 보임"이 사라지고 존재감이 생김.</div></div>
+  <div class="card A">
+    <div class="sectitle">기본 정보</div>
+    <div class="hero">
+      <div class="nk">DD</div>
+      <div class="role">온라인 스타일링 · 동행 쇼핑</div>
+      <div class="grp"><div class="lab">전문 분야</div><div class="chips"><span class="chip">여행</span><span class="chip">결혼식 하객</span><span class="chip">면접·발표</span></div></div>
+      <div class="grp"><div class="lab">전문 스타일</div><div class="chips"><span class="chip">미니멀</span></div></div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="vlabel"><span class="vn">B · 이름 헤더 + 칩 그룹</span><div class="vd">닉네임을 이름처럼 크게, 역할 한 줄, 그 아래 분야/스타일을 그룹 라벨과 함께. 배경 없이 타이포·여백으로만 정리해 담백하고 꽉 참.</div></div>
+  <div class="card B">
+    <div class="sectitle">기본 정보</div>
+    <div class="nk">DD</div>
+    <div class="role">온라인 스타일링 · 동행 쇼핑 스타일리스트</div>
+    <div class="grp"><div class="lab">전문 분야</div><div class="chips"><span class="chip">여행</span><span class="chip">결혼식 하객</span><span class="chip">면접·발표</span></div></div>
+    <div class="grp"><div class="lab">전문 스타일</div><div class="chips"><span class="chip">미니멀</span></div></div>
+  </div>
+
+  <!-- C -->
+  <div class="vlabel"><span class="vn">C · 한 줄 요약 + 통합 칩</span><div class="vd">닉네임 아래 분야·스타일 칩을 한 덩어리로(스타일은 초록 강조). 가장 컴팩트하게 꽉 채움. 라벨 없이 칩만.</div></div>
+  <div class="card C">
+    <div class="sectitle">기본 정보</div>
+    <div class="nk">DD</div>
+    <div class="chips allchips"><span class="chip">여행</span><span class="chip">결혼식 하객</span><span class="chip">면접·발표</span><span class="chip style">미니멀</span></div>
+  </div>
+
+</div>
+</body>
+</html>

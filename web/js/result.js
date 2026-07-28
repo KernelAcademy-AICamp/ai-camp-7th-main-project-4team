@@ -533,7 +533,7 @@
   }
   // 진단 초기화 — 누적된 입력(dx·기본정보·동의·피드백)을 지우고 처음부터. (목업 테스트용)
   function resetDiag(){
-    try{ ['fitting.dx','fitting.basic','fitting.consent'].forEach(function(k){ sessionStorage.removeItem(k); }); }catch(e){}
+    try{ ['fitting.dx','fitting.basic','fitting.consent','fitting.dxRun'].forEach(function(k){ sessionStorage.removeItem(k); }); }catch(e){}
     FDATA.clearFeedback();
     location.href='diag-basic.html';
   }
@@ -542,8 +542,16 @@
   //  · 로그인: 저장 → '저장했어요' 모달 → 마이(#my)에 결과 표시 / 전문가 → 스타일리스트찾기(#shop)
   //  · 비로그인: 저장·전문가 모두 로그인 유도 모달
   //  · 공유(카드 🔗)는 로그인 무관(card.js shareInvite) — 여기서 다루지 않음
-  // 로그인 상태: index.js loggedIn()과 동일(localStorage fitting.auth, 명시적 로그아웃 시에만 false).
-  function isAuthed(){ return FDATA.isAuthed(); }   // 어댑터(seam)
+  // 계정 ON(api·ACCOUNTS_ENABLED) = 실 Supabase 세션이 로그인 상태의 정본. index.js apiAccounts()와 같은 판정.
+  //   OFF(MVP)면 기존대로 localStorage 목업(proto 데모용).
+  function accountsOn(){ return !!(FDATA.mode==='api' && window.ACCOUNTS_ENABLED && window.FITAUTH && FITAUTH.ready()); }
+  var _sess=null;
+  if(accountsOn()){
+    FITAUTH.getSession().then(function(s){ _sess=s; resumeSaveIntent(); });
+    FITAUTH.onChange(function(e,s){ _sess=s; if(e==='SIGNED_IN') resumeSaveIntent(); });
+  }
+  // 로그인 상태: 계정ON=실세션 / 그 외는 index.js loggedIn()과 동일(localStorage fitting.auth).
+  function isAuthed(){ return accountsOn() ? !!_sess : FDATA.isAuthed(); }   // 어댑터(seam)
   // 진단 유형·기본정보를 마이(#my)가 읽는 프로필로 저장 → 마이가 이 결과를 보여줌.
   function persistResultToProfile(){
     try{
@@ -560,7 +568,14 @@
     }catch(e){}
   }
   function saveResult(){
-    if(FDATA.mode==='api'){ openRModal('saved'); return; }   // MVP: 진단은 서버에 이미 기록됨 · 계정 저장/마이 없음
+    // 계정ON: 로그인 없으면 여기가 '저장 시점 로그인' 게이트(킬메트릭 보호 — 진단 자체는 익명으로 이미 끝남).
+    //   로그인돼 있으면 익명으로 기록된 이번 진단을 계정에 귀속(claim)하고 마이로 안내.
+    if(accountsOn()){
+      if(!isAuthed()){ openLoginSheet(); return; }
+      try{ var sid=FDATA.sessionId?FDATA.sessionId():null; if(sid) FITAUTH.claimDiagnoses(sid); }catch(e){}
+      openRModal('saved'); return;
+    }
+    if(FDATA.mode==='api'){ openRModal('saved'); return; }   // MVP(계정OFF): 진단은 서버에 이미 기록됨 · 계정 저장/마이 없음
     if(!isAuthed()){ openRModal('login','my'); return; }
     // 상의만/하의만(정확히 한 쪽) = 8유형 미완성 → 유형 저장 안 하고 나머지 진단 유도(대칭).
     if(upperDone!==lowerDone){ openRModal('incomplete'); return; }
@@ -579,8 +594,9 @@
   // 결과 카드(iframe, ?host=result)의 🔖 저장 → 부모로 위임해 버튼과 동일 동작
   window.addEventListener('message', function(e){ if(e&&e.data&&e.data.type==='fitting:save') saveResult(); });
 
-  // MVP(api): 계정 저장/로그인 표면 숨김 — '결과 저장하기' 버튼·로그인 안내 문구 감추고 '스타일리스트 찾기'만 남김.
-  if(FDATA.mode==='api'){ try{
+  // MVP(api·계정OFF): 계정 저장/로그인 표면 숨김 — '결과 저장하기' 버튼·로그인 안내 문구 감추고 '스타일리스트 찾기'만.
+  //   계정ON이면 저장 버튼이 곧 로그인 게이트라 그대로 노출한다.
+  if(FDATA.mode==='api' && !accountsOn()){ try{
     var _saveBtn=document.querySelector('.rcta .rbtn.p'); if(_saveBtn) _saveBtn.style.display='none';
     var _ctaNote=document.querySelector('.rcta-note'); if(_ctaNote) _ctaNote.style.display='none';
   }catch(_e){} }
@@ -590,7 +606,7 @@
     closeRModal();
     var title, body, primaryLabel, primaryHref;
     if(kind==='saved'){
-      if(FDATA.mode==='api'){
+      if(FDATA.mode==='api' && !accountsOn()){
         title='결과가 기록됐어요'; body='진단 결과가 안전하게 기록됐어요 · 스타일리스트찾기로 이어가 보세요';
         primaryLabel='스타일리스트 찾기'; primaryHref='index.html#shop';
       } else {
@@ -613,11 +629,35 @@
         '<h3 class="rmodal-t">'+title+'</h3><p class="rmodal-b">'+body+'</p>'+
         '<div class="rmodal-acts">'+
           '<button type="button" class="rmodal-btn ghost" onclick="closeRModal()">닫기</button>'+
-          '<a class="rmodal-btn primary" href="'+primaryHref+'">'+primaryLabel+'</a>'+
+          (primaryHref?'<a class="rmodal-btn primary" href="'+primaryHref+'">'+primaryLabel+'</a>':'')+
         '</div></div>';
     document.body.appendChild(wrap);
   }
   function closeRModal(){ var m=document.getElementById('rmodal'); if(m) m.remove(); }
+
+  /* ── 결과 화면 내 로그인(계정ON) ─────────────────────────────
+     provider로 나갔다 돌아오면 이 페이지가 새로 뜬다. '저장하려다 나갔다'는 의도를
+     sessionStorage에 남겨, 복귀 시 claim+저장완료까지 자동으로 이어붙인다. */
+  var SAVE_INTENT='fitting.saveIntent';
+  function markSaveIntent(){ try{ sessionStorage.setItem(SAVE_INTENT,'1'); }catch(e){} }
+  // 계정ON 로그인 = index와 같은 공용 바텀시트. 결과 화면을 떠나지 않고 그 자리에서 로그인한다.
+  //   OAuth 복귀 주소는 현재 URL이 기본값(auth.js)이라 돌아오면 결과가 그대로 있고, 저장을 이어서 끝낸다.
+  function openLoginSheet(){
+    if(!window.FITAUTHUI){ openRModal('login','my'); return; }   // 컴포넌트 미로드 시 기존 모달로 폴백
+    FITAUTHUI.openSheet({
+      title:'로그인하면 결과가 저장돼요',
+      desc:'진단은 이미 끝났어요 · 계정에 담아두면 언제든 다시 볼 수 있어요',
+      onBeforeRedirect:markSaveIntent
+    });
+  }
+  // 로그인 복귀 후: 저장 의도가 남아 있으면 claim까지 끝내고 '저장했어요'로 마무리.
+  function resumeSaveIntent(){
+    var want=false; try{ want=sessionStorage.getItem(SAVE_INTENT)==='1'; }catch(e){}
+    if(!want || !isAuthed()) return;
+    try{ sessionStorage.removeItem(SAVE_INTENT); }catch(e){}
+    try{ var sid=FDATA.sessionId?FDATA.sessionId():null; if(sid) FITAUTH.claimDiagnoses(sid); }catch(e){}
+    openRModal('saved');
+  }
 
   /* ═══════ 결과 4탭 재구성 — 탭 전환 · 체형 그림(아바타) · 결과 근거(신뢰도) · 결과 풀이 헤더 ═══════ */
   function goTab(n){
@@ -745,8 +785,30 @@
 
   /* ═══ 진단 결과 피드백 — 토스트(rfbToast) + 정확도 검증 바(#rfb) 연동. 마이 embed에선 미노출 ═══ */
   /* 진단 상태별 키 — 넣은 옷 수+완료 카테고리로 서명. 기본→상의→하의 매번 상태가 달라져 그때마다 토스트 재노출 */
-  function fbStateKey(){ try{ return 'fitting.result.fbToast.'+((nExp||0)+':'+Object.keys(doneCats||{}).sort().join(',')); }catch(e){ return 'fitting.result.fbToast'; } }
+  /* 피드백 상태 키 — '이 진단 실행' 단위(diag-loading이 찍는 fitting.dxRun).
+     진단 '모양'(경험수:카테고리)으로 묶으면 같은 조합으로 다시 진단했을 때 키가 겹쳐,
+     이전 진단에서 답했다는 이유로 새 진단의 정확도 질문이 안 뜬다. dxRun이 없으면(구 세션·데모) 모양으로 폴백. */
+  function fbStateKey(){
+    var run=''; try{ run=sessionStorage.getItem('fitting.dxRun')||''; }catch(e){}
+    if(run) return 'fitting.result.fbToast.run.'+run;
+    try{ return 'fitting.result.fbToast.'+((nExp||0)+':'+Object.keys(doneCats||{}).sort().join(',')); }catch(e){ return 'fitting.result.fbToast'; }
+  }
   function fbToastHide(){ var t=document.getElementById('rfbToast'); if(!t) return; t.classList.remove('on'); setTimeout(function(){ t.hidden=true; }, 380); }
+  function fbAnswered(){ try{ return sessionStorage.getItem(fbStateKey())==='1'; }catch(e){ return false; } }
+  // 닫기(×)는 '지금 치워달라'이지 '다시 묻지 말라'가 아니다 — 지금 화면에서만 감춘다.
+  //   미답변이면 새로고침·재방문 때 다시 뜬다. 억제를 남기는 건 답변했을 때뿐.
+  function fbToastDismiss(){
+    fbToastHide();
+    if(!fbAnswered()){                       // 닫으면 평가 경로를 모르게 되니 정본(탭3)을 알려준다
+      rToast('정확도 평가는 ‘결과 근거’ 탭에서 언제든 할 수 있어요');
+      markFbPending(true);
+    }
+  }
+  // 미답변 표시 — 탭3 라벨의 작은 점. 새 표면을 만들지 않고 이미 있는 검증 바로 유도한다.
+  function markFbPending(on){
+    var t3=document.getElementById('t3'); if(!t3) return;
+    t3.classList.toggle('fb-pending', !!on && !fbAnswered());
+  }
   function fbToastThanks(){
     var t=document.getElementById('rfbToast'); if(!t) return;
     var ey=t.querySelector('.rfbtoast-ey'), q=t.querySelector('.rfbtoast-q'), sub=t.querySelector('.rfbtoast-sub'), b=document.getElementById('rfbToastBtns');
@@ -765,6 +827,7 @@
       FDATA.saveFeedback({ ts:new Date().toISOString(), bodyType:cardType, verdict:vmap[val]||val, confidenceTier:confTier(), engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId });
     }catch(e){}
     try{ sessionStorage.setItem(fbStateKey(),'1'); }catch(e){}
+    markFbPending(false);                      // 답했으면 탭3 미답변 점 해제
     if(from==='toast'){ fbToastThanks(); }   // (구)피드백 전용 토스트 — 답 후 닫힘
     else if(from==='ctatoast'){ /* 결합 토스트: 답해도 닫지 않고 다음 단계 CTA 유지 */ }
     else { fbToastHide(); }                    // 검증 바(탭③)에서 답하면 토스트 닫기
@@ -784,7 +847,6 @@
   (function fbToastInit(){
     if(/[?&]embed/.test(location.search)) return;   // 마이 내진단결과(embed)에선 토스트 없음
     var isApi=(window.FDATA && FDATA.mode==='api');
-    var LOGIN='<div class="rfbt-login">로그인하면 이 결과가 저장돼요 · <a href="index.html?login=1&next=my">로그인</a></div>';
     var ICJ='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>';
     var ICS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20v-1a4 4 0 0 0-8 0v1"/><circle cx="12" cy="8" r="3.2"/></svg>';
     var ICU='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg>';
@@ -813,7 +875,8 @@
         var needBot=upperDone;              // 상의 완료 → 하의 남음
         var href=needBot?'diag-fit.html?cat=bottom&reuse=1&have=top':'diag-fit.html?cat=top&reuse=1&have=bottom';
         rows = opt(true,href,null,ICU,(needBot?'하의':'상의')+'까지 하면 완성돼요','체형이 또렷해지고 추천도 정밀해져요','진단하기',false);
-        foot = (isApi?'':LOGIN);
+        // 로그인 유도는 붙이지 않는다 — 이 상태의 할 일은 '나머지 진단' 하나이고,
+        // 8체형이 아직 미완성이라 지금 저장할 결과도 반쪽이다. 저장 유도는 완료 후 결과 CTA가 맡는다.
       } else {                              // 0벌(건너뜀) → 상·하의 고르는 진단 플로우로
         eyTxt='기본 결과';
         rows = opt(true,'diag-fit.html',null,ICU,'입어본 옷을 넣어볼까요?','키·몸무게 추정보다 훨씬 정확해져요','더 정확히',false);
@@ -822,6 +885,10 @@
       acts.innerHTML=rows + foot;
     }
     function fire(){
+      // 억제 조건은 '이 진단에 이미 답함' 하나뿐 — 답한 사람에게 또 묻지 않는다(응답 오염·신뢰 하락).
+      //   닫기만 한 경우는 억제하지 않는다: 새로고침·재방문이면 다시 묻는다.
+      //   ※ 이전엔 fbStateKey를 쓰기만 하고 읽지 않아, 답해도 새로고침마다 6초 뒤 다시 떴다.
+      if(fbAnswered()){ markFbPending(false); return; }
       var t=document.getElementById('rfbToast'); if(!t) return; fill(); t.hidden=false;
       requestAnimationFrame(function(){ t.classList.add('on'); });
     }

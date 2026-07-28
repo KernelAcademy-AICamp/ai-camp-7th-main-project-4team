@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>메인화면 시안 3안 — 구성 동일 · 표현 비교</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<style>
+/* ==========================================================================
+   _home-concepts.html — 메인화면 표현 3안 비교용 시안(버리는 파일 · 커밋 안 함).
+   구성(히어로→How→결과카드→매칭→아웃트로)은 index.html 그대로 두고 '표현'만 바꿔 비교한다.
+   실제 tokens.css·Pretendard를 링크해 톤이 실물과 같게 보이도록 함.
+   ========================================================================== */
+*{box-sizing:border-box; margin:0; padding:0}
+body{background:#E9E9E6; color:var(--ink); font-family:var(--sans); letter-spacing:var(--ls-body);}
+
+.top{max-width:1600px; margin:0 auto; padding:30px var(--pad) 8px}
+.top h1{font-size:var(--fs-h2); font-weight:var(--w-x); letter-spacing:var(--ls-tight)}
+.top p{font-size:var(--fs-sm); color:var(--sub); margin-top:8px; line-height:1.6}
+.top .legend{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px}
+.top .lg{font-size:12px; font-weight:var(--w-bold); background:#fff; border:var(--bd); padding:5px 11px; border-radius:var(--r-chip); color:var(--sub)}
+
+.cols{max-width:1600px; margin:0 auto; padding:18px var(--pad) 60px;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:20px; align-items:start}
+@media(max-width:1180px){ .cols{grid-template-columns:1fr; max-width:520px} }
+
+.concept{min-width:0}
+.chead{margin-bottom:12px}
+.chead .cno{font-size:12px; font-weight:var(--w-x); letter-spacing:var(--ls-label); color:var(--sub2)}
+.chead h2{font-size:var(--fs-h3); font-weight:var(--w-x); letter-spacing:var(--ls-tight); margin-top:3px}
+.chead p{font-size:13px; color:var(--sub); margin-top:6px; line-height:1.55; min-height:57px}
+
+/* 미니 홈 프레임 — 세로 스크롤로 전체 흐름 확인 */
+.frame{height:660px; overflow-y:auto; overflow-x:hidden; border:var(--bd); border-radius:var(--r-card);
+  box-shadow:var(--sh-card); background:var(--bg); scrollbar-width:thin}
+.frame::-webkit-scrollbar{width:7px} .frame::-webkit-scrollbar-thumb{background:#CFCEC9; border-radius:9px}
+.sec{padding:26px 22px; border-bottom:1px solid var(--line)}
+.sec:last-child{border-bottom:none}
+.eyebrow{font-size:10px; font-weight:var(--w-x); letter-spacing:var(--ls-label); text-transform:uppercase; color:var(--sub2)}
+.h{font-size:21px; font-weight:var(--w-x); letter-spacing:var(--ls-tight); line-height:1.3; margin-top:7px}
+.sub{font-size:12.5px; color:var(--sub); line-height:1.6; margin-top:8px}
+.num{font-family:var(--num); font-feature-settings:"tnum"}
+.cta{display:flex; gap:7px; margin-top:16px}
+.b1,.b2{font-size:12px; font-weight:var(--w-bold); padding:10px 13px; border-radius:var(--r-btn); border:none; cursor:default; font-family:var(--sans)}
+.b1{background:var(--ink); color:#fff}
+.b2{background:transparent; color:var(--ink); border:var(--bd-input)}
+
+/* ── ① 블루프린트 ─────────────────────────────────────────────────── */
+.c1 .frame{background:
+  linear-gradient(var(--bg),var(--bg)),
+  repeating-linear-gradient(0deg,transparent 0 15px,rgba(46,74,59,.05) 15px 16px),
+  repeating-linear-gradient(90deg,transparent 0 15px,rgba(46,74,59,.05) 15px 16px);
+  background-blend-mode:normal; background-color:var(--bg)}
+.c1 .sec{background:
+  repeating-linear-gradient(0deg,transparent 0 15px,rgba(46,74,59,.045) 15px 16px),
+  repeating-linear-gradient(90deg,transparent 0 15px,rgba(46,74,59,.045) 15px 16px)}
+.c1 .eyebrow{color:var(--green)}
+.c1 .h b{color:var(--green)}
+/* 치수선 — 옷본 도면의 그 선 */
+.c1 .dim{position:relative; margin:16px 0 4px; height:30px}
+.c1 .dim .line{position:absolute; left:0; right:0; top:14px; height:1px; background:var(--green); opacity:.55}
+.c1 .dim .line::before,.c1 .dim .line::after{content:""; position:absolute; top:-4px; width:1px; height:9px; background:var(--green)}
+.c1 .dim .line::before{left:0} .c1 .dim .line::after{right:0}
+.c1 .dim .lab{position:absolute; left:50%; top:2px; transform:translateX(-50%); background:var(--bg);
+  padding:0 7px; font-family:var(--num); font-size:11.5px; font-weight:var(--w-bold); color:var(--green)}
+.c1 .plate{border:1px solid var(--green-line); border-radius:10px; background:rgba(255,255,255,.72);
+  padding:14px; margin-top:14px}
+.c1 .ptitle{font-size:10px; font-weight:var(--w-x); letter-spacing:var(--ls-label); color:var(--green); text-transform:uppercase}
+.c1 .pval{font-family:var(--num); font-size:26px; font-weight:var(--w-x); letter-spacing:-.03em; margin-top:5px}
+.c1 .pval small{font-size:12px; font-weight:var(--w-med); color:var(--sub); margin-left:2px}
+.c1 .stepline{display:flex; gap:10px; padding:11px 0; border-bottom:1px dashed var(--green-line)}
+.c1 .stepline:last-child{border-bottom:none}
+.c1 .sno{font-family:var(--num); font-size:10.5px; font-weight:var(--w-x); color:var(--green);
+  border:1px solid var(--green-line); border-radius:5px; padding:2px 5px; height:fit-content; letter-spacing:.06em}
+.c1 .stt{font-size:13px; font-weight:var(--w-x)}
+.c1 .sds{font-size:11.5px; color:var(--sub); margin-top:3px; line-height:1.5}
+.c1 .patt{border:1px solid var(--green-line); border-radius:10px; height:120px; margin-top:12px; position:relative;
+  background:rgba(255,255,255,.72); overflow:hidden}
+.c1 .patt svg{position:absolute; inset:0; width:100%; height:100%}
+.c1 .lockrow{display:flex; align-items:center; gap:8px; margin-top:11px; font-size:11.5px; color:var(--sub); font-weight:var(--w-med)}
+.c1 .tychips{display:flex; flex-wrap:wrap; gap:5px; margin-top:12px}
+.c1 .ty{font-family:var(--num); font-size:10.5px; font-weight:var(--w-x); letter-spacing:var(--ls-code);
+  border:1px solid var(--green-line); color:var(--green); padding:4px 7px; border-radius:5px; background:rgba(255,255,255,.7)}
+.c1 .ty.on{background:var(--green); color:#fff; border-color:var(--green)}
+.c1 .outro{text-align:center}
+.c1 .ologo{font-size:24px; font-weight:var(--w-x); letter-spacing:var(--ls-tight)}
+
+/* ── ② 에디토리얼 (웜 차콜 톤 미리보기) ───────────────────────────── */
+.c2 .frame{background:#F4F2EF}
+.c2{--cc:#433D35; --cc-soft:#E7E3DD;}   /* 웜 차콜 — 메모의 톤 리프레시 후보(초록 대신) */
+.c2 .sec{padding:30px 24px; border-bottom:none; background:#F4F2EF}
+.c2 .eyebrow{color:#A39A8D; letter-spacing:.16em}
+.c2 .h{font-size:29px; letter-spacing:-.055em; line-height:1.18; margin-top:11px}
+.c2 .h b{font-weight:var(--w-x); font-style:italic; color:var(--cc)}
+.c2 .sub{color:#7C7367; font-size:12.5px; max-width:88%}
+.c2 .rule{height:1px; background:#DBD5CC; margin:22px 0}
+.c2 .b1{background:var(--cc)} .c2 .b2{border-color:#CFC8BE; color:var(--cc)}
+.c2 .bignum{font-family:var(--num); font-size:62px; font-weight:300; letter-spacing:-.06em; color:var(--cc); line-height:1}
+.c2 .bignum small{font-size:15px; font-weight:var(--w-med); margin-left:4px; color:#A39A8D}
+.c2 .idx{display:flex; justify-content:space-between; align-items:baseline; padding:12px 0; border-bottom:1px solid #E4DFD7}
+.c2 .idx:last-child{border-bottom:none}
+.c2 .ino{font-family:var(--num); font-size:11px; color:#A39A8D; font-weight:var(--w-bold); letter-spacing:.1em}
+.c2 .itt{font-size:14.5px; font-weight:var(--w-x); letter-spacing:-.03em}
+.c2 .ids{font-size:11.5px; color:#8A8175; margin-top:2px}
+.c2 .lookgrid{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:14px}
+.c2 .look{aspect-ratio:3/4; background:var(--cc-soft); border-radius:2px; position:relative; overflow:hidden}
+.c2 .look span{position:absolute; left:9px; bottom:8px; font-family:var(--num); font-size:10.5px;
+  font-weight:var(--w-x); letter-spacing:var(--ls-code); color:var(--cc)}
+.c2 .look.lock{background:#DDD7CE; display:flex; align-items:center; justify-content:center}
+.c2 .look.lock b{font-size:10.5px; color:#7C7367; font-weight:var(--w-bold)}
+.c2 .outro{text-align:left; padding-top:36px; padding-bottom:40px}
+.c2 .ologo{font-size:44px; font-weight:300; letter-spacing:-.055em; color:var(--cc)}
+
+/* ── ③ 카드 덱 ────────────────────────────────────────────────────── */
+.c3 .frame{background:#151714}
+.c3 .sec{background:transparent; border-bottom:1px solid rgba(255,255,255,.08); color:#F2F1EE}
+.c3 .eyebrow{color:var(--green-light)}
+.c3 .h{color:#fff}
+.c3 .h b{color:var(--green-light)}
+.c3 .sub{color:#9C9E98}
+.c3 .b1{background:var(--green-light); color:#151714}
+.c3 .b2{border-color:rgba(255,255,255,.24); color:#F2F1EE}
+/* 부채꼴 카드 덱 */
+.c3 .deck{position:relative; height:190px; margin:20px 0 4px}
+.c3 .card{position:absolute; left:50%; top:8px; width:104px; height:150px; margin-left:-52px;
+  border-radius:12px; border:1px solid rgba(255,255,255,.16); background:linear-gradient(160deg,#2A3D33,#1C241F);
+  transform-origin:50% 130%; box-shadow:0 12px 30px rgba(0,0,0,.45); display:flex; align-items:flex-end; padding:11px}
+.c3 .card i{font-style:normal; font-family:var(--num); font-size:11px; font-weight:var(--w-x);
+  letter-spacing:var(--ls-code); color:var(--green-light)}
+.c3 .card.f{background:linear-gradient(160deg,var(--green),#22352B); border-color:var(--green-light)}
+.c3 .card:nth-child(1){transform:rotate(-21deg)} .c3 .card:nth-child(2){transform:rotate(-10.5deg)}
+.c3 .card:nth-child(3){transform:rotate(0deg)}   .c3 .card:nth-child(4){transform:rotate(10.5deg)}
+.c3 .card:nth-child(5){transform:rotate(21deg)}
+.c3 .card.f{z-index:5; transform:rotate(0deg) translateY(-10px) scale(1.06)}
+.c3 .swipe{text-align:center; font-size:11px; color:#7E817B; margin-top:6px; font-weight:var(--w-med)}
+.c3 .row{display:flex; gap:9px; padding:11px 0; border-bottom:1px solid rgba(255,255,255,.07)}
+.c3 .row:last-child{border-bottom:none}
+.c3 .rno{font-family:var(--num); font-size:10.5px; font-weight:var(--w-x); color:var(--green-light); padding-top:2px}
+.c3 .rtt{font-size:13px; font-weight:var(--w-x); color:#F2F1EE}
+.c3 .rds{font-size:11.5px; color:#8E918B; margin-top:3px; line-height:1.5}
+.c3 .mini{display:flex; align-items:center; gap:9px; border:1px solid rgba(255,255,255,.12); border-radius:12px;
+  padding:11px; margin-top:13px; background:rgba(255,255,255,.03)}
+.c3 .av{width:30px; height:30px; border-radius:50%; background:var(--green); color:#fff; display:flex;
+  align-items:center; justify-content:center; font-size:11px; font-weight:var(--w-x); flex:none}
+.c3 .mnm{font-size:12px; font-weight:var(--w-bold); color:#F2F1EE}
+.c3 .msb{font-size:11px; color:#8E918B; margin-top:2px}
+.c3 .pct{margin-left:auto; font-family:var(--num); font-size:15px; font-weight:var(--w-x); color:var(--green-light)}
+.c3 .outro{text-align:center; padding:34px 22px 40px}
+.c3 .ologo{font-size:26px; font-weight:var(--w-x); letter-spacing:var(--ls-tight); color:#fff}
+.c3 .otag{font-size:11.5px; color:#8E918B; margin-top:8px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <h1>메인화면 시안 — 구성은 그대로, 표현만 3안</h1>
+  <p>히어로 → 이렇게 측정해요 → 결과 카드 → 스타일리스트 매칭 → 아웃트로. 다섯 블록의 순서·역할은 지금 index.html과 동일하고, 그걸 어떤 표현으로 담을지만 다릅니다. 각 패널은 스크롤돼요.</p>
+  <div class="legend">
+    <span class="lg">실제 tokens.css · Pretendard 링크 — 톤 실물과 동일</span>
+    <span class="lg">정적 시안 (동작·애니메이션 없음)</span>
+    <span class="lg">버리는 파일 · 커밋 안 함</span>
+  </div>
+</div>
+
+<div class="cols">
+
+  <!-- ── ① 블루프린트 ─────────────────────────────────────────── -->
+  <div class="concept c1">
+    <div class="chead"><span class="cno">① BLUEPRINT</span>
+      <h2>블루프린트 — 옷본 도면</h2>
+      <p>줄자를 버리지 않고 <b>확장</b>. 치수선·격자·패턴 조각으로 "측정기 데모"를 "전문 도구"로. 기존 줄자 CSS를 상당 부분 재활용 — 가장 저렴.</p>
+    </div>
+    <div class="frame">
+
+      <div class="sec">
+        <span class="eyebrow">체형·사이즈 진단</span>
+        <div class="h">안 입어본 브랜드도<br><b>내 사이즈</b>로 딱 FIT</div>
+        <p class="sub">평소 입던 옷의 느낌으로, 딱 맞는 브랜드와 핏을 찾아드려요</p>
+        <div class="dim"><div class="line"></div><div class="lab">172 cm</div></div>
+        <div class="plate">
+          <div class="ptitle">Measured</div>
+          <div class="pval">172<small>cm</small> · 64<small>kg</small></div>
+        </div>
+        <div class="cta"><button class="b2">스타일리스트 둘러보기</button><button class="b1">진단 시작하기</button></div>
+      </div>
+
+      <div class="sec">
+        <span class="eyebrow">How it works</span>
+        <div class="h">착용 경험을 <b>사이즈로 번역</b>해요</div>
+        <div style="margin-top:12px">
+          <div class="stepline"><span class="sno">01</span><div><div class="stt">착용 경험 입력</div><div class="sds">브랜드·핏·부위별 느낌. 치수 대신 '경험'으로</div></div></div>
+          <div class="stepline"><span class="sno">02</span><div><div class="stt">AI 체형 진단</div><div class="sds">8가지 체형 중 내 유형 판정</div></div></div>
+          <div class="stepline"><span class="sno">03</span><div><div class="stt">브랜드별 사이즈 번역</div><div class="sds">안 입어본 브랜드도 내 몸 기준으로 환산</div></div></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <span class="eyebrow">Result card</span>
+        <div class="h">8가지 체형,<br>당신은 어디에?</div>
+        <div class="patt">
+          <svg viewBox="0 0 200 120" fill="none" stroke="#2E4A3B" stroke-width=".8">
+            <path d="M60 12 L140 12 L152 40 L132 46 L132 108 L68 108 L68 46 L48 40 Z" opacity=".75"/>
+            <path d="M78 12 Q100 26 122 12" opacity=".5" stroke-dasharray="3 3"/>
+            <path d="M68 46 L132 46" opacity=".35" stroke-dasharray="3 3"/>
+            <path d="M68 74 L132 74" opacity=".35" stroke-dasharray="3 3"/>
+            <circle cx="100" cy="46" r="1.8" fill="#2E4A3B" stroke="none"/>
+            <circle cx="100" cy="74" r="1.8" fill="#2E4A3B" stroke="none"/>
+          </svg>
+        </div>
+        <div class="tychips">
+          <span class="ty on">STR</span><span class="ty">TRI</span><span class="ty">INV</span><span class="ty">HRG</span>
+          <span class="ty">BAL</span><span class="ty">DIA</span><span class="ty">RND</span><span class="ty">TUB</span>
+        </div>
+        <div class="lockrow">🔒 진단을 마치면 내 카드가 열려요</div>
+      </div>
+
+      <div class="sec">
+        <span class="eyebrow">Shopper match</span>
+        <div class="h">나에게 어울리는 스타일<br>함께 찾아가요</div>
+        <div class="dim" style="margin-top:18px"><div class="line"></div><div class="lab">매칭 97%</div></div>
+        <div class="plate" style="display:flex; align-items:center; gap:10px">
+          <div style="width:30px;height:30px;border-radius:50%;background:var(--green-soft);border:1px solid var(--green-line);flex:none"></div>
+          <div><div style="font-size:12px;font-weight:800">민지 스타일리스트</div>
+            <div style="font-size:11px;color:var(--sub);margin-top:2px">소개팅 · 데일리</div></div>
+        </div>
+      </div>
+
+      <div class="sec outro">
+        <div class="ologo">Fitting</div>
+        <div class="dim" style="margin-top:14px"><div class="line"></div><div class="lab">measure → fit</div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── ② 에디토리얼 ─────────────────────────────────────────── -->
+  <div class="concept c2">
+    <div class="chead"><span class="cno">② EDITORIAL</span>
+      <h2>에디토리얼 — 웜 차콜</h2>
+      <p>줄자 그래픽을 <b>걷어내고</b> 큰 타이포·여백으로. 8체형은 룩북 인덱스처럼. 미확정으로 남아있던 <b>웜 차콜 톤</b>을 함께 미리보기 — 가장 비쌈.</p>
+    </div>
+    <div class="frame">
+
+      <div class="sec">
+        <span class="eyebrow">Fit diagnosis</span>
+        <div class="h">안 입어본 브랜드도<br><b>내 사이즈</b>로 딱</div>
+        <p class="sub">평소 입던 옷의 느낌으로, 딱 맞는 브랜드와 핏을 찾아드려요</p>
+        <div class="rule"></div>
+        <div class="bignum">172<small>cm</small></div>
+        <div class="cta" style="margin-top:20px"><button class="b1">진단 시작하기</button><button class="b2">둘러보기</button></div>
+      </div>
+
+      <div class="sec">
+        <span class="eyebrow">How it works</span>
+        <div class="h">착용 경험을<br><b>사이즈로 번역</b>해요</div>
+        <div style="margin-top:18px">
+          <div class="idx"><div><div class="ino">01</div><div class="itt">착용 경험 입력</div><div class="ids">치수 대신 '경험'으로</div></div><div class="bignum" style="font-size:30px">2<small>분</small></div></div>
+          <div class="idx"><div><div class="ino">02</div><div class="itt">AI 체형 진단</div><div class="ids">8가지 체형 판정</div></div><div class="bignum" style="font-size:30px">8<small>형</small></div></div>
+          <div class="idx"><div><div class="ino">03</div><div class="itt">사이즈 번역</div><div class="ids">브랜드별 환산</div></div><div class="bignum" style="font-size:30px">0<small>반품</small></div></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <span class="eyebrow">The index</span>
+        <div class="h">8가지 체형,<br>당신은 어디에?</div>
+        <div class="lookgrid">
+          <div class="look"><span>STR</span></div>
+          <div class="look"><span>TRI</span></div>
+          <div class="look"><span>HRG</span></div>
+          <div class="look lock"><b>진단하면 열려요</b></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <span class="eyebrow">Shopper</span>
+        <div class="h">어울리는 스타일<br>함께 찾아가요</div>
+        <p class="sub">내 체형·사이즈에 맞는 스타일리스트를 연결해요</p>
+        <div class="rule"></div>
+        <div style="display:flex; align-items:baseline; gap:10px">
+          <div class="bignum" style="font-size:44px">97<small>%</small></div>
+          <div style="font-size:11.5px;color:#8A8175">민지 스타일리스트<br>소개팅 · 데일리</div>
+        </div>
+      </div>
+
+      <div class="sec outro">
+        <div class="ologo">Fitting</div>
+        <div style="font-size:12px;color:#8A8175;margin-top:10px">착용 경험을 사이즈로, 그리고 스타일링까지</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── ③ 카드 덱 ────────────────────────────────────────────── -->
+  <div class="concept c3">
+    <div class="chead"><span class="cno">③ CARD DECK</span>
+      <h2>카드 덱 — 카드가 주인공</h2>
+      <p>지금 4번째 섹션에 잠겨 있는 <b>결과 카드</b>를 히어로로 끌어올림. 8장이 부채로 펼쳐지고 넘어가요. "내 카드를 열어라"가 페이지 전체의 후크.</p>
+    </div>
+    <div class="frame">
+
+      <div class="sec">
+        <span class="eyebrow">Result card</span>
+        <div class="h">8가지 체형 중<br><b>내 카드</b>는 어떤 것?</div>
+        <div class="deck">
+          <div class="card"><i>TRI</i></div>
+          <div class="card"><i>INV</i></div>
+          <div class="card f"><i>STR</i></div>
+          <div class="card"><i>HRG</i></div>
+          <div class="card"><i>BAL</i></div>
+        </div>
+        <div class="swipe">← 넘겨서 8체형 둘러보기 →</div>
+        <div class="cta" style="justify-content:center"><button class="b1">내 카드 열기</button></div>
+      </div>
+
+      <div class="sec">
+        <span class="eyebrow">How it works</span>
+        <div class="h">카드 한 장까지<br><b>3단계</b></div>
+        <div style="margin-top:12px">
+          <div class="row"><span class="rno">01</span><div><div class="rtt">착용 경험 입력</div><div class="rds">치수 대신 '경험'으로 시작해요</div></div></div>
+          <div class="row"><span class="rno">02</span><div><div class="rtt">AI 체형 진단</div><div class="rds">8가지 체형 중 내 유형 판정</div></div></div>
+          <div class="row"><span class="rno">03</span><div><div class="rtt">사이즈 번역</div><div class="rds">안 입어본 브랜드도 내 몸 기준으로</div></div></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <span class="eyebrow">Measure</span>
+        <div class="h">평소 옷의 느낌만으로<br><b>2분</b>이면 충분</div>
+        <p class="sub">복잡한 신체 치수 입력 없이 시작해요</p>
+        <div class="mini" style="justify-content:space-between">
+          <div><div class="mnm">내 측정값</div><div class="msb">진단하면 채워져요</div></div>
+          <div class="pct">172cm</div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <span class="eyebrow">Shopper match</span>
+        <div class="h">어울리는 스타일<br>함께 찾아가요</div>
+        <div class="mini">
+          <div class="av">나</div>
+          <div><div class="mnm">민지 스타일리스트</div><div class="msb">소개팅 · 데일리</div></div>
+          <div class="pct">97%</div>
+        </div>
+      </div>
+
+      <div class="sec outro">
+        <div class="ologo">Fitting</div>
+        <div class="otag">착용 경험을 사이즈로, 그리고 스타일링까지</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>판정 로딩 → 카드 리빌 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
+<link rel="stylesheet" href="css/diag.css?v=c86b6818">
+<link rel="stylesheet" href="css/judge.css?v=33125101">
+<style>
+  body{background:#F6F6F5;font-family:'Pretendard',sans-serif;margin:0;padding:34px 30px 90px;color:#16140F;}
+  .wrap{max-width:1080px;margin:0 auto;}
+  .htop{font-size:21px;font-weight:800;letter-spacing:-.03em;}
+  .hsub{margin:8px 0 18px;font-size:14px;color:#6E6B63;line-height:1.6;}
+  .play{background:#16140F;color:#fff;border:none;border-radius:11px;padding:11px 20px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:26px;}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;}
+  @media(max-width:860px){.cols{grid-template-columns:1fr;}}
+  .lab{display:inline-block;font-size:12px;font-weight:800;padding:3px 10px;border-radius:20px;}
+  .nm{font-size:15.5px;font-weight:800;margin:7px 0 3px;letter-spacing:-.02em;}
+  .ds{font-size:13px;color:#6E6B63;margin:0 0 14px;line-height:1.5;}
+  /* 캔버스(오른쪽 결과 영역) */
+  .canvas{position:relative;display:flex;flex-direction:column;gap:14px;}
+  .panel{border:1px solid #E6E5E1;border-radius:18px;background:#fff;padding:18px 20px;}
+  .pt{font-size:15px;font-weight:800;letter-spacing:-.03em;}
+  .sk{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px;}
+  .sk span{height:30px;border-radius:8px;background:#EDEDEA;display:block;}
+  .skbar{height:26px;border-radius:8px;background:#EDEDEA;margin-top:12px;}
+  /* 결과 앞면(간이 B게이지) */
+  .front{height:100%;display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;
+         border:1px solid #E6E5E1;border-radius:20px;padding:22px 26px;background:#fff;}
+  .ring{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;
+        background:conic-gradient(#2E4A3B 0 72%, #E7EFEA 0);}
+  .ring b{width:74px;height:74px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:26px;font-weight:800;}
+  .fvd{font-size:22px;font-weight:800;letter-spacing:-.03em;} .fsay{font-size:14.5px;color:#6E6B63;margin-top:6px;}
+  /* 로딩 마크(브랜드 링) — 밝은 배경용 */
+  .mk{position:relative;width:66px;height:66px;display:grid;place-items:center;}
+  .mk svg{position:absolute;inset:0;width:66px;height:66px;animation:sp 1.15s cubic-bezier(.5,.1,.5,.9) infinite;}
+  .mk i{font-style:normal;font-size:13px;font-weight:800;letter-spacing:.08em;color:#2E4A3B;}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .ovtx{font-size:14.5px;font-weight:700;color:#6E6B63;text-align:center;}
+  /* A: 캔버스 전체 덮개 */
+  .ov{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+      background:rgba(251,252,251,.82);backdrop-filter:blur(2px);border-radius:20px;}
+  /* B: 카드 뒷면 위에 얹는 로딩(어두운 배경용) */
+  .dmk i{color:#CBDDD2;} .dmk .trk{stroke:rgba(255,255,255,.16);} .dmk .arc{stroke:#9FD9B7;}
+  .dtx{font-size:13.5px;font-weight:700;color:rgba(255,255,255,.72);margin-top:12px;text-align:center;}
+  .backin{display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .hide{display:none;}
+</style></head><body>
+<div class="wrap">
+  <div class="htop">"판정 진행 중" → 결과 카드 리빌 — 연결 방식 비교</div>
+  <div class="hsub">버튼을 누르면 <b>판정하기</b>를 누른 순간부터의 모션이 양쪽에서 동시에 재생돼요. 실제 화면엔 아직 적용 안 했어요.</div>
+  <button class="play" onclick="play()">▶ 다시 재생</button>
+
+  <div class="cols">
+    <!-- A 현재 -->
+    <div>
+      <span class="lab" style="color:#6E6B63;background:#EDEDEA;border:1px solid #DAD8D2">현재</span>
+      <p class="nm">캔버스 전체 덮개 → 카드가 새로 등장해 뒤집힘</p>
+      <p class="ds">덮개(길쭉) → 카드(200px)로 자리가 점프해요</p>
+      <div class="canvas" id="cA">
+        <div class="jflip hide" id="fA"><div class="jflip-inner">
+          <div class="jflip-face jflip-back"><span class="cblogo">Fit<i class="sq"></i></span></div>
+          <div class="jflip-face jflip-front"><div class="front"><div class="ring"><b>M</b></div><div><div class="fvd">여유 있게 맞아요</div><div class="fsay">지금 사이즈로 사면 돼요</div></div></div></div>
+        </div></div>
+        <div class="panel"><div class="pt">사이즈별로 어떻게 맞을까</div><div class="sk" id="s1A"><span></span><span></span><span></span><span></span></div></div>
+        <div class="panel"><div class="pt">자세히 알고 싶다면</div><div class="skbar" id="s2A"></div></div>
+        <div class="ov" id="oA"><div class="mk"><svg viewBox="0 0 66 66" fill="none"><circle cx="33" cy="33" r="28" stroke="#E7EFEA" stroke-width="3"/><path d="M33 5a28 28 0 0 1 24.2 14" stroke="#2E4A3B" stroke-width="3" stroke-linecap="round"/></svg><i>FIT</i></div><div class="ovtx">판정을 진행 중이에요…</div></div>
+      </div>
+    </div>
+
+    <!-- B 제안 -->
+    <div>
+      <span class="lab" style="color:#2E4A3B;background:#E7EFEA;border:1px solid #CBDDD2">제안</span>
+      <p class="nm">카드 뒷면이 먼저 서서 로딩 → 그대로 뒤집힘</p>
+      <p class="ds">로딩과 카드가 <b>같은 요소</b>라 크기 점프가 없어요 · 아래는 스켈레톤 유지</p>
+      <div class="canvas" id="cB">
+        <div class="jflip" id="fB"><div class="jflip-inner">
+          <div class="jflip-face jflip-back"><div class="backin">
+            <div class="mk dmk"><svg viewBox="0 0 66 66" fill="none"><circle class="trk" cx="33" cy="33" r="28" stroke-width="3"/><path class="arc" d="M33 5a28 28 0 0 1 24.2 14" stroke-width="3" stroke-linecap="round"/></svg><i>FIT</i></div>
+            <div class="dtx" id="dtxB">판정을 진행 중이에요…</div>
+          </div></div>
+          <div class="jflip-face jflip-front"><div class="front"><div class="ring"><b>M</b></div><div><div class="fvd">여유 있게 맞아요</div><div class="fsay">지금 사이즈로 사면 돼요</div></div></div></div>
+        </div></div>
+        <div class="panel"><div class="pt">사이즈별로 어떻게 맞을까</div><div class="sk" id="s1B"><span></span><span></span><span></span><span></span></div></div>
+        <div class="panel"><div class="pt">자세히 알고 싶다면</div><div class="skbar" id="s2B"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  var FILLED='<span style="background:#E7EFEA"></span><span style="background:#E4E3DE"></span><span style="background:#E7EFEA"></span><span style="background:#F4F3EF"></span>';
+  var EMPTY='<span></span><span></span><span></span><span></span>';
+  function play(){
+    // 초기화
+    var fA=document.getElementById('fA'), oA=document.getElementById('oA'), fB=document.getElementById('fB');
+    fA.classList.add('hide'); fA.classList.remove('on'); oA.style.display='';
+    fB.classList.remove('on');
+    document.getElementById('dtxB').style.opacity='1';
+    document.getElementById('s1A').innerHTML=EMPTY; document.getElementById('s1B').innerHTML=EMPTY;
+    document.getElementById('s2A').style.background='#EDEDEA'; document.getElementById('s2B').style.background='#EDEDEA';
+
+    // 1.7초 후 결과 도착
+    setTimeout(function(){
+      // A: 덮개 사라지고 카드가 '새로' 등장 → 뒤집기
+      oA.style.display='none';
+      fA.classList.remove('hide');
+      document.getElementById('s1A').innerHTML=FILLED;
+      document.getElementById('s2A').style.background='#E7EFEA';
+      setTimeout(function(){ fA.classList.add('on'); }, 240);
+
+      // B: 이미 서 있던 카드가 그대로 뒤집힘 (로딩 문구만 페이드)
+      document.getElementById('dtxB').style.transition='opacity .2s'; document.getElementById('dtxB').style.opacity='0';
+      document.getElementById('s1B').innerHTML=FILLED;
+      document.getElementById('s2B').style.background='#E7EFEA';
+      setTimeout(function(){ fB.classList.add('on'); }, 120);
+    }, 1700);
+  }
+  play();
+</script>
+</body></html>

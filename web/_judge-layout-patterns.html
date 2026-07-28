@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>판정 화면 전체 배치 · 패턴</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --bg:#F6F6F5; --surface:#fff; --ink:#16140F; --ink2:#3A382F;
+    --sub:#6E6B63; --sub2:#A6A29A; --line:#E6E5E1; --line2:#DAD8D2; --soft:#EDEDEA;
+    --g:#2E4A3B; --gs:#E7EFEA; --gl:#CBDDD2; --warn:#B0553F; --wsoft:#F7ECE8;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Pretendard','Apple SD Gothic Neo',system-ui,sans-serif; -webkit-font-smoothing:antialiased;}
+  .page{max-width:1180px; margin:0 auto; padding:40px 32px 100px;}
+  .ph{font-size:26px; font-weight:800; letter-spacing:-.03em;}
+  .psub{margin-top:8px; font-size:15px; color:var(--sub); line-height:1.65; max-width:820px;}
+  .psub b{color:var(--ink2); font-weight:800;}
+  .grid{margin-top:36px; display:grid; grid-template-columns:repeat(2,1fr); gap:26px;}
+  @media (max-width:820px){ .grid{grid-template-columns:1fr;} }
+
+  .pat{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:22px 22px 20px;}
+  .pat-tag{display:flex; align-items:center; gap:10px; margin-bottom:4px;}
+  .pat-n{font-size:12px; font-weight:800; color:#fff; background:var(--g); width:24px; height:24px; border-radius:7px;
+    display:flex; align-items:center; justify-content:center;}
+  .pat-h{font-size:17px; font-weight:800; letter-spacing:-.03em;}
+  .pat-now{font-size:10.5px; font-weight:800; color:var(--g); background:var(--gs); border:1px solid var(--gl);
+    padding:2px 8px; border-radius:20px;}
+  .pat-sum{margin:8px 0 16px; font-size:13px; color:var(--sub); line-height:1.55;}
+
+  /* ── 와이어프레임 프레임(가짜 화면) ── */
+  .wf{background:#F3F3F1; border:1px solid var(--line); border-radius:12px; padding:14px; height:260px; position:relative; overflow:hidden;}
+  .wf-nav{height:14px; border-radius:5px; background:#E2E1DC; margin-bottom:12px; width:38%;}
+  .blk{background:#fff; border:1px solid var(--line2); border-radius:8px; display:flex; align-items:center; justify-content:center;
+    font-size:11px; font-weight:700; color:var(--sub); text-align:center; line-height:1.35; padding:4px;}
+  .blk.g{background:var(--gs); border-color:var(--gl); color:var(--g);}
+  .blk.res{background:repeating-linear-gradient(135deg,#fff,#fff 7px,#F3F7F4 7px,#F3F7F4 14px); border-color:var(--gl); color:var(--g);}
+  .blk.dash{background:#fff; border-style:dashed; border-color:var(--gl); color:var(--sub);}
+  .btnblk{background:var(--g); color:#fff; border-radius:8px; font-size:11px; font-weight:800; display:flex;
+    align-items:center; justify-content:center; height:26px;}
+  .lbl{position:absolute; font-size:10px; font-weight:800; color:var(--sub2); letter-spacing:.02em;}
+
+  /* 패턴1 — 좌우 2단 */
+  .wf1{display:flex; gap:10px;}
+  .wf1 .col-l{width:38%; display:flex; flex-direction:column; gap:8px;}
+  .wf1 .col-r{flex:1; display:flex; flex-direction:column;}
+  .wf1 .col-l .blk{height:30px;} .wf1 .col-l .blk.tall{height:52px;}
+  .wf1 .col-r .blk{flex:1;}
+
+  /* 패턴2 — 위저드 스텝 */
+  .wf2{display:flex; flex-direction:column; align-items:center;}
+  .dots{display:flex; gap:7px; margin:2px 0 14px;}
+  .dot{width:22px; height:6px; border-radius:20px; background:#DAD8D2;} .dot.on{background:var(--g); width:30px;}
+  .wf2 .card{width:74%; flex:1; display:flex; flex-direction:column; gap:8px;}
+  .wf2 .card .blk{flex:1;}
+  .wf2 .arrows{position:absolute; bottom:12px; left:14px; right:14px; display:flex; justify-content:space-between; font-size:16px; color:var(--sub2);}
+
+  /* 패턴3 — 한 컬럼 세로 흐름 */
+  .wf3{display:flex; flex-direction:column; align-items:center; overflow-y:hidden;}
+  .wf3 .flow{width:70%; display:flex; flex-direction:column; gap:7px;}
+  .wf3 .flow .blk{height:26px;}
+  .scrollcut{position:absolute; left:0; right:0; bottom:0; height:40px; background:linear-gradient(transparent,#F3F3F1);}
+
+  /* 패턴4 — 요약바 + 결과 */
+  .wf4{display:flex; flex-direction:column; gap:9px;}
+  .wf4 .bar{height:30px; display:flex; align-items:center; gap:6px; padding:0 8px; background:#fff; border:1px solid var(--line2); border-radius:8px;}
+  .chip{height:15px; border-radius:20px; background:var(--soft); flex:0 0 auto;}
+  .wf4 .res{flex:1;}
+
+  .pros{margin-top:15px; display:flex; flex-direction:column; gap:7px;}
+  .pro, .con{font-size:12.5px; line-height:1.5; display:flex; gap:7px;}
+  .pro b, .con b{flex:none; font-weight:800;}
+  .pro b{color:var(--g);} .con b{color:var(--warn);}
+  .pro span, .con span{color:var(--ink2);}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="ph">판정 화면 · 전체 배치 4안</div>
+  <div class="psub">"사이즈표 입력 → 판정 → 결과"를 <b>한 화면에 어떻게 앉히느냐</b>의 구조만 비교해요. 색·글씨·디테일은 뺀 뼈대(와이어프레임)예요. 핵심 질문은 <b>입력과 결과를 같은 자리서 바꿀지 / 나란히 둘지 / 이어서 흐르게 할지</b>.</div>
+
+  <div class="grid">
+
+    <!-- 1 -->
+    <div class="pat">
+      <div class="pat-tag"><span class="pat-n">1</span><span class="pat-h">좌우 2단</span><span class="pat-now">지금 방식</span></div>
+      <div class="pat-sum">왼쪽에 입력 레일 고정, 오른쪽 넓은 캔버스. 판정 전엔 안내, 판정 누르면 <b>같은 자리</b>가 결과로 바뀜.</div>
+      <div class="wf wf1">
+        <div class="col-l">
+          <div class="blk">내 체형</div>
+          <div class="blk">옷 종류</div>
+          <div class="blk tall">사이즈표<br>입력</div>
+          <div class="btnblk">판정하기</div>
+        </div>
+        <div class="col-r"><div class="blk res">캔버스<br>안내 → 결과 교체</div></div>
+      </div>
+      <div class="pros">
+        <div class="pro"><b>좋음</b><span>넓은 화면 활용 · 입력값이 옆에 계속 보여 다시 판정 쉬움</span></div>
+        <div class="con"><b>아쉬움</b><span>입력·결과를 동시에 크게 못 봄(교체) · 모바일선 결국 세로로 쌓임</span></div>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="pat">
+      <div class="pat-tag"><span class="pat-n">2</span><span class="pat-h">위저드 스텝</span></div>
+      <div class="pat-sum">전체폭, <b>한 번에 하나씩</b>. 옷 종류 → 사이즈표 → 결과를 단계로 넘김. 위에 진행바.</div>
+      <div class="wf wf2">
+        <div class="dots"><span class="dot on"></span><span class="dot"></span><span class="dot"></span></div>
+        <div class="card">
+          <div class="blk g" style="flex:0 0 24px">2단계 · 사이즈표</div>
+          <div class="blk">사이즈표 입력</div>
+          <div class="btnblk" style="flex:0 0 26px">다음</div>
+        </div>
+        <div class="arrows"><span>‹</span><span>›</span></div>
+      </div>
+      <div class="pros">
+        <div class="pro"><b>좋음</b><span>한 가지에 집중 · 데스크탑·모바일 똑같은 흐름 · 초보 안내 강함</span></div>
+        <div class="con"><b>아쉬움</b><span>단계 왕복 번거로움 · 전체 흐름이 한눈에 안 보임 · 값 수정하러 뒤로</span></div>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="pat">
+      <div class="pat-tag"><span class="pat-n">3</span><span class="pat-h">한 컬럼 세로 흐름</span></div>
+      <div class="pat-sum">가운데 한 줄로 위→아래로 쭉. 판정 누르면 <b>그 아래에 결과가 이어서</b> 나타남(스크롤).</div>
+      <div class="wf wf3">
+        <div class="flow">
+          <div class="blk">내 체형</div>
+          <div class="blk">옷 종류</div>
+          <div class="blk" style="height:44px">사이즈표 입력</div>
+          <div class="btnblk">판정하기</div>
+          <div class="blk dash" style="height:40px">↓ 결과가 여기 이어서</div>
+        </div>
+        <div class="scrollcut"></div>
+      </div>
+      <div class="pros">
+        <div class="pro"><b>좋음</b><span>자연스러운 하나의 흐름 · 결과가 입력 맥락 바로 아래 · 반응형 단순</span></div>
+        <div class="con"><b>아쉬움</b><span>결과 보려면 스크롤 · 넓은 화면선 양옆 여백 많음</span></div>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="pat">
+      <div class="pat-tag"><span class="pat-n">4</span><span class="pat-h">입력 요약바 + 결과 중심</span></div>
+      <div class="pat-sum">판정 후 입력값은 위에 <b>얇은 요약바</b>로 접히고(브랜드·사이즈), 화면 대부분은 결과. 재판정 시 펼침.</div>
+      <div class="wf wf4">
+        <div class="bar">
+          <span class="chip" style="width:34px"></span><span class="chip" style="width:22px"></span>
+          <span class="chip" style="width:44px"></span><span style="margin-left:auto; font-size:11px; color:var(--sub2)">▾ 수정</span>
+        </div>
+        <div class="blk res">판정 결과 (verdict · 매트릭스 · 밴드)</div>
+      </div>
+      <div class="pros">
+        <div class="pro"><b>좋음</b><span>결과를 가장 크게 강조 · 재판정 빠름 · 결과 공유/정독에 유리</span></div>
+        <div class="con"><b>아쉬움</b><span>입력이 접혀 처음 쓰는 사람에겐 덜 안내적 · 판정 전 상태 설계 따로 필요</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

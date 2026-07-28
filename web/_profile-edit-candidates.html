@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>내 프로필 편집 · 레이아웃 후보</title>
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;-webkit-font-smoothing:antialiased;padding:36px 20px 140px}
+  .page{max-width:940px;margin:0 auto}
+  .ptitle{font-size:16px;font-weight:800;color:var(--green);margin:0 0 4px}
+  .pdesc{font-size:13px;color:var(--sub);margin:0 0 8px;line-height:1.6}
+  .prio{font-size:12.5px;color:var(--sub2);margin:0 0 26px;line-height:1.6}
+  .prio b{color:var(--green)}
+
+  .vlabel{margin:40px 0 14px}
+  .vlabel .vn{display:inline-block;font-size:12.5px;font-weight:800;color:#fff;background:var(--green);border-radius:20px;padding:5px 13px}
+  .vlabel .vd{font-size:13px;color:var(--sub);margin-top:9px;line-height:1.55}
+
+  /* 공통 카드/폼 요소 */
+  .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:0 6px 18px rgba(20,18,16,.05)}
+  .fl{display:block;font-size:12.5px;font-weight:800;color:var(--sub2);margin:16px 0 7px}
+  .fl:first-child{margin-top:0}
+  .fin{width:100%;border:1.5px solid var(--line2);border-radius:10px;padding:11px 13px;font-family:inherit;font-size:14px;background:#fff;color:var(--ink)}
+  textarea.fin{min-height:64px;resize:vertical}
+  .hint{font-size:12px;color:var(--sub2);margin-top:7px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-size:12.5px;font-weight:700;border:1.5px solid var(--line2);background:#fff;color:var(--sub);border-radius:20px;padding:7px 13px;cursor:pointer}
+  .chip.on{border-color:var(--green);color:var(--green);background:var(--green-soft)}
+  .cnt{color:var(--green);font-weight:800}
+
+  /* 아바타 */
+  .ava{display:flex;align-items:center;gap:16px}
+  .ava .img{width:78px;height:78px;border-radius:50%;background:var(--soft);flex:none;overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--sub2);font-size:24px}
+  .ava .act{display:flex;flex-direction:column;gap:7px;align-items:flex-start}
+  .btn-ghost{font-size:12.5px;font-weight:700;padding:8px 13px;border-radius:9px;border:1.5px solid var(--line2);background:#fff;color:var(--ink);cursor:pointer}
+  .btn-save{font-size:13px;font-weight:800;padding:11px 20px;border-radius:11px;border:none;background:var(--green);color:#fff;cursor:pointer}
+
+  /* 서비스·가격 행 */
+  .svc{display:flex;align-items:center;gap:11px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;margin-bottom:9px}
+  .svc .tog{display:flex;align-items:center;gap:9px;flex:1;font-size:14px;font-weight:700}
+  .svc input[type=checkbox]{width:17px;height:17px;accent-color:var(--green)}
+  .svc.off{opacity:.5}
+  .svc .price{width:120px;text-align:right;border:1.5px solid var(--line2);border-radius:9px;padding:8px 11px;font-family:inherit;font-size:13.5px}
+  .svc .won{font-size:13px;color:var(--sub)}
+
+  /* 포트폴리오 그리드 */
+  .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+  .pgrid .ph{aspect-ratio:3/4;border-radius:10px;background:var(--soft)}
+  .pgrid .add{aspect-ratio:3/4;border-radius:10px;border:1.5px dashed var(--line2);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--sub2);cursor:pointer}
+
+  /* 섹션(A) */
+  .sec{display:flex;gap:14px;padding:20px 0;border-top:1px solid var(--line)}
+  .sec:first-of-type{border-top:none;padding-top:4px}
+  .sec .no{width:26px;height:26px;flex:none;border-radius:50%;background:var(--green);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .sec .body{flex:1;min-width:0}
+  .sec .st{font-size:14.5px;font-weight:800;margin-bottom:2px}
+  .sec .sh{font-size:12px;color:var(--sub2);margin-bottom:12px}
+
+  /* 2열(B,D) */
+  .two{display:grid;grid-template-columns:300px 1fr;gap:18px;align-items:start}
+  .two .l{position:sticky;top:16px}
+  @media(max-width:760px){.two{grid-template-columns:1fr}.two .l{position:static}.pgrid{grid-template-columns:repeat(3,1fr)}}
+  .mini{font-size:11.5px;font-weight:800;letter-spacing:.04em;color:var(--sub2);text-transform:uppercase;margin:0 0 10px}
+
+  /* 미리보기(D) */
+  .pv{background:linear-gradient(180deg,var(--green-soft),#fff 60%);border:1px solid var(--line);border-radius:18px;padding:24px;text-align:center}
+  .pv .pav{width:88px;height:88px;border-radius:50%;background:#fff;border:3px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.1);margin:0 auto 12px;overflow:hidden}
+  .pv .pnm{font-size:18px;font-weight:800}
+  .pv .prole{font-size:12.5px;color:var(--sub);margin-top:3px}
+  .pv .prate{font-size:13px;color:var(--green);font-weight:700;margin-top:6px}
+  .pv .pchips{justify-content:center;margin-top:14px}
+  .pv .pbio{font-size:13px;color:var(--ink-soft);line-height:1.6;margin-top:14px;text-align:left;background:#fff;border-radius:12px;padding:13px}
+  .pvcap{font-size:11.5px;font-weight:800;color:var(--green);background:var(--green-soft);border-radius:20px;padding:4px 11px;display:inline-block;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="ptitle">내 프로필 편집 · 레이아웃 후보</p>
+  <p class="pdesc">고객에게 노출되는 핵심 화면이라, 정보를 위계에 맞게 직관적으로 배치한 4가지 후보예요. 같은 항목(사진·활동명·서비스/가격·소개·전문분야·전문스타일·포트폴리오)을 다르게 구성했어요.</p>
+  <p class="prio">적용한 위계(고객이 선택할 때 보는 순서 기준): <b>① 정체성</b> 사진·활동명 → <b>② 포지셔닝</b> 전문분야·전문스타일 → <b>③ 제안</b> 서비스·가격 → <b>④ 목소리</b> 소개 → <b>⑤ 증명</b> 포트폴리오</p>
+
+  <!-- ================= A ================= -->
+  <div class="vlabel"><span class="vn">A · 섹션 안내형(번호 위계)</span><div class="vd">한 폼을 번호 매긴 5섹션으로. 위→아래로 중요도 순서를 그대로 따라가서 처음 쓰는 사람도 길을 잃지 않음. 가장 무난·안정적.</div></div>
+  <div class="card">
+    <div class="sec"><div class="no">1</div><div class="body"><div class="st">기본 정보</div><div class="sh">고객에게 가장 먼저 보이는 얼굴과 이름</div>
+      <div class="ava"><div class="img">📷</div><div class="act"><button class="btn-ghost">프로필 사진 변경</button><button class="btn-ghost">기본으로</button></div></div>
+      <label class="fl">활동명 (고객에게 보여요)</label><input class="fin" placeholder="예: 소희 스타일리스트">
+    </div></div>
+    <div class="sec"><div class="no">2</div><div class="body"><div class="st">전문성</div><div class="sh">어떤 스타일리스트인지 — 각각 최대 3개</div>
+      <label class="fl">전문 분야 <span class="cnt">2/3</span></label><div class="chips"><span class="chip on">데일리</span><span class="chip on">소개팅룩</span><span class="chip">하객룩</span><span class="chip">면접룩</span></div>
+      <label class="fl">전문 스타일 <span class="cnt">1/3</span></label><div class="chips"><span class="chip on">미니멀</span><span class="chip">캐주얼</span><span class="chip">클래식</span><span class="chip">스트릿</span></div>
+    </div></div>
+    <div class="sec"><div class="no">3</div><div class="body"><div class="st">서비스·가격</div><div class="sh">제공할 유형을 켜고 가격을 입력하세요 · 최소 1개</div>
+      <div class="svc"><label class="tog"><input type="checkbox" checked> 온라인 스타일링</label><input class="price" value="35,000"><span class="won">원</span></div>
+      <div class="svc"><label class="tog"><input type="checkbox" checked> 동행 쇼핑</label><input class="price" value="120,000"><span class="won">원</span></div>
+      <div class="svc off"><label class="tog"><input type="checkbox"> 이미지 컨설팅</label><input class="price" placeholder="0"><span class="won">원</span></div>
+    </div></div>
+    <div class="sec"><div class="no">4</div><div class="body"><div class="st">소개</div><div class="sh">한두 문장으로 강점을</div>
+      <textarea class="fin" placeholder="예: 데일리·소개팅룩 전문, 비대면 큐레이션이 강점이에요"></textarea>
+    </div></div>
+    <div class="sec"><div class="no">5</div><div class="body"><div class="st">포트폴리오</div><div class="sh">최대 8장 · 사진마다 착용 모델 키·몸무게</div>
+      <div class="pgrid"><div class="ph"></div><div class="ph"></div><div class="ph"></div><div class="add">＋</div></div>
+    </div></div>
+    <div style="text-align:right;margin-top:20px"><button class="btn-ghost" style="margin-right:8px">취소</button><button class="btn-save">저장</button></div>
+  </div>
+
+  <!-- ================= B ================= -->
+  <div class="vlabel"><span class="vn">B · 좌우 2열(정체성 고정)</span><div class="vd">왼쪽에 사진·활동명·전문성(정체성)을 고정, 오른쪽에 서비스·소개·포트폴리오(상세). 데스크톱에서 위쪽 정체성을 계속 보며 편집. 넓은 화면에 유리.</div></div>
+  <div class="two">
+    <div class="l card">
+      <p class="mini">정체성</p>
+      <div class="ava" style="flex-direction:column;text-align:center;gap:12px"><div class="img" style="width:90px;height:90px">📷</div><button class="btn-ghost">사진 변경</button></div>
+      <label class="fl">활동명</label><input class="fin" placeholder="소희 스타일리스트">
+      <label class="fl">전문 분야 <span class="cnt">2/3</span></label><div class="chips"><span class="chip on">데일리</span><span class="chip on">소개팅룩</span><span class="chip">하객룩</span></div>
+      <label class="fl">전문 스타일 <span class="cnt">1/3</span></label><div class="chips"><span class="chip on">미니멀</span><span class="chip">캐주얼</span></div>
+    </div>
+    <div class="r card">
+      <p class="mini">서비스·가격</p>
+      <div class="svc"><label class="tog"><input type="checkbox" checked> 온라인 스타일링</label><input class="price" value="35,000"><span class="won">원</span></div>
+      <div class="svc"><label class="tog"><input type="checkbox" checked> 동행 쇼핑</label><input class="price" value="120,000"><span class="won">원</span></div>
+      <div class="svc off"><label class="tog"><input type="checkbox"> 이미지 컨설팅</label><input class="price" placeholder="0"><span class="won">원</span></div>
+      <p class="mini" style="margin-top:22px">소개</p>
+      <textarea class="fin" placeholder="데일리·소개팅룩 전문, 비대면 큐레이션이 강점이에요"></textarea>
+      <p class="mini" style="margin-top:22px">포트폴리오</p>
+      <div class="pgrid"><div class="ph"></div><div class="ph"></div><div class="ph"></div><div class="add">＋</div></div>
+      <div style="text-align:right;margin-top:20px"><button class="btn-save">저장</button></div>
+    </div>
+  </div>
+
+  <!-- ================= C ================= -->
+  <div class="vlabel"><span class="vn">C · 항목별 카드 분할</span><div class="vd">그룹마다 독립 카드. "무엇을 편집 중"인지 명확하고, 나중에 카드별 접기/개별 저장으로 확장 쉬움. 항목이 많아도 덜 부담.</div></div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div class="card"><p class="mini">① 프로필 사진</p><div class="ava"><div class="img">📷</div><div class="act"><button class="btn-ghost">사진 변경</button><button class="btn-ghost">기본으로</button></div></div></div>
+    <div class="card"><p class="mini">② 활동명 · 전문성</p>
+      <label class="fl">활동명</label><input class="fin" placeholder="소희 스타일리스트">
+      <label class="fl">전문 분야 <span class="cnt">2/3</span></label><div class="chips"><span class="chip on">데일리</span><span class="chip on">소개팅룩</span><span class="chip">하객룩</span></div>
+      <label class="fl">전문 스타일 <span class="cnt">1/3</span></label><div class="chips"><span class="chip on">미니멀</span><span class="chip">캐주얼</span></div>
+    </div>
+    <div class="card"><p class="mini">③ 서비스 · 가격</p>
+      <div class="svc"><label class="tog"><input type="checkbox" checked> 온라인 스타일링</label><input class="price" value="35,000"><span class="won">원</span></div>
+      <div class="svc"><label class="tog"><input type="checkbox" checked> 동행 쇼핑</label><input class="price" value="120,000"><span class="won">원</span></div>
+    </div>
+    <div class="card"><p class="mini">④ 소개</p><textarea class="fin" placeholder="데일리·소개팅룩 전문, 비대면 큐레이션이 강점이에요"></textarea></div>
+    <div class="card"><p class="mini">⑤ 포트폴리오</p><div class="pgrid"><div class="ph"></div><div class="ph"></div><div class="ph"></div><div class="add">＋</div></div></div>
+    <div style="text-align:right"><button class="btn-save">전체 저장</button></div>
+  </div>
+
+  <!-- ================= D ================= -->
+  <div class="vlabel"><span class="vn">D · 편집 + 라이브 미리보기</span><div class="vd">왼쪽 편집, 오른쪽에 "고객에게 보이는 프로필"을 실시간 미리보기. 중요도(고객 노출)를 가장 직접적으로 체감. 구현은 가장 무겁지만 프리미엄.</div></div>
+  <div class="two">
+    <div class="l2 card">
+      <label class="fl">프로필 사진</label><div class="ava"><div class="img">📷</div><div class="act"><button class="btn-ghost">변경</button></div></div>
+      <label class="fl">활동명</label><input class="fin" placeholder="소희 스타일리스트">
+      <label class="fl">전문 분야 / 스타일</label><div class="chips"><span class="chip on">데일리</span><span class="chip on">소개팅룩</span><span class="chip on">미니멀</span></div>
+      <label class="fl">서비스·가격</label>
+      <div class="svc"><label class="tog"><input type="checkbox" checked> 온라인 스타일링</label><input class="price" value="35,000"><span class="won">원</span></div>
+      <label class="fl">소개</label><textarea class="fin" placeholder="비대면 큐레이션이 강점이에요"></textarea>
+      <div style="text-align:right;margin-top:18px"><button class="btn-save">저장</button></div>
+    </div>
+    <div class="r2">
+      <div class="pv">
+        <span class="pvcap">고객에게 이렇게 보여요</span>
+        <div class="pav"></div>
+        <div class="pnm">소희 스타일리스트</div>
+        <div class="prole">온라인 스타일링 · 동행 쇼핑</div>
+        <div class="prate">★ 5.0 · 후기 1</div>
+        <div class="chips pchips"><span class="chip on">데일리</span><span class="chip on">소개팅룩</span><span class="chip on">미니멀</span></div>
+        <div class="pbio">데일리·소개팅룩 전문, 비대면 큐레이션이 강점이에요</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

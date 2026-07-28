@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>판정 결과 · 구성 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --bg:#F6F6F5; --surface:#fff; --ink:#16140F; --ink2:#3A382F;
+    --sub:#6E6B63; --sub2:#A6A29A; --line:#E6E5E1; --line2:#DAD8D2; --soft:#EDEDEA;
+    --g:#2E4A3B; --gm:#5A7A68; --gs:#E7EFEA; --gl:#CBDDD2; --warn:#B0553F; --wsoft:#F7ECE8;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Pretendard','Apple SD Gothic Neo',system-ui,sans-serif; -webkit-font-smoothing:antialiased;}
+  .page{max-width:1300px; margin:0 auto; padding:40px 32px 100px;}
+  .ph{font-size:26px; font-weight:800; letter-spacing:-.03em;}
+  .psub{margin-top:8px; font-size:15px; color:var(--sub); line-height:1.6; max-width:820px;}
+  .grid{margin-top:34px; display:flex; flex-wrap:wrap; gap:30px; align-items:flex-start;}
+  .cand{width:560px; max-width:100%;}
+  .cand-tag{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+  .cand-n{font-size:12px; font-weight:800; color:#fff; background:var(--g); padding:4px 11px; border-radius:20px;}
+  .cand-d{font-size:12.5px; color:var(--sub); line-height:1.5;}
+  .stack{display:flex; flex-direction:column; gap:16px;}
+
+  /* ===== 공통 위젯 ===== */
+  /* 다크 히어로 */
+  .rhero{--acc:#8FD6A8; background:linear-gradient(160deg,#1e2026,#16171b); border-radius:20px; padding:24px; color:#fff; position:relative; overflow:hidden;}
+  .rhero::after{content:""; position:absolute; top:-46px; right:-34px; width:180px; height:180px; border-radius:50%; background:radial-gradient(circle,rgba(143,214,168,.16),transparent 70%);}
+  .rhero-top{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; position:relative;}
+  .rey{font-size:10.5px; font-weight:800; letter-spacing:.09em; color:var(--acc); text-transform:uppercase;}
+  .rsize{font-size:52px; font-weight:800; letter-spacing:-.05em; line-height:.95; margin-top:7px;}
+  .rsize small{font-size:15px; font-weight:700; color:#98978f;}
+  .rgauge{width:82px; height:82px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; position:relative;
+    background:conic-gradient(var(--acc) 0 88%, rgba(255,255,255,.12) 88% 100%);}
+  .rgauge::before{content:""; position:absolute; inset:9px; border-radius:50%; background:#16171b;}
+  .rgv{position:relative; font-size:23px; font-weight:800; text-align:center; line-height:1;}
+  .rgl{position:relative; display:block; font-size:9px; font-weight:800; color:var(--acc); letter-spacing:.08em; margin-top:2px;}
+  .rverdict{position:relative; font-size:18px; font-weight:800; letter-spacing:-.035em; margin-top:17px;}
+  .rbody{position:relative; font-size:13px; color:#b6b5ae; line-height:1.6; margin-top:6px;}
+  .rchips{position:relative; display:flex; flex-wrap:wrap; gap:7px; margin-top:15px;}
+  .rchip{font-size:11px; font-weight:700; color:#cfcec8; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:20px; padding:5px 11px;}
+
+  /* 신뢰도 */
+  .rconf{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:14px; overflow:hidden;}
+  .rconf > div{background:var(--surface); padding:13px 16px; display:flex; flex-direction:column; gap:4px;}
+  .rconf b{font-size:10.5px; font-weight:800; color:var(--sub2); letter-spacing:.06em;}
+  .rconf strong{font-size:14.5px; font-weight:800; letter-spacing:-.03em;}
+  .rconf span{font-size:12px; color:var(--sub); line-height:1.45;}
+  .rconf .lo strong{color:var(--warn);}
+
+  /* 패널 */
+  .rpanel{border:1px solid var(--line); border-radius:18px; padding:22px; background:var(--surface);}
+  .rphead{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:5px;}
+  .rpt{font-size:17px; font-weight:800; letter-spacing:-.035em;}
+  .rpill{font-size:11px; font-weight:800; color:var(--g); background:var(--gs); border:1px solid var(--gl); padding:3px 9px; border-radius:20px;}
+  .rpd{font-size:13px; color:var(--sub); line-height:1.5; margin-bottom:16px;}
+
+  /* 매트릭스 */
+  .rmx{width:100%; border-collapse:separate; border-spacing:5px;}
+  .rmx th{font-size:12px; font-weight:800; color:var(--sub); padding:2px; text-align:center;}
+  .rmx th.pk{color:var(--g);}
+  .rmx td.h{font-size:12.5px; font-weight:800; color:var(--ink2); text-align:left; white-space:nowrap; padding-right:6px;}
+  .rmx td{padding:0;}
+  .cell{height:38px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800;}
+  .cell.t{background:var(--wsoft); color:var(--warn);} .cell.s{background:var(--gs); color:var(--g);} .cell.r{background:var(--soft); color:var(--sub2);}
+  .rmx col.pkcol, .rmx .pkcol{background:rgba(46,74,59,.05);}
+  .rmx th.pk .pkm{display:inline-block; background:var(--g); color:#fff; border-radius:20px; padding:2px 8px; font-size:10.5px;}
+
+  /* 밴드(눈금) */
+  .rband{display:flex; flex-direction:column; gap:16px;}
+  .rbrow .rblab{display:flex; justify-content:space-between; font-size:12.5px; font-weight:800; margin-bottom:7px;}
+  .rblab .v{color:var(--sub); font-weight:700;}
+  .rbtrack{position:relative; height:34px; border-radius:9px; overflow:hidden; display:flex;}
+  .rbz{height:100%;} .rbz.t{background:var(--wsoft);} .rbz.s{background:var(--gs);} .rbz.r{background:var(--soft);}
+  .rbmark{position:absolute; top:-3px; bottom:-3px; width:3px; border-radius:3px; background:var(--ink);}
+  .rbwhisk{position:absolute; top:50%; height:2px; background:rgba(22,20,15,.25); transform:translateY(-50%);}
+  .rbznlab{display:flex; justify-content:space-between; margin-top:6px; font-size:10.5px; font-weight:800; color:var(--sub2);}
+
+  /* opt-in */
+  .rshare{border:1px solid var(--gl); background:var(--gs); border-radius:16px; padding:16px 18px; display:flex; align-items:center; gap:11px;}
+  .rshare .cb{width:18px; height:18px; border:2px solid var(--g); border-radius:5px; flex:none;}
+  .rshare b{font-size:13.5px; font-weight:800;} .rshare span{display:block; font-size:12px; color:var(--sub); margin-top:2px;}
+
+  .rredo{width:100%; text-align:center; padding:13px; border:1.5px solid var(--line2); border-radius:12px; font-size:14px; font-weight:800; color:var(--ink); background:transparent;}
+
+  /* 결론 배너(C) */
+  .rban{display:flex; align-items:center; gap:16px; background:var(--g); color:#fff; border-radius:18px; padding:20px 24px;}
+  .rban-sz{font-size:40px; font-weight:800; letter-spacing:-.04em; line-height:1;}
+  .rban-tx b{font-size:17px; font-weight:800;} .rban-tx span{display:block; font-size:12.5px; color:var(--gl); margin-top:3px;}
+  .rban-sc{margin-left:auto; text-align:right;} .rban-sc b{font-size:26px; font-weight:800;} .rban-sc span{display:block; font-size:10px; color:var(--gl); letter-spacing:.08em;}
+
+  /* 요약 히어로(B) — 밝은 좌우 분할 */
+  .rsum{display:grid; grid-template-columns:auto 1fr; gap:22px; border:1px solid var(--line); border-radius:20px; padding:24px; background:var(--surface); align-items:center;}
+  .rsum-l{text-align:center;}
+  .rsum-sz{font-size:56px; font-weight:800; letter-spacing:-.05em; line-height:.9;}
+  .rsum-vd{font-size:13px; font-weight:800; color:var(--g); margin-top:6px;}
+  .rsum-sc{margin-top:10px; font-size:11px; font-weight:800; color:var(--sub2);} .rsum-sc b{color:var(--g); font-size:14px;}
+  .rsum-r{display:flex; flex-direction:column; gap:9px; border-left:1px solid var(--line); padding-left:22px;}
+  .rsum-line{display:flex; align-items:center; gap:9px; font-size:13px;}
+  .rsum-line .k{font-weight:800; color:var(--ink2); width:38px;}
+  .rsum-line .b{flex:1; height:8px; border-radius:20px; background:var(--soft); position:relative; overflow:hidden;}
+  .rsum-line .b i{position:absolute; top:0; bottom:0; background:var(--g); border-radius:20px;}
+  .rsum-line .t{font-size:11.5px; font-weight:800; color:var(--g);}
+  .g2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:600px){ .g2{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="ph">판정 결과 · 구성 시안 3종</div>
+  <div class="psub">같은 내용(추천 사이즈·점수 · 신뢰도 정보 · 사이즈별 매트릭스 · 부위별 눈금)을 <b>어떻게 배치·강조하느냐</b>만 달라요. 샘플: 상의 · 추천 M · FIT 88.</div>
+
+  <div class="grid">
+
+    <!-- ===== A ===== -->
+    <div class="cand">
+      <div class="cand-tag"><span class="cand-n">A · 정통 스택</span><span class="cand-d">다크 히어로를 주연으로, 위→아래로 정독</span></div>
+      <div class="stack">
+        <div class="rhero">
+          <div class="rhero-top">
+            <div><div class="rey">추천 사이즈</div><div class="rsize">M<small> / 유니클로</small></div></div>
+            <div class="rgauge"><div><div class="rgv">88</div><span class="rgl">FIT</span></div></div>
+          </div>
+          <div class="rverdict">딱 맞아요</div>
+          <div class="rbody">M이 딱 맞는 구간에 들어와요. 아래에서 부위별로 자세히 볼 수 있어요.</div>
+          <div class="rchips"><span class="rchip">가슴 +3cm 딱</span><span class="rchip">어깨 +1cm 딱</span></div>
+        </div>
+        <div class="rconf">
+          <div><b>내 데이터</b><strong>착용경험 2벌</strong><span>오차 ±2cm까지 좁혀짐</span></div>
+          <div class="lo"><b>브랜드 표기</b><strong>검증 안 됨</strong><span>착용 결과 0건 · 표기 치수 기준</span></div>
+        </div>
+        <div class="rpanel">
+          <div class="rphead"><div class="rpt">사이즈별로 어떻게 맞나</div><span class="rpill">유니클로</span></div>
+          <div class="rpd">올려주신 표의 모든 사이즈를 내 체형에 대봤어요</div>
+          <table class="rmx">
+            <thead><tr><th></th><th>S</th><th class="pk"><span class="pkm">M</span></th><th>L</th></tr></thead>
+            <tbody>
+              <tr><td class="h">가슴</td><td><div class="cell t">끼임</div></td><td class="pkcol"><div class="cell s">딱</div></td><td><div class="cell r">여유</div></td></tr>
+              <tr><td class="h">어깨</td><td><div class="cell t">끼임</div></td><td class="pkcol"><div class="cell s">딱</div></td><td><div class="cell s">딱</div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="rpanel">
+          <div class="rphead"><div class="rpt">추천 사이즈 자세히</div><span class="rpill">추천 M</span></div>
+          <div class="rpd">막대가 내 몸, 색 구간은 이 옷의 끼임·딱·여유 경계예요</div>
+          <div class="rband">
+            <div class="rbrow"><div class="rblab">가슴<span class="v">내 96 · 옷 99</span></div>
+              <div class="rbtrack"><div class="rbz t" style="width:33%"></div><div class="rbz s" style="width:40%"></div><div class="rbz r" style="width:27%"></div>
+                <div class="rbwhisk" style="left:52%;width:16%"></div><div class="rbmark" style="left:60%"></div></div>
+              <div class="rbznlab"><span>끼임</span><span>딱</span><span>여유</span></div></div>
+            <div class="rbrow"><div class="rblab">어깨<span class="v">내 44 · 옷 45</span></div>
+              <div class="rbtrack"><div class="rbz t" style="width:38%"></div><div class="rbz s" style="width:42%"></div><div class="rbz r" style="width:20%"></div>
+                <div class="rbwhisk" style="left:50%;width:14%"></div><div class="rbmark" style="left:56%"></div></div>
+              <div class="rbznlab"><span>끼임</span><span>딱</span><span>여유</span></div></div>
+          </div>
+        </div>
+        <div class="rshare"><span class="cb"></span><div><b>이 사이즈표를 핏팅 개선에 쓸게요</b><span>다른 분들의 판정이 더 정확해져요</span></div></div>
+        <button class="rredo">다른 옷 판정하기</button>
+      </div>
+    </div>
+
+    <!-- ===== B ===== -->
+    <div class="cand">
+      <div class="cand-tag"><span class="cand-n">B · 요약 대시보드</span><span class="cand-d">밝은 히어로 좌우 분할 — 사이즈 + 부위 요약을 한눈에</span></div>
+      <div class="stack">
+        <div class="rsum">
+          <div class="rsum-l">
+            <div class="rsum-sz">M</div><div class="rsum-vd">딱 맞아요</div>
+            <div class="rsum-sc">FIT <b>88</b></div>
+          </div>
+          <div class="rsum-r">
+            <div class="rsum-line"><span class="k">가슴</span><span class="b"><i style="left:20%;right:20%"></i></span><span class="t">딱</span></div>
+            <div class="rsum-line"><span class="k">어깨</span><span class="b"><i style="left:25%;right:18%"></i></span><span class="t">딱</span></div>
+            <div class="rsum-line" style="margin-top:4px; font-size:11.5px; color:var(--sub)"><span class="k" style="color:var(--sub2)">신뢰</span>착용경험 2벌 · ±2cm · 브랜드 표기 미검증</div>
+          </div>
+        </div>
+        <div class="rpanel">
+          <div class="rphead"><div class="rpt">사이즈별로 어떻게 맞나</div><span class="rpill">유니클로</span></div>
+          <table class="rmx" style="margin-top:8px">
+            <thead><tr><th></th><th>S</th><th class="pk"><span class="pkm">M</span></th><th>L</th></tr></thead>
+            <tbody>
+              <tr><td class="h">가슴</td><td><div class="cell t">끼임</div></td><td class="pkcol"><div class="cell s">딱</div></td><td><div class="cell r">여유</div></td></tr>
+              <tr><td class="h">어깨</td><td><div class="cell t">끼임</div></td><td class="pkcol"><div class="cell s">딱</div></td><td><div class="cell s">딱</div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="rpanel">
+          <div class="rphead"><div class="rpt">추천 사이즈 자세히</div><span class="rpill">추천 M</span></div>
+          <div class="rband" style="margin-top:8px">
+            <div class="rbrow"><div class="rblab">가슴<span class="v">내 96 · 옷 99</span></div>
+              <div class="rbtrack"><div class="rbz t" style="width:33%"></div><div class="rbz s" style="width:40%"></div><div class="rbz r" style="width:27%"></div>
+                <div class="rbwhisk" style="left:52%;width:16%"></div><div class="rbmark" style="left:60%"></div></div></div>
+            <div class="rbrow"><div class="rblab">어깨<span class="v">내 44 · 옷 45</span></div>
+              <div class="rbtrack"><div class="rbz t" style="width:38%"></div><div class="rbz s" style="width:42%"></div><div class="rbz r" style="width:20%"></div>
+                <div class="rbwhisk" style="left:50%;width:14%"></div><div class="rbmark" style="left:56%"></div></div></div>
+          </div>
+        </div>
+        <button class="rredo">다른 옷 판정하기</button>
+      </div>
+    </div>
+
+    <!-- ===== C ===== -->
+    <div class="cand">
+      <div class="cand-tag"><span class="cand-n">C · 결론 배너 + 2열</span><span class="cand-d">한 줄 결론 배너, 매트릭스·눈금을 나란히</span></div>
+      <div class="stack">
+        <div class="rban">
+          <div class="rban-sz">M</div>
+          <div class="rban-tx"><b>이 옷은 M이 맞아요</b><span>가슴·어깨 모두 딱 맞는 구간</span></div>
+          <div class="rban-sc"><b>88</b><span>FIT</span></div>
+        </div>
+        <div class="g2">
+          <div class="rpanel">
+            <div class="rphead"><div class="rpt" style="font-size:15px">사이즈별</div></div>
+            <table class="rmx" style="margin-top:6px">
+              <thead><tr><th></th><th>S</th><th class="pk"><span class="pkm">M</span></th><th>L</th></tr></thead>
+              <tbody>
+                <tr><td class="h">가슴</td><td><div class="cell t">끼임</div></td><td class="pkcol"><div class="cell s">딱</div></td><td><div class="cell r">여유</div></td></tr>
+                <tr><td class="h">어깨</td><td><div class="cell t">끼임</div></td><td class="pkcol"><div class="cell s">딱</div></td><td><div class="cell s">딱</div></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="rpanel">
+            <div class="rphead"><div class="rpt" style="font-size:15px">부위별 눈금</div></div>
+            <div class="rband" style="margin-top:6px; gap:12px">
+              <div class="rbrow"><div class="rblab" style="font-size:11.5px">가슴</div>
+                <div class="rbtrack" style="height:28px"><div class="rbz t" style="width:33%"></div><div class="rbz s" style="width:40%"></div><div class="rbz r" style="width:27%"></div><div class="rbmark" style="left:60%"></div></div></div>
+              <div class="rbrow"><div class="rblab" style="font-size:11.5px">어깨</div>
+                <div class="rbtrack" style="height:28px"><div class="rbz t" style="width:38%"></div><div class="rbz s" style="width:42%"></div><div class="rbz r" style="width:20%"></div><div class="rbmark" style="left:56%"></div></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="rconf">
+          <div><b>내 데이터</b><strong>착용경험 2벌</strong><span>±2cm까지 좁혀짐</span></div>
+          <div class="lo"><b>브랜드 표기</b><strong>검증 안 됨</strong><span>표기 치수 기준</span></div>
+        </div>
+        <button class="rredo">다른 옷 판정하기</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

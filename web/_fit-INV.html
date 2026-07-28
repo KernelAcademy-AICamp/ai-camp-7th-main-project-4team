@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><title>Fit · 모던 V라인 미리보기</title></head>
+<body style="font-family:sans-serif;padding:40px;color:#555">
+적용 중… 모던 V라인(INV)으로 Fit 화면을 엽니다
+<script>
+  // 판정 기준 유형을 '모던 V라인(INV)'로 심고 judge.html로 이동(로컬 미리보기)
+  try {
+    var u = {}; try { u = JSON.parse(localStorage.getItem('fitting.user') || '{}') || {}; } catch (e) {}
+    u.type = 'INV';
+    localStorage.setItem('fitting.user', JSON.stringify(u));
+  } catch (e) {}
+  location.replace('judge.html');
+</script>
+</body></html>

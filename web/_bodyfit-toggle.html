@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>바디핏 + 사이즈 토글</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{--bg:#F6F6F5;--surface:#fff;--ink:#16140F;--ink2:#3A382F;--sub:#6E6B63;--sub2:#A6A29A;--line:#E6E5E1;--line2:#DAD8D2;--soft:#EDEDEA;--g:#2E4A3B;--gm:#5A7A68;--gs:#E7EFEA;--gl:#CBDDD2;--warn:#B0553F;--wsoft:#F7ECE8;}
+  *{box-sizing:border-box;} body{margin:0;background:var(--bg);color:var(--ink);font-family:'Pretendard',sans-serif;padding:34px;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:560px;margin:0 auto;}
+  .h{font-size:22px;font-weight:800;letter-spacing:-.03em;} .sub{margin:8px 0 22px;font-size:14px;color:var(--sub);line-height:1.6;}
+  .jpanel{border:1px solid var(--line);border-radius:18px;padding:22px 24px;background:var(--surface);}
+  .jphead{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .jpt{font-size:18px;font-weight:800;letter-spacing:-.035em;} .jpill{font-size:11px;font-weight:800;color:var(--g);background:var(--gs);border:1px solid var(--gl);padding:3px 9px;border-radius:20px;}
+  .jpd{font-size:13.5px;color:var(--sub);margin:5px 0 16px;}
+  /* 사이즈 토글 */
+  .sztog{display:flex;gap:6px;background:var(--soft);border-radius:12px;padding:4px;margin-bottom:6px;}
+  .sztog button{flex:1;position:relative;border:none;background:transparent;border-radius:9px;padding:9px 0;font:inherit;font-size:14px;font-weight:800;color:var(--sub);cursor:pointer;}
+  .sztog button.on{background:#fff;color:var(--g);box-shadow:0 2px 6px rgba(20,18,16,.08);}
+  .sztog .rec{position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:800;color:#fff;background:var(--g);padding:1px 6px;border-radius:20px;}
+  .szsay{font-size:13px;color:var(--ink2);font-weight:700;margin:12px 0 4px;} .szsay b{color:var(--g);}
+  .bf{display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin-top:8px;}
+  .bf-fig{flex:none;width:150px;} .bf-fig svg{width:100%;display:block;overflow:visible;}
+  .bf-leg{flex:1;min-width:150px;display:flex;flex-direction:column;gap:12px;}
+  .bf-item{display:flex;align-items:flex-start;gap:11px;}
+  .bf-dot{flex:none;width:11px;height:11px;border-radius:50%;margin-top:3px;}
+  .bf-tx b{font-size:14.5px;font-weight:800;} .bf-st{font-size:12.5px;font-weight:800;margin-left:7px;}
+  .bf-tx p{margin:2px 0 0;font-size:12.5px;color:var(--sub);font-feature-settings:"tnum";}
+</style></head><body>
+<div class="wrap">
+  <div class="h">바디핏 + 사이즈 토글 (프로토)</div>
+  <div class="sub">사이즈를 누르면 <b>그 사이즈가 내 몸에 어떻게 걸리는지</b> 그림이 바뀌어요. "다른 핏 원하면 S/L"을 몸 그림으로 비교.</div>
+
+  <div class="jpanel">
+    <div class="jphead"><div class="jpt">자세히 알고 싶다면</div><span class="jpill" id="pill">추천 M</span></div>
+    <div class="jpd">회색이 내 체형, 초록선이 옷이에요 · 선이 뜬 만큼 여유 (끼임이면 안쪽·빨강)</div>
+    <div class="sztog" id="tog"></div>
+    <div class="szsay" id="say"></div>
+    <div class="bf"><div class="bf-fig" id="fig"></div><div class="bf-leg" id="leg"></div></div>
+  </div>
+</div>
+<script>
+function off(e){return Math.max(-9,Math.min(14,e*2.1));}
+function bodyFitSVG(category,parts){var G="#2E4A3B",R="#B0553F",FILL="#E4E3DE";function dc(t){return t?R:G;}var map={};parts.forEach(function(p){map[p.key]=p;});var GS=parts.some(function(p){return p.tight;})?R:G;var svg,order;
+if(category==="BOTTOM"){var w=off((map.waist||{}).ease||0),h=off((map.hip||{}).ease||0),t=off((map.thigh||{}).ease||0);svg='<svg viewBox="0 0 200 280"><path d="M70 24 L130 24 L144 78 L128 262 L106 262 L100 120 L94 262 L72 262 L56 78 Z" fill="'+FILL+'"/><path d="M'+(70-w)+' 20 L'+(130+w)+' 20 L'+(150+h)+' 80 L'+(128+t)+' 250 L106 250 L100 122 L94 250 L'+(72-t)+' 250 L'+(50-h)+' 80 Z" fill="none" stroke="'+GS+'" stroke-width="2.4" stroke-linejoin="round"/><line x1="'+(50-h)+'" y1="250" x2="98" y2="250" stroke="'+GS+'" stroke-width="2.4"/><line x1="102" y1="250" x2="'+(128+t)+'" y2="250" stroke="'+GS+'" stroke-width="2.4"/><circle cx="132" cy="44" r="4.5" fill="'+dc((map.waist||{}).tight)+'" stroke="#fff" stroke-width="2"/><circle cx="148" cy="82" r="4.5" fill="'+dc((map.hip||{}).tight)+'" stroke="#fff" stroke-width="2"/><circle cx="127" cy="150" r="4.5" fill="'+dc((map.thigh||{}).tight)+'" stroke="#fff" stroke-width="2"/></svg>';order=["waist","hip","thigh"];}
+else{var sh=off((map.shoulder||{}).ease||0),ch=off((map.chest||{}).ease||0),ws=off((map.waist||{}).ease||0);var SH=46,CH=40,WS=36;svg='<svg viewBox="0 0 200 250"><circle cx="100" cy="30" r="20" fill="'+FILL+'"/><path d="M100 50 L112 58 L'+(100+SH)+' 64 L'+(100+CH)+' 92 L'+(100+WS)+' 196 Q100 206 '+(100-WS)+' 196 L'+(100-CH)+' 92 L'+(100-SH)+' 64 L88 58 Z" fill="'+FILL+'"/><path d="M100 47 L114 56 L'+(100+SH+sh)+' 62 L'+(100+CH+ch)+' 90 L'+(100+WS+ws)+' 204 Q100 216 '+(100-WS-ws)+' 204 L'+(100-CH-ch)+' 90 L'+(100-SH-sh)+' 62 L86 56 Z" fill="none" stroke="'+GS+'" stroke-width="2.4" stroke-linejoin="round"/><circle cx="'+(100-SH)+'" cy="66" r="4.5" fill="'+dc((map.shoulder||{}).tight)+'" stroke="#fff" stroke-width="2"/><circle cx="'+(100+CH)+'" cy="112" r="4.5" fill="'+dc((map.chest||{}).tight)+'" stroke="#fff" stroke-width="2"/><circle cx="'+(100+WS)+'" cy="176" r="4.5" fill="'+dc((map.waist||{}).tight)+'" stroke="#fff" stroke-width="2"/></svg>';order=["shoulder","chest","waist"];}
+function dc(t){return t?"#B0553F":"#2E4A3B";}
+var leg=order.filter(function(k){return map[k];}).map(function(k){var p=map[k],sign=p.ease>=0?"+":"";return '<div class="bf-item"><span class="bf-dot" style="background:'+dc(p.tight)+'"></span><div class="bf-tx"><b>'+p.ko+'</b><span class="bf-st" style="color:'+dc(p.tight)+'">'+p.fit+'</span><p>여유 '+sign+p.ease+'cm</p></div></div>';}).join("");
+return {svg:svg,legend:leg};}
+
+// 데모: 상의 S/M/L/XL 부위별 여유(cm). M 추천.
+function lab(e){return e<0?"끼임":e<=2?"딱":e<=8?"여유":"넉넉";}
+function mk(sh,ch,ws){return [
+  {key:"shoulder",ko:"어깨",ease:sh,fit:lab(sh),tight:sh<0},
+  {key:"chest",ko:"가슴",ease:ch,fit:lab(ch),tight:ch<0},
+  {key:"waist",ko:"허리",ease:ws,fit:lab(ws),tight:ws<0}
+];}
+var SIZES={
+  S:{parts:mk(-2,-1,3),  say:"어깨·가슴이 <b style='color:#B0553F'>껴요</b> — 딱 붙는 핏"},
+  M:{parts:mk(1,3,6),    say:"<b>딱 맞아요</b> — 어깨 딱, 가슴 살짝 여유", rec:true},
+  L:{parts:mk(3,7,10),   say:"넉넉해요 — 여유롭게 입고 싶으면"},
+  XL:{parts:mk(6,12,15), say:"많이 <b>넉넉</b>해요 — 오버핏"}
+};
+var order=["S","M","L","XL"];
+var tog=document.getElementById('tog');
+tog.innerHTML=order.map(function(s){return '<button data-s="'+s+'">'+(SIZES[s].rec?'<span class="rec">추천</span>':'')+s+'</button>';}).join("");
+function render(s){
+  var d=SIZES[s];
+  var r=bodyFitSVG("TOP",d.parts);
+  document.getElementById('fig').innerHTML=r.svg;
+  document.getElementById('leg').innerHTML=r.legend;
+  document.getElementById('say').innerHTML=d.say;
+  document.getElementById('pill').textContent=(d.rec?"추천 ":"")+s;
+  Array.prototype.forEach.call(tog.children,function(b){b.classList.toggle('on',b.getAttribute('data-s')===s);});
+}
+tog.addEventListener('click',function(e){var b=e.target.closest('button');if(b)render(b.getAttribute('data-s'));});
+render("M");
+</script>
+</body></html>

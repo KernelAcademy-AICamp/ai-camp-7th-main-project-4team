@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<title>consent row check</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
+<link rel="stylesheet" href="css/diag.css?v=c86b6818">
+<link rel="stylesheet" href="css/judge.css?v=33125101">
+<style>body{background:#F6F6F5;font-family:'Pretendard',sans-serif;margin:0;padding:28px;}
+ h3{font-size:13px;color:#6E6B63;margin:0 0 8px;font-weight:700;}
+ .rail{width:380px;}   /* 실제 좌측 컬럼 폭(.jsetup-cols 380px) */
+ .mark{outline:1px dashed #B0553F; outline-offset:2px;}</style>
+</head><body>
+<main class="jwrap" style="padding:0;max-width:none">
+  <h3>실제 좌측 카드 폭(380px) 기준 — 동의 한 줄 확인</h3>
+  <div class="rail">
+    <div class="jcard">
+      <div class="jstep">
+        <div class="jstep-hd"><span class="jstep-n">3</span><span class="jstep-l">사이즈표</span></div>
+        <label class="jconsent-row mark"><input type="checkbox"><span>핏팅 판정을 <b>더 정확하게</b> 하기 위해 사이즈표를 활용할게요</span></label>
+      </div>
+      <button class="jbtn">판정하기</button>
+    </div>
+  </div>
+</main>
+<script>
+  var el=document.querySelector('.jconsent-row span');
+  var lh=parseFloat(getComputedStyle(el).lineHeight);
+  var lines=Math.round(el.getBoundingClientRect().height/lh);
+  document.querySelector('h3').textContent += ' → 현재 ' + lines + '줄 (span 높이 ' + Math.round(el.getBoundingClientRect().height) + 'px)';
+</script>
+</body></html>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fit 배너 대안 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{--bg:#F6F6F5;--surface:#fff;--ink:#16140F;--ink2:#3A382F;--sub:#6E6B63;--sub2:#A6A29A;--line:#E6E5E1;--line2:#DAD8D2;--soft:#EDEDEA;--g:#2E4A3B;--gm:#5A7A68;--gs:#E7EFEA;--gl:#CBDDD2;--warn:#B0553F;}
+  *{box-sizing:border-box;} body{margin:0;background:var(--bg);color:var(--ink);font-family:'Pretendard',sans-serif;padding:40px 28px 80px;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:900px;margin:0 auto;}
+  .htop{font-size:22px;font-weight:800;letter-spacing:-.03em;} .hsub{margin:8px 0 30px;font-size:14px;color:var(--sub);line-height:1.6;}
+  .case{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px 28px 30px;margin-bottom:22px;}
+  .clab{display:inline-block;font-size:12px;font-weight:800;color:var(--g);background:var(--gs);border:1px solid var(--gl);padding:3px 10px;border-radius:20px;margin-bottom:6px;}
+  .cname{font-size:16px;font-weight:800;letter-spacing:-.02em;margin:0 0 3px;}
+  .cdesc{font-size:13px;color:var(--sub);margin:0 0 20px;line-height:1.55;}
+  .stage{background:var(--bg);border:1px dashed var(--line2);border-radius:14px;padding:24px 22px;}
+  /* 공통 타이틀 컨텍스트(스타일리스트 화면 톤) */
+  .jtitle{font-size:24px;font-weight:800;letter-spacing:-.035em;margin:0;}
+  .jsub{font-size:15px;color:var(--sub);margin:7px 0 0;line-height:1.6;}
+  ic{display:inline-flex;} svg{display:block;}
+
+  /* 현재(참고) */
+  .jflow{display:flex;align-items:center;flex-wrap:wrap;gap:7px 13px;padding:10px 16px;background:var(--gs);border:1px solid var(--gl);border-radius:14px;margin-top:18px;}
+  .jflow-s{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;color:var(--ink2);}
+  .jflow-ic{flex:none;width:28px;height:28px;border-radius:8px;background:var(--surface);color:var(--g);display:flex;align-items:center;justify-content:center;}
+  .jflow-ic svg{width:17px;height:17px;} .jflow-ar{color:#5A7A68;font-size:14px;font-weight:800;}
+
+  /* A · 조용한 캡션(박스 제거) */
+  .a-cap{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;margin-top:14px;font-size:13.5px;font-weight:700;color:var(--sub);}
+  .a-n{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:5px;background:var(--soft);color:var(--ink2);font-size:11px;font-weight:800;}
+  .a-cap .sep{color:var(--sub2);}
+
+  /* B · 무채색 스트립(초록 뺀 조용한 버전) */
+  .b-flow{display:flex;align-items:center;flex-wrap:wrap;gap:7px 14px;padding:12px 4px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:16px;}
+  .b-s{display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:800;color:var(--ink2);}
+  .b-ic{flex:none;width:26px;height:26px;border-radius:7px;background:var(--soft);color:var(--ink2);display:flex;align-items:center;justify-content:center;}
+  .b-ic svg{width:16px;height:16px;} .b-ar{color:var(--sub2);font-size:13px;font-weight:800;}
+
+  /* C · 가치 한 줄(단계 대신 '무엇을 해주는지') */
+  .c-band{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--gs);border:1px solid var(--gl);border-radius:14px;margin-top:16px;}
+  .c-ic{flex:none;width:34px;height:34px;border-radius:10px;background:var(--surface);color:var(--g);display:flex;align-items:center;justify-content:center;}
+  .c-ic svg{width:19px;height:19px;}
+  .c-tx{font-size:15px;font-weight:700;color:var(--ink2);line-height:1.5;} .c-tx b{color:var(--g);font-weight:800;}
+
+  /* D · 넘버 스텝(가벼운 스테퍼) */
+  .d-step{display:flex;align-items:center;flex-wrap:wrap;gap:10px 6px;margin-top:16px;}
+  .d-s{display:flex;align-items:center;gap:9px;padding:8px 14px 8px 8px;background:var(--surface);border:1px solid var(--line2);border-radius:999px;}
+  .d-n{flex:none;width:22px;height:22px;border-radius:50%;background:var(--g);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+  .d-t{font-size:14px;font-weight:800;color:var(--ink2);}
+  .d-line{width:16px;height:2px;border-radius:2px;background:var(--line2);}
+
+  /* E · 배너 제거(타이틀만) */
+  .e-note{margin-top:16px;font-size:12.5px;color:var(--sub2);font-style:italic;}
+</style></head><body>
+<div class="wrap">
+  <div class="htop">Fit 상단 배너 — 대안 방향 5</div>
+  <div class="hsub">지금 초록 흐름 바가 왼쪽 <b>①②③ 스텝 카드</b>랑 역할이 겹쳐요. 그래서 "더 조용하게 / 가치를 말하게 / 아예 덜어내기"까지 폭넓게 담았어요. 각 시안은 실제 타이틀 아래 위치에 넣어 봤어요.</div>
+
+  <!-- 현재 -->
+  <div class="case">
+    <span class="clab" style="color:var(--sub);background:var(--soft);border-color:var(--line2)">현재</span>
+    <p class="cname">초록 흐름 바</p>
+    <p class="cdesc">아이콘 3스텝 · full-width 초록 배너</p>
+    <div class="stage">
+      <h1 class="jtitle">이 옷, 맞을까요?</h1>
+      <p class="jsub">내 진단 결과를 기준으로 구매하려는 옷이 맞을지 알려드려요</p>
+      <div class="jflow">
+        <span class="jflow-s"><span class="jflow-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/></svg></span>원하는 옷 종류의 사이즈표를 넣으면</span>
+        <span class="jflow-ar">→</span>
+        <span class="jflow-s"><span class="jflow-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>값을 확인하고,</span>
+        <span class="jflow-ar">→</span>
+        <span class="jflow-s"><span class="jflow-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg></span>딱 판정해드려요</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- A -->
+  <div class="case">
+    <span class="clab">A</span>
+    <p class="cname">조용한 캡션 · 박스 제거</p>
+    <p class="cdesc">배너를 없애고 서브카피 아래 아주 가벼운 한 줄 캡션으로. 단계는 왼쪽 ①②③ 카드가 이미 안내하니 여기선 스치듯.</p>
+    <div class="stage">
+      <h1 class="jtitle">이 옷, 맞을까요?</h1>
+      <p class="jsub">내 진단 결과를 기준으로 구매하려는 옷이 맞을지 알려드려요</p>
+      <div class="a-cap"><span class="a-n">1</span>사이즈표 넣기<span class="sep">·</span><span class="a-n">2</span>값 확인<span class="sep">·</span><span class="a-n">3</span>판정</div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="case">
+    <span class="clab">B</span>
+    <p class="cname">무채색 스트립 · 초록 뺀 조용한 버전</p>
+    <p class="cdesc">지금 구조는 유지하되 초록 채움을 빼고 위아래 얇은 선만. 배너 느낌이 확 줄고 정보 전달만 남아요.</p>
+    <div class="stage">
+      <h1 class="jtitle">이 옷, 맞을까요?</h1>
+      <p class="jsub">내 진단 결과를 기준으로 구매하려는 옷이 맞을지 알려드려요</p>
+      <div class="b-flow">
+        <span class="b-s"><span class="b-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/></svg></span>사이즈표 넣기</span>
+        <span class="b-ar">→</span>
+        <span class="b-s"><span class="b-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>값 확인</span>
+        <span class="b-ar">→</span>
+        <span class="b-s"><span class="b-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg></span>판정</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="case">
+    <span class="clab">C</span>
+    <p class="cname">가치 한 줄 · '무엇을 해주는지'</p>
+    <p class="cdesc">단계를 나열하는 대신 이 화면이 <b>해주는 것</b>을 한 문장으로. 처음 온 사람에게 더 와닿아요.</p>
+    <div class="stage">
+      <h1 class="jtitle">이 옷, 맞을까요?</h1>
+      <p class="jsub">내 진단 결과를 기준으로 구매하려는 옷이 맞을지 알려드려요</p>
+      <div class="c-band">
+        <span class="c-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg></span>
+        <span class="c-tx">사이즈표만 있으면, <b>내 체형 기준으로</b> 이 옷이 맞을지 바로 확인해드려요</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- D -->
+  <div class="case">
+    <span class="clab">D</span>
+    <p class="cname">넘버 스텝 · 가벼운 스테퍼</p>
+    <p class="cdesc">번호 알약을 선으로 이은 진짜 '단계' 느낌. 배너보다 진행 안내로 읽혀요. 왼쪽 카드 번호와 톤이 이어져요.</p>
+    <div class="stage">
+      <h1 class="jtitle">이 옷, 맞을까요?</h1>
+      <p class="jsub">내 진단 결과를 기준으로 구매하려는 옷이 맞을지 알려드려요</p>
+      <div class="d-step">
+        <span class="d-s"><span class="d-n">1</span><span class="d-t">사이즈표 넣기</span></span>
+        <span class="d-line"></span>
+        <span class="d-s"><span class="d-n">2</span><span class="d-t">값 확인</span></span>
+        <span class="d-line"></span>
+        <span class="d-s"><span class="d-n">3</span><span class="d-t">판정</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- E -->
+  <div class="case">
+    <span class="clab">E</span>
+    <p class="cname">배너 제거 · 타이틀만</p>
+    <p class="cdesc">아예 없애기. 단계 안내는 왼쪽 ①②③ 카드가 전담하고, 상단은 타이틀+서브카피로 깔끔하게. 가장 여백이 넓어요.</p>
+    <div class="stage">
+      <h1 class="jtitle">이 옷, 맞을까요?</h1>
+      <p class="jsub">내 진단 결과를 기준으로 구매하려는 옷이 맞을지 알려드려요</p>
+      <div class="e-note">— 배너 자리 비움 (바로 아래 2단 입력/결과) —</div>
+    </div>
+  </div>
+
+</div>
+</body></html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏 카드 펼침 방식 후보 — 순수 CSS</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<style>
+/* ==========================================================================
+   _deal-variants.html — 핏 카드 8종 '펼치는 방식' 후보 모음(버리는 파일).
+   각 데크는 순수 CSS 무한루프(스택→펼침→유지→모임). 카드 내용은 bodytypes.json.
+   마음에 드는 번호 고르면 그 방식만 히어로(_home-deck)에 이식.
+   흰선 방지: 라운드=clip-path, .hc overflow 안 씀.
+   ========================================================================== */
+*{box-sizing:border-box; margin:0; padding:0}
+body{background:var(--bg); color:var(--ink); font-family:var(--sans); padding:36px 0 90px}
+.wrap{max-width:960px; margin:0 auto; padding:0 28px}
+.head h1{font-size:23px; font-weight:800; letter-spacing:-.03em}
+.head p{font-size:13.5px; color:var(--sub); margin-top:8px; line-height:1.6}
+section{margin-top:26px; border:1px solid var(--line); border-radius:16px; background:var(--surface,#fff); overflow:hidden}
+.lab{display:flex; align-items:baseline; gap:10px; padding:16px 22px 0}
+.lab .num{font-family:var(--num,monospace); font-size:12px; font-weight:800; color:var(--green); background:var(--green-soft); border-radius:6px; padding:2px 8px}
+.lab b{font-size:15px; font-weight:800}
+.lab span{font-size:12.5px; color:var(--sub)}
+.deck{position:relative; width:100%; height:430px}
+
+/* ── 카드(공통) ─────────────────────────────────────────────────────── */
+.card{position:absolute; width:160px; height:271px; z-index:var(--i);
+  background:#16171b; clip-path:inset(0 round 14px); transform-origin:50% 50%;
+  backface-visibility:hidden; will-change:transform;
+  animation-duration:5.6s; animation-iteration-count:infinite; animation-timing-function:cubic-bezier(.55,0,.25,1); animation-fill-mode:backwards}
+.card .hc{position:absolute; top:0; left:0; width:392px; height:664px; transform:scale(.40816); transform-origin:top left;
+  color:#fff; display:flex; flex-direction:column; align-items:center; padding:26px 26px 30px; background:#16171b}
+.card .hc .ctop{width:100%; display:flex; justify-content:flex-start}
+.card .hc .clogo{font-size:20px; font-weight:800; letter-spacing:-.05em}
+.card .hc .clogo .sq{display:inline-block; width:6px; height:6px; background:currentColor; margin-left:2px; vertical-align:baseline}
+.card .hc .hcbody{flex:1; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center}
+.card .hc .fig{position:relative; width:120px; height:184px; margin-bottom:6px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; transform:scale(.85)}
+.card .hc .fig .head{width:32px; height:36px; margin-bottom:-3px; z-index:2; position:relative}
+.card .hc .fig .head .face{position:absolute; inset:0; border-radius:10px 10px 8px 8px; background:#ecd9c9; z-index:2;
+  background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px),repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px)}
+.card .hc .fig .head .cap{position:absolute; top:-3px; left:-3px; right:-3px; height:13px; border-radius:10px 10px 45% 45%; background:#2a2b30; z-index:3}
+.card .hc .fig .head.female .cap{background:#9a7350}
+.card .hc .fig .head .longhair{position:absolute; top:-5px; left:-7px; right:-7px; bottom:1px; background:#9a7350; border-radius:50% 50% 36% 36% / 46% 46% 30% 30%; z-index:1}
+.card .hc .fig .head .ey{position:absolute; top:18px; width:4px; height:5px; border-radius:50%; background:#2a2b30; z-index:4}
+.card .hc .fig .head .ey.l{left:9px} .card .hc .fig .head .ey.r{right:9px}
+.card .hc .fig .body{width:120px; position:relative; image-rendering:pixelated;
+  background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 8px),repeating-linear-gradient(90deg,rgba(0,0,0,.16) 0 1px,transparent 1px 8px)}
+.card .hc .fig .body.straight{clip-path:polygon(38% 0,62% 0,62% 64%,64% 100%,36% 100%,38% 64%)}
+.card .hc .fig .body.aline{clip-path:polygon(40% 0,60% 0,60% 30%,88% 100%,12% 100%,40% 30%)}
+.card .hc .fig .body.vline{clip-path:polygon(13% 0,87% 0,64% 40%,60% 100%,40% 100%,36% 40%)}
+.card .hc .fig .body.xline{clip-path:polygon(17% 0,83% 0,57% 46%,87% 100%,13% 100%,43% 46%)}
+.card .hc .fig .body.balance{clip-path:polygon(33% 0,67% 0,60% 50%,67% 100%,33% 100%,40% 50%)}
+.card .hc .fig .body.diamond{clip-path:polygon(37% 0,63% 0,85% 50%,61% 100%,39% 100%,15% 50%)}
+.card .hc .fig .body.round{clip-path:ellipse(45% 47% at 50% 53%)}
+.card .hc .fig .body.tube{clip-path:polygon(43% 0,57% 0,57% 100%,43% 100%)}
+.card .hc .code{margin-top:18px; font-size:14px; font-weight:800; letter-spacing:.22em; opacity:.92}
+.card .hc .word{margin-top:12px; font-size:34px; font-weight:800; letter-spacing:-.03em; line-height:1.1; text-align:center}
+.card .hc .tagline{margin-top:16px; font-size:17px; line-height:1.5; opacity:.8; text-align:center; max-width:300px}
+
+/* ── ① 부채꼴 아크 — 아래 피벗 중심 좌우 대칭 부채 ── */
+.v-fan .card{left:calc(50% - 80px); top:78px; transform-origin:50% 158%; animation-name:sp-fan; animation-delay:calc(var(--i) * 70ms)}
+@keyframes sp-fan{
+  0%   {transform:rotate(0deg)}
+  20%  {transform:rotate(calc((var(--i) - 3.5) * 9deg))}
+  60%  {transform:rotate(calc((var(--i) - 3.5) * 9deg))}
+  82%  {transform:rotate(0deg)}
+  100% {transform:rotate(0deg)}
+}
+
+/* ── ② 리본 스프레드 — 아주 넓고 납작한 아크(딜러가 쫙 펼치듯) ── */
+.v-ribbon .card{left:calc(50% - 80px); top:120px; transform-origin:50% 520%; animation-name:sp-ribbon; animation-delay:calc(var(--i) * 55ms)}
+@keyframes sp-ribbon{
+  0%   {transform:rotate(0deg)}
+  20%  {transform:rotate(calc((var(--i) - 3.5) * 4.4deg))}
+  60%  {transform:rotate(calc((var(--i) - 3.5) * 4.4deg))}
+  82%  {transform:rotate(0deg)}
+  100% {transform:rotate(0deg)}
+}
+
+/* ── ③ 3D 원근 부채 — 손에 쥔 듯 카드가 안쪽으로 휘며 깊이감 ── */
+.v-persp{perspective:1500px}
+.v-persp .card{left:calc(50% - 80px); top:70px; transform-origin:50% 135%; animation-name:sp-persp; animation-delay:calc(var(--i) * 70ms)}
+@keyframes sp-persp{
+  0%   {transform:rotate(0deg) rotateY(0deg)}
+  20%  {transform:rotate(calc((var(--i) - 3.5) * 7deg)) rotateY(calc((var(--i) - 3.5) * -7deg))}
+  60%  {transform:rotate(calc((var(--i) - 3.5) * 7deg)) rotateY(calc((var(--i) - 3.5) * -7deg))}
+  82%  {transform:rotate(0deg) rotateY(0deg)}
+  100% {transform:rotate(0deg) rotateY(0deg)}
+}
+
+/* ── ④ 스택 리플 — 한 장씩 앞으로 튀어나와 보여주고 들어감(룩북 넘김) ── */
+.v-riffle .card{left:calc(50% - 80px); top:74px; animation-name:sp-riffle; animation-duration:4.4s; animation-delay:calc(var(--i) * 550ms); animation-timing-function:cubic-bezier(.3,.85,.25,1)}
+@keyframes sp-riffle{
+  0%   {transform:translateY(0) scale(1); z-index:1}
+  5%   {transform:translateY(-52px) scale(1.06); z-index:20}
+  16%  {transform:translateY(-52px) scale(1.06); z-index:20}
+  22%  {transform:translateY(0) scale(1); z-index:1}
+  100% {transform:translateY(0) scale(1); z-index:1}
+}
+
+@media(prefers-reduced-motion:reduce){ .card{animation:none} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <h1>핏 카드 펼침 방식 — 후보 4</h1>
+    <p>각 데크는 순수 CSS 무한루프(스택 → 펼침 → 유지 → 모임). 마음에 드는 번호 알려주시면 그 방식만 히어로에 이식할게요.</p>
+  </div>
+
+  <section><div class="lab"><span class="num">1</span><b>부채꼴 아크</b><span>아래 축 중심 좌우 대칭 부채 — 정갈하고 카드다움</span></div>
+    <div class="deck v-fan" data-deck></div></section>
+
+  <section><div class="lab"><span class="num">2</span><b>리본 스프레드</b><span>아주 넓고 납작하게 쫙 — 딜러가 테이블에 펼치는 플로리시</span></div>
+    <div class="deck v-ribbon" data-deck></div></section>
+
+  <section><div class="lab"><span class="num">3</span><b>3D 원근 부채</b><span>손에 쥔 듯 안쪽으로 휘는 입체감 — 임팩트·프리미엄</span></div>
+    <div class="deck v-persp" data-deck></div></section>
+
+  <section><div class="lab"><span class="num">4</span><b>스택 리플(한 장씩)</b><span>한 장씩 앞으로 튀어나와 보여주고 들어감 — 캐릭터 또렷</span></div>
+    <div class="deck v-riffle" data-deck></div></section>
+</div>
+
+<script>
+(function(){
+  var G='female';
+  var CODES=['TRI','INV','HRG','STR','BAL','DIA','RND','TUB'];
+  function figHTML(silhouette, point){
+    var head='<div class="head '+G+'">'+(G==='female'?'<span class="longhair"></span>':'')+
+      '<span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div>';
+    return '<div class="fig">'+head+'<div class="body '+silhouette+'" style="background-color:'+point+'; height:150px"></div></div>';
+  }
+  function cardHTML(code, t){
+    var g=(t.gender&&(t.gender[G]||t.gender.female))||{};
+    var tag=(g.profile&&g.profile[0])||'';
+    return '<div class="hc" style="background:radial-gradient(ellipse 70% 34% at 50% 11%, '+t.point+'2b, transparent 60%), linear-gradient(160deg,#191a1f,#0f1014)">'+
+      '<div class="ctop"><span class="clogo">Fitting<i class="sq"></i></span></div>'+
+      '<div class="hcbody">'+figHTML(t.silhouette, t.point)+
+        '<div class="code" style="color:'+t.point+'">'+code+'</div>'+
+        '<div class="word">'+t.name+'</div>'+
+        '<div class="tagline">'+tag+'</div></div></div>';
+  }
+  fetch('data/bodytypes.json').then(function(r){ return r.json(); }).then(function(j){
+    var map={}; j.types.forEach(function(t){ map[t.code]=t; });
+    [].forEach.call(document.querySelectorAll('[data-deck]'), function(deck){
+      CODES.forEach(function(code,i){
+        if(!map[code]) return;
+        var el=document.createElement('div');
+        el.className='card'; el.style.setProperty('--i', i);
+        el.innerHTML=cardHTML(code, map[code]);
+        deck.appendChild(el);
+      });
+    });
+  }).catch(function(e){ document.querySelector('.wrap').insertAdjacentHTML('beforeend','<p style="color:var(--sub);margin-top:20px">데이터 로드 실패 — npm run serve로 열어주세요.</p>'); });
+})();
+</script>
+</body>
+</html>

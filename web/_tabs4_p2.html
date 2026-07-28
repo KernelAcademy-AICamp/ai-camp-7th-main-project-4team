@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅 — 진단 결과 (4그룹 탭 시안)</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+<link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
+<link rel="stylesheet" href="css/diag.css?v=c86b6818">
+<link rel="stylesheet" href="css/result.css?v=49d3ba32">
+<style>
+  /* ───── 탭 시안 전용 스타일 (확정되면 result.css로 이관) ───── */
+
+  /* 탭 바 — 스크롤해도 위에 붙어 있게. 활성=잉크 글씨 + 딥그린 밑줄(채움 금지 원칙) */
+  .rtabs{ position:sticky; top:0; z-index:30; display:flex; gap:4px; margin:26px 0 0;
+    border-bottom:1.5px solid var(--line); background:var(--canvas,#FBFAF8); }
+  .rtab{ appearance:none; background:none; border:0; font-family:inherit; cursor:pointer;
+    padding:14px 20px 13px; font-size:17px; font-weight:700; letter-spacing:-.02em; color:var(--muted);
+    border-bottom:2.5px solid transparent; margin-bottom:-1.5px; white-space:nowrap; }
+  .rtab:hover{ color:var(--ink); }
+  .rtab.on{ color:var(--ink); font-weight:800; border-bottom-color:var(--accent); }
+  .rtab .n{ display:inline-block; font-size:13px; font-weight:800; color:var(--muted);
+    background:#EDECE8; border-radius:20px; padding:1px 8px; margin-right:8px;
+    font-family:var(--suit,inherit); font-feature-settings:'tnum'; }
+  .rtab.on .n{ color:#fff; background:var(--accent); }
+
+  /* 패널 — 한 번에 하나만 */
+  .rpane{ display:none; margin-top:26px; }
+  .rpane.on{ display:block; animation:rfade .22s ease both; }
+  @keyframes rfade{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
+  @media(prefers-reduced-motion:reduce){ .rpane.on{ animation:none; } }
+
+  /* 탭2·3 — 카드가 없으니 좌우 같은 폭 2단 */
+  .rgrid2{ display:grid; grid-template-columns:1fr 1fr; gap:34px; align-items:start; }
+  @media(max-width:840px){ .rgrid2{ grid-template-columns:1fr; gap:16px; } }
+
+  /* 탭 안내 한 줄 — 이 탭이 뭘 보여주는지 */
+  .rpane-lead{ font-size:15.5px; color:var(--muted); margin:0 0 18px; }
+
+  /* '이렇게 계산했어요' — UT에서 "자세한 정보도 보고 싶다" → 정확도 근거 노출 (임시 카피) */
+  .rhow{ counter-reset:rh; }
+  .rhow .k{ font-size:19px; font-weight:800; color:var(--ink); }
+  .rhow-step{ display:flex; gap:12px; padding:15px 0; border-bottom:1px solid var(--line); }
+  .rhow-step:last-of-type{ border-bottom:0; padding-bottom:4px; }
+  .rhow-step .no{ flex:none; width:24px; height:24px; border-radius:8px; background:#E7EFEA; color:var(--accent);
+    font-size:14px; font-weight:800; display:flex; align-items:center; justify-content:center;
+    font-family:var(--suit,inherit); font-feature-settings:'tnum'; }
+  .rhow-step b{ display:block; font-size:16px; font-weight:800; color:var(--ink); letter-spacing:-.02em; }
+  .rhow-step p{ margin:5px 0 0; font-size:14.5px; color:var(--muted); line-height:1.6; }
+
+  /* CTA는 탭 밖 공통 — 탭 영역과 시각적으로 떼어놓기 */
+  .rbottom{ margin-top:34px; padding-top:26px; border-top:1px solid var(--line); }
+
+  /* ── 모바일 ── result.css의 '한 흐름 재정렬'(display:contents + order)은 탭과 충돌 → 해제 */
+  @media(max-width:640px){
+    .rtabs{ margin-top:18px; gap:0; overflow-x:auto; scrollbar-width:none; }
+    .rtabs::-webkit-scrollbar{ display:none; }
+    .rtab{ flex:1; padding:13px 8px 12px; font-size:15px; }
+    .rtab .n{ display:none; }
+    .rpane{ margin-top:18px; }
+    .rleft, .rcol{ display:flex !important; flex-direction:column; gap:14px; }
+    #cardslot,#rshare,#recs,#rfb,#rtip,#rtypeid,#rfit,#meas,#means,.rcta-note{ order:0 !important; }
+    .rbottom{ margin-top:24px; padding-top:0; border-top:0; }
+  }
+  /* ── 시안 조정 ──────────────────────────────
+     카드가 이미 보여주는 BAL·이름·설명1줄은 감추고, 카드에 없는 것만 남김 */
+  /* 왼쪽은 카드 + 정확도 배지 + 공유하기만. 유형 블록은 숨겨두고 조각만 다른 탭으로 옮겨 씀 */
+  #rtypeid{ display:none; }
+  #rtypeinfo .dtl-code, #rtypeinfo .dtl-name{ display:none; }   /* 카드가 이미 보여줌 */
+  #rtypeinfo .dtl-desc b{ display:none; }                        /* 설명 1줄 = 카드 tagline과 동일 */
+  #rtypeinfo .dtl-korea{ display:inline-block; font-size:13px; color:var(--muted); }
+  #rtypeinfo .dtl-desc{ margin-top:8px; font-size:15px; line-height:1.6; }
+  /* 해시태그는 유형 카드로 이동함 → 한 끗은 팁 문장만 담음 */
+  .dtl-tip .dtl-hash span{ font-size:12.5px; font-weight:700; color:#CBDDD2;
+    background:rgba(255,255,255,.09); padding:5px 11px; border-radius:20px; }
+  /* 해시태그를 오른쪽으로 뺀 자리 */
+  .dtl-hashbox{ display:flex; flex-wrap:wrap; gap:7px; }
+  .dtl-hashbox:empty{ display:none; }
+</style>
+</head>
+<body>
+
+<div id="rloading" class="rloading" role="status" aria-live="polite">
+  <div class="rloading-in"><div class="rloading-spin" aria-hidden="true"></div><p>결과를 준비하고 있어요</p></div>
+</div>
+
+<div class="dhead"><div class="dhead-in"><a class="logo" href="index.html">Fitting<i></i></a><a class="dx" href="index.html" title="닫기">✕</a></div></div>
+
+<div class="rwrap">
+  <h1 id="rtitle">내 핏 타입이 나왔어요</h1>
+  <div class="subttl"><span>평소 입던 옷으로 분석한 결과예요</span><i class="sep"> · </i><span>저장하고 브랜드별 추천 사이즈도 확인해보세요</span></div>
+  <div id="rupgrade" class="rupgrade" hidden></div>
+
+  <!-- ───── 탭 ───── -->
+  <div class="rtabs" role="tablist" aria-label="진단 결과 보기">
+    <button type="button" class="rtab" role="tab" aria-selected="false" aria-controls="p1" id="t1" onclick="goTab(1)"><span class="n">1</span>내 핏 카드</button>
+    <button type="button" class="rtab on" role="tab" aria-selected="true" aria-controls="p2" id="t2" onclick="goTab(2)"><span class="n">2</span>체형 인사이트</button>
+    <button type="button" class="rtab"    role="tab" aria-selected="false" aria-controls="p3" id="t3" onclick="goTab(3)"><span class="n">3</span>체형 자세히 보기</button>
+    <button type="button" class="rtab"    role="tab" aria-selected="false" aria-controls="p4" id="t4" onclick="goTab(4)"><span class="n">4</span>정확도 근거</button>
+  </div>
+
+  <!-- 탭1 — 카드 + 브랜드 추천 -->
+  <section class="rpane" id="p1" role="tabpanel" aria-labelledby="t1">
+    <div class="rgrid">
+      <div class="rleft">
+        <div id="cardslot"></div>
+        <div id="rshare" class="rshare" hidden>
+          <button type="button" class="rsharebtn" onclick="shareResult()">
+            <svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>
+            내 핏 카드 공유하기
+          </button>
+          <span class="rshare-note">친구와 함께 핏을 공유해보세요</span>
+        </div>
+        <div id="rtypeid" class="dtl-id"></div>
+      </div>
+      <div class="rcol">
+        <div id="rtip" class="dtl-tip"></div>
+        <div id="recs" class="rpanel"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 탭2 — 체형 인사이트 + 결과 풀이 -->
+  <section class="rpane on" id="p2" role="tabpanel" aria-labelledby="t2">
+    <p class="rpane-lead">이 결과가 왜 나왔는지, 내 몸이 어떤 비율인지 보여드려요</p>
+    <div class="rgrid2">
+      <div class="rcol">
+        <div class="rpanel" id="rtypeinfop"><div class="rkicker">내 체형 유형</div><div id="rtypeinfo"></div></div>
+        <div id="meas" class="rpanel"></div>
+      </div>
+      <div class="rcol"><div id="means" class="rpanel"></div></div>
+    </div>
+  </section>
+
+  <!-- 탭3 — 스타일리스트에게 전달되는 아바타 -->
+  <section class="rpane" id="p3" role="tabpanel" aria-labelledby="t3">
+    <p class="rpane-lead">내 몸이 어떤 실루엣인지, 부위별로 얼마나 될지 그림으로 봐요</p>
+    <div class="rgrid2">
+      <div class="rcol">
+        <div class="rpanel">
+          <div class="rkicker">내 체형 아바타</div>
+          <div class="rnote">재보지 않아도 이 정도로 <b>예상</b>돼요 · 진단을 더 하면 범위가 좁아져요</div>
+          <div id="ravatar" style="margin-top:14px"></div>
+        </div>
+      </div>
+      <div class="rcol">
+        <div class="rpanel">
+          <div class="rkicker">이 그림은 이렇게 쓰여요</div>
+          <div class="rnote">스타일리스트에게 매칭을 요청하면 <b>이 실루엣이 그대로 전달</b>돼요 · 키·몸무게 같은 숫자는 공유되지 않아요</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 탭4 — 정확도 판단 근거 -->
+  <section class="rpane" id="p4" role="tabpanel" aria-labelledby="t4">
+    <p class="rpane-lead">이 결과를 얼마나 믿을 수 있는지, 어떤 계산에서 나왔는지 보여드려요</p>
+    <div class="rgrid2">
+      <div class="rcol">
+        <!-- 계산 근거 (임시 카피 — 문구 확정 필요) -->
+        <div class="rpanel rhow">
+          <div class="k">이렇게 계산했어요</div>
+          <div class="rhow-step"><span class="no">1</span><div><b>입어본 옷의 실측 사이즈</b><p>브랜드 사이즈표의 실제 치수와, 그 옷이 어땠는지(딱맞음·조임·남음)를 함께 봐요</p></div></div>
+          <div class="rhow-step"><span class="no">2</span><div><b>어깨·가슴·허리·엉덩이 역산</b><p>사이즈표와 착용감을 맞춰 내 몸 치수 범위를 좁혀요. 옷이 많을수록 범위가 좁아져요</p></div></div>
+          <div class="rhow-step"><span class="no">3</span><div><b>8가지 체형 유형에 대조</b><p>부위별 비율을 8유형 기준과 견줘 가장 가까운 유형으로 분류해요</p></div></div>
+          <div class="rhow-step"><span class="no">4</span><div><b>브랜드별 사이즈 대조</b><p>브랜드마다 다른 실측치에 내 치수를 대입해 가장 잘 맞는 사이즈를 골라요</p></div></div>
+        </div>
+
+        <div class="rpanel" id="rfb"><div class="rfbq">추천 결과가 잘 맞나요? <span>· 정확도 검증</span></div>
+          <div class="rseg"><div class="o ok" onclick="fb(this,'맞음')"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> 맞아요</div><div class="o mid" onclick="fb(this,'보통')"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg> 보통</div><div class="o no" onclick="fb(this,'안맞음')"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg> 안 맞아요</div></div>
+          <label class="rconsent"><input type="checkbox" id="eiConsent" onchange="setEngineConsent(this.checked)">
+            <span class="rconsent-txt"><b>익명으로 진단 개선</b>에 활용하는 데 동의하며, <b>만 14세 이상</b> 또는 법정대리인 동의를 확인했어요 (선택)
+            </span></label></div>
+
+        <a class="rjudge" href="judge.html">
+          <span class="rjudge-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/><circle cx="8" cy="6" r="1.6" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="1.6" fill="currentColor" stroke="none"/></svg></span>
+          <span class="rjudge-tx"><b>사려는 옷이 따로 있나요?</b><span>사이즈표를 올리면 그 옷도 맞을지 판정해요</span></span>
+          <span class="rjudge-go">판정하기 →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── 탭 밖 공통 ───── -->
+  <div class="rbottom">
+    <div class="rcta"><button type="button" class="rbtn p" onclick="saveResult()">결과 저장하기</button><button type="button" class="rbtn l" onclick="goExpert()">스타일리스트 찾기</button></div>
+    <p class="rcta-note">비회원 진단은 끝까지 무료예요 · 저장·스타일리스트 매칭은 로그인 후 이어져요</p>
+    <p class="rcta-note" style="margin-top:10px"><a href="#" onclick="resetDiag();return false" style="color:var(--sub);text-decoration:underline"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg> 진단 초기화 — 입력을 지우고 처음부터</a></p>
+    <p class="rcta-note" style="margin-top:22px;padding-top:16px;border-top:1px solid var(--line);font-size:14.5px;color:var(--sub2)"><a href="about.html" style="color:var(--sub2)">서비스 소개</a> · <a href="terms.html" style="color:var(--sub2)">이용약관</a> · <a href="privacy.html" style="color:var(--sub2)">개인정보 처리방침</a></p>
+  </div>
+</div>
+
+<script>
+  // 시안: 해시태그를 카드 밑 → 오른쪽(한 끗 아래)으로 옮김
+  (function moveHash(){
+    var tries=0;
+    var t=setInterval(function(){
+      var hash=document.querySelector("#rtypeid .dtl-hash");   // 태그는 카드로 이동 → 여기선 안 씀(숨김)
+      var korea=document.querySelector("#rtypeid .dtl-korea"), desc=document.querySelector("#rtypeid .dtl-desc"), idst=document.getElementById("rtypeinfo");
+      if(hash && korea && desc && idst){
+        hash.remove();                                  // 카드에 이미 있음(중복 방지)
+        idst.appendChild(korea); idst.appendChild(desc);
+        clearInterval(t);
+      }
+      if(++tries>40) clearInterval(t);
+    },100);
+  })();
+  /* 시안용 실루엣 목업 — 실제로는 pro-quote.js의 bodySilhouette()을 공용화해서 씀 */
+  (function avatarMock(){
+    var el=document.getElementById("ravatar"); if(!el) return;
+    var TP="#2E4A3B";
+    function tag(y,txt){ return '<g><rect x="18" y="'+(y-13)+'" width="92" height="26" rx="13" fill="#EAF0EC" stroke="'+TP+'" stroke-opacity=".35"/>'+
+      '<circle cx="34" cy="'+y+'" r="3.4" fill="'+TP+'"/><text x="46" y="'+(y+4)+'" font-size="12" font-weight="700" fill="'+TP+'">'+txt+'</text></g>'; }
+    function val(y,part,v,pm){ return '<text x="248" y="'+(y-3)+'" font-size="11.5" font-weight="700" fill="#6E6B63">'+part+'</text>'+
+      '<text x="248" y="'+(y+14)+'" font-size="15" font-weight="800" fill="#16140F">약 '+v+'<tspan font-size="11" font-weight="700" fill="#6E6B63">cm ±'+pm+'</tspan></text>'; }
+    el.innerHTML='<svg viewBox="0 0 360 470" style="width:100%;display:block">'+
+      '<ellipse cx="176" cy="462" rx="46" ry="8" fill="'+TP+'" opacity=".10"/>'+
+      '<ellipse cx="176" cy="44" rx="24" ry="28" fill="#EAF0EC" stroke="'+TP+'" stroke-width="2"/>'+
+      '<rect x="165" y="64" width="22" height="30" rx="8" fill="#EAF0EC" stroke="'+TP+'" stroke-width="2"/>'+
+      '<path d="M136 104 Q176 92 216 104 L222 168 Q206 214 210 262 Q200 300 200 300 L152 300 Q152 300 142 262 Q146 214 130 168 Z" fill="#EAF0EC" stroke="'+TP+'" stroke-width="2" stroke-linejoin="round"/>'+
+      '<path d="M152 300 L156 452 M200 300 L196 452" stroke="'+TP+'" stroke-width="2" fill="none"/>'+
+      '<path d="M138 110 Q120 170 126 240" stroke="'+TP+'" stroke-width="11" fill="none" stroke-linecap="round" opacity=".85"/>'+
+      '<path d="M214 110 Q232 170 226 240" stroke="'+TP+'" stroke-width="11" fill="none" stroke-linecap="round" opacity=".85"/>'+
+      tag(112,"넓은 편")+tag(172,"슬림 편")+tag(238,"슬림 편")+tag(292,"표준")+
+      val(112,"어깨","39","1")+val(172,"가슴","84","4")+val(238,"허리","69","5")+val(292,"엉덩이","91","4")+
+      '</svg>';
+  })();
+  function goTab(n){
+    for(var i=1;i<=4;i++){
+      var tab=document.getElementById('t'+i), pane=document.getElementById('p'+i);
+      var on=(i===n);
+      tab.classList.toggle('on',on); tab.setAttribute('aria-selected',on?'true':'false');
+      pane.classList.toggle('on',on);
+    }
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+</script>
+<script src="js/demo-session.js?v=f0075c36"></script>
+<script src="js/body-model.js?v=8fe572dd"></script>
+<script src="js/engine.js?v=de45a879"></script>
+<script src="js/bodytype.js?v=f6e75dd3"></script>
+<script src="js/config.js?v=5f55324e"></script>
+<script src="js/data.js?v=0b603d0c"></script>
+<script src="js/result.js?v=ccf4afff"></script>
+<script src="js/a11y.js?v=1876c5ec"></script>
+</body>
+</html>

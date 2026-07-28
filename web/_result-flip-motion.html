@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>후보 · 카드 뒤집기 모션</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{ --tp:#ff9ec5; }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; background:#EEEDEA; color:#16140F; -webkit-font-smoothing:antialiased; padding:38px 24px 90px;}
+  .head{max-width:1200px; margin:0 auto 30px;}
+  .head h1{font-size:24px; font-weight:800; letter-spacing:-.03em;}
+  .head p{font-size:14.5px; color:#6E6B63; margin-top:8px; line-height:1.6;}
+
+  .gallery{max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:44px 34px; justify-items:center;}
+  .cand{width:320px;}
+  .cand .lab{margin-bottom:14px;}
+  .cand .lab b{font-size:16px; font-weight:800;}
+  .cand .lab span{display:block; font-size:13px; color:#6E6B63; line-height:1.5; margin-top:4px;}
+
+  /* ── 뒤집기 무대 ── */
+  .stage{perspective:1400px; width:320px; height:542px; cursor:pointer;}
+  .flip{position:relative; width:100%; height:100%; transform-style:preserve-3d;}
+  .cf{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+    border-radius:26px; overflow:hidden; color:#fff; display:flex; flex-direction:column; align-items:center; padding:26px 24px;
+    box-shadow:0 20px 46px rgba(10,11,14,.30);}
+  .front{background:radial-gradient(ellipse 70% 34% at 50% 11%, #ff9ec52b, transparent 60%), linear-gradient(160deg,#191a1f,#0f1014);}
+  .back{background:linear-gradient(165deg,#20222a,#101116);}
+
+  .ctop{width:100%; display:flex; justify-content:flex-start; font-size:11px; font-weight:800; letter-spacing:.14em;}
+  .clogo{font-size:17px; font-weight:800; letter-spacing:-.05em;}
+  .clogo i{display:inline-block; width:5px; height:5px; background:var(--tp); margin-left:2px;}
+  .body{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;}
+  .fig{width:86px; height:120px; position:relative; margin-bottom:8px;}
+  .fig .b{position:absolute; bottom:0; left:0; right:0; height:104px; background:var(--tp); clip-path:polygon(37% 0,63% 0,85% 50%,61% 100%,39% 100%,15% 50%);}
+  .fig .b::before{content:""; position:absolute; left:0; top:0; bottom:0; width:42%; background:rgba(255,255,255,.18);}
+  .fig .h{position:absolute; top:0; left:50%; transform:translateX(-50%); width:26px; height:30px; border-radius:9px 9px 7px 7px; background:#ecd9c9; z-index:2;}
+  .fig .hh{position:absolute; top:-4px; left:50%; transform:translateX(-50%); width:36px; height:34px; border-radius:50% 50% 36% 36%; background:#9a7350; z-index:1;}
+  .code{font-size:12px; font-weight:800; letter-spacing:.2em; color:var(--tp); margin-top:8px;}
+  .word{font-size:27px; font-weight:800; letter-spacing:-.03em; margin-top:9px;}
+  .tag{font-size:13.5px; line-height:1.5; opacity:.75; margin-top:12px;}
+  .hint{width:100%; text-align:center; font-size:12px; font-weight:700; color:rgba(255,255,255,.5); padding-top:12px; border-top:1px solid rgba(255,255,255,.1);}
+  .back .body .bl{font-size:12px; font-weight:800; letter-spacing:.14em; color:var(--tp);}
+  .back .body .bt{font-size:20px; font-weight:800; margin-top:12px; line-height:1.4;}
+  .back .body .bs{font-size:13.5px; color:rgba(255,255,255,.6); margin-top:10px;}
+
+  /* ══ 모션별 ══ */
+  /* 공통 전환 세팅은 각 모션에서 */
+  .m-right .flip{transition:transform .72s cubic-bezier(.4,.05,.2,1);}
+  .m-right .back{transform:rotateY(180deg);}
+  .m-right.on .flip{transform:rotateY(-180deg);}   /* 오른쪽으로 넘김 */
+
+  .m-left .flip{transition:transform .72s cubic-bezier(.4,.05,.2,1);}
+  .m-left .back{transform:rotateY(180deg);}
+  .m-left.on .flip{transform:rotateY(180deg);}      /* 왼쪽으로 넘김(현재) */
+
+  .m-up .flip{transition:transform .72s cubic-bezier(.4,.05,.2,1);}
+  .m-up .back{transform:rotateX(180deg);}
+  .m-up.on .flip{transform:rotateX(180deg);}         /* 위로 넘김(책장) */
+
+  /* 팝 플립 — 오른쪽 회전 + 중간에 살짝 커짐 */
+  .m-pop .flip{transition:transform .8s cubic-bezier(.34,1.4,.4,1);}
+  .m-pop .back{transform:rotateY(180deg);}
+  .m-pop.on .flip{transform:rotateY(-180deg) scale(1);}
+  .m-pop .stage{}
+  .m-pop.on .flip{animation:pop .8s ease;}
+  @keyframes pop{0%{transform:rotateY(0) scale(1);}45%{transform:rotateY(-90deg) scale(1.06);}100%{transform:rotateY(-180deg) scale(1);}}
+
+  /* 크로스페이드 — 3D 회전 없이 부드럽게 교체(가장 안전) */
+  .m-fade .flip{transform-style:flat;}
+  .m-fade .cf{transition:opacity .4s ease, transform .5s cubic-bezier(.4,.05,.2,1); backface-visibility:visible;}
+  .m-fade .back{transform:scale(.94); opacity:0;}
+  .m-fade .front{opacity:1;}
+  .m-fade.on .front{opacity:0; transform:scale(.94);}
+  .m-fade.on .back{opacity:1; transform:scale(1);}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>카드 뒤집기 모션 — 후보 5종</h1>
+  <p>각 카드를 눌러 뒤집어 보세요 · 지금 적용된 건 "왼쪽으로 넘김(B)"이에요 · 방향·축·느낌만 다르고 내용은 동일</p>
+</div>
+
+<div class="gallery" id="g">
+
+  <!-- 오른쪽 -->
+  <div class="cand">
+    <div class="lab"><b>A. 오른쪽으로 넘김</b><span>오른손으로 카드 오른쪽을 젖히는 느낌 · Y축</span></div>
+    <div class="stage m-right"></div>
+  </div>
+  <!-- 왼쪽(현재) -->
+  <div class="cand">
+    <div class="lab"><b>B. 왼쪽으로 넘김 <em style="color:#B0553F;font-style:normal;font-size:11px">(현재)</em></b><span>왼쪽으로 도는 기본값 · Y축</span></div>
+    <div class="stage m-left"></div>
+  </div>
+  <!-- 위로 -->
+  <div class="cand">
+    <div class="lab"><b>C. 위로 넘김 (책장)</b><span>노트 페이지 넘기듯 위→아래 · X축</span></div>
+    <div class="stage m-up"></div>
+  </div>
+  <!-- 팝 -->
+  <div class="cand">
+    <div class="lab"><b>D. 팝 플립</b><span>오른쪽으로 돌면서 중간에 살짝 커짐 · 경쾌</span></div>
+    <div class="stage m-pop"></div>
+  </div>
+  <!-- 크로스페이드 -->
+  <div class="cand">
+    <div class="lab"><b>E. 크로스페이드</b><span>3D 회전 없이 부드럽게 교체 · 가장 안정적</span></div>
+    <div class="stage m-fade"></div>
+  </div>
+
+</div>
+
+<script>
+  var FRONT =
+    '<div class="cf front">'+
+      '<div class="ctop"><span class="clogo">Fitting<i></i></span></div>'+
+      '<div class="body">'+
+        '<div class="fig"><div class="hh"></div><div class="h"></div><div class="b"></div></div>'+
+        '<div class="code">DIA</div>'+
+        '<div class="word">소프트 다이아</div>'+
+        '<div class="tag">어깨·다리는 슬림하고<br>허리·배에 볼륨이 있는 다이아 라인</div>'+
+      '</div>'+
+      '<div class="hint">눌러서 뒤집기 ↻</div>'+
+    '</div>';
+  var BACK =
+    '<div class="cf back">'+
+      '<div class="ctop"><span class="clogo" style="color:var(--tp)">FIT 상세</span></div>'+
+      '<div class="body">'+
+        '<div class="bl">FIT INSIGHT</div>'+
+        '<div class="bt">중앙은 흐르게 두고<br>어깨·다리를 살리면<br>실루엣이 정돈돼요</div>'+
+        '<div class="bs">(뒷면 구성은 후보에서 선택)</div>'+
+      '</div>'+
+      '<div class="hint">눌러서 앞면으로 ↺</div>'+
+    '</div>';
+  document.querySelectorAll('.stage').forEach(function(st){
+    st.innerHTML = '<div class="flip">'+FRONT+BACK+'</div>';
+    st.addEventListener('click', function(){ st.classList.toggle('on'); });
+  });
+</script>
+</body>
+</html>

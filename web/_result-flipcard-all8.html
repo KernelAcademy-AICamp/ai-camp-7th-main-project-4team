@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>목업 · 8체형 플립카드</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; background:#EEEDEA; color:#16140F; -webkit-font-smoothing:antialiased; padding:38px 24px 100px;}
+  .head{max-width:1300px; margin:0 auto 34px;}
+  .head h1{font-size:24px; font-weight:800; letter-spacing:-.03em;}
+  .head p{font-size:14.5px; color:#6E6B63; margin-top:8px; line-height:1.6;}
+
+  .gallery{max-width:1300px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fill,minmax(392px,1fr)); gap:54px 40px; justify-items:center;}
+  .cand{width:392px;}
+  .tlabel{font-size:15px; font-weight:800; margin-bottom:14px;} .tlabel span{color:#6E6B63; font-weight:600; margin-left:6px;}
+
+  /* ── 플립 카드 (실제 결과카드와 동일) ── */
+  .flipwrap{perspective:1600px; width:392px; max-width:100%;}
+  .flip{position:relative; width:100%; min-height:664px; transition:transform .72s cubic-bezier(.4,.05,.2,1); transform-style:preserve-3d; cursor:pointer;}
+  .flip.turned{transform:rotateY(180deg);}
+  .cface{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+        border-radius:30px; overflow:hidden; color:#fff; display:flex; flex-direction:column; align-items:center;
+        padding:24px 26px 26px; background:#16171b; box-shadow:0 24px 54px rgba(10,11,14,.30);}
+  .cface.back{transform:rotateY(180deg);}
+
+  /* 앞면 = 온보딩 카드 */
+  .front{padding:26px 26px 30px;
+    background:radial-gradient(ellipse 70% 34% at 50% 11%, color-mix(in srgb, var(--tp) 17%, transparent), transparent 60%), linear-gradient(160deg,#191a1f,#0f1014);}
+  .ctop{width:100%; display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:800; letter-spacing:.16em;}
+  .front .ctop{justify-content:flex-start;}
+  .clogo{font-size:20px; font-weight:800; letter-spacing:-.05em;}
+  .clogo .sq{display:inline-block; width:6px; height:6px; background:currentColor; margin-left:2px; vertical-align:baseline;}
+  .hcbody{flex:1; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .fig{position:relative; width:120px; height:184px; margin-bottom:6px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; transform:scale(.85);}
+  .fig .head{width:32px; height:36px; margin-bottom:-3px; z-index:2; position:relative; flex:none;}
+  .fig .head .longhair{position:absolute; top:-5px; left:-7px; right:-7px; bottom:1px; background:#9a7350; border-radius:50% 50% 36% 36% / 46% 46% 30% 30%; z-index:1;}
+  .fig .head .face{position:absolute; inset:0; border-radius:10px 10px 8px 8px; background:#ecd9c9; z-index:2;
+    background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px),repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px);}
+  .fig .head .cap{position:absolute; top:-3px; left:-3px; right:-3px; height:13px; border-radius:10px 10px 45% 45%; background:#9a7350; z-index:3;}
+  .fig .head .ey{position:absolute; top:18px; width:4px; height:5px; border-radius:50%; background:#2a2b30; z-index:4;}
+  .fig .head .ey.l{left:9px;} .fig .head .ey.r{right:9px;}
+  .fig .body{width:120px; height:150px; position:relative; flex:none; background:var(--tp);
+    background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 8px),repeating-linear-gradient(90deg,rgba(0,0,0,.16) 0 1px,transparent 1px 8px);}
+  .fig .body::before{content:""; position:absolute; left:0; top:0; bottom:0; width:42%; background:rgba(255,255,255,.18);}
+  .fig .body.straight{clip-path:polygon(38% 0,62% 0,62% 64%,64% 100%,36% 100%,38% 64%);}
+  .fig .body.aline{clip-path:polygon(40% 0,60% 0,60% 30%,88% 100%,12% 100%,40% 30%);}
+  .fig .body.vline{clip-path:polygon(13% 0,87% 0,64% 40%,60% 100%,40% 100%,36% 40%);}
+  .fig .body.xline{clip-path:polygon(17% 0,83% 0,57% 46%,87% 100%,13% 100%,43% 46%);}
+  .fig .body.balance{clip-path:polygon(33% 0,67% 0,60% 50%,67% 100%,33% 100%,40% 50%);}
+  .fig .body.diamond{clip-path:polygon(37% 0,63% 0,85% 50%,61% 100%,39% 100%,15% 50%);}
+  .fig .body.round{clip-path:ellipse(45% 47% at 50% 53%);}
+  .fig .body.tube{clip-path:polygon(43% 0,57% 0,57% 100%,43% 100%);}
+  .code{margin-top:18px; font-size:14px; font-weight:800; letter-spacing:.22em; opacity:.92; color:var(--tp);}
+  .word{margin-top:12px; font-size:34px; font-weight:800; letter-spacing:-.03em; line-height:1.1; text-align:center;}
+  .tagline{margin-top:16px; font-size:17px; line-height:1.5; opacity:.8; text-align:center; max-width:300px;}
+  .fliphint{width:100%; text-align:center; font-size:13px; font-weight:700; color:rgba(255,255,255,.6); padding:14px 0 2px; border-top:1px solid rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; gap:6px;}
+  .fliphint svg{width:15px; height:15px;}
+
+  /* 뒷면 = FIT INSIGHT + VS + 궁합 */
+  .back{padding:28px 26px 26px;}
+  .ctop-r{color:rgba(255,255,255,.45); font-size:12px; font-weight:800; letter-spacing:.14em;}
+  .b-lab{font-size:11.5px; font-weight:800; letter-spacing:.14em; color:var(--tp);}
+  .b-ins{width:100%; margin:74px 0 26px; text-align:center;}
+  .b-ins .b-lab{display:block; margin-bottom:13px;}
+  .b-ins p{font-size:23px; font-weight:800; line-height:1.44; letter-spacing:-.02em;}
+  .b-ins p b{color:var(--tp); box-shadow:inset 0 -10px 0 color-mix(in srgb, var(--tp) 24%, transparent);}
+  .b-fitbox{width:100%; border:1px solid rgba(255,255,255,.13); border-radius:18px; padding:24px 16px; background:rgba(255,255,255,.03);}
+  .b-duel{width:100%; display:grid; grid-template-columns:1fr auto 1fr; align-items:start;}   /* 위쪽 기준 줄맞춤(개수 달라도 정렬 유지) */
+  .b-side{text-align:center; padding:6px;}
+  .b-sh{display:inline-flex; align-items:center; gap:5px; font-size:13px; font-weight:800; margin-bottom:14px;}
+  .b-side.ok .b-sh{color:var(--tp);}
+  .b-side.no .b-sh{color:rgba(255,255,255,.55);}
+  .b-sh svg{width:15px; height:15px;}
+  .b-it{font-size:15px; font-weight:800; line-height:1.32; min-height:52px; display:flex; align-items:center; justify-content:center; text-align:center; padding:5px 2px; word-break:keep-all;}
+  .b-side.no .b-it{color:rgba(255,255,255,.6);}
+  .b-vs{font-size:13px; font-weight:900; letter-spacing:.04em; color:rgba(255,255,255,.72); padding:0 14px; position:relative; align-self:center;}
+  .b-vs::before,.b-vs::after{content:""; position:absolute; left:50%; width:1px; background:rgba(255,255,255,.12); height:30px;}
+  .b-vs::before{top:-42px;} .b-vs::after{bottom:-42px;}
+  .grow{flex:1; min-height:14px;}
+  .b-foot{width:100%; margin-top:26px; margin-bottom:26px; text-align:center;}
+  .b-match{font-size:14.5px; font-weight:600; color:rgba(255,255,255,.9);} .b-match b{color:var(--tp); font-weight:800;}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>8체형 플립카드 — 전체 목업</h1>
+  <p>각 카드를 눌러 앞↔뒤로 뒤집어 보세요 · 유형별 포인트색·실루엣·데이터 그대로 적용</p>
+</div>
+
+<div class="gallery" id="g"></div>
+
+<script>
+var TYPES = [
+ {"code":"TRI","name":"소프트 A라인","silhouette":"aline","point":"#76d6c6","profile":["어깨는 좁고 하체에 볼륨이 있는 A라인","시선을 위로 올리면 균형이 좋아요"],"fitOk":["A라인 치마","어두운 바지"],"fitNo":["스키니 바지","밝은 하의"],"insight":"<b>상의에 포인트</b>를 주고<br>하의는 차분하게 가면<br>균형이 잡혀요","match":"모던 V라인"},
+ {"code":"INV","name":"모던 V라인","silhouette":"vline","point":"#c2c7d0","profile":["어깨가 넓고 힙은 좁은 V라인","상의는 덜고 아래로 균형을 잡으면 멋있어요"],"fitOk":["브이넥","통 넓은 바지"],"fitNo":["어깨 부풀린 옷","어깨 파인 옷"],"insight":"<b>상의는 깔끔하게</b>,<br>하의로 시선을 분산하면<br>균형이 살아나요","match":"소프트 A라인"},
+ {"code":"HRG","name":"엘레강스 X라인","silhouette":"xline","point":"#cf9bff","profile":["어깨·힙이 균형 잡히고 허리가 잘록한 X라인","허리를 살리면 우아하게 떨어져요"],"fitOk":["허리 들어간 옷","벨트"],"fitNo":["펑퍼짐한 옷","허리 낮은 바지"],"insight":"<b>허리를 강조</b>하고<br>세로로 길게 떨어뜨리면<br>라인이 돋보여요","match":"시크 스트레이트"},
+ {"code":"STR","name":"시크 스트레이트","silhouette":"straight","point":"#9db8ff","profile":["어깨–허리–힙이 일직선인 직선 라인","군더더기 없는 깔끔함이 가장 멋있어요"],"fitOk":["셔츠","일자 바지"],"fitNo":["펑퍼짐한 옷","프릴 장식"],"insight":"<b>벨트로 허리에 곡선</b>을<br>더하면 직선 라인이<br>한층 살아나요","match":"엘레강스 X라인"},
+ {"code":"BAL","name":"이지 밸런스","silhouette":"balance","point":"#8fd6a8","profile":["어깨·허리·힙이 고르게 균형 잡힌 표준 라인","뭘 입어도 무난하게 잘 어울려요"],"fitOk":["웬만한 핏 OK","벨트 포인트"],"fitNo":["너무 큰 옷"],"insight":"<b>트렌드는 자유롭게</b>,<br>포인트는 한 곳만 주면<br>깔끔하게 완성돼요","match":"코지 라운드"},
+ {"code":"DIA","name":"소프트 다이아","silhouette":"diamond","point":"#ff9ec5","profile":["어깨·다리는 슬림하고 허리·배에 볼륨이 있는 다이아 라인","세로로 길게 흐르면 깔끔해요"],"fitOk":["A라인 원피스","어깨 드러내기"],"fitNo":["허리 꽉 끼는 옷","짧은 상의"],"insight":"<b>중앙은 흐르게</b> 두고<br>어깨·다리를 살리면<br>실루엣이 정돈돼요","match":"슬릭 라인"},
+ {"code":"RND","name":"코지 라운드","silhouette":"round","point":"#ff9d7a","profile":["전체적으로 부드러운 볼륨의 둥근 라인","세로 라인과 여유 핏으로 길게 떨어뜨려요"],"fitOk":["세로 줄무늬","여유 있는 핏"],"fitNo":["딱 붙는 옷","큰 무늬"],"insight":"<b>세로로 길게</b>,<br>다크 톤으로 정돈하면<br>한층 슬림해 보여요","match":"이지 밸런스"},
+ {"code":"TUB","name":"슬릭 라인","silhouette":"tube","point":"#b6a8ff","profile":["가늘고 굴곡이 적은 일자 라인","레이어와 디테일로 입체감을 더하면 멋져요"],"fitOk":["겹쳐 입기","소매 볼륨"],"fitNo":["딱 붙는 옷","밋밋한 일자"],"insight":"<b>레이어와 디테일</b>로<br>입체감을 더하면<br>밋밋함이 사라져요","match":"소프트 다이아"}
+];
+
+var CW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+var CX = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>';
+var HINT_D = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>';
+var HINT_B = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.64-6.36"/><path d="M3 3v6h6"/></svg>';
+function items(a){ return a.map(function(x){ return '<div class="b-it">'+x+'</div>'; }).join(''); }
+
+var html = TYPES.map(function(t){
+  var front =
+    '<div class="cface front">'+
+      '<div class="ctop"><span class="clogo">Fitting<i class="sq"></i></span></div>'+
+      '<div class="hcbody">'+
+        '<div class="fig"><div class="head female"><span class="longhair"></span><span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div><div class="body '+t.silhouette+'"></div></div>'+
+        '<div class="code">'+t.code+'</div>'+
+        '<div class="word">'+t.name+'</div>'+
+        '<div class="tagline">'+t.profile[0]+'</div>'+
+      '</div>'+
+      '<div class="fliphint">'+HINT_D+'자세히 보기</div>'+
+    '</div>';
+  var back =
+    '<div class="cface back">'+
+      '<div class="ctop"><span class="clogo">Fitting<i class="sq"></i></span><span class="ctop-r">'+t.name+'</span></div>'+
+      '<div class="b-ins"><span class="b-lab">FIT INSIGHT</span><p>'+t.insight+'</p></div>'+
+      '<div class="b-fitbox"><div class="b-duel">'+
+        '<div class="b-side ok"><div class="b-sh">'+CW+'잘맞</div>'+items(t.fitOk)+'</div>'+
+        '<div class="b-vs">VS</div>'+
+        '<div class="b-side no"><div class="b-sh">'+CX+'피할</div>'+items(t.fitNo)+'</div>'+
+      '</div></div>'+
+      '<div class="grow"></div>'+
+      '<div class="b-foot"><span class="b-match">🩷 환상의 궁합 · <b>'+t.match+'</b></span></div>'+
+      '<div class="fliphint">'+HINT_B+'돌아가기</div>'+
+    '</div>';
+  return '<div class="cand">'+
+    '<div class="tlabel">'+t.code+'<span>'+t.name+'</span></div>'+
+    '<div class="flipwrap" style="--tp:'+t.point+'"><div class="flip" onclick="this.classList.toggle(\'turned\')">'+front+back+'</div></div>'+
+  '</div>';
+}).join('');
+
+document.getElementById('g').innerHTML = html;
+</script>
+</body>
+</html>

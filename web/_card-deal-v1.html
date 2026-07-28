@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏 카드 딜링 ↔ 모으기 (순수 CSS 무한루프)</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<style>
+/* ==========================================================================
+   _card-deal.html — 8장 트럼프 카드 스타일 "딜링 ↔ 모으기" 무한 반복(6초 주기).
+   순수 HTML/CSS 애니(키프레임). 카드 내용만 bodytypes.json에서 채움.
+   - 카드는 최종 위치에 미리 배치: left:calc(var(--i)*80px)
+   - 스택은 0%에서 translateX(calc(var(--i)*-80px))로 자기 자리만큼 되돌려 표현
+   - --r(개별 회전각, 단위 포함) / --i(인덱스)
+   - transform·opacity·z-index만 애니, transform-origin:50% 140%(아래 축)
+   - 흰선 방지: 라운드는 clip-path, .hc는 overflow 안 씀
+   ========================================================================== */
+*{box-sizing:border-box; margin:0; padding:0}
+body{min-height:100vh; background:var(--bg); color:var(--ink); font-family:var(--sans);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:28px; padding:40px}
+.note{font-size:13px; color:var(--sub); text-align:center; line-height:1.6}
+.note b{color:var(--ink)}
+
+/* ── 무대 ── */
+.deck{position:relative; width:1000px; max-width:100%; height:470px}
+
+/* ── 카드(딜링 애니) ── */
+.card{position:absolute; top:70px; left:calc(50% - 100px); width:200px; height:339px; z-index:calc(8 - var(--i));
+  background:#16171b; clip-path:inset(0 round 17px);
+  transform-origin:50% 50%; backface-visibility:hidden; will-change:transform;
+  animation-name:deal; animation-duration:6s; animation-timing-function:cubic-bezier(.5,0,.2,1);
+  animation-delay:calc(var(--i) * 60ms); animation-iteration-count:infinite; animation-fill-mode:backwards}
+
+/* 모임 = 각 카드 살짝 회전된 '흐트러진 스택'(rotate(--r)) → 예쁜 파일.
+   펼침 = JS가 계산한 리본 위치(--x,--y,--rot)로 넓고 납작하게 쫙.
+   이징 cubic-bezier(.5,0,.2,1) = 빨아들이는 느낌. z 고정(앞 카드 위). */
+@keyframes deal{
+  0%   { transform:rotate(var(--r)) }
+  18%  { transform:translate(var(--x), var(--y)) rotate(var(--rot)) }
+  55%  { transform:translate(var(--x), var(--y)) rotate(var(--rot)) }
+  80%  { transform:rotate(var(--r)) }
+  100% { transform:rotate(var(--r)) }
+}
+
+/* ── 카드 내용(우리 핏 다크카드) — 392×664로 그려 .hc 통째 축소, overflow 안 씀 ── */
+.card .hc{position:absolute; top:0; left:0; width:392px; height:664px; transform:scale(.5102); transform-origin:top left;
+  color:#fff; display:flex; flex-direction:column; align-items:center; padding:26px 26px 30px; background:#16171b}
+.card .hc .ctop{width:100%; display:flex; justify-content:flex-start}
+.card .hc .clogo{font-size:20px; font-weight:800; letter-spacing:-.05em}
+.card .hc .clogo .sq{display:inline-block; width:6px; height:6px; background:currentColor; margin-left:2px; vertical-align:baseline}
+.card .hc .hcbody{flex:1; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center}
+.card .hc .fig{position:relative; width:120px; height:184px; margin-bottom:6px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; animation:bob 3.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) scale(.85)} 50%{transform:translateY(-6px) scale(.85)}}
+.card .hc .fig .head{width:32px; height:36px; margin-bottom:-3px; z-index:2; position:relative}
+.card .hc .fig .head .face{position:absolute; inset:0; border-radius:10px 10px 8px 8px; background:#ecd9c9; z-index:2;
+  background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px),repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px)}
+.card .hc .fig .head .cap{position:absolute; top:-3px; left:-3px; right:-3px; height:13px; border-radius:10px 10px 45% 45%; background:#2a2b30; z-index:3}
+.card .hc .fig .head.female .cap{background:#9a7350}
+.card .hc .fig .head .longhair{position:absolute; top:-5px; left:-7px; right:-7px; bottom:1px; background:#9a7350; border-radius:50% 50% 36% 36% / 46% 46% 30% 30%; z-index:1}
+.card .hc .fig .head .ey{position:absolute; top:18px; width:4px; height:5px; border-radius:50%; background:#2a2b30; z-index:4}
+.card .hc .fig .head .ey.l{left:9px} .card .hc .fig .head .ey.r{right:9px}
+.card .hc .fig .body{width:120px; position:relative; image-rendering:pixelated;
+  background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 8px),repeating-linear-gradient(90deg,rgba(0,0,0,.16) 0 1px,transparent 1px 8px)}
+.card .hc .fig .body.straight{clip-path:polygon(38% 0,62% 0,62% 64%,64% 100%,36% 100%,38% 64%)}
+.card .hc .fig .body.aline{clip-path:polygon(40% 0,60% 0,60% 30%,88% 100%,12% 100%,40% 30%)}
+.card .hc .fig .body.vline{clip-path:polygon(13% 0,87% 0,64% 40%,60% 100%,40% 100%,36% 40%)}
+.card .hc .fig .body.xline{clip-path:polygon(17% 0,83% 0,57% 46%,87% 100%,13% 100%,43% 46%)}
+.card .hc .fig .body.balance{clip-path:polygon(33% 0,67% 0,60% 50%,67% 100%,33% 100%,40% 50%)}
+.card .hc .fig .body.diamond{clip-path:polygon(37% 0,63% 0,85% 50%,61% 100%,39% 100%,15% 50%)}
+.card .hc .fig .body.round{clip-path:ellipse(45% 47% at 50% 53%)}
+.card .hc .fig .body.tube{clip-path:polygon(43% 0,57% 0,57% 100%,43% 100%)}
+.card .hc .code{margin-top:18px; font-size:14px; font-weight:800; letter-spacing:.22em; opacity:.92}
+.card .hc .word{margin-top:12px; font-size:34px; font-weight:800; letter-spacing:-.03em; line-height:1.1; text-align:center}
+.card .hc .tagline{margin-top:16px; font-size:17px; line-height:1.5; opacity:.8; text-align:center; max-width:300px}
+
+/* ── 모션 최소화 대응: 애니 끄고 펼친 상태로 정지 ── */
+@media (prefers-reduced-motion: reduce){
+  .card{animation:none; transform:none}
+  .card .hc .fig{animation:none}
+}
+@media(max-width:820px){ .deck{transform:scale(.62); transform-origin:top center} }
+</style>
+</head>
+<body>
+<div class="note"><b>핏 카드 · 리본 스프레드 ↔ 모으기</b> — 순수 CSS 무한루프(6초). 가운데 스택 → 넓고 납작하게 쫙 → 유지 → 다시 모임</div>
+<div class="deck" id="deck" role="img" aria-label="핏 체형 카드 8종이 펼쳐졌다 모이는 애니메이션"></div>
+
+<script>
+(function(){
+  var G='female';
+  var CODES=['TRI','INV','HRG','STR','BAL','DIA','RND','TUB'];
+  var ROT=['-9deg','7deg','-4deg','8deg','-7deg','3deg','-8deg','5deg'];   // 모임(흐트러진 스택) 개별 회전각 --r
+  var PIV=1457.7, ANG=4.4;   // 리본 곡률용: 카드중심↔가상 아래축 거리(px) / 카드당 각도(도)
+  var deck=document.getElementById('deck');
+
+  function figHTML(silhouette, point){
+    var head='<div class="head '+G+'">'+(G==='female'?'<span class="longhair"></span>':'')+
+      '<span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div>';
+    return '<div class="fig">'+head+'<div class="body '+silhouette+'" style="background-color:'+point+'; height:150px"></div></div>';
+  }
+  function buildCard(i, code, t){
+    var g=(t.gender&&(t.gender[G]||t.gender.female))||{};
+    var tag=(g.profile&&g.profile[0])||'';
+    var el=document.createElement('div');
+    el.className='card'; el.style.setProperty('--i', i); el.style.setProperty('--r', ROT[i]||'0deg');
+    var th=(i-3.5)*ANG*Math.PI/180;   // 리본 펼침 위치(아래 가상축 회전과 동일한 아크)
+    el.style.setProperty('--x', (PIV*Math.sin(th)).toFixed(1)+'px');
+    el.style.setProperty('--y', (PIV*(1-Math.cos(th))).toFixed(1)+'px');
+    el.style.setProperty('--rot', ((i-3.5)*ANG).toFixed(2)+'deg');
+    el.innerHTML='<div class="hc" style="background:radial-gradient(ellipse 70% 34% at 50% 11%, '+t.point+'2b, transparent 60%), linear-gradient(160deg,#191a1f,#0f1014)">'+
+      '<div class="ctop"><span class="clogo">Fitting<i class="sq"></i></span></div>'+
+      '<div class="hcbody">'+figHTML(t.silhouette, t.point)+
+        '<div class="code" style="color:'+t.point+'">'+code+'</div>'+
+        '<div class="word">'+t.name+'</div>'+
+        '<div class="tagline">'+tag+'</div></div></div>';
+    deck.appendChild(el);
+  }
+  fetch('data/bodytypes.json').then(function(r){ return r.json(); }).then(function(j){
+    var map={}; j.types.forEach(function(t){ map[t.code]=t; });
+    CODES.forEach(function(code,i){ if(map[code]) buildCard(i, code, map[code]); });
+  }).catch(function(e){ deck.innerHTML='<p style="color:var(--sub)">데이터 로드 실패 — npm run serve로 열어주세요.</p>'; });
+})();
+</script>
+</body>
+</html>

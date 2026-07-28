@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>판정 전 패널 · 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --bg:#F6F6F5; --surface:#fff; --ink:#16140F; --ink2:#3A382F;
+    --sub:#6E6B63; --sub2:#A6A29A; --line:#E6E5E1; --line2:#DAD8D2; --soft:#EDEDEA;
+    --g:#2E4A3B; --gm:#5A7A68; --gs:#E7EFEA; --gl:#CBDDD2;
+    --warn:#B0553F; --wsoft:#F7ECE8;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Pretendard','Apple SD Gothic Neo',system-ui,sans-serif; -webkit-font-smoothing:antialiased;}
+  .page{max-width:1500px; margin:0 auto; padding:40px 32px 100px;}
+  .ph{font-size:26px; font-weight:800; letter-spacing:-.03em;}
+  .psub{margin-top:8px; font-size:15px; color:var(--sub); line-height:1.6; max-width:760px;}
+  .grid{margin-top:34px; display:flex; flex-wrap:wrap; gap:26px; align-items:flex-start;}
+  .cand{width:440px; max-width:100%;}
+  .cand-tag{display:flex; align-items:center; gap:9px; margin-bottom:14px;}
+  .cand-n{font-size:12px; font-weight:800; color:var(--g); background:var(--gs); border:1px solid var(--gl);
+    padding:4px 11px; border-radius:20px; letter-spacing:.02em;}
+  .cand-d{font-size:12.5px; color:var(--sub); line-height:1.5;}
+  /* 실제 aside 폭 느낌으로 회색 캔버스 위에 얹어 미리보기 */
+  .stage{background:#EFEFEC; border:1px solid var(--line); border-radius:20px; padding:22px;}
+
+  /* ============ 공통: 리파인 히트맵 ============ */
+  .hm{--cell:40px;}
+  .hm-grid{display:grid; grid-template-columns:44px repeat(3,1fr); gap:7px; align-items:center;}
+  .hm-corner{}
+  .hm-col{text-align:center; font-size:13px; font-weight:800; color:var(--sub); padding-bottom:2px;}
+  .hm-col.pk{color:var(--g);}
+  .hm-col .pkpill{display:inline-block; font-size:10.5px; font-weight:800; color:#fff; background:var(--g);
+    border-radius:20px; padding:2px 9px; letter-spacing:.02em;}
+  .hm-rw{font-size:12.5px; font-weight:800; color:var(--ink2);}
+  .hm-c{height:var(--cell); border-radius:11px; display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:800; letter-spacing:-.01em;}
+  .hm-c.t{background:var(--wsoft); color:var(--warn);}
+  .hm-c.s{background:var(--gs); color:var(--g);}
+  .hm-c.r{background:var(--soft); color:var(--sub2);}
+  /* 추천 열(가운데)을 하나의 레인처럼 — 셀마다 링 대신 세로로 감싸기 */
+  .hm-lane{position:absolute; z-index:0; grid-column:3; grid-row:1 / -1; inset:0; margin:-4px; border-radius:14px;
+    box-shadow:0 0 0 2px var(--g); background:linear-gradient(var(--gs),transparent 62%); pointer-events:none;}
+  .hm-grid{position:relative;}
+  .hm-grid > *:not(.hm-lane){position:relative; z-index:1;}
+  .hm-concl{margin-top:16px; text-align:center;}
+  .hm-concl .pill{display:inline-flex; align-items:center; gap:7px; font-size:13.5px; font-weight:800; color:var(--g);
+    background:var(--gs); border:1px solid var(--gl); border-radius:22px; padding:8px 16px;}
+  .hm-concl .pill svg{width:15px; height:15px;}
+
+  .eg{font-size:10.5px; font-weight:800; color:var(--g); background:var(--gs); padding:2px 8px; border-radius:20px;}
+
+  /* ============ A : 하나의 카드 · 타임라인 ============ */
+  .A{background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:24px 24px 22px;
+    box-shadow:0 1px 2px rgba(20,18,12,.03), 0 12px 30px -18px rgba(20,18,12,.14);}
+  .A-eyebrow{font-size:11px; font-weight:800; color:var(--sub2); letter-spacing:.12em; text-transform:uppercase;}
+  .A-h{margin:6px 0 20px; font-size:19px; font-weight:800; letter-spacing:-.03em;}
+  .tl{list-style:none; margin:0; padding:0; position:relative;}
+  .tl:before{content:""; position:absolute; left:13px; top:8px; bottom:14px; width:2px; background:var(--gl);}
+  .tl li{position:relative; padding:0 0 18px 40px; }
+  .tl li:last-child{padding-bottom:0;}
+  .tl-n{position:absolute; left:0; top:-2px; width:28px; height:28px; border-radius:50%; background:var(--g); color:#fff;
+    font-size:13px; font-weight:800; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 0 4px var(--surface);}
+  .tl-t{font-size:14.5px; font-weight:800; color:var(--ink); letter-spacing:-.02em;}
+  .tl-d{margin-top:3px; font-size:13px; color:var(--sub); line-height:1.55;}
+  .A-div{height:1px; background:var(--line); margin:22px 0 18px;}
+  .A-rh{display:flex; align-items:center; gap:9px; margin-bottom:15px;}
+  .A-rh b{font-size:13px; font-weight:800; color:var(--sub2); letter-spacing:.04em;}
+
+  /* ============ B : 아이콘 스텝 + 히어로 결과 ============ */
+  .B{display:flex; flex-direction:column; gap:16px;}
+  .B-steps{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:8px 18px;}
+  .B-step{display:flex; align-items:center; gap:14px; padding:14px 0;}
+  .B-step + .B-step{border-top:1px solid var(--line);}
+  .B-ic{width:38px; height:38px; flex:none; border-radius:11px; background:var(--gs); color:var(--g);
+    display:flex; align-items:center; justify-content:center;}
+  .B-ic svg{width:20px; height:20px;}
+  .B-tx b{display:block; font-size:14px; font-weight:800; letter-spacing:-.02em;}
+  .B-tx span{display:block; margin-top:2px; font-size:12.5px; color:var(--sub); line-height:1.5;}
+  .B-result{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:20px 20px 18px;
+    box-shadow:0 10px 26px -20px rgba(20,18,12,.18);}
+  .B-rh{display:flex; align-items:center; gap:9px; margin-bottom:16px;}
+  .B-rh b{font-size:13px; font-weight:800; color:var(--sub2); letter-spacing:.04em;}
+  .B .hm{--cell:44px;}
+
+  /* ============ C : 인라인 스텝 + 결과 중심 ============ */
+  .C{display:flex; flex-direction:column; gap:16px;}
+  .C-flow{display:flex; align-items:stretch; gap:0; background:var(--surface); border:1px solid var(--line);
+    border-radius:16px; overflow:hidden;}
+  .C-step{flex:1; padding:15px 12px; text-align:center; position:relative;}
+  .C-step + .C-step{border-left:1px solid var(--line);}
+  .C-sn{width:22px; height:22px; margin:0 auto 8px; border-radius:50%; background:var(--g); color:#fff;
+    font-size:11.5px; font-weight:800; display:flex; align-items:center; justify-content:center;}
+  .C-st{font-size:12.5px; font-weight:800; letter-spacing:-.02em; line-height:1.35;}
+  .C-result{background:linear-gradient(180deg,#fff, #FCFCFB); border:1px solid var(--line); border-radius:20px;
+    padding:22px; box-shadow:0 12px 30px -20px rgba(20,18,12,.2);}
+  .C-rh{display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;}
+  .C-rh b{font-size:15px; font-weight:800; letter-spacing:-.03em;}
+  .C .hm{--cell:46px;}
+  .C .hm-c{font-size:12.5px;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="ph">판정 전 패널 · 시안 3종</div>
+  <div class="psub">오른쪽 "어떻게 진행되고 어떤 결과를 받는지" 안내 패널을 다시 구성했어요. 내용(3스텝 + 예시 결과 히트맵)은 같고 <b>구성·톤만</b> 달라요. 예시 히트맵은 공통으로 손봤어요 — 추천 사이즈(M)를 셀마다 링 대신 <b>세로 레인 하나</b>로 감싸고, 사이즈 헤더를 위로 올려 "이 열이 내 사이즈"가 한눈에 보이게.</div>
+
+  <div class="grid">
+
+    <!-- ============ A ============ -->
+    <div class="cand">
+      <div class="cand-tag"><span class="cand-n">A · 통합 카드</span><span class="cand-d">한 장 카드에 타임라인 스텝 → 결과까지 자연스럽게 흐르게</span></div>
+      <div class="stage">
+        <div class="A">
+          <div class="A-eyebrow">FIT 판정</div>
+          <div class="A-h">사이즈표만 있으면 돼요</div>
+          <ol class="tl">
+            <li><span class="tl-n">1</span><div class="tl-t">사이즈표를 올려요</div><div class="tl-d">캡처해서 붙여넣으면 자동으로 읽어줘요</div></li>
+            <li><span class="tl-n">2</span><div class="tl-t">값만 확인해요</div><div class="tl-d">잘못 읽은 데가 있으면 그 자리서 고쳐요</div></li>
+            <li><span class="tl-n">3</span><div class="tl-t">내 체형에 대봐 판정해요</div><div class="tl-d">사이즈별로 어디가 끼고 남는지, 부위별로</div></li>
+          </ol>
+          <div class="A-div"></div>
+          <div class="A-rh"><b>이런 결과를 받아요</b><span class="eg">예시</span></div>
+          <div class="hm">
+            <div class="hm-grid">
+              <div class="hm-lane"></div>
+              <div class="hm-corner"></div>
+              <div class="hm-col">S</div><div class="hm-col pk"><span class="pkpill">M 추천</span></div><div class="hm-col">L</div>
+              <div class="hm-rw">가슴</div><div class="hm-c t">끼임</div><div class="hm-c s">딱</div><div class="hm-c r">여유</div>
+              <div class="hm-rw">어깨</div><div class="hm-c t">끼임</div><div class="hm-c s">딱</div><div class="hm-c s">딱</div>
+            </div>
+            <div class="hm-concl"><span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>이 옷은 <b style="margin:0 2px">M</b>이 맞겠어요</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ B ============ -->
+    <div class="cand">
+      <div class="cand-tag"><span class="cand-n">B · 아이콘 스텝</span><span class="cand-d">스텝은 아이콘 카드로, 결과는 살짝 띄운 히어로 카드로 분리</span></div>
+      <div class="stage">
+        <div class="B">
+          <div class="B-steps">
+            <div class="B-step">
+              <span class="B-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/></svg></span>
+              <div class="B-tx"><b>사이즈표를 올려요</b><span>캡처해서 붙여넣으면 자동으로 읽어줘요</span></div>
+            </div>
+            <div class="B-step">
+              <span class="B-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+              <div class="B-tx"><b>값만 확인해요</b><span>잘못 읽은 데가 있으면 그 자리서 고쳐요</span></div>
+            </div>
+            <div class="B-step">
+              <span class="B-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg></span>
+              <div class="B-tx"><b>내 체형에 대봐 판정해요</b><span>사이즈별로 어디가 끼고 남는지, 부위별로</span></div>
+            </div>
+          </div>
+          <div class="B-result">
+            <div class="B-rh"><b>이런 결과를 받아요</b><span class="eg">예시</span></div>
+            <div class="hm">
+              <div class="hm-grid">
+                <div class="hm-lane"></div>
+                <div class="hm-corner"></div>
+                <div class="hm-col">S</div><div class="hm-col pk"><span class="pkpill">M 추천</span></div><div class="hm-col">L</div>
+                <div class="hm-rw">가슴</div><div class="hm-c t">끼임</div><div class="hm-c s">딱</div><div class="hm-c r">여유</div>
+                <div class="hm-rw">어깨</div><div class="hm-c t">끼임</div><div class="hm-c s">딱</div><div class="hm-c s">딱</div>
+              </div>
+              <div class="hm-concl"><span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>이 옷은 <b style="margin:0 2px">M</b>이 맞겠어요</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ C ============ -->
+    <div class="cand">
+      <div class="cand-tag"><span class="cand-n">C · 결과 중심</span><span class="cand-d">스텝은 가로 한 줄로 압축, 예시 결과를 크게 주연으로</span></div>
+      <div class="stage">
+        <div class="C">
+          <div class="C-flow">
+            <div class="C-step"><div class="C-sn">1</div><div class="C-st">사이즈표<br>올리기</div></div>
+            <div class="C-step"><div class="C-sn">2</div><div class="C-st">값<br>확인</div></div>
+            <div class="C-step"><div class="C-sn">3</div><div class="C-st">체형에 대봐<br>판정</div></div>
+          </div>
+          <div class="C-result">
+            <div class="C-rh"><b>이런 결과를 받아요</b><span class="eg">예시</span></div>
+            <div class="hm">
+              <div class="hm-grid">
+                <div class="hm-lane"></div>
+                <div class="hm-corner"></div>
+                <div class="hm-col">S</div><div class="hm-col pk"><span class="pkpill">M 추천</span></div><div class="hm-col">L</div>
+                <div class="hm-rw">가슴</div><div class="hm-c t">끼임</div><div class="hm-c s">딱</div><div class="hm-c r">여유</div>
+                <div class="hm-rw">어깨</div><div class="hm-c t">끼임</div><div class="hm-c s">딱</div><div class="hm-c s">딱</div>
+              </div>
+              <div class="hm-concl"><span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>이 옷은 <b style="margin:0 2px">M</b>이 맞겠어요</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

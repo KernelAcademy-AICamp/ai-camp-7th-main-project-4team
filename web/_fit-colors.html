@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FIT 화면 색 팔레트</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --bg:#F6F6F5; --surface:#fff; --ink:#16140F; --ink2:#3A382F;
+    --sub:#6E6B63; --sub2:#A6A29A; --line:#E6E5E1; --line2:#DAD8D2; --soft:#EDEDEA;
+    --g:#2E4A3B; --gm:#5A7A68; --gs:#E7EFEA; --gl:#CBDDD2; --warn:#B0553F; --wsoft:#F7ECE8;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Pretendard',sans-serif; -webkit-font-smoothing:antialiased;}
+  .page{max-width:900px; margin:0 auto; padding:38px 26px 90px;}
+  .ph{font-size:24px; font-weight:800; letter-spacing:-.03em;}
+  .psub{margin:8px 0 0; font-size:14.5px; color:var(--sub); line-height:1.6;}
+  h2{font-size:14px; font-weight:800; color:var(--sub2); letter-spacing:.06em; text-transform:uppercase; margin:36px 0 14px;}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px;}
+  .sw{border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--surface);}
+  .sw .chip{height:66px;}
+  .sw .meta{padding:10px 12px;}
+  .sw .nm{font-size:13px; font-weight:800; letter-spacing:-.02em;}
+  .sw .hex{font-size:11.5px; font-weight:700; color:var(--sub2); font-feature-settings:"tnum"; margin-top:1px; text-transform:uppercase;}
+  .sw .use{font-size:11px; color:var(--sub); margin-top:5px; line-height:1.4;}
+
+  /* 판정 색 매핑 데모 */
+  .fitrow{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:6px;}
+  .fp{display:inline-block; font-size:13px; font-weight:800; padding:6px 14px; border-radius:20px;}
+  .fp.snug{background:var(--gs); color:var(--g);}
+  .fp.tight{background:var(--wsoft); color:var(--warn);}
+  .fp.brd{background:var(--wsoft); color:var(--warn); outline:1.5px dashed var(--warn); outline-offset:-1.5px;}
+  .fp.relax{background:var(--soft); color:var(--sub);}
+  .fp.big{background:var(--soft); color:var(--sub2);}
+  .fp-lab{font-size:12px; color:var(--sub2); font-weight:700; margin-left:2px;}
+  .card{border:1px solid var(--line); border-radius:16px; background:var(--surface); padding:20px 22px;}
+  .cardback{height:80px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(ellipse 72% 34% at 50% 12%, rgba(156,193,174,.22), transparent 60%), linear-gradient(165deg,#191a1f,#0f1014);
+    color:#f3f4f2; font-size:26px; font-weight:800; letter-spacing:-.04em;}
+</style>
+</head><body>
+<div class="page">
+  <div class="ph">FIT 화면 · 색 팔레트</div>
+  <div class="psub">판정(Fit) 화면에서 쓰는 색 전부예요. 진단·결과·쇼퍼 화면과 <b>같은 토큰</b>을 공유해요(딥그린 시스템).</div>
+
+  <h2>판정 색 매핑 (핵심)</h2>
+  <div class="card">
+    <div class="fitrow">
+      <span class="fp snug">딱맞음</span><span class="fp-lab">딥그린 · gs 배경</span>
+    </div>
+    <div class="fitrow"><span class="fp tight">끼임</span><span class="fp brd">아슬</span><span class="fp-lab">테라코타 #B0553F · wsoft 배경 (← 지금 "탁하다"는 그 빨강)</span></div>
+    <div class="fitrow"><span class="fp relax">여유</span><span class="fp-lab">회색 sub</span></div>
+    <div class="fitrow"><span class="fp big">넉넉</span><span class="fp-lab">옅은 회색 sub2</span></div>
+  </div>
+
+  <h2>딥그린 액센트 (유일한 포인트색)</h2>
+  <div class="grid">
+    <div class="sw"><div class="chip" style="background:#2E4A3B"></div><div class="meta"><div class="nm">g · 딥그린</div><div class="hex">#2E4A3B</div><div class="use">딱맞음·추천 박스·아이콘·번호·활성</div></div></div>
+    <div class="sw"><div class="chip" style="background:#5A7A68"></div><div class="meta"><div class="nm">green-mid</div><div class="hex">#5A7A68</div><div class="use">플로우바 화살표</div></div></div>
+    <div class="sw"><div class="chip" style="background:#CBDDD2"></div><div class="meta"><div class="nm">gl · 초록라인</div><div class="hex">#CBDDD2</div><div class="use">칩 테두리·게이지 트랙</div></div></div>
+    <div class="sw"><div class="chip" style="background:#E7EFEA"></div><div class="meta"><div class="nm">gs · 초록소프트</div><div class="hex">#E7EFEA</div><div class="use">딱맞음·추천열·뱃지 배경</div></div></div>
+  </div>
+
+  <h2>경고 / 끼임 (테라코타)</h2>
+  <div class="grid">
+    <div class="sw"><div class="chip" style="background:#B0553F"></div><div class="meta"><div class="nm">warn · 테라코타</div><div class="hex">#B0553F</div><div class="use">끼임·아슬 글자 (탁하다는 그 빨강)</div></div></div>
+    <div class="sw"><div class="chip" style="background:#F7ECE8"></div><div class="meta"><div class="nm">wsoft</div><div class="hex">#F7ECE8</div><div class="use">끼임·아슬 배경</div></div></div>
+  </div>
+
+  <h2>뉴트럴 (배경·표면·텍스트·선)</h2>
+  <div class="grid">
+    <div class="sw"><div class="chip" style="background:#F6F6F5"></div><div class="meta"><div class="nm">bg · 페이퍼</div><div class="hex">#F6F6F5</div><div class="use">기본 배경</div></div></div>
+    <div class="sw"><div class="chip" style="background:#FFFFFF; box-shadow:inset 0 0 0 1px #E6E5E1"></div><div class="meta"><div class="nm">surface</div><div class="hex">#FFFFFF</div><div class="use">카드·표면</div></div></div>
+    <div class="sw"><div class="chip" style="background:#16140F"></div><div class="meta"><div class="nm">ink · 잉크블랙</div><div class="hex">#16140F</div><div class="use">본문·제목·판정버튼</div></div></div>
+    <div class="sw"><div class="chip" style="background:#3A382F"></div><div class="meta"><div class="nm">ink2</div><div class="hex">#3A382F</div><div class="use">진한 보조 텍스트</div></div></div>
+    <div class="sw"><div class="chip" style="background:#6E6B63"></div><div class="meta"><div class="nm">sub</div><div class="hex">#6E6B63</div><div class="use">보조 텍스트·여유</div></div></div>
+    <div class="sw"><div class="chip" style="background:#A6A29A"></div><div class="meta"><div class="nm">sub2</div><div class="hex">#A6A29A</div><div class="use">캡션·넉넉·플레이스홀더</div></div></div>
+    <div class="sw"><div class="chip" style="background:#EDEDEA"></div><div class="meta"><div class="nm">soft</div><div class="hex">#EDEDEA</div><div class="use">여유·넉넉·태그 배경</div></div></div>
+    <div class="sw"><div class="chip" style="background:#E6E5E1"></div><div class="meta"><div class="nm">line</div><div class="hex">#E6E5E1</div><div class="use">얇은 경계선</div></div></div>
+    <div class="sw"><div class="chip" style="background:#DAD8D2"></div><div class="meta"><div class="nm">line2</div><div class="hex">#DAD8D2</div><div class="use">입력 테두리·표 구분선</div></div></div>
+  </div>
+
+  <h2>리빌 카드백 (다크) · 유형색</h2>
+  <div class="grid">
+    <div class="sw"><div class="cardback">Fit<span style="width:9px;height:9px;background:#CBDDD2;display:inline-block;margin-left:4px"></span></div><div class="meta"><div class="nm">카드백 그라디언트</div><div class="hex">#191A1F → #0F1014</div><div class="use">결과 리빌 카드 뒷면 (유형카드와 통일)</div></div></div>
+    <div class="sw"><div class="chip" style="background:#9db8ff"></div><div class="meta"><div class="nm">유형색(예: STR)</div><div class="hex">#9DB8FF</div><div class="use">판정기준 아바타 배경(유형마다 다름)</div></div></div>
+  </div>
+</div>
+</body></html>

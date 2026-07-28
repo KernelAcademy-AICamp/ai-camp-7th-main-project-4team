@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>결과 요약 카드 · 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --bg:#F6F6F5; --surface:#fff; --ink:#16140F; --ink2:#3A382F;
+    --sub:#6E6B63; --sub2:#A6A29A; --line:#E6E5E1; --line2:#DAD8D2; --soft:#EDEDEA;
+    --g:#2E4A3B; --gm:#5A7A68; --gs:#E7EFEA; --gl:#CBDDD2;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Pretendard','Apple SD Gothic Neo',system-ui,sans-serif; -webkit-font-smoothing:antialiased;}
+  .page{max-width:720px; margin:0 auto; padding:40px 26px 100px;}
+  .ph{font-size:24px; font-weight:800; letter-spacing:-.03em;}
+  .psub{margin:8px 0 4px; font-size:14.5px; color:var(--sub); line-height:1.6;}
+  .cand{margin-top:30px;}
+  .cand-tag{display:flex; align-items:center; gap:9px; margin-bottom:12px;}
+  .cand-n{font-size:12px; font-weight:800; color:#fff; background:var(--g); padding:4px 11px; border-radius:20px;}
+  .cand-d{font-size:12.5px; color:var(--sub);}
+
+  .card{border:1px solid var(--line); border-radius:20px; background:var(--surface); box-shadow:0 8px 24px -18px rgba(20,18,12,.2);}
+  .say{font-size:14px; color:var(--ink2); line-height:1.55;} .say b{color:var(--g); font-weight:800;}
+  .meta{font-size:11.5px; color:var(--sub2);}
+  .vd{font-weight:800; color:var(--g);}
+
+  /* ===== A · 좌우 분할 ===== */
+  .A{display:grid; grid-template-columns:auto 1fr; gap:24px; padding:24px 26px; align-items:center;}
+  .A-l{text-align:center; padding-right:24px; border-right:1px solid var(--line);}
+  .A-sz{font-size:56px; font-weight:800; letter-spacing:-.05em; line-height:.9;}
+  .A-vd{font-size:13.5px; font-weight:800; color:var(--g); margin-top:6px;}
+  .A-fit{margin-top:9px; font-size:11px; font-weight:800; color:var(--sub2);} .A-fit b{color:var(--g); font-size:14px;}
+  .A-r .say{margin:0;} .A-r .meta{margin-top:11px; padding-top:11px; border-top:1px solid var(--line);}
+
+  /* ===== B · 게이지 히어로 ===== */
+  .B{display:grid; grid-template-columns:auto 1fr; gap:24px; padding:24px 26px; align-items:center;}
+  .gg{position:relative; width:104px; height:104px; flex:none;}
+  .gg .ring{width:100%; height:100%; border-radius:50%; background:conic-gradient(var(--g) 0 88%, var(--gl) 88% 100%);}
+  .gg .hole{position:absolute; inset:10px; border-radius:50%; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .gg .m{font-size:38px; font-weight:800; letter-spacing:-.04em; line-height:.9;}
+  .gg .f{font-size:9.5px; font-weight:800; color:var(--g); letter-spacing:.08em; margin-top:3px;}
+  .B-r .vd{font-size:20px; letter-spacing:-.03em;}
+  .B-r .say{margin:7px 0 0;} .B-r .meta{margin-top:11px;}
+
+  /* ===== C · 상단 라인 + 문장 ===== */
+  .C{padding:22px 26px;}
+  .C-top{display:flex; align-items:center; gap:12px;}
+  .C-sz{font-size:44px; font-weight:800; letter-spacing:-.05em; line-height:.9;}
+  .C-vd{font-size:13px; font-weight:800; color:var(--g); background:var(--gs); border:1px solid var(--gl); padding:5px 12px; border-radius:20px;}
+  .C-fit{margin-left:auto; text-align:right;} .C-fit b{font-size:26px; font-weight:800; letter-spacing:-.03em;} .C-fit span{display:block; font-size:9.5px; font-weight:800; color:var(--sub2); letter-spacing:.08em;}
+  .C-div{height:1px; background:var(--line); margin:16px 0 14px;}
+  .C .say{margin:0 0 12px;} .C .meta{}
+
+  /* ===== D · 다크 히어로 ===== */
+  .D{--acc:#8FD6A8; background:linear-gradient(160deg,#1e2026,#16171b); border-color:#22232a; padding:24px 26px; color:#fff; position:relative; overflow:hidden;}
+  .D::after{content:""; position:absolute; top:-46px; right:-34px; width:180px; height:180px; border-radius:50%; background:radial-gradient(circle,rgba(143,214,168,.16),transparent 70%);}
+  .D-top{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; position:relative;}
+  .D-ey{font-size:10.5px; font-weight:800; letter-spacing:.09em; color:var(--acc); text-transform:uppercase;}
+  .D-sz{font-size:50px; font-weight:800; letter-spacing:-.05em; line-height:.95; margin-top:7px;} .D-sz small{font-size:14px; color:#98978f; font-weight:700;}
+  .D-gg{width:78px; height:78px; border-radius:50%; flex:none; position:relative; background:conic-gradient(var(--acc) 0 88%, rgba(255,255,255,.12) 88% 100%); display:flex; align-items:center; justify-content:center;}
+  .D-gg::before{content:""; position:absolute; inset:8px; border-radius:50%; background:#16171b;}
+  .D-gv{position:relative; font-size:21px; font-weight:800;} .D-gl{position:relative; display:block; font-size:8.5px; font-weight:800; color:var(--acc); letter-spacing:.08em; text-align:center;}
+  .D-vd{position:relative; font-size:18px; font-weight:800; letter-spacing:-.03em; margin-top:16px;}
+  .D-say{position:relative; font-size:13px; color:#b6b5ae; line-height:1.55; margin-top:6px;}
+  .D-meta{position:relative; font-size:11.5px; color:#86857e; margin-top:13px; padding-top:12px; border-top:1px solid rgba(255,255,255,.09);}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="ph">결과 요약 카드 · 4안</div>
+  <div class="psub">같은 정보(추천 M · 딱 맞아요 · FIT 88 · 요약 문장 · 신뢰 메타)를 어떻게 배치·강조하느냐만 달라요. 뒤집혀 나오는 <b>앞면 카드</b>라 A~C는 밝게, D는 다크 옵션.</div>
+
+  <!-- A -->
+  <div class="cand">
+    <div class="cand-tag"><span class="cand-n">A · 좌우 분할</span><span class="cand-d">지금 방식 — 왼쪽 사이즈, 오른쪽 설명</span></div>
+    <div class="card A">
+      <div class="A-l"><div class="A-sz">M</div><div class="A-vd">딱 맞아요</div><div class="A-fit">FIT <b>88</b></div></div>
+      <div class="A-r">
+        <p class="say">가슴·어깨 모두 <b>딱 맞는</b> 구간이에요. 아래에서 사이즈별로 자세히 볼 수 있어요.</p>
+        <div class="meta">착용경험 2벌 · ±2cm · 브랜드 표기 미검증</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="cand">
+    <div class="cand-tag"><span class="cand-n">B · 게이지 히어로</span><span class="cand-d">FIT 점수를 원형 게이지로, 가운데 사이즈</span></div>
+    <div class="card B">
+      <div class="gg"><div class="ring"></div><div class="hole"><span class="m">M</span><span class="f">FIT 88</span></div></div>
+      <div class="B-r">
+        <div class="vd">딱 맞아요</div>
+        <p class="say">가슴·어깨 모두 딱 맞는 구간이에요. 아래에서 사이즈별로 자세히 볼 수 있어요.</p>
+        <div class="meta">착용경험 2벌 · ±2cm · 브랜드 표기 미검증</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="cand">
+    <div class="cand-tag"><span class="cand-n">C · 상단 라인 + 문장</span><span class="cand-d">한 줄에 사이즈·판정·점수, 아래 설명</span></div>
+    <div class="card C">
+      <div class="C-top">
+        <span class="C-sz">M</span><span class="C-vd">딱 맞아요</span>
+        <span class="C-fit"><b>88</b><span>FIT</span></span>
+      </div>
+      <div class="C-div"></div>
+      <p class="say">가슴·어깨 모두 <b>딱 맞는</b> 구간이에요. 아래에서 사이즈별로 자세히 볼 수 있어요.</p>
+      <div class="meta">착용경험 2벌 · ±2cm · 브랜드 표기 미검증</div>
+    </div>
+  </div>
+
+  <!-- D -->
+  <div class="cand">
+    <div class="cand-tag"><span class="cand-n">D · 다크 히어로</span><span class="cand-d">결과 카드백과 같은 톤 (뒤집힘 대비는 약함)</span></div>
+    <div class="card D">
+      <div class="D-top">
+        <div><div class="D-ey">추천 사이즈</div><div class="D-sz">M<small> / 유니클로</small></div></div>
+        <div class="D-gg"><div><div class="D-gv">88</div><span class="D-gl">FIT</span></div></div>
+      </div>
+      <div class="D-vd">딱 맞아요</div>
+      <p class="D-say">가슴·어깨 모두 딱 맞는 구간이에요. 아래에서 사이즈별로 자세히 볼 수 있어요.</p>
+      <div class="D-meta">착용경험 2벌 · ±2cm · 브랜드 표기 미검증</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

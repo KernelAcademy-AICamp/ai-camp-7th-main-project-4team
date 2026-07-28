@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏 카드 마무리 — 모으기 → 카피 → "?" 카드 뒤집기 CTA</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<style>
+/* ==========================================================================
+   _card-flip.html — 한 번 재생: 리본 딜 → 흐트러진 스택 모으기 → 카드 페이드아웃 →
+   메인카피 "8유형 중, 나의 핏은?" → '?' 카드 등장 → 카드 뒤집혀 뒷면 CTA.
+   버리는 파일. 흰선 차단(clip-path).
+   ========================================================================== */
+*{box-sizing:border-box; margin:0; padding:0}
+body{min-height:100vh; background:var(--bg); color:var(--ink); font-family:var(--sans);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:30px}
+.note{font-size:12.5px; color:var(--sub); text-align:center}
+.replay{font-size:12px; font-weight:700; color:var(--green); background:var(--green-soft); border:1px solid var(--green-line); border-radius:20px; padding:6px 14px; cursor:pointer}
+.stage{position:relative; width:1000px; max-width:100%; height:560px}
+
+/* ── (1) 딜/모으기 덱 ── */
+.deck{position:absolute; inset:0}
+.card{position:absolute; left:calc(50% - 100px); top:150px; width:200px; height:339px;
+  background:#16171b; clip-path:inset(0 round 17px); transform-origin:50% 50%; backface-visibility:hidden; z-index:calc(8 - var(--i))}
+.play .card{animation:dealOnce 3.1s cubic-bezier(.5,0,.2,1) calc(var(--i) * 55ms) both}
+@keyframes dealOnce{
+  0%{transform:rotate(var(--r))}
+  22%{transform:translate(var(--x), var(--y)) rotate(var(--rot))}
+  55%{transform:translate(var(--x), var(--y)) rotate(var(--rot))}
+  82%{transform:rotate(var(--r))}
+  100%{transform:rotate(var(--r))}
+}
+.play .deck{animation:deckOut .6s ease 3.35s both}
+@keyframes deckOut{to{opacity:0; transform:scale(.92)}}
+
+/* 덱 카드 내용(축소) */
+.card .hc{position:absolute; top:0; left:0; width:392px; height:664px; transform:scale(.5102); transform-origin:top left;
+  color:#fff; display:flex; flex-direction:column; align-items:center; padding:26px 26px 30px; background:#16171b}
+.card .hc .ctop{width:100%; display:flex; justify-content:flex-start}
+.card .hc .clogo{font-size:20px; font-weight:800; letter-spacing:-.05em}
+.card .hc .clogo .sq{display:inline-block; width:6px; height:6px; background:currentColor; margin-left:2px; vertical-align:baseline}
+.card .hc .hcbody{flex:1; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center}
+.card .hc .fig{position:relative; width:120px; height:184px; margin-bottom:6px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; transform:scale(.85)}
+.card .hc .fig .head{width:32px; height:36px; margin-bottom:-3px; z-index:2; position:relative}
+.card .hc .fig .head .face{position:absolute; inset:0; border-radius:10px 10px 8px 8px; background:#ecd9c9; z-index:2}
+.card .hc .fig .head .cap{position:absolute; top:-3px; left:-3px; right:-3px; height:13px; border-radius:10px 10px 45% 45%; background:#2a2b30; z-index:3}
+.card .hc .fig .head.female .cap{background:#9a7350}
+.card .hc .fig .head .longhair{position:absolute; top:-5px; left:-7px; right:-7px; bottom:1px; background:#9a7350; border-radius:50% 50% 36% 36% / 46% 46% 30% 30%; z-index:1}
+.card .hc .fig .head .ey{position:absolute; top:18px; width:4px; height:5px; border-radius:50%; background:#2a2b30; z-index:4}
+.card .hc .fig .head .ey.l{left:9px} .card .hc .fig .head .ey.r{right:9px}
+.card .hc .fig .body{width:120px; position:relative;
+  background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 8px),repeating-linear-gradient(90deg,rgba(0,0,0,.16) 0 1px,transparent 1px 8px)}
+.card .hc .fig .body.straight{clip-path:polygon(38% 0,62% 0,62% 64%,64% 100%,36% 100%,38% 64%)}
+.card .hc .fig .body.aline{clip-path:polygon(40% 0,60% 0,60% 30%,88% 100%,12% 100%,40% 30%)}
+.card .hc .fig .body.vline{clip-path:polygon(13% 0,87% 0,64% 40%,60% 100%,40% 100%,36% 40%)}
+.card .hc .fig .body.xline{clip-path:polygon(17% 0,83% 0,57% 46%,87% 100%,13% 100%,43% 46%)}
+.card .hc .fig .body.balance{clip-path:polygon(33% 0,67% 0,60% 50%,67% 100%,33% 100%,40% 50%)}
+.card .hc .fig .body.diamond{clip-path:polygon(37% 0,63% 0,85% 50%,61% 100%,39% 100%,15% 50%)}
+.card .hc .fig .body.round{clip-path:ellipse(45% 47% at 50% 53%)}
+.card .hc .fig .body.tube{clip-path:polygon(43% 0,57% 0,57% 100%,43% 100%)}
+.card .hc .code{margin-top:18px; font-size:14px; font-weight:800; letter-spacing:.22em; opacity:.92}
+.card .hc .word{margin-top:12px; font-size:34px; font-weight:800; letter-spacing:-.03em; line-height:1.1; text-align:center}
+.card .hc .tagline{margin-top:16px; font-size:17px; line-height:1.5; opacity:.8; text-align:center; max-width:300px}
+
+/* ── (2) 마무리: 카피 + 뒤집는 카드 ── */
+.final{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:26px; opacity:0; pointer-events:none}
+.play .final{animation:finalIn .6s ease 3.75s both}
+.final.on{pointer-events:auto}
+@keyframes finalIn{from{opacity:0} to{opacity:1}}
+.copy{font-size:clamp(26px,3.4vw,40px); font-weight:800; letter-spacing:-.04em; line-height:1.24; text-align:center}
+.copy b{color:var(--green)}
+
+.flip{width:230px; height:390px; perspective:1300px}
+.flipin{position:relative; width:100%; height:100%; transform-style:preserve-3d}
+.play .flipin{animation:doFlip 1s cubic-bezier(.5,0,.25,1) 4.5s both}
+@keyframes doFlip{from{transform:rotateY(0)} to{transform:rotateY(180deg)}}
+.face{position:absolute; inset:0; clip-path:inset(0 round 20px); backface-visibility:hidden;
+  display:flex; flex-direction:column; color:#fff; padding:24px}
+.face .logo{font-size:18px; font-weight:800; letter-spacing:-.05em}
+.face .logo i{display:inline-block; width:5px; height:5px; background:currentColor; margin-left:2px; vertical-align:baseline}
+/* 앞면 = ? 미스터리 */
+.front{background:linear-gradient(160deg,#20323f,#0f1014)}
+.front .q{flex:1; display:flex; align-items:center; justify-content:center; font-size:158px; font-weight:800; color:var(--green-light,#9CC1AE); text-shadow:0 0 30px rgba(156,193,174,.4)}
+/* 뒷면 = CTA */
+.back{background:radial-gradient(ellipse 80% 40% at 50% 12%, rgba(156,193,174,.16), transparent 60%), linear-gradient(160deg,#1b2a21,#0f1014); transform:rotateY(180deg)}
+.back .bc{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:18px}
+.back .bc .t{font-size:24px; font-weight:800; line-height:1.34}
+.back .bc .t b{color:var(--green-light,#9CC1AE)}
+.back .bc .btn{display:inline-flex; align-items:center; gap:8px; font-family:var(--sans); font-size:16px; font-weight:800;
+  padding:14px 24px; border-radius:14px; background:var(--green-light,#9CC1AE); color:#132019; border:0; cursor:pointer}
+
+@media(prefers-reduced-motion:reduce){ .play .card,.play .deck,.play .final,.play .flipin{animation:none} .final{opacity:1} .flipin{transform:rotateY(180deg)} }
+</style>
+</head>
+<body>
+<div class="note">한 번 재생: <b>리본 딜 → 스택 모으기 → 카드 페이드아웃 → "8유형 중, 나의 핏은?" → "?" 카드 뒤집혀 뒷면 CTA</b></div>
+<button class="replay" id="replay">↻ 다시 보기</button>
+
+<div class="stage play" id="stage">
+  <div class="deck" id="deck"></div>
+  <div class="final" id="final">
+    <div class="copy">8유형 중,<br><b>나의 핏</b>은?</div>
+    <div class="flip"><div class="flipin">
+      <div class="face front"><span class="logo">Fitting<i></i></span><div class="q">?</div></div>
+      <div class="face back"><span class="logo">Fitting<i></i></span>
+        <div class="bc"><div class="t">3분이면<br><b>내 핏</b>이 나와요</div><button class="btn">내 핏 찾기 →</button></div></div>
+    </div></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var G='female';
+  var CODES=['TRI','INV','HRG','STR','BAL','DIA','RND','TUB'];
+  var ROT=['-9deg','7deg','-4deg','8deg','-7deg','3deg','-8deg','5deg'];
+  var PIV=1457.7, ANG=4.4;
+  var deck=document.getElementById('deck'), stage=document.getElementById('stage'), finalEl=document.getElementById('final');
+
+  function figHTML(silhouette, point){
+    var head='<div class="head '+G+'">'+(G==='female'?'<span class="longhair"></span>':'')+
+      '<span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div>';
+    return '<div class="fig">'+head+'<div class="body '+silhouette+'" style="background-color:'+point+'; height:150px"></div></div>';
+  }
+  function fitHTML(code, t){
+    var g=(t.gender&&(t.gender[G]||t.gender.female))||{};
+    var tag=(g.profile&&g.profile[0])||'';
+    return '<div class="hc" style="background:radial-gradient(ellipse 70% 34% at 50% 11%, '+t.point+'2b, transparent 60%), linear-gradient(160deg,#191a1f,#0f1014)">'+
+      '<div class="ctop"><span class="clogo">Fitting<i class="sq"></i></span></div>'+
+      '<div class="hcbody">'+figHTML(t.silhouette, t.point)+
+        '<div class="code" style="color:'+t.point+'">'+code+'</div>'+
+        '<div class="word">'+t.name+'</div>'+
+        '<div class="tagline">'+tag+'</div></div></div>';
+  }
+  fetch('data/bodytypes.json').then(function(r){ return r.json(); }).then(function(j){
+    var map={}; j.types.forEach(function(t){ map[t.code]=t; });
+    CODES.forEach(function(code,i){
+      if(!map[code]) return;
+      var el=document.createElement('div'); el.className='card';
+      el.style.setProperty('--i', i); el.style.setProperty('--r', ROT[i]||'0deg');
+      var th=(i-3.5)*ANG*Math.PI/180;
+      el.style.setProperty('--x', (PIV*Math.sin(th)).toFixed(1)+'px');
+      el.style.setProperty('--y', (PIV*(1-Math.cos(th))).toFixed(1)+'px');
+      el.style.setProperty('--rot', ((i-3.5)*ANG).toFixed(2)+'deg');
+      el.innerHTML=fitHTML(code, map[code]); deck.appendChild(el);
+    });
+  }).catch(function(e){ deck.innerHTML='<p style="color:var(--sub)">데이터 로드 실패 — npm run serve로 열어주세요.</p>'; });
+
+  document.getElementById('replay').addEventListener('click', function(){
+    finalEl.classList.remove('on'); stage.classList.remove('play'); void stage.offsetWidth; stage.classList.add('play');
+  });
+  stage.addEventListener('animationend', function(e){ if(e.animationName==='doFlip') finalEl.classList.add('on'); });
+})();
+</script>
+</body>
+</html>

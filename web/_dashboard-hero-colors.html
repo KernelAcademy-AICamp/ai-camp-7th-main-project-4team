@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수익 히어로 · 색 후보</title>
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;-webkit-font-smoothing:antialiased;padding:34px 22px 120px}
+  .page{max-width:760px;margin:0 auto}
+  .ptitle{font-size:16px;font-weight:800;color:var(--green);margin:0 0 4px}
+  .pdesc{font-size:13px;color:var(--sub);margin:0 0 26px;line-height:1.6}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .wrap .cap{font-size:12.5px;font-weight:800;color:var(--ink);margin:0 0 8px}
+  .kc{border-radius:16px;padding:18px 20px;box-shadow:0 6px 18px rgba(20,18,16,.05);border:1px solid var(--line)}
+  .kc small{display:block;font-size:12px;font-weight:700;margin-bottom:6px}
+  .kc b{font-family:var(--num);font-size:30px;font-weight:800;letter-spacing:-.02em;display:block}
+  .kc .trend{font-size:12px;font-weight:700;margin-top:6px}
+
+  /* 1 딥그린 그라데이션(현재) */
+  .c1{background:linear-gradient(135deg,var(--green),var(--green-mid));border-color:transparent;color:#fff}
+  .c1 small,.c1 .trend{color:var(--green-soft)} .c1 b{color:#fff}
+  /* 2 딥그린 솔리드 */
+  .c2{background:var(--green);border-color:transparent;color:#fff}
+  .c2 small,.c2 .trend{color:var(--green-soft)} .c2 b{color:#fff}
+  /* 3 잉크 차콜 */
+  .c3{background:var(--ink);border-color:transparent;color:#fff}
+  .c3 small,.c3 .trend{color:rgba(255,255,255,.6)} .c3 b{color:#fff}
+  /* 4 연그린 라이트(딥그린 글씨) */
+  .c4{background:var(--green-soft);border-color:transparent;color:var(--green)}
+  .c4 small{color:var(--green)} .c4 b{color:var(--green)} .c4 .trend{color:var(--green)}
+  /* 5 크림 + 딥그린 라인 */
+  .c5{background:#fff;border:1.5px solid var(--green);color:var(--ink)}
+  .c5 small{color:var(--sub2)} .c5 b{color:var(--green)} .c5 .trend{color:var(--sub)}
+  /* 6 웜 테라코타(포인트) */
+  .c6{background:linear-gradient(135deg,#8a3f2c,var(--warn,#b0553f));border-color:transparent;color:#fff}
+  .c6 small,.c6 .trend{color:#f3d8ce} .c6 b{color:#fff}
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="ptitle">수익 히어로 · 색 후보</p>
+  <p class="pdesc">지금은 1번(딥그린 그라데이션)이에요. 팔레트 안에서 쓸 수 있는 대안들 — 흰 미니 카드(신규·진행·평점)는 그대로 옆에 있다고 보시면 돼요.</p>
+  <div class="grid">
+    <div class="wrap"><div class="cap">1 · 딥그린 그라데이션 (현재)</div><div class="kc c1"><small>이번 달 수익</small><b>60,000원</b><div class="trend">거래 1건 완료</div></div></div>
+    <div class="wrap"><div class="cap">2 · 딥그린 솔리드</div><div class="kc c2"><small>이번 달 수익</small><b>60,000원</b><div class="trend">거래 1건 완료</div></div></div>
+    <div class="wrap"><div class="cap">3 · 잉크 차콜 (블랙 계열)</div><div class="kc c3"><small>이번 달 수익</small><b>60,000원</b><div class="trend">거래 1건 완료</div></div></div>
+    <div class="wrap"><div class="cap">4 · 연그린 라이트 (딥그린 글씨)</div><div class="kc c4"><small>이번 달 수익</small><b>60,000원</b><div class="trend">거래 1건 완료</div></div></div>
+    <div class="wrap"><div class="cap">5 · 흰 카드 + 딥그린 테두리</div><div class="kc c5"><small>이번 달 수익</small><b>60,000원</b><div class="trend">거래 1건 완료</div></div></div>
+    <div class="wrap"><div class="cap">6 · 웜 테라코타 (포인트)</div><div class="kc c6"><small>이번 달 수익</small><b>60,000원</b><div class="trend">거래 1건 완료</div></div></div>
+  </div>
+</div>
+</body>
+</html>

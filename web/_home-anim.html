@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>카드 애니메이션 시안 6종 — 비교용</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<style>
+/* ==========================================================================
+   _home-anim.html — 히어로 카드 애니메이션 패턴 비교(버리는 파일 · 커밋 안 함).
+   무거운 실물 card.html 대신 가벼운 목업 카드로 '움직임'만 비교. 고른 패턴을 실물로 구현.
+   전부 CSS @keyframes 자동 루프. tokens.css·Pretendard 링크(톤 실물과 동일).
+   ========================================================================== */
+*{box-sizing:border-box; margin:0; padding:0}
+body{background:var(--bg); color:var(--ink); font-family:var(--sans); letter-spacing:var(--ls-body); -webkit-user-select:none; user-select:none}
+
+.top{max-width:1500px; margin:0 auto; padding:30px 40px 6px}
+.top h1{font-size:26px; font-weight:800; letter-spacing:-.04em}
+.top p{font-size:14px; color:var(--sub); margin-top:8px; line-height:1.6}
+
+.grid{max-width:1500px; margin:0 auto; padding:18px 40px 70px;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:22px}
+@media(max-width:1080px){ .grid{grid-template-columns:repeat(2,1fr)} }
+@media(max-width:720px){ .grid{grid-template-columns:1fr; max-width:460px} }
+
+.demo{background:var(--surface); border:var(--bd); border-radius:var(--r-card); overflow:hidden; box-shadow:var(--sh-card)}
+.dhead{padding:15px 18px 12px; border-bottom:1px solid var(--line)}
+.dhead .no{font-size:11px; font-weight:800; letter-spacing:.12em; color:var(--green)}
+.dhead h2{font-size:16px; font-weight:800; letter-spacing:-.03em; margin-top:4px}
+.dhead p{font-size:12px; color:var(--sub); margin-top:5px; line-height:1.5; min-height:34px}
+.stage{position:relative; height:270px; overflow:hidden;
+  background:radial-gradient(ellipse 60% 50% at 50% 45%, #fff, var(--bg))}
+
+/* 목업 카드 — 실물 톤(다크 + 유형 포인트색). 캐릭터/코드만 흉내 */
+.card{position:absolute; left:50%; top:50%; width:92px; height:138px; margin:-69px 0 0 -46px;
+  border-radius:11px; background:linear-gradient(165deg,#20222a,#141519); border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 8px 20px rgba(10,11,14,.30); will-change:transform, opacity; backface-visibility:hidden;
+  display:flex; flex-direction:column; align-items:center; padding:14px 8px 10px}
+.card .ch{width:26px; height:40px; border-radius:8px 8px 5px 5px; background:var(--c); opacity:.9; position:relative}
+.card .ch::before{content:""; position:absolute; left:50%; top:-9px; width:13px; height:13px; margin-left:-6.5px;
+  border-radius:50%; background:#ecd9c9}
+.card .cd{margin-top:auto; font-family:var(--num); font-size:10px; font-weight:800; letter-spacing:.18em; color:var(--c)}
+.card .ln{width:60%; height:3px; border-radius:2px; background:rgba(255,255,255,.14); margin-top:7px}
+
+.stage.reveal .card::after{content:""; position:absolute; inset:0; border-radius:11px;
+  box-shadow:0 0 0 1px var(--gl, transparent)}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <h1>카드 애니메이션 시안 6종</h1>
+  <p>"한 장씩 뽑기"가 부자연스러워서, 뽑기에 얽매이지 않은 자동 연출 6가지를 목업으로 만들었어요. 마음에 드는 번호(또는 조합)를 골라주시면 실물 카드로 구현할게요. 전부 자동 반복이에요.</p>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+(function(){
+  var COL=['#9db8ff','#f4a3c0','#a3d9c9','#f4d58d','#c9a3f4','#f4b08d','#8dd4f4','#b8e08d'];
+  var CODE=['STR','TRI','HRG','INV','BAL','DIA','RND','TUB'];
+
+  // 패턴 정의 — 각자 카드 수·설명·CSS(카드별 @keyframes 생성 함수)
+  var PATTERNS=[
+    { no:'01', name:'커버플로우', desc:'카드가 옆으로 흐르고 가운데 한 장이 정면으로 크게 — 앨범 넘기듯', n:5, dur:9000,
+      css:function(n,dur){ var s=[]; var gap=dur/n;
+        for(var i=0;i<n;i++){ var d=i*gap;
+          s.push('@keyframes cf'+i+'{'+
+            pct(0,d,dur,'transform:translateX(150px) rotateY(-42deg) scale(.8);opacity:.35;z-index:1')+
+            pct(gap*0.5,d,dur,'transform:translateX(0) rotateY(0) scale(1.18);opacity:1;z-index:9')+
+            pct(gap,d,dur,'transform:translateX(-150px) rotateY(42deg) scale(.8);opacity:.35;z-index:1')+
+            pct(gap*1.001,d,dur,'transform:translateX(150px) rotateY(-42deg) scale(.8);opacity:0;z-index:1')+
+          '}'); }
+        return s.join('\n'); },
+      stageCSS:'perspective:900px', mk:function(el,i){ el.style.animation='cf'+i+' var(--dur) linear infinite'; } },
+
+    { no:'02', name:'부채 호흡', desc:'부채로 펼친 채 은은하게 벌어졌다 모였다 — 정적이지만 우아', n:7, dur:5200,
+      css:function(n,dur){ var s=[], mid=(n-1)/2;
+        for(var i=0;i<n;i++){ var a=(i-mid)*9, ax=(i-mid)*30;
+          s.push('@keyframes br'+i+'{'+
+            '0%,100%{transform:translateX('+(ax*.5)+'px) translateY('+Math.abs(i-mid)*3+'px) rotate('+(a*.5)+'deg)}'+
+            '50%{transform:translateX('+ax+'px) translateY('+Math.abs(i-mid)*7+'px) rotate('+a+'deg)}'+
+          '}'); }
+        return s.join('\n'); },
+      mk:function(el,i){ el.style.animation='br'+i+' var(--dur) ease-in-out infinite'; el.style.transformOrigin='50% 260%'; } },
+
+    { no:'03', name:'웨이브', desc:'부채에서 한 장씩 순차로 살짝 떠올랐다 내려감 — 물결처럼', n:7, dur:4200,
+      css:function(n,dur){ var s=[], mid=(n-1)/2;
+        for(var i=0;i<n;i++){ var a=(i-mid)*9, ax=(i-mid)*32, d=i*(dur/(n*3));
+          s.push('@keyframes wv'+i+'{'+
+            pct(0,d,dur,'transform:translateX('+ax+'px) translateY(0) rotate('+a+'deg)')+
+            pct(dur*0.12,d,dur,'transform:translateX('+ax+'px) translateY(-24px) rotate('+a+'deg);z-index:9')+
+            pct(dur*0.26,d,dur,'transform:translateX('+ax+'px) translateY(0) rotate('+a+'deg)')+
+            pct(dur,d,dur,'transform:translateX('+ax+'px) translateY(0) rotate('+a+'deg)')+
+          '}'); }
+        return s.join('\n'); },
+      mk:function(el,i){ el.style.animation='wv'+i+' var(--dur) ease-in-out infinite'; el.style.transformOrigin='50% 260%'; } },
+
+    { no:'04', name:'셔플 → 딜', desc:'가운데 모였다가 부채로 촥 펼쳐지고 다시 모임 — 딜러가 카드 다루듯', n:7, dur:5000,
+      css:function(n,dur){ var s=[], mid=(n-1)/2;
+        for(var i=0;i<n;i++){ var a=(i-mid)*10, ax=(i-mid)*34;
+          s.push('@keyframes sh'+i+'{'+
+            '0%{transform:translateX(0) translateY('+(i*-1)+'px) rotate(-2deg)}'+
+            '18%{transform:translateX(0) translateY('+(i*-1)+'px) rotate(-2deg)}'+
+            '42%{transform:translateX('+ax+'px) translateY('+Math.abs(i-mid)*6+'px) rotate('+a+'deg)}'+
+            '72%{transform:translateX('+ax+'px) translateY('+Math.abs(i-mid)*6+'px) rotate('+a+'deg)}'+
+            '100%{transform:translateX(0) translateY('+(i*-1)+'px) rotate(-2deg)}'+
+          '}'); }
+        return s.join('\n'); },
+      mk:function(el,i){ el.style.animation='sh'+i+' var(--dur) cubic-bezier(.5,0,.3,1) infinite'; el.style.zIndex=i; } },
+
+    { no:'05', name:'폭포', desc:'위에서 한 장씩 떨어져 부채로 쌓임 — 카드가 내려앉는 느낌', n:6, dur:5400,
+      css:function(n,dur){ var s=[], mid=(n-1)/2;
+        for(var i=0;i<n;i++){ var a=(i-mid)*9, ax=(i-mid)*32, d=i*(dur/(n*2.2));
+          s.push('@keyframes cs'+i+'{'+
+            pct(0,d,dur,'transform:translateX('+ax+'px) translateY(-220px) rotate('+a+'deg);opacity:0')+
+            pct(dur*0.10,d,dur,'transform:translateX('+ax+'px) translateY(0) rotate('+a+'deg);opacity:1')+
+            pct(dur*0.80,d,dur,'transform:translateX('+ax+'px) translateY(0) rotate('+a+'deg);opacity:1')+
+            pct(dur*0.90,d,dur,'transform:translateX('+ax+'px) translateY(0) rotate('+a+'deg);opacity:0')+
+            pct(dur,d,dur,'transform:translateX('+ax+'px) translateY(-220px) rotate('+a+'deg);opacity:0')+
+          '}'); }
+        return s.join('\n'); },
+      mk:function(el,i){ el.style.animation='cs'+i+' var(--dur) cubic-bezier(.3,.8,.35,1) infinite'; el.style.zIndex=i; } },
+
+    { no:'06', name:'스택 넘기기', desc:'맨 앞 카드가 옆으로 넘어가며 뒤 카드가 올라옴 — 카드 뭉치를 넘기듯', n:5, dur:6500,
+      css:function(n,dur){ var s=[]; var gap=dur/n;
+        for(var i=0;i<n;i++){ var d=i*gap;
+          s.push('@keyframes st'+i+'{'+
+            pct(0,d,dur,'transform:translate(0,0) rotate(0) scale(1);opacity:1;z-index:9')+
+            pct(gap*0.55,d,dur,'transform:translate(200px,-20px) rotate(16deg) scale(.94);opacity:0;z-index:9')+
+            pct(gap*0.56,d,dur,'transform:translate(0,14px) rotate(0) scale(.9);opacity:.5;z-index:1')+
+            pct(gap*0.999,d,dur,'transform:translate(0,4px) rotate(0) scale(.97);opacity:.85;z-index:5')+
+            pct(gap,d,dur,'transform:translate(0,0) rotate(0) scale(1);opacity:1;z-index:9')+
+          '}'); }
+        return s.join('\n'); },
+      mk:function(el,i){ el.style.animation='st'+i+' var(--dur) cubic-bezier(.5,0,.2,1) infinite'; } }
+  ];
+
+  // 절대시각(ms) 스톱을 카드별 delay 얹어 % 문자열로. 루프 안에서 시차 재생.
+  function pct(at, delay, dur, decl){
+    var p=((at+delay)%dur)/dur*100;
+    return p.toFixed(2)+'%{'+decl+'}';
+  }
+
+  var grid=document.getElementById('grid'), css=[];
+  PATTERNS.forEach(function(P){
+    css.push(P.css(P.n, P.dur));
+    var demo=document.createElement('div'); demo.className='demo';
+    demo.innerHTML='<div class="dhead"><div class="no">PATTERN '+P.no+'</div><h2>'+P.name+'</h2><p>'+P.desc+'</p></div>';
+    var st=document.createElement('div'); st.className='stage';
+    if(P.stageCSS) st.style.cssText=P.stageCSS;
+    st.style.setProperty('--dur', P.dur+'ms');
+    for(var i=0;i<P.n;i++){
+      var c=document.createElement('div'); c.className='card';
+      c.style.setProperty('--c', COL[i%COL.length]);
+      c.innerHTML='<div class="ch"></div><div class="ln"></div><div class="cd">'+CODE[i%CODE.length]+'</div>';
+      P.mk(c,i); st.appendChild(c);
+    }
+    demo.appendChild(st); grid.appendChild(demo);
+  });
+  var style=document.createElement('style'); style.textContent=css.join('\n'); document.head.appendChild(style);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fit 판정 · 화면 구성안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --g:#2E4A3B; --gs:#E7EFEA; --gl:#CBDDD2; --jink:#16140F; --jink2:#3A382F;
+    --jsub:#6E6B63; --jsub2:#A6A29A; --jline:#E6E5E1; --jsoft:#EDEDEA;
+    --type:#9db8ff;              /* STR(시크 스트레이트) 유형색 = 정체성 액센트 */
+    --type-soft:#eef3ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#F4F3EF;color:var(--jink);font-family:'Pretendard',system-ui,sans-serif;-webkit-font-smoothing:antialiased;padding:34px 20px 120px}
+  .page{max-width:1120px;margin:0 auto}
+  h1.pt{font-size:19px;font-weight:800;color:var(--g);margin:0 0 6px}
+  .pd{font-size:13.5px;color:var(--jsub);margin:0 0 26px;line-height:1.65;max-width:820px}
+  .pd b{color:var(--g)}
+  .sechd{font-size:12.5px;font-weight:800;color:#fff;background:var(--g);border-radius:20px;padding:5px 13px;display:inline-block;margin:0 0 14px}
+
+  .phone{background:#fff;border:1px solid var(--jline);border-radius:22px;box-shadow:0 12px 34px rgba(20,18,16,.09);overflow:hidden;margin-bottom:40px}
+  .phscroll{padding:26px 26px 30px}
+
+  h2.jtitle{font-size:24px;font-weight:800;letter-spacing:-.04em;line-height:1.2;margin:0}
+  .jsub{font-size:14px;color:var(--jsub);margin:8px 0 0;line-height:1.5}
+
+  /* ── 기준 프레이밍(체형) — 회색 박스 탈피, 유형색 액센트 ── */
+  .basis{display:flex;align-items:center;gap:13px;background:#fff;border:1px solid var(--jline);border-left:4px solid var(--type);border-radius:12px;padding:12px 15px;box-shadow:0 3px 12px rgba(20,18,16,.04)}
+  .basis-av{flex:none;width:44px;height:44px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--type)}
+  .head{position:relative;width:34px;height:38px;transform:scale(.66);transform-origin:center}
+  .head .face{position:absolute;inset:0;border-radius:10px 10px 8px 8px;background:#ecd9c9;z-index:2;background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px),repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 1px,transparent 1px 7px)}
+  .head .cap{position:absolute;top:-3px;left:-3px;right:-3px;height:13px;border-radius:10px 10px 45% 45%;background:#2a2b30;z-index:3}
+  .head .ey{position:absolute;top:18px;width:4px;height:5px;border-radius:50%;background:#2a2b30;z-index:4}.head .ey.l{left:9px}.head .ey.r{right:9px}
+  .basis-tx{flex:1;min-width:0}
+  .basis-k{font-size:10.5px;font-weight:800;color:var(--jsub2);letter-spacing:.08em;text-transform:uppercase}
+  .basis-n{font-size:15px;font-weight:800;color:var(--jink);letter-spacing:-.02em;margin-top:1px}
+  .basis-code{display:inline-block;font-size:10.5px;font-weight:800;color:var(--jsub);background:var(--jsoft);border-radius:5px;padding:1px 5px;margin-left:6px;vertical-align:1.5px;letter-spacing:.03em}
+  .basis-re{flex:none;font-size:12px;font-weight:700;color:var(--jsub);text-decoration:none;border-bottom:1px solid var(--jline);padding-bottom:1px}
+
+  /* ── 필드 ── */
+  .lab{font-size:11.5px;font-weight:800;color:var(--jsub2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:9px}
+  .jseg{display:flex;gap:8px}
+  .jseg .jseg-b{flex:1;padding:11px 16px;border-radius:11px;border:1px solid var(--jline);background:#fff;font-size:14px;font-weight:700;color:var(--jsub);cursor:pointer}
+  .jseg-b.on{background:var(--gs);border-color:var(--gl);color:var(--g);font-weight:800}
+
+  /* ── 업로드 히어로 ── */
+  .drop{border:1.5px dashed var(--gl);border-radius:16px;background:var(--gs);padding:40px 18px;text-align:center;cursor:pointer}
+  .drop-ic{width:58px;height:58px;border-radius:15px;background:#fff;color:var(--g);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:0 3px 10px rgba(20,18,16,.05)}
+  .drop-ic svg{width:28px;height:28px}
+  .drop-t{font-size:16px;font-weight:800;color:var(--jink)}
+  .drop-d{font-size:12.5px;color:var(--jsub);margin-top:6px;line-height:1.5}
+  .drop-d b{color:var(--g)}
+  .manlink{text-align:center;margin-top:13px}
+  .manlink a{font-size:13px;font-weight:700;color:var(--g);text-decoration:none;border-bottom:1px solid var(--gl);cursor:pointer}
+
+  .jbtn{display:block;width:100%;padding:16px;border-radius:13px;border:none;background:var(--g);color:#fff;font-size:15.5px;font-weight:800;cursor:pointer;text-align:center;font-family:inherit}
+  .jbtn[disabled]{opacity:.4}
+
+  /* ── 우측 거들기 ── */
+  .side{background:var(--jsoft);border-radius:16px;padding:18px 18px 20px}
+  .side+.side{margin-top:16px}
+  .side-h{font-size:13px;font-weight:800;color:var(--jink);margin-bottom:12px}
+  .step{display:flex;gap:11px;align-items:flex-start}
+  .step+.step{margin-top:12px}
+  .step-n{flex:none;width:23px;height:23px;border-radius:50%;background:var(--g);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .step-t{font-size:13px;font-weight:800;color:var(--jink);line-height:1.4}
+  .step-d{font-size:11.5px;color:var(--jsub);margin-top:2px;line-height:1.45}
+
+  .eg-hd{font-size:13px;font-weight:800;color:var(--jink);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+  .eg-tag{font-size:10px;font-weight:800;color:var(--jsub2);background:#fff;border:1px solid var(--jline);border-radius:5px;padding:1px 6px;letter-spacing:.04em}
+  .hm{display:grid;grid-template-columns:34px repeat(3,1fr);gap:5px;align-items:center}
+  .hm .rw{font-size:11px;font-weight:700;color:var(--jsub)}
+  .hm .c{font-size:11px;font-weight:800;text-align:center;padding:7px 0;border-radius:7px;color:var(--jsub)}
+  .hm .c.t{background:#F6E4D6;color:#B4651E}
+  .hm .c.s{background:var(--gs);color:var(--g)}
+  .hm .c.pk{outline:2px solid var(--g);outline-offset:-2px}
+  .hm .col{font-size:10.5px;font-weight:800;text-align:center;color:var(--jsub2)}
+  .hm .col.pk{color:var(--g)}
+  .eg-c{font-size:12.5px;color:var(--jink);margin-top:11px;text-align:center}.eg-c b{color:var(--g);font-weight:800}
+
+  .twocol{display:grid;grid-template-columns:1.42fr 1fr;gap:24px;margin-top:20px}
+  @media(max-width:760px){.twocol{grid-template-columns:1fr}}
+  .stack>*+*{margin-top:18px}
+
+  /* ── 체형 표현 3안 비교 ── */
+  .opts{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(max-width:820px){.opts{grid-template-columns:1fr}}
+  .opt-l{font-size:12.5px;font-weight:800;color:var(--jink);margin-bottom:9px}
+  .opt-l span{color:var(--jsub2);font-weight:600}
+  .opt-box{background:#fff;border:1px solid var(--jline);border-radius:16px;padding:18px}
+  /* 2안 인라인 */
+  .basis-line{display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--jink)}
+  .basis-line .dot{width:26px;height:26px;border-radius:50%;background:var(--type);flex:none;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .basis-line .dot .head{transform:scale(.42)}
+  .basis-line b{font-weight:800}
+  .basis-line .re{margin-left:auto;font-size:12px;color:var(--jsub);text-decoration:underline}
+  /* 3안 틴트 */
+  .basis.tint{background:var(--type-soft);border-color:#d6e2ff;border-left-color:var(--type)}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1 class="pt">Fit 판정 화면 · 구성안</h1>
+  <p class="pd">화면의 주인공은 <b>사이즈표 업로드</b>. <b>내 체형</b>은 판정의 '기준'으로 조용히(회색 박스 대신 유형색 액센트만), <b>진행 방법·예시</b>는 우측에서 거들어요. 넓은 폭이라 좌(작업)·우(안심) 투컬럼, 모바일은 세로 스택.</p>
+
+  <!-- ══════════ 추천 구성 ══════════ -->
+  <div class="phone"><div class="phscroll">
+    <div><h2 class="jtitle">이 옷, 맞을까요?</h2><p class="jsub">사려는 상품의 사이즈표를 올리면 내 체형 기준으로 판정해요</p></div>
+    <div class="twocol">
+
+      <!-- 좌: 작업 -->
+      <div class="stack">
+        <div class="basis">
+          <span class="basis-av"><span class="head male"><span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></span></span>
+          <div class="basis-tx">
+            <div class="basis-k">판정 기준</div>
+            <div class="basis-n">시크 스트레이트<span class="basis-code">STR</span></div>
+          </div>
+          <a class="basis-re">진단 수정</a>
+        </div>
+
+        <div><div class="lab">무슨 옷</div><div class="jseg"><button class="jseg-b on">상의</button><button class="jseg-b">하의</button></div></div>
+
+        <div><div class="lab">사이즈표</div>
+          <div class="drop">
+            <div class="drop-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 15l4-4 3 3 4-5 7 7"/><circle cx="9" cy="9" r="1.3"/></svg></div>
+            <div class="drop-t">상품 사이즈표를 올려주세요</div>
+            <div class="drop-d">쇼핑몰 사이즈표를 캡처해 <b>붙여넣기(⌘V)</b> · 드래그 · 눌러서 선택</div>
+          </div>
+          <div class="manlink"><a>또는 표를 직접 입력하기 →</a></div>
+        </div>
+
+        <button class="jbtn" disabled>판정하기</button>
+      </div>
+
+      <!-- 우: 안심(방법 + 예시) -->
+      <div>
+        <div class="side">
+          <div class="side-h">이렇게 판정해요</div>
+          <div class="step"><div class="step-n">1</div><div><div class="step-t">사이즈표를 올려요</div><div class="step-d">캡처해서 붙여넣으면 자동으로 읽어줘요</div></div></div>
+          <div class="step"><div class="step-n">2</div><div><div class="step-t">값만 확인해요</div><div class="step-d">잘못 읽은 데가 있으면 그 자리서 고쳐요</div></div></div>
+          <div class="step"><div class="step-n">3</div><div><div class="step-t">내 체형에 대봐 판정</div><div class="step-d">사이즈별로 어디가 끼고 남는지 부위별로</div></div></div>
+        </div>
+        <div class="side">
+          <div class="eg-hd">이런 결과를 받아요 <span class="eg-tag">예시</span></div>
+          <div class="hm">
+            <div class="rw">가슴</div><div class="c t">끼임</div><div class="c s pk">딱</div><div class="c">여유</div>
+            <div class="rw">어깨</div><div class="c t">끼임</div><div class="c s pk">딱</div><div class="c s">딱</div>
+            <div></div><div class="col">S</div><div class="col pk">M</div><div class="col">L</div>
+          </div>
+          <div class="eg-c">→ 이 옷은 <b>M</b>이 맞겠네요</div>
+        </div>
+      </div>
+
+    </div>
+  </div></div>
+
+  <!-- ══════════ 체형 표현 3안 ══════════ -->
+  <span class="sechd">체형(기준) 표현 · 3안</span>
+  <div class="opts">
+    <div>
+      <div class="opt-l">1안 · 액센트 카드 <span>(위 시안에 적용 / 추천)</span></div>
+      <div class="opt-box">
+        <div class="basis">
+          <span class="basis-av"><span class="head male"><span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></span></span>
+          <div class="basis-tx"><div class="basis-k">판정 기준</div><div class="basis-n">시크 스트레이트<span class="basis-code">STR</span></div></div>
+          <a class="basis-re">진단 수정</a>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="opt-l">2안 · 조용한 한 줄 <span>(자리 최소)</span></div>
+      <div class="opt-box">
+        <div class="basis-line">
+          <span class="dot"><span class="head male"><span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></span></span>
+          <span><b>시크 스트레이트</b> 기준으로 판정</span>
+          <a class="re">수정</a>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="opt-l">3안 · 유형색 틴트 카드 <span>(정체성 강조)</span></div>
+      <div class="opt-box">
+        <div class="basis tint">
+          <span class="basis-av"><span class="head male"><span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></span></span>
+          <div class="basis-tx"><div class="basis-k">판정 기준</div><div class="basis-n">시크 스트레이트<span class="basis-code">STR</span></div></div>
+          <a class="basis-re">진단 수정</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

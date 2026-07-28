@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>메인 프로토타입 v15 — 인트로 → 폭포 → 줄자 마무리</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<style>
+/* ==========================================================================
+   _home-deck.html v15 — 메인 히어로 (버리는 파일 · 커밋 안 함).
+   스토리(1회 재생 · 전부 자동):
+     ① "당신의 체형, 아직도 모르시나요?" → "FITTING에서 알려드립니다" (페이드)
+     ② 카드가 위에서 떨어져 부채로 쌓임(폭포) — 어색했던 '촤라락+하나씩'을 대체. 캐릭터+제목만(아래 자물쇠)
+     ③ 카드 정리 → 줄자가 나타나 스윽 측정 → "안 입어본 브랜드도 내 사이즈로 딱 FIT" + [내 체형 진단하러 가기 →]
+   줄자 = 서비스 핵심 모티프(측정=핏). 카드 = 실물 card.html. 순환은 CSS @keyframes. 연출 (B) 감각적.
+   ========================================================================== */
+*{box-sizing:border-box; margin:0; padding:0}
+body{background:var(--bg); color:var(--ink); font-family:var(--sans); letter-spacing:var(--ls-body);
+  -webkit-user-select:none; user-select:none; overflow-x:hidden}
+.wrap{max-width:1440px; margin:0 auto; padding:0 44px}
+@media(max-width:900px){ .wrap{padding:0 20px} }
+.note{background:var(--surface); border-bottom:var(--bd); padding:11px 20px; font-size:12.5px; color:var(--sub); text-align:center}
+.note b{color:var(--ink)}
+
+/* ── 히어로 ────────────────────────────────────────────────────────── */
+.hero{position:relative; overflow:hidden}
+.hero::before{content:""; position:absolute; left:50%; top:-22%; width:920px; height:920px; margin-left:-460px;
+  background:radial-gradient(circle at 50% 50%, var(--green-soft), transparent 62%); opacity:.7; pointer-events:none}
+.heroin{position:relative; padding:44px 0 30px; text-align:center}
+.kick{display:inline-flex; align-items:center; gap:7px; font-size:var(--fs-label); font-weight:var(--w-x);
+  letter-spacing:var(--ls-label); color:var(--green); background:var(--green-soft); padding:7px 14px; border-radius:var(--r-chip)}
+.kick .dot{width:5px; height:5px; border-radius:50%; background:var(--green); animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* 무대 — 3겹: 인트로 텍스트 · 카드 덱 · 줄자 마무리 */
+.stage{position:relative; height:520px; margin-top:20px}
+
+/* ① 인트로 카피 */
+.intro{position:absolute; left:50%; top:44%; transform:translate(-50%,-50%); width:88%; pointer-events:none}
+.intro .l{position:absolute; left:50%; top:0; transform:translate(-50%,-50%); width:100%;
+  font-size:clamp(28px,3.6vw,46px); font-weight:var(--w-x); letter-spacing:-.05em; line-height:1.3; opacity:0; white-space:nowrap}
+.intro .l b{color:var(--green)}
+
+/* 카드 덱 (폭포로 낙하) */
+.deck{position:absolute; left:50%; top:150px; width:0; height:340px}
+.card{position:absolute; left:-100px; top:0; width:200px; height:339px; border-radius:17px;
+  overflow:hidden; background:#16171b; border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 14px 34px rgba(10,11,14,.22); opacity:0;
+  transform-origin:50% 50%; will-change:transform, opacity; backface-visibility:hidden}
+.card .cf{position:absolute; top:0; left:0; width:392px; height:664px; border:0;
+  transform:scale(.5102); transform-origin:top left; pointer-events:none}
+.card .veil{position:absolute; left:0; right:0; bottom:0; top:52%; opacity:0;
+  backdrop-filter:blur(7px) saturate(.9); -webkit-backdrop-filter:blur(7px) saturate(.9);
+  background:linear-gradient(180deg, rgba(22,23,27,.18), rgba(22,23,27,.46));
+  -webkit-mask-image:linear-gradient(180deg, transparent 0, #000 22px); mask-image:linear-gradient(180deg, transparent 0, #000 22px);
+  display:flex; align-items:flex-start; justify-content:center; padding-top:22px; pointer-events:none}
+.card .veil b{font-size:10.5px; font-weight:var(--w-x); color:rgba(255,255,255,.82); display:inline-flex; align-items:center; gap:5px}
+.card .veil svg{width:11px; height:11px}
+
+/* ③ 줄자 마무리 — 카드가 정리된 뒤 */
+.finale{position:absolute; left:50%; top:46%; transform:translate(-50%,-50%); width:min(520px,86%); text-align:center; opacity:0; pointer-events:none; z-index:50}
+.finale.show{pointer-events:auto}
+.ruler{position:relative; margin:24px auto 0}
+.rbar{position:relative; height:50px; border-radius:9px; background:var(--surface); border:1px solid var(--line2); overflow:hidden}
+.rfill{position:absolute; left:0; top:0; bottom:0; width:0; background:var(--green-soft); transition:width 1.3s cubic-bezier(.3,.8,.25,1) .2s}
+.finale.show .rfill{width:72%}
+.rticks{position:absolute; inset:0; background:repeating-linear-gradient(90deg, var(--line2) 0 1px, transparent 1px 13px);
+  -webkit-mask-image:linear-gradient(180deg,#000 0 46%,transparent 46%); mask-image:linear-gradient(180deg,#000 0 46%,transparent 46%)}
+.rticks.major{background:repeating-linear-gradient(90deg, var(--sub2) 0 1px, transparent 1px 66px);
+  -webkit-mask-image:linear-gradient(180deg,#000 0 74%,transparent 74%); mask-image:linear-gradient(180deg,#000 0 74%,transparent 74%)}
+.rnums{position:absolute; left:0; right:0; bottom:4px; display:flex; justify-content:space-between; padding:0 5px;
+  font-family:var(--num); font-size:9.5px; color:var(--sub2); font-weight:var(--w-bold)}
+.rmark{position:absolute; top:-5px; bottom:-5px; width:2px; background:var(--green); left:0; border-radius:2px;
+  transition:left 1.3s cubic-bezier(.3,.8,.25,1) .2s}
+.finale.show .rmark{left:72%}
+.rmark::after{content:""; position:absolute; top:-4px; left:-4px; width:10px; height:10px; border-radius:50%; background:var(--green); border:2px solid var(--surface)}
+.rread{display:flex; align-items:baseline; justify-content:center; gap:8px; margin-top:12px}
+.rread .v{font-family:var(--num); font-size:26px; font-weight:var(--w-x); letter-spacing:-.03em}
+.rread .v small{font-size:12px; font-weight:var(--w-med); color:var(--sub); margin-left:2px}
+.rread .sep{color:var(--line2)}
+.fcopy{font-size:clamp(23px,2.8vw,36px); font-weight:var(--w-x); letter-spacing:-.05em; line-height:1.26}
+.fcopy b{color:var(--green)}
+.fbtn{display:inline-flex; align-items:center; gap:8px; margin-top:22px;
+  font-family:var(--sans); font-size:16px; font-weight:var(--w-bold); padding:16px 26px; border-radius:var(--r-btn);
+  background:var(--green-soft); color:var(--green); border:1px solid var(--green-line); cursor:pointer; transition:.14s}
+.fbtn:hover{background:#DDE9E2; transform:translateY(-1px)}
+
+.downhint{text-align:center; font-size:13px; color:var(--sub2); font-weight:var(--w-med); padding:22px 0 40px}
+.downhint .arr{display:inline-block; margin-left:6px; animation:bob 1.7s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+
+/* ── 서비스 소개 (유지) ─────────────────────────────────────────────── */
+.svc{background:var(--surface); border-top:var(--bd); position:relative}
+.svcin{padding:84px 0 90px}
+.shead{text-align:center; max-width:660px; margin:0 auto}
+.eyebrow{font-size:var(--fs-label); font-weight:var(--w-x); letter-spacing:var(--ls-label); text-transform:uppercase; color:var(--sub2)}
+h2{font-size:clamp(28px,3vw,42px); font-weight:var(--w-x); letter-spacing:-.05em; line-height:1.26; margin-top:12px}
+h2 b{color:var(--green)}
+.lead{font-size:16px; color:var(--sub); margin-top:13px; line-height:1.62}
+.how{display:grid; grid-template-columns:64px minmax(0,1fr); gap:34px; margin-top:56px; align-items:start}
+.vtape{position:relative; height:100%; min-height:520px; justify-self:center; width:34px}
+.vtape .rail{position:absolute; left:50%; margin-left:-.5px; top:0; bottom:0; width:1px; background:var(--line2)}
+.vtape .tk{position:absolute; left:50%; margin-left:-.5px; top:0; bottom:0; width:1px;
+  background:repeating-linear-gradient(180deg, var(--line2) 0 1px, transparent 1px 12px)}
+.vtape .vfill{position:absolute; left:50%; margin-left:-1.5px; top:0; width:3px; height:0; background:var(--green); border-radius:3px}
+.vtape .vhead{position:absolute; left:50%; margin-left:-7px; top:0; width:14px; height:14px; border-radius:50%;
+  background:var(--green); border:3px solid var(--surface); box-shadow:0 0 0 1px var(--green-line)}
+.steps{display:flex; flex-direction:column; gap:22px}
+.step{display:grid; grid-template-columns:56px minmax(0,1fr) auto; gap:20px; align-items:center;
+  background:var(--bg); border:var(--bd); border-radius:var(--r-card); padding:26px 28px;
+  opacity:0; transform:translateY(26px); transition:opacity .6s, transform .6s cubic-bezier(.2,.8,.3,1)}
+.step.on{opacity:1; transform:none}
+.step .ic{width:56px; height:56px; border-radius:15px; background:var(--green-soft); color:var(--green);
+  display:flex; align-items:center; justify-content:center; flex:none}
+.step .ic svg{width:26px; height:26px}
+.step .no{font-family:var(--num); font-size:11px; font-weight:var(--w-x); letter-spacing:var(--ls-label); color:var(--green)}
+.step h3{font-size:20px; font-weight:var(--w-x); letter-spacing:-.035em; margin-top:5px}
+.step p{font-size:14px; color:var(--sub); margin-top:6px; line-height:1.6; max-width:520px}
+.step .big{text-align:right; flex:none}
+.step .big b{display:block; font-family:var(--num); font-size:34px; font-weight:var(--w-x); letter-spacing:-.04em; color:var(--green)}
+.step .big span{font-size:12px; color:var(--sub2); font-weight:var(--w-bold)}
+@media(max-width:900px){
+  .heroin{padding-top:30px}
+  .stage{height:480px} .deck{top:120px}
+  .card{width:158px; height:268px; left:-79px} .card .cf{transform:scale(.4031)}
+  .intro .l{white-space:normal}
+  .how{grid-template-columns:1fr; gap:18px} .vtape{display:none}
+  .step{grid-template-columns:46px minmax(0,1fr); gap:14px; padding:20px}
+  .step .big{grid-column:1/-1; text-align:left}
+}
+@media(prefers-reduced-motion:reduce){
+  .card,.intro .l{display:none}
+  .finale{opacity:1 !important; animation:none !important}
+}
+</style>
+</head>
+<body>
+
+<div class="note"><b>프로토타입 v16</b> — 인트로 카피 → <b>촤라락 펼침</b>(하나씩 뽑기는 뺌) → 부채로 잠깐 → <b>줄자로 측정</b> · 카피 위 · 줄자 중간 · 버튼 아래</div>
+
+<!-- ── 히어로 ── -->
+<section class="hero"><div class="wrap heroin">
+
+  <span class="kick"><span class="dot"></span> 체형·사이즈 진단</span>
+
+  <div class="stage" id="stage">
+    <div class="intro" id="intro">
+      <div class="l" id="l1">당신의 체형, <b>아직도 모르시나요?</b></div>
+      <div class="l" id="l2"><b>FITTING</b>에서 알려드립니다</div>
+    </div>
+    <div class="deck" id="deck"></div>
+    <div class="finale" id="finale">
+      <div class="fcopy">안 입어본 브랜드도<br><b>내 사이즈로 딱 FIT</b></div>
+      <div class="ruler">
+        <div class="rbar">
+          <div class="rfill"></div>
+          <div class="rticks"></div><div class="rticks major"></div>
+          <div class="rnums"><span>150</span><span>160</span><span>170</span><span>180</span><span>190</span></div>
+          <div class="rmark"></div>
+        </div>
+        <div class="rread"><span class="v">172<small>cm</small></span><span class="sep">·</span><span class="v">64<small>kg</small></span></div>
+      </div>
+      <button class="fbtn" id="startBtn">내 체형 진단하러 가기 →</button>
+    </div>
+  </div>
+
+</div>
+<div class="downhint">그런데 체형은 어떻게 알아낼까요?<span class="arr">↓</span></div>
+</section>
+
+<!-- ── 서비스 소개 (유지) ── -->
+<section class="svc"><div class="wrap svcin">
+  <div class="shead">
+    <span class="eyebrow">How it works</span>
+    <h2>착용 경험을 <b>사이즈로 번역</b>해요</h2>
+    <p class="lead">복잡한 신체 치수 입력 없이, 평소 옷의 느낌만으로 3단계면 끝나요</p>
+  </div>
+
+  <div class="how" id="how">
+    <div class="vtape">
+      <div class="rail"></div><div class="tk"></div>
+      <div class="vfill" id="vfill"></div><div class="vhead" id="vhead"></div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></div>
+        <div><div class="no">STEP 01</div><h3>착용 경험 입력</h3>
+          <p>평소 입는 옷의 브랜드·핏·부위별 느낌을 알려주세요. 치수 대신 '경험'으로 시작해요</p></div>
+        <div class="big"><b class="cnt" data-to="2">0</b><span>분이면 충분</span></div>
+      </div>
+      <div class="step">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8L12 3z"/><path d="M19 14.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6.6-1.6z"/></svg></div>
+        <div><div class="no">STEP 02</div><h3>AI 체형 진단</h3>
+          <p>8가지 체형 유형 중 내 유형을 판정하고, 공유용 캐릭터 카드로 보여드려요</p></div>
+        <div class="big"><b class="cnt" data-to="8">0</b><span>체형으로 분류</span></div>
+      </div>
+      <div class="step">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15.6 2.3l6.1 6.1a1 1 0 0 1 0 1.4L9.8 21.7a1 1 0 0 1-1.4 0l-6.1-6.1a1 1 0 0 1 0-1.4L14.2 2.3a1 1 0 0 1 1.4 0z"/><path d="M14 5l2 2M11 8l2 2M8 11l2 2M5 14l2 2"/></svg></div>
+        <div><div class="no">STEP 03</div><h3>브랜드별 사이즈 번역</h3>
+          <p>안 입어본 브랜드도 내 몸 기준으로 사이즈를 환산해, 반품 없이 한 번에 맞춰요</p></div>
+        <div class="big"><b class="cnt" data-to="0" data-from="9">9</b><span>반품을 목표로</span></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<script>
+(function(){
+  var G='female';
+  var CODES=['TRI','INV','HRG','STR','BAL','DIA','RND','TUB'];
+  var N=CODES.length, mid=(N-1)/2;
+  var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var stage=document.getElementById('stage'), deck=document.getElementById('deck'), finaleEl=document.getElementById('finale');
+
+  /* ── 타임라인(ms) · 1회 재생 ─────────────────────────────────────── */
+  var T={
+    introA: 300, introB: 2050, introDur: 1750,   // ① 인트로 2줄
+    spreadAt: 3900, spStep: 55, spDur: 660,       // ② 촤라락(중앙 모임 → 옆으로 펼침)
+    holdAll: 1600,                                // 부채로 잠깐 보여줌(하나씩 뽑기 없음)
+    clearDur: 700                                 // ③ 카드 정리(페이드)
+  };
+  T.spreadEnd = T.spreadAt + (N-1)*T.spStep + T.spDur;
+  T.clearA  = T.spreadEnd + T.holdAll;
+  T.clearB  = T.clearA + T.clearDur;
+  T.finaleAt= T.clearA + 200;                     // 카드 정리되며 줄자 등장
+  T.total   = T.clearB + 2400;                    // 줄자 측정+카피 여유
+  var EASE_OUT='cubic-bezier(.22,.9,.28,1)', EASE_IO='cubic-bezier(.5,0,.3,1)';
+
+  var GAP_X, STEP, cardW;
+  function layout(){
+    var stageW=stage.clientWidth;
+    cardW=window.innerWidth<=900?158:200;
+    STEP=window.innerWidth<=900?4.6:7;
+    var spreadW=Math.min(600, stageW - cardW - 46);
+    GAP_X=spreadW/(N-1);
+  }
+  // 중앙 모임(등장 준비) → 옆으로 촤라락 펼침
+  function CSTACK(i){ return 'translateX('+(i*-1)+'px) translateY('+(i*-1.2)+'px) rotate(-2deg)'; }
+  function FANC(i){ return 'translateX('+((i-mid)*GAP_X)+'px) translateY('+(Math.abs(i-mid)*1.5)+'px) rotate('+((i-mid)*STEP)+'deg)'; }
+
+  function kf(name, stops){
+    return '@keyframes '+name+'{\n'+stops.map(function(s){
+      return (s[0]/T.total*100).toFixed(3)+'%{'+s[1]+(s[2]?';animation-timing-function:'+s[2]:'')+'}';
+    }).join('\n')+'\n}';
+  }
+
+  function dealCSS(){
+    layout();
+    var out=[];
+    for(var i=0;i<N;i++){
+      var spA=T.spreadAt+i*T.spStep, spB=spA+T.spDur;
+      // 중앙에 모여 등장 → 옆으로 촤라락 펼침 → 부채로 유지 → 정리(페이드). z는 나중 장이 위로.
+      out.push(kf('deal'+i, [
+        [0,             'transform:'+CSTACK(i)+';opacity:0;z-index:'+i],
+        [T.spreadAt-120,'transform:'+CSTACK(i)+';opacity:0;z-index:'+i],
+        [spA,           'transform:'+CSTACK(i)+';opacity:1;z-index:'+i, EASE_OUT],
+        [spB,           'transform:'+FANC(i)+';opacity:1;z-index:'+i],
+        [T.clearA,      'transform:'+FANC(i)+';opacity:1;z-index:'+i, EASE_IO],
+        [T.clearB,      'transform:'+FANC(i)+' translateY(14px) scale(.95);opacity:0;z-index:'+i],
+        [T.total,       'transform:'+FANC(i)+' translateY(14px) scale(.95);opacity:0;z-index:'+i]
+      ]));
+      // veil — 펼친 후 상시(캐릭터+제목만), 정리 때 사라짐
+      out.push(kf('veil'+i, [
+        [0,'opacity:0'], [spB-100,'opacity:0'], [spB+120,'opacity:1'],
+        [T.clearA,'opacity:1'], [T.clearB,'opacity:0'], [T.total,'opacity:0']
+      ]));
+      out.push(
+        '.stage.run .card[data-i="'+i+'"]{animation:deal'+i+' '+T.total+'ms forwards}',
+        '.stage.run .card[data-i="'+i+'"] .veil{animation:veil'+i+' '+T.total+'ms forwards}'
+      );
+    }
+    // ① 인트로 2줄
+    out.push(kf('introA', [
+      [0,'opacity:0'], [T.introA,'opacity:0'], [T.introA+400,'opacity:1'],
+      [T.introA+T.introDur-450,'opacity:1'], [T.introA+T.introDur,'opacity:0'], [T.total,'opacity:0']
+    ]));
+    out.push(kf('introB', [
+      [0,'opacity:0'], [T.introB,'opacity:0'], [T.introB+400,'opacity:1'],
+      [T.introB+T.introDur-450,'opacity:1'], [T.introB+T.introDur,'opacity:0'], [T.total,'opacity:0']
+    ]));
+    out.push('.stage.run #l1{animation:introA '+T.total+'ms forwards}');
+    out.push('.stage.run #l2{animation:introB '+T.total+'ms forwards}');
+    // ③ 줄자 마무리 등장(줄자 마커/fill은 .show CSS transition으로 측정 연출)
+    out.push(kf('finale', [
+      [0,'opacity:0;transform:translate(-50%,-50%) scale(.98)'],
+      [T.finaleAt,'opacity:0;transform:translate(-50%,-50%) scale(.98)'],
+      [T.finaleAt+600,'opacity:1;transform:translate(-50%,-50%) scale(1)'],
+      [T.total,'opacity:1;transform:translate(-50%,-50%) scale(1)']
+    ]));
+    out.push('.stage.run #finale{animation:finale '+T.total+'ms forwards}');
+    return out.join('\n');
+  }
+
+  CODES.forEach(function(code,i){
+    var el=document.createElement('div');
+    el.className='card'; el.dataset.i=i; el.dataset.code=code;
+    el.innerHTML='<iframe class="cf" src="card.html?type='+code+'&g='+G+'" scrolling="no" tabindex="-1" title="결과 카드 '+code+'"></iframe>'+
+      '<div class="veil"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">'+
+      '<rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>진단하면 열려요</b></div>';
+    deck.appendChild(el);
+    var f=el.querySelector('.cf');
+    f.addEventListener('load', function(){
+      try{ var doc=f.contentDocument; if(!doc) return;
+        var info=doc.querySelector('.info');
+        if(info) el.querySelector('.veil').style.top=(info.getBoundingClientRect().top/f.clientHeight*100)+'%';
+        var st=doc.createElement('style'); st.textContent='.fig{animation:none!important}'; doc.head.appendChild(st);
+      }catch(e){}
+    });
+  });
+
+  var style=document.createElement('style'); style.textContent=dealCSS(); document.head.appendChild(style);
+
+  var started=false;
+  new IntersectionObserver(function(en,ob){
+    en.forEach(function(x){
+      if(!x.isIntersecting || started) return;
+      started=true;
+      if(RM){ finaleEl.classList.add('show'); ob.disconnect(); return; }
+      stage.classList.add('run');
+      setTimeout(function(){ finaleEl.classList.add('show'); }, T.finaleAt+300);   // 줄자 측정 연출 트리거
+      ob.disconnect();
+    });
+  },{threshold:.2}).observe(stage);
+
+  document.getElementById('startBtn').addEventListener('click', function(){
+    alert('데모 — 실제로는 진단 플로우(diag-basic.html)로 이동해요.');
+  });
+
+  var rz=null;
+  addEventListener('resize', function(){ clearTimeout(rz); rz=setTimeout(function(){ style.textContent=dealCSS(); }, 220); });
+
+  /* ── 서비스 소개(유지): 스텝 등장 · 카운트업 · 세로 줄자 스크롤 1:1 ── */
+  var so=new IntersectionObserver(function(en){
+    en.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add('on'); so.unobserve(x.target); } });
+  },{threshold:.35});
+  [].forEach.call(document.querySelectorAll('.step'), function(s,i){ s.style.transitionDelay=(i*90)+'ms'; so.observe(s); });
+
+  function countTo(el){
+    var to=+el.dataset.to, from=el.dataset.from?+el.dataset.from:0, t0=null;
+    function step(ts){ if(!t0) t0=ts; var p=Math.min(1,(ts-t0)/1100), e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(from+(to-from)*e); if(p<1) requestAnimationFrame(step); }
+    requestAnimationFrame(step);
+  }
+  var co=new IntersectionObserver(function(en){
+    en.forEach(function(x){ if(x.isIntersecting){ countTo(x.target); co.unobserve(x.target); } });
+  },{threshold:.6});
+  [].forEach.call(document.querySelectorAll('.cnt'), function(el){ co.observe(el); });
+
+  var how=document.getElementById('how'), vfill=document.getElementById('vfill'), vhead=document.getElementById('vhead'), tick=false;
+  function upd(){ tick=false;
+    var r=how.getBoundingClientRect(), vh=window.innerHeight;
+    var prog=(vh*0.55 - r.top)/(r.height*1.02); prog=Math.max(0,Math.min(1,prog));
+    var pct=(prog*100).toFixed(2)+'%'; vfill.style.height=pct; vhead.style.top=pct;
+  }
+  addEventListener('scroll', function(){ if(!tick){ tick=true; requestAnimationFrame(upd); } }, {passive:true});
+  addEventListener('resize', upd); upd();
+})();
+</script>
+</body>
+</html>

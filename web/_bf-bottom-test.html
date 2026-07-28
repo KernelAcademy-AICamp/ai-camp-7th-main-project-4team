@@ -1,0 +1,41 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>bottom bodyfit test</title>
+<style>body{background:#fff;margin:0;padding:20px;font-family:sans-serif;}svg{width:220px;display:block;overflow:visible;border:1px solid #eee;}.lab{font:12px sans-serif;fill:#999;}</style>
+</head><body>
+<div id="out"></div>
+<script>
+function off(e){return Math.max(-9,Math.min(14,e*2.1));}
+// 현재 코드 그대로
+function currentBottom(map){
+  var G="#2E4A3B",R="#B0553F",FILL="#E4E3DE";
+  var w=off((map.waist||{}).ease||0),h=off((map.hip||{}).ease||0),t=off((map.thigh||{}).ease||0);
+  var GS=G;
+  return '<svg viewBox="0 0 200 280">'+
+    '<path d="M70 24 L130 24 L144 78 L128 262 L106 262 L100 120 L94 262 L72 262 L56 78 Z" fill="'+FILL+'"/>'+
+    '<path d="M'+(70-w)+' 20 L'+(130+w)+' 20 L'+(150+h)+' 80 L'+(128+t)+' 250 L106 250 L100 122 L94 250 L'+(72-t)+' 250 L'+(50-h)+' 80 Z" fill="none" stroke="'+GS+'" stroke-width="2.4" stroke-linejoin="round"/>'+
+    '<line x1="'+(50-h)+'" y1="250" x2="98" y2="250" stroke="'+GS+'" stroke-width="2.4"/>'+
+    '<line x1="102" y1="250" x2="'+(128+t)+'" y2="250" stroke="'+GS+'" stroke-width="2.4"/>'+
+    '</svg>';
+}
+// 수정안: 힙 곡선(Q) + 왼쪽 밑단 좌표 버그(50-h→72-t) 수정
+function fixedBottom(map){
+  var G="#2E4A3B",R="#B0553F",FILL="#E4E3DE";
+  var w=off((map.waist||{}).ease||0),h=off((map.hip||{}).ease||0),t=off((map.thigh||{}).ease||0);
+  var GS=G;
+  return '<svg viewBox="0 0 200 280">'+
+    '<path d="M70 24 L130 24 L144 78 L128 262 L106 262 L100 120 L94 262 L72 262 L56 78 Z" fill="'+FILL+'"/>'+
+    '<path d="M'+(70-w)+' 20 L'+(130+w)+' 20 '+
+      'Q'+(150+h)+' 80 '+(128+t)+' 250 '+
+      'L106 250 L100 122 L94 250 '+
+      'L'+(72-t)+' 250 '+
+      'Q'+(50-h)+' 80 '+(70-w)+' 20 Z" fill="none" stroke="'+GS+'" stroke-width="2.4" stroke-linejoin="round"/>'+
+    '<line x1="'+(72-t)+'" y1="250" x2="98" y2="250" stroke="'+GS+'" stroke-width="2.4"/>'+
+    '<line x1="102" y1="250" x2="'+(128+t)+'" y2="250" stroke="'+GS+'" stroke-width="2.4"/>'+
+    '</svg>';
+}
+var map={ waist:{ease:3}, hip:{ease:18}, thigh:{ease:12} };
+document.getElementById('out').innerHTML =
+  '<h3>현재 (삐쭉)</h3>'+currentBottom(map)+
+  '<h3>수정안 (힙 곡선 + 밑단 좌표 수정)</h3>'+fixedBottom(map);
+</script>
+</body></html>

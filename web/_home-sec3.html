@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>메인 아래 섹션 리디자인 — ③ 스타일리스트 연결</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<style>
+/* _home-sec3.html — ③ 스타일리스트 연결 리디자인 시안(버리는 파일). 히어로 톤(딥그린·브랜드 사각점). */
+*{box-sizing:border-box; margin:0; padding:0}
+body{background:var(--bg); color:var(--ink); font-family:var(--sans); letter-spacing:var(--ls-body)}
+.note{background:var(--surface,#fff); border-bottom:1px solid var(--line); padding:11px 20px; font-size:12.5px; color:var(--sub); text-align:center}
+.note b{color:var(--ink)}
+.wrap{max-width:1160px; margin:0 auto; padding:0 28px}
+.blk{padding:76px 0}
+.eyebrow{display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:800; letter-spacing:.12em; color:var(--sub2); text-transform:uppercase}
+.eyebrow .sq{width:7px; height:7px; border-radius:2px; background:var(--green)}
+.hsec{font-size:clamp(28px,3.4vw,38px); font-weight:800; letter-spacing:-.045em; line-height:1.22; margin-top:15px}
+.hsec b{color:var(--green)}
+.lead{font-size:16.5px; color:var(--sub); margin-top:13px; line-height:1.62; max-width:560px}
+
+.occ{display:flex; flex-wrap:wrap; gap:8px; margin-top:26px}
+.occ .oc{font-size:14px; font-weight:700; color:var(--sub); background:var(--surface,#fff); border:1.5px solid var(--line2); padding:9px 16px; border-radius:20px; cursor:pointer; transition:.22s}
+.occ .oc:hover{border-color:var(--green-line); color:var(--green)}
+.occ .oc.on{background:var(--green); color:#fff; border-color:var(--green); box-shadow:0 6px 16px rgba(46,74,59,.2)}
+
+/* 연결 — 나 → 줄자선(펄스) → 매칭 쇼퍼 */
+.connect{display:flex; align-items:center; margin-top:40px; max-width:1000px}
+.node{background:var(--surface,#fff); border:1px solid var(--line); border-radius:20px; padding:20px 22px; box-shadow:0 10px 28px rgba(20,22,28,.05); display:flex; align-items:center; gap:14px; flex:none; width:352px}
+.node .av,.shopper .ph{width:52px; height:52px; border-radius:50%; flex:none; overflow:hidden; display:flex; align-items:center; justify-content:center; background:linear-gradient(160deg,#eef1ef,#dde3df)}
+.shopper .ph{background:linear-gradient(160deg,#efe7dc,#e2d4c2)}
+/* 아바타 얼굴 = 우리 캐릭터 머리 */
+.avhead{position:relative; width:32px; height:36px; transform:scale(.82); transform-origin:center}
+.avhead.male .longhair{display:none}
+.avhead .face{position:absolute; inset:0; border-radius:10px 10px 8px 8px; background:#ecd9c9; z-index:2;
+  background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.07) 0 1px,transparent 1px 7px),repeating-linear-gradient(90deg,rgba(0,0,0,.07) 0 1px,transparent 1px 7px)}
+.avhead .cap{position:absolute; top:-3px; left:-3px; right:-3px; height:13px; border-radius:10px 10px 45% 45%; z-index:3}
+.avhead .longhair{position:absolute; top:-5px; left:-7px; right:-7px; bottom:1px; border-radius:50% 50% 36% 36% / 46% 46% 30% 30%; z-index:1}
+.avhead.female .cap,.avhead.female .longhair{background:#9a7350}
+.avhead.male .cap{background:#2a2b30}
+.avhead .ey{position:absolute; top:18px; width:4px; height:5px; border-radius:50%; background:#2a2b30; z-index:4}
+.avhead .ey.l{left:9px} .avhead .ey.r{right:9px}
+.node .nm{font-size:16.5px; font-weight:800; letter-spacing:-.02em}
+.node .sub{font-size:13px; color:var(--sub); margin-top:3px} .node .sub .sq{display:inline-block; width:5px; height:5px; border-radius:1px; background:var(--green); margin:0 4px}
+
+/* 줄자 링크(점선 wire 대신 눈금 줄자) */
+.link{flex:1; position:relative; min-width:130px; height:34px; display:flex; align-items:center; padding:0 8px}
+.link .rail{position:absolute; left:8px; right:8px; top:50%; margin-top:-1px; height:2px; background:repeating-linear-gradient(90deg,var(--line2) 0 1.6px,transparent 1.6px 12px)}
+.link .fill{position:absolute; left:8px; top:50%; margin-top:-1.5px; height:3px; width:0; border-radius:3px; background:linear-gradient(90deg,var(--green-mid),var(--green))}
+.link .mk{position:absolute; top:50%; left:8px; width:9px; height:9px; margin:-4.5px 0 0 -4.5px; border-radius:2px; background:var(--green); box-shadow:0 2px 8px rgba(46,74,59,.4); opacity:0}
+.shopper{position:relative; opacity:.5; box-shadow:0 10px 28px rgba(20,22,28,.05)}
+.shopper .badge{position:absolute; top:-12px; left:20px; background:var(--green); color:#fff; font-size:12.5px; font-weight:800; padding:4px 11px; border-radius:20px; box-shadow:0 5px 14px rgba(46,74,59,.35); opacity:0; transform:scale(.5)}
+
+/* 재매칭 루프 — 초록선이 계속 왼→오로 그어지며(사각 마커 따라감) 매 바퀴 매칭 반복 */
+.connect.play .link .fill{animation:lineSweep 2.4s ease infinite}
+.connect.play .link .mk{animation:mkSweep 2.4s ease infinite}
+.connect.play .shopper{animation:shopMatch 2.4s ease infinite}
+.connect.play .shopper .badge{animation:badgePop 2.4s ease infinite}
+@keyframes lineSweep{0%{width:0;opacity:1}46%{width:calc(100% - 16px);opacity:1}74%{width:calc(100% - 16px);opacity:1}86%{width:calc(100% - 16px);opacity:0}100%{width:0;opacity:0}}
+@keyframes mkSweep{0%{left:8px;opacity:0}6%{opacity:1}46%{left:calc(100% - 8px);opacity:1}74%{left:calc(100% - 8px);opacity:1}84%{opacity:0}100%{left:8px;opacity:0}}
+@keyframes shopMatch{0%,42%{opacity:.5; border-color:var(--line); box-shadow:0 10px 28px rgba(20,22,28,.05)}54%{opacity:1; border-color:var(--green); box-shadow:0 0 0 2px var(--green-soft),0 18px 40px rgba(46,74,59,.16)}76%{opacity:1; border-color:var(--green); box-shadow:0 0 0 2px var(--green-soft),0 18px 40px rgba(46,74,59,.16)}88%,100%{opacity:.5; border-color:var(--line); box-shadow:0 10px 28px rgba(20,22,28,.05)}}
+@keyframes badgePop{0%,44%{opacity:0; transform:scale(.5)}56%{opacity:1; transform:scale(1)}76%{opacity:1; transform:scale(1)}88%,100%{opacity:0; transform:scale(.5)}}
+.shopper .snm{font-size:15.5px; font-weight:800; letter-spacing:-.03em}
+.shopper .spec{font-size:13px; color:var(--sub); margin-top:2px}
+.shopper .pill{display:inline-block; margin-top:6px; font-size:12.5px; font-weight:800; color:var(--green); background:var(--green-soft); padding:3px 9px; border-radius:11px}
+.shopper .mt{margin-left:auto; text-align:right; flex:none; padding-left:10px}
+.shopper .mt .pct{font-family:var(--num,monospace); font-feature-settings:'tnum'; font-weight:800; font-size:22px; color:var(--green); letter-spacing:-.02em}
+.shopper .mt .ml{font-size:12.5px; color:var(--sub2); font-weight:700}
+
+@media(max-width:900px){
+  .connect{flex-direction:column; gap:20px; max-width:360px}
+  .node{width:100%} .link{width:100%; height:56px} .link .rail{left:50%; right:auto; top:8px; bottom:8px; width:2px; height:auto; margin:0 0 0 -1px}
+  /* 모바일: 가로 스윕 대신 세로 채움 정적 표시 */
+  .connect.play .link .fill{animation:none; left:50%; margin-left:-1.5px; top:8px; width:3px; height:calc(100% - 16px); opacity:1}
+  .connect.play .link .mk{display:none}
+  .connect.play .shopper{animation:none; opacity:1; border-color:var(--green); box-shadow:0 0 0 2px var(--green-soft),0 18px 40px rgba(46,74,59,.16)}
+  .connect.play .shopper .badge{animation:none; opacity:1; transform:scale(1)}
+}
+</style>
+</head>
+<body>
+<div class="note"><b>③ 스타일리스트 연결</b> — 히어로 톤·줄자 링크로 정돈 · 실물 비교: <b>http://localhost:8000/index.html</b></div>
+
+<section class="blk"><div class="wrap">
+  <span class="eyebrow"><span class="sq"></span> Shopper match</span>
+  <h2 class="hsec">나에게 어울리는 스타일<br><b>핏팅</b>에서 함께 찾아가요</h2>
+  <p class="lead">내 체형·사이즈에 맞는 스타일리스트를 연결해, 뭘 입을지 고민을 대신 풀어드려요</p>
+
+  <div class="occ">
+    <span class="oc on">소개팅</span><span class="oc">면접·발표</span><span class="oc">결혼식 하객</span><span class="oc">여행</span><span class="oc">일상 코디</span>
+  </div>
+
+  <div class="connect" id="connect">
+    <div class="node me"><div class="av"><div class="avhead female"><span class="longhair"></span><span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div></div><div><div class="nm">내 프로필</div><div class="sub">시크 스트레이트<span class="sq"></span>172cm</div></div></div>
+    <div class="link"><div class="rail"></div><div class="fill"></div><div class="mk"></div></div>
+    <div class="node shopper">
+      <div class="badge">매칭 완료</div>
+      <div class="ph"><div class="avhead male"><span class="longhair"></span><span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div></div>
+      <div><div class="snm">이서연 스타일리스트</div><div class="spec">미니멀·오피스룩 전문</div><span class="pill">소개팅 추천</span></div>
+      <div class="mt"><div class="pct">94%</div><div class="ml">궁합</div></div>
+    </div>
+  </div>
+</div></section>
+<div style="height:40vh"></div>
+
+<script>
+  // 상황별 스타일리스트 — 초록선이 한 바퀴 완주할 때마다 칩·매칭 재생
+  var SHOPPERS=[
+    {n:'이서연',s:'미니멀·데이트룩 전문',p:'소개팅 추천',pct:94,g:'female'},
+    {n:'박준호',s:'포멀·정장 전문',p:'면접 추천',pct:91,g:'male'},
+    {n:'김하늘',s:'하객룩·드레시 전문',p:'하객 추천',pct:96,g:'female'},
+    {n:'정우진',s:'캐주얼·트래블 전문',p:'여행 추천',pct:89,g:'male'},
+    {n:'최유나',s:'데일리·베이직 전문',p:'일상 추천',pct:93,g:'female'}
+  ];
+  var ocEls=document.querySelectorAll('.occ .oc'), oi=0;
+  var connectEl=document.getElementById('connect'), fillEl=connectEl.querySelector('.link .fill');
+  var snm=document.querySelector('.shopper .snm'), spec=document.querySelector('.shopper .spec'),
+      pill=document.querySelector('.shopper .pill'), pct=document.querySelector('.shopper .mt .pct'),
+      phhead=document.querySelector('.shopper .ph .avhead');
+  function setSlot(n){ oi=(n+SHOPPERS.length)%SHOPPERS.length;
+    [].forEach.call(ocEls,function(x,k){ x.classList.toggle('on', k===oi); });
+    var s=SHOPPERS[oi]; snm.textContent=s.n+' 스타일리스트'; spec.textContent=s.s; pill.textContent=s.p; pct.textContent=s.pct+'%'; phhead.className='avhead '+s.g;
+  }
+  // 초록선(fill)이 한 바퀴 끝날 때마다(=선이 왼끝으로 리셋된 순간) 다음 상황으로 재매칭
+  fillEl.addEventListener('animationiteration', function(){ setSlot(oi+1); });
+  // 칩 클릭 시 그 상황으로(루프는 계속)
+  document.querySelector('.occ').addEventListener('click', function(e){ var o=e.target.closest('.oc'); if(!o) return; setSlot([].indexOf.call(ocEls,o)); });
+  var started=false;
+  new IntersectionObserver(function(en){ en.forEach(function(x){ if(x.isIntersecting && !started){ started=true; setSlot(0); connectEl.classList.add('play'); } }); },{threshold:.4}).observe(connectEl);
+</script>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>후보 · 결과카드 뒷면 구성</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  :root{ --tp:#ff9ec5; --tpd:#e07aa4; }   /* DIA 포인트 */
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; background:#EEEDEA; color:#16140F; -webkit-font-smoothing:antialiased; padding:38px 24px 90px;}
+  .head{max-width:1200px; margin:0 auto 30px;}
+  .head h1{font-size:24px; font-weight:800; letter-spacing:-.03em;}
+  .head p{font-size:14.5px; color:#6E6B63; margin-top:8px; line-height:1.6;}
+
+  .gallery{max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fill,minmax(392px,1fr)); gap:44px 34px; justify-items:center;}
+  .cand{width:392px;}
+  .cand .lab{display:flex; align-items:baseline; gap:9px; margin-bottom:14px;}
+  .cand .lab b{font-size:17px; font-weight:800;}
+  .cand .lab span{font-size:13px; color:#6E6B63; line-height:1.5;}
+
+  /* ── 공통 카드(뒷면) ── */
+  .card{width:392px; min-height:664px; border-radius:30px; overflow:hidden; color:#fff; position:relative;
+    display:flex; flex-direction:column; padding:28px 28px 30px;
+    background:radial-gradient(ellipse 80% 30% at 50% 0%, #ff9ec522, transparent 60%), linear-gradient(165deg,#191a1f,#0f1014);
+    box-shadow:0 22px 50px rgba(10,11,14,.30);}
+  .ctop{display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:800; letter-spacing:.14em; color:rgba(255,255,255,.45);}
+  .clogo{font-size:17px; font-weight:800; letter-spacing:-.05em; color:#fff;}
+  .clogo i{display:inline-block; width:5px; height:5px; background:var(--tp); margin-left:2px;}
+  .grow{flex:1;}
+  .lab-s{font-size:11.5px; font-weight:800; letter-spacing:.12em; color:var(--tp);}
+  .match{font-size:14px; font-weight:600; color:rgba(255,255,255,.9);} .match b{color:var(--tp); font-weight:800;}
+
+  /* chips */
+  .chip{display:inline-block; font-size:13.5px; font-weight:700; padding:7px 13px; border-radius:10px; margin:0 6px 6px 0;}
+  .chip.ok{background:rgba(156,193,174,.16); color:#bfe0cd;}
+  .chip.no{background:rgba(255,255,255,.07); color:rgba(255,255,255,.5);}
+
+  /* ══════════ A — 섹션 스택(정석) ══════════ */
+  .a .kicker{display:flex; align-items:center; gap:8px; margin-top:22px;}
+  .a .kicker .code{font-size:12px; font-weight:800; letter-spacing:.16em; color:var(--tp); background:rgba(255,158,197,.14); padding:5px 10px; border-radius:7px;}
+  .a .kicker .nm{font-size:19px; font-weight:800; letter-spacing:-.02em;}
+  .a .sec{margin-top:20px;}
+  .a .sec .lab-s{display:block; margin-bottom:8px;}
+  .a .sec p{font-size:15.5px; line-height:1.6; color:rgba(255,255,255,.9);} .a .sec p b{color:#fff; font-weight:800;}
+  .a .div{height:1px; background:rgba(255,255,255,.1); margin:22px 0;}
+  .a .fitrow{margin-bottom:14px;}
+  .a .fitrow .fh{display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:800; margin-bottom:9px;}
+  .a .fitrow.ok .fh{color:#bfe0cd;} .a .fitrow.no .fh{color:rgba(255,255,255,.5);}
+  .a .fitrow .fh svg{width:14px; height:14px;}
+  .a .foot{margin-top:auto; padding-top:22px; border-top:1px solid rgba(255,255,255,.1);}
+
+  /* ══════════ B — 인사이트 히어로 + O/X 대비 ══════════ */
+  .b .body{flex:1; display:flex; flex-direction:column; justify-content:center;}
+  .b .ins-hero{margin:26px 0 30px;}
+  .b .ins-hero .lab-s{display:block; margin-bottom:14px;}
+  .b .ins-hero p{font-size:25px; font-weight:800; line-height:1.42; letter-spacing:-.02em;}
+  .b .ins-hero p b{color:var(--tp); box-shadow:inset 0 -10px 0 rgba(255,158,197,.22);}
+  .b .cols{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .b .col{border-radius:16px; padding:16px 15px; min-height:150px;}
+  .b .col.ok{background:rgba(156,193,174,.12); border:1px solid rgba(156,193,174,.28);}
+  .b .col.no{background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1);}
+  .b .col .h{display:flex; align-items:center; gap:6px; font-size:13px; font-weight:800; margin-bottom:14px;}
+  .b .col.ok .h{color:#bfe0cd;} .b .col.no .h{color:rgba(255,255,255,.55);}
+  .b .col .h svg{width:16px; height:16px;}
+  .b .col .it{font-size:15px; font-weight:700; line-height:1.4; padding:9px 0; border-top:1px solid rgba(255,255,255,.08);}
+  .b .col.ok .it{color:#fff;} .b .col.no .it{color:rgba(255,255,255,.6);}
+  .b .foot{margin-top:26px; text-align:center;}
+
+  /* ══════════ C — 스타일 처방전(칩 중심) ══════════ */
+  .c .top{margin-top:22px;}
+  .c .top .nm{font-size:22px; font-weight:800; letter-spacing:-.02em;}
+  .c .top .korea{font-size:13px; font-weight:700; color:rgba(255,255,255,.55); margin-top:5px;}
+  .c .hash{margin-top:14px;}
+  .c .hash span{font-size:13px; font-weight:800; color:var(--tp); margin-right:12px;}
+  .c .rx{margin-top:26px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.09); border-radius:18px; padding:20px;}
+  .c .rx .row + .row{margin-top:18px; padding-top:18px; border-top:1px solid rgba(255,255,255,.09);}
+  .c .rx .rh{font-size:13px; font-weight:800; margin-bottom:11px;}
+  .c .rx .row.ok .rh{color:#bfe0cd;} .c .rx .row.no .rh{color:rgba(255,255,255,.5);}
+  .c .note{margin-top:22px; font-size:14px; line-height:1.6; color:rgba(255,255,255,.72);} .c .note b{color:#fff;}
+  .c .foot{margin-top:auto; padding-top:20px;}
+
+  /* ══════════ D — 넘버 에디토리얼 ══════════ */
+  .d .num{position:relative; padding-left:20px; margin-top:24px;}
+  .d .num::before{content:""; position:absolute; left:0; top:4px; bottom:4px; width:3px; border-radius:2px; background:var(--tp); opacity:.6;}
+  .d .num .no{font-size:11px; font-weight:800; letter-spacing:.14em; color:var(--tp); opacity:.85;}
+  .d .num .tt{font-size:11px; font-weight:800; letter-spacing:.1em; color:rgba(255,255,255,.5); margin-left:8px;}
+  .d .num p{font-size:16px; line-height:1.6; color:rgba(255,255,255,.92); margin-top:9px;} .d .num p b{color:#fff; font-weight:800;}
+  .d .num.big p{font-size:19px; font-weight:700; line-height:1.5;}
+  .d .stylerow{display:flex; gap:9px; margin-top:11px;}
+  .d .stylerow .col{flex:1;}
+  .d .stylerow .h{font-size:11.5px; font-weight:800; margin-bottom:7px;}
+  .d .stylerow .col.ok .h{color:#bfe0cd;} .d .stylerow .col.no .h{color:rgba(255,255,255,.5);}
+  .d .foot{margin-top:auto; padding-top:22px; border-top:1px solid rgba(255,255,255,.1);}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>결과카드 뒷면 — 구성 후보 4종</h1>
+  <p>같은 정보(MY FIT · FIT INSIGHT · 잘맞/피할 FIT · 환상의 궁합)를 배치만 다르게 했어요 · DIA(소프트 다이아, 여성) 실제 데이터</p>
+</div>
+
+<div class="gallery">
+
+  <!-- ══════════ A ══════════ -->
+  <div class="cand a">
+    <div class="lab"><b>A. 섹션 스택</b><span>정석 — 위에서 아래로 다 읽힘. 정보량 100%</span></div>
+    <div class="card">
+      <div class="ctop"><span class="clogo">Fitting<i></i></span><span>MY FIT</span></div>
+      <div class="kicker"><span class="code">DIA</span><span class="nm">소프트 다이아</span></div>
+
+      <div class="sec">
+        <span class="lab-s">MY FIT</span>
+        <p>어깨·다리는 슬림하고 허리·배에 볼륨이 있는 다이아 라인. 세로로 길게 흐르면 깔끔해요</p>
+      </div>
+      <div class="sec">
+        <span class="lab-s">FIT INSIGHT</span>
+        <p><b>중앙은 흐르게</b> 두고 어깨·다리를 살리면 실루엣이 정돈돼요</p>
+      </div>
+
+      <div class="div"></div>
+
+      <div class="fitrow ok">
+        <div class="fh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>잘맞 FIT</div>
+        <span class="chip ok">A라인 원피스</span><span class="chip ok">어깨 드러내기</span>
+      </div>
+      <div class="fitrow no">
+        <div class="fh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>피할 FIT</div>
+        <span class="chip no">허리 꽉 끼는 옷</span><span class="chip no">짧은 상의</span>
+      </div>
+
+      <div class="foot">
+        <div class="match">🩷 환상의 궁합 · <b>슬릭 라인</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ B ══════════ -->
+  <div class="cand b">
+    <div class="lab"><b>B. 인사이트 히어로 + O/X</b><span>한 끗을 크게, 잘맞·피할을 2열로 대비. 가장 직관적</span></div>
+    <div class="card">
+      <div class="ctop"><span class="clogo">Fitting<i></i></span><span>소프트 다이아</span></div>
+      <div class="body">
+        <div class="ins-hero">
+          <span class="lab-s">FIT INSIGHT</span>
+          <p><b>중앙은 흐르게</b> 두고<br>어깨·다리를 살리면<br>실루엣이 정돈돼요</p>
+        </div>
+        <div class="cols">
+          <div class="col ok">
+            <div class="h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>잘맞 FIT</div>
+            <div class="it">A라인 원피스</div>
+            <div class="it">어깨 드러내기</div>
+          </div>
+          <div class="col no">
+            <div class="h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>피할 FIT</div>
+            <div class="it">허리 꽉 끼는 옷</div>
+            <div class="it">짧은 상의</div>
+          </div>
+        </div>
+        <div class="foot"><span class="match">🩷 환상의 궁합 · <b>슬릭 라인</b></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ C ══════════ -->
+  <div class="cand c">
+    <div class="lab"><b>C. 스타일 처방전</b><span>해시태그 + 잘맞/피할을 한 박스에. '처방전'처럼 실용적</span></div>
+    <div class="card">
+      <div class="ctop"><span class="clogo">Fitting<i></i></span><span>STYLE Rx</span></div>
+      <div class="top">
+        <div class="nm">소프트 다이아</div>
+        <div class="korea">사이즈코리아 · 마름모꼴체형</div>
+        <div class="hash"><span>#소프트</span><span>#세로라인</span><span>#플로우</span></div>
+      </div>
+      <div class="rx">
+        <div class="row ok">
+          <div class="rh">이렇게 입어요</div>
+          <span class="chip ok">A라인 원피스</span><span class="chip ok">어깨 드러내기</span>
+        </div>
+        <div class="row no">
+          <div class="rh">이건 피해요</div>
+          <span class="chip no">허리 꽉 끼는 옷</span><span class="chip no">짧은 상의</span>
+        </div>
+      </div>
+      <p class="note"><b>중앙은 흐르게</b> 두고 어깨·다리를 살리면 실루엣이 정돈돼요</p>
+      <div class="foot"><div class="match">🩷 환상의 궁합 · <b>슬릭 라인</b></div></div>
+    </div>
+  </div>
+
+  <!-- ══════════ D ══════════ -->
+  <div class="cand d">
+    <div class="lab"><b>D. 넘버 에디토리얼</b><span>01·02·03 잡지식 흐름. 스토리처럼 읽힘</span></div>
+    <div class="card">
+      <div class="ctop"><span class="clogo">Fitting<i></i></span><span>DIA · 소프트 다이아</span></div>
+
+      <div class="num">
+        <span class="no">01</span><span class="tt">MY FIT</span>
+        <p>어깨·다리는 슬림하고 허리·배에 볼륨이 있는 다이아 라인. 세로로 길게 흐르면 깔끔해요</p>
+      </div>
+      <div class="num big">
+        <span class="no">02</span><span class="tt">FIT INSIGHT</span>
+        <p><b>중앙은 흐르게</b> 두고 어깨·다리를 살리면 실루엣이 정돈돼요</p>
+      </div>
+      <div class="num">
+        <span class="no">03</span><span class="tt">STYLE</span>
+        <div class="stylerow">
+          <div class="col ok"><div class="h">잘맞</div><span class="chip ok">A라인 원피스</span><span class="chip ok">어깨 드러내기</span></div>
+          <div class="col no"><div class="h">피할</div><span class="chip no">허리 꽉 끼는 옷</span><span class="chip no">짧은 상의</span></div>
+        </div>
+      </div>
+
+      <div class="foot"><div class="match">🩷 환상의 궁합 · <b>슬릭 라인</b></div></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

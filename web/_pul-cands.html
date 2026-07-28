@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>결과 풀이 후보</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<style>
+  :root{ --g:#2E4A3B; --gs:#E7EFEA; --gl:#CBDDD2; --gm:#5E7A69; --ink:#16140F; --sub:#6E6B63; --line:#E6E5E1; --warn:#B0553F; }
+  body{background:#F1F1EF;font-family:'Pretendard',sans-serif;color:var(--ink);margin:0;padding:34px 30px 100px;}
+  .wrap{max-width:600px;margin:0 auto;}
+  .htop{font-size:19px;font-weight:800;letter-spacing:-.03em;} .hsub{margin:7px 0 30px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .case{margin-bottom:38px;}
+  .lab{display:inline-block;font-size:11px;font-weight:800;color:var(--g);background:var(--gs);border:1px solid var(--gl);padding:2px 10px;border-radius:20px;margin-bottom:5px;}
+  .cds{font-size:12.5px;color:var(--sub);margin:0 0 12px;}
+  /* 컬럼 폭 재현 = 540px */
+  .col{width:540px;max-width:100%;}
+  .p{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px 22px;}
+  .pt{font-size:19px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px;}
+  .foot{margin-top:18px;font-size:12px;color:#A6A29A;line-height:1.5;}
+
+  /* 공통 아이콘칩 */
+  .mk{flex:none;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:15px;font-weight:800;}
+  .mk.pl{background:var(--gs);color:var(--g);} .mk.eq{background:#EDEEF1;color:#3A382F;} .mk.wn{background:#F7ECE8;color:var(--warn);}
+
+  /* ── A: 톤별 카드 3블록 ── */
+  .a-it{display:flex;gap:13px;padding:15px 15px;border-radius:14px;border:1px solid var(--line);margin-top:11px;}
+  .a-it:first-child{margin-top:16px;}
+  .a-it.pl{background:#F4F8F5;border-color:#DBE8E0;} .a-it.eq{background:#F6F6F8;border-color:#E7E7EC;} .a-it.wn{background:#FBF3F0;border-color:#EFDDD6;}
+  .a-it b{font-size:15px;} .a-it p{margin:4px 0 0;font-size:14px;color:#55524B;line-height:1.55;}
+
+  /* ── B: 핏 공식 히어로 + 보조 2줄 ── */
+  .b-hero{margin-top:16px;background:linear-gradient(150deg,#F0F6F1,#E7EFEA);border:1px solid var(--gl);border-radius:16px;padding:20px 20px;}
+  .b-hero .hl{font-size:12px;font-weight:800;color:var(--g);letter-spacing:.02em;display:flex;align-items:center;gap:7px;}
+  .b-hero .ht{margin-top:9px;font-size:18px;font-weight:800;line-height:1.5;letter-spacing:-.02em;}
+  .b-hero .ht b{color:var(--g);box-shadow:inset 0 -9px 0 rgba(46,74,59,.14);}
+  .b-row{display:flex;gap:12px;padding:14px 4px;} .b-row + .b-row{border-top:1px solid var(--line);}
+  .b-row b{font-size:14.5px;} .b-row p{margin:3px 0 0;font-size:13.5px;color:var(--sub);line-height:1.5;}
+  .b-rows{margin-top:8px;}
+
+  /* ── C: 좌측 컬러 레일 타임라인 ── */
+  .c-list{margin-top:16px;position:relative;padding-left:6px;}
+  .c-it{display:flex;gap:14px;padding:0 0 20px;position:relative;}
+  .c-it:last-child{padding-bottom:0;}
+  .c-rail{flex:none;display:flex;flex-direction:column;align-items:center;}
+  .c-dot{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:16px;font-weight:800;z-index:1;}
+  .c-dot.pl{background:var(--g);color:#fff;} .c-dot.eq{background:#3A382F;color:#fff;} .c-dot.wn{background:var(--warn);color:#fff;}
+  .c-line{width:2px;flex:1;background:var(--line);margin:3px 0;}
+  .c-it:last-child .c-line{display:none;}
+  .c-body{padding-top:3px;} .c-body b{font-size:15.5px;} .c-body p{margin:4px 0 0;font-size:14px;color:#55524B;line-height:1.55;}
+
+  /* ── D: 요약문 + 라벨칩 리스트 ── */
+  .d-sum{margin-top:14px;font-size:16.5px;font-weight:700;line-height:1.55;letter-spacing:-.02em;}
+  .d-sum b{color:var(--g);}
+  .d-list{margin-top:18px;border-top:1px solid var(--line);}
+  .d-it{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--line);}
+  .d-it:last-child{border-bottom:0;padding-bottom:2px;}
+  .d-chip{flex:none;font-size:11.5px;font-weight:800;padding:4px 10px;border-radius:7px;margin-top:1px;}
+  .d-chip.pl{background:var(--gs);color:var(--g);} .d-chip.eq{background:#EDEEF1;color:#3A382F;} .d-chip.wn{background:#F7ECE8;color:var(--warn);}
+  .d-it p{font-size:14.5px;line-height:1.55;color:#3d3b35;} .d-it p b{color:var(--ink);font-weight:800;}
+</style></head><body>
+<div class="wrap">
+  <div class="htop">"결과 풀이" — 오른쪽 컬럼(540px)에서 더 잘 보이게</div>
+  <div class="hsub">지금은 아이콘+한 줄 3개라 심심해요. 같은 내용(강점·핏 공식·주의)을 4가지로.</div>
+
+  <!-- A -->
+  <div class="case"><span class="lab">A</span>
+    <p class="cds">톤별 색 카드 3블록 — 강점(초록)·핏 공식(중립)·주의(주황) 배경을 옅게 깔아 구분 · 꽉 차 보임</p>
+    <div class="col"><div class="p">
+      <div class="pt">결과 풀이</div>
+      <div class="a-it pl"><span class="mk pl">+</span><div><b>강점</b><p>슬림한 허리 — 여기를 기준으로 맞추면 실루엣이 안정적이에요</p></div></div>
+      <div class="a-it eq"><span class="mk eq">=</span><div><b>핏 공식</b><p>가슴 기준으로 사이즈를 고르고, 나머지는 여유로 조절해요</p></div></div>
+      <div class="a-it wn"><span class="mk wn">!</span><div><b>주의</b><p>가슴이 치수 경계에 걸리면 큰 쪽을 골라요</p></div></div>
+      <div class="foot">※ 이 진단 데이터로 만든 규칙 해설이에요 · 문체는 추후 AI가 다듬어요</div>
+    </div></div>
+  </div>
+
+  <!-- B -->
+  <div class="case"><span class="lab">B</span>
+    <p class="cds">핵심인 '핏 공식'을 위에 큰 히어로 박스로 강조 · 강점·주의는 아래 보조 2줄 (정보 위계 뚜렷)</p>
+    <div class="col"><div class="p">
+      <div class="pt">결과 풀이</div>
+      <div class="b-hero">
+        <div class="hl"><span class="mk eq" style="width:22px;height:22px;font-size:13px">=</span> 핏 공식</div>
+        <div class="ht"><b>가슴 기준</b>으로 사이즈를 고르고, 나머지는 여유로 조절해요</div>
+      </div>
+      <div class="b-rows">
+        <div class="b-row"><span class="mk pl">+</span><div><b>강점</b><p>슬림한 허리 — 여기를 기준으로 맞추면 실루엣이 안정적이에요</p></div></div>
+        <div class="b-row"><span class="mk wn">!</span><div><b>주의</b><p>가슴이 치수 경계에 걸리면 큰 쪽을 골라요</p></div></div>
+      </div>
+      <div class="foot">※ 이 진단 데이터로 만든 규칙 해설이에요 · 문체는 추후 AI가 다듬어요</div>
+    </div></div>
+  </div>
+
+  <!-- C -->
+  <div class="case"><span class="lab">C</span>
+    <p class="cds">왼쪽 컬러 노드 타임라인 — 강점→공식→주의를 연결선으로 읽는 흐름 · 에디토리얼 느낌</p>
+    <div class="col"><div class="p">
+      <div class="pt">결과 풀이</div>
+      <div class="c-list">
+        <div class="c-it"><div class="c-rail"><span class="c-dot pl">+</span><span class="c-line"></span></div><div class="c-body"><b>강점</b><p>슬림한 허리 — 여기를 기준으로 맞추면 실루엣이 안정적이에요</p></div></div>
+        <div class="c-it"><div class="c-rail"><span class="c-dot eq">=</span><span class="c-line"></span></div><div class="c-body"><b>핏 공식</b><p>가슴 기준으로 사이즈를 고르고, 나머지는 여유로 조절해요</p></div></div>
+        <div class="c-it"><div class="c-rail"><span class="c-dot wn">!</span><span class="c-line"></span></div><div class="c-body"><b>주의</b><p>가슴이 치수 경계에 걸리면 큰 쪽을 골라요</p></div></div>
+      </div>
+      <div class="foot">※ 이 진단 데이터로 만든 규칙 해설이에요 · 문체는 추후 AI가 다듬어요</div>
+    </div></div>
+  </div>
+
+  <!-- D -->
+  <div class="case"><span class="lab">D</span>
+    <p class="cds">맨 위 한 줄 요약(큰 글씨) + 아래 라벨칩 리스트 · 요점 먼저 · 담백하고 읽기 쉬움</p>
+    <div class="col"><div class="p">
+      <div class="pt">결과 풀이</div>
+      <div class="d-sum">표준 체형이라 <b>사이즈 선택이 자유로운 편</b>이에요</div>
+      <div class="d-list">
+        <div class="d-it"><span class="d-chip pl">강점</span><p><b>슬림한 허리</b> — 여기를 기준으로 맞추면 실루엣이 안정적이에요</p></div>
+        <div class="d-it"><span class="d-chip eq">핏 공식</span><p><b>가슴 기준</b>으로 사이즈를 고르고, 나머지는 여유로 조절해요</p></div>
+        <div class="d-it"><span class="d-chip wn">주의</span><p>가슴이 <b>치수 경계</b>에 걸리면 큰 쪽을 골라요</p></div>
+      </div>
+      <div class="foot">※ 이 진단 데이터로 만든 규칙 해설이에요 · 문체는 추후 AI가 다듬어요</div>
+    </div></div>
+  </div>
+
+</div>
+</body></html>

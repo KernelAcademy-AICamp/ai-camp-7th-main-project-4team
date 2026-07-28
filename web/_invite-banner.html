@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>친구 초대 배너 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<style>
+  body{background:var(--bg);font-family:'Pretendard',sans-serif;color:var(--ink);margin:0;padding:36px 30px 90px;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1180px;margin:0 auto;}
+  .htop{font-size:21px;font-weight:800;letter-spacing:-.03em;} .hsub{margin:8px 0 30px;font-size:14px;color:var(--muted);line-height:1.6;}
+  .case{margin-bottom:30px;}
+  .lab{display:inline-block;font-size:12px;font-weight:800;color:var(--accent);background:var(--green-soft);border:1px solid #CBDDD2;padding:3px 10px;border-radius:20px;}
+  .nm{font-size:15px;font-weight:800;margin:7px 0 3px;letter-spacing:-.02em;} .ds{font-size:13px;color:var(--muted);margin:0 0 13px;}
+
+  /* 배너 공통(index.css .invite-banner 규격 동일) */
+  .ban{display:flex; align-items:center; gap:14px; padding:15px 18px; border-radius:16px;}
+  .ban .ic{flex:none; width:26px; height:26px;} .ban .ic svg{width:100%; height:100%; display:block;}
+  .ban .tx{flex:1; min-width:0; line-height:1.4;}
+  .ban .tx b{display:block; font-size:16px; font-weight:800;}
+  .ban .tx span{font-size:13px;}
+  .ban .cta{flex:none; font-weight:800; font-size:14px; padding:10px 16px; border-radius:10px; border:none; cursor:pointer; white-space:nowrap; font-family:inherit;}
+  .ban .x{flex:none; background:transparent; border:none; font-size:16px; cursor:pointer; padding:4px; line-height:1;}
+
+  /* 현재 — 딥그린 꽉 채움 */
+  .v0{background:var(--green); color:#fff; box-shadow:0 8px 22px rgba(46,74,59,.22);}
+  .v0 .tx span{opacity:.9;} .v0 .cta{background:#fff; color:var(--green);} .v0 .x{color:#fff; opacity:.7;}
+  /* A — 연한 초록 + 딥그린 글씨 */
+  .vA{background:var(--green-soft); color:var(--accent); border:1px solid #CBDDD2;}
+  .vA .tx b{color:var(--ink);} .vA .tx span{color:var(--muted);}
+  .vA .cta{background:var(--accent); color:#fff;} .vA .x{color:var(--muted);}
+  /* B — 흰 카드 + 초록 얇은 테두리 */
+  .vB{background:#fff; border:1px solid #CBDDD2; box-shadow:0 6px 18px rgba(20,18,16,.05);}
+  .vB .ic{color:var(--accent);} .vB .tx b{color:var(--ink);} .vB .tx span{color:var(--muted);}
+  .vB .cta{background:var(--ink); color:#fff;} .vB .x{color:var(--faint);}
+  /* C — 웜 크림 + 잉크 (선물 느낌) */
+  .vC{background:#F6EFE4; border:1px solid #E7DAC5;}
+  .vC .ic{color:#A8763C;} .vC .tx b{color:var(--ink);} .vC .tx span{color:#8A7657;}
+  .vC .cta{background:var(--ink); color:#fff;} .vC .x{color:#B3A48A;}
+  /* D — 잉크(차콜) + 흰 글씨 */
+  .vD{background:var(--ink); color:#fff;}
+  .vD .ic{color:#9FD9B7;} .vD .tx span{opacity:.75;}
+  .vD .cta{background:#fff; color:var(--ink);} .vD .x{color:#fff; opacity:.6;}
+</style></head><body>
+<div class="wrap">
+  <div class="htop">친구 초대 배너 — 선물 SVG + 색 시안</div>
+  <div class="hsub">이모지 🎁 → <b>선(stroke) 아이콘 SVG</b>로 교체했어요(사이트 다른 아이콘과 같은 결). 아래는 배경색 후보.</div>
+  <div id="out"></div>
+</div>
+<script>
+  var GIFT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+
+    '<rect x="2.5" y="7.6" width="19" height="4.6" rx="1"/>'+
+    '<path d="M4.6 12.2v8.2a1 1 0 0 0 1 1h12.8a1 1 0 0 0 1-1v-8.2"/>'+
+    '<path d="M12 7.6v13.8"/>'+
+    '<path d="M12 7.6H7.9a2.2 2.2 0 1 1 0-4.4c2.8 0 4.1 4.4 4.1 4.4z"/>'+
+    '<path d="M12 7.6h4.1a2.2 2.2 0 1 0 0-4.4C13.3 3.2 12 7.6 12 7.6z"/></svg>';
+  var CASES=[
+    ['현재','v0','딥그린 꽉 채움','지금 배포된 상태 · 존재감은 크지만 톤이 셈'],
+    ['A','vA','연한 초록 + 딥그린 CTA','부드럽고 브랜드 톤 유지 · "딥그린 꽉채움 지양"과 맞음 (추천)'],
+    ['B','vB','흰 카드 + 초록 얇은 테두리','가장 가볍고 깔끔 · 홈 배경과 자연스럽게 어울림'],
+    ['C','vC','웜 크림 + 잉크','선물/축하 느낌 · 초록 계열에서 살짝 벗어나 눈에 띔'],
+    ['D','vD','잉크(차콜) + 흰 글씨','차분하고 세련됨 · 초록 안 쓰고도 대비 확보']
+  ];
+  document.getElementById('out').innerHTML = CASES.map(function(c){
+    var isCur = c[0]==='현재';
+    return '<div class="case">'+
+      '<span class="lab"'+(isCur?' style="color:var(--muted);background:#EDEDEA;border-color:#DAD8D2"':'')+'>'+c[0]+'</span>'+
+      '<p class="nm">'+c[2]+'</p><p class="ds">'+c[3]+'</p>'+
+      '<div class="ban '+c[1]+'">'+
+        '<span class="ic">'+GIFT+'</span>'+
+        '<div class="tx"><b>친구 초대로 오셨네요!</b><span>내 체형에 맞는 핏도 3분이면 나와요 · 지금 무료로 진단해보세요</span></div>'+
+        '<button class="cta">진단 시작하기</button><button class="x">✕</button>'+
+      '</div></div>';
+  }).join('');
+</script>
+</body></html>

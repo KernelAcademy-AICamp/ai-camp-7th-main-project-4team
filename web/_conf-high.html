@@ -1,0 +1,47 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<title>정확도 높음 배지 후보</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
+<link rel="stylesheet" href="css/diag.css?v=c86b6818">
+<link rel="stylesheet" href="css/result.css?v=49d3ba32">
+<style>
+  body{background:#F6F6F5;font-family:'Pretendard',sans-serif;margin:0;padding:36px;color:#16140F;}
+  .wrap{max-width:760px;margin:0 auto;} .rwrap{max-width:none;padding:0;}
+  h3{font-size:18px;font-weight:800;margin:0 0 6px;letter-spacing:-.03em;}
+  .sub{font-size:13.5px;color:#6E6B63;margin:0 0 24px;line-height:1.6;}
+  .case{background:#fff;border:1px solid #E6E5E1;border-radius:14px;padding:15px 18px;margin-bottom:12px;}
+  .lab{display:inline-block;font-size:11.5px;font-weight:800;color:#2E4A3B;background:#E7EFEA;border:1px solid #CBDDD2;padding:2px 9px;border-radius:20px;margin-bottom:10px;}
+  .flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .flow .ar{color:#A6A29A;font-weight:800;}
+  .ck{width:13px;height:13px;vertical-align:-1px;margin-right:3px}
+  /* 후보별 '높음' 색 오버라이드 */
+  #A .rconf.high{background:#2E4A3B;color:#fff;}
+  #B .rconf.high{background:#2E4A3B;color:#fff;}
+  #C .rconf.high{background:#E7EFEA;color:#2E4A3B;box-shadow:inset 0 0 0 1.5px #2E4A3B;}
+  #D .rconf.high{background:#CBDDD2;color:#22402F;}
+  #E .rconf.high{background:linear-gradient(120deg,#2E4A3B,#436a54);color:#fff;}
+</style></head><body>
+<div class="wrap rwrap">
+  <h3>정확도 "높음" 배지 — 색 후보</h3>
+  <p class="sub">검정이 너무 강하다고 하셔서. 낮음(베이지)·보통(연초록)과 함께 놓고 <b>흐름</b>을 봤어요.</p>
+  <div id="cases"></div>
+</div>
+<script>
+  var CK='<svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+  var C=[
+    ['A','딥그린 꽉 채움','브랜드 색 · 낮음→보통→높음이 색 계열로 이어짐 (추천)', '정확도 높음'],
+    ['B','딥그린 + 체크','완성 신호 강화', CK+'정확도 높음'],
+    ['C','흰 배경 + 딥그린 테두리','가장 가벼움 · 튀지 않음', '정확도 높음'],
+    ['D','연한 딥그린 채움','검정보다 부드럽고 배지들과 톤 맞음', '정확도 높음'],
+    ['E','딥그린 그라데이션','살짝 프리미엄 느낌', '정확도 높음']
+  ];
+  document.getElementById('cases').innerHTML=C.map(function(c){
+    return '<div class="case" id="'+c[0]+'"><span class="lab">'+c[0]+' · '+c[1]+'</span>'+
+      '<div style="font-size:12.5px;color:#6E6B63;margin-bottom:11px">'+c[2]+'</div>'+
+      '<div class="flow"><span class="rconf low">정확도 낮음</span><span class="ar">→</span>'+
+      '<span class="rconf mid">정확도 보통</span><span class="ar">→</span>'+
+      '<span class="rconf high">'+c[3]+'</span></div></div>';
+  }).join('');
+</script>
+</body></html>

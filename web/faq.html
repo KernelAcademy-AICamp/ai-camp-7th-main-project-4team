@@ -8,8 +8,14 @@
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
+<link rel="stylesheet" href="css/auth-ui.css?v=3f72bdd7">
 <link rel="stylesheet" href="css/appnav.css?v=21e67dfb">
-<script defer src="js/appnav.js?v=89560970"></script>
+<!-- 공용 헤더가 api/proto·로그인 상태를 알아야 해서. defer라 문서 순서대로 실행된다. -->
+<script defer src="js/config.js?v=5f55324e"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="js/auth.js?v=790fe0f0"></script>
+<script defer src="js/auth-ui.js?v=78d5c083"></script>
+<script defer src="js/appnav.js?v=3dd82c59"></script>
 <style>
 /* FAQ 전용 (개발 1차 구현 — 색·폰트는 fitting.css 변수만 참조 · 추후 디자이너가 fitting.css로 흡수) */
 .faq-search{position:relative;max-width:520px;margin:22px 0 4px}
@@ -36,11 +42,12 @@
 </head>
 <body>
 
+<!-- 공용 상단 내비 — appnav.js가 주입(judge·about과 동일 크롬).
+     .appnav-hd는 sticky 전체폭이라 .container(940) 밖에 둔다(안에 넣으면 폭이 잘리고 패딩이 겹침).
+     헤더 전환 링크는 두지 않는다 — 본문 하단 버튼이 같은 역할. -->
+<div id="appnav"></div>
+
 <div class="container">
-  <nav class="top">
-    <a href="index.html" class="logo">Fitting<i></i></a>
-    <div class="nav-r"><a href="index.html?my=mp-support" class="nav-login">문의하기</a></div>
-  </nav>
 
   <section class="block" style="border-bottom:none">
     <span class="kicker">Help center</span>

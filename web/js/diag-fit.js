@@ -393,9 +393,14 @@
     // 셀이 바뀌면 사이즈 체계도 달라질 수 있어 사이즈 재렌더(브랜드 union→셀 스코프)
     el.onchange=function(){ renderSizes(g); };
   }
-  var LABELKEY={'어깨':'shoulder','가슴':'chest','가슴·품':'chest','배':'belly','소매':'sleeve','총장':'length',
+  /* 화면 라벨 → 축 키. fits=의류 스펙 축(engine CAT_PARTS·garments 컬럼) / painFlags·lengthPrefs=몸 축(body-model SHOW).
+     ※ 키는 진단 레코드(input.experiences)에 그대로 저장돼 admin-improve 분석 재료가 된다.
+        여기 없는 라벨은 collectFeel에서 조용히 버려지니, CATS의 fit/flag/pref 라벨을 고치면 이 표도 같이 고칠 것. */
+  var LABELKEY={'어깨':'shoulder','가슴':'chest','가슴·품':'chest','배':'belly','총장':'length',
     '허리':'waist','엉덩이':'hip','허벅지':'thigh','밑위':'rise','기장':'length',
-    '팔(소매통)':'arm','팔':'arm','목':'neck','목/칼라':'neck','암홀':'armhole','종아리':'calf','밑단':'hem','상하 비율':'ratio'};
+    '소매 기장':'sleeve','소매':'sleeve',   // 렌더 라벨은 '소매 기장'(CATS.pref) — '소매'는 facet 부활 대비 별칭
+    // 소매통·팔 페인은 팔 '둘레'(body-model upperArm=위팔둘레). arm은 팔'길이' 축이라 여기 쓰면 축이 어긋난다.
+    '팔(소매통)':'upperArm','팔':'upperArm','목':'neck','목/칼라':'neck','암홀':'armhole','종아리':'calf','밑단':'hem','상하 비율':'ratio'};
   var FITV={'끼임':'TIGHT','딱맞음':'SNUG','여유':'RELAXED','큼':'BIG'};
   var FLAGV={'끼임':'TIGHT','괜찮음':'OK'};
   var PREFV={'짧음':'SHORT','딱 좋음':'GOOD','긺':'LONG'};

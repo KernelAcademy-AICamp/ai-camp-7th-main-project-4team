@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>메인 프로토타입 v12 — 아치 부채 + 전부 자동(클릭 없음)</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<style>
+/* ==========================================================================
+   _home-deck.html v12 — 메인 히어로 (버리는 파일 · 커밋 안 함).
+   요청: 고객이 직접 안 뽑음 → 전부 자동. v11의 아치 부채 등장 + v10의 자동 진행 결합.
+   구현: 부채 배치는 CSS(--rot), 자동 순환은 카드마다 @keyframes 하나(JS 타이머 0, 컴포지터 구동).
+   카드 = 실물 card.html(디자인·마크업 유지). 연출 (B) 감각적.
+   ========================================================================== */
+*{box-sizing:border-box; margin:0; padding:0}
+body{background:var(--bg); color:var(--ink); font-family:var(--sans); letter-spacing:var(--ls-body);
+  -webkit-user-select:none; user-select:none; overflow-x:hidden}
+.wrap{max-width:1440px; margin:0 auto; padding:0 44px}
+@media(max-width:900px){ .wrap{padding:0 20px} }
+.note{background:var(--surface); border-bottom:var(--bd); padding:11px 20px; font-size:12.5px; color:var(--sub); text-align:center}
+.note b{color:var(--ink)}
+
+/* ── 히어로 ────────────────────────────────────────────────────────── */
+.hero{position:relative; overflow:hidden}
+.hero::before{content:""; position:absolute; left:50%; top:-22%; width:920px; height:920px; margin-left:-460px;
+  background:radial-gradient(circle at 50% 50%, var(--green-soft), transparent 62%); opacity:.75; pointer-events:none}
+.heroin{position:relative; padding:52px 0 26px; text-align:center}
+.kick{display:inline-flex; align-items:center; gap:7px; font-size:var(--fs-label); font-weight:var(--w-x);
+  letter-spacing:var(--ls-label); color:var(--green); background:var(--green-soft); padding:7px 14px; border-radius:var(--r-chip)}
+.kick .dot{width:5px; height:5px; border-radius:50%; background:var(--green); animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+h1{font-size:clamp(40px,5vw,68px); font-weight:var(--w-x); letter-spacing:-.06em; line-height:1.1; margin-top:16px}
+h1 b{color:var(--green)}
+.hsub{font-size:17px; color:var(--sub); margin:15px auto 0; line-height:1.6; max-width:540px}
+
+/* 무대 — 카드 origin은 아래 먼 점(아치 부채) */
+.stage{position:relative; height:470px; margin-top:8px}
+.glow{position:absolute; left:50%; top:38%; width:440px; height:440px; margin:-220px 0 0 -220px;
+  background:radial-gradient(circle, rgba(46,74,59,.22), transparent 62%); opacity:0; pointer-events:none}
+.deck{position:absolute; left:50%; top:150px; width:0; height:340px}
+.card{position:absolute; left:-100px; top:0; width:200px; height:339px; border-radius:17px;
+  overflow:hidden; background:#16171b; border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 14px 34px rgba(10,11,14,.22);
+  transform-origin:50% 230%;                 /* 아래 먼 점 → rotate만으로 아치 부채. 팝일 땐 rotate 0으로 중앙 위 */
+  transform:translateY(46px) rotate(0deg) scale(.96); opacity:0;   /* 로드 전 초기값(아래에서 미끄러져 등장) */
+  will-change:transform, filter; backface-visibility:hidden}
+.card .cf{position:absolute; top:0; left:0; width:392px; height:664px; border:0;
+  transform:scale(.5102); transform-origin:top left; pointer-events:none}
+/* 로드 등장 — stagger로 부채 펼침(v11에서 좋았던 그 등장) */
+.deck.dealt .card{transform:rotate(var(--rot)) translateY(0) scale(1); opacity:1; filter:blur(2.6px);
+  transition:transform .62s cubic-bezier(.22,.9,.28,1), opacity .5s ease, filter .5s ease}
+
+/* 결과 이름표 — 팝된 카드 아래. 8개 겹쳐두고 자기 차례에만(CSS 구동) */
+.tnames{position:relative; height:64px; margin-top:4px}
+.tnames .nm{position:absolute; left:0; right:0; top:0; opacity:0}
+.tnames .code{font-family:var(--num); font-size:12px; font-weight:var(--w-x); letter-spacing:var(--ls-code); color:var(--green)}
+.tnames .word{font-size:clamp(22px,2.4vw,30px); font-weight:var(--w-x); letter-spacing:-.04em; margin-top:4px; line-height:1.2}
+.tnames .desc{font-size:13px; color:var(--sub); margin-top:6px; line-height:1.5}
+
+.cta{display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap}
+.btn{font-family:var(--sans); font-size:15px; font-weight:var(--w-bold); padding:15px 22px;
+  border-radius:var(--r-btn); border:none; cursor:pointer; transition:.14s}
+.btn.p{background:var(--green-soft); color:var(--green); border:1px solid var(--green-line)}
+.btn.p:hover{background:#DDE9E2; transform:translateY(-1px)}
+.btn.g{background:transparent; color:var(--ink); border:var(--bd-input)}
+.btn.g:hover{background:var(--soft)}
+.downhint{text-align:center; font-size:13px; color:var(--sub2); font-weight:var(--w-med); padding:24px 0 40px}
+.downhint .arr{display:inline-block; margin-left:6px; animation:bob 1.7s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+
+/* ── 서비스 소개 (유지) ─────────────────────────────────────────────── */
+.svc{background:var(--surface); border-top:var(--bd); position:relative}
+.svcin{padding:84px 0 90px}
+.shead{text-align:center; max-width:660px; margin:0 auto}
+.eyebrow{font-size:var(--fs-label); font-weight:var(--w-x); letter-spacing:var(--ls-label); text-transform:uppercase; color:var(--sub2)}
+h2{font-size:clamp(28px,3vw,42px); font-weight:var(--w-x); letter-spacing:-.05em; line-height:1.26; margin-top:12px}
+h2 b{color:var(--green)}
+.lead{font-size:16px; color:var(--sub); margin-top:13px; line-height:1.62}
+.how{display:grid; grid-template-columns:64px minmax(0,1fr); gap:34px; margin-top:56px; align-items:start}
+.vtape{position:relative; height:100%; min-height:520px; justify-self:center; width:34px}
+.vtape .rail{position:absolute; left:50%; margin-left:-.5px; top:0; bottom:0; width:1px; background:var(--line2)}
+.vtape .tk{position:absolute; left:50%; margin-left:-.5px; top:0; bottom:0; width:1px;
+  background:repeating-linear-gradient(180deg, var(--line2) 0 1px, transparent 1px 12px)}
+.vtape .vfill{position:absolute; left:50%; margin-left:-1.5px; top:0; width:3px; height:0; background:var(--green); border-radius:3px}
+.vtape .vhead{position:absolute; left:50%; margin-left:-7px; top:0; width:14px; height:14px; border-radius:50%;
+  background:var(--green); border:3px solid var(--surface); box-shadow:0 0 0 1px var(--green-line)}
+.steps{display:flex; flex-direction:column; gap:22px}
+.step{display:grid; grid-template-columns:56px minmax(0,1fr) auto; gap:20px; align-items:center;
+  background:var(--bg); border:var(--bd); border-radius:var(--r-card); padding:26px 28px;
+  opacity:0; transform:translateY(26px); transition:opacity .6s, transform .6s cubic-bezier(.2,.8,.3,1)}
+.step.on{opacity:1; transform:none}
+.step .ic{width:56px; height:56px; border-radius:15px; background:var(--green-soft); color:var(--green);
+  display:flex; align-items:center; justify-content:center; flex:none}
+.step .ic svg{width:26px; height:26px}
+.step .no{font-family:var(--num); font-size:11px; font-weight:var(--w-x); letter-spacing:var(--ls-label); color:var(--green)}
+.step h3{font-size:20px; font-weight:var(--w-x); letter-spacing:-.035em; margin-top:5px}
+.step p{font-size:14px; color:var(--sub); margin-top:6px; line-height:1.6; max-width:520px}
+.step .big{text-align:right; flex:none}
+.step .big b{display:block; font-family:var(--num); font-size:34px; font-weight:var(--w-x); letter-spacing:-.04em; color:var(--green)}
+.step .big span{font-size:12px; color:var(--sub2); font-weight:var(--w-bold)}
+@media(max-width:900px){
+  .heroin{padding-top:34px}
+  .stage{height:410px} .deck{top:120px}
+  .card{width:150px; height:254px; left:-75px} .card .cf{transform:scale(.3827)}
+  .how{grid-template-columns:1fr; gap:18px} .vtape{display:none}
+  .step{grid-template-columns:46px minmax(0,1fr); gap:14px; padding:20px}
+  .step .big{grid-column:1/-1; text-align:left}
+}
+/* 모션 최소화 — 자동 순환 정지, 부채로 펼친 상태 유지 */
+@media(prefers-reduced-motion:reduce){
+  .card,.tnames .nm{animation:none !important}
+  .downhint .arr,.kick .dot{animation:none !important}
+}
+</style>
+</head>
+<body>
+
+<div class="note"><b>프로토타입 v12</b> — 아치 부채 등장(v11) + <b>전부 자동</b>(클릭 없음) · 부채에서 한 장씩 스스로 앞으로 나와 유형명을 보여주고 들어감 · 순환</div>
+
+<!-- ── 히어로 ── -->
+<section class="hero"><div class="wrap heroin">
+
+  <span class="kick"><span class="dot"></span> 체형·사이즈 진단</span>
+  <h1><b>당신의 핏</b></h1>
+  <p class="hsub">안 입어본 브랜드도 내 사이즈로 딱 FIT</p>
+
+  <div class="stage" id="stage">
+    <div class="glow" id="glow"></div>
+    <div class="deck" id="deck"></div>
+  </div>
+
+  <div class="tnames" id="tnames"></div>
+
+  <div class="cta">
+    <button class="btn p" id="startBtn">내 체형 진단 시작하기 →</button>
+    <button class="btn g">스타일리스트 둘러보기</button>
+  </div>
+
+</div>
+<div class="downhint">그런데 체형은 어떻게 알아낼까요?<span class="arr">↓</span></div>
+</section>
+
+<!-- ── 서비스 소개 (유지) ── -->
+<section class="svc"><div class="wrap svcin">
+  <div class="shead">
+    <span class="eyebrow">How it works</span>
+    <h2>착용 경험을 <b>사이즈로 번역</b>해요</h2>
+    <p class="lead">복잡한 신체 치수 입력 없이, 평소 옷의 느낌만으로 3단계면 끝나요</p>
+  </div>
+
+  <div class="how" id="how">
+    <div class="vtape">
+      <div class="rail"></div><div class="tk"></div>
+      <div class="vfill" id="vfill"></div><div class="vhead" id="vhead"></div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></div>
+        <div><div class="no">STEP 01</div><h3>착용 경험 입력</h3>
+          <p>평소 입는 옷의 브랜드·핏·부위별 느낌을 알려주세요. 치수 대신 '경험'으로 시작해요</p></div>
+        <div class="big"><b class="cnt" data-to="2">0</b><span>분이면 충분</span></div>
+      </div>
+      <div class="step">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8L12 3z"/><path d="M19 14.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6.6-1.6z"/></svg></div>
+        <div><div class="no">STEP 02</div><h3>AI 체형 진단</h3>
+          <p>8가지 체형 유형 중 내 유형을 판정하고, 공유용 캐릭터 카드로 보여드려요</p></div>
+        <div class="big"><b class="cnt" data-to="8">0</b><span>체형으로 분류</span></div>
+      </div>
+      <div class="step">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15.6 2.3l6.1 6.1a1 1 0 0 1 0 1.4L9.8 21.7a1 1 0 0 1-1.4 0l-6.1-6.1a1 1 0 0 1 0-1.4L14.2 2.3a1 1 0 0 1 1.4 0z"/><path d="M14 5l2 2M11 8l2 2M8 11l2 2M5 14l2 2"/></svg></div>
+        <div><div class="no">STEP 03</div><h3>브랜드별 사이즈 번역</h3>
+          <p>안 입어본 브랜드도 내 몸 기준으로 사이즈를 환산해, 반품 없이 한 번에 맞춰요</p></div>
+        <div class="big"><b class="cnt" data-to="0" data-from="9">9</b><span>반품을 목표로</span></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<script>
+(function(){
+  var G='female';
+  var CODES=['TRI','INV','HRG','STR','BAL','DIA','RND','TUB'];
+  var N=CODES.length, mid=(N-1)/2;
+  var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var stage=document.getElementById('stage'), deck=document.getElementById('deck'),
+      tnames=document.getElementById('tnames'), glow=document.getElementById('glow');
+
+  /* ── 자동 순환 타임라인(ms) ─────────────────────────────
+     부채 유지 → 카드 i가 자기 차례에 앞으로 나옴(rotate0·확대·선명·유형명) → 들어감 → 다음 → 반복 */
+  var T={ popAt: 900, gap: 1150, up: 520, hold: 560, down: 440 };
+  T.total = T.popAt + (N-1)*T.gap + T.up + T.hold + T.down + 500;   // 마지막 카드가 들어온 뒤 여백 → 다음 사이클
+  var EASE_OUT='cubic-bezier(.22,.9,.28,1)', EASE_IO='cubic-bezier(.5,0,.3,1)';
+
+  var STEP, cards=[], NAMES={};
+  function fanRot(i){ return (i-mid)*STEP; }
+  function FAN(i){ return 'rotate('+fanRot(i)+'deg) translateY(0px) scale(1)'; }
+  var POP='rotate(0deg) translateY(-116px) scale(1.16)';
+
+  function kf(name, stops){
+    return '@keyframes '+name+'{\n'+stops.map(function(s){
+      return (s[0]/T.total*100).toFixed(3)+'%{'+s[1]+(s[2]?';animation-timing-function:'+s[2]:'')+'}';
+    }).join('\n')+'\n}';
+  }
+  function times(i){
+    var a=T.popAt+i*T.gap;
+    return { a:a, b:a+T.up, c:a+T.up+T.hold, d:a+T.up+T.hold+T.down };
+  }
+
+  // 부채 각도(반응형: 모바일 좁게)
+  function setStep(){ STEP = window.innerWidth<=900 ? 4.4 : 6.4;
+    cards.forEach(function(el,i){ el.style.setProperty('--rot', fanRot(i).toFixed(2)+'deg'); }); }
+
+  // 위치 트랙 — 부채 유지 + 자기 차례 팝(z-index·filter도 같은 트랙)
+  function dealCSS(){
+    var out=[];
+    for(var i=0;i<N;i++){
+      var t=times(i);
+      out.push(kf('auto'+i, [
+        [0,       'transform:'+FAN(i)+';filter:blur(2.6px);z-index:'+i],
+        [t.a,     'transform:'+FAN(i)+';filter:blur(2.6px);z-index:'+i, EASE_OUT],
+        [t.b,     'transform:'+POP+';filter:blur(0px);z-index:40'],
+        [t.c,     'transform:'+POP+';filter:blur(0px);z-index:40', EASE_IO],
+        [t.d,     'transform:'+FAN(i)+';filter:blur(2.6px);z-index:'+i],
+        [T.total, 'transform:'+FAN(i)+';filter:blur(2.6px);z-index:'+i]
+      ]));
+      out.push('.deck.run .card[data-i="'+i+'"]{animation:auto'+i+' '+T.total+'ms infinite}');
+    }
+    // 글로우 — 카드가 앞에 나와있는 동안만 은은하게(감각적 B)
+    var gstops=[[0,'opacity:0']];
+    for(var j=0;j<N;j++){ var t=times(j);
+      gstops.push([t.b-60,'opacity:0'],[t.b+80,'opacity:1'],[t.c,'opacity:1'],[t.d,'opacity:0']); }
+    gstops.push([T.total,'opacity:0']);
+    out.push(kf('glowcyc', gstops));
+    out.push('#glow.run{animation:glowcyc '+T.total+'ms infinite}');
+    return out.join('\n');
+  }
+
+  // 이름표 트랙 — 팝된 카드 아래에 유형명
+  function nameCSS(){
+    var out=[];
+    for(var i=0;i<N;i++){ var t=times(i);
+      out.push(kf('nm'+i, [
+        [0,'opacity:0'], [t.b-80,'opacity:0'], [t.b+120,'opacity:1'],
+        [t.c,'opacity:1'], [t.c+180,'opacity:0'], [T.total,'opacity:0']
+      ]));
+      out.push('.tnames.run .nm[data-i="'+i+'"]{animation:nm'+i+' '+T.total+'ms infinite}');
+    }
+    return out.join('\n');
+  }
+
+  CODES.forEach(function(code,i){
+    var el=document.createElement('div');
+    el.className='card'; el.dataset.i=i; el.dataset.code=code;
+    el.innerHTML='<iframe class="cf" src="card.html?type='+code+'&g='+G+'" scrolling="no" tabindex="-1" title="결과 카드 '+code+'"></iframe>';
+    deck.appendChild(el); cards.push(el);
+    var f=el.querySelector('.cf');
+    f.addEventListener('load', function(){
+      try{ var doc=f.contentDocument; if(!doc) return;
+        var st=doc.createElement('style'); st.textContent='.fig{animation:none!important}'; doc.head.appendChild(st);
+      }catch(e){}
+    });
+
+    var nm=document.createElement('div'); nm.className='nm'; nm.dataset.i=i;
+    nm.innerHTML='<div class="code">'+code+'</div><div class="word">&nbsp;</div><div class="desc">&nbsp;</div>';
+    tnames.appendChild(nm);
+  });
+  setStep();
+
+  var style=document.createElement('style');
+  style.textContent=dealCSS()+'\n'+nameCSS();
+  document.head.appendChild(style);
+
+  // 등장(부채 펼침) → 끝나면 자동 순환 시작
+  function start(){
+    deck.classList.add('dealt');
+    cards.forEach(function(el,i){ el.style.transitionDelay=(i*55)+'ms'; });
+    if(RM) return;   // 모션 최소화: 부채로 정지
+    setTimeout(function(){
+      cards.forEach(function(el){ el.style.transitionDelay='0ms'; el.style.transition='none'; });
+      deck.classList.add('run'); tnames.classList.add('run'); glow.classList.add('run');
+    }, N*55+750);
+  }
+  requestAnimationFrame(function(){ requestAnimationFrame(start); });
+
+  document.getElementById('startBtn').addEventListener('click', function(){
+    alert('데모 — 실제로는 진단 플로우(diag-basic.html)로 이동해요.');
+  });
+
+  var rz=null;
+  addEventListener('resize', function(){ clearTimeout(rz); rz=setTimeout(setStep, 200); });
+
+  // 화면 밖이면 자동 순환 정지(배터리 절약)
+  new IntersectionObserver(function(en){
+    en.forEach(function(x){
+      var st=x.isIntersecting?'running':'paused';
+      [].forEach.call(document.querySelectorAll('.deck.run .card,.tnames.run .nm,#glow'), function(el){
+        el.style.animationPlayState=st;
+      });
+    });
+  },{threshold:.08}).observe(stage);
+
+  // 이름·설명은 bodytypes.json 단일 출처에서(card.html과 같은 원칙 — 하드코딩 금지)
+  fetch('data/bodytypes.json').then(function(r){ return r.json(); }).then(function(d){
+    var by={}; (d.types||[]).forEach(function(t){ by[t.code]=t; });
+    cards.forEach(function(el,i){
+      var t=by[el.dataset.code]; if(!t) return;
+      var g=(t.gender&&t.gender[G])||{}, box=tnames.querySelector('.nm[data-i="'+i+'"]');
+      box.querySelector('.word').textContent=t.name;
+      box.querySelector('.desc').textContent=(g.profile&&g.profile[0])||t.sizeKorea||'';
+    });
+  }).catch(function(){});
+
+  /* ── 서비스 소개(유지): 스텝 등장 · 카운트업 · 세로 줄자 스크롤 1:1 ── */
+  var so=new IntersectionObserver(function(en){
+    en.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add('on'); so.unobserve(x.target); } });
+  },{threshold:.35});
+  [].forEach.call(document.querySelectorAll('.step'), function(s,i){ s.style.transitionDelay=(i*90)+'ms'; so.observe(s); });
+
+  function countTo(el){
+    var to=+el.dataset.to, from=el.dataset.from?+el.dataset.from:0, t0=null;
+    function step(ts){ if(!t0) t0=ts; var p=Math.min(1,(ts-t0)/1100), e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(from+(to-from)*e); if(p<1) requestAnimationFrame(step); }
+    requestAnimationFrame(step);
+  }
+  var co=new IntersectionObserver(function(en){
+    en.forEach(function(x){ if(x.isIntersecting){ countTo(x.target); co.unobserve(x.target); } });
+  },{threshold:.6});
+  [].forEach.call(document.querySelectorAll('.cnt'), function(el){ co.observe(el); });
+
+  var how=document.getElementById('how'), vfill=document.getElementById('vfill'), vhead=document.getElementById('vhead'), tick=false;
+  function upd(){ tick=false;
+    var r=how.getBoundingClientRect(), vh=window.innerHeight;
+    var prog=(vh*0.55 - r.top)/(r.height*1.02); prog=Math.max(0,Math.min(1,prog));
+    var pct=(prog*100).toFixed(2)+'%'; vfill.style.height=pct; vhead.style.top=pct;
+  }
+  addEventListener('scroll', function(){ if(!tick){ tick=true; requestAnimationFrame(upd); } }, {passive:true});
+  addEventListener('resize', upd); upd();
+})();
+</script>
+</body>
+</html>

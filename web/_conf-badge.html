@@ -1,0 +1,36 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<title>정확도 배지 색</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
+<link rel="stylesheet" href="css/diag.css?v=c86b6818">
+<link rel="stylesheet" href="css/result.css?v=49d3ba32">
+<style>
+  body{background:#F6F6F5;font-family:'Pretendard',sans-serif;margin:0;padding:38px;color:#16140F;}
+  .wrap{max-width:640px;margin:0 auto;}
+  h3{font-size:18px;font-weight:800;letter-spacing:-.03em;margin:0 0 6px;}
+  .sub{font-size:13.5px;color:#6E6B63;margin:0 0 26px;line-height:1.6;}
+  .rwrap{max-width:none;padding:0;}
+  .rowc{display:flex;align-items:center;gap:16px;padding:16px 18px;background:#fff;border:1px solid #E6E5E1;border-radius:14px;margin-bottom:12px;}
+  .rowc .rconf{flex:none;}
+  .meta{font-size:13px;color:#6E6B63;line-height:1.5;} .meta b{color:#16140F;}
+  .sw{display:flex;gap:6px;margin-top:6px;} .sw span{font-size:11px;color:#8b887f;font-family:monospace;}
+</style></head><body>
+<div class="wrap rwrap">
+  <h3>정확도 배지 — 3단계 색</h3>
+  <p class="sub">착용 경험 벌 수(0 / 1 / 2+)에 따라 <b>베이지 → 초록 → 검정</b>으로 진해져요.</p>
+
+  <div class="rowc">
+    <span class="rconf low">정확도 낮음 · 기본 추정</span>
+    <div class="meta"><b>0벌</b> · 키·몸무게·나이만으로 추정<div class="sw"><span>bg #f2ece0</span><span>text #8a7a52</span></div></div>
+  </div>
+  <div class="rowc">
+    <span class="rconf mid">정확도 보통</span>
+    <div class="meta"><b>1벌</b> · 착용 경험 1개 반영<div class="sw"><span>bg #e7efe7</span><span>text #4a7a4a</span></div></div>
+  </div>
+  <div class="rowc">
+    <span class="rconf high">정확도 높음</span>
+    <div class="meta"><b>2벌 이상</b> · 확실<div class="sw"><span>bg --rink(잉크)</span><span>text #fff</span></div></div>
+  </div>
+</div>
+</body></html>

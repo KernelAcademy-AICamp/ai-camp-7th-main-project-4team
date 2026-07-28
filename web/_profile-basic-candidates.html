@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>프로필 편집 · 사진+닉네임 배치 후보</title>
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Pretendard',system-ui,sans-serif;-webkit-font-smoothing:antialiased;padding:36px 20px 120px}
+  .page{max-width:720px;margin:0 auto}
+  .ptitle{font-size:16px;font-weight:800;color:var(--green);margin:0 0 4px}
+  .pdesc{font-size:13px;color:var(--sub);margin:0 0 30px;line-height:1.6}
+  .vlabel{margin:38px 0 12px}
+  .vlabel .vn{display:inline-block;font-size:12.5px;font-weight:800;color:#fff;background:var(--green);border-radius:20px;padding:5px 13px}
+  .vlabel .vd{font-size:13px;color:var(--sub);margin-top:9px;line-height:1.55}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 6px 18px rgba(20,18,16,.05)}
+  .sectitle{font-size:17px;font-weight:800;color:var(--ink);margin-bottom:4px}
+  .secdesc{font-size:12px;color:var(--sub2);margin-bottom:18px}
+  .lab{display:block;font-size:12.5px;font-weight:800;color:var(--ink-soft);margin:0 0 7px}
+  .fin{width:100%;border:1.5px solid var(--line2);border-radius:10px;padding:11px 13px;font-family:inherit;font-size:14px;background:#fff}
+  .ava{width:84px;height:84px;border-radius:50%;background:var(--soft);flex:none;display:flex;align-items:center;justify-content:center;color:var(--sub2);font-size:26px;overflow:hidden}
+  .ava.sm{width:60px;height:60px;font-size:20px}
+  .btn{font-size:12.5px;font-weight:700;padding:8px 14px;border-radius:9px;border:1.5px solid var(--line2);background:#fff;color:var(--ink);cursor:pointer;white-space:nowrap}
+  .reset{font-size:12px;font-weight:700;color:var(--sub);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+
+  /* A: 아바타 좌 · 우측에 닉네임+버튼 세로 */
+  .A .row{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:start}
+  .A .right{display:flex;flex-direction:column;gap:0}
+  .A .acts{display:flex;align-items:center;gap:12px;margin-top:14px}
+
+  /* B: 사진 한 줄(아바타+버튼) → 닉네임 아래 */
+  .B .photo{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+  .B .photo .acts{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+
+  /* C: 한 줄 컴팩트 */
+  .C .oneline{display:flex;align-items:center;gap:14px}
+  .C .oneline .nkwrap{flex:1;min-width:0}
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="ptitle">프로필 편집 · 사진 + 닉네임 배치 후보</p>
+  <p class="pdesc">지금은 아바타 아래로 버튼이 쌓이고 닉네임이 옆 위에 떠서 균형이 안 맞아요. 세 가지 배치안이에요.</p>
+
+  <!-- A -->
+  <div class="vlabel"><span class="vn">A · 아바타 좌 · 우측 세로</span><div class="vd">아바타는 왼쪽에 사진만. 오른쪽에 닉네임 입력 → 그 아래 "사진 변경·되돌리기". 오른쪽이 세로로 채워져 균형이 맞음. 가장 안정적.</div></div>
+  <div class="card A">
+    <div class="sectitle">기본 정보</div><div class="secdesc">고객에게 보여질 이름과 프로필을 설정하세요</div>
+    <div class="row">
+      <div class="ava">🙂</div>
+      <div class="right">
+        <label class="lab">닉네임</label>
+        <input class="fin" value="DD" style="max-width:320px">
+        <div class="acts"><button class="btn">프로필 사진 변경</button><span class="reset">기본 이미지로 되돌리기</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="vlabel"><span class="vn">B · 사진 한 줄 → 닉네임 아래</span><div class="vd">위에 사진 영역(아바타 + 변경/되돌리기), 아래에 닉네임 전체폭. 위아래로 흐르는 세로 구성이라 깔끔·명확. 섹션 흐름과 잘 맞음.</div></div>
+  <div class="card B">
+    <div class="sectitle">기본 정보</div><div class="secdesc">고객에게 보여질 이름과 프로필을 설정하세요</div>
+    <label class="lab">프로필 사진</label>
+    <div class="photo">
+      <div class="ava">🙂</div>
+      <div class="acts"><button class="btn">프로필 사진 변경</button><span class="reset">기본 이미지로 되돌리기</span></div>
+    </div>
+    <label class="lab">닉네임</label>
+    <input class="fin" value="DD" style="max-width:320px">
+  </div>
+
+  <!-- C -->
+  <div class="vlabel"><span class="vn">C · 한 줄 컴팩트</span><div class="vd">작은 아바타 + 닉네임 입력을 한 줄에, 변경은 옆 버튼. 가장 공간 절약. 사진 비중을 낮추고 싶을 때.</div></div>
+  <div class="card C">
+    <div class="sectitle">기본 정보</div><div class="secdesc">고객에게 보여질 이름과 프로필을 설정하세요</div>
+    <label class="lab">닉네임 · 프로필 사진</label>
+    <div class="oneline">
+      <div class="ava sm">🙂</div>
+      <div class="nkwrap"><input class="fin" value="DD"></div>
+      <button class="btn">사진 변경</button>
+    </div>
+    <div style="margin-top:9px"><span class="reset">기본 이미지로 되돌리기</span></div>
+  </div>
+
+</div>
+</body>
+</html>
