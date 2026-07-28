@@ -10,8 +10,9 @@
 <link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
 <link rel="stylesheet" href="css/diag.css?v=c86b6818">
 <link rel="stylesheet" href="css/judge.css?v=33125101">
+<link rel="stylesheet" href="css/auth-ui.css?v=3f72bdd7">
 <link rel="stylesheet" href="css/appnav.css?v=21e67dfb">
-<script defer src="js/appnav.js?v=89560970"></script>
+<script defer src="js/appnav.js?v=3dd82c59"></script>
 </head>
 <body>
 <!-- 판정(Fit) — 개발자 기능 배선. 디자이너 재스킨 대상(마크업 최소·토큰만 사용). -->
@@ -203,7 +204,12 @@
 <script src="js/body-model.js?v=8fe572dd"></script>
 <script src="js/engine.js?v=de45a879"></script>
 <script src="js/bodytype.js?v=f6e75dd3"></script>
-<script src="js/config.js?v=53f50277"></script>
+<script src="js/config.js?v=5f55324e"></script>
+<!-- 소비자 계정(ACCOUNTS_ENABLED) — appnav 헤더가 실 세션을 알아야 해서.
+     동기 스크립트라 defer된 appnav.js(head)보다 먼저 실행된다. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/auth.js?v=790fe0f0"></script>
+<script src="js/auth-ui.js?v=78d5c083"></script>
 <script src="js/data.js?v=0b603d0c"></script>
 <script src="js/judge.js?v=1903ac2a"></script>
 <script src="js/a11y.js?v=1876c5ec"></script>

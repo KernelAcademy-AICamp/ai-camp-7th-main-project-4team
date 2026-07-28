@@ -1,3 +1,8 @@
+  // 진단 '실행' 식별자 — 모든 진단 경로(기본·옷 기반·파생)가 이 화면을 지나므로 여기가 단일 지점.
+  //   결과화면 피드백 상태(fitting.result.fbToast.*)가 이 값으로 묶인다. 없으면 같은 입력으로 다시
+  //   진단했을 때 이전 진단의 '이미 답함'이 그대로 걸려 정확도 질문이 아예 안 뜬다.
+  try{ sessionStorage.setItem('fitting.dxRun', String(Date.now())+'.'+Math.floor(Math.random()*1e6)); }catch(e){}
+
   const params=new URLSearchParams(location.search);
   const SKIP=params.get('skip')==='1';
   const G=params.get('g');

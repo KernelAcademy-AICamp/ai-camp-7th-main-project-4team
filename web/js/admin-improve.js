@@ -6,7 +6,9 @@
   var $=function(id){return document.getElementById(id);};
   var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
   function kpi(n,l,s){return '<div class="kpi"><div class="n">'+(typeof n==='number'?n.toLocaleString():n)+'</div><div class="l">'+l+'</div>'+(s?'<div class="s">'+s+'</div>':'')+'</div>';}
-  var PARTLBL={chest:'가슴',shoulder:'어깨',belly:'배',sleeve:'소매',length:'총장',waist:'허리',hip:'엉덩이',thigh:'허벅지',arm:'팔',neck:'목',rise:'밑위',hem:'밑단'};
+  var PARTLBL={chest:'가슴',shoulder:'어깨',belly:'배',sleeve:'소매',length:'총장',waist:'허리',hip:'엉덩이',thigh:'허벅지',
+    upperArm:'팔(소매통)',neck:'목',armhole:'암홀',calf:'종아리',rise:'밑위',hem:'밑단',ratio:'상하 비율',
+    arm:'팔(소매통·구 표기)'};   // 2026-07-27 이전 진단 레코드가 소매통을 arm으로 저장했다 — 옛 로그 라벨 유지용
   // 엔진 역산(engine.js CAT_PARTS)이 실제 소비하는 부위 — 이 밖의 fits는 수집만 되고 미사용(⑤에서 배선 후보로).
   var CORE={chest:1,shoulder:1,waist:1,hip:1,thigh:1};
 
@@ -75,7 +77,7 @@
 
     $('painTable').innerHTML='<thead><tr><th>브랜드</th><th>병목부위</th><th>끼임</th><th>응답</th><th>작업</th></tr></thead><tbody>'+
       (painRows.length?painRows.map(function(p){
-        return '<tr><td><b>'+esc(p.brand)+'</b></td><td>'+esc(p.part)+'</td><td class="num"><b>'+p.tight+'</b></td><td class="num muted">'+p.seen+'</td>'+
+        return '<tr><td><b>'+esc(p.brand)+'</b></td><td>'+esc(PARTLBL[p.part]||p.part)+'</td><td class="num"><b>'+p.tight+'</b></td><td class="num muted">'+p.seen+'</td>'+
           '<td><a class="pill" style="color:var(--green);background:var(--green-soft);text-decoration:none" href="admin-garments.html?brand='+encodeURIComponent(p.brand)+'">실측 보정 →</a></td></tr>';
       }).join(''):'<tr><td class="muted" colspan="5">아직 페인 신호가 없어요 · 진단이 쌓이면 브랜드×부위별 끼임이 모여요</td></tr>')+'</tbody>';
 

@@ -23,26 +23,27 @@
 
   // ── 샘플(대표 응답 16건). 화면 완성용 — 실데이터 아님. ─────────────────
   var SAMPLE=[
-    {id:'s01',ts:'2026-07-12T21:14:00',gender:'female',bodyType:'C',category:'TOP',verdict:'맞음',confidenceTier:'high',engineImprove:true, anchors:[{brandName:'유니클로',fitLine:'regular',sizeLabel:'M'}],painFlags:{arm:'OK',neck:'OK'}},
-    {id:'s02',ts:'2026-07-12T20:02:00',gender:'female',bodyType:'C',category:'TOP',verdict:'맞음',confidenceTier:'high',engineImprove:true, anchors:[{brandName:'무신사 스탠다드',fitLine:'relaxed',sizeLabel:'L'}],painFlags:{arm:'TIGHT',neck:'OK'}},
-    {id:'s03',ts:'2026-07-12T18:40:00',gender:'male',  bodyType:'F',category:'TOP',verdict:'애매',confidenceTier:'mid', engineImprove:false,anchors:[{brandName:'자라',fitLine:'slim',sizeLabel:'M'}],painFlags:{arm:'OK',neck:'TIGHT'}},
+    {id:'s01',ts:'2026-07-12T21:14:00',gender:'female',bodyType:'C',category:'TOP',verdict:'맞음',confidenceTier:'high',engineImprove:true, anchors:[{brandName:'유니클로',fitLine:'regular',sizeLabel:'M'}],painFlags:{upperArm:'OK',neck:'OK'}},
+    {id:'s02',ts:'2026-07-12T20:02:00',gender:'female',bodyType:'C',category:'TOP',verdict:'맞음',confidenceTier:'high',engineImprove:true, anchors:[{brandName:'무신사 스탠다드',fitLine:'relaxed',sizeLabel:'L'}],painFlags:{upperArm:'TIGHT',neck:'OK'}},
+    {id:'s03',ts:'2026-07-12T18:40:00',gender:'male',  bodyType:'F',category:'TOP',verdict:'애매',confidenceTier:'mid', engineImprove:false,anchors:[{brandName:'자라',fitLine:'slim',sizeLabel:'M'}],painFlags:{upperArm:'OK',neck:'TIGHT'}},
     {id:'s04',ts:'2026-07-12T17:11:00',gender:'male',  bodyType:'F',category:'BOTTOM',verdict:'맞음',confidenceTier:'mid', engineImprove:true, anchors:[{brandName:'유니클로',fitLine:'straight',sizeLabel:'32'}],painFlags:{thigh:'TIGHT'}},
-    {id:'s05',ts:'2026-07-12T15:55:00',gender:'female',bodyType:'A',category:'TOP',verdict:'틀림',confidenceTier:'high',engineImprove:true, anchors:[{brandName:'스파오',fitLine:'regular',sizeLabel:'S'}],painFlags:{arm:'TIGHT',neck:'OK'}},
-    {id:'s06',ts:'2026-07-12T14:20:00',gender:'female',bodyType:'D',category:'TOP',verdict:'맞음',confidenceTier:'mid', engineImprove:false,anchors:[{brandName:'탑텐',fitLine:'regular',sizeLabel:'M'}],painFlags:{arm:'OK'}},
-    {id:'s07',ts:'2026-07-12T12:05:00',gender:'male',  bodyType:'G',category:'TOP',verdict:'맞음',confidenceTier:'high',engineImprove:true, anchors:[{brandName:'에잇세컨즈',fitLine:'relaxed',sizeLabel:'L'}],painFlags:{arm:'OK',neck:'OK'}},
+    {id:'s05',ts:'2026-07-12T15:55:00',gender:'female',bodyType:'A',category:'TOP',verdict:'틀림',confidenceTier:'high',engineImprove:true, anchors:[{brandName:'스파오',fitLine:'regular',sizeLabel:'S'}],painFlags:{upperArm:'TIGHT',neck:'OK'}},
+    {id:'s06',ts:'2026-07-12T14:20:00',gender:'female',bodyType:'D',category:'TOP',verdict:'맞음',confidenceTier:'mid', engineImprove:false,anchors:[{brandName:'탑텐',fitLine:'regular',sizeLabel:'M'}],painFlags:{upperArm:'OK'}},
+    {id:'s07',ts:'2026-07-12T12:05:00',gender:'male',  bodyType:'G',category:'TOP',verdict:'맞음',confidenceTier:'high',engineImprove:true, anchors:[{brandName:'에잇세컨즈',fitLine:'relaxed',sizeLabel:'L'}],painFlags:{upperArm:'OK',neck:'OK'}},
     {id:'s08',ts:'2026-07-12T10:48:00',gender:'female',bodyType:'C',category:'BOTTOM',verdict:'애매',confidenceTier:'low', engineImprove:false,anchors:[{brandName:'자라',fitLine:'wide',sizeLabel:'27'}],painFlags:{thigh:'OK',hip:'TIGHT'}},
     {id:'s09',ts:'2026-07-11T22:30:00',gender:'male',  bodyType:'H',category:'TOP',verdict:'틀림',confidenceTier:'mid', engineImprove:true, anchors:[{brandName:'무신사 스탠다드',fitLine:'oversized',sizeLabel:'XL'}],painFlags:{neck:'TIGHT'}},
-    {id:'s10',ts:'2026-07-11T20:12:00',gender:'female',bodyType:'B',category:'TOP',verdict:'맞음',confidenceTier:'mid', engineImprove:false,anchors:[{brandName:'유니클로',fitLine:'slim',sizeLabel:'S'}],painFlags:{arm:'OK'}},
-    {id:'s11',ts:'2026-07-11T18:00:00',gender:'female',bodyType:'C',category:'TOP',verdict:'맞음',confidenceTier:'high',engineImprove:true, anchors:[{brandName:'스파오',fitLine:'regular',sizeLabel:'M'}],painFlags:{arm:'OK',neck:'OK'}},
+    {id:'s10',ts:'2026-07-11T20:12:00',gender:'female',bodyType:'B',category:'TOP',verdict:'맞음',confidenceTier:'mid', engineImprove:false,anchors:[{brandName:'유니클로',fitLine:'slim',sizeLabel:'S'}],painFlags:{upperArm:'OK'}},
+    {id:'s11',ts:'2026-07-11T18:00:00',gender:'female',bodyType:'C',category:'TOP',verdict:'맞음',confidenceTier:'high',engineImprove:true, anchors:[{brandName:'스파오',fitLine:'regular',sizeLabel:'M'}],painFlags:{upperArm:'OK',neck:'OK'}},
     {id:'s12',ts:'2026-07-11T15:33:00',gender:'male',  bodyType:'F',category:'BOTTOM',verdict:'애매',confidenceTier:'low', engineImprove:false,anchors:[{brandName:'탑텐',fitLine:'straight',sizeLabel:'34'}],painFlags:{thigh:'TIGHT',waist:'TIGHT'}},
-    {id:'s13',ts:'2026-07-11T13:10:00',gender:'female',bodyType:'E',category:'TOP',verdict:'맞음',confidenceTier:'mid', engineImprove:true, anchors:[{brandName:'자라',fitLine:'regular',sizeLabel:'M'}],painFlags:{arm:'OK'}},
-    {id:'s14',ts:'2026-07-10T21:44:00',gender:'male',  bodyType:'G',category:'TOP',verdict:'맞음',confidenceTier:'high',engineImprove:false,anchors:[{brandName:'유니클로',fitLine:'regular',sizeLabel:'L'}],painFlags:{arm:'OK',neck:'OK'}},
-    {id:'s15',ts:'2026-07-10T19:20:00',gender:'female',bodyType:'A',category:'TOP',verdict:'틀림',confidenceTier:'low', engineImprove:true, anchors:[{brandName:'에잇세컨즈',fitLine:'slim',sizeLabel:'S'}],painFlags:{arm:'TIGHT'}},
-    {id:'s16',ts:'2026-07-10T16:05:00',gender:'female',bodyType:'D',category:'TOP',verdict:'맞음',confidenceTier:'mid', engineImprove:false,anchors:[{brandName:'무신사 스탠다드',fitLine:'regular',sizeLabel:'M'}],painFlags:{arm:'OK'}}
+    {id:'s13',ts:'2026-07-11T13:10:00',gender:'female',bodyType:'E',category:'TOP',verdict:'맞음',confidenceTier:'mid', engineImprove:true, anchors:[{brandName:'자라',fitLine:'regular',sizeLabel:'M'}],painFlags:{upperArm:'OK'}},
+    {id:'s14',ts:'2026-07-10T21:44:00',gender:'male',  bodyType:'G',category:'TOP',verdict:'맞음',confidenceTier:'high',engineImprove:false,anchors:[{brandName:'유니클로',fitLine:'regular',sizeLabel:'L'}],painFlags:{upperArm:'OK',neck:'OK'}},
+    {id:'s15',ts:'2026-07-10T19:20:00',gender:'female',bodyType:'A',category:'TOP',verdict:'틀림',confidenceTier:'low', engineImprove:true, anchors:[{brandName:'에잇세컨즈',fitLine:'slim',sizeLabel:'S'}],painFlags:{upperArm:'TIGHT'}},
+    {id:'s16',ts:'2026-07-10T16:05:00',gender:'female',bodyType:'D',category:'TOP',verdict:'맞음',confidenceTier:'mid', engineImprove:false,anchors:[{brandName:'무신사 스탠다드',fitLine:'regular',sizeLabel:'M'}],painFlags:{upperArm:'OK'}}
   ];
 
-  var PARTLBL={arm:'팔(소매)',neck:'목',thigh:'허벅지',hip:'엉덩이',waist:'허리',shoulder:'어깨',chest:'가슴',
-    belly:'배',sleeve:'소매',length:'총장',rise:'밑위',hem:'밑단'};
+  var PARTLBL={upperArm:'팔(소매통)',neck:'목',armhole:'암홀',calf:'종아리',thigh:'허벅지',hip:'엉덩이',waist:'허리',
+    shoulder:'어깨',chest:'가슴',belly:'배',sleeve:'소매',length:'총장',rise:'밑위',hem:'밑단',ratio:'상하 비율',
+    arm:'팔(소매통·구 표기)'};   // 옛 진단 레코드 호환(2026-07-27 이전 소매통=arm)
   // 착용감/불편/기장 원값 → 한글. (fits: 4지 · painFlags: 2지 · lengthPrefs: 3지)
   var FEELKO={TIGHT:'끼임',SNUG:'딱맞음',RELAXED:'여유',BIG:'큼',OK:'괜찮음',SHORT:'짧음',GOOD:'딱 좋음',LONG:'긺'};
   function feelKo(v){ return FEELKO[v]||v; }

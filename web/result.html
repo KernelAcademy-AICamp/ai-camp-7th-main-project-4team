@@ -8,7 +8,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
 <link rel="stylesheet" href="css/diag.css?v=c86b6818">
-<link rel="stylesheet" href="css/result.css?v=bdcc01b9">
+<link rel="stylesheet" href="css/auth-ui.css?v=3f72bdd7">
+<link rel="stylesheet" href="css/result.css?v=49d3ba32">
 </head>
 <body>
 
@@ -155,7 +156,7 @@
 
 <!-- 결과 토스트 — 정확도 피드백(항상) + 상태별 다음 단계. 결과 화면에서만(마이 embed는 CSS로 숨김). 다음 단계는 result.js fbToastInit이 상태별로 채움 -->
 <div class="rfbtoast" id="rfbToast" role="dialog" aria-label="진단 결과" hidden>
-  <button class="rfbtoast-x" id="rfbToastX" aria-label="닫기" onclick="fbToastHide()">&times;</button>
+  <button class="rfbtoast-x" id="rfbToastX" aria-label="닫기" onclick="fbToastDismiss()">&times;</button>
   <div class="rfbtoast-ey" id="rfbToastEy">진단 완료</div>
   <div class="rfbtoast-q" id="rfbToastQ">이 결과, 평소 내 사이즈랑 비슷한가요?</div>
   <div class="rfbtoast-sub" id="rfbToastSub">답해주시면 다음 진단이 더 정확해져요</div>
@@ -172,10 +173,14 @@
 <script src="js/body-model.js?v=8fe572dd"></script>
 <script src="js/engine.js?v=de45a879"></script>
 <script src="js/bodytype.js?v=f6e75dd3"></script>
-<script src="js/config.js?v=53f50277"></script>
+<script src="js/config.js?v=5f55324e"></script>
 <script src="js/data.js?v=0b603d0c"></script>
 <script src="js/body-figure.js?v=b613013e"></script>
-<script src="js/result.js?v=11ab7643"></script>
+<!-- 소비자 계정(ACCOUNTS_ENABLED) — 결과 저장 게이트가 실 세션을 알아야 해서. 플래그 off면 auth.js는 로드만 되고 안 쓰임. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/auth.js?v=790fe0f0"></script>
+<script src="js/auth-ui.js?v=78d5c083"></script>
+<script src="js/result.js?v=ccf4afff"></script>
 <script src="js/a11y.js?v=1876c5ec"></script>
 </body>
 </html>
