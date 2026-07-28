@@ -108,8 +108,17 @@
      세션이 복원될 때도 발생한다 → 마커(auth-ui가 provider로 떠나기 직전에 남김)가 있을 때만 실행한다.
      이게 없으면 홈에 들를 때마다 토스트가 뜨고, claim·프로필 upsert까지 매번 다시 돈다. */
   function onSignedIn(){
-    var fresh=false;
-    try{ fresh=sessionStorage.getItem('fitting.loginPending')==='1'; sessionStorage.removeItem('fitting.loginPending'); }catch(e){}
+    /* 마커는 localStorage(탭 공유) — 매직링크는 새 탭에서 열려 sessionStorage로는 안 건너온다.
+       탭을 공유하는 대신 유효기간을 둔다: 메일을 열기까지 걸리는 시간은 허용하되,
+       며칠 뒤 세션 복원이 '방금 로그인'으로 오인되지 않게. 읽는 즉시 지운다(1회성). */
+    var fresh=false, LOGIN_TTL=30*60*1000;
+    try{
+      var mk=localStorage.getItem('fitting.loginPending');
+      if(mk!=null){ localStorage.removeItem('fitting.loginPending'); fresh=(Date.now()-(+mk||0))<LOGIN_TTL; }
+      // 하위호환: 이 배포 전에 열려 있던 탭이 남긴 옛 마커('1', sessionStorage)
+      if(!fresh && sessionStorage.getItem('fitting.loginPending')==='1'){ fresh=true; }
+      sessionStorage.removeItem('fitting.loginPending');
+    }catch(e){}
     if(!fresh){ hydrateAccount(); return; }   // 세션 복원 = 조용히 계정 데이터만 반영
     var u=_authSession&&_authSession.user, email=u&&u.email;
     // 카카오 무이메일 → 프로필의 이메일 칸((필수) 표시)으로 안내한다. 로그인 직후 네이티브 prompt를

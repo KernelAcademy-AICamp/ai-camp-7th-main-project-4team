@@ -73,11 +73,19 @@ var nJs = copyDir('js', function (f) { return !JS_SKIP(f); });
 copyDir('css'); copyDir('img'); copyDir('photos');
 
 // 3) config.js — 기본 모드 proto → api 주입 (배포는 항상 측정 모드)
+//    + 계정 쿼리 오버라이드(?accounts=on) 제거 — 프로덕션에서 URL 하나로 로그인이 켜지면
+//      실제 Supabase 계정·profile 행이 생긴다(진짜 PII). 처리방침 법적 검토 전이라
+//      링크가 유출되거나 팀원이 무심코 공유하면 검토 전 상태로 실사용자 PII가 들어온다.
+//      로컬(web/)에서는 그대로 두어 라이브 테스트에 계속 쓴다 — 배포본만 잠근다.
+//      계정을 실제로 열 때는 config.js의 ACCOUNTS_ENABLED 기본값을 true로 바꾼다(뒷문이 아니라 정문).
 var cfgPath = path.join(OUT, 'js/config.js');
 if (fs.existsSync(cfgPath)) {
   var cfg = fs.readFileSync(cfgPath, 'utf8');
   var swapped = cfg.replace(/forced \|\| 'proto'/, "forced || 'api'");
   if (swapped === cfg) console.warn('  ⚠ config.js 모드 주입 실패 — proto 기본값 패턴 불일치(수동 확인)');
+  var ACC_LINE = "if (acc) w.ACCOUNTS_ENABLED = (acc === 'on');";
+  if (swapped.indexOf(ACC_LINE) < 0) console.warn('  ⚠ 계정 오버라이드 제거 실패 — 패턴 불일치(config.js 변경됨, 수동 확인)');
+  swapped = swapped.split(ACC_LINE).join("/* gen-app: 배포본은 쿼리로 계정을 켤 수 없다 */");
   fs.writeFileSync(cfgPath, swapped);
 }
 
