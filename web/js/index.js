@@ -42,7 +42,7 @@
   function hydrateAccount(){
     if(!apiAccounts()) return;
     FITAUTH.getProfile().then(function(p){
-      if(!p) return;
+      if(!p){ renderProfile(); renderMyAvatar(); return; }   // 프로필 없음(신규 계정) = '미입력'으로 다시 그린다
       _acctEmail = p.email || '';
       if(p.display_name){ USER.name=p.display_name; USER.initial=(String(p.display_name)[0]||USER.initial); }
       var b=p.basic||{};
@@ -79,8 +79,20 @@
     if(sid) FITAUTH.claimDiagnoses(sid).then(read); else read();
   }
   function apiAccounts(){ return !!(window.FDATA&&FDATA.mode==='api'&&window.ACCOUNTS_ENABLED&&window.FITAUTH&&FITAUTH.ready()); }
+  /* 계정 모드에선 목업 페르소나(김도현)를 쓰지 않는다.
+     USER는 proto 데모용 하드코딩 값이라, 새 계정처럼 profile이 비어 있으면 hydrateAccount가
+     덮어쓸 게 없어 **남의 신체 정보가 내 프로필에 채워진 것처럼** 보인다(탈퇴→재가입 시 실제로 그랬다).
+     서버에서 온 값만 채우고, 없으면 '미입력'으로 정직하게 비워 둔다. */
+  function clearPersona(){
+    USER.name='회원'; USER.initial='회'; USER.type=null;
+    USER.gender=''; USER.age=''; USER.height=null; USER.weight=null;
+    USER.fitTop=''; USER.fitBottom='';
+    // initAuth는 첫 renderProfile 뒤에 돈다 → 지우기만 하면 목업이 화면에 남는다. 다시 그린다.
+    try{ renderProfile(); renderMyAvatar(); }catch(e){}
+  }
   function initAuth(){
     if(!apiAccounts()) return;
+    clearPersona();
     FITAUTH.getSession().then(function(s){ _authSession=s; applyAuthUI(); if(s) hydrateAccount(); });
     FITAUTH.onChange(function(e,s){ _authSession=s; applyAuthUI(); if(e==='SIGNED_IN') onSignedIn(); });
   }
@@ -553,10 +565,14 @@
         '<div class="msub"><div class="subhead">신체 · 선호 정보</div>'+
           '<div class="field"><span>이름</span><span class="v">'+esc(U.name)+'</span></div>'+
           (apiAccounts()?'<div class="field"><span>이메일</span><span class="v">'+esc(_acctEmail||'미등록')+'</span></div>':'')+
-          '<div class="field"><span>성별 · 연령대</span><span class="v">'+(U.gender==='female'?'여성':'남성')+' · '+esc(U.age||'미입력')+'</span></div>'+
-          '<div class="field"><span>키 · 몸무게</span><span class="v"><span class="num">'+U.height+'</span>cm · <span class="num">'+U.weight+'</span>kg</span></div>'+
-          '<div class="field"><span>상의 핏 취향</span><span class="v">'+U.fitTop+'</span></div>'+
-          '<div class="field"><span>하의 핏 취향</span><span class="v">'+U.fitBottom+'</span></div>'+
+          // 값이 없으면 '미입력' — 없는 값을 목업으로 메우면 남의 정보처럼 보인다
+            (U.age?'':'<option value="" selected>선택</option>')+   // 미입력이면 아무거나 고른 척하지 않는다
+          '<div class="field"><span>성별 · 연령대</span><span class="v">'+(U.gender?(U.gender==='female'?'여성':'남성'):'미입력')+' · '+esc(U.age||'미입력')+'</span></div>'+
+          '<div class="field"><span>키 · 몸무게</span><span class="v">'+
+            (U.height?('<span class="num">'+U.height+'</span>cm'):'미입력')+' · '+
+            (U.weight?('<span class="num">'+U.weight+'</span>kg'):'미입력')+'</span></div>'+
+          '<div class="field"><span>상의 핏 취향</span><span class="v">'+esc(U.fitTop||'미입력')+'</span></div>'+
+          '<div class="field"><span>하의 핏 취향</span><span class="v">'+esc(U.fitBottom||'미입력')+'</span></div>'+
           '<div class="note">🔒 민감정보 · 편집 시 재진단을 추천해요</div></div>'+
         '</div><div class="prof-actions"><button class="btn" onclick="editProfile()">프로필 수정하기</button></div>';
     } else {
@@ -569,7 +585,8 @@
           // 나이는 진단에서 연령대로만 받는다 → 여기서도 같은 선택지로(숫자 입력이면 진단 입력과 형식이 어긋난다)
           '<div class="pedit inrow3"><div><label>연령대</label><select class="inp" id="pAge">'+
             AGE_BANDS.map(function(a){ return '<option value="'+a+'"'+(U.age===a?' selected':'')+'>'+a+'</option>'; }).join('')+
-          '</select></div><div><label>키(cm)</label><input class="inp" id="pHeight" type="number" value="'+U.height+'"></div><div><label>몸무게(kg)</label><input class="inp" id="pWeight" type="number" value="'+U.weight+'"></div></div>'+
+          '</select></div><div><label>키(cm)</label><input class="inp" id="pHeight" type="number" value="'+(U.height||'')+'" placeholder="예: 172"></div>'+
+          '<div><label>몸무게(kg)</label><input class="inp" id="pWeight" type="number" value="'+(U.weight||'')+'" placeholder="예: 68"></div></div>'+
           '<div class="pedit"><label>상의 핏 취향</label><div class="seg" id="pFitTop">'+FIT_OPTS.map(function(f){return '<span class="o'+(U.fitTop===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div>'+
           '<div class="pedit"><label>하의 핏 취향</label><div class="seg" id="pFitBottom">'+FIT_OPTS_BOTTOM.map(function(f){return '<span class="o'+(U.fitBottom===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div>'+
           '<div class="note" style="color:var(--warn)">⚠️ 신체정보를 바꾸면 재진단을 추천해요</div></div>'+
