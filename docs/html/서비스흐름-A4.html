@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>핏팅 서비스 흐름 — A4</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+<style>
+  :root{
+    --green:#2E4A3B; --green-mid:#5A7A68; --green-soft:#E7EFEA; --green-line:#CBDDD2;
+    --clay:#B0553F; --clay-soft:#F7ECE8; --clay-bg:#FBF4F1; --clay-line:#E8CFC7;
+    --ink:#16140F; --sub:#6E6B63; --sub2:#A6A29A;
+    --line:#E6E5E1; --soft:#EDEDEA; --wash:#F6F6F5;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{font-family:'Pretendard','Malgun Gothic',sans-serif; color:var(--ink); background:#8E938E;
+    -webkit-font-smoothing:antialiased; word-break:keep-all; padding:24px 0; letter-spacing:-.02em}
+  .num{font-family:'SUIT Variable','Pretendard',sans-serif; font-feature-settings:'tnum'; letter-spacing:0}
+  .page{width:8.27in; min-height:11.69in; padding:0.5in 0.55in; background:#fff; position:relative;
+    margin:0 auto 22px; box-shadow:0 6px 30px rgba(0,0,0,.22); display:flex; flex-direction:column;
+    page-break-after:always; overflow:hidden}
+  @page{ size:A4 portrait; margin:0 }
+  @media print{ body{background:#fff; padding:0} .page{margin:0; box-shadow:none} }
+
+  /* header */
+  .hd{display:flex; align-items:flex-end; gap:12px; border-bottom:2px solid var(--ink); padding-bottom:8px}
+  .hd .eb{font-size:9px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--sub2)}
+  .hd h1{font-size:19px; font-weight:800; letter-spacing:-.03em; margin-top:3px; line-height:1.2}
+  .hd h1 b{color:var(--green)}
+  .hd .who{margin-left:auto; font-size:9.5px; color:var(--sub); text-align:right; line-height:1.55}
+  .hd .who b{color:var(--ink)}
+
+  .lead{font-size:11px; line-height:1.6; color:var(--sub); margin-top:9px}
+  .lead b{color:var(--ink); font-weight:700}
+
+  /* 원칙 3 */
+  .rules{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px}
+  .rule{border:1px solid var(--line); border-radius:9px; padding:8px 10px; background:var(--wash)}
+  .rule .rt{font-size:11px; font-weight:800; color:var(--green)}
+  .rule .rd{font-size:9.5px; line-height:1.5; color:var(--sub); margin-top:3px}
+
+  /* phase band */
+  .ph{display:flex; align-items:center; gap:9px; margin-top:14px; margin-bottom:8px}
+  .ph .pi{width:22px; height:22px; border-radius:6px; background:var(--green); color:#fff; font-size:11px;
+    font-weight:800; display:flex; align-items:center; justify-content:center}
+  .ph .pn{font-size:13px; font-weight:800; letter-spacing:-.02em}
+  .ph .pd{font-size:10px; color:var(--sub2); font-weight:700}
+  .ph .pl{flex:1; height:1px; background:var(--line)}
+  .ph.shop .pi{background:var(--clay)}
+  .ph.shop .pn{color:var(--clay)}
+
+  /* step rows */
+  .steps{display:flex; flex-direction:column}
+  .st{display:grid; grid-template-columns:52px 1fr; gap:10px; position:relative}
+  .st .sl{position:relative; display:flex; flex-direction:column; align-items:center}
+  .st .sl .dot{width:26px; height:26px; border-radius:50%; background:#fff; border:2px solid var(--green);
+    color:var(--green); font-size:10.5px; font-weight:800; display:flex; align-items:center;
+    justify-content:center; z-index:1; margin-top:1px; white-space:nowrap}
+  .st .sl .rail{position:absolute; top:26px; bottom:-4px; width:2px; background:var(--green-line)}
+  .st:last-child .sl .rail{display:none}
+  .st .sb{padding-bottom:11px; min-width:0}
+  .st .sh{display:flex; align-items:baseline; gap:7px; flex-wrap:wrap}
+  .st .sh .tt{font-size:12.5px; font-weight:800; letter-spacing:-.02em}
+  .st .sh .tag{font-size:8.5px; font-weight:800; letter-spacing:.06em; padding:2px 6px; border-radius:5px;
+    background:var(--green-soft); color:var(--green); text-transform:uppercase}
+  .st .sh .tag.mv{background:var(--ink); color:#fff}
+  .st .sh .tag.v2{background:var(--soft); color:var(--sub)}
+  .st .sd{font-size:10.5px; line-height:1.55; color:var(--sub); margin-top:4px}
+  .st .sd b{color:var(--ink); font-weight:700}
+  .st.hero .sl .dot{background:var(--green); color:#fff}
+  .st.hero .sb{background:var(--green-soft); border:1px solid var(--green-line); border-radius:10px;
+    padding:9px 11px; margin-bottom:11px}
+  .st.shop .sl .dot{border-color:var(--clay); color:var(--clay)}
+  .st.shop .sl .rail{background:var(--clay-line)}
+
+  /* sub chips under a step */
+  .subs{display:flex; flex-direction:column; gap:4px; margin-top:6px}
+  .sx{display:grid; grid-template-columns:auto 1fr; gap:6px; align-items:baseline;
+    font-size:10px; line-height:1.5; color:var(--sub)}
+  .sx .k{font-weight:800; color:var(--ink); white-space:nowrap; font-size:9.5px;
+    background:var(--wash); border:1px solid var(--line); border-radius:5px; padding:1px 6px}
+  .sx.warn .k{background:var(--clay-bg); border-color:var(--clay-line); color:var(--clay)}
+  .sx.gr .k{background:var(--green-soft); border-color:var(--green-line); color:var(--green)}
+  .sx b{color:var(--ink); font-weight:700}
+
+  /* metric callout */
+  .mc{background:var(--green); color:#fff; border-radius:8px; padding:7px 10px; margin-top:6px;
+    display:flex; align-items:baseline; gap:8px}
+  .mc .ml{font-size:8.5px; font-weight:800; letter-spacing:.12em; color:#9CC1AE; white-space:nowrap}
+  .mc .mx{font-size:10.5px; line-height:1.45; color:#DCE9E1}
+  .mc .mx b{color:#fff; font-weight:800}
+
+  .sec{border:1px solid var(--line); border-radius:11px; padding:10px 12px; margin-top:12px}
+  .sec .ht{font-size:9px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:var(--sub2); margin-bottom:7px}
+  table.m{width:100%; border-collapse:collapse; font-size:10px}
+  table.m th{background:var(--soft); font-size:8.5px; font-weight:800; letter-spacing:.06em;
+    color:var(--sub); padding:5px 7px; border:1px solid var(--line); text-align:left}
+  table.m td{border:1px solid var(--line); padding:5px 7px; line-height:1.45; color:var(--sub); vertical-align:top}
+  table.m td b{color:var(--ink); font-weight:800}
+  table.m td.g{background:var(--green-soft)} table.m td.g b{color:var(--green)}
+
+  .ftr{margin-top:auto; padding-top:9px; border-top:1px solid var(--line); display:flex; gap:12px; align-items:baseline}
+  .ftr .fl{font-size:8.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--sub2); white-space:nowrap}
+  .ftr .fx{font-size:9.5px; color:var(--sub); line-height:1.5}
+  .ftr .fx b{color:var(--ink); font-weight:700}
+  .pg{position:absolute; right:0.55in; bottom:0.3in; font-size:9px; color:var(--sub2); font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 1 ============ -->
+<div class="page">
+  <div class="hd">
+    <div>
+      <div class="eb">Service Flow · A4 — 1 / 2</div>
+      <h1>핏팅 서비스 흐름 — <b>메인 퍼널</b></h1>
+    </div>
+    <div class="who">PRD <b>1_제품정의</b> · 플로우 <b>3_사용자플로우</b><br>2026-07-28</div>
+  </div>
+
+  <p class="lead">사용자가 <b>홈에 들어와 → 진단하고 → 결과를 받고 → 그 결과로 옷을 판정하고 → 전문가로 넘어가기까지</b>의 한 줄기 흐름. ★ = MVP에서 실제로 만드는 화면.</p>
+
+  <div class="rules">
+    <div class="rule"><div class="rt">가입은 나중에</div><div class="rd">비회원으로 진단~결과~피드백까지 다 간다. 가입은 <b>결과 저장</b>·<b>매칭 이용</b> 두 순간만.</div></div>
+    <div class="rule"><div class="rt">진단은 동의 게이트 없이</div><div class="rd">시작을 막지 않는다. 엔진 개선 목적 활용만 결과 화면에서 <b>opt-in</b>.</div></div>
+    <div class="rule"><div class="rt">막다른 길 금지</div><div class="rd">실패·빈 화면에도 돌아갈 길을 둔다(추정 실패→옷 추가, 신뢰도 낮음→재진단).</div></div>
+  </div>
+
+  <div class="ph"><div class="pi">🏠</div><div class="pn">탭1 · 홈</div><div class="pd">— 입구</div><div class="pl"></div></div>
+  <div class="steps">
+    <div class="st">
+      <div class="sl"><div class="dot">0</div><div class="rail"></div></div>
+      <div class="sb">
+        <div class="sh"><span class="tt">홈 랜딩</span><span class="tag mv">★ MVP</span></div>
+        <div class="sd">"이게 뭐 하는 서비스"를 3초에 전달 + <b>[내 사이즈 진단 시작]</b> CTA. 작동 3스텝 안내 · 상황별 쇼퍼 리스트(오픈예정·1기 모집)로 매칭 수요도 미리 심는다.</div>
+        <div class="subs"><div class="sx"><span class="k">다음</span><span>진단 시작 — <b>동의 게이트 없음</b></span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ph"><div class="pi">🔍</div><div class="pn">탭2 · 체형 진단</div><div class="pd">— 무료 퍼널 · 제품의 얼굴</div><div class="pl"></div></div>
+  <div class="steps">
+    <div class="st">
+      <div class="sl"><div class="dot">2-1</div><div class="rail"></div></div>
+      <div class="sb">
+        <div class="sh"><span class="tt">기본 정보 입력</span><span class="tag mv">★</span></div>
+        <div class="sd">성별 · 나이 · 키 · 몸무게. 성별을 고르면 <b>평균값을 미리 채워</b> 입력 부담을 줄인다.</div>
+      </div>
+    </div>
+    <div class="st">
+      <div class="sl"><div class="dot">2-2</div><div class="rail"></div></div>
+      <div class="sb">
+        <div class="sh"><span class="tt">착용경험 보정</span><span class="tag mv">★</span><span class="tag">정확도의 핵심 입력</span></div>
+        <div class="sd">옷 종류(상의/하의)·선호핏 → <b>입어본 옷 1~3벌</b>[브랜드+핏+사이즈] → 부위별 느낌(큼·여유·딱맞음·끼임). 이 답으로 체형을 <b>거꾸로 계산</b>한다.</div>
+        <div class="subs">
+          <div class="sx warn"><span class="k">0벌이면</span><span>건너뛰기 가능 — 대신 <b>신뢰도 '낮음'</b>으로 결과가 나간다</span></div>
+          <div class="sx"><span class="k">브랜드 없음</span><span>목록에 없으면 <b>직접 입력</b>으로 분기</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="st">
+      <div class="sl"><div class="dot">2-3</div><div class="rail"></div></div>
+      <div class="sb">
+        <div class="sh"><span class="tt">진단 로딩</span><span class="tag mv">★</span></div>
+        <div class="sd">서버 엔진이 <b>체형 역산 → 브랜드 사이즈 매칭 → AI 설명 문장</b> 순으로 처리. 숫자는 규칙, 문장만 AI.</div>
+        <div class="subs"><div class="sx warn"><span class="k">갈림길</span><span>확신 못 함(신뢰도 낮음) → <b>"옷을 더 추가해 주세요"</b> → 2-2로 되돌림</span></div></div>
+      </div>
+    </div>
+    <div class="st hero">
+      <div class="sl"><div class="dot">2-4</div><div class="rail"></div></div>
+      <div class="sb">
+        <div class="sh"><span class="tt">결과 카드 — 제품의 얼굴</span><span class="tag mv">★ Aha</span></div>
+        <div class="sd">① <b>체형 프로필</b>(8유형 캐릭터) ② <b>핏 인사이트</b> ③ <b>브랜드별 추천 사이즈</b> + 옷장 · 신뢰도 3단계(0벌 낮음 / 1벌 보통 / 2~3벌 정확).<br>"안 입어본 브랜드인데 이 사이즈면 맞겠다"는 확신이 처음 서는 지점.</div>
+        <div class="subs">
+          <div class="sx warn"><span class="k">가입 ①</span><span><b>결과 저장</b>을 누를 때만 가입 모달. 비회원은 임시 링크로 보관(만료 있음) · 저장 안 해도 흐름은 계속</span></div>
+          <div class="sx"><span class="k">되돌기</span><span>재진단 / 옷장에서 <b>다음 종류 이어서 진단</b>(기본정보·체형 재사용) → 2-2</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="st">
+      <div class="sl"><div class="dot">2-5</div><div class="rail"></div></div>
+      <div class="sb">
+        <div class="sh"><span class="tt">피드백 — 측정 지점</span><span class="tag mv">★</span></div>
+        <div class="sd">"실제 내 사이즈와 맞나요?" 동의/비동의 · "안 사본 브랜드도 사보겠어요?" 의향 · 엔진 개선 <b>opt-in</b>(만 14세 확인 접목).</div>
+        <div class="mc"><span class="ml">★ KILL METRIC</span><span class="mx">아는 브랜드 검증 기준 <b>사이즈 정확도 ≥ 65%</b> · 보조 — 타브랜드 구매 의향 ≥ 50%</span></div>
+      </div>
+    </div>
+    <div class="st">
+      <div class="sl"><div class="dot">2-8</div><div class="rail"></div></div>
+      <div class="sb">
+        <div class="sh"><span class="tt">구매 판정(Fit)으로 분기</span><span class="tag mv">★</span></div>
+        <div class="sd">결과 하단 <b>판정 바</b> — "지금 사려는 그 옷, 나한테 맞을까". 진단이 <b>내 몸</b>이라면 판정은 <b>그 옷 한 벌</b>. → 2쪽 상세 흐름</div>
+      </div>
+    </div>
+    <div class="st shop">
+      <div class="sl"><div class="dot">2-6</div><div class="rail"></div></div>
+      <div class="sb">
+        <div class="sh"><span class="tt">전문가 전환 — 무료→유료의 다리</span><span class="tag mv">★</span></div>
+        <div class="sd">"스타일까지 전문가에게 받기". 사이즈는 풀렸으니 남은 축(<b>스타일 어울림 40%</b>)으로 넘긴다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ph shop"><div class="pi">👔</div><div class="pn">탭3 · 쇼퍼찾기</div><div class="pd">— 전문가 매칭 · 페이크도어(수요 측정)</div><div class="pl"></div></div>
+  <div class="steps">
+    <div class="st shop">
+      <div class="sl"><div class="dot">3-1</div><div class="rail"></div></div>
+      <div class="sb">
+        <div class="sh"><span class="tt">매칭 진입 (페이크도어)</span><span class="tag mv">★</span></div>
+        <div class="sd">관심 서비스 선택(온라인 스타일링 / 동행 쇼핑 / 이미지 컨설팅) · 상황 선택 · <b>클릭 기록</b> · 오픈 알림 신청 + 1기 모집. <b>실제 매칭은 하지 않는다</b> — 수요부터 확인.</div>
+        <div class="subs"><div class="sx warn"><span class="k">가입 ②</span><span>구경·유형 선택까지 비회원. <b>알림신청/요청</b>을 누르는 순간 가입 관문</span></div></div>
+        <div class="mc"><span class="ml">전환 신호</span><span class="mx">유형별 <b>클릭 · 알림신청 ≥ 25%</b> — 유료 전환 가능성의 대리 지표</span></div>
+      </div>
+    </div>
+    <div class="st shop">
+      <div class="sl"><div class="dot">3-2</div></div>
+      <div class="sb">
+        <div class="sh"><span class="tt">알림 완료 · 준비중</span><span class="tag mv">★ 도착</span></div>
+        <div class="sd">"오픈하면 알려드릴게요" 확인. <b>여기가 MVP 흐름의 끝</b> — 그 뒤(요청·결제·정산)는 v2. → 2쪽</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ftr">
+    <div class="fl">한 줄 요약</div>
+    <div class="fx">비회원으로 <b>홈 → 진단 → 결과 → 피드백</b>까지 끊김 없이 가고, 결과에서 <b>판정(재사용)</b>과 <b>매칭(수요 측정)</b> 두 갈래로 확장된다.</div>
+  </div>
+  <div class="pg num">1 / 2</div>
+</div>
+
+<!-- ============ PAGE 2 ============ -->
+<div class="page">
+  <div class="hd">
+    <div>
+      <div class="eb">Service Flow · A4 — 2 / 2</div>
+      <h1>구매 판정 흐름 · <b>가입 게이트 · v2 거래 전주기</b></h1>
+    </div>
+    <div class="who">판정 <b>3_사용자플로우 §2-1</b> · v2 <b>§4</b><br>2026-07-28</div>
+  </div>
+
+  <div class="ph"><div class="pi">🧾</div><div class="pn">구매 판정(Fit)</div><div class="pd">— "이 옷, 나한테 맞을까" · 결과·마이의 판정 바에서 진입</div><div class="pl"></div></div>
+  <p class="lead" style="margin-top:0">진단 결과가 판정의 <b>기준</b>이 되므로 <b>진단 → 판정</b> 순서가 고정. 진단 없이 들어오면 진단으로 유도한다. 이 흐름은 같은 엔진을 재사용하면서, 올라온 사이즈표를 <b>실측 자산으로 회수</b>하는 수집 경로이기도 하다.</p>
+  <div class="steps" style="margin-top:9px">
+    <div class="st">
+      <div class="sl"><div class="dot">①</div><div class="rail"></div></div>
+      <div class="sb">
+        <div class="sh"><span class="tt">판정 기준 = 내 체형</span><span class="tag mv">★</span></div>
+        <div class="sd">현재 세션의 진단 결과·8유형이 <b>자동으로</b> 세팅된다(고를 필요 없음).</div>
+        <div class="subs"><div class="sx warn"><span class="k">진단 없음</span><span>"판정 기준이 없어요 — <b>먼저 진단하기</b>" → 2-1 기본정보로</span></div></div>
+      </div>
+    </div>
+    <div class="st">
+      <div class="sl"><div class="dot">②</div><div class="rail"></div></div>
+      <div class="sb">
+        <div class="sh"><span class="tt">옷 종류 선택</span><span class="tag mv">★</span></div>
+        <div class="sd">상의 / 하의 — 볼 부위가 달라진다(상의=어깨·가슴 / 하의=허리·엉덩이·허벅지).</div>
+      </div>
+    </div>
+    <div class="st">
+      <div class="sl"><div class="dot">③</div><div class="rail"></div></div>
+      <div class="sb">
+        <div class="sh"><span class="tt">사이즈표 올리기</span><span class="tag mv">★</span></div>
+        <div class="sd"><b>캡처 업로드</b>(붙여넣기·드래그·선택 → AI 인식) 또는 <b>직접 입력</b>. 인식 결과는 표에서 바로 수정 가능.</div>
+        <div class="subs"><div class="sx gr"><span class="k">수집 동의</span><span>선택 — "판정을 더 정확하게 하려고 사이즈표를 활용할게요" 체크 시 브랜드·상품명 입력. <b>판정 자체는 사이즈만 있으면 실행</b></span></div></div>
+      </div>
+    </div>
+    <div class="st">
+      <div class="sl"><div class="dot">▶</div><div class="rail"></div></div>
+      <div class="sb">
+        <div class="sh"><span class="tt">판정 로딩</span><span class="tag mv">★</span></div>
+        <div class="sd">카드 뒷면이 먼저 서고, 결과가 오면 그대로 뒤집힌다(크기 점프 없음).</div>
+        <div class="subs"><div class="sx warn"><span class="k">핵심 부위 없음</span><span>"판정할 수 없어요" — <b>근거 없으면 긍정하지 않는다</b> → 사이즈표 다시 올리기</span></div></div>
+      </div>
+    </div>
+    <div class="st hero">
+      <div class="sl"><div class="dot">✓</div><div class="rail"></div></div>
+      <div class="sb">
+        <div class="sh"><span class="tt">판정 결과</span><span class="tag mv">★</span></div>
+        <div class="sd">① <b>추천 사이즈 + 핏 게이지</b> ② 사이즈별 판정 표(끼임 · 딱맞음 · 여유) ③ 부위별 근거(수치 · 체형 그림). 세로축(총장·기장)은 정보 라인으로만 표시.</div>
+      </div>
+    </div>
+    <div class="st shop">
+      <div class="sl"><div class="dot">📥</div></div>
+      <div class="sb">
+        <div class="sh"><span class="tt">사이즈표 수집 — 자산화 루프</span><span class="tag mv">★</span></div>
+        <div class="sd">동의했다면 <b>garment_submission 저장(멱등)</b> → 운영자 검수 → <b>정본 garment로 승격</b>. 다음 사용자의 판정·진단이 그만큼 정확해진다.</div>
+        <div class="mc"><span class="ml">구조적 이득</span><span class="mx"><b>쓸수록 브랜드 커버리지가 늘어난다</b> — 실측 확보(최대 난관)를 사용자 힘으로 푸는 경로</span></div>
+        <div class="subs" style="margin-top:6px"><div class="sx"><span class="k">반복</span><span><b>다른 옷 판정하기</b> → 입력 초기화 후 ③으로 (재방문을 만드는 지점)</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="ht">가입은 정확히 언제 요구하나 — 본선은 끝까지 비회원</div>
+    <table class="m">
+      <tr><th style="width:130px">가입 지점</th><th>비회원은</th><th>가입하면</th></tr>
+      <tr><td class="g"><b>① 결과 저장</b><br>(2-4 결과 카드)</td><td>결과를 <b>임시 링크</b>로 잠깐 보관(만료 있음)</td><td>결과가 계정에 <b>영구 보관</b> · 저장 안 해도 흐름은 피드백으로 계속</td></tr>
+      <tr><td class="g"><b>② 매칭 실제 이용</b><br>(3-1 쇼퍼찾기)</td><td>구경·유형 선택까지 가능</td><td>"요청/알림신청"에서 <b>가입 관문</b> → 3-2 도착 · 실매칭은 v2</td></tr>
+    </table>
+  </div>
+
+  <div class="sec">
+    <div class="ht">화면별 진입 → 갈림길 → 도착</div>
+    <table class="m">
+      <tr><th style="width:104px">화면</th><th style="width:132px">언제 들어오나</th><th style="width:118px">갈림길</th><th>어디로</th></tr>
+      <tr><td><b>탭1 홈</b></td><td>첫 방문 · 링크 만료 복귀</td><td>진단 시작</td><td>2-1</td></tr>
+      <tr><td><b>2-1 기본정보</b></td><td>홈에서 진단 시작</td><td>입력 완료</td><td>2-2</td></tr>
+      <tr><td><b>2-2 착용경험</b></td><td>기본정보 완료 · 재진단·옷추가 복귀</td><td>제출 / 옷 없음</td><td>2-3 / 직접입력 분기</td></tr>
+      <tr><td><b>2-3 로딩</b></td><td>착용경험 제출</td><td>엔진 판정</td><td>2-4 결과 / 추정 실패 → 2-2</td></tr>
+      <tr><td class="g"><b>2-4 결과 카드</b></td><td>진단 성공</td><td>저장 · 재진단 · 공유 · 다음</td><td>가입창 / 2-2 / 2-7 / 2-5</td></tr>
+      <tr><td><b>2-5 피드백</b></td><td>결과 확인 후</td><td>응답 완료</td><td>2-6 전문가 전환</td></tr>
+      <tr><td class="g"><b>2-8 구매 판정</b></td><td>결과·마이의 판정 바</td><td>진단 없음 · 판정 실행</td><td>2-1 유도 / 판정 결과 → 다른 옷 반복</td></tr>
+      <tr><td><b>3-1 페이크도어</b></td><td>전환 버튼</td><td>유형 선택·알림신청</td><td>3-2 / 가입창</td></tr>
+      <tr><td><b>3-2 알림 완료</b></td><td>알림 신청</td><td>—</td><td><b>끝(MVP 도착점)</b></td></tr>
+    </table>
+  </div>
+
+  <div class="ph shop" style="margin-top:12px"><div class="pi">💳</div><div class="pn">v2 — 실매칭이 열렸을 때의 거래 전주기</div><div class="pd">— 지금은 만들지 않음</div><div class="pl"></div></div>
+  <table class="m">
+    <tr><th style="width:96px">단계</th><th>내용</th></tr>
+    <tr><td><b>1.2 목록·상세</b></td><td>서비스탭·상황/예산/스타일 필터 → 쇼퍼 상세(후기·포트폴리오)</td></tr>
+    <tr><td class="g"><b>1.3 견적 요청</b></td><td>서비스·상황·예산·일정·스타일 + <b>체형 진단 결과 자동 첨부(핸드오프)</b> — 다른 매칭 서비스엔 없는 무기</td></tr>
+    <tr><td><b>요청 두 경로</b></td><td>🎯 <b>지명</b>(특정 쇼퍼 → 수락/거절) · ⚖ <b>오픈 역경매</b>(여러 쇼퍼 입찰 → 가격·평점·기간으로 낙찰) — 둘 다 결제로 수렴</td></tr>
+    <tr><td><b>1.8 결제</b></td><td><b>에스크로 보관</b> — 완료 확인 후에야 쇼퍼에게 정산(양측 보호)</td></tr>
+    <tr><td><b>1.6·1.7 진행</b></td><td>쇼퍼와 대화 + 결과물(코디·구매링크) 수령 → "받았어요·완료 확인" · 문제 시 신고·환불 → 정산 보류 → 관리자 중재</td></tr>
+    <tr><td><b>완료·정산</b></td><td>완료 확정 → 에스크로 릴리스 → 별점·후기</td></tr>
+  </table>
+
+  <div class="ftr">
+    <div class="fl">흐름의 두 엔진</div>
+    <div class="fx"><b>측정 루프</b> — 진단 → 결과 → 피드백 → 정확도 % · <b>자산 루프</b> — 판정 → 사이즈표 수집 → 검수 → 정본 승격 → 다음 진단이 더 정확해짐</div>
+  </div>
+  <div class="pg num">2 / 2</div>
+</div>
+
+</body>
+</html>

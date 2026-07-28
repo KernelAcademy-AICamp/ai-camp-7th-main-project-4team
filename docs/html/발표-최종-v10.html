@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>핏팅 — 최종 발표 v5 (작업 중 · 1~4장)</title>
+<title>핏팅 — 최종 발표 v10 (문제 → MVP → 유저 반응 → 개선 → 변화)</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <style>
@@ -365,6 +365,11 @@
   .l2c h3{font-size:17px; font-weight:800; letter-spacing:-.025em; margin-top:6px; color:var(--clay); line-height:1.3}
   .l2c p{font-size:12px; color:var(--sub); line-height:1.6; margin-top:8px}
   .l2c p b{color:var(--ink); font-weight:700}
+  .l2c .lans{margin-top:10px; padding-top:9px; border-top:1px solid rgba(176,85,63,.22);
+    font-size:11.5px; line-height:1.55; color:var(--sub)}
+  .l2c .lans .lah{display:block; font-size:12.5px; font-weight:800; color:var(--green);
+    letter-spacing:-.02em; margin-bottom:3px}
+  .l2c .lans b{color:var(--ink); font-weight:700}
   .rootc{margin-top:12px; background:var(--green); color:#fff; border-radius:13px; padding:14px 20px;
     display:flex; align-items:center; gap:16px;
     font-size:15px; font-weight:800; letter-spacing:-.025em; line-height:1.45}
@@ -706,34 +711,110 @@
   .rjoin{text-align:center; font-size:13px; font-weight:800; letter-spacing:-.01em;
     color:rgba(110,107,99,.9); margin-top:18px}
   .rjoin b{color:#16140F}
-  /* ── 07 · 한계 ↔ 해자 대응표 ── */
-  .vs{display:grid; grid-template-columns:1fr 52px 1.15fr; row-gap:12px; align-items:stretch; flex:1; min-height:0}
-  .vshd{font-size:10.5px; font-weight:800; letter-spacing:.13em; text-transform:uppercase;
-    padding-bottom:3px; text-align:center}
-  .vshd.l{color:var(--clay)} .vshd.r{color:var(--green)}
-  .vbox{border-radius:12px; padding:16px 20px; display:flex; flex-direction:column; justify-content:center}
-  .vbox.l{background:var(--clay-bg); border:1px solid rgba(176,85,63,.28)}
-  .vbox.r{background:var(--green-soft); border:1px solid rgba(46,74,59,.22)}
-  .vbox .vk{font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase}
-  .vbox.l .vk{color:var(--clay)} .vbox.r .vk{color:var(--green)}
-  .vbox h3{font-size:18.5px; font-weight:800; letter-spacing:-.025em; margin-top:6px; line-height:1.3}
-  .vbox.l h3{color:var(--clay)} .vbox.r h3{color:var(--green)}
-  .vbox p{font-size:13px; color:var(--sub); line-height:1.6; margin-top:8px}
-  .vbox p b{color:var(--ink); font-weight:700}
-  .vbox .vev{margin-top:10px; font-size:12px; font-weight:800; color:var(--green);
-    padding-top:9px; border-top:1px solid rgba(46,74,59,.18)}
-  .varr{display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:800; color:rgba(110,107,99,.42)}
+  /* ══ v8 · MVP Evolution ══ */
+  .vhero{display:grid; grid-template-columns:1fr 1fr; gap:16px; flex:1; min-height:0}
+  .vcard{border:1px solid rgba(46,74,59,.22); background:#E7EFEA; border-radius:14px;
+    padding:20px 22px; display:flex; flex-direction:column}
+  .vcard .vk{font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#2E4A3B}
+  .vcard h3{font-size:23px; font-weight:800; letter-spacing:-.03em; margin-top:8px; color:#2E4A3B; line-height:1.25}
+  .vcard p{font-size:13px; color:#6E6B63; line-height:1.65; margin-top:11px}
+  .vcard p b{color:#16140F; font-weight:700}
+  .vcard .vf{margin-top:auto; padding-top:14px; font-size:12.5px; font-weight:800; color:#2E4A3B}
+  .vbar{display:flex; align-items:center; gap:12px; margin-top:14px}
+  .vtag{display:inline-block; flex:none; font-size:11.5px; font-weight:800; letter-spacing:.04em;
+    color:#fff; background:#16140F; border-radius:20px; padding:5px 14px}
+  .vbar .vtx{font-size:13px; font-weight:700; color:#6E6B63}
+  .vbar .vtx b{color:#16140F; font-weight:800}
+  /* 서비스 확장 3스텝 */
+  .evo{display:grid; grid-template-columns:1fr 44px 1fr 44px 1fr; align-items:stretch; flex:1; min-height:0}
+  .evostep{border:1px solid rgba(22,20,15,.11); border-radius:14px; background:#F6F6F5;
+    padding:20px 22px; display:flex; flex-direction:column; justify-content:center}
+  .evostep .ek{font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:rgba(110,107,99,.72)}
+  .evostep h3{font-size:22px; font-weight:800; letter-spacing:-.03em; margin-top:8px; line-height:1.25}
+  .evostep p{font-size:12.5px; color:#6E6B63; line-height:1.6; margin-top:10px}
+  .evostep p b{color:#16140F; font-weight:700}
+  .evostep.new{background:#E7EFEA; border:2px solid #2E4A3B}
+  .evostep.new .ek, .evostep.new h3{color:#2E4A3B}
+  .enew{display:inline-block; font-size:10px; font-weight:800; letter-spacing:.1em; color:#fff;
+    background:#B0553F; border-radius:20px; padding:4px 10px; margin-bottom:9px}
+  .earr{display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800; color:rgba(110,107,99,.45)}
+  .evofoot{display:grid; grid-template-columns:1fr 44px 1fr 44px 1fr; margin-top:11px}
+  .evofoot .ev1{grid-column:1 / 4; font-size:12px; font-weight:800; color:rgba(110,107,99,.9); text-align:center;
+    padding-top:9px; border-top:2px solid rgba(22,20,15,.11)}
+  .evofoot .ev2{grid-column:5; font-size:12px; font-weight:800; color:#2E4A3B; text-align:center;
+    padding-top:9px; border-top:2px solid #2E4A3B}
+  /* ══════════ v9 · MVP 개선 서사(문제→MVP→반응→개선→변화) ══════════ */
+  .cflow.f4{grid-template-columns:repeat(4,1fr)}
+  .cflow.f3{grid-template-columns:repeat(3,1fr)}
+  .cfarr{display:grid; gap:14px; margin-top:11px}
+  .cfarr.f4{grid-template-columns:repeat(4,1fr)}
+  .cfarr span{text-align:center; font-size:17px; font-weight:800; color:rgba(110,107,99,.42)}
+  .cstep.fake{border-style:dashed; border-color:rgba(176,85,63,.42); background:rgba(176,85,63,.04)}
+  .cstep.fake .ct{color:#B0553F}
+
+  /* v1 → v2 비교표 (11번 · 메인) */
+  .vt{width:100%; border-collapse:separate; border-spacing:0 9px}
+  .vt th{font-size:10px; font-weight:800; letter-spacing:.13em; text-transform:uppercase;
+    color:rgba(110,107,99,.72); padding:0 16px 2px; text-align:left}
+  .vt td{padding:13px 16px; vertical-align:middle; line-height:1.45; background:#F6F6F5;
+    border-top:1px solid rgba(22,20,15,.11); border-bottom:1px solid rgba(22,20,15,.11)}
+  .vt td:first-child{border-left:1px solid rgba(22,20,15,.11); border-radius:12px 0 0 12px}
+  .vt td:last-child{border-right:1px solid rgba(22,20,15,.11); border-radius:0 12px 12px 0}
+  .vt .vk2{width:96px; font-size:11px; font-weight:800; letter-spacing:.04em; color:rgba(110,107,99,.85)}
+  .vt .v1{width:30%; font-size:14px; font-weight:700; color:#6E6B63}
+  .vt .v1 s{color:rgba(110,107,99,.75); text-decoration-thickness:1.5px}
+  .vt .varr{width:40px; text-align:center; font-size:17px; font-weight:800; color:#2E4A3B}
+  .vt .v2{font-size:15px; font-weight:800; color:#16140F; letter-spacing:-.02em}
+  .vt .v2 span{display:block; font-size:11.5px; font-weight:600; color:#6E6B63; margin-top:4px; letter-spacing:0}
+  .vt tr.hi td{background:#E7EFEA; border-color:rgba(46,74,59,.24)}
+  .vt tr.hi .v2{color:#2E4A3B}
+
+  /* 15번 · 마무리 체인 */
+  .chain{display:flex; align-items:stretch; justify-content:center}
+  .chn{flex:1; border:1px solid rgba(22,20,15,.11); background:#F6F6F5; border-radius:12px;
+    padding:15px 12px; text-align:center; display:flex; flex-direction:column; justify-content:center}
+  .chn b{display:block; font-size:15px; font-weight:800; letter-spacing:-.025em}
+  .chn span{display:block; font-size:11px; color:#6E6B63; margin-top:6px; line-height:1.45}
+  .chn.fin{background:#2E4A3B; border-color:#2E4A3B}
+  .chn.fin b{color:#fff}
+  .chn.fin span{color:rgba(231,239,234,.78)}
+  .cha{flex:none; width:28px; display:flex; align-items:center; justify-content:center;
+    font-size:15px; font-weight:800; color:rgba(110,107,99,.45)}
+  .whatis.w4{grid-template-columns:repeat(4,1fr)}
+  .whatis.w4 h3{font-size:17px}
+  .whatis.w4 p{font-size:12px}
+  /* 관찰 카드 3 */
+  .obs{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; flex:1; min-height:0}
+  .ob{border:1px solid rgba(22,20,15,.11); border-radius:14px; background:#fff; padding:18px 20px;
+    display:flex; flex-direction:column}
+  .ob .obk{font-size:10px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:rgba(110,107,99,.72)}
+  .ob .obn{font-size:38px; font-weight:800; letter-spacing:-.04em; color:#2E4A3B; margin-top:9px; line-height:1}
+  .ob .obn i{font-style:normal; font-size:16px; margin-left:3px; font-weight:800}
+  .ob h3{font-size:18px; font-weight:800; letter-spacing:-.025em; margin-top:9px; line-height:1.3}
+  .ob p{font-size:12.5px; color:#6E6B63; line-height:1.65; margin-top:10px}
+  .ob p b{color:#16140F; font-weight:700}
+  .ob .obf{margin-top:auto; padding-top:12px; font-size:11.5px; font-weight:800; color:rgba(110,107,99,.9)}
+  /* 킬 메트릭 큰 판 */
+  .kill{border:2px solid #2E4A3B; background:#E7EFEA; border-radius:16px; padding:22px 26px;
+    display:flex; align-items:center; gap:26px}
+  .kill .kn{font-size:70px; font-weight:800; letter-spacing:-.05em; color:#2E4A3B; line-height:.95; flex:none}
+  .kill .kn i{font-style:normal; font-size:30px}
+  .kill .kt{font-size:21px; font-weight:800; letter-spacing:-.03em; color:#2E4A3B; line-height:1.3}
+  .kill .kd{font-size:13px; color:#6E6B63; line-height:1.65; margin-top:9px}
+  .kill .kd b{color:#16140F; font-weight:700}
 </style>
 </head>
 <body>
 
-<!-- ═══ 01 · 표지 ═══ -->
+<!-- ═══════════════ 01 · 문제 (Why) ═══════════════ -->
+
+<!-- 1 · 표지 -->
 <section class="slide cover">
   <div class="bigmark">Fitting<i></i></div>
   <div class="rule"></div>
-  <div class="tagline">어떤 브랜드로든, 사이즈 걱정 없이</div>
+  <div class="tagline">“내 사이즈가 맞을까?”</div>
   <div class="sub" style="margin-top:14px">
-    평소 입던 옷의 착용 경험으로<br>브랜드를 가로질러 내 사이즈를 번역하는 서비스
+    착용 경험만으로 브랜드 사이즈를 번역하는<br>AI 사이즈 진단
   </div>
   <div class="meta">
     <div><div class="k">Team</div><div class="v">강건형 · 이상민 · 이소희</div></div>
@@ -742,212 +823,329 @@
   </div>
 </section>
 
-<!-- ═══ 02 · 이 옷 맞을까? ═══ -->
-<section class="slide ask">
-  <div class="askmark">Fitting<i></i></div>
-  <div class="askbody">
-    <div class="askq">이 옷,<br><b>살까 말까?</b></div>
-    <div class="asksub">온라인으로 옷을 살 때마다,<br>우리는 같은 고민을 반복합니다.</div>
+
+<!-- 2 · 문제 제기 -->
+<section class="slide ctr">
+  <div class="chead tight">
+    <div class="ceb">01 · Problem</div>
+    <h1 class="ch1">온라인 쇼핑에서 가장 큰 고민은,<br><b>사이즈</b>입니다.</h1>
+    <div class="cscn">옷이 마음에 들어도, 마지막에 늘 같은 곳에서 멈춥니다</div>
   </div>
-  <div class="pageno" style="color:rgba(255,255,255,.45)">02</div>
+
+  <div class="rootg">
+    <div class="rc">
+      <div class="rcb">고민 ①</div>
+      <div class="rq">새 브랜드에서는<br>내 사이즈를 모른다</div>
+      <div class="rlead">사이즈표는 있지만</div>
+      <div class="ritem"><div class="rx">✕</div><div class="rtx">브랜드마다 <b>같은 M이 다른 M</b>입니다</div></div>
+      <div class="ritem"><div class="rx">✕</div><div class="rtx">비교할 <b>내 몸 치수를 모릅니다</b> — 숫자만 봐선 판단이 안 됩니다</div></div>
+      <div class="ritem"><div class="rx">✕</div><div class="rtx">후기를 뒤져도 <b>그 사람 체형이 나와 같은지</b> 알 수 없습니다</div></div>
+    </div>
+    <div class="rc">
+      <div class="rcb">결과 ②</div>
+      <div class="rq">결국 늘 사던<br>브랜드만 산다</div>
+      <div class="rlead">그래서 벌어지는 일</div>
+      <div class="ritem"><div class="rx">✕</div><div class="rtx">새 브랜드는 <b>시도 자체를 포기</b>합니다</div></div>
+      <div class="ritem"><div class="rx">✕</div><div class="rtx">시도하면 <b>반품</b>이 따라옵니다 — 시간도 비용도 사용자 몫</div></div>
+      <div class="ritem"><div class="rx">✕</div><div class="rtx">선택지가 <b>내가 아는 브랜드 수만큼</b> 좁아집니다</div></div>
+    </div>
+  </div>
+  <div class="rjoin">두 문장은 하나입니다 — <b>사이즈를 모르면, 살 수 있는 옷이 줄어듭니다</b></div>
+  <div class="pageno">01</div>
 </section>
 
-<!-- ═══ 03 · 6가지 과정 ═══ -->
-<section class="slide ctr">
-  <div class="chead">
-    <div class="ceb">The Everyday Journey</div>
-    <h1 class="ch1">온라인에서 옷 한 벌을 사기 위해,<br>우리는 <b>6가지 과정을 거칩니다.</b></h1>
-    <div class="cscn">시나리오 : 3주 뒤 여행룩 온라인 쇼핑</div>
+
+<!-- 3 · 왜 기존 서비스로 해결되지 않는가 -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">01 · Why Not Solved</div>
+      <h1>이미 있는 사이즈 추천은, <i>플랫폼 밖으로 못 나갑니다</i></h1>
+    </div>
+    <div class="pchip"><span>공통 전제 <b>구매·리뷰 이력</b></span></div>
+  </div>
+  <p class="lead">기존 추천은 <b>“그 플랫폼 안에서 쌓인 이력”</b>으로 작동합니다. 이력이 없는 <em>새 브랜드</em>에서는 다시 처음으로 돌아갑니다.</p>
+
+  <div class="body">
+    <div class="exl">
+      <div class="ex">
+        <div class="top">
+          <div class="kk2">자사몰 사이즈 추천</div>
+          <h3>내가 산 이력으로 추천</h3>
+          <p>같은 쇼핑몰에서 <b>내가 이미 산 옷</b>을 기준으로 사이즈를 골라줍니다. 정확도는 높습니다 — 그 몰 안에서만.</p>
+          <p style="margin-top:10px; padding-top:10px; border-top:1px solid var(--line)">이력이 곧 데이터라, <b>이력이 없으면 추천도 없습니다.</b> 새 브랜드를 시도할수록 추천은 쓸모없어집니다.</p>
+        </div>
+        <div class="lim">
+          <div class="lk">한계</div>
+          <div class="lv"><b>처음 가는 몰에서는 추천이 없습니다</b></div>
+        </div>
+      </div>
+      <div class="ex">
+        <div class="top">
+          <div class="kk2">리뷰 · 후기</div>
+          <h3>“175/70인데 L 맞아요”</h3>
+          <p>가장 많이 쓰이는 방법입니다. 실제 착용자의 말이라 믿음이 갑니다.</p>
+          <p style="margin-top:10px; padding-top:10px; border-top:1px solid var(--line)">하지만 <b>기준이 사람마다 다릅니다.</b> 어깨가 넓은 사람의 “딱 맞아요”와 마른 사람의 “딱 맞아요”는 다른 옷입니다.</p>
+        </div>
+        <div class="lim">
+          <div class="lk">한계</div>
+          <div class="lv">키·몸무게가 같아도 <b>체형이 다르면 결과가 다릅니다</b></div>
+        </div>
+      </div>
+      <div class="ex">
+        <div class="top">
+          <div class="kk2">사이즈 추천 앱 · 3D 스캔</div>
+          <h3>몸을 재서 추천</h3>
+          <p>실측·촬영으로 몸을 재고 사이즈를 계산합니다. 원리는 가장 정확합니다.</p>
+          <p style="margin-top:10px; padding-top:10px; border-top:1px solid var(--line)">문제는 <b>시작 비용</b>입니다. 줄자를 꺼내고 사진을 찍는 순간, 대부분은 그냥 후기 검색으로 돌아갑니다.</p>
+        </div>
+        <div class="lim">
+          <div class="lk">한계</div>
+          <div class="lv"><b>재는 것부터가 부담</b>입니다 — 옷 하나 사려고 몸을 스캔하지 않습니다</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pdef">
+      <div class="pdarr">↓</div>
+      <div class="pdk">Problem Definition</div>
+      <div class="pdbig">브랜드 사이즈를 <b>번역</b>해주는 서비스가 없다</div>
+      <div class="pdsub">A 브랜드에서의 내 경험을, <b>B 브랜드의 사이즈로 옮겨주는</b> 서비스</div>
+    </div>
+  </div>
+  <div class="pageno">02</div>
+</section>
+
+
+<!-- ═══════════════ 02 · MVP (What) ═══════════════ -->
+
+<!-- 4 · MVP 목표 -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">02 · MVP Goal</div>
+      <h1>우리가 검증하려는 것은 <b>딱 하나</b>입니다</h1>
+    </div>
+    <div class="pchip"><span>검증 기간 <b>2026.06 ~ 07</b></span></div>
   </div>
 
-  <div class="cflow">
-    <div class="cstep">
-      <div class="cn">step 01</div><div class="ct">검색</div>
-      <div class="cd">여행룩 검색</div>
-      <div class="cq">“하… 어떤 스타일이<br>나한테 어울리는지 모르겠어”</div>
+  <div class="body">
+    <div class="oneline" style="flex:1; padding:10px 0 26px">
+      <div class="hmw">Hypothesis</div>
+      <div class="big">착용 경험만으로<br>새로운 브랜드의 사이즈를<br><b>신뢰할 수 있게</b> 추천할 수 있는가?</div>
+      <div class="bsub">몸을 재지 않고, <b>“평소 입던 옷이 어떻게 맞았는지”</b>만으로</div>
     </div>
-    <div class="cstep">
-      <div class="cn">step 02</div><div class="ct">사이즈표 확인</div>
-      <div class="cd">가슴단면 52 · 어깨 45<br>· 총장 72cm…</div>
-      <div class="cq">“이게 나한테 맞는 건가?”</div>
+
+    <div class="kill">
+      <div class="kn">65<i>%</i></div>
+      <div>
+        <div class="kt">킬 메트릭 — 추천 사이즈가 “맞다”는 동의율 65%</div>
+        <div class="kd">결과 화면에서 <b>맞음 · 보통 · 안 맞음</b> 피드백을 받아 <b>진단 ID와 함께 DB에 적재</b>합니다.
+          아는 브랜드로 검증했을 때 동의율이 <b>65%에 못 미치면 엔진을 교체</b>합니다 — 지표 하나로 제품의 생사를 정합니다.</div>
+      </div>
     </div>
-    <div class="cstep">
-      <div class="cn">step 03</div><div class="ct">후기 뒤지기</div>
-      <div class="cd">"175/70인데 L 맞아요"<br>비슷한 체형 후기 검색</div>
-      <div class="cq">“근데 이 사람 체형이 나랑 같나?”</div>
-    </div>
-    <div class="cstep">
-      <div class="cn">step 04</div><div class="ct">고민</div>
-      <div class="cd">추천 사이즈는 L,<br>후기는 M도 많고…</div>
-      <div class="cq">“모르겠다. 그냥 크게 살까”</div>
-    </div>
-    <div class="cstep">
-      <div class="cn">step 05</div><div class="ct">주문</div>
-      <div class="cd">한 치수 크게 주문</div>
-      <div class="cq">“모르겠다. 일단 주문하자”</div>
-    </div>
-    <div class="cstep">
-      <div class="cn">step 06</div><div class="ct">수령 · 반품</div>
-      <div class="cd">입어보니<br>어깨는 맞는데 배가 낀다</div>
-      <div class="cq">“하… 또 반품해야 하네.”</div>
+
+    <div class="foot" style="margin-top:13px">
+      <div class="fbox"><div class="k">이 MVP에서 안 하는 것</div><div class="v">회원 관리 · 결제 · 커머스 연동 — <b>가설과 무관한 것은 전부 뒤로</b></div></div>
+      <div class="fbox g"><div class="k">그래서 만든 것</div><div class="v">진단부터 <b>정확도가 자동으로 집계되는</b> 최소 구조</div></div>
     </div>
   </div>
   <div class="pageno">03</div>
 </section>
 
-<!-- ═══ 04 · 원인은 두 곳 ═══ -->
+
+<!-- 5 · MVP 기능 -->
 <section class="slide ctr">
   <div class="chead">
-    <div class="ceb">Where It Breaks</div>
-    <h1 class="ch1">6가지 과정을 거치지만,<br>막히는 이유는 <i>두 가지</i>였습니다.</h1>
-    <div class="cscn">후기를 찾고, 고민하고, 반품하는 이유는 모두 여기서 시작됩니다</div>
+    <div class="ceb">02 · What We Built</div>
+    <h1 class="ch1">기능은 <b>네 개</b>로 줄였습니다.</h1>
+    <div class="cscn">가설을 검증하는 데 필요한 것만 남기고, 나머지는 만들지 않았습니다</div>
   </div>
 
-  <div class="cflow">
-    <div class="cstep cause">
-      <div class="cbadge on">원인 ①</div>
-      <div class="cn">step 01</div><div class="ct">검색</div>
-      <div class="cd"><b>어떤 스타일이 나한테<br>어울리는지 모른다</b></div>
-      <div class="cq">“하… 뭘 사야 하지”</div>
-    </div>
-    <div class="cstep cause">
-      <div class="cbadge on">원인 ②</div>
-      <div class="cn">step 02</div><div class="ct">사이즈표 확인</div>
-      <div class="cd">숫자는 있는데<br><b>비교할 내 치수가 없다</b></div>
-      <div class="cq">“이게 나한테 맞는 건가?”</div>
+  <div class="cflow f4">
+    <div class="cstep">
+      <div class="cn">기능 01</div><div class="ct">AI 진단</div>
+      <div class="cd">평소 입던 옷의 브랜드·사이즈와<br><b>어디가 어떻게 맞았는지</b>를 입력</div>
+      <div class="cq">“몸을 재지 않아도 됩니다”</div>
     </div>
     <div class="cstep">
-      <div class="cn">step 03</div><div class="ct">후기 뒤지기</div>
-      <div class="cd">"175/70인데 L 맞아요"<br>비슷한 체형 후기 검색</div>
-      <div class="cq">“근데 이 사람 체형이 나랑 같나?”</div>
+      <div class="cn">기능 02</div><div class="ct">브랜드 추천 사이즈</div>
+      <div class="cd">착용 경험을 몸 치수로 역산해<br><b>브랜드별 추천 사이즈</b>로 번역</div>
+      <div class="cq">“이 브랜드면 M이에요”</div>
     </div>
     <div class="cstep">
-      <div class="cn">step 04</div><div class="ct">고민</div>
-      <div class="cd">추천 사이즈는 L,<br>후기는 M도 많고…</div>
-      <div class="cq">“모르겠다. 그냥 크게 살까”</div>
+      <div class="cn">기능 03</div><div class="ct">구매 판정</div>
+      <div class="cd">사려는 옷의 사이즈표를 올리면<br><b>이 옷을 사도 되는지</b> 판정</div>
+      <div class="cq">“이 옷, 살까 말까?”</div>
     </div>
-    <div class="cstep">
-      <div class="cn">step 05</div><div class="ct">주문</div>
-      <div class="cd">한 치수 크게 주문</div>
-      <div class="cq">“모르겠다. 일단 주문하자”</div>
-    </div>
-    <div class="cstep res2">
-      <div class="cbadge gray">결과</div>
-      <div class="cn">step 06</div><div class="ct">수령 · 반품</div>
-      <div class="cd">입어보니<br>어깨는 맞는데 배가 낀다</div>
-      <div class="cq">“하… 또 반품해야 하네.”</div>
+    <div class="cstep fake">
+      <div class="cbadge">페이크도어</div>
+      <div class="cn">기능 04</div><div class="ct">전문가 추천</div>
+      <div class="cd">스타일은 정답이 없으니 사람에게<br><b>수요만 먼저</b> 측정</div>
+      <div class="cq">“정말 원하는지부터 봅니다”</div>
     </div>
   </div>
 
-  <div class="retn">
-    <div class="arc"></div>
-    <div class="rcap">↺ 그래서 <b>다음 쇼핑도 똑같이</b> 시작됩니다</div>
-  </div>
+  <div class="cfin">①②③은 <b>사이즈 가설</b>을, ④는 <b>다음 단계 수요</b>를 확인하기 위한 장치입니다</div>
   <div class="pageno">04</div>
 </section>
 
 
-<!-- ═══ 05 · 그래서 직접 물어봤습니다 ═══ -->
-<section class="slide ctr">
-  <div class="chead" style="margin-bottom:0">
-    <div class="ceb">Validation</div>
-    <h1 class="ch1 ans">그래서, <b>직접 물어봤습니다.</b></h1>
-    <div class="cscn">“이게 저희 생각일 수도 있잖아요” — <b style="color:#6E6B63">가설이 실제 사용자에게도 맞는지 확인했습니다</b></div>
+<!-- 6 · 핵심 플로우 -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">02 · Core Loop</div>
+      <h1>핵심은 기능이 아니라, <b>정확도가 측정되는 흐름</b>입니다</h1>
+    </div>
+    <div class="pchip"><span>진단 → 결과 → 피드백 → <b>집계</b></span></div>
+  </div>
+  <p class="lead">“잘 만들었다”는 감상으로 끝나지 않게, <b>쓰면 쓸수록 정확도가 숫자로 쌓이는 구조</b>를 먼저 깔았습니다.</p>
+
+  <div class="body">
+    <div class="loop4">
+      <div class="l4">
+        <div class="l4n">1</div>
+        <h3>진단</h3>
+        <p>기본 정보 + <b>착용 경험</b>(브랜드·사이즈·부위별 느낌)을 입력합니다.</p>
+        <div class="l4t">3분 · 사진 없음</div>
+      </div>
+      <div class="l4a">→</div>
+      <div class="l4">
+        <div class="l4n">2</div>
+        <h3>결과</h3>
+        <p>8체형 판정과 <b>브랜드별 추천 사이즈</b>를 보여줍니다. 계산은 <b>서버 엔진</b>에서 합니다.</p>
+        <div class="l4t">실측 DB는 서버에만</div>
+      </div>
+      <div class="l4a">→</div>
+      <div class="l4">
+        <div class="l4n">3</div>
+        <h3>피드백</h3>
+        <p>결과 화면에서 <b>맞음 · 보통 · 안 맞음</b>을 받아 <b>진단 ID와 함께</b> 저장합니다.</p>
+        <div class="l4t">아는 브랜드만 검증 대상</div>
+      </div>
+      <div class="l4a">→</div>
+      <div class="l4 fin">
+        <div class="l4n g">4</div>
+        <h3>정확도 측정</h3>
+        <p><b>동의율</b>이 자동으로 집계됩니다. 65% 미만이면 <b>엔진을 바꿉니다.</b></p>
+        <div class="l4t g">킬 메트릭 · 판단 기준</div>
+      </div>
+    </div>
+
+    <div class="eyebrow" style="margin:16px 0 9px">이 흐름을 받치는 구조</div>
+    <div class="ovj6" style="grid-template-columns:1fr 26px 1fr 26px 1fr 26px 1fr">
+      <div class="ovs"><span class="on">Client</span>정적 프론트</div>
+      <div class="l4a">→</div>
+      <div class="ovs"><span class="on">Server</span>API · 진단 엔진</div>
+      <div class="l4a">→</div>
+      <div class="ovs"><span class="on">DB</span>Supabase (Postgres)</div>
+      <div class="l4a">→</div>
+      <div class="ovs hit"><span class="on">Metric</span>동의율 집계 SQL</div>
+    </div>
+
+    <div class="foot" style="margin-top:auto">
+      <div class="fbox" style="flex:1.6">
+        <div class="k">왜 서버에서 계산하나</div>
+        <div class="v">브랜드 실측표와 계산 로직을 <b>서버에만</b> 둡니다 — 화면에 내려주면 <b>데이터가 그대로 복사</b>됩니다</div>
+      </div>
+      <div class="fbox g"><div class="k">운영비</div><div class="v"><b>$0</b>으로 실서비스 구조 — 무료 티어만으로 측정 가능</div></div>
+    </div>
   </div>
   <div class="pageno">05</div>
 </section>
 
 
-<!-- ═══ 06 · 진짜 있었다 ═══ -->
-<section class="slide ctr">
-  <div class="chead">
-    <div class="ceb">Validation</div>
-    <h1 class="ch1">가장 큰 고민은 <b>이 두 가지</b>였습니다.</h1>
-    <div class="cscn">2026.06 · 자체 설문 31명 — 온라인 쇼핑을 하며 가장 막히는 것</div>
-  </div>
+<!-- ═══════════════ 03 · 유저 반응 (Validation) ═══════════════ -->
 
-  <div class="twobig">
-    <div class="bignum sty">
-      <div class="bn num">40<span>%</span></div>
-      <div class="bl2">스타일 어울림</div>
-      <div class="bd2">“나한테 <b>뭐가 어울리는지</b> 모르겠다”</div>
+<!-- 7 · 사용성 테스트 -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">03 · Usability Test</div>
+      <h1>만든 것을 <b>실제 사용자에게 붙여봤습니다</b></h1>
     </div>
-    <div class="bignum sze">
-      <div class="bn num">38<span>%</span></div>
-      <div class="bl2">사이즈 적합</div>
-      <div class="bd2">“이 브랜드에서 <b>내 사이즈가 뭔지</b> 모르겠다”</div>
-    </div>
+    <div class="pchip"><span>일시 <b>2026.07.24</b></span><span>방식 <b>정량 1~5 + 자유서술</b></span></div>
   </div>
+  <p class="lead">“우리끼리 좋다”는 검증이 아닙니다. 설명 없이 <b>혼자 써보게 한 뒤</b>, 단계마다 점수와 말을 받았습니다.</p>
 
-  <div class="qrow-h">그리고 지금도, 실제로 이렇게 묻고 있습니다</div>
-  <div class="qrow">
-    <div class="qline">
-      <div class="qt">“키 175, 몸무게 68. 국내 상의 100 입는데 사이즈 어떻게 가는 게 좋을까요?”</div>
-      <div class="qs2">무신사 상품 문의</div>
+  <div class="body">
+    <div class="obs">
+      <div class="ob">
+        <div class="obk">Who · 몇 명</div>
+        <div class="obn">11<i>명</i></div>
+        <h3>20~30대 온라인 쇼핑 사용자</h3>
+        <p>노트북·휴대폰 <b>각자 기기로</b> 접속했습니다. 기기별 차이도 함께 봤습니다.</p>
+        <p>정량 점수는 <b>같은 화면을 본 8명</b>만, 자유서술은 <b>11명 전원</b>을 씁니다. 표본이 작다는 것도 그대로 안고 갑니다.</p>
+        <div class="obf">노트북 4.0 · 휴대폰 4.0 · 진입 난이도 차이 확인</div>
+      </div>
+      <div class="ob">
+        <div class="obk">How · 어떻게</div>
+        <div class="obn">4<i>단계</i></div>
+        <h3>설명 없이 혼자, 단계마다 점수</h3>
+        <p>진단 시작 → 정보 입력 → 결과 → 판정까지 <b>안내 없이</b> 진행하게 하고, 단계별로 <b>1~5점 + 자유서술</b>을 받았습니다.</p>
+        <p>중간에 <b>설명하지 않았습니다.</b> 옆에서 거들면 “쓸 만하다”가 나오지만, 그건 배포된 뒤에는 없는 도움입니다.</p>
+        <div class="obf">막히면 막히는 대로 두고 관찰</div>
+      </div>
+      <div class="ob">
+        <div class="obk">What · 무엇을 봤나</div>
+        <div class="obn">3<i>가지</i></div>
+        <h3>막힘 · 이해 · 신뢰</h3>
+        <p><b>어디서 멈추는지</b>, <b>서비스를 이해하는지</b>, 그리고 <b>결과를 믿는지</b>. 특히 “이해했다”와 “쓰겠다” 사이의 간격을 봤습니다.</p>
+        <p>“좋았어요”는 세지 않았습니다. <b>멈춘 지점과 되물은 말</b>만 기록했습니다.</p>
+        <div class="obf">기능 만족도보다 <b>행동 의향</b>을 우선</div>
+      </div>
     </div>
-    <div class="qline">
-      <div class="qt">“키 172, 68이면 사이즈 몇 입어야 하나요?”</div>
-      <div class="qs2">네이버 쇼핑 문의</div>
-    </div>
-    <div class="qline">
-      <div class="qt">“팔뚝을 가리려고 가디건을 샀는데 전혀 가려지지 않는 우람한 팔뚝이삼”</div>
-      <div class="qs2">에이블리 구매 리뷰</div>
+
+    <div class="foot" style="margin-top:13px">
+      <div class="fbox"><div class="k">솔직하게 · 우리가 한 실수</div><div class="v">테스트 <b>도중에 결과 화면을 바꿔서</b> 데이터가 섞였습니다 — 그래서 <b>정량 분석은 같은 화면을 본 8명 기준</b>으로만 합니다</div></div>
     </div>
   </div>
   <div class="pageno">06</div>
 </section>
 
-<!-- ═══ 07 · 한계 ↔ 해자 ═══ -->
+
+<!-- 8 · 핵심 결과 -->
 <section class="slide">
-  <div class="chead dense">
-    <div class="ceb">Existing Solutions &amp; Moat</div>
-    <h1 class="ch1">기존이 <i style="font-style:normal; color:#B0553F">못 하는 이유</i>가,<br><b>그대로 우리가 할 수 있는 이유였습니다.</b></h1>
-    <div class="cscn">무신사·지그재그도 <b style="color:#6E6B63">이미 사이즈와 스타일을 추천합니다</b> — 그런데 왜 이 고민은 안 풀렸을까요</div>
+  <div class="shead">
+    <div>
+      <div class="eyebrow">03 · Key Findings</div>
+      <h1>한 문장으로: <i>재미있는데, 못 믿겠다</i></h1>
+    </div>
+    <div class="pchip"><span>n=8 <b>동일 화면 기준</b></span><span>추천 의향 <b>8.4 / 10</b></span></div>
   </div>
 
-  <div class="body" style="margin-top:0">
-    <div class="vs">
-      <div class="vshd l">기존 서비스의 한계</div>
-      <div></div>
-      <div class="vshd r">그래서 우리가 서는 자리</div>
+  <div class="body">
+    <div class="kpi3" style="flex:none">
+      <div class="k3 g">
+        <div class="n3">4.54</div>
+        <div class="t3">진단 자체는 재미있다</div>
+        <div class="d3">진단 4단계 평균 · 로딩 화면이 <b>4.88</b>로 최고점</div>
+      </div>
+      <div class="k3 g">
+        <div class="n3">4.25</div>
+        <div class="t3">결과는 궁금하다</div>
+        <div class="d3">구매 판정 만족도 — <b>“내 옷”</b>에 답할수록 점수가 올라갔습니다</div>
+      </div>
+      <div class="k3 c">
+        <div class="n3">3.38</div>
+        <div class="t3">하지만 믿음은 부족하다</div>
+        <div class="d3">신뢰 점수 · 실제 사용 의향도 <b>같은 3.38</b>이었습니다</div>
+      </div>
+    </div>
 
-      <div class="vbox l">
-        <div class="vk">한계 01 · 범위</div>
-        <h3>그 몰 안에서만 작동한다</h3>
-        <p><b>그 몰의 상품 중에서</b> 골라줄 뿐, 브랜드가 바뀌면 기준도 사라집니다</p>
-      </div>
-      <div class="varr">→</div>
-      <div class="vbox r">
-        <div class="vk">해자 01 · 중립성</div>
-        <h3>우리는 옷을 팔지 않습니다</h3>
-        <p>파는 쪽은 <b>“다른 브랜드로 건너가도 된다”</b>고 말할 동기가 없습니다</p>
-        <div class="vev">어느 몰에도 속하지 않으니 브랜드 A의 경험을 B로 번역합니다</div>
-      </div>
+    <div class="qrow-h" style="margin-top:26px">사용자가 한 말</div>
+    <div class="qrow">
+      <div class="qline"><div class="qt">“사진도 없이 진단하는데, 이걸 믿어도 되나요?”</div><div class="qs2">신뢰 · 다수 언급</div></div>
+      <div class="qline"><div class="qt">“결과 화면에 갑자기 너무 많은 정보가 들어와서 당황했어요.”</div><div class="qs2">결과 화면 · 2명</div></div>
+      <div class="qline"><div class="qt">“체형 진단이 주력인지 전문가 매칭이 주력인지 헷갈려요.”</div><div class="qs2">정체성 · 정확히 찌른 지적</div></div>
+      <div class="qline"><div class="qt">“평소 입는 브랜드가 목록에 없어서, 뭘 적어야 할지 몰랐어요.”</div><div class="qs2">입력 단계 · 4명</div></div>
+    </div>
 
-      <div class="vbox l">
-        <div class="vk">한계 02 · 조건</div>
-        <h3>구매 이력이 있어야 한다</h3>
-        <p>그 몰에서 <b>산 적이 있어야</b> 작동합니다</p>
-      </div>
-      <div class="varr">→</div>
-      <div class="vbox r">
-        <div class="vk">해자 02 · 진입 조건</div>
-        <h3>착용 경험 2벌이면 됩니다</h3>
-        <p>이력 대신 <b>“유니클로 S가 어깨는 딱, 배는 좀 낀다”</b>를 씁니다</p>
-        <div class="vev">첫 방문 · 구매 이력 0건 · 2분</div>
-      </div>
-
-      <div class="vbox l">
-        <div class="vk">한계 03 · 기준</div>
-        <h3>기준이 사람이 아니다</h3>
-        <p>구매 이력 · 상품 정보 · 후기 — 모두 <b>옷과 남의 기록</b>입니다</p>
-      </div>
-      <div class="varr">→</div>
-      <div class="vbox r">
-        <div class="vk">해자 03 · 데이터</div>
-        <h3>몸 치수를 직접 계산합니다</h3>
-        <p><b>사이즈코리아 제8차 인체치수조사</b> 회귀 모델 × <b>9개 브랜드 1,679행</b> 실측</p>
-        <div class="vev">몰을 가로지르는 실측은 플랫폼 안에서 만들어지지 않습니다</div>
+    <div class="foot" style="margin-top:auto">
+      <div class="fbox g" style="border-left-width:4px">
+        <div class="k">해석</div>
+        <div class="v" style="font-size:15px">과정은 잘 만들었습니다. <b>문제는 마지막 화면 — 결과(3.88)</b>였고, 그 아래엔 <b>신뢰</b>가 있었습니다</div>
       </div>
     </div>
   </div>
@@ -955,354 +1153,47 @@
 </section>
 
 
-<!-- ═══ 08 · 문제 2 → 해결 3단계 ═══ -->
-<section class="slide">
-  <div class="chead dense">
-    <div class="ceb">As-is → To-be</div>
-    <h1 class="ch1">그래서 <b>쇼핑을 다시 설계했습니다.</b></h1>
-    <div class="cscn">문제는 <b style="color:#6E6B63">두 가지</b>, 해결은 <b style="color:#6E6B63">세 단계</b> — 사이즈는 두 갈래라 두 단계로 나눠 풉니다</div>
-  </div>
-
-  <div class="body" style="margin-top:0">
-    <div class="match">
-      <div class="mhd" style="text-align:center">As-is · 막히던 두 가지</div>
-      <div></div>
-      <div class="mhd" style="text-align:center">To-be · 세 단계</div>
-
-      <!-- 문제 ① 사이즈 — 두 갈래로 뻗음 -->
-      <div class="mbox as" style="grid-column:1; grid-row:2 / span 2">
-        <div class="mk">원인 ② 사이즈 · 설문 38%</div>
-        <div class="mt">“이 브랜드에서<br>내 사이즈가 뭔지 모르겠다”</div>
-        <div class="md">줄자는 번거롭고 <b>남의 후기는 내 기준이 아니다</b>. 결제 직전까지 답이 없어 <b>한 치수 크게</b> 주문한다</div>
-        <div class="msplit"><i>① 내 치수를 모른다</i><i>② 그 옷을 모른다</i></div>
-      </div>
-      <div class="marrow" style="grid-column:2; grid-row:2">→</div>
-      <div class="mbox to" style="grid-column:3; grid-row:2">
-        <div class="mk">1단계 · 체형 진단</div>
-        <div class="mt">평소 입던 옷 2벌로 역산</div>
-        <div class="md">착용 경험에서 <b>부위별 치수와 8체형</b>을 계산 → <b>9개 브랜드</b>의 내 사이즈로 번역. <b>2분 · 줄자 없이 · 최초 1회</b></div>
-      </div>
-
-      <div class="marrow" style="grid-column:2; grid-row:3">→</div>
-      <div class="mbox to" style="grid-column:3; grid-row:3">
-        <div class="mk">2단계 · 구매 판정 (Fit)</div>
-        <div class="mt">사려는 그 옷 사이즈표를 올리면 즉답</div>
-        <div class="md">우리 DB에 <b>없는 브랜드여도</b> 캡처 한 장이면 사이즈별로 판정 — <b>결제 버튼 앞</b>에서 쓰는 기능</div>
-      </div>
-
-      <!-- 문제 ② 스타일 -->
-      <div class="mbox as" style="grid-column:1; grid-row:4">
-        <div class="mk">원인 ① 스타일 · 설문 40%</div>
-        <div class="mt">“나한테 뭐가 어울리는지 모르겠다”</div>
-        <div class="md">사이즈가 맞아도 남는 문제 — <b>정답이 없어</b> 계산으로 풀리지 않는다</div>
-      </div>
-      <div class="marrow" style="grid-column:2; grid-row:4">→</div>
-      <div class="mbox to" style="grid-column:3; grid-row:4">
-        <div class="mk">3단계 · 스타일리스트 연결</div>
-        <div class="mt">계산 대신 사람</div>
-        <div class="md">진단 결과를 <b>요청서에 자동 첨부</b> — 전문가가 <b>체형을 알고</b> 시작하니 처음부터 말이 통합니다</div>
-      </div>
-    </div>
-  </div>
-  <div class="pageno">08</div>
-</section>
-
-
-<!-- ═══ 09 · 시연 ① 진단 ═══ -->
+<!-- 9 · 데이터 분석 -->
 <section class="slide">
   <div class="shead">
     <div>
-      <div class="eyebrow">Demo 01 · Size Diagnosis</div>
-      <h1>시연 ① — 착용 경험만으로 <b>내 체형과 브랜드 사이즈까지</b></h1>
+      <div class="eyebrow">03 · Analysis</div>
+      <h1>점수를 뜯어보니, <b>갭이 한 곳에 몰려 있었습니다</b></h1>
     </div>
-    <div class="pchip"><span>사이즈 축 · <b>첫 번째 순간</b></span><span>소요 <b>약 2분</b></span></div>
+    <div class="pchip"><span>정량 <b>n=8</b></span><span>자유서술 <b>11명 전원</b></span></div>
   </div>
-  <p class="lead">앞에서 말한 역산이 <b>실제로 어떻게 도는지</b> 보여드리겠습니다. 입력은 <b>옷 2벌의 착용 경험</b>뿐입니다.</p>
 
   <div class="body">
-    <div class="demo">
+    <div style="display:grid; grid-template-columns:1.12fr 1fr; gap:18px; flex:1; min-height:0">
       <div style="display:flex; flex-direction:column; min-height:0">
-        <div class="shots">
-          <div class="shot"><div class="cap">① 착용 경험 입력</div><img src="../발표-데모/04-진단-착용경험.png" alt="착용경험 입력"></div>
-          <div class="shot"><div class="cap">② 8체형 진단 결과</div><img src="../발표-데모/05-결과-체형카드.png" alt="체형 카드"></div>
-          <div class="shot"><div class="cap">③ 브랜드별 추천 사이즈</div><img src="../발표-데모/07-결과-브랜드추천.png" alt="브랜드 추천"></div>
-        </div>
-      </div>
-
-      <div class="steps">
-        <div class="stp"><div class="sn">1</div><div>
-          <div class="st">"유니클로 오버핏 S를 입어요"</div>
-          <div class="sd">기본 정보 4개 + 평소 입던 옷 <b>1~3벌</b>과 부위별 느낌(끼임/딱맞음/여유/큼). <b>이 착용 경험이 줄자를 대신합니다.</b></div>
-        </div></div>
-        <div class="stp"><div class="sn">2</div><div>
-          <div class="st">몸 치수를 거꾸로 계산</div>
-          <div class="sd">그 옷의 실측치에서 <b>여유(옷−몸)</b>를 역산 → 부위별 몸 치수 → <b>8체형</b>으로 분류. 근거는 <b>사이즈코리아 제8차 인체치수조사</b> 회귀 모델입니다.</div>
-        </div></div>
-        <div class="stp"><div class="sn">3</div><div>
-          <div class="st">안 입어본 브랜드로 번역</div>
-          <div class="sd">계산된 몸을 <b>9개 브랜드 · 1,679행</b> 실측표에 대입 — 브랜드마다 다른 사이즈가 <b>'딱맞음 %'와 병목 부위</b>까지 함께 나옵니다.</div>
-        </div></div>
-        <div class="stp" style="border-color:rgba(46,74,59,.22); background:var(--green-soft)"><div class="sn" style="background:var(--clay)">✓</div><div>
-          <div class="st" style="color:var(--green)">정확도 검증 루프</div>
-          <div class="sd">결과 화면의 <b>"맞아요 / 보통 / 안 맞아요"</b>를 진단 ID와 함께 DB에 적재 — 킬 메트릭(<b>동의율 65%</b>)을 실측합니다.</div>
-        </div></div>
-      </div>
-    </div>
-  </div>
-  <div class="pageno">09</div>
-</section>
-
-
-
-<!-- ═══ 10 · 중간발표 질문 ═══ -->
-<section class="slide ask">
-  <div class="askmark">Fitting<i></i></div>
-  <div class="askbody">
-    <div class="qmark">“</div>
-    <div class="askq2">그럼 <b>입고 싶은 옷</b>은<br>어떻게 하나요?</div>
-    <div class="askwho">— 2026.07 중간 발표회, 코치님 질문</div>
-    <div class="asksub" style="margin-top:26px">
-      진단은 <b style="color:#fff">‘내가 어떤 체형인지’</b>까지만 답하고 있었습니다.<br>
-      정작 사용자가 사려는 건 <b style="color:#fff">장바구니에 담긴 그 옷</b>인데요.
-    </div>
-  </div>
-  <div class="pageno" style="color:rgba(255,255,255,.45)">10</div>
-</section>
-
-<!-- ═══ 11 · 시연 ② 판정 ═══ -->
-<section class="slide">
-  <div class="shead">
-    <div>
-      <div class="eyebrow">Demo 02 · Purchase Judgement (Fit)</div>
-      <h1>시연 ② — <i>사려는 그 옷</i>의 사이즈표를 올리면, 바로 판정</h1>
-    </div>
-    <div class="pchip"><span>사이즈 축 · <b>두 번째 순간</b></span><span>구현 · <b>배포 완료</b></span></div>
-  </div>
-  <p class="lead">진단이 <b>"내 체형"</b>에 답한다면, 판정은 <b>"이 옷 한 벌"</b>에 답합니다. <em>우리 DB에 없는 브랜드여도</em> 캡처 한 장이면 됩니다.</p>
-
-  <div class="body">
-    <div class="demo" style="grid-template-columns:1.25fr 1fr">
-      <div class="mock">
-        <div class="mtop">fitting.app/judge — 구매 판정(Fit)</div>
-        <div class="mbd">
-          <div>
-            <div class="mrow"><span class="mn">1</span>판정 기준 · <b>시크 스트레이트 STR</b><br><span style="color:var(--sub2); font-size:10px; margin-left:21px">내 진단 결과가 자동으로 들어옴</span></div>
-            <div class="mrow"><span class="mn">2</span>옷 종류 · <b>하의</b></div>
-            <div class="mrow"><span class="mn">3</span>사이즈표 &nbsp;<b style="color:var(--green)">[캡처 업로드]</b> <span style="color:var(--sub2)">[직접 입력]</span>
-              <div style="border:1px dashed var(--line); border-radius:6px; padding:12px; text-align:center; color:var(--sub2); font-size:10.5px; margin-top:6px">
-                🖼 상품 사이즈표 이미지<br>붙여넣기 · 드래그 · 눌러서 선택
-              </div>
-            </div>
-            <div class="mrow" style="font-size:10.5px">☐ 사이즈표를 핏팅 개선에 활용할게요 <span style="color:var(--sub2)">(선택)</span></div>
-            <div class="mbtn">판정하기</div>
-          </div>
-          <div>
-            <div class="mverd">M · FIT 92 — 지금 이 사이즈로 사면 돼요
-              <span>총장 · 밑위는 길이라 점수에 넣지 않고 참고로만 알려드려요</span></div>
-            <table class="mtbl">
-              <tr><th>부위</th><th>S</th><th>M</th><th>L</th></tr>
-              <tr><td>허리</td><td class="tight">끼임</td><td class="fit">딱맞음</td><td>여유</td></tr>
-              <tr><td>엉덩이</td><td class="tight">끼임</td><td class="fit">딱맞음</td><td>여유</td></tr>
-              <tr><td>허벅지</td><td class="tight">끼임</td><td class="fit">딱맞음</td><td>여유</td></tr>
-              <tr><td>밑위</td><td colspan="3" style="color:var(--sub2)">길이 — 참고 정보</td></tr>
-            </table>
-            <div style="font-size:10px; color:var(--sub2); margin-top:6px; line-height:1.5">
-              "몇 사이즈?"가 아니라 <b style="color:var(--ink)">"어디가 걸리나"</b>를 보여줍니다
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="steps">
-        <div class="stp"><div class="sn">1</div><div>
-          <div class="st">진단 결과가 그대로 기준</div>
-          <div class="sd">고를 것이 없습니다. 진단을 안 했으면 판정 대신 <b>진단부터 하도록</b> 유도합니다.</div>
-        </div></div>
-        <div class="stp"><div class="sn">2</div><div>
-          <div class="st">캡처를 AI가 읽는다</div>
-          <div class="sd">사이즈표는 대부분 이미지입니다. 붙여넣기·드래그로 올리면 <b>표를 인식</b>하고, 틀린 숫자는 그 자리에서 고칩니다.</div>
-        </div></div>
-        <div class="stp"><div class="sn">3</div><div>
-          <div class="st">모르면 모른다고 한다</div>
-          <div class="sd">핵심 부위 치수가 없으면 <b>"판정할 수 없어요"</b>로 끝냅니다. 근거 없이 "잘 맞아요"라고 하지 않습니다 — <b>틀린 긍정은 침묵보다 비쌉니다.</b></div>
-        </div></div>
-        <div class="stp" style="border-color:rgba(46,74,59,.22); background:var(--green-soft)"><div class="sn" style="background:var(--clay)">↑</div><div>
-          <div class="st" style="color:var(--green)">그리고 데이터가 쌓인다</div>
-          <div class="sd">동의한 사용자의 사이즈표는 <b>검수 후 정본 실측 DB로 승격</b>됩니다. 손으로 모으던 데이터가 <b>쓸수록 늘어나는 구조</b>로 바뀝니다.</div>
-        </div></div>
-      </div>
-    </div>
-  </div>
-  <div class="pageno">11</div>
-</section>
-
-
-<!-- ═══ 12 · 판정은 계속 똑똑해집니다 ═══ -->
-<section class="slide">
-  <div class="shead">
-    <div>
-      <div class="eyebrow">Growth Loop</div>
-      <h1>그리고 판정은, <b>쓸수록 똑똑해집니다</b></h1>
-    </div>
-    <div class="pchip"><span>수집 → 검수 → <b>정본 승격</b></span></div>
-  </div>
-  <p class="lead">브랜드 실측을 팀이 손으로 모으면 <b>한계가 분명합니다.</b> 그래서 판정을 쓰는 과정 자체가 <em>데이터를 모으는 과정</em>이 되게 했습니다.</p>
-
-  <div class="body">
-    <div class="loop4">
-      <div class="l4">
-        <div class="l4n">1</div>
-        <h3>사용자가 올린다</h3>
-        <p>판정하려면 어차피 <b>사이즈표를 올려야</b> 합니다. 동의한 경우에만 저장합니다.</p>
-        <div class="l4t">동의는 선택 · 판정은 동의 없이도 작동</div>
-      </div>
-      <div class="l4a">→</div>
-      <div class="l4">
-        <div class="l4n">2</div>
-        <h3>운영자가 검수한다</h3>
-        <p>잘못된 실측이 정본에 섞이면 <b>추천과 판정이 통째로 흔들립니다.</b> 사람이 한 번 거릅니다.</p>
-        <div class="l4t">대기 · 승인 · 반려 · 병합</div>
-      </div>
-      <div class="l4a">→</div>
-      <div class="l4">
-        <div class="l4n">3</div>
-        <h3>정본으로 승격된다</h3>
-        <p>승인된 사이즈표가 <b>브랜드 실측 DB에 편입</b>되고, <b>다음 진단·판정에 바로</b> 반영됩니다.</p>
-        <div class="l4t">편집 즉시 반영</div>
-      </div>
-      <div class="l4a">→</div>
-      <div class="l4 fin">
-        <div class="l4n g">4</div>
-        <h3>커버리지가 넓어진다</h3>
-        <p>우리가 모르던 브랜드가 <b>사용자 손으로</b> 채워집니다. 쓰는 사람이 늘수록 <b>답할 수 있는 옷이 늘어납니다.</b></p>
-        <div class="l4t g">지금 9개 브랜드 · 1,679행에서 시작</div>
-      </div>
-    </div>
-
-    <div class="foot" style="margin-top:auto">
-      <div class="fbox g" style="border-left-width:4px; flex:1.5">
-        <div class="k">이게 왜 중요하냐면</div>
-        <div class="v" style="font-size:15px">사이즈 번역의 한계는 늘 <b>실측 데이터의 양</b>입니다 — 그 한계를 <b>사용자가 푸는 구조</b>를 만들었습니다</div>
-      </div>
-      <div class="fbox"><div class="k">그래서 판정은</div><div class="v">기능이자 <b>수집 장치</b>입니다</div></div>
-    </div>
-  </div>
-  <div class="pageno">12</div>
-</section>
-
-<!-- ═══ 13 · 시연 ③ 매칭 ═══ -->
-<section class="slide">
-  <div class="shead">
-    <div>
-      <div class="eyebrow">Demo 03 · Stylist Matching</div>
-      <h1>핏은 해결됐습니다. <b>이제 남은 건 스타일입니다</b></h1>
-    </div>
-    <div class="pchip"><span>스타일 축 <b>설문 40%</b></span><span>실매칭 <b>수요 검증 단계</b></span></div>
-  </div>
-  <p class="lead">사이즈는 계산으로 풀었습니다. 그런데 <b>“뭘 사야 어울리는지”</b>는 규칙으로 계산되지 않습니다 — <em>정답이 없는 문제</em>라서요.</p>
-
-  <div class="body">
-    <div class="demo">
-      <div class="shots" style="grid-template-columns:repeat(2,1fr)">
-        <div class="shot"><div class="cap">① 스타일리스트 찾기 · 견적 요청</div><img src="../발표-데모/08-스타일리스트-찾기.png" alt="스타일리스트 찾기"></div>
-        <div class="shot"><div class="cap">② 견적서에 체형이 자동 첨부</div><img src="../발표-데모/10-쇼퍼-견적서-체형카드.png" alt="쇼퍼 견적서"></div>
-      </div>
-
-      <div class="steps">
-        <div class="stp" style="border-color:rgba(46,74,59,.22); background:var(--green-soft)"><div class="sn">★</div><div>
-          <div class="st" style="color:var(--green)">사이즈 축과 스타일 축을 잇는 고리</div>
-          <div class="sd">진단 결과(<b>8체형 · 부위별 예상 치수 · 상하의 핏 취향</b>)가 견적서에 그대로 실립니다. 스타일리스트가 <b>체형을 모르는 채 시작하지 않습니다.</b></div>
-        </div></div>
-        <div class="stp"><div class="sn">1</div><div>
-          <div class="st">지금은 수요부터 측정합니다</div>
-          <div class="sd">공급자를 먼저 모으면 <b>콜드 스타트</b>에 빠집니다. 그래서 배포본은 <b>페이크도어</b> — "오픈 알림 신청(이메일)"으로 전환 신호만 받습니다. <b>목표 25% 이상.</b></div>
-        </div></div>
-        <div class="stp"><div class="sn">2</div><div>
-          <div class="st">뒤쪽은 이미 만들어 두었습니다</div>
-          <div class="sd">요청 → 견적 → <b>안전결제</b> → 결과물 전달 → 정산 → 분쟁까지 데모로 동작합니다. 수요가 확인되면 <b>여는 것</b>만 남습니다.</div>
-        </div></div>
-      </div>
-    </div>
-  </div>
-  <div class="pageno">13</div>
-</section>
-
-
-
-
-<!-- ═══ 14 · 그래서 FITTING입니다 ═══ -->
-<section class="slide">
-  <div class="shead">
-    <div>
-      <div class="eyebrow">Before / After</div>
-      <h1>그래서, <b>구매 여정이 이렇게 바뀝니다</b></h1>
-    </div>
-    <div class="pchip"><span>처음 보셨던 <b>그 여정</b></span></div>
-  </div>
-
-  <div class="body">
-    <div class="ba">
-      <div class="balb bad2">Before</div>
-      <div class="bflow">
-        <div class="bs">검색<span>뭘 살지 모름</span></div>
-        <div class="bs">사이즈표<span>읽을 기준 없음</span></div>
-        <div class="bs">후기 뒤지기<span>남의 체형</span></div>
-        <div class="bs">고민<span>확신 없음</span></div>
-        <div class="bs">주문<span>감으로</span></div>
-        <div class="bs">반품<span>또 실패</span></div>
-      </div>
-    </div>
-
-    <div class="baar">↓</div>
-
-    <div class="ba">
-      <div class="balb good2">After</div>
-      <div class="bflow after">
-        <div class="bs on"><b>체형 진단</b><span>기준이 생긴다 · 최초 1회</span></div>
-        <div class="bs on"><b>구매 판정</b><span>이 옷이 맞는지 확인</span></div>
-        <div class="bs on"><b>확신하고 주문</b><span>반품을 전제하지 않음</span></div>
-        <div class="bs on sty2"><b>스타일리스트</b><span>스타일이 고민되면</span></div>
-      </div>
-    </div>
-
-    <div class="bafin">
-      <b>나를 기준으로</b>, 사이즈와 스타일을 <b>함께</b> 해결합니다
-    </div>
-  </div>
-  <div class="pageno">14</div>
-</section>
-
-<!-- ═══ 15 · UT ═══ -->
-<section class="slide">
-  <div class="shead">
-    <div>
-      <div class="eyebrow">Usability Test</div>
-      <h1>실제 사용자 <b>11명</b>에게 붙여봤습니다</h1>
-    </div>
-    <div class="pchip"><span>일시 <b>2026.07.24</b></span><span>방식 <b>정량 1~5 + 자유서술</b></span></div>
-  </div>
-  <p class="lead">"우리끼리 좋다"는 검증이 아닙니다. 화면을 주고 <b>혼자 써보게 한 뒤</b> 단계별로 점수를 받았습니다.</p>
-
-  <div class="body">
-    <div style="display:grid; grid-template-columns:1.1fr 1fr; gap:18px; flex:1; min-height:0">
-      <div>
-        <div class="eyebrow" style="margin-bottom:9px">단계별 만족도 (5점 만점 · n=8)</div>
+        <div class="eyebrow" style="margin-bottom:9px">단계별 만족도 (5점 만점)</div>
         <div class="bars">
           <div class="bar"><div class="bl">진단 로딩</div><div class="bt"><div class="bf" style="width:97.6%"></div></div><div class="bv">4.88</div></div>
           <div class="bar"><div class="bl">착용 경험 입력</div><div class="bt"><div class="bf" style="width:89.2%"></div></div><div class="bv">4.46</div></div>
           <div class="bar"><div class="bl">기본 정보 입력</div><div class="bt"><div class="bf" style="width:88.8%"></div></div><div class="bv">4.44</div></div>
           <div class="bar"><div class="bl">진단 시작</div><div class="bt"><div class="bf" style="width:87.6%"></div></div><div class="bv">4.38</div></div>
-          <div class="bar"><div class="bl">구매 판정(Fit)</div><div class="bt"><div class="bf" style="width:85%"></div></div><div class="bv">4.25</div></div>
-          <div class="bar"><div class="bl">스타일리스트 찾기</div><div class="bt"><div class="bf c" style="width:78.8%"></div></div><div class="bv c">3.94</div></div>
+          <div class="bar"><div class="bl">구매 판정</div><div class="bt"><div class="bf" style="width:85%"></div></div><div class="bv">4.25</div></div>
+          <div class="bar"><div class="bl">전문가 찾기</div><div class="bt"><div class="bf c" style="width:78.8%"></div></div><div class="bv c">3.94</div></div>
           <div class="bar"><div class="bl">진단 결과 화면</div><div class="bt"><div class="bf c" style="width:77.6%"></div></div><div class="bv c">3.88</div></div>
         </div>
-        <div class="foot" style="margin-top:14px">
-          <div class="fbox g" style="flex:none; padding:9px 15px"><div class="k">추천 의향 (0~10 평균)</div><div class="v"><span class="num" style="font-size:26px">8.4</span><span class="unit">· 부정 0명 · NPS 18</span></div></div>
-          <div class="fbox"><div class="k">해석</div><div class="v">과정은 잘 만들었습니다. <b>문제는 마지막 화면 — 결과</b>입니다</div></div>
+        <div class="fbox" style="margin-top:13px; flex:none">
+          <div class="k">읽는 법</div>
+          <div class="v">입력하는 동안은 <b>전부 4.4 이상</b>인데, <b>답을 받는 화면에서만</b> 점수가 떨어집니다</div>
+        </div>
+
+        <div class="card" style="flex:none; margin-top:11px">
+          <div class="kk">레이아웃은 지렛대가 아니었다</div>
+          <p style="margin-top:6px">테스트 중 결과 화면을 <b>1탭 → 4탭</b>으로 바꿔봤지만, 실사용 의향은 <b>3.38 → 3.33</b>으로 그대로였습니다.
+            <b>화면을 재배치해도 신뢰는 오르지 않습니다.</b></p>
+        </div>
+
+        <div class="fbox g" style="margin-top:auto; flex:none">
+          <div class="k">그래서 다음 화살표는</div>
+          <div class="v">“결과 화면을 예쁘게”가 아니라 <b>“결과에 근거를 붙이기”</b>로 정했습니다</div>
         </div>
       </div>
 
-      <div style="display:flex; flex-direction:column; min-height:0">
+      <div style="display:flex; flex-direction:column; min-height:0; gap:11px">
         <div class="card hot" style="flex:none">
           <div class="kk">가장 중요한 발견</div>
           <h3>이해는 되는데, 쓸지는 모르겠다</h3>
@@ -1312,161 +1203,323 @@
             <div><div class="num c" style="font-size:26px">3.38</div><div style="font-size:11px; color:var(--clay); font-weight:800; margin-top:3px">실제 사용 의향</div></div>
             <div style="margin-left:auto; text-align:right"><div class="num c" style="font-size:26px">−1.0</div><div style="font-size:11px; color:var(--clay); font-weight:800; margin-top:3px">갭</div></div>
           </div>
-          <p style="margin-top:12px">원인은 <b>신뢰(3.38)</b>였습니다 — <b>"사진도 없이 진단하는데 믿어도 되나"</b>. 기능이 부족한 게 아니라, <b>내가 반영됐다는 느낌</b>이 부족했습니다.</p>
+          <p style="margin-top:11px">기능이 부족한 게 아니라 <b>“내 몸이 반영됐다는 느낌”</b>이 부족했습니다. 신뢰(3.38)와 사용 의향(3.38)이 <b>같은 숫자</b>인 것이 근거입니다.</p>
         </div>
 
-        <div class="quotes" style="grid-template-columns:1fr; gap:8px; margin-top:11px">
-          <div class="quote"><div class="q">“사진 없이 진단해서 신뢰가 낮아요. 아바타로 보여주면 좋겠어요.”</div><div class="s">신뢰 · 다수 언급</div></div>
-          <div class="quote"><div class="q">“체형 진단이 주력인지 매칭이 주력인지 헷갈려요.”</div><div class="s">정체성 · 정확히 찌른 지적</div></div>
-          <div class="quote"><div class="q">“결과 화면에 갑자기 너무 많은 정보가 들어와서 당황했어요.”</div><div class="s">결과 화면 정보 과부하 · 2명</div></div>
+        <div class="todo" style="margin-top:auto">
+          <div class="tk">여기서 답이 안 나오는 것 · 배포 데이터로</div>
+          <div class="tv">결과 확인률 · <b>피드백 제출률</b> · 전문가 클릭률 — 11명으로는 전환을 잴 수 없습니다.
+            <b>“다들 좋다고 했다”로 결론 내지 않습니다.</b></div>
         </div>
       </div>
     </div>
   </div>
-  <div class="pageno">15</div>
+  <div class="pageno">08</div>
 </section>
 
 
-<!-- ═══ 16 · 피드백과 개선 ═══ -->
+<!-- ═══════════════ 04 · 개선 (Iteration) ═══════════════ -->
+
+<!-- 10 · 문제점 정리 -->
+<section class="slide ctr">
+  <div class="chead">
+    <div class="ceb">04 · Problems Found</div>
+    <h1 class="ch1">유저가 느낀 문제는<br><i>세 가지</i>로 모였습니다.</h1>
+    <div class="cscn">서로 다른 말처럼 보이지만, 전부 “결과 화면”에서 벌어진 일이었습니다</div>
+  </div>
+
+  <div class="p3">
+    <div class="pb">
+      <div class="pn">1</div>
+      <h3>근거 부족</h3>
+      <div class="q">“사진도 없이 진단하는데, 이걸 믿어도 되나요?”</div>
+      <p style="font-size:12.5px; color:var(--sub); line-height:1.65; margin-top:11px">숫자는 나오는데 <b style="color:var(--ink)">그 숫자가 어디서 나왔는지</b>를 보여주지 않았습니다. 사용자 입장에선 근거 없는 단정으로 보입니다.</p>
+      <div class="ev">신뢰 <b>3.38</b> · 다수 언급</div>
+    </div>
+    <div class="pb">
+      <div class="pn">2</div>
+      <h3>추천 이유 부족</h3>
+      <div class="q">“왜 M인지는 안 알려주고, M이라고만 하네요.”</div>
+      <p style="font-size:12.5px; color:var(--sub); line-height:1.65; margin-top:11px">결과가 <b style="color:var(--ink)">결론만</b> 있고 과정이 없었습니다. 정보를 줄이는 문제가 아니라 <b style="color:var(--ink)">순서를 정하는</b> 문제였습니다.</p>
+      <div class="ev">결과 화면 <b>3.88</b> · 전 단계 중 최하</div>
+    </div>
+    <div class="pb">
+      <div class="pn">3</div>
+      <h3>행동 연결 안 됨</h3>
+      <div class="q">“결과는 봤는데, 그래서 지금 뭘 하면 되죠?”</div>
+      <p style="font-size:12.5px; color:var(--sub); line-height:1.65; margin-top:11px">진단은 끝났는데 <b style="color:var(--ink)">사려던 그 옷</b>으로 이어지지 않았습니다. 이해는 했지만 쓸 자리가 없었습니다.</p>
+      <div class="ev">이해 4.38 → 실사용 <b>3.38</b></div>
+    </div>
+  </div>
+
+  <div class="cfin" style="margin-top:30px">세 문제의 뿌리는 하나 — <b>결과를 “보여주기만” 했고, 설득하지 않았습니다</b></div>
+  <div class="pageno">09</div>
+</section>
+
+
+<!-- 11 · 개선안 v1 → v2 (메인) -->
 <section class="slide">
   <div class="shead">
     <div>
-      <div class="eyebrow">Feedback → Fix</div>
-      <h1>받은 피드백으로, <b>이렇게 바꿨습니다</b></h1>
+      <div class="eyebrow">04 · Iteration — v1 → v2</div>
+      <h1>받은 지적에, <b>하나씩 답했습니다</b></h1>
     </div>
-    <div class="pchip"><span>1차 MVP <b>진단 · 매칭</b></span><span>→ 2차 <b>+ 판정 · 수집</b></span></div>
+    <div class="pchip"><span>v1 <b>진단 · 추천</b></span><span>→ v2 <b>+ 근거 · 판정 · 수집</b></span></div>
   </div>
-  <p class="lead">우리 마음대로 바꾼 게 아니라, <b>받은 지적에 하나씩 답한 것</b>입니다. 못 푸는 것은 못 푼다고 적었습니다.</p>
+  <p class="lead">우리 마음대로 바꾼 게 아닙니다. <b>어떤 지적에 대한 답인지</b>를 한 줄씩 붙였습니다.</p>
 
   <div class="body">
-    <table class="fixt">
-      <tr><th style="width:88px">어디서</th><th style="width:34%">받은 지적</th><th style="width:30%">우리가 한 것</th><th>판단 근거</th></tr>
-      <tr>
-        <td><span class="fp mid">중간 발표</span></td>
-        <td><b>“그럼 입고 싶은 옷은 어떻게 하나요?”</b><br><span class="fs">진단은 "내 체형"까지만 답하고 있었다</span></td>
-        <td><b>구매 판정(Fit) 신설</b> + <b>사이즈표 수집 루프</b></td>
-        <td class="fs">붙여봤더니 <b>4.24점</b> — 원래 있던 결과 화면(3.88)보다 높았다</td>
+    <table class="vt">
+      <tr><th class="vk2">지적</th><th>v1</th><th></th><th>v2 — 우리가 한 것</th></tr>
+      <tr class="hi">
+        <td class="vk2">근거 부족</td>
+        <td class="v1"><s>사이즈만 추천</s></td>
+        <td class="varr">→</td>
+        <td class="v2">추천 근거를 함께 보여줌
+          <span>어떤 착용 경험에서 어떤 치수를 역산했는지, 어느 부위가 근거인지까지 공개</span></td>
+      </tr>
+      <tr class="hi">
+        <td class="vk2">이유 부족</td>
+        <td class="v1"><s>결과만 노출</s></td>
+        <td class="varr">→</td>
+        <td class="v2">구매 판정(Fit) 추가
+          <span>사려는 옷의 사이즈표를 올리면 부위별로 “어디가 걸리는지”까지 판정</span></td>
+      </tr>
+      <tr class="hi">
+        <td class="vk2">행동 단절</td>
+        <td class="v1"><s>결과에서 끝나는 화면</s></td>
+        <td class="varr">→</td>
+        <td class="v2">전문가 연결로 이어짐
+          <span>스타일처럼 정답이 없는 질문은 사람에게 — 수요는 페이크도어로 먼저 측정</span></td>
       </tr>
       <tr>
-        <td><span class="fp ut">UT 11명</span></td>
-        <td><b>결과 화면 정보 과부하</b><br><span class="fs">"갑자기 너무 많은 정보가 들어와 당황" · 2명</span></td>
-        <td>결과를 <b>3탭으로 재구성</b><br><span class="fs">내 핏 카드 · 체형 분석 · 결과 근거</span></td>
-        <td class="fs">만족도 최하(3.88) 화면 · 정보를 줄이는 게 아니라 <b>순서를 정하는</b> 문제</td>
+        <td class="vk2">측정 불가</td>
+        <td class="v1"><s>단순 진단</s></td>
+        <td class="varr">→</td>
+        <td class="v2">피드백 수집 · 정확도 집계
+          <span>맞음/보통/안 맞음을 진단 ID와 함께 적재 — 킬 메트릭이 자동으로 계산됨</span></td>
       </tr>
       <tr>
-        <td><span class="fp ut">UT 11명</span></td>
-        <td><b>브랜드 목록이 좁다</b><br><span class="fs">"탑텐·유니클로가 없어 어떻게 적지?" · 4명</span></td>
-        <td>주요 브랜드 추가 + <b>"목록에 없음"을 버튼형으로</b></td>
-        <td class="fs">가장 싸고 효과 큼 — <b>입력에서 막히면 정확도가 통째로 흔들림</b></td>
-      </tr>
-      <tr>
-        <td><span class="fp str">전략 먼저</span></td>
-        <td><b>신뢰가 낮다 <span class="num">3.38</span></b><br><span class="fs">"사진 없이 진단해서 못 믿겠다 / 실측을 직접 넣고 싶다"</span></td>
-        <td><b>실측 직접 입력</b> 옵션 검토 중</td>
-        <td class="fs"><b>UI가 아니라 방향 문제</b> — 정하지 않고 화면만 고치면 같은 지적이 반복된다</td>
-      </tr>
-      <tr>
-        <td><span class="fp no">못 푼다</span></td>
-        <td><b>실사용 전환이 낮다 <span class="num">3.38</span></b></td>
-        <td>UT로 결론 내지 않음 → <b>배포 데이터로</b></td>
-        <td class="fs">11명으로 전환율은 측정 불가 · <b>"다들 좋다고 했다"로 결론 금지</b></td>
+        <td class="vk2">입력 막힘</td>
+        <td class="v1"><s>브랜드 목록이 좁음</s></td>
+        <td class="varr">→</td>
+        <td class="v2">주요 브랜드 추가 · “목록에 없음”을 버튼형으로
+          <span>가장 싸고 효과 큰 수정 — 입력에서 막히면 정확도가 통째로 흔들리기 때문</span></td>
       </tr>
     </table>
 
     <div class="foot" style="margin-top:auto">
-      <div class="fbox"><div class="k">우리가 한 실수</div><div class="v">테스트 <b>도중에 화면을 바꿔서</b> 데이터가 섞였습니다 — 다음엔 <b>빌드를 고정</b>하고 시작합니다</div></div>
-      <div class="fbox g"><div class="k">그래서 배운 것</div><div class="v">레이아웃을 바꿔도 실사용 점수는 그대로였습니다 — <b>지렛대는 화면이 아니라 신뢰</b>였습니다</div></div>
+      <div class="fbox"><div class="k">못 고친 것도 적습니다</div><div class="v">실사용 전환은 <b>UT로 못 풉니다</b> — 11명으로 전환율은 측정 불가라 <b>배포 데이터로</b> 넘겼습니다</div></div>
+      <div class="fbox g"><div class="k">기준</div><div class="v">지적 하나 = 대응 하나. <b>근거 없는 개선은 넣지 않았습니다</b></div></div>
     </div>
   </div>
-  <div class="pageno">16</div>
+  <div class="pageno">10</div>
 </section>
 
-<!-- ═══ 17 · 팀 · 로드맵 ═══ -->
+
+<!-- 12 · 화면 변화 -->
 <section class="slide">
   <div class="shead">
     <div>
-      <div class="eyebrow">Team &amp; Next</div>
-      <h1>3명이 이렇게 굴렸고, <b>다음은 이렇습니다</b></h1>
+      <div class="eyebrow">04 · Before / After</div>
+      <h1>화면으로 보면, <b>이렇게 달라졌습니다</b></h1>
     </div>
-    <div class="pchip"><span>기간 <b>2026.06 ~ 07</b></span></div>
+    <div class="pchip"><span>결과 화면 <b>3.88</b></span><span>판정 화면 <b>4.25</b></span></div>
+  </div>
+  <p class="lead">답을 <b>하나 더 주는</b> 게 아니라, <em>왜 그 답인지</em>를 같이 주는 화면으로 바꿨습니다.</p>
+
+  <div class="body">
+    <div class="demo" style="grid-template-columns:1fr 1.28fr">
+      <div style="display:flex; flex-direction:column; min-height:0">
+        <div class="balb bad2" style="width:96px; margin-bottom:10px">Before</div>
+        <div class="shots" style="grid-template-columns:1fr 1fr">
+          <div class="shot"><div class="cap">체형 결과</div><img src="../발표-데모/05-결과-체형카드.png" alt="체형 카드"></div>
+          <div class="shot"><div class="cap">브랜드 추천 사이즈</div><img src="../발표-데모/07-결과-브랜드추천.png" alt="브랜드 추천"></div>
+        </div>
+        <div class="fbox" style="margin-top:11px; flex:none">
+          <div class="k">문제</div>
+          <div class="v">“M”이라는 <b>답만</b> 있고, <b>왜 M인지</b>가 없습니다 — 그리고 여기서 <b>화면이 끝납니다</b></div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; min-height:0">
+        <div class="balb good2" style="width:96px; margin-bottom:10px">After</div>
+        <div class="mock" style="flex:1; min-height:0">
+          <div class="mtop">fitting.app/judge — 구매 판정(Fit)</div>
+          <div class="mbd">
+            <div>
+              <div class="mrow"><span class="mn">1</span>판정 기준 · <b>시크 스트레이트 STR</b><br><span style="color:var(--sub2); font-size:10px; margin-left:21px">내 진단 결과가 자동으로 들어옴</span></div>
+              <div class="mrow"><span class="mn">2</span>사이즈표 &nbsp;<b style="color:var(--green)">[캡처 업로드]</b> <span style="color:var(--sub2)">[직접 입력]</span>
+                <div style="border:1px dashed var(--line); border-radius:6px; padding:9px; text-align:center; color:var(--sub2); font-size:10px; margin-top:5px">
+                  상품 사이즈표 이미지<br>붙여넣기 · 드래그
+                </div>
+              </div>
+              <div class="mrow" style="font-size:10px">☐ 사이즈표를 핏팅 개선에 활용할게요 <span style="color:var(--sub2)">(선택)</span></div>
+              <div class="mbtn" style="padding:7px">판정하기</div>
+            </div>
+            <div>
+              <div class="mverd">M · FIT 92 — 지금 이 사이즈로 사면 돼요
+                <span>총장·밑위는 길이라 점수에 넣지 않고 참고로만 알려드려요</span></div>
+              <table class="mtbl">
+                <tr><th>부위</th><th>S</th><th>M</th><th>L</th></tr>
+                <tr><td>허리</td><td class="tight">끼임</td><td class="fit">딱맞음</td><td>여유</td></tr>
+                <tr><td>엉덩이</td><td class="tight">끼임</td><td class="fit">딱맞음</td><td>여유</td></tr>
+                <tr><td>허벅지</td><td class="tight">끼임</td><td class="fit">딱맞음</td><td>여유</td></tr>
+              </table>
+              <div class="mrow" style="margin-top:6px; font-size:10.5px; background:var(--green-soft); border-color:rgba(46,74,59,.22)">
+                <b style="color:var(--green)">근거</b> · 유니클로 M “가슴 딱맞음” → 가슴둘레 <b>92cm</b>로 역산
+              </div>
+              <div class="mbtn" style="padding:7px; font-size:10.5px; background:#fff; color:var(--ink); border:1px solid var(--line)">이 결과가 맞았나요? &nbsp;맞음 · 보통 · 안 맞음</div>
+            </div>
+          </div>
+        </div>
+        <div class="fbox g" style="margin-top:11px; flex:none">
+          <div class="k">바뀐 것</div>
+          <div class="v">답 + <b>근거</b> + <b>다음 행동</b>(피드백 · 전문가) — 화면이 <b>끝나지 않고 이어집니다</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">11</div>
+</section>
+
+
+<!-- ═══════════════ 05 · 변화 (Impact) ═══════════════ -->
+
+<!-- 13 · 무엇이 달라졌는가 -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">05 · Impact</div>
+      <h1>v2에서 <b>무엇이 달라졌는가</b></h1>
+    </div>
+    <div class="pchip"><span>중간 발표 이후 <b>4주</b></span></div>
+  </div>
+  <p class="lead">기능이 늘어난 게 아니라, <b>제품이 스스로를 증명할 수 있게</b> 됐습니다.</p>
+
+  <div class="body">
+    <div class="whatis w4">
+      <div class="wi">
+        <div class="wn">1</div>
+        <h3>정확도를 잴 수 있다</h3>
+        <p>피드백이 <b>진단 ID와 함께</b> 쌓여, 동의율이 <b>자동 집계</b>됩니다. 이제 “정확한 것 같다”가 아니라 <b>숫자로</b> 말합니다.</p>
+        <p>기준에 미달하면 <b>엔진을 교체한다</b>는 규칙까지 미리 정해뒀습니다.</p>
+        <div class="st">킬 메트릭 측정 가능</div>
+      </div>
+      <div class="wi">
+        <div class="wn">2</div>
+        <h3>구매 판정이 생겼다</h3>
+        <p>“내 체형”에서 멈추지 않고 <b>“이 옷 한 벌”</b>에 답합니다. UT에서 <b>4.25점</b> — 기존 결과 화면(3.88)보다 높았습니다.</p>
+        <p>추가한 기능이 <b>가장 아쉬웠던 화면보다 높은 점수</b>를 받았다는 건, 방향이 맞았다는 뜻입니다.</p>
+        <div class="st">추가한 기능이 실제로 통함</div>
+      </div>
+      <div class="wi">
+        <div class="wn">3</div>
+        <h3>실측 데이터가 쌓인다</h3>
+        <p>판정에 올린 사이즈표를 <b>동의한 경우에만</b> 저장하고, 검수를 거쳐 <b>정본 DB로 승격</b>합니다.</p>
+        <p>손으로 모으던 브랜드 실측이 <b>쓸수록 늘어나는 구조</b>로 바뀝니다.</p>
+        <div class="st">쓸수록 커버리지가 넓어짐</div>
+      </div>
+      <div class="wi">
+        <div class="wn">4</div>
+        <h3>전문가 연결을 준비했다</h3>
+        <p>정답이 없는 스타일 영역은 <b>페이크도어로 수요만</b> 확인합니다. 수요가 확인되면 그때 엽니다.</p>
+        <p>수요가 없으면 <b>만들지 않는 것</b>도 결론입니다.</p>
+        <div class="st wip">수요 확인 후 오픈</div>
+      </div>
+    </div>
+
+    <div class="foot" style="margin-top:13px">
+      <div class="fbox g" style="border-left-width:4px">
+        <div class="k">한 줄로</div>
+        <div class="v" style="font-size:15px">v1은 <b>“된다”를 보여주는 제품</b>이었고, v2는 <b>“맞다”를 증명하는 제품</b>입니다</div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">12</div>
+</section>
+
+
+<!-- 14 · 앞으로 검증할 것 -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">05 · Next Validation</div>
+      <h1>다음 한 달, <b>이 숫자들을 봅니다</b></h1>
+    </div>
+    <div class="pchip"><span>배포 데이터 기준</span></div>
   </div>
 
   <div class="body">
-    <div class="cols" style="flex:none">
-      <div class="card">
-        <div class="kk">Team · 역할</div>
-        <h3>3인 · 소유가 겹치지 않게</h3>
-        <p><b>강건형</b> 팀장 · 데이터/엔진 &nbsp;|&nbsp; <b>이상민</b> 개발 &nbsp;|&nbsp; <b>이소희</b> 디자인</p>
-        <p style="margin-top:6px"><b>"한 파일 = 한 역할"</b> 소유 규칙과 역할별 브랜치로 충돌을 구조적으로 없앴습니다.</p>
-      </div>
-      <div class="card">
-        <div class="kk">Process · 협업</div>
-        <h3>문서를 코드 옆에 두었습니다</h3>
-        <p>기획 문서·화면 정의·의사결정 기록을 <b>같은 저장소</b>에 두고, 화면 현황판은 <b>코드에서 자동 생성</b>합니다.</p>
-        <p style="margin-top:6px">방향이 바뀐 결정은 <b>이유까지 기록</b>해, 나중에 "왜 이렇게 됐지"를 다시 묻지 않습니다.</p>
-      </div>
-      <div class="card">
-        <div class="kk">Stack · 운영비</div>
-        <h3>운영비 $0으로 실서비스 구조</h3>
-        <p>정적 프론트 + 서버 API + <b>Supabase(Postgres)</b>. 브랜드 실측표는 <b>서버에만</b> 두어 노출되지 않게 했습니다.</p>
-        <p style="margin-top:6px">진단·판정 계산도 서버에서 — 데이터가 곧 자산이기 때문입니다.</p>
+    <div class="kill" style="flex:none">
+      <div class="kn">65<i>%</i></div>
+      <div>
+        <div class="kt">킬 메트릭 — 사이즈 정확도(동의율)</div>
+        <div class="kd">아는 브랜드로 검증했을 때 <b>“맞다”가 65% 이상</b>이면 가설이 성립합니다.
+          미달이면 화면이 아니라 <b>엔진을 교체</b>합니다 — 지금 UT 점수로는 판단하지 않습니다.</div>
       </div>
     </div>
 
-    <div class="road" style="margin-top:13px">
-      <div class="rd on">
-        <div class="when">Now · MVP</div>
-        <h4>정확도를 증명한다</h4>
-        <ul>
-          <li>킬 메트릭 <b>동의율 65%</b> 실측</li>
-          <li>UT 지적 즉시 반영(브랜드·결과 화면)</li>
-          <li>신뢰 문제 = 실측 직접 입력 검토</li>
-        </ul>
+    <div class="eyebrow" style="margin:20px 0 10px">보조 지표 — 킬 메트릭을 해석하기 위한 숫자</div>
+    <div class="kpi3">
+      <div class="k3">
+        <div class="n3" style="color:var(--ink)">구매 의향</div>
+        <div class="t3">추천 사이즈로 실제로 살 것인가</div>
+        <div class="d3">결과·판정 화면에서의 <b>구매 의향 응답</b> — 정확도가 높아도 사지 않으면 의미가 없습니다</div>
+        <div class="d3" style="margin-top:8px; padding-top:8px; border-top:1px solid var(--line)">측정 · 판정 결과 화면의 <b>“이 사이즈로 살게요”</b> 응답률</div>
       </div>
-      <div class="rd">
-        <div class="when">Next · v2</div>
-        <h4>매칭을 실제로 연다</h4>
-        <ul>
-          <li>수요(오픈 알림) 확인되면 실매칭 오픈</li>
-          <li>스타일리스트 매칭 수수료 = 첫 수익</li>
-          <li>브랜드 커버리지 확대(판정 수집 루프)</li>
-        </ul>
+      <div class="k3">
+        <div class="n3" style="color:var(--ink)">피드백 제출률</div>
+        <div class="t3">동의율을 믿을 수 있는가</div>
+        <div class="d3">제출률이 낮으면 동의율 자체가 <b>편향된 표본</b>입니다 — 먼저 확인할 숫자</div>
+        <div class="d3" style="margin-top:8px; padding-top:8px; border-top:1px solid var(--line)">측정 · 결과를 본 사람 중 <b>피드백을 남긴 비율</b></div>
       </div>
-      <div class="rd">
-        <div class="when">Later · v3</div>
-        <h4>데이터를 판다</h4>
-        <ul>
-          <li>축적된 사이즈 데이터를 <b>B2B API</b>로</li>
-          <li>쇼핑몰 반품률 절감이 가치 제안</li>
-          <li>상황별(면접·하객·여행) 확장</li>
-        </ul>
+      <div class="k3 c">
+        <div class="n3" style="font-size:26px">전문가 클릭률</div>
+        <div class="t3">다음 단계 수요가 있는가</div>
+        <div class="d3">페이크도어 클릭·알림 신청 — <b>수요가 없으면 만들지 않습니다</b></div>
+        <div class="d3" style="margin-top:8px; padding-top:8px; border-top:1px solid var(--line)">측정 · <b>오픈 알림 신청 이메일</b> 수 (session_id로 진단과 연결)</div>
       </div>
     </div>
 
     <div class="foot" style="margin-top:auto">
-      <div class="fbox g" style="border-left-width:4px; padding:12px 16px">
-        <div class="k">지금 하고 있는 것</div>
-        <div class="v" style="font-size:15px">정확도를 <b>증명하는 단계</b>입니다 — 동의율 65%를 실측하고, 사용성 테스트에서 나온 <b>신뢰 문제</b>를 풉니다</div>
-      </div>
+      <div class="fbox"><div class="k">지금 하고 있는 것</div><div class="v">동의율 <b>65%를 실측</b>하고, UT에서 나온 <b>신뢰 문제</b>를 푸는 단계입니다</div></div>
+      <div class="fbox g"><div class="k">판단 규칙</div><div class="v">미달이면 <b>엔진 교체</b> · 수요 없으면 <b>기능 폐기</b></div></div>
     </div>
   </div>
-  <div class="pageno">17</div>
+  <div class="pageno">13</div>
 </section>
 
 
-
-
-
-
-
-<!-- ═══ 18 · 클로징 ═══ -->
-<section class="slide ask close">
-  <div class="askbody">
-    <div class="cq">“이 옷, 살까 말까?”</div>
-    <div class="cbig">이제, <b>답할 수 있습니다</b></div>
-    <div class="cmark">Fitting<i></i></div>
-    <div class="cthx">감사합니다</div>
+<!-- 15 · 마무리 -->
+<section class="slide ctr">
+  <div class="chead tight">
+    <div class="ceb">05 · Wrap-up</div>
+    <h1 class="ch1">오늘 이야기를 <b>한 장으로</b>.</h1>
   </div>
+
+  <div class="chain">
+    <div class="chn"><b>Problem</b><span>새 브랜드에서는<br>내 사이즈를 모른다</span></div>
+    <div class="cha">→</div>
+    <div class="chn"><b>v1 MVP</b><span>착용 경험 기반<br>AI 진단을 만들었다</span></div>
+    <div class="cha">→</div>
+    <div class="chn"><b>User Feedback</b><span>흥미로웠지만<br>신뢰가 부족했다</span></div>
+    <div class="cha">→</div>
+    <div class="chn"><b>v2 MVP</b><span>근거 · 구매 판정<br>· 데이터 수집 추가</span></div>
+    <div class="cha">→</div>
+    <div class="chn"><b>Data</b><span>정확도와 수요가<br>숫자로 쌓인다</span></div>
+    <div class="cha">→</div>
+    <div class="chn fin"><b>Next</b><span>브랜드 사이즈를<br>번역하는 플랫폼</span></div>
+  </div>
+
+  <div class="answer" style="margin-top:44px">
+    <div class="ak2">그래서 핏팅은</div>
+    <div class="abig">“사이즈 추천 서비스”가 아니라<br><b>브랜드 사이즈를 번역하는 데이터 플랫폼</b>입니다</div>
+  </div>
+
+  <div class="cfin" style="margin-top:26px">지금은 <b>정확도를 증명하는 단계</b>입니다 — 감사합니다</div>
+  <div class="pageno">14</div>
 </section>
+
 </body>
 </html>

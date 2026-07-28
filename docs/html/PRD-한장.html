@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>핏팅 PRD — 한 장</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+<style>
+  :root{
+    --green:#2E4A3B; --green-mid:#5A7A68; --green-soft:#E7EFEA; --green-line:#CBDDD2;
+    --clay:#B0553F; --clay-soft:#F7ECE8; --clay-bg:#FBF4F1; --clay-line:#E8CFC7;
+    --ink:#16140F; --sub:#6E6B63; --sub2:#A6A29A;
+    --line:#E6E5E1; --soft:#EDEDEA; --wash:#F6F6F5;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{font-family:'Pretendard','Malgun Gothic',sans-serif; color:var(--ink); background:#8E938E;
+    -webkit-font-smoothing:antialiased; word-break:keep-all; padding:24px 0; letter-spacing:-.02em}
+  .num{font-family:'SUIT Variable','Pretendard',sans-serif; font-feature-settings:'tnum'; letter-spacing:0}
+  .page{width:13.333in; height:7.5in; padding:0.38in 0.46in; background:#fff; position:relative;
+    margin:0 auto 22px; box-shadow:0 6px 30px rgba(0,0,0,.22); display:flex; flex-direction:column;
+    page-break-after:always; overflow:hidden}
+  @page{ size:13.333in 7.5in; margin:0 }
+  @media print{ body{background:#fff; padding:0} .page{margin:0; box-shadow:none} }
+
+  .hd{display:flex; align-items:flex-end; gap:14px; border-bottom:2px solid var(--ink); padding-bottom:9px}
+  .hd .eb{font-size:10px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--sub2)}
+  .hd h1{font-size:23px; font-weight:800; letter-spacing:-.03em; margin-top:3px; line-height:1.2}
+  .hd h1 b{color:var(--green)}
+  .hd .who{margin-left:auto; font-size:10.5px; color:var(--sub); text-align:right; line-height:1.6}
+  .hd .who b{color:var(--ink)}
+
+  .spine{background:var(--green); color:#fff; border-radius:12px; padding:12px 17px; margin-top:11px;
+    display:flex; align-items:center; gap:14px}
+  .spine .lb{font-size:9.5px; font-weight:800; letter-spacing:.14em; color:#9CC1AE; white-space:nowrap}
+  .spine .tx{font-size:16.5px; font-weight:800; letter-spacing:-.025em; line-height:1.4}
+  .spine .tx i{font-style:normal; color:#9CC1AE}
+
+  .grid{display:grid; grid-template-columns:1.05fr 1fr 1fr; gap:13px; flex:1; min-height:0; margin-top:11px}
+  .col{display:flex; flex-direction:column; gap:11px; min-height:0}
+  .sec{border:1px solid var(--line); border-radius:12px; padding:11px 13px; background:#fff}
+  .sec.fill{flex:1; min-height:0}
+  .sec .st{font-size:9.5px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:var(--sub2); margin-bottom:8px}
+  .sec .st span{color:var(--green-mid)}
+
+  p.tx{font-size:11.5px; line-height:1.62; color:var(--sub)}
+  p.tx b{color:var(--ink); font-weight:700}
+  ul.li{padding-left:0; list-style:none}
+  ul.li li{font-size:11.5px; line-height:1.55; color:var(--sub); padding-left:11px; position:relative; margin-bottom:5px}
+  ul.li li:last-child{margin-bottom:0}
+  ul.li li:before{content:''; position:absolute; left:0; top:7px; width:4px; height:4px; border-radius:50%; background:var(--green-line)}
+  ul.li li b{color:var(--ink); font-weight:700}
+
+  .two{display:grid; grid-template-columns:1fr 1fr; gap:9px}
+  .kbox{border-radius:10px; padding:10px 12px}
+  .kbox .kt{font-size:9.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; margin-bottom:6px}
+  .kbox .kb{font-size:11.5px; line-height:1.55; color:var(--sub)}
+  .kbox .kb b{color:var(--ink); font-weight:700}
+  .kbox.a{background:var(--clay-bg); border:1px solid var(--clay-line)} .kbox.a .kt{color:var(--clay)}
+  .kbox.b{background:var(--green-soft); border:1px solid var(--green-line)} .kbox.b .kt{color:var(--green)}
+
+  .feat{display:flex; flex-direction:column; gap:8px}
+  .f{display:grid; grid-template-columns:22px 1fr; gap:9px; align-items:start}
+  .f .fn{width:22px; height:22px; border-radius:50%; background:var(--green); color:#fff; font-size:11px;
+    font-weight:800; display:flex; align-items:center; justify-content:center; margin-top:1px}
+  .f.fake .fn{background:var(--clay)}
+  .f .ft{font-size:12.5px; font-weight:800; line-height:1.3}
+  .f .ft em{font-style:normal; font-size:10px; font-weight:700; color:var(--sub2); margin-left:5px; letter-spacing:0}
+  .f .fd{font-size:11px; color:var(--sub); line-height:1.5; margin-top:3px}
+  .f .fd b{color:var(--ink); font-weight:700}
+
+  .metric{background:var(--green); border-radius:12px; padding:12px 14px; color:#fff}
+  .metric .mt{font-size:9.5px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:#9CC1AE}
+  .metric .mv{display:flex; align-items:baseline; gap:8px; margin-top:6px}
+  .metric .mv .n{font-size:32px; font-weight:800; letter-spacing:-.04em}
+  .metric .mv .u{font-size:12px; font-weight:800; color:#9CC1AE}
+  .metric .md{font-size:11px; line-height:1.5; color:#CFE2D8; margin-top:5px}
+  .metric .md b{color:#fff; font-weight:700}
+  .metric .sub{border-top:1px solid rgba(255,255,255,.18); margin-top:9px; padding-top:8px; display:flex; gap:14px}
+  .metric .sub div{font-size:10.5px; color:#CFE2D8; line-height:1.4}
+  .metric .sub div b{display:block; font-size:14px; color:#fff; font-weight:800; letter-spacing:-.02em}
+
+  table.m{width:100%; border-collapse:collapse; font-size:11px}
+  table.m th{background:var(--soft); font-size:9px; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--sub); padding:5px 8px; border:1px solid var(--line); text-align:left}
+  table.m td{border:1px solid var(--line); padding:7px 8px; line-height:1.45; color:var(--sub); vertical-align:top}
+  table.m td b{color:var(--ink); font-weight:800}
+  table.m tr.now td{background:var(--green-soft)}
+  table.m tr.now td b{color:var(--green)}
+  table.m .st{width:52px; font-weight:800; color:var(--ink); white-space:nowrap}
+
+  .flow{display:flex; align-items:center; gap:5px; flex-wrap:wrap; margin-top:2px}
+  .flow .n{font-size:10.5px; font-weight:800; padding:5px 8px; border-radius:7px; background:var(--wash);
+    border:1px solid var(--line); color:var(--ink); white-space:nowrap}
+  .flow .n.hi{background:var(--green); color:#fff; border-color:var(--green)}
+  .flow .n.db{background:var(--clay-bg); border-color:var(--clay-line); color:var(--clay)}
+  .flow .ar{color:var(--sub2); font-size:10px}
+
+  .ft{margin-top:9px; padding-top:8px; border-top:1px solid var(--line); display:flex; gap:16px; align-items:baseline}
+  .ft .fl{font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--sub2); white-space:nowrap}
+  .ft .fx{font-size:10.5px; color:var(--sub); line-height:1.5}
+  .ft .fx b{color:var(--ink); font-weight:700}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div>
+      <div class="eb">Product Requirements — One Pager</div>
+      <h1>핏팅(Fitting) — <b>브랜드를 가로질러 '내 사이즈'를 번역한다</b></h1>
+    </div>
+    <div class="who">
+      정본 <b>docs/1_제품정의.md</b> · 실행계획 <b>마일스톤1</b><br>
+      2026-07-28 · 팀 3인(팀장·개발·디자인)
+    </div>
+  </div>
+
+  <div class="spine">
+    <div class="lb">ONE LINE</div>
+    <div class="tx">"내 사이즈가 맞을까?"에서 멈추는 사람에게, <i>평소 입던 옷의 착용 경험</i>만으로 새 브랜드의 내 사이즈를 알려주는 AI 진단 카드.<br>진단으로 사용자·사이즈 데이터를 모으고, 그 위에 전문가 매칭을 얹어 확장한다.</div>
+  </div>
+
+  <div class="grid">
+
+    <!-- COL 1 : 문제 · 사용자 -->
+    <div class="col">
+      <div class="sec">
+        <div class="st">01 · 문제</div>
+        <p class="tx">새 브랜드로 건너가려는 사람은 <b>거기서 내 사이즈가 뭔지</b>를 몰라 망설인다. 기존 사이즈 추천은 <b>자기 몰 안 + 구매 이력</b>에 갇혀 있어, 새 몰·새 브랜드로 넘어가는 순간 아무도 번역해주지 않는다. 결국 늘 사던 브랜드의 비슷한 옷만 다시 산다.</p>
+        <div class="two" style="margin-top:9px">
+          <div class="kbox a">
+            <div class="kt">구매를 막는 2축</div>
+            <div class="kb"><b>스타일 어울림 40%</b><br><b>사이즈 적합 38%</b><br><span style="font-size:10.5px">— 설문. 반반이라 하나만 풀면 절반만 잡힌다</span></div>
+          </div>
+          <div class="kbox b">
+            <div class="kt">그래서 도구는 사이즈</div>
+            <div class="kb">스타일은 정답이 없다 → <b>전문가</b><br>사이즈는 정답이 있다 → <b>도구</b><br><span style="font-size:10.5px">지금의 심장 = 번역 엔진</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="st">02 · 타깃 · JTBD</div>
+        <p class="tx"><b>김도현 / 33 / 직장인.</b> 소개팅·미팅·발표처럼 잘 보이고 싶은 자리엔 기꺼이 지갑을 열지만, 안 입어본 브랜드는 사이즈가 두려워 결국 늘 사던 곳에서 비슷한 옷만 산다.</p>
+        <p class="tx" style="margin-top:7px; padding-left:9px; border-left:2px solid var(--green-line); color:var(--ink); font-weight:600">"안 입어보던 브랜드 옷을 사고 싶을 때, <b>사이즈 실패 걱정 없이</b> 나에게 맞는 걸 골라 새로운 모습에 도전한다."</p>
+      </div>
+
+      <div class="sec fill">
+        <div class="st">03 · 차별점 · 해자</div>
+        <ul class="li">
+          <li><b>몰 교차</b> — 플랫폼 울타리를 넘어 브랜드 간 사이즈를 번역한다. 개별 몰은 구조적으로 못 만드는 데이터.</li>
+          <li><b>구매 이력 불필요</b> — 착용 경험만으로 시작한다. 신규 사용자도 첫 진단부터 결과가 나온다.</li>
+          <li><b>중립성</b> — 직접 팔지 않으니 "건너가게" 도울 동기가 있다.</li>
+          <li><b>쓸수록 커지는 실측</b> — 판정에 올라온 사이즈표를 검수해 정본으로 승격. 커버리지를 사용자 힘으로 채운다.</li>
+          <li><b>매칭으로 이어지는 연결</b> — 진단 결과(브랜드별 사이즈)가 전문가 요청에 자동으로 딸려간다.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- COL 2 : 기능 · 플로우 -->
+    <div class="col">
+      <div class="sec">
+        <div class="st">04 · MVP 기능 <span>— 이번에 만드는 것</span></div>
+        <div class="feat">
+          <div class="f">
+            <div class="fn">1</div>
+            <div>
+              <div class="ft">AI 체형·사이즈 진단<em>LLM + 규칙</em></div>
+              <div class="fd">성별·키·몸무게 + <b>착용경험 보정</b> + 선호핏 → 카드 3종: 체형 프로필 · 핏 인사이트 · <b>브랜드별 추천 사이즈</b>. 숫자는 규칙, 말은 AI.</div>
+            </div>
+          </div>
+          <div class="f">
+            <div class="fn">2</div>
+            <div>
+              <div class="ft">구매 판정 (Fit)<em>규칙</em></div>
+              <div class="fd">진단이 "내 몸"이라면, 판정은 <b>지금 사려는 그 옷 한 벌</b>에 답한다. 사이즈표 캡처(AI 인식)·직접 입력 → 사이즈별 판정. 동의 시 <b>실측 데이터로 승격</b>.</div>
+            </div>
+          </div>
+          <div class="f fake">
+            <div class="fn">3</div>
+            <div>
+              <div class="ft">전문가 추천 받기<em>페이크도어</em></div>
+              <div class="fd">실매칭 없이 <b>클릭·오픈알림 신청만 로깅</b>해 유료 전환신호를 측정. 수요부터 확인하고 만든다.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec fill">
+        <div class="st">05 · 핵심 플로우 · 측정 배선</div>
+        <div class="flow">
+          <span class="n">진단 입력</span><span class="ar">▸</span>
+          <span class="n hi">서버 엔진 /api/diagnose</span><span class="ar">▸</span>
+          <span class="n">결과 카드</span><span class="ar">▸</span>
+          <span class="n">"맞았나?" 피드백</span><span class="ar">▸</span>
+          <span class="n db">DB feedback</span><span class="ar">▸</span>
+          <span class="n db">kill_metric</span>
+        </div>
+        <div class="flow" style="margin-top:7px">
+          <span class="n">판정 입력·캡처</span><span class="ar">▸</span>
+          <span class="n hi">/api/judge</span><span class="ar">▸</span>
+          <span class="n">사이즈별 판정</span><span class="ar">▸</span>
+          <span class="n db">garment_submission</span><span class="ar">▸</span>
+          <span class="n db">검수 → 정본 실측</span>
+        </div>
+        <p class="tx" style="margin-top:9px"><b>Aha:</b> 진단 카드에서 "평소 입던 옷 기준으로, 한 번도 안 입어본 브랜드인데 이 사이즈면 맞겠다"는 확신이 처음 드는 순간.</p>
+        <p class="tx" style="margin-top:6px"><b>엔진 원칙:</b> 숫자는 규칙(재현 가능·검증 가능), 서술만 LLM. 진단은 카테고리 단위(상의·하의). 결과는 덮어쓰지 않고 <b>날짜 스냅샷</b>으로 쌓는다. 엔진은 서버에서만 돈다(클라이언트 미노출 = 해자).</p>
+      </div>
+
+      <div class="sec">
+        <div class="st">06 · 범위 밖 (지금은 안 만든다)</div>
+        <p class="tx">전문가 실매칭 · 결제/정산 · 8유형 LLM 서술 · 파생 카테고리(아우터·원피스·치마) · SEO 페이지. <b>하나라도 끌려오면 측정이 늦어진다.</b> <span style="color:var(--sub2)">※ 계정·어드민·구매 판정은 측정에 필요해 In으로 편입됨</span></p>
+      </div>
+    </div>
+
+    <!-- COL 3 : 성공기준 · 로드맵 -->
+    <div class="col">
+      <div class="metric">
+        <div class="mt">★ Kill Metric — 성패를 가르는 단 하나</div>
+        <div class="mv"><span class="n num">65</span><span class="u">% 이상</span></div>
+        <div class="md"><b>아는 브랜드</b>로 진단했을 때 "실제로 내가 입는 사이즈랑 맞다" 동의율. 실구매 없이 엔진 정확도를 잰다. <b>미달이면 엔진 교체 또는 중단.</b></div>
+        <div class="sub">
+          <div><b class="num">≥50%</b>"안 사본 브랜드도 사보겠다" (페인 해소)</div>
+          <div><b class="num">≥25%</b>유료 버튼 클릭률 (전환신호)</div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="st">07 · 단계 · 비즈니스</div>
+        <table class="m">
+          <tr class="now"><td class="st">Now<br>진단</td><td><b>데이터 확보.</b> 주요 브랜드 N개 한정 진단 + 판정 수집으로 커버리지 확대. <b>수익원 —</b></td></tr>
+          <tr><td class="st">v2<br>매칭</td><td><b>수익화.</b> 전문가 실매칭 — 매칭 수수료(B2C) · 커머스 제휴 커미션</td></tr>
+          <tr><td class="st">v3<br>확장</td><td><b>데이터 확장.</b> 사이즈 API(B2B·반품 절감) + 상황별(소개팅·면접·결혼식) 과금 · 오프라인 · 퍼스널컬러</td></tr>
+        </table>
+        <p class="tx" style="margin-top:7px"><b>North Star:</b> 주간 유료 추천 채택 수. MVP는 그 입구인 <b>번역 정확도 + 유료 전환신호</b>를 검증한다.</p>
+      </div>
+
+      <div class="sec fill">
+        <div class="st">08 · 현재 상태 <span>· 2026-07</span></div>
+        <ul class="li">
+          <li><b>측정 경로 실배선 완료</b> — 진단→서버 엔진→DB 적재→정확도 집계까지 연결됨</li>
+          <li><b>측정 2축</b> — ① 진단 정확도(feedback) ② 매칭 수요(lead·페이크도어). <b>session_id</b>로 조인해 진단→수요 전환을 본다</li>
+          <li><b>구매 판정 In 편입</b> — 같은 엔진 재사용이라 측정을 늦추지 않고, 실측 커버리지(최대 제약)를 사용자 힘으로 푼다</li>
+          <li><b>어드민 4메뉴 가동</b> — 사이즈·데이터 / 정확도 추세 / 전문가 수요 / 엔진 강화</li>
+          <li>스택 — Next.js + Supabase + Vercel, <b>운영비 $0</b></li>
+        </ul>
+      </div>
+
+      <div class="sec">
+        <div class="st">09 · 열린 질문</div>
+        <p class="tx">추정 로직 규칙 vs LLM 비중(킬 메트릭이 답한다) · 착용경험 <b>몇 벌·어떤 부위</b>까지 물을지 · <b>브랜드 실측 확보·정규화</b>(차별점이자 최대 난관) · 페이크도어 클릭의 허수 보정</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="ft">
+    <div class="fl">Definition of Done</div>
+    <div class="fx">실사용자가 진단→피드백을 제출해 <b>DB에 행이 쌓이고</b>, 쿼리 한 줄로 <b>현재 정확도 %</b>를 본다 · 엔진은 서버에서 돌고 골든테스트 CI 그린 · 배포 상태에서 운영비 $0</div>
+  </div>
+
+</div>
+</body>
+</html>
