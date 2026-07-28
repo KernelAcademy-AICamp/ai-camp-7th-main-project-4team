@@ -7,7 +7,24 @@
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
-<link rel="stylesheet" href="css/diag.css?v=900e1078">
+<link rel="stylesheet" href="css/diag.css?v=c86b6818">
+<style>
+  /* 마무리 단계 — '하의도 이어서'는 본문 강조 카드, '상의 더'는 링크. 결정 주버튼(지금 결과 보기)·이전은 푸터(모든 단계 동일) */
+  .vq{ margin-top:2px; }
+  .vq-cont{ display:flex; align-items:center; gap:12px; width:100%; box-sizing:border-box; padding:14px 15px;
+    border:1.5px solid var(--green-line,#CBDDD2); border-radius:14px; background:var(--green-soft); text-align:left; font-family:inherit; cursor:pointer; transition:.14s; }
+  .vq-cont:hover{ border-color:var(--green); }
+  .vq-ic{ width:38px; height:38px; flex:none; border-radius:11px; background:#fff; display:flex; align-items:center; justify-content:center; color:var(--green); }
+  .vq-ic svg{ width:19px; height:19px; }
+  .vq-tx{ flex:1; min-width:0; }
+  .vq-tx b{ display:block; font-size:15px; font-weight:800; letter-spacing:-.02em; color:var(--ink); white-space:nowrap; }
+  .vq-tx b span{ display:inline; }
+  .vq-tx s{ display:block; text-decoration:none; font-size:12px; color:var(--gm,#5a7a68); margin-top:1px; }
+  .vq-go{ flex:none; color:var(--green); font-weight:800; }
+  .vq-link{ margin-top:12px; text-align:center; }
+  .vq-link a{ font-size:13px; color:var(--muted); text-decoration:underline; text-underline-offset:2px; cursor:pointer; }
+  .vq-link a b{ color:var(--ink); font-weight:700; }
+</style>
 <script>
   /* 결과화면 '상의/하의 진단하기'(?cat=top|bottom)로 들어오면 첫 페인트부터 카테고리 선택(idx0) 대신
      선호핏(idx1)이 보이게 — idx0가 잠깐 떴다 넘어가는 깜빡임 방지. 문서 끝(diag-fit.js 실행 후)에서 skipcat 해제. */
@@ -127,7 +144,17 @@
           <div class="acc-row"><span class="l">2~3벌</span><span class="r">정확 — 권장</span></div>
         </div>
       </div>
+      <!-- 나머지 카테고리 안 남았을 때(양쪽 완료)만 노출 — 같은 카테고리 추가 -->
       <button class="add-garment" onclick="next()">+ 다른 핏의 <span class="catword">상의</span> 추가하기</button>
+      <!-- 나머지 카테고리 남았을 때 render가 노출 — 질문형(가로 2분할) -->
+      <div class="vq" hidden>
+        <button type="button" class="vq-cont" onclick="footerActionAlso()">
+          <span class="vq-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h9l3 3v13H6z"/><path d="M9 12h6M9 16h6"/></svg></span>
+          <span class="vq-tx"><b><span class="v2-other">하의</span>도 이어서 진단하기</b><s>전신 체형까지 완성 · 2분</s></span>
+          <span class="vq-go">›</span>
+        </button>
+        <div class="vq-link"><a onclick="next()">또는 <b><span class="catword">상의</span>를 한 벌 더</b> 넣기 +</a></div>
+      </div>
     </div>
   </div>
 
@@ -181,7 +208,17 @@
           <div class="acc-row now"><span class="l">2벌 · 지금<span class="cur">현재</span></span><span class="r">정확 — 권장</span></div>
         </div>
       </div>
+      <!-- 나머지 카테고리 안 남았을 때만 노출 — 같은 카테고리 추가(프로토) -->
       <button class="add-garment" onclick="toast('프로토타입 · 같은 카테고리 옷을 한 벌 더 추가하면 정보·느낌 2단계가 더 생겨요 (최대 3벌)')">+ <span class="catword">상의</span> 더 추가하기</button>
+      <!-- 나머지 카테고리 남았을 때 render가 노출 — 질문형(가로 2분할) -->
+      <div class="vq" hidden>
+        <button type="button" class="vq-cont" onclick="footerActionAlso()">
+          <span class="vq-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h9l3 3v13H6z"/><path d="M9 12h6M9 16h6"/></svg></span>
+          <span class="vq-tx"><b><span class="v2-other">하의</span>도 이어서 진단하기</b><s>전신 체형까지 완성 · 2분</s></span>
+          <span class="vq-go">›</span>
+        </button>
+        <div class="vq-link"><a onclick="toast('프로토타입 · 같은 카테고리 옷을 한 벌 더 추가하면 정보·느낌 2단계가 더 생겨요 (최대 3벌)')">또는 <b><span class="catword">상의</span>를 한 벌 더</b> 넣기 +</a></div>
+      </div>
       <div class="notice mt-16">입력은 자동 저장돼요. 결과 화면에서 언제든 수정·재진단할 수 있어요</div>
     </div>
   </div>
@@ -190,9 +227,9 @@
   <div class="wnav">
     <button class="btn-line" onclick="prev()">이전</button>
     <span class="spacer"></span>
-    <!-- 진단 완료 단계에서 상/하의 한쪽만 했고 다른 쪽이 남았으면 nextbtn='OO만 진단' + alsobtn='OO도 진단하기'로 나란히 -->
-    <button class="btn-primary" id="nextbtn" onclick="footerAction()" disabled>다음</button>
+    <!-- v2: 푸터는 '진단하기' 하나(무조건 결과로). alsobtn은 미사용(render가 항상 숨김) — 이어가기는 본문 카드로 -->
     <button class="btn-primary" id="alsobtn" onclick="footerActionAlso()" style="display:none">하의도 진단하기</button>
+    <button class="btn-primary" id="nextbtn" onclick="footerAction()" disabled>다음</button>
   </div>
 
   <!-- ===== 파생 카테고리 · 선호핏만 (빠른 경로) — 기반(상/하의)이 체형을 잠근 뒤 진입 ===== -->
@@ -264,7 +301,7 @@
   /* 안내 토스트 — 브라우저 기본 alert 대체 (diag-fit.js와 독립) */
   function toast(m){ var t=document.getElementById('toast'); if(!t) return; t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2600); }
 </script>
-<script src="js/diag-fit.js?v=7c3a6fb1"></script>
+<script src="js/diag-fit.js?v=9dd8379d"></script>
 <script>
   /* diag-fit.js가 실제 활성 스텝(선호핏)을 세팅한 뒤 skipcat 해제 —
      그래야 이후 '이전'을 눌러 카테고리 선택(idx0)으로 내려가 편집할 수 있음. */

@@ -7,16 +7,16 @@
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
-<link rel="stylesheet" href="css/diag.css?v=900e1078">
+<link rel="stylesheet" href="css/diag.css?v=c86b6818">
 <link rel="stylesheet" href="css/auth-ui.css?v=dcc9663e">
-<link rel="stylesheet" href="css/result.css?v=4699af4f">
+<link rel="stylesheet" href="css/result.css?v=49d3ba32">
 </head>
 <body>
 
 <!-- 결과 준비 로딩 오버레이 — 분류·카드·측정·추천이 실제로 그려지면 result.js가 걷어냄 -->
 <div id="rloading" class="rloading" role="status" aria-live="polite">
   <div class="rloading-in">
-    <span class="rload-mk" aria-hidden="true"><svg class="rload-ring" viewBox="0 0 140 140" fill="none"><circle class="trk" cx="70" cy="70" r="62" stroke-width="2.5"/><path class="arc" d="M70 8a62 62 0 0 1 53.7 31" stroke-width="2.5" stroke-linecap="round"/></svg><span class="rload-lg">Fitting<i class="sq"></i></span></span>
+    <div class="dl-mk" aria-hidden="true"><svg class="dl-ring" viewBox="0 0 140 140" fill="none"><circle class="trk" cx="70" cy="70" r="62" stroke-width="2.5"/><path class="arc" d="M70 8a62 62 0 0 1 53.7 31" stroke-width="2.5" stroke-linecap="round"/></svg><span class="dl-lg">Fit<i class="sq"></i></span></div>
     <p>결과를 준비하고 있어요</p>
   </div>
 </div>
@@ -125,6 +125,11 @@
           <div class="rhow-step"><span class="no">3</span><div><b>8가지 체형 유형에 대조</b><p>부위별 비율을 8유형 기준과 견줘 가장 가까운 유형으로 분류해요</p></div></div>
           <div class="rhow-step"><span class="no">4</span><div><b>브랜드별 사이즈 대조</b><p>브랜드마다 다른 실측치에 내 치수를 대입해 가장 잘 맞는 사이즈를 골라요</p></div></div>
         </div>
+        <!-- 진단 이력 — 마이(embed)에서만 노출. '이렇게 계산했어요' 아래 같은 흰 박스 -->
+        <div class="rpanel rhist">
+          <div class="k">진단 이력</div>
+          <div class="rhist-row"><span>과거 진단 목록·비교</span><b>2026.06 · 1건</b></div>
+        </div>
         <!-- 정확도 검증 바 — 결과 피드백(토스트와 동일 카피·연동). 마이 embed에선 CSS로 숨김 -->
         <div class="rpanel" id="rfb"><div class="rfbq">이 결과, 평소 내 사이즈랑 비슷한가요? <span>· 진단 개선에 반영</span></div>
           <div class="rseg"><div class="o ok" data-val="비슷" onclick="pickFeedback('비슷','tab4')"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> 비슷해요</div><div class="o mid" data-val="보통" onclick="pickFeedback('보통','tab4')"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg> 보통</div><div class="o no" data-val="다름" onclick="pickFeedback('다름','tab4')"><svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg> 달라요</div></div>
@@ -175,7 +180,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/auth.js?v=e6065d3b"></script>
 <script src="js/auth-ui.js?v=b94dfdf8"></script>
-<script src="js/result.js?v=ee85d0e6"></script>
+<script src="js/result.js?v=7c2ab6db"></script>
 <script src="js/a11y.js?v=1876c5ec"></script>
 </body>
 </html>
