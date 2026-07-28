@@ -473,15 +473,24 @@
     SHORT:'짧음', GOOD:'딱 좋음', LONG:'긺',
     skinny:'스키니', slim:'슬림', regular:'레귤러', loose:'루즈', oversize:'오버',
     straight:'스트레이트', tapered:'테이퍼드', wide:'와이드', bootcut:'부츠컷' };
+  /* 표 조회는 반드시 자기 키만 — 값이 'toString'·'constructor'면 Object.prototype의
+     함수가 잡혀 셀에 함수 소스가 찍힌다(자유 입력 openNote로 들어올 수 있다). */
+  var _own=Object.prototype.hasOwnProperty;
+  function csvLab(k){ return _own.call(CSV_LAB, k) ? CSV_LAB[k] : k; }
+  function csvVal(v){ return _own.call(CSV_VAL, v) ? CSV_VAL[v] : String(v); }
   function csvFlat(rows, section, obj, path){
     if(obj===null || obj===undefined || obj==='') return;
     if(Array.isArray(obj)){ obj.forEach(function(v,i){ csvFlat(rows, section, v, path ? path+' '+(i+1) : String(i+1)); }); return; }
     if(typeof obj==='object'){ Object.keys(obj).forEach(function(k){
-      csvFlat(rows, section, obj[k], (path?path+' · ':'')+(CSV_LAB[k]||k)); }); return; }
+      csvFlat(rows, section, obj[k], (path?path+' · ':'')+csvLab(k)); }); return; }
     if(typeof obj==='boolean') obj = obj?'예':'아니오';
-    rows.push([section, path, CSV_VAL[obj] || String(obj)]);
+    rows.push([section, path, csvVal(obj)]);
   }
-  function csvEsc(s){ s=String(s==null?'':s); return /[",\r\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; }
+  /* 수식 인젝션 방어 — 엑셀은 =,+,-,@ 로 시작하는 셀을 수식으로 실행한다.
+     자유 의견·브랜드명 등 사용자 입력이 그대로 들어오므로 앞에 '를 붙여 무력화한다.
+     다만 -5 같은 순수 음수는 값 그대로가 맞으니 예외. */
+  function csvSafe(s){ return (/^[=+\-@\t\r]/.test(s) && !/^-?\d+(\.\d+)?$/.test(s)) ? "'"+s : s; }
+  function csvEsc(s){ s=csvSafe(String(s==null?'':s)); return /[",\r\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; }
   function _dlCsv(rows, name){
     try{
       var body=rows.map(function(r){ return r.map(csvEsc).join(','); }).join('\r\n');
@@ -501,12 +510,15 @@
     var d=document.getElementById('privData'); if(!d) return;
     /* 빈 상태도 행 구조는 유지한다 — 회색 문장 하나만 뜨면 카드 안에서 붕 뜬다. */
     if(apiAccounts()){   // 계정 모드 — 서버(profile·diagnosis)에서 상태 조회
-      FITAUTH.getProfile().then(function(p){
-        FITAUTH.myDiagnoses(100).then(function(list){
-          d.innerHTML = '<div class="field"><span>계정</span><span class="v">'+esc((p&&(p.email||p.display_name))||'로그인됨')+'</span></div>'+
-            '<div class="field"><span>저장된 진단</span><span class="v'+(list.length?'':' ph')+'">'+list.length+'건</span></div>'+
-            (list.length?'':'<div class="note">진단을 완료하면 계정에 저장돼요</div>');
-        });
+      /* 조회가 실패하면 '없음'이 아니라 실패라고 말한다 — 0건으로 보이면
+         사용자는 데이터가 지워진 줄 안다. */
+      Promise.all([FITAUTH.getProfile(), FITAUTH.myDiagnoses(100)]).then(function(r){
+        var p=r[0], list=r[1]||[];
+        d.innerHTML = '<div class="field"><span>계정</span><span class="v">'+esc((p&&(p.email||p.display_name))||'로그인됨')+'</span></div>'+
+          '<div class="field"><span>저장된 진단</span><span class="v'+(list.length?'':' ph')+'">'+list.length+'건</span></div>'+
+          (list.length?'':'<div class="note">진단을 완료하면 계정에 저장돼요</div>');
+      }).catch(function(){
+        d.innerHTML = '<div class="note">데이터를 불러오지 못했어요 · 잠시 후 다시 시도해 주세요</div>';
       });
       return;
     }
@@ -530,7 +542,7 @@
         (data.feedback||[]).forEach(function(f,i){ csvFlat(rows, '정확도 피드백 '+(i+1), f, ''); });
         if(rows.length<=head.length){ toast('내려받을 데이터가 없어요'); return; }
         _dlCsv(rows, 'fitting-my-data-'+st.file+'.csv');
-      });
+      }).catch(function(){ toast('내려받기에 실패했어요'); });
       return;
     }
     var basic=safeParse(ssGet('fitting.basic')), dx=safeParse(ssGet('fitting.dx')), bt=safeParse(ssGet('fitting.dxtype'));
@@ -555,12 +567,15 @@
   }
 
   var _btCache=null;
-  /* 8유형 표(bodytypes.json)를 채운 뒤 cb — 못 읽어도 cb는 부른다(이름은 부가정보). */
+  /* 8유형 표(bodytypes.json)를 채운 뒤 cb — 못 읽어도 cb는 부른다(이름은 부가정보).
+     표 만들기와 cb를 다른 단계로 나눈다: 한 .then 안에서 부르면 cb가 던졌을 때
+     뒤의 .catch가 cb를 한 번 더 불러 다운로드가 두 번 일어난다. */
   function withBodyTypes(cb){
     if(_btCache) return cb();
     fetch('data/bodytypes.json').then(function(r){return r.json();})
-      .then(function(j){ _btCache={}; j.types.forEach(function(x){ _btCache[x.code]=x; }); cb(); })
-      .catch(function(){ cb(); });
+      .then(function(j){ _btCache={}; j.types.forEach(function(x){ _btCache[x.code]=x; }); })
+      .catch(function(){})
+      .then(function(){ cb(); });
   }
   function avatarFaceHTML(){ return '<div class="head '+USER.gender+'">'+(USER.gender==='female'?'<span class="longhair"></span>':'')+'<span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div>'; }
   function renderMyAvatar(){

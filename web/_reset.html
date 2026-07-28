@@ -20,10 +20,17 @@
   <script>
     /* localStorage(프로필·요청 등)와 sessionStorage(진단 입력·결과) 둘 다 지운다.
        세션 쪽을 빼먹었더니 demo-session.js가 '이미 있으면 안 심는다'는 규칙에 걸려
-       초기화해도 옛 시드값(연령대 33 등)이 계속 살아남았다. */
+       초기화해도 옛 시드값(연령대 33 등)이 계속 살아남았다.
+
+       단 fitting.mode·fitting.accounts는 남긴다(config.js가 sessionStorage에 쓰는 값).
+       사용자 데이터가 아니라 '이 탭이 어느 모드로 열렸는지'를 가리키는 스위치라,
+       같이 지우면 계정 모드에서 초기화한 사람이 proto로 튕긴다.
+       index.js wipeLocal()도 같은 이유로 이 둘만 되살린다. */
+    var KEEP = ['fitting.mode', 'fitting.accounts'];
     try{
       [localStorage, sessionStorage].forEach(function(store){
-        Object.keys(store).filter(function(k){ return k.indexOf('fitting.')===0; })
+        Object.keys(store)
+          .filter(function(k){ return k.indexOf('fitting.')===0 && KEEP.indexOf(k)<0; })
           .forEach(function(k){ store.removeItem(k); });
       });
     }catch(e){}
