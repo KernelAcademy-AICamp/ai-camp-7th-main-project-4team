@@ -8,10 +8,16 @@
   w.SUPABASE_URL = 'https://mprdnzlzkmljblxracsj.supabase.co';
   w.SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_dzmb3dYgDwZYWDoKt84uyA_J1MPfscJ';   // 공개 키(커밋 OK) — admin 클라이언트/RLS
 
-  // 소비자 계정(Phase 0a: 로그인+개인화) 노출 플래그. ★기본 false = 프로덕션 동작 무변경(인증 표면 숨김 유지).
-  //   ⚠️ true로 켜기 전 선결: 개인정보 처리방침·동의 문구 갱신(실계정=PII). 준비되면 여기만 true.
+  // 소비자 계정(Phase 0a: 로그인+개인화) 노출 플래그.
   //   활성 provider(Supabase Auth): Google·이메일 매직링크·카카오. (네이버=미지원→'준비 중')
-  w.ACCOUNTS_ENABLED = false;
+  //
+  //   2026-07-28 true로 전환 — 학원 팀플 발표용이라는 판단(사용자 결정). 켜면 실제 Supabase
+  //   계정·profile 행이 생긴다(진짜 PII). 아래 둘은 여전히 미해결이며, 알고 켠 것이다:
+  //     · 개인정보 처리방침 법적 검토 보류(privacy.html에 '검토 전 초안' 고지는 유지)
+  //     · 커스텀 SMTP 미연결 — 내장 메일은 시간당 발송 한도가 낮아 이메일 로그인이 막힐 수 있다.
+  //       발표 시연은 구글·카카오 로그인을 주 경로로 쓸 것(그쪽은 한도 없음).
+  //   ↩︎ 되돌리려면 이 한 줄을 false로. 배포되면 인증 표면이 다시 전부 숨겨진다.
+  w.ACCOUNTS_ENABLED = true;
   // (?accounts=on|off 쿼리로 임시 강제 — 기본값을 안 건드리고 로그인 흐름을 라이브 테스트하려고. mode와 같은 방식으로 세션 유지)
   //   ⚠️ on으로 켜면 실제 Supabase 계정·profile 행이 생긴다(진짜 PII). 처리방침 갱신 전에는 테스트 계정으로만 쓸 것.
   var acc = (location.search.match(/[?&]accounts=(on|off)/) || [])[1];
