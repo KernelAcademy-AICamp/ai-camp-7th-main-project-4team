@@ -97,6 +97,24 @@
 
     input.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') sendMagic(); });
 
+    /* Supabase가 주는 실패 원문은 영문이라 실사용자에게 읽히지 않는다('email rate limit exceeded').
+       자주 나오는 것만 한국어로 바꾸고, **모르는 원인은 원문 그대로** 남긴다 — 삼키면 원인 추적이
+       불가능해진다. 원문은 어느 경우든 콘솔에 남는다. */
+    var ERRMAP = [
+      [/rate limit|too many request|over_email_send/i, '메일 발송이 잠깐 제한됐어요 · 잠시 후 다시 시도해 주세요'],
+      [/only request this after (\d+) ?second/i, '조금 뒤에 다시 보낼 수 있어요 · $1초 후 시도해 주세요'],
+      [/invalid|unable to validate/i, '이메일 주소를 다시 확인해 주세요'],
+      [/signups? not allowed|not enabled|disabled/i, '지금은 이메일 로그인을 쓸 수 없어요 · 다른 방법으로 로그인해 주세요'],
+      [/failed to fetch|networkerror|timeout|load failed/i, '네트워크 연결을 확인해 주세요']
+    ];
+    function friendly(raw) {
+      var s = String(raw == null ? '' : raw);
+      for (var i = 0; i < ERRMAP.length; i++) {
+        var m = s.match(ERRMAP[i][0]);
+        if (m) return ERRMAP[i][1].replace('$1', m[1] || '');
+      }
+      return '전송 실패 · ' + (s || '알 수 없는 오류');
+    }
     function sendMagic() {
       var em = (input.value || '').trim();
       if (!MAIL_RE.test(em)) { say('이메일 주소를 다시 확인해 주세요', 'err'); input.focus(); return; }
@@ -108,7 +126,7 @@
         send.disabled = false; send.textContent = '다시 보내기';
         if (r && r.ok) { say(em + ' 로 링크를 보냈어요 · 메일함(스팸함)을 확인해 주세요', 'ok'); return; }
         try { console.error('[fitting] signInEmail 실패:', r && r.error); } catch (e) {}
-        say('전송 실패 · ' + ((r && r.error) || '알 수 없는 오류'), 'err');   // 원인을 삼키지 않고 그대로 노출
+        say(friendly(r && r.error), 'err');
       });
     }
 
