@@ -158,7 +158,7 @@
   function render(){
     steps.forEach((s,k)=>s.classList.toggle('active',k===cur));
     var wf=document.getElementById('wfill'); if(wf) wf.style.width=((cur+1)/steps.length*100)+'%';
-    document.querySelectorAll('#qconn span').forEach(function(el,k){ el.classList.toggle('on', k<=cur); });  // 질문 진행(연결선)
+    document.querySelectorAll('#qconn span').forEach(function(el,k){ el.classList.toggle('on', k<=cur); });  // 질문 진행(2→3 연결선 채움)
     const btn=document.getElementById('nextbtn');
     const also=document.getElementById('alsobtn');
     if(isPrefOnlyBase() && cur===1) btn.textContent='진단하기';
@@ -167,11 +167,22 @@
     // 옷 정보 입력을 '다 마친' 단계(DIAGNOSE_AT: 한 벌만으로도/2벌 완료)에서만 노출 — 카테고리 선택·선호핏 등
     // 이른 단계에선 절대 안 뜬다(데이터 없어 선호핏만 받는 prefOnly 카테고리 포함). 상/하의 나머지가 남았을 때만.
     var pair = !!DIAGNOSE_AT[cur] && !!otherBaseCat() && !otherDone();
-    // 주의: hidden 속성은 .btn-primary의 display 규칙에 무력화됨 → style.display로 직접 제어.
-    if(pair){
-      btn.textContent = (target==='top'?'상의':'하의')+'만 진단';
-      if(also){ also.textContent=(target==='top'?'하의':'상의')+'도 진단하기'; also.style.display=''; }
-    } else if(also){ also.style.display='none'; }
+    // 나머지 카테고리 남은 완료단계(pair) → 질문형(가로 2분할). 제목=질문 / 본문 .vq(아니요·네 + 상의추가 링크) 노출 /
+    //   푸터 '진단하기'·'같은옷 추가' 버튼은 숨김. 그 외엔 원래 문구·푸터 진단하기.
+    if(also) also.style.display='none';   // 푸터 alsobtn 미사용(하의도는 본문 강조카드)
+    // 제목·부제는 원래 문구 그대로. 나머지 카테고리 남으면 본문 '하의도 이어서' 강조카드만 노출. 푸터 주버튼은 '진단하기'(line 165).
+    var stepEl=steps[cur], vq=stepEl?stepEl.querySelector('.vq'):null;
+    if(pair && vq){
+      var other=(target==='top'?'하의':'상의');
+      [].forEach.call(vq.querySelectorAll('.v2-other'),function(e){e.textContent=other;});
+      vq.hidden=false;
+      var addb=stepEl.querySelector('.add-garment'); if(addb) addb.style.display='none';
+      btn.textContent='이대로 진단하기';   // 본문 '하의도 이어서 진단하기'와 대비 — 상의만으로 지금 진단
+    } else if(vq){
+      vq.hidden=true;
+      var addb2=stepEl.querySelector('.add-garment'); if(addb2) addb2.style.display='';
+    }
+    btn.style.display='';
     updateNext();
     window.scrollTo(0,0);
   }
@@ -179,7 +190,12 @@
   function next(){ if(cur<steps.length-1){cur++;render()} }
   // 이전 = 항상 직전 단계로(그 전 입력 그대로 남아 수정 가능). idx0(대상 선택)에서만 기본정보 화면으로.
   // skip 진입(상의/하의 진단하기)이라도 이전을 누르면 건너뛴 대상 선택(idx0)으로 내려가 편집 가능.
-  function prev(){ if(cur>0){cur--;render()} else location.href=PREV_URL; }
+  function prev(){
+    // 카테고리를 미리 정해 들어온 유입(?cat= · '이어서 진단'·결과의 'OO 진단하기')은 idx0(카테고리 선택)을 건너뛰므로,
+    // 첫 단계(idx1)에서 '이전'은 카테고리 선택이 아니라 직전 화면(예: 하의도 결정한 상의 마무리)으로 돌아가야 함.
+    if(skipCat && cur<=1){ if(history.length>1){ history.back(); } else { location.href=PREV_URL; } return; }
+    if(cur>0){cur--;render()} else location.href=PREV_URL;
+  }
   function footerAction(){
     if(!stepDone()) return;
     if(isPrefOnlyBase() && cur===1){ collectPrefOnly(); location.href='diag-loading.html?cat='+target; return; }
