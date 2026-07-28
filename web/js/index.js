@@ -38,6 +38,8 @@
 
   // ── 소비자 계정(api·ACCOUNTS_ENABLED) 실 인증 (Phase 0a) — proto/플래그off는 위 목업 유지 ──
   var _authSession=null, _acctEmail='';
+  var _authReady=false;   // 세션 판정이 끝났나(계정 모드) — 끝나기 전의 '비로그인'은 결론이 아니다
+  var _navPending=false;  // 그 판정을 기다리느라 미뤄둔 화면 복원이 있나
   // 로그인/세션복원 시 계정 profile로 USER 하이드레이트(기본정보 프리필·이름·이메일). renderProfile/아바타 갱신.
   function hydrateAccount(){
     if(!apiAccounts()) return;
@@ -93,9 +95,15 @@
   function initAuth(){
     if(!apiAccounts()) return;
     clearPersona();
-    FITAUTH.getSession().then(function(s){ _authSession=s; applyAuthUI(); if(s) hydrateAccount(); });
-    FITAUTH.onChange(function(e,s){ _authSession=s; applyAuthUI(); if(e==='SIGNED_IN') onSignedIn(); });
+    FITAUTH.getSession().then(function(s){
+      _authSession=s; _authReady=true; applyAuthUI();
+      if(s) hydrateAccount();
+      resumeNav();          // 세션 판정 전에 미뤄둔 화면 복원(마이에서 새로고침한 경우)
+    }, function(){ _authReady=true; });   // 세션 조회 실패도 '판정 끝'이다 — 계속 기다리면 복원이 영영 안 온다
+    FITAUTH.onChange(function(e,s){ _authSession=s; _authReady=true; applyAuthUI(); if(e==='SIGNED_IN'){ onSignedIn(); resumeNav(); } });
   }
+  /* 미뤄둔 복원을 한 번만 재시도. 로그인 상태가 아니면 조용히 접는다(홈이 맞는 화면). */
+  function resumeNav(){ if(!_navPending) return; _navPending=false; if(loggedIn()) restoreNav(); }
   /* 로그인 '직후'에만 도는 환영 처리. SIGNED_IN은 실제 로그인뿐 아니라 다른 페이지에서 돌아와
      세션이 복원될 때도 발생한다 → 마커(auth-ui가 provider로 떠나기 직전에 남김)가 있을 때만 실행한다.
      이게 없으면 홈에 들를 때마다 토스트가 뜨고, claim·프로필 upsert까지 매번 다시 돈다. */
@@ -870,7 +878,13 @@
   }catch(e){} }
   function restoreNav(){ try{
     var st=JSON.parse(sessionStorage.getItem('fitting.nav')||'null'); if(!st||!st.tab) return false;
-    if(st.tab==='my'){ if(!loggedIn()) return false;
+    if(st.tab==='my'){ if(!loggedIn()){
+        /* 계정 모드에서 세션 복원은 비동기다(FITAUTH.getSession().then). restoreNav는 로드 직후
+           동기로 도니 그 시점엔 아직 '비로그인'이라, 마이를 보다 새로고침하면 홈으로 튕겼다.
+           판정이 끝나기 전이면 포기하지 말고 표시만 남기고, initAuth가 세션을 받은 뒤 다시 부른다. */
+        if(apiAccounts() && !_authReady) _navPending=true;
+        return false;
+      }
       if(st.myPanel) goMy(st.myPanel); else if(st.myPanelId) openMyPanel(st.myPanelId); else go('my');
     } else go(st.tab);
     if(st.ov && st.ov.mode && typeof st.ov.req==='number' && st.ov.req>=0){
