@@ -34,7 +34,11 @@
       age: document.getElementById('age').value,
       height: +document.getElementById('height').value,
       weight: +document.getElementById('weight').value };
-    try{ sessionStorage.setItem('fitting.basic', JSON.stringify(basic)); }catch(e){}
+    try{ sessionStorage.setItem('fitting.basic', JSON.stringify(basic));
+      // 사용자가 직접 입력한 순간부터 이 세션은 데모가 아니다 — 표식을 지워야
+      // api로 전환해도 demo-session이 이 값을 목업으로 오인해 지우지 않는다.
+      sessionStorage.removeItem('fitting.demoSeed');
+    }catch(e){}
   }
   const RETURN_KEY='fitting.judge.return', NODX_KEY='fitting.judge.nodx';   /* Fit '진단 수정/시작하기'에서 왔는지 표식 + 진단없음 미리보기 플래그 */
   function clearReturn(){ try{ sessionStorage.removeItem(RETURN_KEY); sessionStorage.removeItem(NODX_KEY); }catch(e){} }   /* 앞으로 진행 = 실제 진단 → 표식·미리보기 모두 해제 */

@@ -67,6 +67,19 @@ module.exports = async function handler(req, res) {
   if (!SPECS || !SPECS.length) return res.status(500).json({ error: 'garments unavailable' });
 
   var b = req.body || {};
+
+  /* 데모 목업 차단(서버 최종 방어선) — 클라 가드는 우회된다.
+     demo-session.js가 api에서 '심지 않는다'만 지켰더니, 같은 탭이 앞서 proto로 열렸을 때
+     이미 심긴 시드가 남아 result.js가 그걸 진짜 진단으로 POST했다(실 DB에 가짜 12건 유입,
+     로그인 시 claim으로 계정에까지 귀속). 클라만 믿을 수 없으므로 여기서도 막는다.
+     판별 기준은 age 타입 하나 — 실제 입력(diag-basic)은 '30대' 같은 연령대 문자열만 보내고,
+     숫자 age를 만드는 코드는 데모 시드뿐이었다. 172/68·경험0 같은 값 조합으로 거르면
+     '경험 0벌 진단'(정상 플로우)을 쓰는 실사용자를 오탐한다. */
+  var _age = b.basic && b.basic.age;
+  if (typeof _age === 'number') {
+    return res.status(400).json({ error: 'invalid basic.age (연령대 문자열이어야 함) — 데모 목업으로 판단해 저장하지 않음' });
+  }
+
   var sex = b.sex === 'male' ? 'male' : 'female';
   var prefs = b.prefs || {};
   var exps = Array.isArray(b.experiences) ? b.experiences : [];
