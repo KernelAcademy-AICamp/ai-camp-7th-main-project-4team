@@ -188,16 +188,9 @@
   .rprin{ margin:0; background:#fff; border:1px solid var(--rline); border-radius:14px; padding:14px 24px; }   /* 좌우 24px = 한 끗(dtl-tip)·추천 패널과 글자 시작선 정렬 */
   .rprin-badge{ display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:800; letter-spacing:.03em; color:var(--gm); background:var(--gs); border-radius:20px; padding:4px 10px; margin-bottom:10px; }
   .rprin-badge svg{ width:13px; height:13px; }
-  .rprin-sent{ margin:0; font-size:15.5px; line-height:1.6; letter-spacing:-.02em; font-weight:600; color:var(--rink); }
-  .rprin-sent b{ font-weight:800; box-shadow:inset 0 -8px 0 var(--gs); }
+  .rprin-sent{ margin:0; font-size:19px; line-height:1.62; letter-spacing:-.02em; font-weight:600; color:var(--rink); }   /* 한 끗(dtl-tip p)과 동일 크기 */
+  .rprin-sent b{ font-weight:800; box-shadow:inset 0 -9px 0 var(--gs); }
 
-  /* ② 추천 근거줄 — s2list 안에서 각 추천을 s2item으로 묶어 근거를 막대 바로 아래에 */
-  .s2item{ margin-bottom:14px; } .s2item:last-child{ margin-bottom:0; }
-  .s2item .s2row{ margin-bottom:0; }
-  /* 근거줄 — 추천 막대(회색 채움)와 확실히 구분: 흰 배경 + 왼쪽 초록 라인 + 들여쓰기로 '막대에 딸린 주석'처럼 */
-  .s2basis{ margin:5px 0 0 12px; padding:9px 12px; font-size:13px; line-height:1.55; color:var(--sub); background:#fff; border:1px solid var(--rline); border-left:3px solid var(--g); border-radius:9px; }
-  .s2basis .s2basis-ic{ margin-right:2px; font-weight:800; color:var(--g); } .s2basis b{ color:var(--rink); font-weight:700; }
-  .s2basis .s2to{ margin:0 3px; font-weight:800; color:var(--g); }
   .s2in .sz{ font-family:var(--suit,inherit); font-feature-settings:'tnum'; font-size:24.5px; font-weight:800; color:var(--rink); }
   .s2in .p{ font-size:15.5px; font-weight:800; color:var(--g); }
   .s2row.lo .s2fill{ background:#F0EFEC; } .s2row.lo .s2in .p{ color:var(--sub2); }
@@ -465,6 +458,14 @@
   html.embed #rupgrade,
   html.embed .rbottom{ display:none !important; }   /* 하단 저장·스타일리스트·초기화 CTA는 마이에선 불필요(마이 자체 액션이 대신) */
   html.embed .rtabs{ margin-top:4px; }
+  /* 진단 이력 박스 — 마이(embed)에서만 '이렇게 계산했어요' 아래에 노출 */
+  #p3 .rhist{ display:none; }
+  html.embed #p3 .rhist{ display:block; }
+  /* 제목 크기는 아래 판정하기 바의 '사려는 옷이 따로 있나요?'(.rjudge-tx b)와 동일 */
+  #p3 .rhist .k{ font-size:14.5px; font-weight:800; letter-spacing:-.02em; color:var(--ink); }
+  #p3 .rhist-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px;
+    font-size:14.5px; color:var(--sub); line-height:1.6; }
+  #p3 .rhist-row b{ font-weight:800; color:var(--ink); white-space:nowrap; }
 
   /* 진단 결과 피드백 토스트 — 진단 플로우 결과 화면에만(마이 embed에선 숨김). 10초 뒤 하단서 슬쩍, 1회. id=rtoast(result.js rToast)와 충돌 피해 rfbToast/.rfbtoast 사용 */
   .rfbtoast{ --g:#2E4A3B; --gs:#E7EFEA; --ink:#16140F; --sub:#6E6B63; --sub2:#A6A29A; --line:#E6E5E1; --line2:#E0DED8;
