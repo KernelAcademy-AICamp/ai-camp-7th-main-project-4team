@@ -7,14 +7,13 @@
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
-<link rel="stylesheet" href="css/appnav.css?v=21e67dfb">
-<link rel="stylesheet" href="css/auth-ui.css?v=3f72bdd7">
+<link rel="stylesheet" href="css/auth-ui.css?v=dcc9663e">
 <link rel="stylesheet" href="css/appnav.css?v=21e67dfb">
 <!-- 공용 헤더가 api/proto·로그인 상태를 알아야 해서. defer라 문서 순서대로 실행된다. -->
 <script defer src="js/config.js?v=5f55324e"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script defer src="js/auth.js?v=790fe0f0"></script>
-<script defer src="js/auth-ui.js?v=78d5c083"></script>
+<script defer src="js/auth.js?v=e6065d3b"></script>
+<script defer src="js/auth-ui.js?v=b94dfdf8"></script>
 <script defer src="js/appnav.js?v=3dd82c59"></script>
 </head>
 <body>
@@ -27,30 +26,33 @@
   <h1>개인정보 처리방침</h1>
   <p class="updated">시행일 2026-07-01 · 본 문서는 프로토타입용 예시이며 법적 검토 전 초안입니다.</p>
 
-  <p>핏팅(이하 "회사")은 「개인정보 보호법」을 준수합니다. 비로그인 진단은 이용자가 요청한 <strong>사이즈 진단 제공에 필요한 최소 정보만</strong> 수집·이용하며, <strong>진단 이용 자체에는 별도의 동의가 필요하지 않습니다</strong>(서비스 제공에 필요한 처리). <strong>엔진 개선 활용은 이용자가 선택적으로 동의</strong>할 수 있고, 미동의해도 진단은 그대로 제공됩니다.</p>
+  <p>핏팅(이하 "회사")은 「개인정보 보호법」을 준수합니다. 비로그인 진단은 이용자가 요청한 <strong>사이즈 진단 제공에 필요한 최소 정보만</strong> 수집·이용하며, <strong>진단 이용 자체에는 별도의 동의가 필요하지 않습니다</strong>(서비스 제공에 필요한 처리). 진단 기록은 사이즈 번역 정확도를 유지·개선하는 데 이용되며, 회원 탈퇴 시에는 특정 개인을 알아볼 수 없도록 비식별 처리하여 보존합니다(§3).</p>
 
-  <p>만 14세 미만 아동의 개인정보를 <strong>동의 기반</strong>으로 처리할 때는 법정대리인의 동의를 받습니다. 엔진 개선 활용(선택 동의)은 만 14세 이상이거나 법정대리인의 동의를 받은 이용자만 선택할 수 있습니다.</p>
+  <p>회원가입은 <strong>만 14세 이상</strong>인 이용자를 대상으로 하며, 가입 시점에 이를 안내합니다. 만 14세 미만 아동의 개인정보를 처리해야 하는 경우 법정대리인의 동의를 받습니다. <strong>비로그인 진단은 개인정보를 수집하지 않으므로 연령 확인을 요구하지 않습니다.</strong></p>
 
   <h2>1. 수집하는 항목</h2>
   <table>
     <tr><th>구분</th><th>항목</th><th>근거</th></tr>
-    <tr><td>필수</td><td>성별, 나이, 키, 몸무게, 선호핏, 착용 경험(브랜드·사이즈·부위별 느낌)</td><td>사이즈 번역 진단 제공(서비스 제공에 필요)</td></tr>
-    <tr><td>선택 동의</td><td>위 진단 정보 · "맞았나?" 피드백</td><td>번역 정확도(엔진) 개선 — 동의 시에만, 비식별·집계</td></tr>
+    <tr><td>필수</td><td>성별, 연령대, 키, 몸무게, 선호핏, 착용 경험(브랜드·사이즈·부위별 느낌)</td><td>사이즈 번역 진단 제공(서비스 제공에 필요)</td></tr>
+    <tr><td>회원(로그인 시)</td><td>이메일, 표시명(닉네임), 계정 식별자</td><td>계정 생성·본인 확인, 진단 결과 저장·이력 제공</td></tr>
+    <tr><td>필수</td><td>"맞았나?" 정확도 피드백</td><td>사이즈 번역 정확도 확인·개선(서비스 제공에 필요)</td></tr>
     <tr><td>자동</td><td>접속 로그, 기기·브라우저 정보</td><td>서비스 운영·보안</td></tr>
   </table>
+  <p>회원 가입은 <strong>카카오·구글 소셜 로그인 또는 이메일 링크 로그인</strong>으로 이루어집니다. 소셜 로그인 시 해당 사업자로부터 이메일·닉네임을 전달받으며, 이메일이 제공되지 않는 경우 이용자가 직접 입력합니다. <strong>진단 이용에는 로그인이 필요하지 않습니다</strong> — 결과를 저장할 때만 로그인을 요청합니다.</p>
 
   <h2>2. 수집·이용 목적</h2>
   <ul>
     <li>착용 경험 역산 및 브랜드별 사이즈 번역 진단 제공(서비스 제공)</li>
-    <li>번역 정확도 측정·개선(피드백·익명 통계) — <strong>이용자가 동의한 경우에만</strong></li>
+    <li>번역 정확도 측정·개선(피드백·통계) — 진단 제공과 같은 근거(서비스 제공)로 처리하며, 통계는 비식별 처리 후 이용합니다</li>
     <li>(선택·실이용 시) 전문가 매칭 및 상담 연결</li>
   </ul>
 
   <h2>3. 보유 및 이용 기간</h2>
   <ul>
     <li>비로그인 진단 정보: 서비스 제공·품질 확인에 필요한 <strong>최소 기간</strong> 보유 후 파기</li>
-    <li>회원(로그인) 결과: 회원 탈퇴 시 지체 없이 파기(법령상 보존 의무 제외)</li>
-    <li>엔진 개선용 데이터(동의분): 개인 식별·재식별이 불가능하도록 <strong>비식별·집계 처리</strong> 후 통계로만 보관</li>
+    <li>회원 계정 정보(이메일·표시명·프로필): <strong>회원 탈퇴 시 지체 없이 파기</strong>(법령상 보존 의무 제외)</li>
+    <li><strong>탈퇴 시 진단 기록의 처리</strong>: 진단 기록(성별·연령대·키·몸무게·착용 경험·결과)은 <strong>삭제하지 않고 비식별 처리하여 보존</strong>합니다. 계정 연결과 세션 식별자를 모두 끊어 <strong>특정 개인을 알아볼 수 없는 상태</strong>로 만든 뒤, 사이즈 번역 정확도 개선 목적으로만 이용합니다. 비식별 처리된 정보는 개인정보에 해당하지 않습니다.<br>진단 기록은 서비스의 정확도를 유지하는 근간이므로, 회사는 이를 개별 삭제하는 기능을 제공하지 않습니다. 대신 <strong>진단은 로그인 없이 끝까지 이용할 수 있으며</strong>, 로그인·저장 시점에 이 처리 방식을 미리 안내합니다.</li>
+    <li>정확도 개선용 통계: 개인 식별·재식별이 불가능하도록 <strong>비식별·집계 처리</strong> 후 통계로만 보관</li>
   </ul>
 
   <h2>4. 신체정보의 처리</h2>
@@ -61,10 +63,18 @@
     <li>이용자가 전문가 매칭을 실이용하는 경우, 매칭에 필요한 범위의 체형 프로필이 해당 전문가에게 제공될 수 있습니다(사전 고지·동의).</li>
     <li>자연어 인사이트 생성을 위해 외부 AI(Anthropic Claude) API를 이용하며, 식별정보는 전송하지 않습니다.</li>
     <li>클라우드 인프라(Vercel 등) 운영을 위한 처리위탁이 있을 수 있습니다.</li>
+    <li>데이터베이스·인증 인프라 운영을 <strong>Supabase</strong>에 위탁합니다(계정·진단 데이터 저장, 로그인 처리).</li>
+    <li>소셜 로그인 이용 시 <strong>카카오·구글</strong>로부터 이메일·닉네임을 전달받습니다(이용자가 해당 사업자에 동의한 범위).</li>
   </ul>
 
   <h2>6. 이용자의 권리</h2>
   <p>이용자는 자신의 개인정보 열람·정정·삭제·처리정지를 요구할 수 있으며, 회사는 지체 없이 조치합니다.</p>
+  <p>회원은 서비스 안에서 직접 다음을 할 수 있습니다.</p>
+  <ul>
+    <li><strong>내 데이터 내려받기</strong>(마이 &gt; 개인정보) — 프로필·진단·피드백을 CSV 파일로 내려받습니다.</li>
+    <li><strong>회원 탈퇴</strong>(마이 &gt; 프로필·계정, 또는 마이 &gt; 개인정보) — 계정과 개인정보(이메일·표시명·프로필)를 <strong>지체 없이 파기</strong>하고, 진단 기록은 §3에 따라 <strong>비식별 처리 후 보존</strong>합니다. 되돌릴 수 없습니다.</li>
+  </ul>
+  <p>진단 기록이 보존되는 것을 원하지 않는 이용자는 <strong>로그인하지 않고 진단만 이용</strong>할 수 있습니다. 이 경우 계정이 만들어지지 않으며, 진단 정보는 처음부터 특정 개인과 연결되지 않습니다.</p>
 
   <h2>7. 개인정보 보호책임자</h2>
   <p>성명: (미정) · 연락처: privacy@fitting.example · 본 정보는 프로토타입 예시입니다.</p>

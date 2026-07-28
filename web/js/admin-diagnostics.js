@@ -2,7 +2,7 @@
    화면 우선: 실수집 배선 전이라 소스는 (1)이 브라우저 로그 fitting.feedback (2)샘플.
    정본 응답 레코드 계약(나중 배선의 목표 형태):
      { id, ts, gender:'female'|'male', bodyType:'A'..'H', category:'TOP'|'BOTTOM'|...,
-       verdict:'맞음'|'애매'|'틀림', confidenceTier:'low'|'mid'|'high', engineImprove:bool,
+       verdict:'맞음'|'애매'|'틀림', confidenceTier:'low'|'mid'|'high',
        anchors:[{brandName, fitLine, sizeLabel}], painFlags:{part:'TIGHT'|'OK'} } */
 (function(){
   "use strict";
@@ -23,22 +23,22 @@
 
   // ── 샘플(대표 응답 16건). 화면 완성용 — 실데이터 아님. ─────────────────
   var SAMPLE=[
-    {id:'s01',ts:'2026-07-12T21:14:00',gender:'female',bodyType:'C',category:'TOP',verdict:'맞음',confidenceTier:'high',engineImprove:true, anchors:[{brandName:'유니클로',fitLine:'regular',sizeLabel:'M'}],painFlags:{upperArm:'OK',neck:'OK'}},
-    {id:'s02',ts:'2026-07-12T20:02:00',gender:'female',bodyType:'C',category:'TOP',verdict:'맞음',confidenceTier:'high',engineImprove:true, anchors:[{brandName:'무신사 스탠다드',fitLine:'relaxed',sizeLabel:'L'}],painFlags:{upperArm:'TIGHT',neck:'OK'}},
-    {id:'s03',ts:'2026-07-12T18:40:00',gender:'male',  bodyType:'F',category:'TOP',verdict:'애매',confidenceTier:'mid', engineImprove:false,anchors:[{brandName:'자라',fitLine:'slim',sizeLabel:'M'}],painFlags:{upperArm:'OK',neck:'TIGHT'}},
-    {id:'s04',ts:'2026-07-12T17:11:00',gender:'male',  bodyType:'F',category:'BOTTOM',verdict:'맞음',confidenceTier:'mid', engineImprove:true, anchors:[{brandName:'유니클로',fitLine:'straight',sizeLabel:'32'}],painFlags:{thigh:'TIGHT'}},
-    {id:'s05',ts:'2026-07-12T15:55:00',gender:'female',bodyType:'A',category:'TOP',verdict:'틀림',confidenceTier:'high',engineImprove:true, anchors:[{brandName:'스파오',fitLine:'regular',sizeLabel:'S'}],painFlags:{upperArm:'TIGHT',neck:'OK'}},
-    {id:'s06',ts:'2026-07-12T14:20:00',gender:'female',bodyType:'D',category:'TOP',verdict:'맞음',confidenceTier:'mid', engineImprove:false,anchors:[{brandName:'탑텐',fitLine:'regular',sizeLabel:'M'}],painFlags:{upperArm:'OK'}},
-    {id:'s07',ts:'2026-07-12T12:05:00',gender:'male',  bodyType:'G',category:'TOP',verdict:'맞음',confidenceTier:'high',engineImprove:true, anchors:[{brandName:'에잇세컨즈',fitLine:'relaxed',sizeLabel:'L'}],painFlags:{upperArm:'OK',neck:'OK'}},
-    {id:'s08',ts:'2026-07-12T10:48:00',gender:'female',bodyType:'C',category:'BOTTOM',verdict:'애매',confidenceTier:'low', engineImprove:false,anchors:[{brandName:'자라',fitLine:'wide',sizeLabel:'27'}],painFlags:{thigh:'OK',hip:'TIGHT'}},
-    {id:'s09',ts:'2026-07-11T22:30:00',gender:'male',  bodyType:'H',category:'TOP',verdict:'틀림',confidenceTier:'mid', engineImprove:true, anchors:[{brandName:'무신사 스탠다드',fitLine:'oversized',sizeLabel:'XL'}],painFlags:{neck:'TIGHT'}},
-    {id:'s10',ts:'2026-07-11T20:12:00',gender:'female',bodyType:'B',category:'TOP',verdict:'맞음',confidenceTier:'mid', engineImprove:false,anchors:[{brandName:'유니클로',fitLine:'slim',sizeLabel:'S'}],painFlags:{upperArm:'OK'}},
-    {id:'s11',ts:'2026-07-11T18:00:00',gender:'female',bodyType:'C',category:'TOP',verdict:'맞음',confidenceTier:'high',engineImprove:true, anchors:[{brandName:'스파오',fitLine:'regular',sizeLabel:'M'}],painFlags:{upperArm:'OK',neck:'OK'}},
-    {id:'s12',ts:'2026-07-11T15:33:00',gender:'male',  bodyType:'F',category:'BOTTOM',verdict:'애매',confidenceTier:'low', engineImprove:false,anchors:[{brandName:'탑텐',fitLine:'straight',sizeLabel:'34'}],painFlags:{thigh:'TIGHT',waist:'TIGHT'}},
-    {id:'s13',ts:'2026-07-11T13:10:00',gender:'female',bodyType:'E',category:'TOP',verdict:'맞음',confidenceTier:'mid', engineImprove:true, anchors:[{brandName:'자라',fitLine:'regular',sizeLabel:'M'}],painFlags:{upperArm:'OK'}},
-    {id:'s14',ts:'2026-07-10T21:44:00',gender:'male',  bodyType:'G',category:'TOP',verdict:'맞음',confidenceTier:'high',engineImprove:false,anchors:[{brandName:'유니클로',fitLine:'regular',sizeLabel:'L'}],painFlags:{upperArm:'OK',neck:'OK'}},
-    {id:'s15',ts:'2026-07-10T19:20:00',gender:'female',bodyType:'A',category:'TOP',verdict:'틀림',confidenceTier:'low', engineImprove:true, anchors:[{brandName:'에잇세컨즈',fitLine:'slim',sizeLabel:'S'}],painFlags:{upperArm:'TIGHT'}},
-    {id:'s16',ts:'2026-07-10T16:05:00',gender:'female',bodyType:'D',category:'TOP',verdict:'맞음',confidenceTier:'mid', engineImprove:false,anchors:[{brandName:'무신사 스탠다드',fitLine:'regular',sizeLabel:'M'}],painFlags:{upperArm:'OK'}}
+    {id:'s01',ts:'2026-07-12T21:14:00',gender:'female',bodyType:'C',category:'TOP',verdict:'맞음',confidenceTier:'high',anchors:[{brandName:'유니클로',fitLine:'regular',sizeLabel:'M'}],painFlags:{upperArm:'OK',neck:'OK'}},
+    {id:'s02',ts:'2026-07-12T20:02:00',gender:'female',bodyType:'C',category:'TOP',verdict:'맞음',confidenceTier:'high',anchors:[{brandName:'무신사 스탠다드',fitLine:'relaxed',sizeLabel:'L'}],painFlags:{upperArm:'TIGHT',neck:'OK'}},
+    {id:'s03',ts:'2026-07-12T18:40:00',gender:'male',  bodyType:'F',category:'TOP',verdict:'애매',confidenceTier:'mid', anchors:[{brandName:'자라',fitLine:'slim',sizeLabel:'M'}],painFlags:{upperArm:'OK',neck:'TIGHT'}},
+    {id:'s04',ts:'2026-07-12T17:11:00',gender:'male',  bodyType:'F',category:'BOTTOM',verdict:'맞음',confidenceTier:'mid', anchors:[{brandName:'유니클로',fitLine:'straight',sizeLabel:'32'}],painFlags:{thigh:'TIGHT'}},
+    {id:'s05',ts:'2026-07-12T15:55:00',gender:'female',bodyType:'A',category:'TOP',verdict:'틀림',confidenceTier:'high',anchors:[{brandName:'스파오',fitLine:'regular',sizeLabel:'S'}],painFlags:{upperArm:'TIGHT',neck:'OK'}},
+    {id:'s06',ts:'2026-07-12T14:20:00',gender:'female',bodyType:'D',category:'TOP',verdict:'맞음',confidenceTier:'mid', anchors:[{brandName:'탑텐',fitLine:'regular',sizeLabel:'M'}],painFlags:{upperArm:'OK'}},
+    {id:'s07',ts:'2026-07-12T12:05:00',gender:'male',  bodyType:'G',category:'TOP',verdict:'맞음',confidenceTier:'high',anchors:[{brandName:'에잇세컨즈',fitLine:'relaxed',sizeLabel:'L'}],painFlags:{upperArm:'OK',neck:'OK'}},
+    {id:'s08',ts:'2026-07-12T10:48:00',gender:'female',bodyType:'C',category:'BOTTOM',verdict:'애매',confidenceTier:'low', anchors:[{brandName:'자라',fitLine:'wide',sizeLabel:'27'}],painFlags:{thigh:'OK',hip:'TIGHT'}},
+    {id:'s09',ts:'2026-07-11T22:30:00',gender:'male',  bodyType:'H',category:'TOP',verdict:'틀림',confidenceTier:'mid', anchors:[{brandName:'무신사 스탠다드',fitLine:'oversized',sizeLabel:'XL'}],painFlags:{neck:'TIGHT'}},
+    {id:'s10',ts:'2026-07-11T20:12:00',gender:'female',bodyType:'B',category:'TOP',verdict:'맞음',confidenceTier:'mid', anchors:[{brandName:'유니클로',fitLine:'slim',sizeLabel:'S'}],painFlags:{upperArm:'OK'}},
+    {id:'s11',ts:'2026-07-11T18:00:00',gender:'female',bodyType:'C',category:'TOP',verdict:'맞음',confidenceTier:'high',anchors:[{brandName:'스파오',fitLine:'regular',sizeLabel:'M'}],painFlags:{upperArm:'OK',neck:'OK'}},
+    {id:'s12',ts:'2026-07-11T15:33:00',gender:'male',  bodyType:'F',category:'BOTTOM',verdict:'애매',confidenceTier:'low', anchors:[{brandName:'탑텐',fitLine:'straight',sizeLabel:'34'}],painFlags:{thigh:'TIGHT',waist:'TIGHT'}},
+    {id:'s13',ts:'2026-07-11T13:10:00',gender:'female',bodyType:'E',category:'TOP',verdict:'맞음',confidenceTier:'mid', anchors:[{brandName:'자라',fitLine:'regular',sizeLabel:'M'}],painFlags:{upperArm:'OK'}},
+    {id:'s14',ts:'2026-07-10T21:44:00',gender:'male',  bodyType:'G',category:'TOP',verdict:'맞음',confidenceTier:'high',anchors:[{brandName:'유니클로',fitLine:'regular',sizeLabel:'L'}],painFlags:{upperArm:'OK',neck:'OK'}},
+    {id:'s15',ts:'2026-07-10T19:20:00',gender:'female',bodyType:'A',category:'TOP',verdict:'틀림',confidenceTier:'low', anchors:[{brandName:'에잇세컨즈',fitLine:'slim',sizeLabel:'S'}],painFlags:{upperArm:'TIGHT'}},
+    {id:'s16',ts:'2026-07-10T16:05:00',gender:'female',bodyType:'D',category:'TOP',verdict:'맞음',confidenceTier:'mid', anchors:[{brandName:'무신사 스탠다드',fitLine:'regular',sizeLabel:'M'}],painFlags:{upperArm:'OK'}}
   ];
 
   var PARTLBL={upperArm:'팔(소매통)',neck:'목',armhole:'암홀',calf:'종아리',thigh:'허벅지',hip:'엉덩이',waist:'허리',
@@ -77,7 +77,7 @@
     if(!Array.isArray(raw)) raw=[];
     return raw.map(function(r,i){ return {
       id:'r'+i, ts:r.ts, gender:r.gender||null, bodyType:r.bodyType||'?', category:r.category||'TOP',
-      verdict:r.verdict, confidenceTier:r.confidenceTier||'mid', engineImprove:!!r.engineImprove,
+      verdict:r.verdict, confidenceTier:r.confidenceTier||'mid',
       anchors:r.anchors||[], painFlags:r.painFlags||{} };
     });
   }
@@ -103,7 +103,6 @@
       bodyType:res.card||'?', category:cat,
       verdict: fb?fb.verdict:null,
       confidenceTier:res.confidenceTier||'mid',
-      engineImprove: fb?!!fb.engine_improve_consent:false,
       engineVersion:r.engine_version||'?',
       anchors:exps.map(function(e){ return {brandName:e.brandName,fitLine:e.fitLine,sizeLabel:e.sizeLabel}; }),
       painFlags:pain, _raw:{basic:inp.basic||null, prefs:inp.prefs||null, experiences:exps} };
@@ -176,15 +175,13 @@
     // 총 진단 = 결과 시점 수집(전체). 응답 = 정확도 누른 것. 맞음율(킬메트릭)은 응답분 기준.
     var n=DATA.length, ans=0, byV={};
     VERDICTS.forEach(function(v){byV[v]=0;});
-    var consent=0;
-    DATA.forEach(function(r){ if(r.verdict){ ans++; if(byV[r.verdict]!=null)byV[r.verdict]++; } if(r.engineImprove)consent++; });
+    DATA.forEach(function(r){ if(r.verdict){ ans++; if(byV[r.verdict]!=null)byV[r.verdict]++; } });
     $('dxKpis').innerHTML=[
       kpi(n,'총 진단','결과 시점 수집'),
       kpi(pct(ans,n)+'%','정확도 응답률','응답 '+ans+'/'+n),
       kpi(pct(byV['맞음'],ans)+'%','맞음율(킬메트릭)','맞음 '+byV['맞음']+'/'+ans),
       kpi(pct(byV['애매'],ans)+'%','애매','애매 '+byV['애매']+'/'+ans),
-      kpi(pct(byV['틀림'],ans)+'%','틀림','틀림 '+byV['틀림']+'/'+ans),
-      kpi(pct(consent,n)+'%','엔진개선 동의','opt-in '+consent+'/'+n)
+      kpi(pct(byV['틀림'],ans)+'%','틀림','틀림 '+byV['틀림']+'/'+ans)
     ].join('');
   }
 
@@ -257,10 +254,10 @@
         '<td>'+anch+'</td>'+
         '<td>'+(r.verdict?'<span class="pill" style="'+(VBADGE[r.verdict]||'')+'">'+esc(r.verdict)+'</span>':'<span class="pill muted">대기</span>')+'</td>'+
         '<td class="muted">'+(TIERLBL[r.confidenceTier]||r.confidenceTier)+'</td>'+
-        '<td>'+(r.engineImprove?'✓':'<span class="muted">·</span>')+'</td></tr>';
-      var detail='<tr id="'+did+'" style="display:none"><td colspan="8" style="background:rgba(31,106,74,.04);font-size:.92em;line-height:1.55">'+expDetail(r._raw)+'</td></tr>';
+        '</tr>';
+      var detail='<tr id="'+did+'" style="display:none"><td colspan="7" style="background:rgba(31,106,74,.04);font-size:.92em;line-height:1.55">'+expDetail(r._raw)+'</td></tr>';
       return main+detail;
     }).join('');
-    $('logTable').innerHTML='<thead><tr><th>시각</th><th>성별</th><th>8유형</th><th>카테고리</th><th>앵커</th><th>정확도</th><th>신뢰도</th><th>동의</th></tr></thead><tbody>'+rows+'</tbody>';
+    $('logTable').innerHTML='<thead><tr><th>시각</th><th>성별</th><th>8유형</th><th>카테고리</th><th>앵커</th><th>정확도</th><th>신뢰도</th></tr></thead><tbody>'+rows+'</tbody>';
   }
 })();

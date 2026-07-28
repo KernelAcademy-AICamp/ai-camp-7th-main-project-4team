@@ -28,8 +28,8 @@
 <link rel="stylesheet" href="css/tokens.css?v=8e429c15">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="css/auth-ui.css?v=3f72bdd7">
-<link rel="stylesheet" href="css/index.css?v=809c31cd">
+<link rel="stylesheet" href="css/auth-ui.css?v=dcc9663e">
+<link rel="stylesheet" href="css/index.css?v=f700201c">
 </head>
 <body>
 
@@ -388,7 +388,7 @@
               <div class="field"><span>연결 계정</span><span class="v" id="acctConn">카카오 · dlthg***@kakao.com</span></div>
             </div>
             <div class="msub"><div class="subhead">개인정보·데이터 관리</div>
-              <div class="links"><a onclick="openMyPanel('mp-privacy')">내 데이터 내려받기·삭제 · 동의 관리 <span class="arr">›</span></a></div>
+              <div class="links"><a onclick="openMyPanel('mp-privacy')">내 데이터 내려받기 · 탈퇴 <span class="arr">›</span></a></div>
             </div>
             <div class="msub"><div class="subhead">로그아웃</div>
               <div class="links"><a onclick="doLogout()">로그아웃 <span class="arr">›</span></a></div>
@@ -480,19 +480,31 @@
         <section class="mpanel" id="mp-privacy">
           <div class="crumb"><a onclick="goMy('mp-profile')" style="cursor:pointer;color:var(--sub2)">‹ 프로필 · 계정</a> · 개인정보·데이터</div>
           <h1>개인정보 · 데이터 관리</h1>
-          <p class="lead">내 데이터를 내려받거나 삭제하고, 동의를 관리해요</p>
+          <p class="lead">내 데이터를 내려받거나, 탈퇴할 수 있어요</p>
+          <!-- 상태(내 데이터) → 액션(내려받기) → 되돌릴 수 없는 액션(탈퇴) 순.
+               탈퇴가 색면 카드라 화면에서 가장 먼저 눈에 띄던 것을, 설명 좌·아웃라인 버튼 우로 낮춘다. -->
           <div class="mcard">
             <div class="msub"><div class="subhead">내 진단 데이터</div>
               <div id="privData"></div>
-              <div class="links"><a onclick="downloadMyData()">데이터 내려받기(JSON) <span class="arr">›</span></a><a class="danger" onclick="deleteMyData()">진단 데이터 삭제 <span class="arr">›</span></a></div>
             </div>
-            <div class="msub"><div class="subhead">엔진 개선 활용 동의</div>
-              <div class="field"><span>내 진단을 엔진 개선에 활용<br><span class="note">동의는 선택 · 진단 이용엔 영향 없어요</span></span><div class="toggle" id="privConsent" onclick="toggleEngineConsent()"></div></div>
+            <!-- 진단 데이터만 골라 지우는 경로는 두지 않는다(약관 제4조의2) — 탈퇴로 일원화 -->
+            <div class="msub">
+              <div class="actrow">
+                <div class="actx"><b>데이터 내려받기</b><span>저장된 진단 데이터를 CSV 파일로 받아요 · 엑셀에서 바로 열려요</span></div>
+                <button class="tinybtn ghost" onclick="downloadMyData()">CSV 내려받기</button>
+              </div>
             </div>
-            <div class="msub"><div class="subhead">안내</div>
-              <div class="note">체형·치수는 <b>민감정보</b>예요. 삭제하면 진단 이력도 함께 파기되고 되돌릴 수 없어요. 자세한 처리 방침은 <a href="privacy.html" style="color:var(--green);font-weight:700">개인정보 처리방침</a>을 참고하세요.</div>
+            <!-- 엔진 개선 활용 '동의' 토글 제거 — 진단 기록은 탈퇴 후에도 비식별로 보존·활용된다고
+                 약관·처리방침에 명시했다. 그 위에 선택 동의 토글을 두면 "끄면 활용 안 되나?"로 읽혀
+                 화면이 정책과 다른 말을 한다. 동의가 실제로 갈리는 지점은 결과화면 피드백이다. -->
+            <div class="msub">
+              <div class="actrow">
+                <div class="actx"><b>회원 탈퇴</b><span>계정과 개인정보는 파기돼요 · 진단 기록은 누구인지 알 수 없게 처리한 뒤 사이즈 정확도 개선에만 쓰여요</span></div>
+                <button class="tinybtn quit" onclick="doQuit()">탈퇴하기</button>
+              </div>
             </div>
           </div>
+          <p class="undernote">체형·치수는 <b>민감정보</b>예요 · 자세한 내용은 <a href="privacy.html">개인정보 처리방침</a>을 참고하세요</p>
         </section>
       </main>
     </div>
@@ -579,11 +591,11 @@
 
 <!-- sangmin 모듈(⑥): 진단 입력 설문(M1) + 엔진 계약 목업(M2) -->
 <script src="js/config.js?v=5f55324e"></script>
-<script src="js/data.js?v=0b603d0c"></script>
+<script src="js/data.js?v=87553366"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/auth.js?v=790fe0f0"></script>
-<script src="js/auth-ui.js?v=78d5c083"></script>
-<script src="js/index.js?v=999c2943"></script>
+<script src="js/auth.js?v=e6065d3b"></script>
+<script src="js/auth-ui.js?v=b94dfdf8"></script>
+<script src="js/index.js?v=aa6f4bb0"></script>
 <script src="js/a11y.js?v=1876c5ec"></script>
 </body>
 </html>

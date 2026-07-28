@@ -515,20 +515,14 @@
 
   // ── 옷장 · 이어서 진단 게이트: 노출 불필요로 제거(2026-07 디자인 결정) ──
 
-  // ── 엔진 개선 활용: 선택 동의(opt-in). 진단 이용엔 영향 없음(서비스 제공 근거로 수집·처리). ──
-  function engineConsented(){ return FDATA.readConsent().engineImprove===true; }   // 어댑터(seam)
-  // 체크 = 엔진 개선 동의 + 만14세 이상/법정대리인 동의 확인(자기확인). 동의 지점에서만 나이 확인.
-  function setEngineConsent(on){
-    FDATA.saveConsent({ engineImprove:!!on, ageAttested:!!on, at:new Date().toISOString() });   // 어댑터(seam)
-  }
-  // 저장된 동의 상태를 체크박스에 반영(재방문·재렌더 시)
-  (function(){ var el=document.getElementById('eiConsent'); if(el) el.checked=engineConsented(); })();
-
-  // ── 피드백 로깅(킬 메트릭 원천). 엔진 개선 활용은 동의(engineImprove)한 경우로 표기 ──
+  /* ── 피드백 로깅(킬 메트릭 원천) ──
+     엔진 개선 '동의' 개념을 걷어냈다. 진단 기록은 비식별로 보존·활용된다고 약관·처리방침에
+     명시했고 비식별 정보는 동의 대상이 아니다. 피드백도 같은 근거(서비스 제공 — 정확도 확인이
+     이 서비스가 파는 것 자체)라 별도 동의를 받지 않는다.
+     연령 확인은 개인정보를 수집하는 시점(회원가입)으로 옮겼다 — 비로그인 진단은 수집이 없다. */
   function fb(el,verdict){
     [].forEach.call(el.parentElement.children,function(c){c.classList.remove('on');}); el.classList.add('on');
-    var consent=FDATA.readConsent();   // 어댑터(seam)
-    var rec={ ts:new Date().toISOString(), bodyType:cardType, verdict:verdict, confidenceTier:confTier(), engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId };
+    var rec={ ts:new Date().toISOString(), bodyType:cardType, verdict:verdict, confidenceTier:confTier(), diagnosisId:_diagId };
     FDATA.saveFeedback(rec);   // 어댑터(seam): proto=localStorage / api=POST /api/feedback(diagnosis_id 포함)
   }
   // 진단 초기화 — 누적된 입력(dx·기본정보·동의·피드백)을 지우고 처음부터. (목업 테스트용)
@@ -823,8 +817,7 @@
     document.querySelectorAll('#rfb .rseg .o').forEach(function(o){ o.classList.toggle('on', o.classList.contains(map[val])); });
     try{
       var vmap={'비슷':'맞음','보통':'보통','다름':'안맞음'};
-      var consent=FDATA.readConsent();
-      FDATA.saveFeedback({ ts:new Date().toISOString(), bodyType:cardType, verdict:vmap[val]||val, confidenceTier:confTier(), engineImprove:consent.engineImprove===true, ageAttested:consent.ageAttested===true, diagnosisId:_diagId });
+      FDATA.saveFeedback({ ts:new Date().toISOString(), bodyType:cardType, verdict:vmap[val]||val, confidenceTier:confTier(), diagnosisId:_diagId });
     }catch(e){}
     try{ sessionStorage.setItem(fbStateKey(),'1'); }catch(e){}
     markFbPending(false);                      // 답했으면 탭3 미답변 점 해제

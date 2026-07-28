@@ -42,12 +42,13 @@
   function hydrateAccount(){
     if(!apiAccounts()) return;
     FITAUTH.getProfile().then(function(p){
-      if(!p) return;
+      if(!p){ renderProfile(); renderMyAvatar(); return; }   // 프로필 없음(신규 계정) = '미입력'으로 다시 그린다
       _acctEmail = p.email || '';
       if(p.display_name){ USER.name=p.display_name; USER.initial=(String(p.display_name)[0]||USER.initial); }
       var b=p.basic||{};
       if(b.gender) USER.gender=(b.gender==='female'?'female':'male');
-      if(b.height) USER.height=+b.height; if(b.weight) USER.weight=+b.weight; if(b.age) USER.age=+b.age;
+      // age는 '30대' 같은 연령대 문자열 — 숫자로 캐스팅하면 NaN이 된다(그대로 둘 것).
+      if(b.height) USER.height=+b.height; if(b.weight) USER.weight=+b.weight; if(b.age) USER.age=String(b.age);
       renderProfile(); renderMyAvatar(); renderAcctCard();
     });
   }
@@ -78,12 +79,30 @@
     if(sid) FITAUTH.claimDiagnoses(sid).then(read); else read();
   }
   function apiAccounts(){ return !!(window.FDATA&&FDATA.mode==='api'&&window.ACCOUNTS_ENABLED&&window.FITAUTH&&FITAUTH.ready()); }
+  /* 계정 모드에선 목업 페르소나(김도현)를 쓰지 않는다.
+     USER는 proto 데모용 하드코딩 값이라, 새 계정처럼 profile이 비어 있으면 hydrateAccount가
+     덮어쓸 게 없어 **남의 신체 정보가 내 프로필에 채워진 것처럼** 보인다(탈퇴→재가입 시 실제로 그랬다).
+     서버에서 온 값만 채우고, 없으면 '미입력'으로 정직하게 비워 둔다. */
+  function clearPersona(){
+    USER.name='회원'; USER.initial='회'; USER.type=null;
+    USER.gender=''; USER.age=''; USER.height=null; USER.weight=null;
+    USER.fitTop=''; USER.fitBottom='';
+    // initAuth는 첫 renderProfile 뒤에 돈다 → 지우기만 하면 목업이 화면에 남는다. 다시 그린다.
+    try{ renderProfile(); renderMyAvatar(); }catch(e){}
+  }
   function initAuth(){
     if(!apiAccounts()) return;
+    clearPersona();
     FITAUTH.getSession().then(function(s){ _authSession=s; applyAuthUI(); if(s) hydrateAccount(); });
     FITAUTH.onChange(function(e,s){ _authSession=s; applyAuthUI(); if(e==='SIGNED_IN') onSignedIn(); });
   }
+  /* 로그인 '직후'에만 도는 환영 처리. SIGNED_IN은 실제 로그인뿐 아니라 다른 페이지에서 돌아와
+     세션이 복원될 때도 발생한다 → 마커(auth-ui가 provider로 떠나기 직전에 남김)가 있을 때만 실행한다.
+     이게 없으면 홈에 들를 때마다 토스트가 뜨고, claim·프로필 upsert까지 매번 다시 돈다. */
   function onSignedIn(){
+    var fresh=false;
+    try{ fresh=sessionStorage.getItem('fitting.loginPending')==='1'; sessionStorage.removeItem('fitting.loginPending'); }catch(e){}
+    if(!fresh){ hydrateAccount(); return; }   // 세션 복원 = 조용히 계정 데이터만 반영
     var u=_authSession&&_authSession.user, email=u&&u.email;
     // 카카오 무이메일 → 프로필의 이메일 칸((필수) 표시)으로 안내한다. 로그인 직후 네이티브 prompt를
     // 띄우면 리다이렉트 복귀 화면과 단절되고, 브라우저가 차단하면 수집 자체가 조용히 실패한다.
@@ -146,14 +165,57 @@
       var el=document.querySelector('#smenu a[data-p="'+p+'"]'); if(el) el.style.display='none';
     });
   }
-  function doLogout(){ if(!confirm('로그아웃할까요? 둘러보기는 로그인 없이 이어갈 수 있어요.')) return;
-    if(apiAccounts()){ FITAUTH.signOut().then(function(){ _authSession=null; applyAuthUI(); go('home'); toast('로그아웃했어요'); }); return; }
-    saveLS('auth', false); applyAuthUI(); go('home'); toast('로그아웃했어요'); }
-  function doQuit(){ if(!confirm('정말 회원 탈퇴할까요? 진단·요청·저장 데이터가 모두 삭제돼요.')) return;
-    ['user','reqs','favs','support','notis'].forEach(function(k){ try{ localStorage.removeItem('fitting.'+k); }catch(e){} });
+  // 확인은 공용 모달(askConfirm)로 — 네이티브 confirm은 화면과 단절되고, 브라우저가 대화상자를
+  //   차단하면 조용히 죽는다(되돌릴 수 없는 탈퇴에서 특히 위험). 이메일 prompt를 걷어낸 것과 같은 이유.
+  function doLogout(){
+    askConfirm('<b>로그아웃</b>할까요?<div class="cf-sub">둘러보기는 로그인 없이 이어갈 수 있어요</div>', '로그아웃', function(){
+      if(apiAccounts()){ FITAUTH.signOut().then(function(){ _authSession=null; applyAuthUI(); go('home'); toast('로그아웃했어요'); }); return; }
+      saveLS('auth', false); applyAuthUI(); go('home'); toast('로그아웃했어요');
+    });
+  }
+  /* 로컬 흔적 정리 — 탈퇴의 일부다. 여기서 남기면 서버를 지워도 되살아난다.
+     ★ 특히 익명 세션 id(fitting.session, localStorage): 이게 남으면 재로그인 시
+       claim_diagnoses가 그 세션의 옛 익명 진단을 새 계정에 다시 붙이고, onSignedIn이
+       프로필까지 재생성한다(실제로 그렇게 되살아났다).
+     키를 하나씩 나열하지 않는다 — 새 키가 생길 때마다 새는 구멍이 된다. */
+  function wipeLocal(){
+    try{
+      var rm=[]; for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k&&k.indexOf('fitting.')===0) rm.push(k); }
+      rm.forEach(function(k){ try{ localStorage.removeItem(k); }catch(e){} });
+    }catch(e){}
+    // sessionStorage는 진단 캐시(dx·dxRun)라 통째로 비우되, 모드·계정 스위치는 되살린다
+    //   (사용자 데이터가 아니라 이 탭이 어느 모드로 열렸는지를 가리키는 값 — 지우면 proto로 튕긴다).
+    var mode=null, acc=null;
+    try{ mode=sessionStorage.getItem('fitting.mode'); acc=sessionStorage.getItem('fitting.accounts'); }catch(e){}
     try{ sessionStorage.clear(); }catch(e){}
+    try{ if(mode) sessionStorage.setItem('fitting.mode', mode); if(acc) sessionStorage.setItem('fitting.accounts', acc); }catch(e){}
     saveLS('auth', false);   // 기본값이 true라 '제거'가 아닌 false 저장해야 탈퇴 후 비로그인 유지
-    applyAuthUI(); toast('회원 탈퇴가 완료됐어요'); setTimeout(function(){ location.reload(); }, 900); }
+  }
+  /* 회원 탈퇴 — 계정 모드에선 실제로 서버를 지운다.
+     예전엔 localStorage만 비우고 '완료됐어요'를 띄웠다(서버 데이터·계정 모두 그대로 남는 거짓 성공).
+     정책: 개인정보(계정·이메일·프로필)는 파기, 진단 데이터는 비식별 처리해 보존(db/12). */
+  function doQuit(){
+    if(!apiAccounts()){       // proto/플래그off = 기존 목업 동작
+      askConfirm('<b>회원 탈퇴</b>할까요?<div class="cf-sub">진단·요청·저장 데이터가 모두 삭제돼요</div>', '탈퇴하기', function(){
+        wipeLocal(); applyAuthUI(); toast('회원 탈퇴가 완료됐어요'); setTimeout(function(){ location.reload(); }, 900);
+      });
+      return;
+    }
+    // 세부는 '지금 결정하는 사람'에게만 필요하다 — 가입 시점으로 끌어올리지 않는다.
+    askConfirm('<b>회원 탈퇴</b>할까요?<div class="cf-sub">계정과 개인정보는 삭제돼요 · 진단 기록은 누구인지 알 수 없게 처리한 뒤 사이즈 정확도 개선에만 쓰여요</div>', '탈퇴하기', quitNow);
+  }
+  function quitNow(){
+    toast('탈퇴를 처리하고 있어요…');
+    FITAUTH.withdraw().then(function(r){
+      if(r&&r.ok){ wipeLocal(); toast('탈퇴가 완료됐어요'); setTimeout(function(){ location.href='index.html'; }, 900); return; }
+      try{ console.error('[fitting] 탈퇴 실패:', r&&r.error); }catch(e){}
+      // 부분 성공을 성공으로 포장하지 않는다 — 개인정보는 지워졌지만 계정이 남은 상태.
+      //   다만 로컬 흔적은 이때도 지운다: 개인정보 파기는 이미 끝났으므로, 세션 id를 남겨두면
+      //   재로그인 때 옛 익명 진단이 다시 귀속된다(파기의 취지가 무너짐).
+      if(r&&r.partial){ wipeLocal(); toast('개인정보는 삭제됐지만 계정 삭제에 실패했어요 · 고객센터로 문의해 주세요'); return; }
+      toast('탈퇴 실패 · '+((r&&r.error)||'알 수 없는 오류'));
+    });
+  }
 
   /* ===== 마이페이지 사이드 네비 ===== */
   function myNav(el){
@@ -302,7 +364,9 @@
   function addReq(r){ reqs.unshift(r); saveLS('reqs', reqs); renderReqs(); }
 
   /* 마이페이지 · 프로필 아바타 — 진단 전=잉크블랙+이니셜 / 진단 후=결과 카드 캐릭터 얼굴 + 유형 색(bodytypes.json 단일 출처) */
-  var USER={ name:'김도현', initial:'김', gender:'male', age:33, height:172, weight:68, fitTop:'슬림', fitBottom:'와이드', type:'STR' };   // type:null = 진단 전 / 핏취향은 상·하의 별도
+  // age = 진단(diag-basic)에서 받는 '연령대' 문자열('30대' 등). 정확한 나이는 물은 적이 없으니 나이인 척하지 않는다.
+  var AGE_BANDS=['10대','20대','30대','40대','50대','60대 이상'];   // diag-basic.js AGE와 동일 — 바꾸면 같이 바꿀 것
+  var USER={ name:'김도현', initial:'김', gender:'male', age:'30대', height:172, weight:68, fitTop:'슬림', fitBottom:'와이드', type:'STR' };   // type:null = 진단 전 / 핏취향은 상·하의 별도
   // 결과 페이지에서 '결과 저장' 시 기록한 진단 프로필(fitting.user)을 병합 → 마이가 실제 진단 결과를 보여줌.
   (function(){ try{ var s=JSON.parse(localStorage.getItem('fitting.user')||'null'); if(s&&typeof s==='object') Object.assign(USER, s); }catch(e){} })();
   /* ===== 고객센터 · 1:1 문의 (1.9 / G.2) ===== */
@@ -388,66 +452,131 @@
   }
   function ssGet(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } }
   function safeParse(s){ try{ return s?JSON.parse(s):null; }catch(e){ return s; } }
-  /* 엔진개선 동의 = 진단 결과화면(result.js)과 동일 키·포맷(sessionStorage fitting.consent) */
-  function engineConsent(){ try{ return JSON.parse(ssGet('fitting.consent')||'{}').engineImprove===true; }catch(e){ return false; } }
-  function _dlJson(obj, name){
+  /* ── 내 데이터 내려받기(CSV) ────────────────────────────────────────
+     받는 사람이 엑셀에서 바로 열어보는 게 목적이라 JSON 대신 CSV.
+     형식은 '구분 · 항목 · 값' 긴 형식 — 진단마다 착용 경험 개수가 달라서
+     한 진단을 한 줄에 담는 넓은 형식은 열 수가 들쭉날쭉해진다.
+     키·코드값은 화면에서 쓰는 한글 라벨로 바꾼다(모르는 키는 원문 그대로 — 누락보다 낫다). */
+  var CSV_LAB={ gender:'성별', age:'연령대', height:'키(cm)', weight:'몸무게(kg)',
+    basic:'기본 정보', prefs:'선호 핏', experiences:'착용 경험', input:'입력', result:'결과',
+    category:'구분', brandName:'브랜드', brandId:'브랜드 코드', fitLine:'핏', item:'옷 종류',
+    sizeLabel:'사이즈', subtype:'세부 종류', silhouette:'실루엣', waistband:'허리 밴딩',
+    fits:'착용감', painFlags:'불편한 곳', lengthPrefs:'기장 느낌', openNote:'자유 의견',
+    shoulder:'어깨', chest:'가슴', belly:'배', waist:'허리', hip:'엉덩이', thigh:'허벅지',
+    rise:'밑위', length:'기장', sleeve:'소매 기장', upperArm:'팔(소매통)', neck:'목',
+    armhole:'암홀', calf:'종아리', hem:'밑단', ratio:'상하 비율',
+    created_at:'일시', display_name:'이름', email:'이메일', session_id:'세션 코드',
+    TOP:'상의', BOTTOM:'하의' };
+  var CSV_VAL={ male:'남성', female:'여성', TOP:'상의', BOTTOM:'하의',
+    none:'밴딩 없음', banded:'밴딩 있음',
+    TIGHT:'끼임', SNUG:'딱맞음', RELAXED:'여유', BIG:'큼', OK:'괜찮음',
+    SHORT:'짧음', GOOD:'딱 좋음', LONG:'긺',
+    skinny:'스키니', slim:'슬림', regular:'레귤러', loose:'루즈', oversize:'오버',
+    straight:'스트레이트', tapered:'테이퍼드', wide:'와이드', bootcut:'부츠컷' };
+  /* 표 조회는 반드시 자기 키만 — 값이 'toString'·'constructor'면 Object.prototype의
+     함수가 잡혀 셀에 함수 소스가 찍힌다(자유 입력 openNote로 들어올 수 있다). */
+  var _own=Object.prototype.hasOwnProperty;
+  function csvLab(k){ return _own.call(CSV_LAB, k) ? CSV_LAB[k] : k; }
+  function csvVal(v){ return _own.call(CSV_VAL, v) ? CSV_VAL[v] : String(v); }
+  function csvFlat(rows, section, obj, path){
+    if(obj===null || obj===undefined || obj==='') return;
+    if(Array.isArray(obj)){ obj.forEach(function(v,i){ csvFlat(rows, section, v, path ? path+' '+(i+1) : String(i+1)); }); return; }
+    if(typeof obj==='object'){ Object.keys(obj).forEach(function(k){
+      csvFlat(rows, section, obj[k], (path?path+' · ':'')+csvLab(k)); }); return; }
+    if(typeof obj==='boolean') obj = obj?'예':'아니오';
+    rows.push([section, path, csvVal(obj)]);
+  }
+  /* 수식 인젝션 방어 — 엑셀은 =,+,-,@ 로 시작하는 셀을 수식으로 실행한다.
+     자유 의견·브랜드명 등 사용자 입력이 그대로 들어오므로 앞에 '를 붙여 무력화한다.
+     다만 -5 같은 순수 음수는 값 그대로가 맞으니 예외. */
+  function csvSafe(s){ return (/^[=+\-@\t\r]/.test(s) && !/^-?\d+(\.\d+)?$/.test(s)) ? "'"+s : s; }
+  function csvEsc(s){ s=csvSafe(String(s==null?'':s)); return /[",\r\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; }
+  function _dlCsv(rows, name){
     try{
-      var blob=new Blob([JSON.stringify(obj,null,2)], {type:'application/json'});
-      var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name||'fitting-my-data.json';
+      var body=rows.map(function(r){ return r.map(csvEsc).join(','); }).join('\r\n');
+      /* BOM: 없으면 윈도우 엑셀에서 한글이 깨진다 */
+      var blob=new Blob(['\uFEFF'+body], {type:'text/csv;charset=utf-8;'});
+      var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name||'fitting-my-data.csv';
       document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
       toast('내 데이터를 내려받았어요');
     }catch(e){ toast('내려받기에 실패했어요'); }
   }
+  function csvStamp(){
+    var d=new Date(), p=function(n){ return (n<10?'0':'')+n; };
+    return { file:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()),
+             at:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes()) };
+  }
   function renderPrivacy(){
-    var t=document.getElementById('privConsent');
     var d=document.getElementById('privData'); if(!d) return;
+    /* 빈 상태도 행 구조는 유지한다 — 회색 문장 하나만 뜨면 카드 안에서 붕 뜬다. */
     if(apiAccounts()){   // 계정 모드 — 서버(profile·diagnosis)에서 상태 조회
-      FITAUTH.getProfile().then(function(p){
-        if(t) t.classList.toggle('on', !!(p&&p.engine_improve_consent));
-        FITAUTH.myDiagnoses(100).then(function(list){
-          d.innerHTML = (p||list.length)
-            ? '<div class="field"><span>계정</span><span class="v">'+esc((p&&(p.email||p.display_name))||'로그인됨')+'</span></div>'+
-              '<div class="field"><span>저장된 진단</span><span class="v">'+list.length+'건</span></div>'
-            : '<div class="note">아직 저장된 진단이 없어요 · 진단을 완료하면 계정에 저장돼요</div>';
-        });
+      /* 조회가 실패하면 '없음'이 아니라 실패라고 말한다 — 0건으로 보이면
+         사용자는 데이터가 지워진 줄 안다. */
+      Promise.all([FITAUTH.getProfile(), FITAUTH.myDiagnoses(100)]).then(function(r){
+        var p=r[0], list=r[1]||[];
+        d.innerHTML = '<div class="field"><span>계정</span><span class="v">'+esc((p&&(p.email||p.display_name))||'로그인됨')+'</span></div>'+
+          '<div class="field"><span>저장된 진단</span><span class="v'+(list.length?'':' ph')+'">'+list.length+'건</span></div>'+
+          (list.length?'':'<div class="note">진단을 완료하면 계정에 저장돼요</div>');
+      }).catch(function(){
+        d.innerHTML = '<div class="note">데이터를 불러오지 못했어요 · 잠시 후 다시 시도해 주세요</div>';
       });
       return;
     }
-    if(t) t.classList.toggle('on', engineConsent());
-    var basic=ssGet('fitting.basic'), dx=ssGet('fitting.dx');
-    d.innerHTML = (basic||dx)
-      ? '<div class="field"><span>기본 정보(성별·키·몸무게)</span><span class="v">'+(basic?'저장됨':'없음')+'</span></div>'+
-        '<div class="field"><span>착용 경험·진단 입력</span><span class="v">'+(dx?'저장됨':'없음')+'</span></div>'
-      : '<div class="note">아직 저장된 진단 데이터가 없어요 · 진단을 완료하면 여기 표시돼요</div>';
-  }
-  function toggleEngineConsent(){
-    var on=!engineConsent();
-    try{ sessionStorage.setItem('fitting.consent', JSON.stringify({ engineImprove:on, ageAttested:on, at:new Date().toISOString() })); }catch(e){}   // 로컬 미러(진단 저장에 사용)
-    if(apiAccounts()){ FITAUTH.upsertProfile({ engine_improve_consent:on, age_attested:on, agreed_at:new Date().toISOString() }).then(function(){ renderPrivacy(); }); }
-    else renderPrivacy();
-    toast(on?'엔진 개선 활용에 동의했어요':'엔진 개선 활용 동의를 철회했어요');
+    var basic=ssGet('fitting.basic'), dx=ssGet('fitting.dx'), bt=safeParse(ssGet('fitting.dxtype'));
+    var btCode=(bt&&bt.code)||'';
+    d.innerHTML = '<div class="field"><span>기본 정보(성별·키·몸무게)</span><span class="v'+(basic?'':' ph')+'">'+(basic?'저장됨':'없음')+'</span></div>'+
+      '<div class="field"><span>착용 경험·진단 입력</span><span class="v'+(dx?'':' ph')+'">'+(dx?'저장됨':'없음')+'</span></div>'+
+      '<div class="field"><span>진단 결과(체형 유형)</span><span class="v'+(btCode?'':' ph')+'">'+(btCode?esc(btCode):'없음')+'</span></div>'+
+      ((basic||dx||btCode)?'':'<div class="note">진단을 완료하면 여기에 표시돼요</div>');
   }
   function downloadMyData(){
-    if(apiAccounts()){ FITAUTH.exportMyData().then(function(data){ if(!data){ toast('내려받을 데이터가 없어요'); return; } _dlJson(Object.assign({exportedAt:new Date().toISOString()}, data), 'fitting-my-data.json'); }); return; }
-    var d={ basic:safeParse(ssGet('fitting.basic')), dx:safeParse(ssGet('fitting.dx')), consent:safeParse(ssGet('fitting.consent')), exportedAt:new Date().toISOString() };
-    if(!d.basic && !d.dx){ toast('내려받을 진단 데이터가 없어요'); return; }
-    _dlJson(d, 'fitting-my-data.json');
-  }
-  function deleteMyData(){
+    var st=csvStamp(), head=[['구분','항목','값'],['내보낸 시각','',st.at]];
     if(apiAccounts()){
-      askConfirm('<b>내 계정 데이터를 삭제</b>할까요?<div class="cf-sub">프로필·진단·피드백이 모두 삭제돼요 · 되돌릴 수 없어요</div>', '삭제하기', function(){
-        FITAUTH.deleteMyData().then(function(r){ if(r&&r.ok){ renderPrivacy(); toast('데이터를 삭제했어요'); } else toast('삭제 실패 · 잠시 후 다시'); });
-      });
+      FITAUTH.exportMyData().then(function(data){
+        if(!data){ toast('내려받을 데이터가 없어요'); return; }
+        var rows=head.slice();
+        csvFlat(rows, '계정', data.profile, '');
+        (data.diagnoses||[]).forEach(function(d,i){
+          csvFlat(rows, '진단 '+(i+1)+(d.created_at?' ('+String(d.created_at).slice(0,10)+')':''), d, '');
+        });
+        (data.feedback||[]).forEach(function(f,i){ csvFlat(rows, '정확도 피드백 '+(i+1), f, ''); });
+        if(rows.length<=head.length){ toast('내려받을 데이터가 없어요'); return; }
+        _dlCsv(rows, 'fitting-my-data-'+st.file+'.csv');
+      }).catch(function(){ toast('내려받기에 실패했어요'); });
       return;
     }
-    askConfirm('<b>진단 데이터를 삭제</b>할까요?<div class="cf-sub">신체·착용경험·결과·개선 이력이 모두 삭제돼요 · 되돌릴 수 없어요</div>', '삭제하기', function(){
-      try{ ['fitting.dx','fitting.basic','fitting.consent'].forEach(function(k){ sessionStorage.removeItem(k); }); }catch(e){}
-      try{ localStorage.removeItem('fitting.feedback'); }catch(e){}
-      renderPrivacy(); toast('진단 데이터를 삭제했어요');
+    var basic=safeParse(ssGet('fitting.basic')), dx=safeParse(ssGet('fitting.dx')), bt=safeParse(ssGet('fitting.dxtype'));
+    if(!basic && !dx && !bt){ toast('내려받을 진단 데이터가 없어요'); return; }
+    /* 계정 모드는 diagnosis.result가 통째로 실린다 — 비계정도 결과(체형 유형)까지 같이 준다.
+       유형 이름(bodytypes.json)은 부가정보라, 못 읽어도 코드로 내보내고 멈추지 않는다. */
+    withBodyTypes(function(){
+      var rows=head.slice();
+      csvFlat(rows, '기본 정보', basic || (dx&&dx.basic), '');
+      if(bt && bt.code){
+        var t=_btCache && _btCache[bt.code];
+        csvFlat(rows, '진단 결과', { '체형 유형': bt.code+(t&&t.name?' · '+t.name:''), '성별 기준': bt.gender }, '');
+      }
+      if(dx){
+        csvFlat(rows, '선호 핏', dx.prefs, '');
+        (dx.experiences||[]).forEach(function(e,i){
+          csvFlat(rows, '착용 경험 '+(i+1)+(e.brandName?' · '+e.brandName:''), e, '');
+        });
+      }
+      _dlCsv(rows, 'fitting-my-data-'+st.file+'.csv');
     });
   }
 
   var _btCache=null;
+  /* 8유형 표(bodytypes.json)를 채운 뒤 cb — 못 읽어도 cb는 부른다(이름은 부가정보).
+     표 만들기와 cb를 다른 단계로 나눈다: 한 .then 안에서 부르면 cb가 던졌을 때
+     뒤의 .catch가 cb를 한 번 더 불러 다운로드가 두 번 일어난다. */
+  function withBodyTypes(cb){
+    if(_btCache) return cb();
+    fetch('data/bodytypes.json').then(function(r){return r.json();})
+      .then(function(j){ _btCache={}; j.types.forEach(function(x){ _btCache[x.code]=x; }); })
+      .catch(function(){})
+      .then(function(){ cb(); });
+  }
   function avatarFaceHTML(){ return '<div class="head '+USER.gender+'">'+(USER.gender==='female'?'<span class="longhair"></span>':'')+'<span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div>'; }
   function renderMyAvatar(){
     var nm=document.querySelector('.navname'); if(nm) nm.textContent=USER.name+' 님';   // 헤더 이름 = 프로필 이름과 동기화
@@ -508,10 +637,13 @@
         '<div class="msub"><div class="subhead">신체 · 선호 정보</div>'+
           '<div class="field"><span>이름</span><span class="v">'+esc(U.name)+'</span></div>'+
           (apiAccounts()?'<div class="field"><span>이메일</span><span class="v">'+esc(_acctEmail||'미등록')+'</span></div>':'')+
-          '<div class="field"><span>성별 · 나이</span><span class="v">'+(U.gender==='female'?'여성':'남성')+' · <span class="num">'+U.age+'</span>세</span></div>'+
-          '<div class="field"><span>키 · 몸무게</span><span class="v"><span class="num">'+U.height+'</span>cm · <span class="num">'+U.weight+'</span>kg</span></div>'+
-          '<div class="field"><span>상의 핏 취향</span><span class="v">'+U.fitTop+'</span></div>'+
-          '<div class="field"><span>하의 핏 취향</span><span class="v">'+U.fitBottom+'</span></div>'+
+          // 값이 없으면 '미입력' — 없는 값을 목업으로 메우면 남의 정보처럼 보인다
+          '<div class="field"><span>성별 · 연령대</span><span class="v">'+(U.gender?(U.gender==='female'?'여성':'남성'):'미입력')+' · '+esc(U.age||'미입력')+'</span></div>'+
+          '<div class="field"><span>키 · 몸무게</span><span class="v">'+
+            (U.height?('<span class="num">'+U.height+'</span>cm'):'미입력')+' · '+
+            (U.weight?('<span class="num">'+U.weight+'</span>kg'):'미입력')+'</span></div>'+
+          '<div class="field"><span>상의 핏 취향</span><span class="v">'+esc(U.fitTop||'미입력')+'</span></div>'+
+          '<div class="field"><span>하의 핏 취향</span><span class="v">'+esc(U.fitBottom||'미입력')+'</span></div>'+
           '<div class="note">🔒 민감정보 · 편집 시 재진단을 추천해요</div></div>'+
         '</div><div class="prof-actions"><button class="btn" onclick="editProfile()">프로필 수정하기</button></div>';
     } else {
@@ -521,7 +653,12 @@
           '<div class="pedit"><label>이름</label><input class="inp" id="pName" value="'+esc(U.name)+'"></div>'+
           (apiAccounts()?'<div class="pedit"><label>이메일'+(_acctEmail?'':' <b style="color:var(--warn)">(필수)</b>')+'</label><input class="inp" id="pEmail" type="email" value="'+esc(_acctEmail)+'" placeholder="you@example.com"></div>':'')+
           '<div class="pedit"><label>성별</label><div class="seg" id="pGender">'+['male','female'].map(function(g){return '<span class="o'+(U.gender===g?' on':'')+'" data-g="'+g+'" onclick="pPick(this)">'+(g==='male'?'남성':'여성')+'</span>';}).join('')+'</div></div>'+
-          '<div class="pedit inrow3"><div><label>나이</label><input class="inp" id="pAge" type="number" value="'+U.age+'"></div><div><label>키(cm)</label><input class="inp" id="pHeight" type="number" value="'+U.height+'"></div><div><label>몸무게(kg)</label><input class="inp" id="pWeight" type="number" value="'+U.weight+'"></div></div>'+
+          // 나이는 진단에서 연령대로만 받는다 → 여기서도 같은 선택지로(숫자 입력이면 진단 입력과 형식이 어긋난다)
+          '<div class="pedit inrow3"><div><label>연령대</label><select class="inp" id="pAge">'+
+            (U.age?'':'<option value="" selected>선택</option>')+   // 미입력이면 아무거나 고른 척하지 않는다
+            AGE_BANDS.map(function(a){ return '<option value="'+a+'"'+(U.age===a?' selected':'')+'>'+a+'</option>'; }).join('')+
+          '</select></div><div><label>키(cm)</label><input class="inp" id="pHeight" type="number" value="'+(U.height||'')+'" placeholder="예: 172"></div>'+
+          '<div><label>몸무게(kg)</label><input class="inp" id="pWeight" type="number" value="'+(U.weight||'')+'" placeholder="예: 68"></div></div>'+
           '<div class="pedit"><label>상의 핏 취향</label><div class="seg" id="pFitTop">'+FIT_OPTS.map(function(f){return '<span class="o'+(U.fitTop===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div>'+
           '<div class="pedit"><label>하의 핏 취향</label><div class="seg" id="pFitBottom">'+FIT_OPTS_BOTTOM.map(function(f){return '<span class="o'+(U.fitBottom===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div>'+
           '<div class="note" style="color:var(--warn)">⚠️ 신체정보를 바꾸면 재진단을 추천해요</div></div>'+
@@ -535,7 +672,8 @@
     var nm=document.getElementById('pName'); if(nm&&nm.value.trim()) USER.name=nm.value.trim();
     var g=document.querySelector('#pGender .o.on'); if(g) USER.gender=g.dataset.g;
     var a=document.getElementById('pAge'), h=document.getElementById('pHeight'), w=document.getElementById('pWeight');
-    if(a&&a.value) USER.age=+a.value; if(h&&h.value) USER.height=+h.value; if(w&&w.value) USER.weight=+w.value;
+    if(a&&a.value) USER.age=a.value;   // 연령대 문자열 그대로
+    if(h&&h.value) USER.height=+h.value; if(w&&w.value) USER.weight=+w.value;
     var ft=document.querySelector('#pFitTop .o.on'); if(ft) USER.fitTop=ft.dataset.fit;
     var fb=document.querySelector('#pFitBottom .o.on'); if(fb) USER.fitBottom=fb.dataset.fit;
     if(apiAccounts()){   // 계정 모드: 신체정보·이름·이메일을 서버 profile에 저장

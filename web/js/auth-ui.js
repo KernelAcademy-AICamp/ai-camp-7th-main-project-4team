@@ -44,7 +44,13 @@
         '<p class="authui-msg" role="status" aria-live="polite">' + HINT + '</p>' +
         '<button type="button" class="authui-btn email" data-act="send">로그인 링크 보내기</button>' +
         '<button type="button" class="authui-back" data-act="back">다른 방법으로 로그인</button>' +
-      '</div>';
+      '</div>' +
+      /* 동의 고지 — 여기선 '무엇에 동의하는지'와 그 문서로 가는 길만 준다.
+         탈퇴·보관 처리 같은 세부는 문서(처리방침 §3·약관 제4조의2)와 실제 탈퇴 확인 시점에 있다.
+         가입하려는 순간에 탈퇴 이야기를 먼저 꺼내면 필요 없는 경계심만 만든다. */
+      /* 연령 확인은 여기(개인정보를 실제로 수집하기 시작하는 시점) — 비로그인 진단은 수집이 없어 물을 이유가 없다.
+         별도 체크박스로 마찰을 만들지 않고 동의 고지 한 줄에 얹는다. */
+      (live() ? '<p class="authui-notice">가입하면 <b>만 14세 이상</b>이며 <a href="terms.html">이용약관</a>·<a href="privacy.html">개인정보 처리방침</a>에 동의하는 것으로 봐요</p>' : '');
 
     var pick = el.querySelector('[data-step="pick"]'),
         mail = el.querySelector('[data-step="email"]'),
@@ -58,7 +64,13 @@
       say(HINT, ''); send.disabled = false; send.textContent = '로그인 링크 보내기';
       if (toEmail) setTimeout(function () { input.focus(); }, 60);
     }
-    function leaving() { try { if (opts.onBeforeRedirect) opts.onBeforeRedirect(); } catch (e) {} }
+    /* 이 페이지를 떠나 provider로 가기 직전. '사용자가 방금 로그인을 시작했다'를 남긴다.
+       복귀 후 SIGNED_IN이 뜨는데, 그 이벤트는 **페이지를 새로 열 때 세션이 복원돼도** 발생한다.
+       마커 없이 환영 처리를 하면 홈에 들를 때마다 토스트·프로필 upsert·claim이 다시 돈다. */
+    function leaving() {
+      try { sessionStorage.setItem('fitting.loginPending', '1'); } catch (e) {}
+      try { if (opts.onBeforeRedirect) opts.onBeforeRedirect(); } catch (e) {}
+    }
 
     el.addEventListener('click', function (ev) {
       var b = ev.target.closest ? ev.target.closest('button') : null;

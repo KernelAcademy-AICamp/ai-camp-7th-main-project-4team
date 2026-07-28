@@ -48,7 +48,7 @@
     feedbackJoin: async function (limit) {
       try {
         var r = await client.from('feedback')
-          .select('id,created_at,verdict,actual_size,aware_brand,engine_improve_consent,diagnosis(category,input,result,engine_version)')
+          .select('id,created_at,verdict,actual_size,aware_brand,diagnosis(category,input,result,engine_version)')
           .order('created_at', { ascending: false }).limit(limit || 500);
         return r.data || [];
       } catch (e) { return []; }
@@ -217,7 +217,7 @@
     diagnosesJoin: async function (limit) {
       try {
         var r = await client.from('diagnosis')
-          .select('id,created_at,session_id,category,input,result,engine_version,feedback(verdict,engine_improve_consent,created_at)')
+          .select('id,created_at,session_id,category,input,result,engine_version,feedback(verdict,created_at)')
           .order('created_at', { ascending: false }).limit(limit || 500);
         return r.data || [];
       } catch (e) { return []; }
