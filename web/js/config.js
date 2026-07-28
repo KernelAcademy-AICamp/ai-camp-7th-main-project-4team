@@ -39,4 +39,32 @@
   if (!forced && location.port === '3000') forced = 'api';
   w.FITTING_MODE = forced || 'proto';   // ← gen-app이 'proto'→'api' 치환(프로덕션은 항상 api)
   try { console.log('[fitting] mode:', w.FITTING_MODE); } catch (e) {}
+
+  /* proto 표시 배지 — 화면만 봐서는 지금이 어느 모드인지 알 수 없다.
+     모드는 sessionStorage에 탭 단위로 고정되므로, 배포본에서 ?mode=proto로 한 번 들어오면
+     그 탭은 계속 proto다. 그 상태로 진단을 돌리면 실측표(garments.json)가 배포에 없어
+     추천이 비는데, 원인이 화면에 드러나지 않는다 — 시연 중이면 특히 곤란하다.
+     되돌아갈 링크까지 함께 둔다(기본 주소로는 안 풀린다 — 저장값이 이기기 때문). */
+  if (w.FITTING_MODE === 'proto' && location.pathname.indexOf('/admin') < 0) {
+    var mk = function () {
+      if (document.getElementById('protoBadge')) return;
+      var d = document.createElement('div');
+      d.id = 'protoBadge';
+      d.setAttribute('role', 'status');
+      d.style.cssText = 'position:fixed;left:14px;bottom:14px;z-index:9999;display:flex;align-items:center;gap:9px;' +
+        'padding:7px 12px;border-radius:10px;background:#fff;border:1px solid #DAD8D2;' +
+        'box-shadow:0 4px 14px rgba(20,18,16,.10);font-size:12.5px;font-weight:700;color:#6B6862;' +
+        'font-family:inherit;line-height:1.2;';
+      var t = document.createElement('span');
+      t.textContent = '프로토타입 모드 · 목업 데이터';
+      var a = document.createElement('a');
+      a.textContent = '실서비스 →';
+      a.href = location.pathname + '?mode=api' + (location.hash || '');
+      a.style.cssText = 'color:#2E4A3B;font-weight:800;text-decoration:none;white-space:nowrap;';
+      d.appendChild(t); d.appendChild(a);
+      document.body.appendChild(d);
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mk);
+    else mk();
+  }
 })(window);
