@@ -452,42 +452,116 @@
   }
   function ssGet(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } }
   function safeParse(s){ try{ return s?JSON.parse(s):null; }catch(e){ return s; } }
-  /* 엔진개선 동의 = 진단 결과화면(result.js)과 동일 키·포맷(sessionStorage fitting.consent) */
-  function _dlJson(obj, name){
+  /* ── 내 데이터 내려받기(CSV) ────────────────────────────────────────
+     받는 사람이 엑셀에서 바로 열어보는 게 목적이라 JSON 대신 CSV.
+     형식은 '구분 · 항목 · 값' 긴 형식 — 진단마다 착용 경험 개수가 달라서
+     한 진단을 한 줄에 담는 넓은 형식은 열 수가 들쭉날쭉해진다.
+     키·코드값은 화면에서 쓰는 한글 라벨로 바꾼다(모르는 키는 원문 그대로 — 누락보다 낫다). */
+  var CSV_LAB={ gender:'성별', age:'연령대', height:'키(cm)', weight:'몸무게(kg)',
+    basic:'기본 정보', prefs:'선호 핏', experiences:'착용 경험', input:'입력', result:'결과',
+    category:'구분', brandName:'브랜드', brandId:'브랜드 코드', fitLine:'핏', item:'옷 종류',
+    sizeLabel:'사이즈', subtype:'세부 종류', silhouette:'실루엣', waistband:'허리 밴딩',
+    fits:'착용감', painFlags:'불편한 곳', lengthPrefs:'기장 느낌', openNote:'자유 의견',
+    shoulder:'어깨', chest:'가슴', belly:'배', waist:'허리', hip:'엉덩이', thigh:'허벅지',
+    rise:'밑위', length:'기장', sleeve:'소매 기장', upperArm:'팔(소매통)', neck:'목',
+    armhole:'암홀', calf:'종아리', hem:'밑단', ratio:'상하 비율',
+    created_at:'일시', display_name:'이름', email:'이메일', session_id:'세션 코드',
+    TOP:'상의', BOTTOM:'하의' };
+  var CSV_VAL={ male:'남성', female:'여성', TOP:'상의', BOTTOM:'하의',
+    none:'밴딩 없음', banded:'밴딩 있음',
+    TIGHT:'끼임', SNUG:'딱맞음', RELAXED:'여유', BIG:'큼', OK:'괜찮음',
+    SHORT:'짧음', GOOD:'딱 좋음', LONG:'긺',
+    skinny:'스키니', slim:'슬림', regular:'레귤러', loose:'루즈', oversize:'오버',
+    straight:'스트레이트', tapered:'테이퍼드', wide:'와이드', bootcut:'부츠컷' };
+  function csvFlat(rows, section, obj, path){
+    if(obj===null || obj===undefined || obj==='') return;
+    if(Array.isArray(obj)){ obj.forEach(function(v,i){ csvFlat(rows, section, v, path ? path+' '+(i+1) : String(i+1)); }); return; }
+    if(typeof obj==='object'){ Object.keys(obj).forEach(function(k){
+      csvFlat(rows, section, obj[k], (path?path+' · ':'')+(CSV_LAB[k]||k)); }); return; }
+    if(typeof obj==='boolean') obj = obj?'예':'아니오';
+    rows.push([section, path, CSV_VAL[obj] || String(obj)]);
+  }
+  function csvEsc(s){ s=String(s==null?'':s); return /[",\r\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; }
+  function _dlCsv(rows, name){
     try{
-      var blob=new Blob([JSON.stringify(obj,null,2)], {type:'application/json'});
-      var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name||'fitting-my-data.json';
+      var body=rows.map(function(r){ return r.map(csvEsc).join(','); }).join('\r\n');
+      /* BOM: 없으면 윈도우 엑셀에서 한글이 깨진다 */
+      var blob=new Blob(['\uFEFF'+body], {type:'text/csv;charset=utf-8;'});
+      var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name||'fitting-my-data.csv';
       document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
       toast('내 데이터를 내려받았어요');
     }catch(e){ toast('내려받기에 실패했어요'); }
   }
+  function csvStamp(){
+    var d=new Date(), p=function(n){ return (n<10?'0':'')+n; };
+    return { file:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()),
+             at:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes()) };
+  }
   function renderPrivacy(){
     var d=document.getElementById('privData'); if(!d) return;
+    /* 빈 상태도 행 구조는 유지한다 — 회색 문장 하나만 뜨면 카드 안에서 붕 뜬다. */
     if(apiAccounts()){   // 계정 모드 — 서버(profile·diagnosis)에서 상태 조회
       FITAUTH.getProfile().then(function(p){
         FITAUTH.myDiagnoses(100).then(function(list){
-          d.innerHTML = (p||list.length)
-            ? '<div class="field"><span>계정</span><span class="v">'+esc((p&&(p.email||p.display_name))||'로그인됨')+'</span></div>'+
-              '<div class="field"><span>저장된 진단</span><span class="v">'+list.length+'건</span></div>'
-            : '<div class="note">아직 저장된 진단이 없어요 · 진단을 완료하면 계정에 저장돼요</div>';
+          d.innerHTML = '<div class="field"><span>계정</span><span class="v">'+esc((p&&(p.email||p.display_name))||'로그인됨')+'</span></div>'+
+            '<div class="field"><span>저장된 진단</span><span class="v'+(list.length?'':' ph')+'">'+list.length+'건</span></div>'+
+            (list.length?'':'<div class="note">진단을 완료하면 계정에 저장돼요</div>');
         });
       });
       return;
     }
-    var basic=ssGet('fitting.basic'), dx=ssGet('fitting.dx');
-    d.innerHTML = (basic||dx)
-      ? '<div class="field"><span>기본 정보(성별·키·몸무게)</span><span class="v">'+(basic?'저장됨':'없음')+'</span></div>'+
-        '<div class="field"><span>착용 경험·진단 입력</span><span class="v">'+(dx?'저장됨':'없음')+'</span></div>'
-      : '<div class="note">아직 저장된 진단 데이터가 없어요 · 진단을 완료하면 여기 표시돼요</div>';
+    var basic=ssGet('fitting.basic'), dx=ssGet('fitting.dx'), bt=safeParse(ssGet('fitting.dxtype'));
+    var btCode=(bt&&bt.code)||'';
+    d.innerHTML = '<div class="field"><span>기본 정보(성별·키·몸무게)</span><span class="v'+(basic?'':' ph')+'">'+(basic?'저장됨':'없음')+'</span></div>'+
+      '<div class="field"><span>착용 경험·진단 입력</span><span class="v'+(dx?'':' ph')+'">'+(dx?'저장됨':'없음')+'</span></div>'+
+      '<div class="field"><span>진단 결과(체형 유형)</span><span class="v'+(btCode?'':' ph')+'">'+(btCode?esc(btCode):'없음')+'</span></div>'+
+      ((basic||dx||btCode)?'':'<div class="note">진단을 완료하면 여기에 표시돼요</div>');
   }
   function downloadMyData(){
-    if(apiAccounts()){ FITAUTH.exportMyData().then(function(data){ if(!data){ toast('내려받을 데이터가 없어요'); return; } _dlJson(Object.assign({exportedAt:new Date().toISOString()}, data), 'fitting-my-data.json'); }); return; }
-    var d={ basic:safeParse(ssGet('fitting.basic')), dx:safeParse(ssGet('fitting.dx')), consent:safeParse(ssGet('fitting.consent')), exportedAt:new Date().toISOString() };
-    if(!d.basic && !d.dx){ toast('내려받을 진단 데이터가 없어요'); return; }
-    _dlJson(d, 'fitting-my-data.json');
+    var st=csvStamp(), head=[['구분','항목','값'],['내보낸 시각','',st.at]];
+    if(apiAccounts()){
+      FITAUTH.exportMyData().then(function(data){
+        if(!data){ toast('내려받을 데이터가 없어요'); return; }
+        var rows=head.slice();
+        csvFlat(rows, '계정', data.profile, '');
+        (data.diagnoses||[]).forEach(function(d,i){
+          csvFlat(rows, '진단 '+(i+1)+(d.created_at?' ('+String(d.created_at).slice(0,10)+')':''), d, '');
+        });
+        (data.feedback||[]).forEach(function(f,i){ csvFlat(rows, '정확도 피드백 '+(i+1), f, ''); });
+        if(rows.length<=head.length){ toast('내려받을 데이터가 없어요'); return; }
+        _dlCsv(rows, 'fitting-my-data-'+st.file+'.csv');
+      });
+      return;
+    }
+    var basic=safeParse(ssGet('fitting.basic')), dx=safeParse(ssGet('fitting.dx')), bt=safeParse(ssGet('fitting.dxtype'));
+    if(!basic && !dx && !bt){ toast('내려받을 진단 데이터가 없어요'); return; }
+    /* 계정 모드는 diagnosis.result가 통째로 실린다 — 비계정도 결과(체형 유형)까지 같이 준다.
+       유형 이름(bodytypes.json)은 부가정보라, 못 읽어도 코드로 내보내고 멈추지 않는다. */
+    withBodyTypes(function(){
+      var rows=head.slice();
+      csvFlat(rows, '기본 정보', basic || (dx&&dx.basic), '');
+      if(bt && bt.code){
+        var t=_btCache && _btCache[bt.code];
+        csvFlat(rows, '진단 결과', { '체형 유형': bt.code+(t&&t.name?' · '+t.name:''), '성별 기준': bt.gender }, '');
+      }
+      if(dx){
+        csvFlat(rows, '선호 핏', dx.prefs, '');
+        (dx.experiences||[]).forEach(function(e,i){
+          csvFlat(rows, '착용 경험 '+(i+1)+(e.brandName?' · '+e.brandName:''), e, '');
+        });
+      }
+      _dlCsv(rows, 'fitting-my-data-'+st.file+'.csv');
+    });
   }
 
   var _btCache=null;
+  /* 8유형 표(bodytypes.json)를 채운 뒤 cb — 못 읽어도 cb는 부른다(이름은 부가정보). */
+  function withBodyTypes(cb){
+    if(_btCache) return cb();
+    fetch('data/bodytypes.json').then(function(r){return r.json();})
+      .then(function(j){ _btCache={}; j.types.forEach(function(x){ _btCache[x.code]=x; }); cb(); })
+      .catch(function(){ cb(); });
+  }
   function avatarFaceHTML(){ return '<div class="head '+USER.gender+'">'+(USER.gender==='female'?'<span class="longhair"></span>':'')+'<span class="face"></span><span class="cap"></span><span class="ey l"></span><span class="ey r"></span></div>'; }
   function renderMyAvatar(){
     var nm=document.querySelector('.navname'); if(nm) nm.textContent=USER.name+' 님';   // 헤더 이름 = 프로필 이름과 동기화

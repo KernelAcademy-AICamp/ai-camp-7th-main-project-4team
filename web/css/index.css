@@ -810,6 +810,20 @@
   #my .sup-submit .note{margin-top:0; flex:1; min-width:200px;} #my .sup-submit .btn{flex:none;}
   /* 문의내역·거래문제 섹션 구분 강화 */
   #mp-support .msub{padding:22px 0;}
+  /* 개인정보·데이터 — 액션 행(설명 좌 / 버튼 우).
+     되돌릴 수 없는 액션일수록 색면을 키우지 않는다 — 테두리·글자색으로만 구분. */
+  #my .actrow{display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap;}
+  #my .actx{flex:1; min-width:200px;}
+  #my .actx b{display:block; font-size:15.5px; font-weight:800; margin-bottom:4px;}
+  #my .actx span{display:block; font-size:13.5px; color:var(--sub); line-height:1.55;}
+  #my .actrow .tinybtn{flex:none; padding:11px 18px; font-size:14px;}
+  #my .tinybtn.quit{background:#fff; color:var(--warn); border:1.5px solid var(--warn);}
+  #my .tinybtn.quit:hover{background:var(--warn-soft);}
+  /* 카드 밖 보조 고지 — 카드 안 '안내' 서브섹션이 본문과 동급으로 보이던 것을 낮춤 */
+  #my .undernote{font-size:13px; color:var(--sub2); line-height:1.6; padding:0 4px; margin:-4px 0 8px;}
+  #my .undernote b{color:var(--sub); font-weight:800;}
+  #my .undernote a{color:var(--sub); font-weight:700; text-decoration:underline; text-underline-offset:2px;}
+  #my .undernote a:hover{color:var(--green);}
   /* 회원 탈퇴 — 눈에 띄지 않는 작은 텍스트(누르면 진행) */
   #my .quitrow{text-align:right; margin-top:10px;}
   #my .quitrow .quitlink{display:inline; padding:0; border:none; font-size:12.5px; font-weight:500; color:var(--sub2); text-decoration:underline; text-underline-offset:2px; cursor:pointer;}
@@ -1452,8 +1466,11 @@
     #my .field > span:first-child{ flex:1 1 auto; min-width:0; }
     #my .field .toggle, #my .field .switch{ flex:none; }
 
-    /* ── 개인정보 — 위험 액션(탈퇴·삭제)은 시각적으로 분리 ── */
+    /* ── 고객센터 — 위험 액션(거래 문제 신고)은 시각적으로 분리 ── */
     #my .links a.danger{ margin-top:10px; }
+    /* ── 개인정보 액션 행 — 좁은 폭에선 설명이 한 줄을 다 쓰고 버튼은 아랫줄 우측 ── */
+    #my .actx{ min-width:0; flex-basis:100%; }
+    #my .actrow .tinybtn{ margin-left:auto; }
 
     /* ══ 홈(#home) 모바일 ══
        원인: @media(820px)가 .steps를 1fr 1fr(2단)로 두는데 390px에선 칸이 ~100px밖에 안 남아
