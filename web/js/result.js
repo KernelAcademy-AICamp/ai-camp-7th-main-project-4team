@@ -226,37 +226,10 @@
       var pct=(r.fitScore!=null)?r.fitScore:0;
       var scoreTxt=(r.fitScore!=null)?r.fit+' '+r.fitScore+'%':r.fit;
       var loCls=(r.warn||(r.fitScore!=null&&r.fitScore<70))?' lo':'';
-      // 신뢰 근거 ② — 이 사이즈가 왜 나왔는지 한 줄(attachBasis가 r.basis 세팅, 실계산 추천에만)
-      var basis=r.basis?('<div class="s2basis"><span class="s2basis-ic">↳</span> '+r.basis+'</div>'):'';
-      return '<div class="s2item"><div class="s2row'+loCls+'"><div class="s2fill" style="width:'+pct+'%"></div>'+
+      return '<div class="s2row'+loCls+'"><div class="s2fill" style="width:'+pct+'%"></div>'+
         '<div class="s2in"><div class="b">'+r.brandName+'<small>'+note+'</small></div>'+
-        '<div class="r"><span class="sz">'+r.size+'</span><span class="p">'+scoreTxt+'</span></div></div></div>'+basis+'</div>';
+        '<div class="r"><span class="sz">'+r.size+'</span><span class="p">'+scoreTxt+'</span></div></div></div>';
     }).join('')+'</div>';
-  }
-  // 신뢰 근거 ② — 추천마다 '왜 이 사이즈인지' 근거 한 줄을 r.basis에 부착.
-  //  · 역산 치수(cm)는 그 부위가 착용경험으로 실제 역산됐을 때(ebKeys)만 표기 — 회귀 추정치는 '역산'이라 말하지 않음(지어내기 방지).
-  //  · 착용경험 없음(0벌)이면 '추정 기준'으로 정직하게. cat=이 추천 리스트의 카테고리('TOP'|'BOTTOM').
-  function attachBasis(recs, cat, cm, ebKeys){
-    if(!recs||!recs.length) return;
-    var BN2KEY={'어깨':'shoulder','가슴':'chestFull','허리':'waist','엉덩이':'hip','허벅지':'thigh'};
-    var BN2FIT={'어깨':'shoulder','가슴':'chest','허리':'waist','엉덩이':'hip','허벅지':'thigh'};
-    var FITKO={TIGHT:'끼임',SNUG:'딱맞음',RELAXED:'여유',BIG:'큼'};
-    var e0=(payload.experiences||[]).filter(function(e){ return e.category===cat; })[0];
-    // 착용 사이즈에서 상품코드 괄호는 뺌(예: 'S(620)'→'S') — 근거 한 줄 가독성.
-    var szl=e0?String(e0.sizeLabel||'').replace(/\s*\(.*?\)\s*$/,'').trim():'';
-    var worn=e0?((e0.brandName||'')+(szl?(' '+szl):'')):'';
-    var TO=' <span class="s2to">→</span> ';
-    recs.forEach(function(r){
-      var bnKey=BN2KEY[r.bottleneck]||null;
-      var cmv=(bnKey && ebKeys && ebKeys[bnKey] && cm[bnKey]!=null)?Math.round(cm[bnKey]):null;
-      var fk=BN2FIT[r.bottleneck]||null;
-      var feel=(e0 && e0.fits && fk && FITKO[e0.fits[fk]])?(r.bottleneck+' '+FITKO[e0.fits[fk]]):'';
-      var wornTxt=worn?('<b>'+worn+'</b>'+(feel?(' '+feel):'')):'';
-      // C안(간결 화살표): 입력 옷 → (역산 치수) → 결론. 역산 치수는 그 부위가 착용경험으로 실제 역산된 경우만.
-      if(wornTxt && cmv!=null) r.basis=wornTxt+TO+r.bottleneck+' <b>'+cmv+'</b>'+TO+'<b>'+r.size+'</b>';
-      else if(wornTxt)        r.basis=wornTxt+TO+'<b>'+r.size+'</b>';
-      else                    r.basis='키·몸무게 추정'+TO+'<b>'+r.size+'</b>';
-    });
   }
   // 단일 카테고리 추천(부분 완료)
   function renderRecs(recs, real){
@@ -439,9 +412,6 @@
         body+
         '<div class="dtl-note">'+measNote+'</div>';
 
-      // 신뢰 근거 ② — 각 추천에 '왜 이 사이즈' 근거 한 줄 부착(실계산 TOP/BOTTOM에만, 역산 치수는 ebKeys 부위만)
-      attachBasis(D.topRecs, 'TOP', cm, ebKeys);
-      attachBasis(D.botRecs, 'BOTTOM', cm, ebKeys);
       // 추천 — proto/api가 계산한 topRecs/botRecs(D)를 렌더. specs 없으면 정직한 안내.
       if(fullBody && (isTop||curCat==='BOTTOM')){
         if(D.specsMissing) renderRecsError();
@@ -855,5 +825,5 @@
       var t=document.getElementById('rfbToast'); if(!t) return; fill(); t.hidden=false;
       requestAnimationFrame(function(){ t.classList.add('on'); });
     }
-    window.addEventListener('load', function(){ setTimeout(fire, 6000); });   // 결과 안착 후 6초 뒤
+    window.addEventListener('load', function(){ setTimeout(fire, 15000); });   // 결과 안착 후 15초 뒤
   })();
