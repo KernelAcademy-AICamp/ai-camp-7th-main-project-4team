@@ -53,6 +53,11 @@ grant execute on function withdraw_account() to authenticated;
 --
 -- ⚠ 버튼만 없애면 정책이 강제되지 않는다 — RPC는 토큰만 있으면 클라이언트가 직접 호출할 수
 --   있다. 실행 권한 자체를 회수해야 코드가 정책과 일치한다.
+-- ⚠⚠ authenticated에서만 회수하면 소용없다 — PostgreSQL은 함수를 만들 때 EXECUTE를 **PUBLIC에
+--   기본 부여**하므로 그 경로가 그대로 남는다. (anon 키로 호출해 204가 떨어지는 것으로 확인했다.)
+--   PUBLIC까지 회수해야 실제로 막힌다.
+revoke execute on function delete_my_data() from public;
+revoke execute on function delete_my_data() from anon;
 revoke execute on function delete_my_data() from authenticated;
 -- ※ 함수는 남겨둔다(운영자가 service_role로 개별 대응할 여지 — 법령상 삭제 의무 등).
 -- =============================================================================
