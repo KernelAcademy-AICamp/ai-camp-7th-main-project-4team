@@ -308,8 +308,19 @@
   // 반환 {eb, topRecs, botRecs, specsMissing, id}. 체형추정·8유형분류·렌더는 호출부(클라)가 공통 처리.
   function diagnoseSpecs(est, cm, prefsObj){
     if(FDATA.mode==='api'){
+      /* 저장은 '진단 실행' 단위 — 렌더 단위가 아니다(db/13).
+         dxRun은 diag-loading.js가 진단마다 1회 발급하고, 모든 진단 경로가 그 화면을 지난다.
+         그래서 dxRun이 없다 = 이번엔 진단을 실행한 게 아니라 예전 결과를 보고 있다는 뜻이다
+         (마이 embed·계정 하이드레이션·새로고침). 그때 저장하면 '볼 때마다 진단 1건'이 된다.
+         값을 실어 보내면 서버가 같은 실행을 알아보고 기존 행을 돌려준다(멱등). */
+      var runId=''; try{ runId=sessionStorage.getItem('fitting.dxRun')||''; }catch(e){}
+      /* 조회는 저장하지 않는다: 마이 embed(정의상 보기 전용) · dxRun 없음(옛 결과를 되불러온 것).
+         view_only는 새로 추가한 필드라, 구 클라(캐시)가 안 보내면 서버는 종전대로 저장한다 —
+         조용히 기록이 끊기는 회귀를 만들지 않으려고 기본값을 '저장'으로 뒀다. */
+      var viewOnly = /[?&]embed/.test(location.search) || !runId;
       return FDATA.diagnose({ session_id:FDATA.sessionId(), category:curCat, sex:est.sex, cm:cm,
         prefs:prefsObj, experiences:payload.experiences, basic:payload.basic, input:payload,
+        run_id:runId||undefined, view_only:viewOnly,
         confidenceTier:confidenceTier, engine_version:'server-1' })
         .then(function(resp){ resp=resp||{}; return { eb:resp.eb||{}, topRecs:resp.topRecs||[], botRecs:resp.botRecs||[], specsMissing:false, id:resp.id }; });
     }
@@ -775,6 +786,34 @@
     window.addEventListener('load', function(){ postH(); setTimeout(postH,300); setTimeout(postH,1200); });
     window.addEventListener('resize', postH);
     if(window.ResizeObserver){ try{ new ResizeObserver(postH).observe(document.body); }catch(e){} }
+  })();
+
+  /* ═══ 진단 이력(탭3 · 마이 embed) — 계정의 실제 진단으로 채운다 ═══
+     전엔 '2026.06 · 1건'이 마크업에 박혀 있었다(시안 예시값). 로그인 사용자에게만 보이는
+     자리라 '내 이력'으로 읽히는데, 실제 이력과 무관한 숫자를 말하고 있었다.
+     채우지 못하면(비계정·이력 없음·조회 실패) 박스를 계속 숨긴다 — 빈 값보다 미노출이 정직하다.
+     ※ 같은 입력은 한 건으로 접어 센다: 지금은 저장이 '진단 실행'이 아니라 '결과 렌더'에 묶여 있어
+       같은 진단을 다시 열 때마다 행이 늘어난다. 그 중복까지 세면 사용자가 한 적 없는 횟수가 나온다.
+       저장 경계가 잡히면 접을 게 없어지므로 이 처리는 그대로 둬도 무해하다. */
+  (function(){
+    if(!/[?&]embed/.test(location.search)) return;
+    var box=document.getElementById('rhist'), val=document.getElementById('rhistVal');
+    if(!box || !val || !accountsOn() || !FITAUTH.myDiagnoses) return;
+    FITAUTH.myDiagnoses(100).then(function(list){
+      list=list||[]; if(!list.length) return;
+      var seen={}, n=0, latest='';
+      list.forEach(function(d){
+        var i=d.input||{};
+        var k=JSON.stringify([d.category, i.basic, (i.experiences||[]).length, i.prefs]);
+        if(seen[k]) return;
+        seen[k]=1; n++;
+        if(String(d.created_at||'') > latest) latest=String(d.created_at||'');
+      });
+      if(!n) return;
+      var ym=latest.slice(0,7).replace('-','.');
+      val.textContent=(ym?ym+' · ':'')+n+'건';
+      box.hidden=false;
+    }).catch(function(){});
   })();
 
   /* ═══ 진단 결과 피드백 — 토스트(rfbToast) + 정확도 검증 바(#rfb) 연동. 마이 embed에선 미노출 ═══ */

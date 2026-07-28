@@ -461,6 +461,9 @@
   /* 진단 이력 박스 — 마이(embed)에서만 '이렇게 계산했어요' 아래에 노출 */
   #p3 .rhist{ display:none; }
   html.embed #p3 .rhist{ display:block; }
+  /* 실이력을 못 채웠을 때는 embed에서도 숨긴다(result.js가 hidden 해제) —
+     display:block이 hidden 속성을 이겨서, 이 규칙이 없으면 빈 값이 그대로 보인다. */
+  #p3 .rhist[hidden]{ display:none; }
   /* 제목 크기는 아래 판정하기 바의 '사려는 옷이 따로 있나요?'(.rjudge-tx b)와 동일 */
   #p3 .rhist .k{ font-size:14.5px; font-weight:800; letter-spacing:-.02em; color:var(--ink); }
   #p3 .rhist-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px;

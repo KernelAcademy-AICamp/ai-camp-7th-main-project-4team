@@ -120,13 +120,44 @@ module.exports = async function handler(req, res) {
   botRecs = decorateRecs(botRecs, ord);
 
   // 진단 저장 — 입력 원본 + 결과(카드·신뢰도·추천). 추천은 브랜드×사이즈만(실측표 원본 아님).
+  var sid = b.session_id || ('anon-' + Date.now().toString(36));
+  var cat = b.category || 'TOP';
+  var runId = (typeof b.run_id === 'string' && b.run_id) ? b.run_id : null;
   var row = {
-    session_id: b.session_id || ('anon-' + Date.now().toString(36)),
-    category: b.category || 'TOP',
+    session_id: sid,
+    category: cat,
+    run_id: runId,
     input: b.input != null ? b.input : { basic: b.basic, prefs: prefs, experiences: exps },
     result: { card: b.card || card || null, confidenceTier: confidenceTier, recs: { top: topRecs, bottom: botRecs } },
     engine_version: b.engine_version || 'server-1'
   };
+
+  /* 같은 진단 실행이면 새 행을 만들지 않는다(db/13 · 진단 실행 단위 저장).
+     계산 결과(eb·추천)는 매 요청 돌려줘야 하므로 위에서 그대로 계산하고, 저장만 건너뛴다.
+     클라도 같은 조건을 갖지만 여기서 한 번 더 막는다 — 오늘 두 번 다 클라 가드가 우회됐다. */
+  async function findExisting() {
+    if (!runId) return null;
+    try {
+      var q = URL + '/rest/v1/diagnosis?select=id&limit=1'
+        + '&session_id=eq.' + encodeURIComponent(sid)
+        + '&run_id=eq.' + encodeURIComponent(runId)
+        + '&category=eq.' + encodeURIComponent(cat);
+      var rr = await fetchT(q, { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY } });
+      if (!rr.ok) return null;
+      var jj = await rr.json();
+      return (jj && jj[0] && jj[0].id) || null;
+    } catch (e) { return null; }
+  }
+
+  /* 보기 전용 요청(마이 embed·옛 결과 되불러오기)은 계산만 하고 저장하지 않는다.
+     클라가 명시적으로 보낼 때만 적용 — 필드가 없는 구 클라는 종전대로 저장한다(회귀 방지). */
+  if (b.view_only === true) {
+    return res.status(200).json({ id: null, saved: false, eb: eb, card: card, topRecs: topRecs, botRecs: botRecs });
+  }
+
+  var dup = await findExisting();
+  if (dup) return res.status(200).json({ id: dup, reused: true, eb: eb, card: card, topRecs: topRecs, botRecs: botRecs });
+
   var r;
   try {
     r = await fetchT(URL + '/rest/v1/diagnosis', {
@@ -139,7 +170,15 @@ module.exports = async function handler(req, res) {
     return res.status(e && e.timeout ? 504 : 502).json({ error: e && e.timeout ? 'upstream timeout' : 'upstream unreachable' });
   }
   var t = await r.text();
-  if (!r.ok) return res.status(502).json({ error: 'supabase insert failed', detail: t });
+  if (!r.ok) {
+    // 동시 요청이 겹치면(iframe 리로드가 앞 요청과 경합) 유니크 인덱스가 23505로 막는다 —
+    // 이건 실패가 아니라 '이미 저장됨'이므로 그 행을 찾아 정상 응답한다.
+    if (r.status === 409 || /23505|duplicate key/i.test(t)) {
+      var again = await findExisting();
+      if (again) return res.status(200).json({ id: again, reused: true, eb: eb, card: card, topRecs: topRecs, botRecs: botRecs });
+    }
+    return res.status(502).json({ error: 'supabase insert failed', detail: t });
+  }
   var id = null; try { id = JSON.parse(t)[0].id; } catch (e) {}
   return res.status(201).json({ id: id, eb: eb, card: card, topRecs: topRecs, botRecs: botRecs });
 };
