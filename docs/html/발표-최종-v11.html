@@ -40,7 +40,7 @@
   .body{flex:1; display:flex; flex-direction:column; min-height:0; margin-top:12px}
 
   /* ── 표지 ── */
-  .cover{justify-content:center; background:#16140F}
+  .cover{justify-content:center; background:#2E4A3B}
   .cover .bigmark{font-size:82px; font-weight:800; letter-spacing:-.05em; color:#FFFFFF; line-height:1}
   .cover .bigmark i{display:inline-block; width:15px; height:15px; background:var(--clay);
     margin-left:9px; vertical-align:8px; font-style:normal; border-radius:2px}
@@ -54,7 +54,7 @@
   .cover .rule{width:54px; height:4px; background:var(--clay); margin-top:28px; border-radius:2px}
 
   /* ── 질문(훅) ── */
-  .ask{background:#16140F; justify-content:center}
+  .ask{background:#2E4A3B; justify-content:center}
   .ask .askmark{position:absolute; left:0.55in; top:0.5in; font-size:14px; font-weight:800;
     letter-spacing:.16em; color:rgba(255,255,255,.55); text-transform:uppercase}
   .ask .askmark i{display:inline-block; width:7px; height:7px; background:var(--clay);
@@ -727,13 +727,15 @@
   .bignum .bd2 b{color:#16140F; font-weight:800}
   .etcline{text-align:center; font-size:12.5px; color:rgba(110,107,99,.85); margin-top:14px}
   .etcline b{color:#16140F; font-weight:800}
-  .qrow-h{text-align:center; font-size:11px; font-weight:800; letter-spacing:.12em;
+  .qrow-h{text-align:center; font-size:16px; font-weight:800; letter-spacing:.06em;
     text-transform:uppercase; color:rgba(110,107,99,.72); margin-top:38px}
   .qrow{max-width:9.1in; width:100%; margin:16px auto 0; display:flex; flex-direction:column; gap:12px}
   .qline{position:relative; display:flex; align-items:center; justify-content:space-between; gap:20px;
     background:#F6F6F5; border:1px solid rgba(22,20,15,.14); border-radius:16px; padding:15px 24px}
   .qline .qt{font-size:14px; font-weight:700; color:#16140F; line-height:1.5; white-space:nowrap}
-  .qline .qs2{font-size:11px; color:rgba(110,107,99,.85); font-weight:700; white-space:nowrap}
+  .qline .qsrc{display:flex; align-items:center; gap:9px; white-space:nowrap}
+  .qline .qsrc img{height:22px; width:auto; border-radius:4px; display:block}
+  .qline .qsrc span{font-size:13px; font-weight:700; color:rgba(110,107,99,.9)}
   .qline:after{content:""; position:absolute; left:30px; bottom:-10px; width:0; height:0;
     border-style:solid; border-width:10px 9px 0 0; border-color:rgba(22,20,15,.14) transparent transparent transparent}
   .qline:before{content:""; position:absolute; left:31px; bottom:-8.5px; width:0; height:0; z-index:1;
@@ -804,7 +806,7 @@
   /* ══ v9 · 07 서비스 한눈에 · 11 관리자 ══ */
   .svc{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; flex:1; min-height:0}
   .svcard{border:1px solid rgba(46,74,59,.22); background:#E7EFEA; border-radius:14px;
-    padding:19px 21px; display:flex; flex-direction:column; align-items:center; text-align:center; justify-content:center; position:relative}
+    padding:15px 18px; display:flex; flex-direction:column; align-items:center; text-align:center; justify-content:center; position:relative}
   .svcard .sn{display:inline-flex; align-items:center; justify-content:center; width:29px; height:29px;
     border-radius:50%; background:#2E4A3B; color:#fff; font-size:14px; font-weight:800}
   /* 위쪽 · 두 고민 → 세 기능 */
@@ -815,9 +817,9 @@
   .pg b{display:block; font-size:17px; font-weight:800; letter-spacing:-.025em; color:#B0553F}
   .pg span{display:block; font-size:13px; color:#6E6B63; margin-top:5px; font-weight:600}
   .parr{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:9px 0 11px}
-  .parr i{font-style:normal; text-align:center; font-size:12px; font-weight:800; color:rgba(110,107,99,.55)}
-  .svcard h3{font-size:36px; font-weight:800; letter-spacing:-.03em; margin-top:16px; color:#2E4A3B; line-height:1.22}
-  .svcard .sq{font-size:19px; font-weight:800; color:#5A7A68; margin-top:11px}
+  .parr i{font-style:normal; text-align:center; font-size:17px; font-weight:800; color:#2E4A3B}
+  .svcard h3{font-size:28px; font-weight:800; letter-spacing:-.03em; margin-top:12px; color:#2E4A3B; line-height:1.22}
+  .svcard .sq{font-size:16px; font-weight:800; color:#5A7A68; margin-top:9px}
   .svcard p{font-size:14px; color:#6E6B63; line-height:1.65; margin-top:11px}
   .svcard p b{color:#16140F; font-weight:700}
   .svcard .sf{margin-top:auto; padding-top:12px; font-size:13px; font-weight:800; color:#2E4A3B}
@@ -1189,12 +1191,53 @@
 </section>
 
 
-<!-- ═══ 05 · 원인은 두 곳 ═══ -->
+<!-- ═══ 05 · 진짜 있었다 (설문) ═══ -->
+<section class="slide ctr">
+  <div class="chead">
+    <div class="ceb">Validation</div>
+    <h1 class="ch1">가정하지 않고, <b>직접 물어봤습니다</b></h1>
+    <div class="cscn">2026.06 · 자체 설문 31명 — 온라인 쇼핑을 하며 가장 막히는 것</div>
+  </div>
+
+  <div class="twobig">
+    <div class="bignum sty">
+      <div class="bn num">40<span>%</span></div>
+      <div class="bl2">스타일 어울림</div>
+      <div class="bd2">“나한테 <b>뭐가 어울리는지</b> 모르겠다”</div>
+    </div>
+    <div class="bignum sze">
+      <div class="bn num">38<span>%</span></div>
+      <div class="bl2">사이즈 적합</div>
+      <div class="bd2">“이 브랜드에서 <b>내 사이즈가 뭔지</b> 모르겠다”</div>
+    </div>
+  </div>
+
+  <div class="qrow-h">현재 서비스 중인 쇼핑몰</div>
+  <div class="qrow">
+    <div class="qline">
+      <div class="qt">“키 175, 몸무게 68. 국내 상의 100 입는데 사이즈 어떻게 가는 게 좋을까요?”</div>
+      <div class="qsrc"><img src="assets/logos/musinsa.png" alt="무신사"><span>무신사</span></div>
+    </div>
+    <div class="qline">
+      <div class="qt">“키 172, 68이면 사이즈 몇 입어야 하나요?”</div>
+      <div class="qsrc"><img src="assets/logos/naver.png" alt="네이버"><span>네이버</span></div>
+    </div>
+    <div class="qline">
+      <div class="qt">“팔뚝을 가리려고 가디건을 샀는데 전혀 가려지지 않는 우람한 팔뚝이삼”</div>
+      <div class="qsrc"><img src="assets/logos/ably.png" alt="에이블리"><span>에이블리</span></div>
+    </div>
+  </div>
+  <div class="pageno">04</div>
+</section>
+
+
+
+<!-- ═══ 06 · 원인은 두 곳 ═══ -->
 <section class="slide ctr">
   <div class="chead">
     <div class="ceb">Where It Breaks</div>
     <h1 class="ch1">6가지 과정을 거치지만,<br>막히는 이유는 <i>두 가지</i>였습니다.</h1>
-    <div class="cscn">후기를 찾고, 고민하고, 반품하는 이유는 모두 여기서 시작됩니다</div>
+    <div class="cscn">설문의 <b style="color:#6E6B63">그 두 가지</b>가 — 여정에서 정확히 여기서 터집니다</div>
   </div>
 
   <div class="cflow">
@@ -1225,47 +1268,6 @@
     <div class="arc"></div>
     <div class="rcap">↺ 그래서 <b>다음 쇼핑도 똑같이</b> 시작됩니다</div>
   </div>
-  <div class="pageno">04</div>
-</section>
-
-
-
-<!-- ═══ 06 · 진짜 있었다 ═══ -->
-<section class="slide ctr">
-  <div class="chead">
-    <div class="ceb">Validation</div>
-    <h1 class="ch1">가장 큰 고민은 <b>이 두 가지</b>였습니다.</h1>
-    <div class="cscn">2026.06 · 자체 설문 31명 — 온라인 쇼핑을 하며 가장 막히는 것</div>
-  </div>
-
-  <div class="twobig">
-    <div class="bignum sty">
-      <div class="bn num">40<span>%</span></div>
-      <div class="bl2">스타일 어울림</div>
-      <div class="bd2">“나한테 <b>뭐가 어울리는지</b> 모르겠다”</div>
-    </div>
-    <div class="bignum sze">
-      <div class="bn num">38<span>%</span></div>
-      <div class="bl2">사이즈 적합</div>
-      <div class="bd2">“이 브랜드에서 <b>내 사이즈가 뭔지</b> 모르겠다”</div>
-    </div>
-  </div>
-
-  <div class="qrow-h">현재 서비스 중인 쇼핑몰</div>
-  <div class="qrow">
-    <div class="qline">
-      <div class="qt">“키 175, 몸무게 68. 국내 상의 100 입는데 사이즈 어떻게 가는 게 좋을까요?”</div>
-      <div class="qs2">무신사 상품 문의</div>
-    </div>
-    <div class="qline">
-      <div class="qt">“키 172, 68이면 사이즈 몇 입어야 하나요?”</div>
-      <div class="qs2">네이버 쇼핑 문의</div>
-    </div>
-    <div class="qline">
-      <div class="qt">“팔뚝을 가리려고 가디건을 샀는데 전혀 가려지지 않는 우람한 팔뚝이삼”</div>
-      <div class="qs2">에이블리 구매 리뷰</div>
-    </div>
-  </div>
   <div class="pageno">05</div>
 </section>
 
@@ -1288,8 +1290,8 @@
 
   <div class="body" style="margin-top:0">
     <div class="pgrp">
-      <div class="pg sz"><b>사이즈 고민 · 설문 38%</b><span>“이 브랜드에서 내 사이즈가 뭔지 모르겠다”</span></div>
-      <div class="pg st"><b>스타일 고민 · 설문 40%</b><span>“나한테 뭐가 어울리는지 모르겠다”</span></div>
+      <div class="pg sz"><b>사이즈 고민 · 설문 38%</b></div>
+      <div class="pg st"><b>스타일 고민 · 설문 40%</b></div>
     </div>
     <div class="parr"><i>↓ 내 치수를 만든다</i><i>↓ 그 옷에 답한다</i><i>↓ 사람에게 넘긴다</i></div>
 
@@ -1442,6 +1444,7 @@
       <div class="steps">
         <div class="stp"><div class="sn" style="background:rgba(110,107,99,.5)">1</div><div>
           <div class="st" style="font-size:17px">키·몸무게로 출발점</div>
+          <div style="font-size:12.5px; color:var(--sub2); font-weight:700; margin-top:5px">데이터 · 사이즈코리아</div>
         </div></div>
         <div class="stp" style="border-color:rgba(46,74,59,.3); background:var(--green-soft)"><div class="sn" style="background:var(--green)">2</div><div>
           <div class="st" style="color:var(--green); font-size:17px">착용 경험을 역산 → 내 체형 예측</div>
