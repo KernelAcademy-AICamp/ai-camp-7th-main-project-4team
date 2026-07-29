@@ -417,12 +417,27 @@
     ease:'선호하는 핏을 추천에 반영해요',
     silhouette:'선호하는 핏을 추천에 반영해요'
   };
+  /* 계정에 저장된 핏 취향을 기본 선택으로 — 같은 질문에 두 번 답하지 않게.
+     이 화면은 supabase·auth를 싣지 않는다(비로그인으로 끝까지 도는 게 설계 · 킬메트릭 경로).
+     그래서 서버를 부르지 않고, 로그인 시 index.js가 내려둔 로컬 값(fitting.profile)만 읽는다.
+     값이 없으면(비로그인·첫 진단) 아무것도 고르지 않는다 — 종전 동작 그대로. */
+  function prefFromProfile(ax){
+    var p={}; try{ p=JSON.parse(localStorage.getItem('fitting.profile')||'{}')||{}; }catch(e){}
+    var key=(p.prefs||{})[ax==='silhouette'?'fitBottom':'fitTop']; if(!key) return '';
+    var map=(ax==='silhouette')?PREF_SIL:FITLINE;   // 라벨→키 맵을 뒤집어 키→라벨
+    for(var lab in map){ if(Object.prototype.hasOwnProperty.call(map,lab) && map[lab]===key) return lab; }
+    return '';
+  }
   function renderPrefOpts(){
     var pseg=document.getElementById('prefseg'); if(!pseg) return;
     var ax=prefAxis(), def=PREF_DEFAULT[ax];
+    var pre=prefFromProfile(ax);
     pseg.innerHTML=PREFOPTS[ax].map(function(o){
-      return '<div class="opt" onclick="pick(this)">'+o[0]+' — '+o[1]+'</div>'; }).join('');
-    var ph=document.getElementById('prefhelp'); if(ph) ph.innerHTML=PREFHELP[ax];
+      return '<div class="opt'+(o[0]===pre?' on':'')+'" onclick="pick(this)">'+o[0]+' — '+o[1]+'</div>'; }).join('');
+    var ph=document.getElementById('prefhelp');
+    // 미리 골라둔 건 밝힌다 — 조용히 선택돼 있으면 사용자는 자기가 고른 줄 안다.
+    if(ph) ph.innerHTML = pre ? '지난 진단에서 고른 취향을 미리 골라뒀어요 · 바꿔도 돼요' : PREFHELP[ax];
+    updateNext();   // 미리 선택된 상태면 '다음'이 바로 열려야 한다
   }
   // 선호핏 선택 → enum. 하의=실루엣(형태축), 그 외=fitLine(여유축). prefs[cat]에 저장.
   function fitLineFromPref(){
