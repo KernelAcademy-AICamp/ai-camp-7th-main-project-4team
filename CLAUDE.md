@@ -48,6 +48,26 @@
 - **`.nvmrc` 변경은 팀 전원에게 영향**을 준다. 임의로 고치지 말고 사용자에게 확인받는다.
 - Python 스크립트(`npm run screens`·`stamp-assets`, pre-commit 훅)는 맥에서 `python3`, 윈도우에서 `py -3`으로 자동 해석된다([scripts/py.js](scripts/py.js)). 직접 `python3`을 새로 박지 말 것.
 
+## 건드리기 전에 읽을 것
+
+지뢰가 있는 자리는 **그 자리의 주석이 정본**이다. 아래는 색인일 뿐이니, 해당 영역을 고치기 전에 원본을 열어보고 그 결론 위에서 작업한다(요약본을 여기 옮겨 적지 말 것 — 사본은 원본보다 먼저 틀린다).
+
+| 무엇 | 어디 |
+|---|---|
+| **진단 저장은 '진단 실행' 단위**(렌더 단위 아님) — 과거 진단 불러오기·비교는 이 경계 위에서 | [db/13_diagnosis_run.sql](db/13_diagnosis_run.sql) 헤더 |
+| **데모 목업이 실 DB로 새는 것 차단** — 판별은 `basic.age` 타입 하나(값 조합으로 거르면 실사용자 오탐) | [api/diagnose.js](api/diagnose.js) `데모 목업 차단` 주석 |
+| **모드(`?mode=proto\|api`)는 탭에 고정** — 배포본 proto에서 추천이 비는 건 정상(실측표 미배포) | [web/js/config.js](web/js/config.js) `모드 스위치`·`proto 표시 배지` 주석 |
+| **핏 취향은 `profile.prefs`**(진단이 쓰는 선호 핏과 별개 값) | [db/14_profile_prefs.sql](db/14_profile_prefs.sql) 헤더 |
+
+**QA 공용 테스트 계정** — 로그인 기능을 볼 때 개인 계정을 쓰면 실 사용자 데이터와 섞인다(진단 건수가 킬메트릭). 계정은 `qa@fitting-kr.dev`, 비밀번호는 `.env.local`의 `QA_ACCOUNT_PASSWORD`(**git 제외** — 팀 채널로 전달). 화면에 비밀번호 로그인이 없고 이 주소는 실제 메일함도 아니라, 콘솔에서 세션을 만든 뒤 새로고침한다:
+
+```js
+await FITAUTH.client.auth.signInWithPassword({ email:'qa@fitting-kr.dev', password:'…' })
+location.reload()
+```
+
+> ⚠️ 이 계정으로 진단을 돌리면 `diagnosis`에 실 행이 쌓인다 — 킬메트릭을 셀 때 이 `user_id`를 빼거나 테스트 뒤 지운다.
+
 ## 검증
 
 - **엔진 변경** → `npm test` (무의존성 골든 테스트, 초록불 확인).
