@@ -51,6 +51,8 @@
       if(b.gender) USER.gender=(b.gender==='female'?'female':'male');
       // age는 '30대' 같은 연령대 문자열 — 숫자로 캐스팅하면 NaN이 된다(그대로 둘 것).
       if(b.height) USER.height=+b.height; if(b.weight) USER.weight=+b.weight; if(b.age) USER.age=String(b.age);
+      var pf=p.prefs||{};   // 핏 취향(db/14) — 화면 라벨 그대로. 구 계정은 prefs가 없어 '미입력'으로 남는다.
+      if(pf.fitTop) USER.fitTop=pf.fitTop; if(pf.fitBottom) USER.fitBottom=pf.fitBottom;
       renderProfile(); renderMyAvatar(); renderAcctCard();
     });
   }
@@ -483,6 +485,7 @@
     rise:'밑위', length:'기장', sleeve:'소매 기장', upperArm:'팔(소매통)', neck:'목',
     armhole:'암홀', calf:'종아리', hem:'밑단', ratio:'상하 비율',
     created_at:'일시', display_name:'이름', email:'이메일', session_id:'세션 코드',
+    fitTop:'상의 핏 취향', fitBottom:'하의 핏 취향',   // profile.prefs(db/14) — 진단의 prefs(TOP/BOTTOM)와 다른 값
     TOP:'상의', BOTTOM:'하의' };
   var CSV_VAL={ male:'남성', female:'여성', TOP:'상의', BOTTOM:'하의',
     none:'밴딩 없음', banded:'밴딩 있음',
@@ -693,13 +696,18 @@
     if(h&&h.value) USER.height=+h.value; if(w&&w.value) USER.weight=+w.value;
     var ft=document.querySelector('#pFitTop .o.on'); if(ft) USER.fitTop=ft.dataset.fit;
     var fb=document.querySelector('#pFitBottom .o.on'); if(fb) USER.fitBottom=fb.dataset.fit;
-    if(apiAccounts()){   // 계정 모드: 신체정보·이름·이메일을 서버 profile에 저장
-      var em=document.getElementById('pEmail'); if(em) _acctEmail=em.value.trim();
-      FITAUTH.upsertProfile({ display_name:USER.name, email:_acctEmail||null,
-        basic:{ gender:USER.gender, height:USER.height, weight:USER.weight, age:USER.age } });
+    var srv=null;
+    if(apiAccounts()){   // 계정 모드: 신체정보·이름·이메일·핏 취향을 서버 profile에 저장
+      var em=document.getElementById('pEmail'); if(em) _acctEmail=em.value.trim();   // 아래 renderProfile이 입력칸을 지우므로 먼저 읽는다
+      srv=FITAUTH.upsertProfile({ display_name:USER.name, email:_acctEmail||null,
+        basic:{ gender:USER.gender, height:USER.height, weight:USER.weight, age:USER.age },
+        prefs:{ fitTop:USER.fitTop||null, fitBottom:USER.fitBottom||null } });   // db/14 — 없으면 기기 바꿀 때 이 둘만 사라진다
       renderAcctCard();   // 프로필에서 이메일을 고치면 계정카드도 같이 갱신
     }
-    _profEdit=false; renderProfile(); renderMyAvatar(); renderMyDiagDetail(); toast('프로필을 저장했어요');
+    _profEdit=false; renderProfile(); renderMyAvatar(); renderMyDiagDetail();
+    // 서버 쓰기 결과를 보고 말한다 — 실패한 저장을 '저장했어요'라고 하면 사용자는 다시 시도할 기회를 잃는다.
+    if(!srv){ toast('프로필을 저장했어요'); return; }
+    srv.then(function(r){ toast(r&&r.ok ? '프로필을 저장했어요' : '프로필을 저장하지 못했어요 · 잠시 후 다시 시도해 주세요'); });
   }
 
   /* 마이페이지 · 즐겨찾기 렌더 */
