@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>핏팅 — 최종 발표 v9 (서비스 한눈에 · 관리자 포함)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+<style>
+  :root{
+    --green:#2E4A3B; --green-mid:#5A7A68; --green-soft:#E7EFEA;
+    --clay:#B0553F; --clay-soft:rgba(176,85,63,.09); --clay-bg:rgba(176,85,63,.055);
+    --ink:#16140F; --sub:#6E6B63; --sub2:rgba(110,107,99,.72);
+    --line:rgba(22,20,15,.11); --bg:#FFFFFF; --wash:#F6F6F5;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{font-family:'Pretendard','Malgun Gothic',sans-serif; color:var(--ink); background:#8E938E;
+    -webkit-font-smoothing:antialiased; word-break:keep-all; padding:24px 0;}
+  .slide{width:13.333in; height:7.5in; padding:0.5in 0.55in; background:#fff; position:relative;
+    page-break-after:always; display:flex; flex-direction:column; overflow:hidden;
+    margin:0 auto 22px; box-shadow:0 6px 30px rgba(0,0,0,.22);}
+  .slide:last-child{page-break-after:auto}
+  @page{ size:13.333in 7.5in; margin:0 }
+  @media print{ body{background:#fff; padding:0} .slide{margin:0; box-shadow:none} }
+
+  /* ── 공통 헤더 ── */
+  .shead{display:flex; align-items:flex-end; gap:14px; margin-bottom:3px}
+  .shead .eyebrow{display:block; margin-bottom:7px}
+  .eyebrow{font-size:10.5px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--sub2)}
+  h1{font-size:27px; font-weight:800; letter-spacing:-.022em; line-height:1.15}
+  h1 b{color:var(--green)}
+  h1 i{font-style:normal; color:var(--clay)}
+  .pchip{margin-left:auto; display:flex; gap:6px; align-items:center}
+  .pchip span{font-size:11.5px; font-weight:700; color:var(--sub); background:#F6F6F5;
+    border:1px solid var(--line); border-radius:20px; padding:5px 12px; white-space:nowrap}
+  .pchip b{color:var(--ink); font-weight:800}
+  .lead{font-size:12.5px; color:var(--sub); margin-top:6px; line-height:1.5}
+  .lead em{font-style:normal; color:var(--clay); font-weight:800}
+  .lead b{color:var(--green); font-weight:800}
+  .pageno{position:absolute; right:0.55in; bottom:0.3in; font-size:10px; color:var(--sub2); font-weight:700}
+  .body{flex:1; display:flex; flex-direction:column; min-height:0; margin-top:12px}
+
+  /* ── 표지 ── */
+  .cover{justify-content:center; background:#16140F}
+  .cover .bigmark{font-size:82px; font-weight:800; letter-spacing:-.05em; color:#FFFFFF; line-height:1}
+  .cover .bigmark i{display:inline-block; width:15px; height:15px; background:var(--clay);
+    margin-left:9px; vertical-align:8px; font-style:normal; border-radius:2px}
+  .cover .tagline{font-size:27px; font-weight:800; letter-spacing:-.03em; color:#E7EFEA; margin-top:24px}
+  
+  .cover .sub{font-size:16px; color:#E7EFEA; line-height:1.75; font-weight:500}
+  
+  .cover .meta{position:absolute; left:0.55in; bottom:0.5in; display:flex; gap:26px; align-items:baseline}
+  .cover .meta .k{font-size:10px; font-weight:800; letter-spacing:.12em; color:rgba(231,239,234,.42); text-transform:uppercase}
+  .cover .meta .v{font-size:13px; font-weight:700; color:rgba(255,255,255,.82); margin-top:3px}
+  .cover .rule{width:54px; height:4px; background:var(--clay); margin-top:28px; border-radius:2px}
+
+  /* ── 질문(훅) ── */
+  .ask{background:#16140F; justify-content:center}
+  .ask .askmark{position:absolute; left:0.55in; top:0.5in; font-size:14px; font-weight:800;
+    letter-spacing:.16em; color:rgba(255,255,255,.55); text-transform:uppercase}
+  .ask .askmark i{display:inline-block; width:7px; height:7px; background:var(--clay);
+    margin-left:5px; vertical-align:2px; font-style:normal}
+  .askbody{display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; text-align:center}
+  .askq{font-size:76px; font-weight:800; letter-spacing:-.05em; line-height:1.16; color:rgba(255,255,255,.72)}
+  .askq b{color:#fff}
+  /* 선언 한 장 (딥그린) — 검정 질문 장과 구분 */
+  .ask.stmt{background:#2E4A3B}
+  .ask.stmt .askq{font-size:58px; letter-spacing:-.045em; line-height:1.28; color:rgba(255,255,255,.66)}
+  .ask.stmt .askq b{color:#fff}
+  .ask.stmt .asksub{color:rgba(255,255,255,.58); margin-top:30px}
+  .ask.stmt .askmark{color:rgba(255,255,255,.5)}
+  .asksub{font-size:16.5px; color:rgba(255,255,255,.62); margin-top:34px; line-height:1.7; font-weight:500}
+
+  /* ── 가로 스텝 플로우 ── */
+  .flow{display:grid; grid-template-columns:repeat(6,1fr); gap:9px; margin-top:4px}
+  .flow.f5{grid-template-columns:repeat(5,1fr)}
+  .fstep{border:1px solid var(--line); border-radius:10px; padding:11px 11px 12px; background:#fff;
+    display:flex; flex-direction:column; position:relative; min-height:112px}
+  .fstep .n{font-size:9.5px; font-weight:800; letter-spacing:.1em; color:var(--sub2)}
+  .fstep .t{font-size:14px; font-weight:800; margin-top:4px; letter-spacing:-.01em}
+  .fstep .d{font-size:11px; color:var(--sub); margin-top:6px; line-height:1.45}
+  .fstep .q{font-size:11px; color:var(--ink); font-style:italic; margin-top:auto; padding-top:8px; opacity:.85}
+  .fstep.bad{border-color:rgba(176,85,63,.28); background:var(--clay-bg)}
+  .fstep.bad .t{color:var(--clay)}
+  .fstep.good{border-color:rgba(46,74,59,.22); background:var(--green-soft)}
+  .fstep.good .t{color:var(--green)}
+  .pin{position:absolute; top:-9px; right:9px; width:22px; height:22px; border-radius:50%;
+    background:var(--clay); color:#fff; font-size:11px; font-weight:800; display:flex;
+    align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(176,85,63,.35)}
+  .arrows{display:grid; grid-template-columns:repeat(6,1fr); margin-top:-4px}
+  .arrows span{text-align:center; font-size:13px; color:var(--sub2)}
+
+  /* ── 카드 3분할 ── */
+  .cols{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; flex:1; min-height:0}
+  .cols.c2{grid-template-columns:repeat(2,1fr)}
+  .cols.c4{grid-template-columns:repeat(4,1fr)}
+  .card{border:1px solid var(--line); border-radius:11px; padding:14px 15px; background:#fff;
+    display:flex; flex-direction:column}
+  .card .kk{font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--sub2)}
+  .card h3{font-size:16.5px; font-weight:800; letter-spacing:-.015em; margin-top:5px; line-height:1.3}
+  .card p{font-size:12px; color:var(--sub); line-height:1.55; margin-top:8px}
+  .card p b{color:var(--ink); font-weight:700}
+  .card .tag{margin-top:auto; padding-top:10px; font-size:11px; font-weight:800; color:var(--clay)}
+  .card .tag.g{color:var(--green)}
+  .card.hot{border-color:rgba(176,85,63,.28); background:var(--clay-bg)} .card.hot h3{color:var(--clay)}
+  .card.ok{border-color:rgba(46,74,59,.22); background:var(--green-soft)} .card.ok h3{color:var(--green)}
+  .card.dark{background:var(--green); border-color:var(--green)}
+  .card.dark h3,.card.dark .kk{color:#fff} .card.dark p{color:rgba(46,74,59,.22)}
+  .num{font-size:30px; font-weight:800; letter-spacing:-.03em; color:var(--green); line-height:1}
+  .num.c{color:var(--clay)}
+  .unit{font-size:12px; font-weight:700; color:var(--sub); margin-left:3px}
+
+  /* ── 인용 ── */
+  .quotes{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+  .quote{border-left:3px solid var(--clay); background:var(--clay-bg); border-radius:0 8px 8px 0;
+    padding:11px 13px}
+  .quote .q{font-size:12.5px; font-weight:700; line-height:1.5; color:var(--ink)}
+  .quote .s{font-size:10.5px; color:var(--sub2); margin-top:7px; font-weight:700}
+
+  /* ── 막대 ── */
+  .bars{display:flex; flex-direction:column; gap:9px; margin-top:2px}
+  .bar{display:grid; grid-template-columns:118px 1fr 52px; align-items:center; gap:11px}
+  .bar .bl{font-size:12px; font-weight:700; color:var(--ink); text-align:right}
+  .bar .bt{height:15px; background:var(--wash); border-radius:8px; overflow:hidden; border:1px solid var(--line)}
+  .bar .bf{height:100%; background:var(--green-mid); border-radius:8px 0 0 8px}
+  .bar .bf.c{background:var(--clay)}
+  .bar .bf.soft{background:rgba(46,74,59,.28)}
+  .bar .bv{font-size:12.5px; font-weight:800; color:var(--green); text-align:right}
+  .bar .bv.c{color:var(--clay)}
+
+  /* ── 매칭 표(3:3) ── */
+  .match{display:grid; grid-template-columns:1fr 46px 1fr; gap:0 12px; row-gap:11px; align-items:stretch; flex:1}
+  .mhd{font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--sub2); padding-bottom:2px}
+  .mbox{border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; justify-content:center}
+  .mbox.as{background:var(--clay-bg); border-color:rgba(176,85,63,.28)}
+  .mbox.to{background:var(--green-soft); border-color:rgba(46,74,59,.22)}
+  .mbox .mk{font-size:10px; font-weight:800; letter-spacing:.1em; color:var(--sub2)}
+  .mbox .mt{font-size:15px; font-weight:800; margin-top:4px; line-height:1.3; letter-spacing:-.015em}
+  .mbox.as .mt{color:var(--clay)} .mbox.to .mt{color:var(--green)}
+  .mbox .md{font-size:11.5px; color:var(--sub); margin-top:6px; line-height:1.5}
+  .mbox .md b{color:var(--ink); font-weight:700}
+  .marrow{display:flex; align-items:center; justify-content:center; font-size:19px; color:var(--sub2); font-weight:700}
+
+  /* ── 데모(브라우저 목업) ── */
+  .demo{display:grid; grid-template-columns:1.15fr 1fr; gap:16px; flex:1; min-height:0}
+  .shot{border:1px solid rgba(22,20,15,.2); border-radius:14px; overflow:hidden; background:#fff;
+    box-shadow:0 8px 26px rgba(22,20,15,.13);
+    display:flex; flex-direction:column}
+  .shot .cap{font-size:10.5px; font-weight:800; color:var(--sub2); padding:7px 10px; border-bottom:1px solid var(--line); background:#fff; letter-spacing:.02em}
+  .shot img{width:100%; height:100%; object-fit:cover; object-position:top center; display:block; flex:1; min-height:0}
+  .shots{display:grid; grid-template-columns:repeat(3,1fr); gap:9px; flex:1; min-height:0}
+  .shots.full .shot{background:#fff}
+  .shots.full .shot img{object-fit:contain; object-position:center; padding:8px; background:#fff}
+  /* 결과 3탭 */
+  .tabs3{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; flex:1; min-height:0}
+  .tab3{display:flex; flex-direction:column; min-height:0}
+  .tab3 .t3h{display:flex; align-items:baseline; gap:9px; margin-bottom:9px}
+  .tab3 .t3n{font-size:11px; font-weight:800; letter-spacing:.1em; color:var(--sub2)}
+  .tab3 .t3t{font-size:18px; font-weight:800; letter-spacing:-.028em; color:var(--green)}
+  .tab3 .t3img{flex:1; min-height:0; border:1px solid var(--line); border-radius:12px; background:#fff;
+    overflow:hidden; display:flex}
+  .tab3 .t3img img{width:100%; height:100%; object-fit:contain; padding:8px}
+  .tab3 .t3d{font-size:12.5px; color:var(--sub); line-height:1.6; margin-top:10px}
+  .tab3 .t3d b{color:var(--ink); font-weight:700}
+  .steps{display:flex; flex-direction:column; gap:9px}
+  .stp{border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; gap:11px;
+    align-items:flex-start; box-shadow:none}
+  .steps{padding-left:2px}
+  .stp .sn{width:21px; height:21px; border-radius:50%; background:var(--green); color:#fff; font-size:11px;
+    font-weight:800; display:flex; align-items:center; justify-content:center; flex:none; margin-top:1px}
+  .stp .sk{display:block; font-size:9.5px; font-weight:800; letter-spacing:.13em;
+    text-transform:uppercase; color:var(--sub2); margin-bottom:4px}
+  .stp .st{font-size:14.5px; font-weight:800; letter-spacing:-.022em; line-height:1.3}
+  .stp .sd{font-size:11.5px; color:var(--sub); margin-top:4px; line-height:1.5}
+  .stp .sd b{color:var(--ink); font-weight:700}
+  /* 09 · 단계 구분 — 엔진(초록) / 결과물(잉크) / 검증(클레이) */
+  .stp.eng{border-color:var(--line); background:#fff}
+  .stp.eng .sn{background:rgba(110,107,99,.55)}
+  .stp.eng2{border:1px solid rgba(46,74,59,.28); background:var(--green-soft)}
+  .stp.eng2 .st{color:var(--green)}
+  .stp.out{border-color:rgba(22,20,15,.26); background:var(--wash)}
+  .stp.out .st{color:var(--ink)}
+  .stp.ver{border-color:rgba(176,85,63,.35); background:var(--clay-bg)}
+  .stp.ver .st{color:var(--clay)}
+  .stp.ver .sd b{color:var(--clay)}
+
+  /* 판정 화면 목업 */
+  .mock{border:1px solid rgba(22,20,15,.2); border-radius:14px; background:#fff; display:flex;
+    flex-direction:column; overflow:hidden; box-shadow:0 8px 26px rgba(22,20,15,.13)}
+  .mock .mbd{flex:1; display:grid; grid-template-columns:1fr 1.05fr; gap:9px; padding:10px; min-height:0}
+  .mrow{border:1px solid var(--line); border-radius:7px; padding:7px 9px; font-size:11px; margin-bottom:6px; background:#fff}
+  .mrow .mn{display:inline-flex; width:15px; height:15px; border-radius:50%; background:var(--green); color:#fff;
+    font-size:9px; font-weight:800; align-items:center; justify-content:center; margin-right:6px; vertical-align:1px}
+  .mrow b{font-weight:800}
+  .mbtn{background:var(--ink); color:#fff; border-radius:7px; text-align:center; font-size:11.5px; font-weight:800; padding:8px}
+  .mtbl{width:100%; border-collapse:collapse; font-size:10.5px}
+  .mtbl th,.mtbl td{border:1px solid var(--line); padding:4px 5px; text-align:center}
+  .mtbl th{background:var(--wash); font-weight:800; color:var(--sub)}
+  .mtbl .fit{background:var(--green-soft); color:var(--green); font-weight:800}
+  .mtbl .tight{background:var(--clay-bg); color:var(--clay); font-weight:700}
+  .mverd{background:var(--green); color:#fff; border-radius:8px; padding:9px 11px; font-size:12px; font-weight:800; margin-bottom:7px}
+  .mverd span{display:block; font-size:10px; font-weight:600; color:rgba(46,74,59,.22); margin-top:3px}
+
+  /* ── 하단 인사이트 ── */
+  .foot{margin-top:11px; display:flex; gap:10px; align-items:stretch}
+  .fbox{flex:1; border:1px solid var(--line); border-left:3px solid var(--clay);
+    border-radius:8px; padding:9px 12px; background:#F6F6F5}
+  .fbox.g{border-left-color:var(--green); background:var(--green-soft); border-color:rgba(46,74,59,.22)}
+  .fbox .k{font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--sub2)}
+  .fbox .v{font-size:12.5px; font-weight:700; color:var(--ink); margin-top:3px; line-height:1.42}
+  .fbox.g .v{color:var(--green)}
+
+  /* ── 한 문장 강조 ── */
+  .oneline{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center}
+  .oneline .hmw{font-size:11px; font-weight:800; letter-spacing:.18em; color:var(--clay); text-transform:uppercase}
+  .oneline .big{font-size:38px; font-weight:800; letter-spacing:-.035em; line-height:1.32; margin-top:16px; max-width:10.4in}
+  .oneline .big b{color:var(--green)}
+  .oneline .bsub{font-size:13.5px; color:var(--sub); margin-top:18px; line-height:1.6}
+  .oneline .bsub b{color:var(--ink); font-weight:800}
+
+  /* ── 테이블(UT 대응) ── */
+  .tb{width:100%; border-collapse:collapse; font-size:11.5px}
+  .tb th{background:var(--wash); font-size:10px; font-weight:800; letter-spacing:.08em; color:var(--sub);
+    text-transform:uppercase; padding:7px 9px; border:1px solid var(--line); text-align:left}
+  .tb td{border:1px solid var(--line); padding:8px 9px; vertical-align:top; line-height:1.45; color:var(--sub)}
+  .tb td b{color:var(--ink); font-weight:700}
+  .tb .pill{display:inline-block; font-size:10px; font-weight:800; padding:2px 7px; border-radius:20px; white-space:nowrap}
+  .pill.now{background:var(--green-soft); color:var(--green)}
+  .pill.chk{background:rgba(176,85,63,.10); color:#B0553F}
+  .pill.str{background:rgba(46,74,59,.10); color:#2E4A3B}
+  .pill.no{background:#F6F6F5; color:var(--sub)}
+
+  /* ── 로드맵 ── */
+  .road{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+  .rd{border:1px solid var(--line); border-radius:11px; padding:13px 15px; position:relative}
+  .rd .when{font-size:10px; font-weight:800; letter-spacing:.12em; color:var(--sub2); text-transform:uppercase}
+  .rd h4{font-size:15px; font-weight:800; margin-top:5px; letter-spacing:-.015em}
+  .rd ul{margin-top:8px; padding-left:14px}
+  .rd li{font-size:11.5px; color:var(--sub); line-height:1.6}
+  .rd.on{border-color:var(--green); background:var(--green-soft)} .rd.on h4{color:var(--green)}
+  /* ── v2 추가 ── */
+  .whatis{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; flex:1; min-height:0}
+  .wi{border:1px solid var(--line); border-radius:14px; padding:18px 19px; display:flex; flex-direction:column;
+    background:#fff; position:relative}
+  .wi .wn{width:26px; height:26px; border-radius:50%; background:var(--green); color:#fff; font-size:13px;
+    font-weight:800; display:flex; align-items:center; justify-content:center}
+  .wi h3{font-size:19px; font-weight:800; letter-spacing:-.02em; margin-top:12px; line-height:1.28}
+  .wi p{font-size:12.5px; color:var(--sub); line-height:1.6; margin-top:9px}
+  .wi p b{color:var(--ink); font-weight:700}
+  .wi .st{margin-top:auto; padding-top:12px; font-size:11px; font-weight:800; color:var(--green)}
+  .wi .st.wip{color:var(--sub2)}
+
+  /* 옷장 */
+  .closet{display:grid; grid-template-columns:repeat(5,1fr); gap:12px; flex:1; min-height:0}
+  .cl{border:1px solid var(--line); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; background:#fff}
+  .cl .img{flex:1; background:var(--wash); border-bottom:1px solid var(--line); display:flex;
+    align-items:center; justify-content:center; color:rgba(22,20,15,.18); min-height:0}
+  .cl .img svg{width:52%; height:52%}
+  .cl .cap{padding:10px 11px}
+  .cl .cap .nm{font-size:12.5px; font-weight:800}
+  .cl .cap .rs{font-size:11px; color:var(--clay); font-weight:700; margin-top:4px; line-height:1.4}
+  .cl.dim{opacity:.55}
+
+  /* 근거 자리 표시 */
+  .todo{border:2px dashed var(--clay); background:var(--clay-bg); border-radius:11px; padding:12px 15px}
+  .todo .tk{font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--clay)}
+  .todo .tv{font-size:12.5px; color:var(--ink); margin-top:5px; line-height:1.55; font-weight:600}
+  .todo .tv b{color:var(--clay)}
+
+  /* 문제 3분류 */
+  .p3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; flex:1; min-height:0}
+  .pb{border:1px solid rgba(176,85,63,.28); background:var(--clay-bg); border-radius:14px; padding:18px 19px;
+    display:flex; flex-direction:column}
+  .pb .pn{width:26px; height:26px; border-radius:50%; background:var(--clay); color:#fff; font-size:13px;
+    font-weight:800; display:flex; align-items:center; justify-content:center}
+  .pb h3{font-size:19px; font-weight:800; letter-spacing:-.02em; margin-top:12px; line-height:1.3; color:var(--clay)}
+  .pb .q{font-size:12.5px; color:var(--ink); font-style:italic; margin-top:10px; line-height:1.55}
+  .pb .ev{margin-top:auto; padding-top:12px; font-size:11px; font-weight:800; color:var(--sub)}
+  .pb .ev b{color:var(--clay)}
+
+  /* ── v4 추가 ── */
+  /* 04 · 여정 아래 되돌아가는 악순환 띠 */
+  .cyc{position:relative; margin-top:34px; height:46px}
+  .cyc .ln2{position:absolute; left:52px; right:52px; top:0; height:34px;
+    border:2px dashed var(--clay); border-top:none; border-radius:0 0 16px 16px}
+  .cyc .ln2:before{content:''; position:absolute; left:-7px; top:-9px; width:0; height:0;
+    border-left:6px solid transparent; border-right:6px solid transparent; border-bottom:9px solid var(--clay)}
+  .cyc .cap2{position:absolute; top:24px; left:50%; transform:translateX(-50%); background:#fff; padding:0 14px;
+    color:var(--clay); font-weight:800; font-size:13px; white-space:nowrap}
+  .cyc .cap2 b{color:var(--ink)}
+
+  /* 07 · 차별점 */
+  .diff{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; flex:1; min-height:0}
+  .df{border:1px solid rgba(46,74,59,.22); background:var(--green-soft); border-radius:14px; padding:18px 19px;
+    display:flex; flex-direction:column}
+  .df .dn{width:26px; height:26px; border-radius:50%; background:var(--green); color:#fff; font-size:13px;
+    font-weight:800; display:flex; align-items:center; justify-content:center}
+  .df h3{font-size:19px; font-weight:800; letter-spacing:-.02em; margin-top:12px; line-height:1.3; color:var(--green)}
+  .df p{font-size:12.5px; color:var(--sub); line-height:1.6; margin-top:9px}
+  .df p b{color:var(--ink); font-weight:700}
+  .df .ex2{margin-top:auto; padding-top:12px; font-size:11.5px; font-weight:800; color:var(--green)}
+
+  /* 06 · 기존+한계 */
+  .exl{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; flex:1; min-height:0}
+  .ex{border:1px solid var(--line); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; background:#fff}
+  .ex .top{padding:15px 17px}
+  .ex .top .kk2{font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--sub2)}
+  .ex .top h3{font-size:17px; font-weight:800; letter-spacing:-.02em; margin-top:5px}
+  .ex .top p{font-size:12px; color:var(--sub); line-height:1.55; margin-top:8px}
+  .ex .lim{margin-top:auto; background:var(--clay-bg); border-top:1px solid rgba(176,85,63,.28); padding:13px 17px}
+  .ex .lim .lk{font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--clay)}
+  .ex .lim .lv{font-size:12.5px; color:var(--ink); line-height:1.5; margin-top:5px; font-weight:600}
+  .ex .lim .lv b{color:var(--clay)}
+
+  /* 3:3 고리 라벨 */
+  .cut{display:inline-block; font-size:10px; font-weight:800; letter-spacing:.06em; color:#fff;
+    background:var(--clay); border-radius:20px; padding:3px 9px; margin-bottom:7px}
+  .cut.g{background:var(--green)}
+
+  /* 지표 3칸 */
+  .kpi3{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+  .k3{border:1px solid var(--line); border-radius:12px; padding:14px 16px; background:#fff}
+  .k3.g{background:var(--green-soft); border-color:rgba(46,74,59,.22)}
+  .k3.c{background:var(--clay-bg); border-color:rgba(176,85,63,.28)}
+  .k3 .n3{font-size:32px; font-weight:800; letter-spacing:-.04em; color:var(--green); line-height:1}
+  .k3.c .n3{color:var(--clay)}
+  .k3 .t3{font-size:13px; font-weight:800; margin-top:8px; line-height:1.35}
+  .k3 .d3{font-size:11px; color:var(--sub); margin-top:5px; line-height:1.5}
+
+  /* ── v5 · 여정 오버레이 ── */
+  .ovj{display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr 1fr; gap:8px}
+  .ovs, .ovpre{border:1px solid var(--line); border-radius:9px; padding:9px 10px; background:#fff;
+    font-size:13px; font-weight:800; letter-spacing:-.01em; text-align:center; position:relative}
+  .ovs .on{display:block; font-size:9px; font-weight:800; letter-spacing:.09em; color:var(--sub2); margin-bottom:3px}
+  .ovpre{background:var(--wash); border-style:dashed; color:var(--sub); font-size:12px; line-height:1.35}
+  .ovpre span{display:block; font-size:10.5px; font-weight:600; color:var(--sub2); font-style:italic; margin-top:3px}
+  .ovs.hit{background:var(--green-soft); border-color:rgba(46,74,59,.22); color:var(--green)}
+  .ovs.hit .on{color:var(--green-mid)}
+  .ovs.gone{background:var(--clay-bg); border-color:rgba(176,85,63,.28); color:var(--sub2); text-decoration:line-through}
+  .ovs.gone i{position:absolute; right:6px; top:5px; font-style:normal; color:var(--clay); font-size:13px; font-weight:800; text-decoration:none}
+
+  .ovarr{display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr 1fr; gap:8px; margin:5px 0 3px}
+  .ovarr span{text-align:center; color:var(--green); font-size:16px; font-weight:800}
+
+  .ovc{display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr 1fr; gap:10px; align-items:stretch}
+  .ovcard{border:1px solid rgba(46,74,59,.22); background:var(--green-soft); border-radius:12px; padding:13px 15px;
+    display:flex; flex-direction:column}
+  .ovcard.sty{background:var(--wash); border-color:var(--line)}
+  .ovcard .oh{margin-bottom:5px}
+  .ovcard .on2{font-size:9.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--sub); background:#fff; border:1px solid var(--line); border-radius:20px; padding:3px 8px}
+  .ovcard .on2.g{color:var(--green); border-color:rgba(46,74,59,.22)}
+  .ovcard h3{font-size:16.5px; font-weight:800; letter-spacing:-.02em; line-height:1.3; color:var(--green)}
+  .ovcard.sty h3{color:var(--ink)}
+  .ovcard p{font-size:11.5px; color:var(--sub); line-height:1.55; margin-top:8px}
+  .ovcard p b{color:var(--ink); font-weight:700}
+  .ovcard .ot{margin-top:auto; padding-top:10px; font-size:11px; font-weight:800; color:var(--sub)}
+  .ovcard .ot.g{color:var(--green)}
+  .ovcard .ot b{color:var(--ink)}
+
+  /* ── v5 · 세 지점 → 두 고민 브리지 ── */
+  .bridge{display:grid; grid-template-columns:auto 26px auto 30px auto 26px auto; align-items:center;
+    justify-content:center; gap:0 6px; margin-top:13px; padding:11px 14px;
+    background:var(--wash); border:1px solid var(--line); border-radius:11px}
+  .bridge .bl2{font-size:12.5px; font-weight:700; color:var(--ink); white-space:nowrap}
+  .bridge .bp{display:inline-flex; width:18px; height:18px; border-radius:50%; background:var(--clay);
+    color:#fff; font-size:10.5px; font-weight:800; align-items:center; justify-content:center; margin-right:5px; vertical-align:-3px}
+  .bridge .barr{text-align:center; color:var(--sub2); font-size:14px; font-weight:800}
+  .bridge .bax{font-size:13px; font-weight:800; border-radius:20px; padding:5px 13px; white-space:nowrap}
+  .bridge .bax.sty{background:var(--green-soft); color:var(--green); border:1px solid rgba(46,74,59,.22)}
+  .bridge .bax.siz{background:var(--clay-bg); color:var(--clay); border:1px solid rgba(176,85,63,.28)}
+  .bridge .bgap{border-left:1px solid var(--line); height:26px; margin:0 auto}
+  /* ── v5 · 06 전제 + 한계2 ── */
+  .prem{border:1px solid var(--line); background:var(--wash); border-radius:12px; padding:14px 18px;
+    display:flex; align-items:baseline; gap:16px; flex-wrap:wrap}
+  .prem .pk{font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--sub2); white-space:nowrap}
+  .prem .pv{font-size:17px; font-weight:800; letter-spacing:-.025em}
+  .prem .pv b{color:var(--clay)}
+  .prem .pn2{margin-left:auto; font-size:11.5px; color:var(--sub)}
+  .lim2{display:grid; grid-template-columns:1fr 1fr; gap:14px; flex:1; min-height:0; margin-top:13px}
+  .l2{border:1px solid rgba(176,85,63,.28); background:var(--clay-bg); border-radius:14px; padding:18px 20px;
+    display:flex; flex-direction:column}
+  .l2 .ln3{font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--clay)}
+  .l2 h3{font-size:21px; font-weight:800; letter-spacing:-.025em; margin-top:7px; line-height:1.3; color:var(--clay)}
+  .l2 p{font-size:13px; color:var(--sub); line-height:1.65; margin-top:11px}
+  .l2 p b{color:var(--ink); font-weight:700}
+  .l2 .l2f{margin-top:auto; padding-top:12px; font-size:12.5px; font-weight:800; color:var(--sub)}
+  .l2 .l2f b{color:var(--clay)}
+  /* ── 08 · 기존 한계 + 포지셔닝 합본 ── */
+  .m6{display:grid; grid-template-columns:1fr 1.35fr; gap:18px; flex:1; min-height:0; align-items:stretch}
+  .m6l{display:flex; flex-direction:column; gap:11px}
+  .m6l > div{flex:1; display:flex; flex-direction:column; justify-content:center}
+  .l2c{border:1px solid rgba(176,85,63,.28); background:var(--clay-bg); border-radius:13px; padding:14px 16px}
+  .l2c .ln3{font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--clay)}
+  .l2c h3{font-size:17px; font-weight:800; letter-spacing:-.025em; margin-top:6px; color:var(--clay); line-height:1.3}
+  .l2c p{font-size:12px; color:var(--sub); line-height:1.6; margin-top:8px}
+  .l2c p b{color:var(--ink); font-weight:700}
+  .rootc{margin-top:12px; background:var(--green); color:#fff; border-radius:13px; padding:14px 20px;
+    display:flex; align-items:center; gap:16px;
+    font-size:15px; font-weight:800; letter-spacing:-.025em; line-height:1.45}
+  .rootc .rk{flex:none; font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase;
+    color:rgba(255,255,255,.6); padding-right:16px; border-right:1px solid rgba(255,255,255,.22)}
+  .rootc b{color:var(--green-soft)}
+  .stdb{border:1px solid var(--line); background:var(--wash); border-radius:13px; padding:14px 16px}
+  .stdb .sk{font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--sub2)}
+  .stdb .schips{display:flex; flex-wrap:wrap; gap:6px; margin-top:9px}
+  .stdb .schips i{font-style:normal; font-size:12.5px; font-weight:800; color:var(--ink);
+    background:#fff; border:1px solid var(--line); border-radius:8px; padding:5px 10px}
+  .stdb .snote{font-size:12px; color:var(--sub); margin-top:10px; line-height:1.6}
+  .stdb .snote b{color:var(--ink); font-weight:700}
+  /* ── 09 · 문제 2 → 해결 3단계 ── */
+  .match{display:grid; grid-template-columns:1fr 46px 1fr; grid-template-rows:auto repeat(3,1fr);
+    gap:0 12px; row-gap:11px; align-items:stretch; flex:1}
+  .msplit{margin-top:11px; display:flex; gap:8px}
+  .msplit i{flex:1; font-style:normal; font-size:11.5px; font-weight:800; color:var(--clay);
+    background:#fff; border:1px solid rgba(176,85,63,.28); border-radius:7px; padding:6px 8px; text-align:center}
+  .mhd{font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--sub2); padding-bottom:2px}
+  .mbox{border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; justify-content:center}
+  .mbox.as{background:var(--clay-bg); border-color:rgba(176,85,63,.28)}
+  .mbox.to{background:var(--green-soft); border-color:rgba(46,74,59,.22)}
+  .mbox .mk{font-size:10px; font-weight:800; letter-spacing:.1em; color:var(--sub2)}
+  .mbox .mt{font-size:16px; font-weight:800; margin-top:4px; line-height:1.3; letter-spacing:-.02em}
+  .mbox.as .mt{color:var(--clay)} .mbox.to .mt{color:var(--green)}
+  .mbox .md{font-size:12px; color:var(--sub); margin-top:6px; line-height:1.55}
+  .mbox .md b{color:var(--ink); font-weight:700}
+  .marrow{display:flex; align-items:center; justify-content:center; font-size:19px; color:var(--sub2); font-weight:700}
+  /* ── v5 · 07 한계 → 대응 ── */
+  .ansv{display:flex; flex-direction:column; gap:13px; flex:1; min-height:0}
+  .an{display:grid; grid-template-columns:230px 34px 1fr; align-items:stretch; gap:0}
+  .an .anh{background:var(--clay-bg); border:1px solid rgba(176,85,63,.28); border-radius:12px; padding:14px 16px;
+    display:flex; flex-direction:column; justify-content:center; font-size:14px; font-weight:800; color:var(--sub)}
+  .an .anb{display:inline-block; font-size:9.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+    color:#fff; background:var(--clay); border-radius:20px; padding:3px 9px; margin-bottom:7px; align-self:flex-start}
+  .an .ana{display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:800; color:var(--green)}
+  .an .anr{background:var(--green-soft); border:1px solid rgba(46,74,59,.22); border-radius:12px; padding:14px 18px}
+  .an .anr h3{font-size:20px; font-weight:800; letter-spacing:-.025em; color:var(--green); line-height:1.25}
+  .an .anr p{font-size:12.5px; color:var(--sub); line-height:1.6; margin-top:8px}
+  .an .anr p b{color:var(--ink); font-weight:700}
+  .an .anr .ant{margin-top:9px; font-size:11.5px; font-weight:800; color:var(--green)}
+  /* ── v5 · 포지셔닝 맵 ── */
+  .pmap{position:relative; flex:1; min-height:0; background:#fff;
+    border:1px solid var(--line); border-radius:14px; overflow:hidden}
+  /* 비어 있던 사분면 — 점선 상자 대신 면으로 */
+  .pmap .quad{position:absolute; right:0; top:0; width:50%; height:50%; background:rgba(231,239,234,.55)}
+  .pmap .quadlb{position:absolute; right:16px; top:14px; font-size:11px; font-weight:800;
+    letter-spacing:.06em; color:var(--green-mid)}
+  .pmap .ax-v{position:absolute; left:50%; top:30px; bottom:30px; width:1px; background:rgba(22,20,15,.16)}
+  .pmap .ax-h{position:absolute; top:50%; left:30px; right:30px; height:1px; background:rgba(22,20,15,.16)}
+  .pmap .ax-lb{position:absolute; font-size:11px; font-weight:600; color:var(--sub2); white-space:nowrap}
+  .pmap .ax-lb b{color:var(--sub); font-weight:800}
+  .pmap .ax-lb.top{top:11px; left:50%; transform:translateX(-50%)}
+  .pmap .ax-lb.bottom{bottom:11px; left:50%; transform:translateX(-50%)}
+  .pmap .ax-lb.left{left:14px; top:50%; transform:translateY(-50%)}
+  .pmap .ax-lb.right{right:14px; top:50%; transform:translateY(-50%)}
+  /* 좌표점 — 상자 없이 텍스트로 */
+  .pmap .pt{position:absolute; transform:translate(-50%,50%); display:flex; flex-direction:column;
+    align-items:center; text-align:center; width:150px}
+  .pmap .dot{width:9px; height:9px; border-radius:50%; background:#fff; border:2px solid var(--sub2)}
+  .pmap .lbl{margin-top:8px}
+  .pmap .lbl b{display:block; font-size:12.5px; font-weight:700; letter-spacing:-.015em; color:var(--ink); line-height:1.35}
+  .pmap .lbl span{display:block; font-size:11px; color:var(--sub2); line-height:1.45; margin-top:3px}
+  /* 우리 — 채운 점 + 초록 활자, 배지 없음 */
+  .pmap .pt.us .dot{width:13px; height:13px; background:var(--green); border-color:var(--green);
+    box-shadow:0 0 0 5px rgba(46,74,59,.1)}
+  .pmap .pt.us .lbl b{font-size:15px; font-weight:800; color:var(--green); letter-spacing:-.025em}
+  .pmap .pt.us .lbl span{color:var(--green-mid); font-weight:600}
+  /* ── v5 · 09 문제 정의 ── */
+  .defbig{text-align:center; padding:14px 0 4px}
+  .defbig .hmw{font-size:10.5px; font-weight:800; letter-spacing:.18em; color:var(--clay); text-transform:uppercase}
+  .defbig .big{font-size:31px; font-weight:800; letter-spacing:-.035em; line-height:1.35; margin-top:11px}
+  .defbig .big b{color:var(--green)}
+  .defbig .bnote{font-size:12.5px; color:var(--sub); margin-top:11px; line-height:1.6}
+  .defbig .bnote b{color:var(--ink); font-weight:800}
+  .split3{display:grid; grid-template-columns:1.42fr 1fr; gap:14px; flex:1; min-height:0; margin-top:14px}
+  .sp3{border:1px solid rgba(176,85,63,.28); background:var(--clay-bg); border-radius:14px; padding:14px 16px;
+    display:flex; flex-direction:column}
+  .sp3.sty{border-color:rgba(46,74,59,.22); background:var(--green-soft)}
+  .sp3h{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+  .sp3t{font-size:12.5px; font-weight:800; border-radius:20px; padding:4px 11px; background:#fff}
+  .sp3t.siz{color:var(--clay); border:1px solid rgba(176,85,63,.28)}
+  .sp3t.stl{color:var(--green); border:1px solid rgba(46,74,59,.22)}
+  .sp3d{font-size:12px; color:var(--sub); font-weight:600}
+  .sp3d b{color:var(--ink); font-weight:800}
+  .sp3b{display:flex; flex-direction:column; gap:9px; margin-top:12px}
+  .sp3i{display:flex; gap:10px; align-items:flex-start; background:#fff; border:1px solid var(--line);
+    border-radius:10px; padding:10px 12px}
+  .sp3n{width:21px; height:21px; border-radius:50%; background:var(--clay); color:#fff; font-size:11px;
+    font-weight:800; display:flex; align-items:center; justify-content:center; flex:none; margin-top:1px}
+  .sp3n.g{background:var(--green)}
+  .sp3i b{display:block; font-size:13.5px; font-weight:800; letter-spacing:-.015em}
+  .sp3i span{display:block; font-size:11.5px; color:var(--sub); line-height:1.5; margin-top:4px}
+  .sp3f{margin-top:auto; padding-top:11px; font-size:12px; font-weight:700; color:var(--sub)}
+  .sp3f b{color:var(--ink); font-weight:800}
+  /* ── v5 · 10 여정 오버레이(6칸) ── */
+  .ovj6{display:grid; grid-template-columns:repeat(6,1fr); gap:9px}
+  .ovarr6{display:grid; grid-template-columns:repeat(6,1fr); gap:9px; margin:6px 0 4px}
+  .ovarr6 span{text-align:center; color:var(--green); font-size:16px; font-weight:800}
+  .ovc6{display:grid; grid-template-columns:repeat(6,1fr); gap:9px; align-items:stretch; flex:1; min-height:0}
+  .ovc6 .ovcard h3{font-size:17px; line-height:1.25}
+  .ovc6 .ovcard.sty h3{font-size:15px}
+  .ovc6 .ovcard p{font-size:11.5px}
+  .ovc6 .ovcard.sty p{font-size:11px}
+  /* ── v5 · 인사이트(3→2) ── */
+  .ins{display:grid; grid-template-columns:1.05fr 54px 1fr; gap:0 14px; flex:1; min-height:0; align-items:stretch}
+  .inl,.inr{display:flex; flex-direction:column; gap:10px}
+  .inh{font-size:10px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:var(--sub2)}
+  .initem{display:flex; gap:11px; align-items:flex-start; border:1px solid rgba(176,85,63,.28); background:var(--clay-bg);
+    border-radius:12px; padding:12px 14px; flex:1}
+  .initem.sty{border-color:rgba(46,74,59,.22); background:var(--green-soft)}
+  .inn{width:22px; height:22px; border-radius:50%; background:var(--clay); color:#fff; font-size:11.5px;
+    font-weight:800; display:flex; align-items:center; justify-content:center; flex:none; margin-top:2px}
+  .initem.sty .inn{background:var(--green)}
+  .initem b{display:block; font-size:15px; font-weight:800; letter-spacing:-.02em}
+  .initem span{display:block; font-size:11.5px; color:var(--sub); line-height:1.5; margin-top:5px}
+  .inm{display:flex; flex-direction:column; padding-top:26px; gap:10px}
+  .ina{flex:1; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800}
+  .ina.sty{color:var(--green)}
+  .ina.siz{color:var(--clay); flex:2}
+  .incard{border-radius:12px; padding:14px 16px; flex:1; display:flex; flex-direction:column; justify-content:center}
+  .incard.stl{background:var(--green-soft); border:1px solid rgba(46,74,59,.22)}
+  .incard.sze{background:var(--clay-bg); border:1px solid rgba(176,85,63,.28)}
+  .ict{font-size:16px; font-weight:800; letter-spacing:-.02em}
+  .incard.stl .ict{color:var(--green)} .incard.sze .ict{color:var(--clay)}
+  .ict b{font-size:24px; margin-left:6px}
+  .icd{font-size:13px; color:var(--ink); margin-top:8px; line-height:1.5}
+  .icd b{font-weight:800}
+  .icn{font-size:11.5px; color:var(--sub); margin-top:9px; padding-top:9px; border-top:1px solid rgba(0,0,0,.06); line-height:1.5}
+  .icn b{color:var(--ink); font-weight:800}
+  /* ── v6 · 04 결과칸 / 06 인사이트2 / 11 보류칸 / 질문장 ── */
+  .fstep.res{border-color:var(--line2); background:var(--soft, #F6F6F5)}
+  .fstep.res .rtag{position:absolute; top:-9px; right:9px; font-size:9.5px; font-weight:800;
+    letter-spacing:.08em; color:#fff; background:var(--sub); border-radius:20px; padding:3px 9px}
+  .ins2{display:flex; flex-direction:column; gap:13px; flex:1; min-height:0}
+  .i2row{display:grid; grid-template-columns:1fr 46px 1.15fr; gap:0 12px; align-items:stretch; flex:1}
+  .i2l{display:flex; gap:11px; align-items:center; border:1px solid rgba(176,85,63,.28); background:var(--clay-bg);
+    border-radius:12px; padding:13px 15px}
+  .i2l.sty{border-color:rgba(46,74,59,.22); background:var(--green-soft)}
+  .i2l b{display:block; font-size:15.5px; font-weight:800; letter-spacing:-.02em}
+  .i2l span{display:block; font-size:11.5px; color:var(--sub); line-height:1.5; margin-top:5px}
+  .i2a{display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800; color:var(--clay)}
+  .i2a.sty{color:var(--green)}
+  .ovs.left{background:var(--wash); border-style:dashed; color:var(--sub)}
+  .ovs.left i{position:absolute; right:7px; top:5px; font-style:normal; color:var(--clay); font-size:13px; font-weight:800}
+  .ovhold{border:1.5px dashed var(--clay); background:var(--clay-bg); border-radius:12px; padding:14px 16px;
+    display:flex; flex-direction:column; justify-content:center}
+  .ovhold .ovh1{font-size:15px; font-weight:800; color:var(--clay); line-height:1.35}
+  .ovhold .ovh2{font-size:12px; color:var(--sub); line-height:1.6; margin-top:9px}
+  .ovhold .ovh2 b{color:var(--ink); font-weight:800}
+  .ask .qmark{font-size:72px; font-weight:800; color:rgba(255,255,255,.22); line-height:.6; margin-bottom:6px}
+  .askq2{font-size:60px; font-weight:800; letter-spacing:-.045em; line-height:1.2; color:rgba(255,255,255,.72)}
+  .askq2 b{color:#fff}
+  .askwho{font-size:14px; color:rgba(255,255,255,.5); margin-top:22px; font-weight:600}
+  /* ── v7 · 06 문제정의 / 14 성장루프 / 16 Before-After ── */
+  .pdef{text-align:center; margin-top:14px; padding:14px 0 6px; border-top:1px solid var(--line)}
+  .pdef .pdarr{font-size:17px; color:var(--sub2); font-weight:800; margin-bottom:6px}
+  .pdef .pdk{font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--sub2)}
+  .pdef .pdbig{font-size:38px; font-weight:800; letter-spacing:-.04em; margin-top:8px}
+  .pdef .pdbig b{color:var(--green)}
+  .pdef .pdsub{font-size:13px; color:var(--sub); margin-top:9px}
+  .pdef .pdsub b{color:var(--ink); font-weight:800}
+  .loop4{display:grid; grid-template-columns:1fr 26px 1fr 26px 1fr 26px 1fr; gap:0 8px; flex:1; min-height:0}
+  .l4{border:1px solid var(--line); border-radius:13px; padding:15px 16px; background:#fff; display:flex; flex-direction:column}
+  .l4.fin{background:var(--green-soft); border-color:rgba(46,74,59,.22)}
+  .l4n{width:25px; height:25px; border-radius:50%; background:var(--ink); color:#fff; font-size:12.5px;
+    font-weight:800; display:flex; align-items:center; justify-content:center}
+  .l4n.g{background:var(--green)}
+  .l4 h3{font-size:16.5px; font-weight:800; letter-spacing:-.02em; margin-top:11px; line-height:1.3}
+  .l4.fin h3{color:var(--green)}
+  .l4 p{font-size:12px; color:var(--sub); line-height:1.6; margin-top:9px}
+  .l4 p b{color:var(--ink); font-weight:700}
+  .l4 .l4t{margin-top:auto; padding-top:11px; font-size:11px; font-weight:800; color:var(--sub2)}
+  .l4 .l4t.g{color:var(--green)}
+  .l4a{display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:var(--sub2)}
+  .ba{display:grid; grid-template-columns:78px 1fr; gap:12px; align-items:center}
+  .balb{font-size:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; text-align:center;
+    border-radius:20px; padding:6px 0}
+  .balb.bad2{background:var(--clay-bg); color:var(--clay); border:1px solid rgba(176,85,63,.28)}
+  .balb.good2{background:var(--green-soft); color:var(--green); border:1px solid rgba(46,74,59,.22)}
+  .bflow{display:grid; grid-template-columns:repeat(6,1fr); gap:8px}
+  .bflow.after{grid-template-columns:repeat(4,1fr)}
+  .bs{border:1px solid var(--line); border-radius:10px; padding:11px 12px; background:var(--wash);
+    font-size:13px; font-weight:700; color:var(--sub); text-align:center}
+  .bs span{display:block; font-size:10.5px; font-weight:600; color:var(--sub2); margin-top:4px}
+  .bs.on{background:var(--green-soft); border-color:rgba(46,74,59,.22); color:var(--green)}
+  .bs.on b{display:block; font-size:15px; font-weight:800; color:var(--green)}
+  .bs.on span{color:var(--green-mid)}
+  .baar{text-align:center; font-size:20px; color:var(--green); font-weight:800; margin:13px 0}
+  .bafin{margin-top:auto; background:var(--green); color:#fff; border-radius:12px; padding:16px;
+    text-align:center; font-size:20px; font-weight:800; letter-spacing:-.03em}
+  .bafin b{color:#E7EFEA}
+  /* ── v8 · 파생 칸 ── */
+  .fstep.der{border-color:rgba(176,85,63,.20); background:rgba(176,85,63,.03)}
+  .fstep.der .t{color:var(--sub)}
+  .fstep.der .dtag{position:absolute; top:-9px; right:9px; font-size:9px; font-weight:800;
+    letter-spacing:.04em; color:var(--clay); background:#fff; border:1px solid rgba(176,85,63,.28);
+    border-radius:20px; padding:2px 8px}
+  .bs.on.sty2{background:#fff; border-color:rgba(46,74,59,.22)}
+  .bs.on.sty2 b{color:var(--green-mid)}
+  /* ── 클로징 ── */
+  .close .askbody{gap:0}
+  .close .cq{font-size:23px; font-weight:700; color:rgba(255,255,255,.42); letter-spacing:-.03em}
+  .close .cbig{font-size:58px; font-weight:800; letter-spacing:-.045em; color:rgba(255,255,255,.75); margin-top:18px; line-height:1.2}
+  .close .cbig b{color:#fff}
+  .close .cmark{font-size:26px; font-weight:800; letter-spacing:-.05em; color:#E7EFEA; margin-top:52px}
+  .close .cmark i{display:inline-block; width:8px; height:8px; background:var(--clay); margin-left:5px; vertical-align:3px; font-style:normal; border-radius:1px}
+  .close .cthx{font-size:14px; color:rgba(255,255,255,.5); margin-top:14px; font-weight:600}
+  /* ── 03 · 가운데 정렬 레이아웃(피그마 반영) ── */
+  .slide.ctr{justify-content:center; padding:0.5in 0.6in}
+  .chead{text-align:center; margin-bottom:52px}
+  .chead .ceb{font-size:12.5px; font-weight:600; color:var(--sub2); letter-spacing:.01em}
+  .chead .ch1{font-size:31px; font-weight:800; letter-spacing:-.035em; line-height:1.42; margin-top:16px}
+  .chead .ch1 b{color:var(--green)}
+  .chead .cscn{font-size:13px; color:rgba(110,107,99,.66); margin-top:22px; font-weight:500; letter-spacing:-.01em}
+  .cflow{display:grid; grid-template-columns:repeat(6,1fr); gap:14px}
+  .cstep{border:1px solid var(--line); border-radius:16px; background:#fff; padding:22px 16px 20px;
+    min-height:196px; display:flex; flex-direction:column; align-items:center; text-align:center}
+  .cstep .cn{font-size:12px; font-weight:500; color:var(--sub2); letter-spacing:.01em}
+  .cstep .ct{font-size:17px; font-weight:800; letter-spacing:-.025em; margin-top:16px}
+  .cstep .cd{font-size:11.5px; color:var(--sub); line-height:1.65; margin-top:14px}
+  .cstep .cq{font-size:11px; color:rgba(110,107,99,.72); font-style:italic; line-height:1.6; margin-top:auto; padding-top:16px}
+  /* ── 04 · 03과 같은 레이아웃 + 표시만 ── */
+  .chead .ch1 i{font-style:normal; color:var(--clay)}
+  .cstep{position:relative}
+  .cbadge{position:absolute; top:-11px; left:50%; transform:translateX(-50%);
+    font-size:10.5px; font-weight:800; letter-spacing:-.01em; white-space:nowrap;
+    background:#fff; border:1px solid rgba(176,85,63,.28); color:var(--clay); border-radius:20px; padding:4px 11px}
+  .cbadge.on{background:var(--clay); border-color:var(--clay); color:#fff;
+    box-shadow:0 2px 8px rgba(176,85,63,.25)}
+  .cbadge.gray{background:#6E6B63; border-color:#6E6B63; color:#FFFFFF}
+  .cstep.cause{border:1.5px solid #B0553F; background:rgba(176,85,63,.07);
+    transform:translateY(-6px); box-shadow:0 3px 10px rgba(176,85,63,.09)}
+  .cstep.cause .ct{color:#B0553F; font-size:18px}
+  .cstep.cause .cd b{color:var(--ink)}
+
+  .cstep.drv .ct{color:var(--sub)}
+  .cstep.res2{border-color:rgba(22,20,15,.30); background:rgba(22,20,15,.07)}
+  .cstep.res2 .ct{color:#16140F}
+  .cfin{text-align:center; font-size:17px; font-weight:800; letter-spacing:-.025em;
+    color:var(--sub); margin-top:34px}
+  .cfin b{color:var(--green)}
+  /* ── 04 · 결과 → 다시 처음으로 ── */
+  .retn{position:relative; height:56px; margin-top:14px}
+  .retn .arc{position:absolute; left:7%; right:7%; top:0; height:34px;
+    border:2px dashed #B0553F; border-top:none; border-radius:0 0 18px 18px}
+  .retn .arc:before{content:""; position:absolute; left:-7px; top:-9px; width:0; height:0;
+    border-left:6.5px solid transparent; border-right:6.5px solid transparent;
+    border-bottom:9px solid #B0553F}
+  .retn .rcap{position:absolute; top:23px; left:50%; transform:translateX(-50%);
+    background:#fff; padding:0 16px; font-size:14px; font-weight:800; color:#B0553F; white-space:nowrap}
+  .retn .rcap b{color:#16140F; font-weight:800}
+  .cfin{margin-top:12px}
+  /* ── 전환 · 블러 오버레이 ── */
+  .blurq{position:relative; justify-content:center; padding:0}
+  .blurq .bgblur{position:absolute; inset:0; padding:0.5in 0.6in; display:flex; flex-direction:column;
+    justify-content:center; filter:blur(7px); opacity:.55; pointer-events:none}
+  .blurq .veil{position:absolute; inset:0; background:rgba(255,255,255,.55)}
+  .blurq .qover{position:relative; z-index:2; text-align:center; padding:0 0.6in}
+  .blurq .qeb{font-size:12.5px; font-weight:600; color:#6E6B63; letter-spacing:.01em}
+  .blurq .qbig{font-size:46px; font-weight:800; letter-spacing:-.045em; line-height:1.3; margin-top:18px}
+  .blurq .qbig b{color:#2E4A3B}
+  .blurq .qsub{font-size:15px; color:#6E6B63; margin-top:20px; font-weight:500}
+  /* ── 피드백 → 개선 표 ── */
+  .fixt{width:100%; border-collapse:collapse; font-size:12px}
+  .fixt th{background:#F6F6F5; font-size:9.5px; font-weight:800; letter-spacing:.09em; text-transform:uppercase;
+    color:#6E6B63; padding:8px 11px; border:1px solid rgba(22,20,15,.11); text-align:left}
+  .fixt td{border:1px solid rgba(22,20,15,.11); padding:11px; vertical-align:top; line-height:1.5; color:#16140F}
+  .fixt .fs{font-size:11px; color:#6E6B63; font-weight:400}
+  .fixt .fs b{color:#16140F; font-weight:700}
+  .fp{display:inline-block; font-size:10px; font-weight:800; padding:4px 9px; border-radius:20px; white-space:nowrap}
+  .fp.mid{background:#16140F; color:#fff}
+  .fp.ut{background:rgba(46,74,59,.10); color:#2E4A3B}
+  .fp.str{background:rgba(176,85,63,.12); color:#B0553F}
+  .fp.no{background:#F6F6F5; color:#6E6B63; border:1px solid rgba(22,20,15,.14)}
+  .fp.now{background:#E7EFEA; color:#2E4A3B}
+  .fp.chk{background:rgba(176,85,63,.12); color:#B0553F}
+  /* ── 06 · 큰 숫자 두 개 + 인용 3 ── */
+  .twobig{display:grid; grid-template-columns:1fr 1fr; gap:18px; max-width:9.1in; margin:0 auto; width:100%}
+  .bignum{border:1px solid rgba(22,20,15,.11); border-radius:16px; background:#FFFFFF;
+    padding:26px 24px 24px; text-align:center}
+  .bignum.sty{border-color:rgba(46,74,59,.24); background:#E7EFEA}
+  .bignum.sze{border-color:rgba(46,74,59,.24); background:#E7EFEA}
+  .bignum .bn{font-size:76px; font-weight:800; letter-spacing:-.05em; line-height:.95}
+  .bignum .bn span{font-size:34px; margin-left:2px}
+  .bignum.sty .bn{color:#16140F} .bignum.sze .bn{color:#16140F}
+  .bignum .bl2{font-size:19px; font-weight:800; letter-spacing:-.025em; margin-top:14px}
+  .bignum.sty .bl2{color:#16140F} .bignum.sze .bl2{color:#16140F}
+  .bignum .bd2{font-size:13px; color:#6E6B63; margin-top:10px; line-height:1.55}
+  .bignum .bd2 b{color:#16140F; font-weight:800}
+  .etcline{text-align:center; font-size:12.5px; color:rgba(110,107,99,.85); margin-top:14px}
+  .etcline b{color:#16140F; font-weight:800}
+  .qrow-h{text-align:center; font-size:11px; font-weight:800; letter-spacing:.12em;
+    text-transform:uppercase; color:rgba(110,107,99,.72); margin-top:38px}
+  .qrow{max-width:9.1in; width:100%; margin:16px auto 0; display:flex; flex-direction:column; gap:12px}
+  .qline{position:relative; display:flex; align-items:center; justify-content:space-between; gap:20px;
+    background:#F6F6F5; border:1px solid rgba(22,20,15,.14); border-radius:16px; padding:15px 24px}
+  .qline .qt{font-size:14px; font-weight:700; color:#16140F; line-height:1.5; white-space:nowrap}
+  .qline .qs2{font-size:11px; color:rgba(110,107,99,.85); font-weight:700; white-space:nowrap}
+  .qline:after{content:""; position:absolute; left:30px; bottom:-10px; width:0; height:0;
+    border-style:solid; border-width:10px 9px 0 0; border-color:rgba(22,20,15,.14) transparent transparent transparent}
+  .qline:before{content:""; position:absolute; left:31px; bottom:-8.5px; width:0; height:0; z-index:1;
+    border-style:solid; border-width:9px 8px 0 0; border-color:#F6F6F5 transparent transparent transparent}
+  /* ── 07 · 셋 다 아니다 → 하나 ── */
+  .nope{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; max-width:10.2in; margin:0 auto; width:100%}
+  .nc{border:1px solid rgba(22,20,15,.13); border-radius:16px; background:#F6F6F5;
+    padding:22px 18px 20px; text-align:center; position:relative}
+  .nc .nx{font-size:22px; font-weight:800; color:rgba(176,85,63,.85); line-height:1}
+  .nc .nt{font-size:20px; font-weight:800; letter-spacing:-.025em; margin-top:12px;
+    color:rgba(110,107,99,.9); text-decoration:line-through; text-decoration-thickness:1.5px}
+  .nc .nd{font-size:12.5px; color:#6E6B63; line-height:1.6; margin-top:11px}
+  .nc .nd b{color:#16140F; font-weight:800}
+  .nodown{text-align:center; font-size:20px; color:rgba(110,107,99,.55); font-weight:800; margin:20px 0 4px}
+  .answer{text-align:center}
+  .answer .ak2{font-size:11.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:rgba(110,107,99,.72)}
+  .answer .abig{font-size:46px; font-weight:800; letter-spacing:-.045em; margin-top:12px; color:#16140F}
+  .answer .abig b{color:#2E4A3B}
+  /* ── 07 · 두 고민 → 같은 뿌리 ── */
+  .chead .ch1.ans{font-size:46px; letter-spacing:-.045em; line-height:1.3}
+  .chead .ch1.ans b{color:#2E4A3B}
+  .chead.tight{margin-bottom:38px}
+  /* 내용 밀집 장에서도 헤딩은 가운데 (03~07과 통일) */
+  .chead.dense{margin-bottom:16px}
+  .chead.dense .ch1{font-size:26px; margin-top:9px; line-height:1.34}
+  .chead.dense .cscn{font-size:13px; margin-top:10px}
+  .rootg{display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:9.6in; margin:0 auto; width:100%}
+  .rc{border:1px solid rgba(22,20,15,.13); border-radius:16px; background:#F6F6F5; padding:20px 20px 18px}
+  .rc .rcb{display:inline-block; font-size:10.5px; font-weight:800; letter-spacing:.1em;
+    padding:4px 10px; border-radius:999px; background:#E7EFEA; color:#2E4A3B; border:1px solid rgba(46,74,59,.22)}
+  .rc .rq{font-size:19px; font-weight:800; letter-spacing:-.03em; color:#16140F; line-height:1.4; margin-top:12px}
+  .rc .rlead{font-size:11.5px; font-weight:800; letter-spacing:.02em; color:rgba(110,107,99,.85);
+    margin-top:16px; padding-top:13px; border-top:1px solid rgba(22,20,15,.1)}
+  .rc .ritem{display:flex; gap:9px; align-items:baseline; margin-top:10px}
+  .rc .ritem .rx{font-size:13px; font-weight:800; color:rgba(176,85,63,.85); line-height:1.5; flex:none}
+  .rc .ritem .rtx{font-size:12.5px; color:#6E6B63; line-height:1.6}
+  .rc .ritem .rtx b{color:#16140F; font-weight:800}
+  .rc .ritem .rtx s{color:rgba(110,107,99,.9); text-decoration-thickness:1.5px}
+  .rjoin{text-align:center; font-size:13px; font-weight:800; letter-spacing:-.01em;
+    color:rgba(110,107,99,.9); margin-top:18px}
+  .rjoin b{color:#16140F}
+  /* ── 07 · 한계 ↔ 해자 대응표 ── */
+  .vs{display:grid; grid-template-columns:1fr 52px 1.15fr; row-gap:12px; align-items:stretch; flex:1; min-height:0}
+  .vshd{font-size:10.5px; font-weight:800; letter-spacing:.13em; text-transform:uppercase;
+    padding-bottom:3px; text-align:center}
+  .vshd.l{color:var(--clay)} .vshd.r{color:var(--green)}
+  .vbox{border-radius:12px; padding:16px 20px; display:flex; flex-direction:column; justify-content:center}
+  .vbox.l{background:var(--clay-bg); border:1px solid rgba(176,85,63,.28)}
+  .vbox.r{background:var(--green-soft); border:1px solid rgba(46,74,59,.22)}
+  .vbox .vk{font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase}
+  .vbox.l .vk{color:var(--clay)} .vbox.r .vk{color:var(--green)}
+  .vbox h3{font-size:18.5px; font-weight:800; letter-spacing:-.025em; margin-top:6px; line-height:1.3}
+  .vbox.l h3{color:var(--clay)} .vbox.r h3{color:var(--green)}
+  .vbox p{font-size:13px; color:var(--sub); line-height:1.6; margin-top:8px}
+  .vbox p b{color:var(--ink); font-weight:700}
+  .vbox .vev{margin-top:10px; font-size:12px; font-weight:800; color:var(--green);
+    padding-top:9px; border-top:1px solid rgba(46,74,59,.18)}
+  .varr{display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:800; color:rgba(110,107,99,.42)}
+  /* ══ v9 · 07 서비스 한눈에 · 11 관리자 ══ */
+  .svc{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; flex:1; min-height:0}
+  .svcard{border:1px solid rgba(46,74,59,.22); background:#E7EFEA; border-radius:14px;
+    padding:19px 21px; display:flex; flex-direction:column; position:relative}
+  .svcard .sn{display:inline-flex; align-items:center; justify-content:center; width:29px; height:29px;
+    border-radius:50%; background:#2E4A3B; color:#fff; font-size:14px; font-weight:800}
+  /* 위쪽 · 두 고민 → 세 기능 */
+  .pgrp{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+  .pg{border-radius:12px; padding:13px 16px; text-align:center;
+    background:rgba(176,85,63,.055); border:1px solid rgba(176,85,63,.28)}
+  .pg.sz{grid-column:1 / 3} .pg.st{grid-column:3}
+  .pg b{display:block; font-size:17px; font-weight:800; letter-spacing:-.025em; color:#B0553F}
+  .pg span{display:block; font-size:13px; color:#6E6B63; margin-top:5px; font-weight:600}
+  .parr{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:9px 0 11px}
+  .parr i{font-style:normal; text-align:center; font-size:12px; font-weight:800; color:rgba(110,107,99,.55)}
+  .svcard h3{font-size:24px; font-weight:800; letter-spacing:-.03em; margin-top:10px; color:#2E4A3B; line-height:1.22}
+  .svcard .sq{font-size:14px; font-weight:800; color:#5A7A68; margin-top:7px}
+  .svcard p{font-size:14px; color:#6E6B63; line-height:1.65; margin-top:11px}
+  .svcard p b{color:#16140F; font-weight:700}
+  .svcard .sf{margin-top:auto; padding-top:12px; font-size:13px; font-weight:800; color:#2E4A3B}
+  .svrow{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:12px; align-items:stretch}
+  .svdown{text-align:center; font-size:11.5px; font-weight:800; color:rgba(110,107,99,.9); margin:11px 0 0}
+  .svdown b{color:#16140F}
+  .svadmin{border:1px solid rgba(22,20,15,.13); background:#F6F6F5; border-radius:14px; padding:16px 18px;
+    display:flex; align-items:center; gap:18px}
+  .svadmin .sn{flex:none; display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+    border-radius:50%; background:#16140F; color:#fff; font-size:12px; font-weight:800}
+  .svadmin .sat{flex:none; font-size:19px; font-weight:800; letter-spacing:-.028em}
+  .svadmin .sap{font-size:12.5px; color:#6E6B63; line-height:1.6}
+  .svadmin .sap b{color:#16140F; font-weight:700}
+  /* 관리자 4메뉴 */
+  .adm{display:grid; grid-template-columns:repeat(4,1fr); gap:13px; flex:1; min-height:0}
+  .adc{border:1px solid rgba(22,20,15,.11); border-radius:13px; background:#fff; padding:15px 16px;
+    display:flex; flex-direction:column}
+  .adc.key{background:#E7EFEA; border-color:rgba(46,74,59,.22)}
+  .adc .ak3{font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:rgba(110,107,99,.72)}
+  .adc.key .ak3{color:#2E4A3B}
+  .adc h4{font-size:16px; font-weight:800; letter-spacing:-.025em; margin-top:6px; line-height:1.3}
+  .adc.key h4{color:#2E4A3B}
+  .adc p{font-size:11.5px; color:#6E6B63; line-height:1.6; margin-top:8px}
+  .adc p b{color:#16140F; font-weight:700}
+  .adc .af{margin-top:auto; padding-top:10px; font-size:11px; font-weight:800; color:rgba(110,107,99,.9)}
+  .adc.key .af{color:#2E4A3B}
+  .loop{display:grid; grid-template-columns:1fr 26px 1fr 26px 1fr 26px 1fr; align-items:center;
+    margin-top:12px; background:#F6F6F5; border:1px solid rgba(22,20,15,.11); border-radius:13px; padding:13px 16px}
+  .loop .ls{font-size:12.5px; font-weight:800; letter-spacing:-.02em; text-align:center; line-height:1.35}
+  .loop .ls span{display:block; font-size:10.5px; font-weight:600; color:#6E6B63; margin-top:3px}
+  .loop .la{text-align:center; font-size:14px; font-weight:800; color:rgba(110,107,99,.45)}
+  /* ══ v9 · 07 유저플로우 ══ */
+  .uf{display:flex; flex-direction:column; flex:1; min-height:0}
+  .ufmain{display:grid; grid-template-columns:1fr 22px 1fr 22px 1.15fr 22px 1fr 22px 1.15fr; align-items:stretch}
+  .ufn{border:1px solid rgba(22,20,15,.13); background:#fff; border-radius:12px; padding:11px 13px;
+    display:flex; flex-direction:column}
+  .ufn .ufp{font-size:9px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:rgba(110,107,99,.72)}
+  .ufn h4{font-size:14.5px; font-weight:800; letter-spacing:-.025em; margin-top:5px; line-height:1.25}
+  .ufn p{font-size:10.5px; color:#6E6B63; line-height:1.5; margin-top:5px}
+  .ufn p b{color:#16140F; font-weight:700}
+  .ufn.ac{background:#E7EFEA; border-color:rgba(46,74,59,.22)} .ufn.ac h4{color:#2E4A3B}
+  .ufn.key{border:2px solid #2E4A3B; background:#E7EFEA}
+  .ufn.hero{background:#2E4A3B; border-color:#2E4A3B}
+  .ufn.hero .ufp{color:rgba(255,255,255,.6)} .ufn.hero h4{color:#fff}
+  .ufn.hero p{color:rgba(255,255,255,.8)} .ufn.hero p b{color:#fff}
+  .ufa{display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; color:rgba(110,107,99,.42)}
+  .ufsplit{text-align:center; font-size:11px; font-weight:800; color:rgba(110,107,99,.9); margin:12px 0 9px}
+  .ufsplit b{color:#16140F}
+  .ufbr{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+  .ufc{border:1px solid rgba(22,20,15,.13); border-radius:12px; padding:12px 14px; background:#F6F6F5;
+    display:flex; flex-direction:column}
+  .ufc .uk{font-size:9.5px; font-weight:800; letter-spacing:.11em; text-transform:uppercase; color:rgba(110,107,99,.72)}
+  .ufc h4{font-size:15.5px; font-weight:800; letter-spacing:-.025em; margin-top:5px}
+  .ufc p{font-size:11px; color:#6E6B63; line-height:1.55; margin-top:6px}
+  .ufc p b{color:#16140F; font-weight:700}
+  .ufc .um{margin-top:auto; padding-top:9px; font-size:10.5px; font-weight:800; color:#2E4A3B}
+  .ufc.j{background:#E7EFEA; border-color:rgba(46,74,59,.22)} .ufc.j h4{color:#2E4A3B}
+  .ufback{margin-top:11px; background:#16140F; color:#fff; border-radius:12px; padding:11px 16px;
+    display:flex; align-items:center; gap:14px; font-size:12px; font-weight:700; line-height:1.5}
+  .ufback .ubk{flex:none; font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase;
+    color:rgba(255,255,255,.55); padding-right:14px; border-right:1px solid rgba(255,255,255,.22)}
+  .ufback b{color:#E7EFEA; font-weight:800}
+  /* ══ v9 · 09 세로 유저플로우 ══ */
+  .vfl{display:flex; flex-direction:column; align-items:center; flex:1; min-height:0; width:100%}
+  .vfn{width:100%; max-width:8.7in; border:1px solid rgba(22,20,15,.13); background:#fff;
+    border-radius:14px; padding:17px 24px; display:flex; align-items:center; gap:20px}
+  .vfn .vfk{flex:none; width:124px; font-size:11px; font-weight:800; letter-spacing:.11em;
+    text-transform:uppercase; color:rgba(110,107,99,.72)}
+  .vfn h4{flex:none; width:148px; font-size:20px; font-weight:800; letter-spacing:-.032em; line-height:1.2}
+  .vfn p{font-size:15px; color:#6E6B63; line-height:1.6}
+  .vfn p b{color:#16140F; font-weight:700}
+  .vfn.ac{background:#fff}
+  .vfn.hero{background:#F6F6F5; border:1.5px solid rgba(22,20,15,.32)}
+  .vfn.hero h4{color:#16140F}
+  .vfstep{display:inline-flex; align-items:center; gap:8px; font-size:14.5px; font-weight:800; color:#16140F}
+  .vfstep em{font-style:normal; color:rgba(110,107,99,.5); font-weight:800}
+  .vfa{font-size:18px; font-weight:800; color:rgba(110,107,99,.42); margin:4px 0}
+  .vfa b{display:block; font-size:13px; color:#16140F; margin-top:2px}
+  .vfsplit{display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%; max-width:8.7in}
+  .vfc{border-radius:14px; padding:16px 20px; border:1px solid rgba(22,20,15,.13); background:#F6F6F5}
+  .vfc .vck{display:flex; align-items:center; gap:7px; font-size:11px; font-weight:800; letter-spacing:.11em; text-transform:uppercase; color:rgba(110,107,99,.85)}
+  .vfc .vck svg{width:14px; height:14px; flex:none}
+  .vfc h4{font-size:20px; font-weight:800; letter-spacing:-.032em; margin-top:7px; color:#16140F}
+  .vfc p{font-size:14.5px; color:#6E6B63; line-height:1.6; margin-top:9px}
+  .vfc p b{color:#16140F; font-weight:700}
+  /* ══ 09 · 가로 흐름 + 화면 ══ */
+  .hflow{display:grid; grid-template-columns:1fr 30px 1fr 30px 1fr; align-items:stretch}
+  .hstep{border:1px solid var(--line); background:#fff; border-radius:12px; padding:13px 16px;
+    display:flex; flex-direction:column}
+  .hstep.on{background:var(--green-soft); border-color:rgba(46,74,59,.28)}
+  .hstep .hn{width:22px; height:22px; border-radius:50%; background:rgba(110,107,99,.55); color:#fff;
+    font-size:11.5px; font-weight:800; display:flex; align-items:center; justify-content:center}
+  .hstep.on .hn{background:var(--green)}
+  .hstep h4{font-size:16px; font-weight:800; letter-spacing:-.025em; margin-top:8px; line-height:1.25}
+  .hstep.on h4{color:var(--green)}
+  .hstep p{font-size:12px; color:var(--sub); line-height:1.55; margin-top:7px}
+  .hstep p b{color:var(--ink); font-weight:700}
+  .harr{display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:rgba(110,107,99,.4)}
+  .hdown{text-align:center; font-size:12px; font-weight:800; color:rgba(110,107,99,.9); margin:11px 0}
+  .hdown b{color:var(--ink)}
+  .hout{display:grid; grid-template-columns:1.15fr 1fr; gap:18px; flex:1; min-height:0}
+  .hshot{border:1px solid rgba(22,20,15,.2); border-radius:12px; background:#fff; overflow:hidden;
+    display:flex; flex-direction:column; min-height:0}
+  .hshot .hcap{font-size:11px; font-weight:800; color:var(--sub2); padding:8px 12px;
+    border-bottom:1px solid var(--line); letter-spacing:.02em}
+  .hshot img{flex:1; min-height:0; width:100%; object-fit:contain; padding:8px}
+  .hside{display:flex; flex-direction:column; gap:12px; min-height:0}
+  .hcard{border:1px solid rgba(22,20,15,.26); background:var(--wash); border-radius:12px; padding:15px 17px}
+  .hcard .hk{font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--sub2)}
+  .hcard h4{font-size:17px; font-weight:800; letter-spacing:-.025em; margin-top:6px}
+  .hcard p{font-size:12.5px; color:var(--sub); line-height:1.6; margin-top:8px}
+  .hcard p b{color:var(--ink); font-weight:700}
+  .hcard.ut{border-color:rgba(176,85,63,.35); background:var(--clay-bg); margin-top:auto}
+  .hcard.ut h4{color:var(--clay)}
+  .hcard.ut .hk{color:var(--clay)}
+  .hcard.ut p b{color:var(--clay)}
+  /* ══ 09 · 진단 구간 확대 ══ */
+  .zoom{display:grid; grid-template-columns:1fr 26px 1fr 26px 1fr 26px 1.05fr; align-items:stretch; flex:1; min-height:0}
+  .zc{display:flex; flex-direction:column; min-height:0}
+  .zc .zh{display:flex; align-items:baseline; gap:8px; margin-bottom:8px}
+  .zc .zn{font-size:10px; font-weight:800; letter-spacing:.1em; color:var(--sub2)}
+  .zc .zt{font-size:16px; font-weight:800; letter-spacing:-.025em}
+  .zc.last .zt{color:var(--green)}
+  .zc .zimg{flex:1; min-height:0; border:1px solid var(--line); border-radius:12px; background:#fff;
+    overflow:hidden; display:flex}
+  .zc.last .zimg{border:1.5px solid rgba(46,74,59,.35)}
+  .zc .zimg img{width:100%; height:100%; object-fit:contain; padding:7px}
+  .zc .zd{font-size:11.5px; color:var(--sub); line-height:1.55; margin-top:9px}
+  .zc .zd b{color:var(--ink); font-weight:700}
+  .za{display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:800;
+    color:rgba(110,107,99,.4); padding-top:28px}
+  /* ══ 10 · 실제 계산 한 사례 ══ */
+  .calc{display:grid; grid-template-columns:1fr 34px 1.25fr 34px 1fr; align-items:stretch; flex:1; min-height:0}
+  .cbx{border:1px solid var(--line); background:#fff; border-radius:13px; padding:16px 18px;
+    display:flex; flex-direction:column}
+  .cbx .ck{font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--sub2)}
+  .cbx h4{font-size:17px; font-weight:800; letter-spacing:-.025em; margin-top:6px; line-height:1.3}
+  .cbx.mid{background:var(--green-soft); border-color:rgba(46,74,59,.28)}
+  .cbx.mid .ck, .cbx.mid h4{color:var(--green)}
+  .cbx.out{background:var(--wash); border-color:rgba(22,20,15,.26)}
+  .quote2{font-size:15px; font-weight:800; letter-spacing:-.025em; line-height:1.45; margin-top:12px;
+    padding:12px 14px; background:var(--wash); border-radius:10px; border-left:3px solid var(--clay)}
+  .rows{margin-top:12px; display:flex; flex-direction:column; gap:0}
+  .rw{display:flex; align-items:baseline; gap:10px; padding:7px 0; border-top:1px solid rgba(22,20,15,.09)}
+  .rw:first-child{border-top:0}
+  .rw .rl{flex:none; width:74px; font-size:11.5px; font-weight:700; color:var(--sub)}
+  .rw .rv{font-size:13.5px; font-weight:800; letter-spacing:-.015em}
+  .rw .rv em{font-style:normal; font-size:11.5px; font-weight:600; color:var(--sub); margin-left:5px}
+  .rw .rv b{color:var(--green)}
+  .rw .rv i{font-style:normal; color:var(--clay)}
+  .cnote{margin-top:auto; padding-top:12px; font-size:11.5px; color:var(--sub); line-height:1.55}
+  .cnote b{color:var(--ink); font-weight:700}
+  .carr{display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:rgba(110,107,99,.4)}
+  .cshot{margin-top:11px; flex:1; min-height:0; border:1px solid var(--line); border-radius:10px;
+    background:#fff; overflow:hidden; display:flex; flex-direction:column}
+  .cshot .cscap{font-size:10px; font-weight:800; color:var(--sub2); padding:6px 10px;
+    border-bottom:1px solid var(--line); letter-spacing:.02em}
+  .cshot img{flex:1; min-height:0; width:100%; object-fit:contain; padding:6px}
+  .cshot.wide img{object-fit:cover; object-position:top left; padding:0}
+  .brs{display:flex; flex-direction:column; gap:7px; margin-top:12px}
+  .br1{display:flex; align-items:center; gap:10px; border:1px solid var(--line); border-radius:9px;
+    padding:8px 12px; background:#fff}
+  .br1 .bn2{flex:1; font-size:13px; font-weight:800; letter-spacing:-.015em}
+  .br1 .bz{font-size:15px; font-weight:800; color:var(--green)}
+  .br1 .bp{font-size:11px; font-weight:700; color:var(--sub)}
+  /* ══ 09 · 5단계 + 계산 사례 ══ */
+  .f5{display:grid; grid-template-columns:repeat(5,1fr); gap:9px}
+  .f5c{border:1px solid var(--line); background:#fff; border-radius:11px; padding:11px 13px;
+    display:flex; flex-direction:column; position:relative}
+  .f5c .f5n{width:20px; height:20px; border-radius:50%; background:rgba(110,107,99,.5); color:#fff;
+    font-size:10.5px; font-weight:800; display:flex; align-items:center; justify-content:center}
+  .f5c h4{font-size:14.5px; font-weight:800; letter-spacing:-.025em; margin-top:7px; line-height:1.25}
+  .f5c p{font-size:11px; color:var(--sub); line-height:1.5; margin-top:6px}
+  .f5c p b{color:var(--ink); font-weight:700}
+  .f5c.on{background:var(--green-soft); border-color:rgba(46,74,59,.3)}
+  .f5c.on .f5n{background:var(--green)} .f5c.on h4{color:var(--green)}
+  .f5c.out{background:var(--wash); border-color:rgba(22,20,15,.24)}
+  .f5c.out .f5n{background:var(--ink)}
+  .f5c.ut{background:var(--clay-bg); border-color:rgba(176,85,63,.35)}
+  .f5c.ut .f5n{background:var(--clay)} .f5c.ut h4{color:var(--clay)} .f5c.ut p b{color:var(--clay)}
+  .exwrap{display:grid; grid-template-columns:1fr 1.2fr; gap:16px; flex:1; min-height:0; margin-top:13px}
+  .exbox{border:1px solid var(--line); border-radius:13px; background:#fff; padding:15px 17px;
+    display:flex; flex-direction:column; min-height:0}
+  .exbox .exk{font-size:9.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--sub2)}
+  .exq{font-size:14px; font-weight:800; letter-spacing:-.02em; line-height:1.45; margin-top:9px;
+    padding:10px 13px; background:var(--wash); border-radius:9px; border-left:3px solid var(--clay)}
+  .exq i{font-style:normal; color:var(--clay)}
+  .rows{margin-top:11px; display:flex; flex-direction:column}
+  .rw{display:flex; align-items:baseline; gap:10px; padding:6px 0; border-top:1px solid rgba(22,20,15,.09)}
+  .rw:first-child{border-top:0}
+  .rw .rl{flex:none; width:70px; font-size:11px; font-weight:700; color:var(--sub)}
+  .rw .rv{font-size:12.5px; font-weight:800; letter-spacing:-.015em}
+  .rw .rv em{font-style:normal; font-size:10.5px; font-weight:600; color:var(--sub); margin-left:5px}
+  .rw .rv b{color:var(--green)}
+  .exshot{flex:1; min-height:0; border:1px solid var(--line); border-radius:10px; overflow:hidden;
+    display:flex; flex-direction:column; margin-top:10px; background:#fff}
+  .exshot .escap{font-size:10px; font-weight:800; color:var(--sub2); padding:6px 10px; border-bottom:1px solid var(--line)}
+  .exshot img{flex:1; min-height:0; width:100%; object-fit:cover; object-position:top left}
+  /* ══ 09 · 결과 화면 목업 ══ */
+  .rmk{border:1px solid rgba(22,20,15,.2); border-radius:14px; background:#fff; display:flex;
+    flex-direction:column; overflow:hidden; min-height:0; box-shadow:0 8px 26px rgba(22,20,15,.13)}
+  .rmk .rin{flex:1; padding:11px 13px; display:flex; flex-direction:column; min-height:0; gap:9px}
+  .rmk .rh1{font-size:15px; font-weight:800; letter-spacing:-.03em}
+  .rmk .rh1 span{display:block; font-size:9.5px; font-weight:600; color:var(--sub2); margin-top:3px; letter-spacing:0}
+  .rbar{display:flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:9px;
+    padding:7px 9px; font-size:10.5px; font-weight:700; background:#fff}
+  .rbar .rdone{flex:none; font-size:9px; font-weight:800; color:var(--green); background:var(--green-soft);
+    border:1px solid rgba(46,74,59,.22); border-radius:20px; padding:3px 8px}
+  .rbar .rgo{margin-left:auto; flex:none; background:var(--ink); color:#fff; border-radius:7px;
+    padding:5px 11px; font-size:10px; font-weight:800}
+  .rtabs{display:flex; gap:16px; border-bottom:1px solid var(--line)}
+  .rtb{display:flex; align-items:center; gap:5px; font-size:11px; font-weight:800; color:var(--sub2);
+    padding-bottom:6px; border-bottom:2px solid transparent}
+  .rtb i{font-style:normal; width:14px; height:14px; border-radius:50%; background:rgba(110,107,99,.2);
+    color:var(--sub); font-size:8.5px; display:flex; align-items:center; justify-content:center; font-weight:800}
+  .rtb.on{color:var(--ink); border-bottom-color:var(--ink)}
+  .rtb.on i{background:var(--ink); color:#fff}
+  .rbody{flex:1; display:grid; grid-template-columns:0.85fr 1.15fr; gap:9px; min-height:0}
+  .fcard{background:#16140F; border-radius:10px; padding:11px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center}
+  .fcard .fbrand{align-self:flex-start; font-size:9.5px; font-weight:800; color:#fff; letter-spacing:-.02em;
+    display:flex; align-items:center; gap:3px}
+  .fcard .fbrand i{width:4px; height:4px; background:#9db8ff; border-radius:1px; display:inline-block}
+  .fcard .ffig{margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:3px}
+  .fcard .fhead{width:20px; height:20px; border-radius:50%; background:#F0EDE6; display:block}
+  .fcard .fbody{width:38px; height:52px; border-radius:7px 7px 5px 5px; background:#9db8ff; display:block}
+  .fcard .fcode{font-size:9px; font-weight:800; letter-spacing:.18em; color:#9db8ff; margin-top:10px}
+  .fcard .fname{font-size:17px; font-weight:800; letter-spacing:-.035em; color:#fff; margin-top:5px}
+  .fcard .ftags{display:flex; gap:4px; margin-top:8px; flex-wrap:wrap; justify-content:center}
+  .fcard .ftags span{font-size:8.5px; font-weight:700; color:rgba(255,255,255,.72);
+    border:1px solid rgba(255,255,255,.2); border-radius:20px; padding:2px 7px}
+  .fcard .ftag2{font-size:10px; font-weight:600; color:rgba(255,255,255,.62); line-height:1.45; margin-top:9px}
+  .fcard .fhint{margin-top:11px; font-size:8.5px; font-weight:700; color:rgba(255,255,255,.4)}
+  .rside{display:flex; flex-direction:column; gap:7px; min-height:0}
+  .rbn{background:#16140F; border-radius:9px; padding:9px 11px}
+  .rbn .rbk{font-size:8.5px; font-weight:800; letter-spacing:.14em; color:#B9A7F0}
+  .rbn .rbv{font-size:11.5px; font-weight:800; color:#fff; line-height:1.4; margin-top:4px; letter-spacing:-.02em}
+  .rbn .rbv mark{background:rgba(150,120,240,.32); color:#fff; padding:0 2px}
+  .rchip{border:1px solid var(--line); border-radius:9px; padding:8px 10px; background:#fff}
+  .rchip .rcb{display:inline-block; font-size:8.5px; font-weight:800; color:var(--green);
+    background:var(--green-soft); border:1px solid rgba(46,74,59,.22); border-radius:20px; padding:2px 7px}
+  .rchip p{font-size:10.5px; font-weight:700; line-height:1.5; margin-top:6px}
+  .rbrand{border:1px solid var(--line); border-radius:9px; padding:9px 10px; background:#fff; flex:1; min-height:0}
+  .rbrand .rbh{display:flex; align-items:baseline; gap:7px}
+  .rbrand .rbt{font-size:11.5px; font-weight:800}
+  .rbrand .rbs{margin-left:auto; font-size:8.5px; font-weight:800; color:var(--green);
+    background:var(--green-soft); border-radius:20px; padding:2px 7px}
+  .rbrand .rbn2{font-size:9.5px; color:var(--sub2); margin-top:3px}
+  .rrow{display:flex; align-items:center; gap:8px; background:var(--wash); border-radius:7px;
+    padding:6px 9px; margin-top:6px}
+  .rrow .rnm{font-size:10.5px; font-weight:800}
+  .rrow .rnm em{font-style:normal; font-size:9px; font-weight:600; color:var(--sub2); margin-left:4px}
+  .rrow .rsz{margin-left:auto; font-size:15px; font-weight:800; letter-spacing:-.03em}
+  .rrow .rpc{font-size:9px; font-weight:800; color:var(--sub); background:#fff; border-radius:5px; padding:3px 6px}
+  /* ══ 유저플로우 · MVP 그룹 점선 ══ */
+  .grp{position:relative; border:2px dashed; border-radius:16px; padding:21px 14px 14px;
+    display:flex; flex-direction:column; align-items:center; width:100%; max-width:9in}
+  .grp .glb{position:absolute; top:-10px; left:18px; font-size:12px; font-weight:800;
+    letter-spacing:.04em; padding:3px 11px; border-radius:20px; background:#fff}
+  .grp.g1{border-color:rgba(46,74,59,.55)}
+  .grp.g1 .glb{color:#2E4A3B; border:1.5px solid rgba(46,74,59,.55)}
+  .grp.g2{border-color:rgba(176,85,63,.6); max-width:none; padding:19px 14px 14px}
+  .grp.g2 .glb{color:#B0553F; border:1.5px solid rgba(176,85,63,.6)}
+  .grp.g3{border-color:rgba(74,107,138,.6); max-width:none; padding:19px 14px 14px}
+  .grp.g3 .glb{color:#4A6B8A; border:1.5px solid rgba(74,107,138,.6)}
+  .grp.g1 .vfn{max-width:none}
+  .vfa.g1a{color:rgba(46,74,59,.6)}
+  .vfa.dual{display:flex; align-items:center; justify-content:center; gap:26px; margin:24px 0}
+  .vfa.dual .g2a{color:#B0553F} .vfa.dual .g3a{color:#4A6B8A}
+  .vfsplit{align-items:stretch}
+  .grp.g2 .vfc, .grp.g3 .vfc{width:100%; border:0; background:transparent; padding:0}
+  .grp.g3 .vck{color:#4A6B8A}
+  .grp.g2 .vck{color:#B0553F}
+  /* ══ 11 · 스타일리스트 찾기 목업 ══ */
+  .smk{border:1px solid rgba(22,20,15,.2); border-radius:14px; background:#fff; display:flex;
+    flex-direction:column; overflow:hidden; min-height:0; box-shadow:0 8px 26px rgba(22,20,15,.13);
+    padding:14px 16px; gap:10px}
+  .smk .sh1{font-size:16px; font-weight:800; letter-spacing:-.03em}
+  .smk .sh1 span{display:block; font-size:10px; font-weight:600; color:var(--sub2); margin-top:3px; letter-spacing:0}
+  .stabs{display:flex; gap:6px; flex-wrap:wrap}
+  .stabs .st1{font-size:10.5px; font-weight:800; color:var(--sub); border:1px solid var(--line);
+    border-radius:20px; padding:5px 11px; background:#fff}
+  .stabs .st1.on{background:var(--ink); color:#fff; border-color:var(--ink)}
+  .sfil{display:flex; gap:6px}
+  .sfil span{font-size:10px; font-weight:700; color:var(--sub); border:1px solid var(--line);
+    border-radius:8px; padding:5px 10px; background:var(--wash)}
+  .slist{display:flex; flex-direction:column; gap:8px; flex:1; min-height:0}
+  .sitem{border:1px solid var(--line); border-radius:11px; padding:10px 12px; display:flex;
+    align-items:center; gap:11px; background:#fff}
+  .sitem .sav{flex:none; width:34px; height:34px; border-radius:50%; background:var(--green-soft);
+    color:var(--green); font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center}
+  .sitem .sinfo{flex:1; min-width:0}
+  .sitem .snm{font-size:12.5px; font-weight:800; letter-spacing:-.015em}
+  .sitem .snm em{font-style:normal; font-size:10px; font-weight:700; color:var(--green);
+    background:var(--green-soft); border-radius:20px; padding:2px 7px; margin-left:5px}
+  .sitem .stg{display:flex; gap:4px; margin-top:5px; flex-wrap:wrap}
+  .sitem .stg i{font-style:normal; font-size:9.5px; font-weight:700; color:var(--sub2);
+    border:1px solid var(--line); border-radius:20px; padding:2px 7px}
+  .sitem .smeta{font-size:9.5px; color:var(--sub2); margin-top:5px; font-weight:600}
+  .sitem .sprice{flex:none; text-align:right}
+  .sitem .sprice b{display:block; font-size:13px; font-weight:800; letter-spacing:-.02em}
+  .sitem .sprice span{display:block; font-size:9px; color:var(--sub2); font-weight:700; margin-top:2px}
+  .sbn{border:1px solid rgba(46,74,59,.22); background:var(--green-soft); border-radius:11px;
+    padding:9px 12px; display:flex; align-items:center; gap:10px}
+  .sbn .sbt{font-size:11px; font-weight:800; color:var(--green); line-height:1.45}
+  .sbn .sbt span{display:block; font-size:9.5px; font-weight:600; color:var(--sub); margin-top:2px}
+  .sbn .sbg{margin-left:auto; flex:none; background:var(--green); color:#fff; border-radius:7px;
+    padding:5px 11px; font-size:10px; font-weight:800; white-space:nowrap}
+</style>
+</head>
+<body>
+
+<!-- ═══ 02 · 표지 ═══ -->
+<section class="slide cover">
+  <div class="bigmark">Fitting<i></i></div>
+  <div class="rule"></div>
+  <div class="tagline">어떤 브랜드로든, 사이즈 걱정 없이</div>
+  <div class="sub" style="margin-top:14px">
+    평소 입던 옷의 착용 경험으로<br>브랜드를 가로질러 내 사이즈를 번역하는 서비스
+  </div>
+  <div class="meta">
+    <div><div class="k">Team</div><div class="v">강건형 · 이상민 · 이소희</div></div>
+    <div><div class="k">Product</div><div class="v">핏팅(Fitting)</div></div>
+    <div><div class="k">Date</div><div class="v">2026. 07</div></div>
+  </div>
+</section>
+
+
+<!-- ═══ 03 · 이 옷 맞을까? ═══ -->
+<section class="slide ask">
+  <div class="askmark">Fitting<i></i></div>
+  <div class="askbody">
+    <div class="askq">이 옷,<br><b>살까 말까?</b></div>
+    <div class="asksub">온라인으로 옷을 살 때마다,<br>우리는 같은 고민을 반복합니다.</div>
+  </div>
+  <div class="pageno" style="color:rgba(255,255,255,.45)">02</div>
+</section>
+
+
+<!-- ═══ 04 · 6가지 과정 ═══ -->
+<section class="slide ctr">
+  <div class="chead">
+    <div class="ceb">The Everyday Journey</div>
+    <h1 class="ch1">온라인에서 옷 한 벌을 사기 위해,<br>우리는 <b>6가지 과정을 거칩니다.</b></h1>
+    <div class="cscn">시나리오 : 3주 뒤 여행룩 온라인 쇼핑</div>
+  </div>
+
+  <div class="cflow">
+    <div class="cstep">
+      <div class="cn">step 01</div><div class="ct">검색</div>
+      <div class="cd">여행룩 검색</div>
+      <div class="cq">“하… 어떤 스타일이<br>나한테 어울리는지 모르겠어”</div>
+    </div>
+    <div class="cstep">
+      <div class="cn">step 02</div><div class="ct">사이즈표 확인</div>
+      <div class="cd">가슴단면 52 · 어깨 45<br>· 총장 72cm…</div>
+      <div class="cq">“이게 나한테 맞는 건가?”</div>
+    </div>
+    <div class="cstep">
+      <div class="cn">step 03</div><div class="ct">후기 뒤지기</div>
+      <div class="cd">"175/70인데 L 맞아요"<br>비슷한 체형 후기 검색</div>
+      <div class="cq">“근데 이 사람 체형이 나랑 같나?”</div>
+    </div>
+    <div class="cstep">
+      <div class="cn">step 04</div><div class="ct">고민</div>
+      <div class="cd">추천 사이즈는 L,<br>후기는 M도 많고…</div>
+      <div class="cq">“모르겠다. 그냥 크게 살까”</div>
+    </div>
+    <div class="cstep">
+      <div class="cn">step 05</div><div class="ct">주문</div>
+      <div class="cd">한 치수 크게 주문</div>
+      <div class="cq">“모르겠다. 일단 주문하자”</div>
+    </div>
+    <div class="cstep">
+      <div class="cn">step 06</div><div class="ct">수령 · 반품</div>
+      <div class="cd">입어보니<br>어깨는 맞는데 배가 낀다</div>
+      <div class="cq">“하… 또 반품해야 하네.”</div>
+    </div>
+  </div>
+  <div class="pageno">03</div>
+</section>
+
+
+<!-- ═══ 05 · 원인은 두 곳 ═══ -->
+<section class="slide ctr">
+  <div class="chead">
+    <div class="ceb">Where It Breaks</div>
+    <h1 class="ch1">6가지 과정을 거치지만,<br>막히는 이유는 <i>두 가지</i>였습니다.</h1>
+    <div class="cscn">후기를 찾고, 고민하고, 반품하는 이유는 모두 여기서 시작됩니다</div>
+  </div>
+
+  <div class="cflow">
+    <div class="cstep cause">
+      <div class="cbadge on">원인 ①</div>
+      <div class="cn">step 01</div><div class="ct">검색</div>
+      <div class="cd"><b>어떤 스타일이 나한테<br>어울리는지 모른다</b></div>
+      <div class="cq">“하… 뭘 사야 하지”</div>
+    </div>
+    <div class="cstep cause">
+      <div class="cbadge on">원인 ②</div>
+      <div class="cn">step 02</div><div class="ct">사이즈표 확인</div>
+      <div class="cd">숫자는 있는데<br><b>비교할 내 치수가 없다</b></div>
+      <div class="cq">“이게 나한테 맞는 건가?”</div>
+    </div>
+    <div class="cstep">
+      <div class="cn">step 03</div><div class="ct">후기 뒤지기</div>
+      <div class="cd">"175/70인데 L 맞아요"<br>비슷한 체형 후기 검색</div>
+      <div class="cq">“근데 이 사람 체형이 나랑 같나?”</div>
+    </div>
+    <div class="cstep">
+      <div class="cn">step 04</div><div class="ct">고민</div>
+      <div class="cd">추천 사이즈는 L,<br>후기는 M도 많고…</div>
+      <div class="cq">“모르겠다. 그냥 크게 살까”</div>
+    </div>
+    <div class="cstep">
+      <div class="cn">step 05</div><div class="ct">주문</div>
+      <div class="cd">한 치수 크게 주문</div>
+      <div class="cq">“모르겠다. 일단 주문하자”</div>
+    </div>
+    <div class="cstep res2">
+      <div class="cbadge gray">결과</div>
+      <div class="cn">step 06</div><div class="ct">수령 · 반품</div>
+      <div class="cd">입어보니<br>어깨는 맞는데 배가 낀다</div>
+      <div class="cq">“하… 또 반품해야 하네.”</div>
+    </div>
+  </div>
+
+  <div class="retn">
+    <div class="arc"></div>
+    <div class="rcap">↺ 그래서 <b>다음 쇼핑도 똑같이</b> 시작됩니다</div>
+  </div>
+  <div class="pageno">04</div>
+</section>
+
+
+
+<!-- ═══ 06 · 진짜 있었다 ═══ -->
+<section class="slide ctr">
+  <div class="chead">
+    <div class="ceb">Validation</div>
+    <h1 class="ch1">가장 큰 고민은 <b>이 두 가지</b>였습니다.</h1>
+    <div class="cscn">2026.06 · 자체 설문 31명 — 온라인 쇼핑을 하며 가장 막히는 것</div>
+  </div>
+
+  <div class="twobig">
+    <div class="bignum sty">
+      <div class="bn num">40<span>%</span></div>
+      <div class="bl2">스타일 어울림</div>
+      <div class="bd2">“나한테 <b>뭐가 어울리는지</b> 모르겠다”</div>
+    </div>
+    <div class="bignum sze">
+      <div class="bn num">38<span>%</span></div>
+      <div class="bl2">사이즈 적합</div>
+      <div class="bd2">“이 브랜드에서 <b>내 사이즈가 뭔지</b> 모르겠다”</div>
+    </div>
+  </div>
+
+  <div class="qrow-h">그리고 지금도, 실제로 이렇게 묻고 있습니다</div>
+  <div class="qrow">
+    <div class="qline">
+      <div class="qt">“키 175, 몸무게 68. 국내 상의 100 입는데 사이즈 어떻게 가는 게 좋을까요?”</div>
+      <div class="qs2">무신사 상품 문의</div>
+    </div>
+    <div class="qline">
+      <div class="qt">“키 172, 68이면 사이즈 몇 입어야 하나요?”</div>
+      <div class="qs2">네이버 쇼핑 문의</div>
+    </div>
+    <div class="qline">
+      <div class="qt">“팔뚝을 가리려고 가디건을 샀는데 전혀 가려지지 않는 우람한 팔뚝이삼”</div>
+      <div class="qs2">에이블리 구매 리뷰</div>
+    </div>
+  </div>
+  <div class="pageno">05</div>
+</section>
+
+
+<!-- ═══ 07 · 문제 정의 ═══ -->
+<section class="slide ask stmt">
+  <div class="askmark">Problem Definition<i></i></div>
+  <div class="askbody">
+    <div class="askq">문제는 옷이 아니라,<br><b>기준이 없다는 것</b>이었습니다.</div>
+    <div class="asksub">스타일도 사이즈도 — 나를 설명할 기준이 없어서 막힙니다.<br>그래서 저희는 <b style="color:#fff">기준을 만드는 일</b>부터 시작했습니다.</div>
+  </div>
+  <div class="pageno" style="color:rgba(255,255,255,.45)">06</div>
+</section>
+
+<!-- ═══ 08 · 서비스 한눈에 보기 ═══ -->
+<section class="slide">
+  <div class="chead dense">
+    <div class="ceb">Service at a Glance</div>
+    <h1 class="ch1">그래서 핏팅은 <b>이 세 가지로 답합니다.</b></h1>
+    <div class="cscn">막히던 <b style="color:#6E6B63">두 가지</b>에 맞춰 — 사이즈는 두 단계로 나눠 풀고, 스타일은 사람에게 넘깁니다</div>
+  </div>
+
+  <div class="body" style="margin-top:0">
+    <div class="pgrp">
+      <div class="pg sz"><b>사이즈 고민 · 설문 38%</b><span>“이 브랜드에서 내 사이즈가 뭔지 모르겠다”</span></div>
+      <div class="pg st"><b>스타일 고민 · 설문 40%</b><span>“나한테 뭐가 어울리는지 모르겠다”</span></div>
+    </div>
+    <div class="parr"><i>↓ 내 치수를 만든다</i><i>↓ 그 옷에 답한다</i><i>↓ 사람에게 넘긴다</i></div>
+
+    <div class="svc">
+      <div class="svcard">
+        <span class="sn">1</span>
+        <h3>체형 진단</h3>
+        <div class="sq">“내 치수를 모른다”</div>
+        <p>평소 입던 옷 <b>2벌의 착용 경험</b>에서 부위별 치수와 8체형을 역산 → <b>9개 브랜드</b>의 내 사이즈로 번역합니다.</p>
+        <div class="sf">2분 · 줄자 없이 · 최초 1회</div>
+      </div>
+      <div class="svcard">
+        <span class="sn">2</span>
+        <h3>구매 판정 (Fit)</h3>
+        <div class="sq">“그 옷이 맞는지 모른다”</div>
+        <p>사려는 옷의 <b>사이즈표를 올리면</b> 사이즈별로 판정합니다. 우리 DB에 <b>없는 브랜드여도</b> 캡처 한 장이면 됩니다.</p>
+        <div class="sf">결제 버튼 앞에서 쓰는 기능</div>
+      </div>
+      <div class="svcard">
+        <span class="sn">3</span>
+        <h3>스타일리스트 연결</h3>
+        <div class="sq">“뭐가 어울리는지 모른다”</div>
+        <p>정답이 없어 계산으로 안 풀립니다. 진단 결과를 <b>요청서에 자동 첨부</b>해 전문가에게 넘깁니다.</p>
+        <div class="sf">계산 대신 사람 · 수요 검증 단계</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pageno">07</div>
+</section>
+
+<!-- ═══ 09 · 유저플로우 ═══ -->
+<section class="slide">
+  <div class="chead dense">
+    <div class="ceb">User Flow</div>
+    <h1 class="ch1">사용자는 <b>이렇게 움직입니다.</b></h1>
+    <div class="cscn">진단으로 <b style="color:#6E6B63">기준을 한 번 만들면</b>, 판정도 스타일도 그 결과를 다시 씁니다</div>
+  </div>
+
+  <div class="body" style="margin-top:0">
+    <div class="vfl">
+      <div class="vfn">
+        <div class="vfk">탭 1 · 입구</div>
+        <h4>홈 랜딩</h4>
+        <p>3초에 전달하고 <b>[내 사이즈 진단 시작]</b>으로 보냅니다</p>
+      </div>
+
+      <div class="vfa">↓</div>
+
+      <!-- MVP 1 -->
+      <div class="grp g1">
+        <span class="glb">MVP 1 · 체형 진단</span>
+        <div class="vfn ac">
+          <div class="vfk">탭 2 · 무료 퍼널</div>
+          <h4>체형 진단</h4>
+          <p><span class="vfstep">기본 정보 <em>→</em> 착용 경험 입력 <em>→</em> 진단 로딩</span><br>
+            입어본 옷 <b>1~3벌</b>과 부위별 느낌</p>
+        </div>
+        <div class="vfa g1a">↓</div>
+        <div class="vfn hero">
+          <div class="vfk">제품의 얼굴</div>
+          <h4>결과 카드</h4>
+          <p>8체형 · 부위별 치수 · <b>브랜드별 추천 사이즈</b></p>
+        </div>
+      </div>
+
+      <div class="vfa dual"><span class="g2a">↓</span><b>이 결과를 기준으로, 두 갈래</b><span class="g3a">↓</span></div>
+
+      <div class="vfsplit">
+        <!-- MVP 2 -->
+        <div class="grp g2">
+          <span class="glb">MVP 2 · 구매 판정</span>
+          <div class="vfc">
+            <div class="vck"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2.5h10v15l-2.5-1.8-2.5 1.8-2.5-1.8L5 17.5z"/><path d="M8 7h4M8 10.5h4"/></svg>사이즈 축 · 반복 사용</div>
+            <h4>구매 판정 (Fit)</h4>
+            <p><b>사이즈표를 올리면</b> 사이즈별로 판정 — 진단 결과가 기준으로 자동 세팅</p>
+          </div>
+        </div>
+        <!-- MVP 3 -->
+        <div class="grp g3">
+          <span class="glb">MVP 3 · 스타일리스트</span>
+          <div class="vfc">
+            <div class="vck"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="6.2" r="3"/><path d="M3.8 17c0-3.4 2.8-5.4 6.2-5.4S16.2 13.6 16.2 17"/></svg>스타일 축 · 유료 퍼널</div>
+            <h4>스타일리스트 연결</h4>
+            <p>진단 결과가 <b>요청서에 자동 첨부</b> — 전문가가 체형을 알고 시작합니다</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">08</div>
+</section>
+
+<!-- ═══ 10 · MVP ① 체형 진단 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">MVP ① · 체형 진단</div>
+      <h1>① 체형 진단 — <b>자를 대지 않고 치수를 압니다</b></h1>
+    </div>
+    <div class="pchip"><span>소요 <b>약 2분</b></span><span>최초 <b>1회</b></span></div>
+  </div>
+  <p class="lead"><b style="color:var(--ink)">추정 → 역산 → 적용</b> 세 단계로, 핏팅만의 치수를 만들었습니다.</p>
+
+  <div class="body">
+    <div class="demo" style="grid-template-columns:1.3fr 1fr">
+      <!-- 결과 화면 목업 -->
+      <div class="rmk">
+        <div class="rin">
+          <div class="rh1">내 핏 타입이 나왔어요<span>평소 입던 옷으로 분석한 결과예요 · 저장하고 브랜드별 추천 사이즈도 확인해보세요</span></div>
+
+          <div class="rbar">
+            <span class="rdone">진단 완료</span>
+            <span><b>사려는 옷</b>이 맞을지 궁금하면 사이즈표로 바로 판정해봐요</span>
+            <span class="rgo">판정하기</span>
+          </div>
+
+          <div class="rtabs">
+            <div class="rtb on"><i>1</i>내 핏 카드</div>
+            <div class="rtb"><i>2</i>체형 분석</div>
+            <div class="rtb"><i>3</i>결과 근거</div>
+          </div>
+
+          <div class="rbody">
+            <div class="fcard">
+              <div class="fbrand">Fitting<i></i></div>
+              <div class="ffig">
+                <span class="fhead"></span>
+                <span class="fbody"></span>
+              </div>
+              <div class="fcode">STR</div>
+              <div class="fname">시크 스트레이트</div>
+              <div class="ftags"><span>#미니멀</span><span>#클린</span><span>#직선</span></div>
+              <div class="ftag2">어깨–허리–힙이 일직선인 직선 라인</div>
+              <div class="fhint">눌러서 자세히 보기</div>
+            </div>
+
+            <div class="rside">
+              <div class="rbn">
+                <div class="rbk">FITTING의 한 끗</div>
+                <div class="rbv"><mark>레이어와 두툼한 소재</mark>로 볼륨을 더하면 가는 라인이 채워져요</div>
+              </div>
+              <div class="rchip">
+                <span class="rcb">✓ 추측 아님 · 역산</span>
+                <p>입어본 옷의 느낌으로 체형을 <b>역산</b>해, 안 입어본 <b>브랜드 사이즈로 번역</b>했어요</p>
+              </div>
+              <div class="rbrand">
+                <div class="rbh"><span class="rbt">브랜드별 추천 사이즈</span><span class="rbs">전신 · 상·하의 완료</span></div>
+                <div class="rbn2">몸에 <b>가장 잘 맞을 순</b>으로 · 핏 지수 = 예상 적합도</div>
+                <div class="rrow"><span class="rnm">무신사 스탠다드<em>레귤러 · 어깨 기준</em></span><span class="rsz">XL</span><span class="rpc">딱맞음 86%</span></div>
+                <div class="rrow"><span class="rnm">자라<em>레귤러 · 유럽핏 편차 큼</em></span><span class="rsz">L</span><span class="rpc">딱맞음 86%</span></div>
+                <div class="rrow"><span class="rnm">스파오<em>레귤러 · 허리 주의</em></span><span class="rsz">L</span><span class="rpc">딱맞음 81%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5단계 -->
+      <div class="steps">
+        <div class="stp"><div class="sn" style="background:rgba(110,107,99,.5)">1</div><div>
+          <span class="sk">Step 1 · 추정</span>
+          <div class="st">국가 인체치수 데이터에서 출발합니다</div>
+          <div class="sd">키·몸무게 → <b>사이즈코리아 제8차 조사</b>의 평균 치수</div>
+        </div></div>
+        <div class="stp" style="border-color:rgba(46,74,59,.3); background:var(--green-soft)"><div class="sn" style="background:var(--green)">2</div><div>
+          <span class="sk" style="color:var(--green-mid)">Step 2 · 역산 — 핵심</span>
+          <div class="st" style="color:var(--green)">착용 경험이 줄자를 대신합니다</div>
+          <div class="sd"><b>“그 유니클로 M, 껴요? 딱? 여유?”</b> 한 줄이면 됩니다</div>
+        </div></div>
+        <div class="stp"><div class="sn" style="background:rgba(110,107,99,.5)">3</div><div>
+          <span class="sk">Step 3 · 적용</span>
+          <div class="st">9개 브랜드 · 1,679행에 대입합니다</div>
+          <div class="sd">안 입어본 브랜드도 <b>바로 나옵니다</b></div>
+        </div></div>
+        <div class="stp" style="border-color:rgba(22,20,15,.24); background:var(--wash)"><div class="sn" style="background:var(--ink)">→</div><div>
+          <span class="sk">결과물</span>
+          <div class="st">내 핏 카드 한 장으로 받습니다</div>
+          <div class="sd">3탭 — <b>내 핏 카드 · 체형 분석 · 결과 근거</b></div>
+        </div></div>
+        <div class="stp" style="border-color:rgba(176,85,63,.35); background:var(--clay-bg)"><div class="sn" style="background:var(--clay)">✓</div><div>
+          <span class="sk" style="color:var(--clay)">검증 · 사용자 11명</span>
+          <div class="st" style="color:var(--clay); font-size:17px">진단 결과 만족도 77.6%</div>
+          <div class="sd">목표 <b>60%</b> 초과</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">09</div>
+</section>
+
+<!-- ═══ 11 · 시연 ② 판정 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">MVP ② · 구매 판정 (Fit)</div>
+      <h1>② 구매 판정 — <b>사려는 옷, 맞는지 판정해 드립니다</b></h1>
+    </div>
+    <div class="pchip"><span>진단 다음 <b>바로 이어짐</b></span><span>구현 · <b>배포 완료</b></span></div>
+  </div>
+  <p class="lead">진단이 <b style="color:var(--ink)">"내 체형"</b>에 답한다면, 판정은 <b style="color:var(--ink)">"이 옷 한 벌"</b>에 답합니다.</p>
+
+  <div class="body">
+    <div class="demo" style="grid-template-columns:1.25fr 1fr">
+      <div class="mock">
+        <div class="mbd">
+          <div>
+            <div class="mrow"><span class="mn">1</span>판정 기준 · <b>시크 스트레이트 STR</b><br><span style="color:var(--sub2); font-size:10px; margin-left:21px">내 진단 결과가 자동으로 들어옴</span></div>
+            <div class="mrow"><span class="mn">2</span>옷 종류 · <b>하의</b></div>
+            <div class="mrow"><span class="mn">3</span>사이즈표 &nbsp;<b style="color:var(--green)">[캡처 업로드]</b> <span style="color:var(--sub2)">[직접 입력]</span>
+              <div style="border:1px dashed var(--line); border-radius:6px; padding:12px; text-align:center; color:var(--sub2); font-size:10.5px; margin-top:6px">
+                🖼 상품 사이즈표 이미지<br>붙여넣기 · 드래그 · 눌러서 선택
+              </div>
+            </div>
+            <div class="mrow" style="font-size:10.5px">☐ 사이즈표를 핏팅 개선에 활용할게요 <span style="color:var(--sub2)">(선택)</span></div>
+            <div class="mbtn">판정하기</div>
+          </div>
+          <div>
+            <div class="mverd">M · FIT 92 — 지금 이 사이즈로 사면 돼요
+              <span>총장 · 밑위는 길이라 점수에 넣지 않고 참고로만 알려드려요</span></div>
+            <table class="mtbl">
+              <tr><th>부위</th><th>S</th><th>M</th><th>L</th></tr>
+              <tr><td>허리</td><td class="tight">끼임</td><td class="fit">딱맞음</td><td>여유</td></tr>
+              <tr><td>엉덩이</td><td class="tight">끼임</td><td class="fit">딱맞음</td><td>여유</td></tr>
+              <tr><td>허벅지</td><td class="tight">끼임</td><td class="fit">딱맞음</td><td>여유</td></tr>
+              <tr><td>밑위</td><td colspan="3" style="color:var(--sub2)">길이 — 참고 정보</td></tr>
+            </table>
+            <div style="font-size:10px; color:var(--sub2); margin-top:6px; line-height:1.5">
+              "몇 사이즈?"가 아니라 <b style="color:var(--ink)">"어디가 걸리나"</b>를 보여줍니다
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="steps">
+        <div class="stp" style="border-color:rgba(46,74,59,.32); background:var(--green-soft)"><div class="sn" style="background:var(--green)">1</div><div>
+          <span class="sk" style="color:var(--green-mid)">Step 1 · 기준 — 핵심</span>
+          <div class="st" style="color:var(--green)">진단으로 알아낸 내 치수가 그대로 기준</div>
+          <div class="sd">고를 것 없이 <b>자동 세팅</b>됩니다</div>
+        </div></div>
+        <div class="stp"><div class="sn" style="background:rgba(110,107,99,.5)">2</div><div>
+          <span class="sk">Step 2 · 입력</span>
+          <div class="st">사이즈표 캡처를 AI가 읽습니다</div>
+          <div class="sd">우리 DB에 <b>없는 브랜드여도</b> 캡처 한 장이면 됩니다</div>
+        </div></div>
+        <div class="stp"><div class="sn" style="background:rgba(110,107,99,.5)">3</div><div>
+          <span class="sk">Step 3 · 판정</span>
+          <div class="st">“몇 사이즈”가 아니라 “어디가 걸리나”</div>
+          <div class="sd">부위별로 <b>끼임 · 딱맞음 · 여유</b></div>
+        </div></div>
+        <div class="stp"><div class="sn" style="background:var(--ink)">!</div><div>
+          <span class="sk">원칙</span>
+          <div class="st">근거가 없으면 판정하지 않습니다</div>
+          <div class="sd"><b>틀린 긍정은 침묵보다 비쌉니다</b></div>
+        </div></div>
+        <div class="stp" style="border-color:rgba(176,85,63,.35); background:var(--clay-bg)"><div class="sn" style="background:var(--clay)">✓</div><div>
+          <span class="sk" style="color:var(--clay)">검증 · 사용자 11명</span>
+          <div class="st" style="color:var(--clay); font-size:17px">구매 판정 만족도 85%</div>
+          <div class="sd">4.25 / 5 — <b>나중에 붙인 기능인데 기존 화면(3.88)보다 높음</b></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">10</div>
+</section>
+
+
+
+<!-- ═══ 12 · 시연 ③ 매칭 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">MVP ③ · 스타일리스트 매칭</div>
+      <h1>③ 스타일리스트 — <b>내 체형 들고, 원하는 전문가에게</b></h1>
+    </div>
+    <div class="pchip"><span>스타일 축 <b>설문 40%</b></span><span>실매칭 <b>수요 검증 단계</b></span></div>
+  </div>
+  <p class="lead"><b style="color:var(--ink)">“뭘 사야 어울리는지”</b>는 규칙으로 계산되지 않습니다</p>
+
+  <div class="body">
+    <div class="demo">
+      <div class="smk">
+        <div class="sh1">나에게 맞는 스타일리스트<span>내 체형·사이즈에 맞춰 <b>완료 매칭 많은 순</b>으로 · 결과물·후기로 검증된 사람만</span></div>
+
+        <div class="stabs">
+          <span class="st1 on">전체</span><span class="st1">온라인 스타일링</span><span class="st1">동행 쇼핑</span><span class="st1">이미지 컨설팅</span>
+        </div>
+        <div class="sfil"><span>상황 ▾</span><span>예산 ▾</span><span>스타일 ▾</span></div>
+
+        <div class="slist">
+          <div class="sitem">
+            <span class="sav">윤</span>
+            <span class="sinfo">
+              <span class="snm">윤서진<em>완료 32건</em></span>
+              <span class="stg"><i>#미니멀</i><i>#오피스</i><i>#클린</i></span>
+              <span class="smeta">후기 28 · 평점 4.9 · 포트폴리오 12</span>
+            </span>
+            <span class="sprice"><b>7만원~</b><span>온라인 스타일링</span></span>
+          </div>
+          <div class="sitem">
+            <span class="sav">한</span>
+            <span class="sinfo">
+              <span class="snm">한도경<em>완료 18건</em></span>
+              <span class="stg"><i>#캐주얼</i><i>#스트릿</i></span>
+              <span class="smeta">후기 15 · 평점 4.8 · 포트폴리오 9</span>
+            </span>
+            <span class="sprice"><b>12만원~</b><span>동행 쇼핑</span></span>
+          </div>
+          <div class="sitem">
+            <span class="sav">배</span>
+            <span class="sinfo">
+              <span class="snm">배유나<em>완료 11건</em></span>
+              <span class="stg"><i>#페미닌</i><i>#하객룩</i></span>
+              <span class="smeta">후기 9 · 평점 5.0 · 포트폴리오 7</span>
+            </span>
+            <span class="sprice"><b>15만원~</b><span>이미지 컨설팅</span></span>
+          </div>
+        </div>
+
+        <div class="sbn">
+          <span class="sbt">견적을 보내면 내 체형 카드가 함께 갑니다<span>8체형 · 부위별 예상 치수 · 핏 취향 자동 첨부</span></span>
+          <span class="sbg">견적 요청하기</span>
+        </div>
+      </div>
+
+      <div class="steps">
+        <div class="stp" style="border-color:rgba(46,74,59,.22); background:var(--green-soft)"><div class="sn">★</div><div>
+          <span class="sk" style="color:var(--green-mid)">두 축을 잇는 고리 — 핵심</span>
+          <div class="st" style="color:var(--green)">진단 결과가 견적서에 그대로 실립니다</div>
+          <div class="sd">전문가가 <b>체형을 모르는 채 시작하지 않습니다</b></div>
+        </div></div>
+        <div class="stp"><div class="sn" style="background:rgba(110,107,99,.5)">1</div><div>
+          <span class="sk">Step 1 · 비교</span>
+          <div class="st">추구미 · 후기 · 포트폴리오로 직접 고릅니다</div>
+          <div class="sd">아무나 배정하지 않습니다 — <b>사용자가 고릅니다</b></div>
+        </div></div>
+        <div class="stp"><div class="sn" style="background:rgba(110,107,99,.5)">2</div><div>
+          <span class="sk">Step 2 · 서비스 선택</span>
+          <div class="st">온라인 스타일링 · 동행 쇼핑 · 이미지 컨설팅</div>
+          <div class="sd">상황(면접 · 하객 · 미팅)도 함께</div>
+        </div></div>
+        <div class="stp"><div class="sn" style="background:rgba(110,107,99,.5)">3</div><div>
+          <span class="sk">Step 3 · 견적 요청</span>
+          <div class="st">체형 카드가 자동으로 딸려갑니다</div>
+          <div class="sd">예산 · 일정 · 원하는 스타일과 함께</div>
+        </div></div>
+        <div class="stp" style="border-color:rgba(22,20,15,.24); background:var(--wash)"><div class="sn" style="background:var(--ink)">지금</div><div>
+          <span class="sk">단계</span>
+          <div class="st">실매칭은 아직, 수요부터 측정합니다</div>
+          <div class="sd"><b>페이크도어</b>로 전환 신호만 — 목표 <b>25%</b>. 뒤쪽은 이미 만들어 뒀습니다</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">11</div>
+</section>
+
+
+
+
+
+<!-- ═══ 13 · 관리자 ═══ -->
+<section class="slide">
+  <div class="chead dense">
+    <div class="ceb">Admin · Operations</div>
+    <h1 class="ch1">쓸수록 정확해지는 건, <b>운영이 붙어 있기 때문입니다.</b></h1>
+    <div class="cscn">브랜드 실측을 팀이 손으로만 모으면 한계가 분명합니다 — <b style="color:#6E6B63">쓰는 행위가 곧 수집이 되게</b> 만들었습니다</div>
+  </div>
+
+  <div class="body" style="margin-top:0">
+    <div class="adm">
+      <div class="adc key">
+        <div class="ak3">3.A · 사이즈 · 데이터</div>
+        <h4>제출 사이즈표 검수</h4>
+        <p>사용자가 판정에서 올린 사이즈표를 <b>대기 · 승인 · 반려 · 병합</b>으로 처리해 <b>정본 실측 DB로 승격</b>합니다. 편집 즉시 진단에 반영됩니다.</p>
+        <div class="af">자산화 루프의 종착점</div>
+      </div>
+      <div class="adc">
+        <div class="ak3">3.C.2 · 진단 · 정확도</div>
+        <h4>킬 메트릭 실측</h4>
+        <p>결과 화면의 <b>“맞아요 / 보통 / 안 맞아요”</b>를 진단 ID와 함께 쌓아 <b>동의율 65%</b>를 봅니다. 엔진 버전별 추세까지 확인합니다.</p>
+        <div class="af">정확도가 오르는지 눈으로 확인</div>
+      </div>
+      <div class="adc">
+        <div class="ak3">3.C.4 · 엔진 강화</div>
+        <h4>불편 기록 → 작업 목록</h4>
+        <p>“겨드랑이가 꼈다” 같은 <b>부위별 불편 기록</b>을 모아 개선 순서를 뽑습니다. 자동 학습이 아니라 <b>사람이 판단할 목록</b>을 만듭니다.</p>
+        <div class="af">사이즈표에 없는 치수를 채워 가는 길</div>
+      </div>
+      <div class="adc">
+        <div class="ak3">3.C.3 · 전문가 수요</div>
+        <h4>페이크도어 측정</h4>
+        <p>오픈 알림 신청과 견적 요청을 <b>진단 세션과 이어</b> 봅니다. 진단한 사람 중 몇 %가 전문가로 넘어가는지 <b>목표 25%</b>.</p>
+        <div class="af">수요가 확인되면 실매칭 오픈</div>
+      </div>
+    </div>
+
+    <div class="loop">
+      <div class="ls">사용자가 올린다<span>판정하려면 어차피 필요 · 동의 시에만 저장</span></div>
+      <div class="la">→</div>
+      <div class="ls">운영자가 검수한다<span>잘못된 실측이 섞이면 전부 흔들립니다</span></div>
+      <div class="la">→</div>
+      <div class="ls">정본으로 승격된다<span>다음 진단 · 판정에 즉시 반영</span></div>
+      <div class="la">→</div>
+      <div class="ls">커버리지가 넓어진다<span>지금 9개 브랜드 · 1,679행에서 시작</span></div>
+    </div>
+  </div>
+  <div class="pageno">12</div>
+</section>
+
+
+<!-- ═══ 14 · 한계 ↔ 해자 ═══ -->
+<section class="slide">
+  <div class="chead dense">
+    <div class="ceb">Existing Solutions &amp; Moat</div>
+    <h1 class="ch1">기존이 <i style="font-style:normal; color:#B0553F">못 하는 이유</i>가,<br><b>그대로 우리가 할 수 있는 이유였습니다.</b></h1>
+    <div class="cscn">여기까지 보시면 이 질문이 남습니다 — <b style="color:#6E6B63">“무신사가 하면 되지 않나요?”</b></div>
+  </div>
+
+  <div class="body" style="margin-top:0">
+    <div class="vs">
+      <div class="vshd l">기존 서비스의 한계</div>
+      <div></div>
+      <div class="vshd r">그래서 우리가 서는 자리</div>
+
+      <div class="vbox l">
+        <div class="vk">한계 01 · 범위</div>
+        <h3>그 몰 안에서만 작동한다</h3>
+        <p><b>그 몰의 상품 중에서</b> 골라줄 뿐, 브랜드가 바뀌면 기준도 사라집니다</p>
+      </div>
+      <div class="varr">→</div>
+      <div class="vbox r">
+        <div class="vk">해자 01 · 중립성</div>
+        <h3>우리는 옷을 팔지 않습니다</h3>
+        <p>파는 쪽은 <b>“다른 브랜드로 건너가도 된다”</b>고 말할 동기가 없습니다</p>
+        <div class="vev">어느 몰에도 속하지 않으니 브랜드 A의 경험을 B로 번역합니다</div>
+      </div>
+
+      <div class="vbox l">
+        <div class="vk">한계 02 · 조건</div>
+        <h3>구매 이력이 있어야 한다</h3>
+        <p>그 몰에서 <b>산 적이 있어야</b> 작동합니다</p>
+      </div>
+      <div class="varr">→</div>
+      <div class="vbox r">
+        <div class="vk">해자 02 · 진입 조건</div>
+        <h3>착용 경험 2벌이면 됩니다</h3>
+        <p>이력 대신 <b>“유니클로 S가 어깨는 딱, 배는 좀 낀다”</b>를 씁니다</p>
+        <div class="vev">첫 방문 · 구매 이력 0건 · 2분</div>
+      </div>
+
+      <div class="vbox l">
+        <div class="vk">한계 03 · 기준</div>
+        <h3>기준이 사람이 아니다</h3>
+        <p>구매 이력 · 상품 정보 · 후기 — 모두 <b>옷과 남의 기록</b>입니다</p>
+      </div>
+      <div class="varr">→</div>
+      <div class="vbox r">
+        <div class="vk">해자 03 · 데이터</div>
+        <h3>몸 치수를 직접 계산합니다</h3>
+        <p><b>사이즈코리아 제8차 인체치수조사</b> 회귀 모델 × <b>9개 브랜드 1,679행</b> 실측</p>
+        <div class="vev">몰을 가로지르는 실측은 플랫폼 안에서 만들어지지 않습니다</div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">13</div>
+</section>
+
+
+
+<!-- ═══ 15 · UT ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">Usability Test</div>
+      <h1>실제 사용자 <b>11명</b>에게 붙여봤습니다</h1>
+    </div>
+    <div class="pchip"><span>일시 <b>2026.07.24</b></span><span>방식 <b>정량 1~5 + 자유서술</b></span></div>
+  </div>
+  <p class="lead">"우리끼리 좋다"는 검증이 아닙니다. 화면을 주고 <b>혼자 써보게 한 뒤</b> 단계별로 점수를 받았습니다.</p>
+
+  <div class="body">
+    <div style="display:grid; grid-template-columns:1.1fr 1fr; gap:18px; flex:1; min-height:0">
+      <div>
+        <div class="eyebrow" style="margin-bottom:9px">단계별 만족도 (5점 만점 · n=8)</div>
+        <div class="bars">
+          <div class="bar"><div class="bl">진단 로딩</div><div class="bt"><div class="bf" style="width:97.6%"></div></div><div class="bv">4.88</div></div>
+          <div class="bar"><div class="bl">착용 경험 입력</div><div class="bt"><div class="bf" style="width:89.2%"></div></div><div class="bv">4.46</div></div>
+          <div class="bar"><div class="bl">기본 정보 입력</div><div class="bt"><div class="bf" style="width:88.8%"></div></div><div class="bv">4.44</div></div>
+          <div class="bar"><div class="bl">진단 시작</div><div class="bt"><div class="bf" style="width:87.6%"></div></div><div class="bv">4.38</div></div>
+          <div class="bar"><div class="bl">구매 판정(Fit)</div><div class="bt"><div class="bf" style="width:85%"></div></div><div class="bv">4.25</div></div>
+          <div class="bar"><div class="bl">스타일리스트 찾기</div><div class="bt"><div class="bf c" style="width:78.8%"></div></div><div class="bv c">3.94</div></div>
+          <div class="bar"><div class="bl">진단 결과 화면</div><div class="bt"><div class="bf c" style="width:77.6%"></div></div><div class="bv c">3.88</div></div>
+        </div>
+        <div class="foot" style="margin-top:14px">
+          <div class="fbox g" style="flex:none; padding:9px 15px"><div class="k">추천 의향 (0~10 평균)</div><div class="v"><span class="num" style="font-size:26px">8.4</span><span class="unit">· 부정 0명 · NPS 18</span></div></div>
+          <div class="fbox"><div class="k">해석</div><div class="v">과정은 잘 만들었습니다. <b>문제는 마지막 화면 — 결과</b>입니다</div></div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; min-height:0">
+        <div class="card hot" style="flex:none">
+          <div class="kk">가장 중요한 발견</div>
+          <h3>이해는 되는데, 쓸지는 모르겠다</h3>
+          <div style="display:flex; gap:22px; margin-top:12px; align-items:flex-end">
+            <div><div class="num" style="font-size:26px; color:var(--sub)">4.38</div><div style="font-size:11px; color:var(--sub); font-weight:700; margin-top:3px">서비스 이해</div></div>
+            <div style="font-size:20px; color:var(--clay); font-weight:800; padding-bottom:6px">→</div>
+            <div><div class="num c" style="font-size:26px">3.38</div><div style="font-size:11px; color:var(--clay); font-weight:800; margin-top:3px">실제 사용 의향</div></div>
+            <div style="margin-left:auto; text-align:right"><div class="num c" style="font-size:26px">−1.0</div><div style="font-size:11px; color:var(--clay); font-weight:800; margin-top:3px">갭</div></div>
+          </div>
+          <p style="margin-top:12px">원인은 <b>신뢰(3.38)</b>였습니다 — <b>"사진도 없이 진단하는데 믿어도 되나"</b>. 기능이 부족한 게 아니라, <b>내가 반영됐다는 느낌</b>이 부족했습니다.</p>
+        </div>
+
+        <div class="quotes" style="grid-template-columns:1fr; gap:8px; margin-top:11px">
+          <div class="quote"><div class="q">“사진 없이 진단해서 신뢰가 낮아요. 아바타로 보여주면 좋겠어요.”</div><div class="s">신뢰 · 다수 언급</div></div>
+          <div class="quote"><div class="q">“체형 진단이 주력인지 매칭이 주력인지 헷갈려요.”</div><div class="s">정체성 · 정확히 찌른 지적</div></div>
+          <div class="quote"><div class="q">“결과 화면에 갑자기 너무 많은 정보가 들어와서 당황했어요.”</div><div class="s">결과 화면 정보 과부하 · 2명</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">14</div>
+</section>
+
+
+
+<!-- ═══ 16 · 피드백과 개선 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">Feedback → Fix</div>
+      <h1>받은 피드백으로, <b>이렇게 바꿨습니다</b></h1>
+    </div>
+    <div class="pchip"><span>1차 MVP <b>진단 · 매칭</b></span><span>→ 2차 <b>+ 판정 · 수집</b></span></div>
+  </div>
+  <p class="lead">우리 마음대로 바꾼 게 아니라, <b>받은 지적에 하나씩 답한 것</b>입니다. 못 푸는 것은 못 푼다고 적었습니다.</p>
+
+  <div class="body">
+    <table class="fixt">
+      <tr><th style="width:88px">어디서</th><th style="width:34%">받은 지적</th><th style="width:30%">우리가 한 것</th><th>판단 근거</th></tr>
+      <tr>
+        <td><span class="fp mid">중간 발표</span></td>
+        <td><b>“그럼 입고 싶은 옷은 어떻게 하나요?”</b><br><span class="fs">진단은 "내 체형"까지만 답하고 있었다</span></td>
+        <td><b>구매 판정(Fit) 신설</b> + <b>사이즈표 수집 루프</b></td>
+        <td class="fs">붙여봤더니 <b>4.24점</b> — 원래 있던 결과 화면(3.88)보다 높았다</td>
+      </tr>
+      <tr>
+        <td><span class="fp ut">UT 11명</span></td>
+        <td><b>결과 화면 정보 과부하</b><br><span class="fs">"갑자기 너무 많은 정보가 들어와 당황" · 2명</span></td>
+        <td>결과를 <b>3탭으로 재구성</b><br><span class="fs">내 핏 카드 · 체형 분석 · 결과 근거</span></td>
+        <td class="fs">만족도 최하(3.88) 화면 · 정보를 줄이는 게 아니라 <b>순서를 정하는</b> 문제</td>
+      </tr>
+      <tr>
+        <td><span class="fp ut">UT 11명</span></td>
+        <td><b>브랜드 목록이 좁다</b><br><span class="fs">"탑텐·유니클로가 없어 어떻게 적지?" · 4명</span></td>
+        <td>주요 브랜드 추가 + <b>"목록에 없음"을 버튼형으로</b></td>
+        <td class="fs">가장 싸고 효과 큼 — <b>입력에서 막히면 정확도가 통째로 흔들림</b></td>
+      </tr>
+      <tr>
+        <td><span class="fp str">전략 먼저</span></td>
+        <td><b>신뢰가 낮다 <span class="num">3.38</span></b><br><span class="fs">"사진 없이 진단해서 못 믿겠다 / 실측을 직접 넣고 싶다"</span></td>
+        <td><b>실측 직접 입력</b> 옵션 검토 중</td>
+        <td class="fs"><b>UI가 아니라 방향 문제</b> — 정하지 않고 화면만 고치면 같은 지적이 반복된다</td>
+      </tr>
+      <tr>
+        <td><span class="fp no">못 푼다</span></td>
+        <td><b>실사용 전환이 낮다 <span class="num">3.38</span></b></td>
+        <td>UT로 결론 내지 않음 → <b>배포 데이터로</b></td>
+        <td class="fs">11명으로 전환율은 측정 불가 · <b>"다들 좋다고 했다"로 결론 금지</b></td>
+      </tr>
+    </table>
+
+    <div class="foot" style="margin-top:auto">
+      <div class="fbox"><div class="k">우리가 한 실수</div><div class="v">테스트 <b>도중에 화면을 바꿔서</b> 데이터가 섞였습니다 — 다음엔 <b>빌드를 고정</b>하고 시작합니다</div></div>
+      <div class="fbox g"><div class="k">그래서 배운 것</div><div class="v">레이아웃을 바꿔도 실사용 점수는 그대로였습니다 — <b>지렛대는 화면이 아니라 신뢰</b>였습니다</div></div>
+    </div>
+  </div>
+  <div class="pageno">15</div>
+</section>
+
+
+<!-- ═══ 17 · 팀 · 로드맵 ═══ -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="eyebrow">Team &amp; Next</div>
+      <h1>3명이 이렇게 굴렸고, <b>다음은 이렇습니다</b></h1>
+    </div>
+    <div class="pchip"><span>기간 <b>2026.06 ~ 07</b></span></div>
+  </div>
+
+  <div class="body">
+    <div class="cols" style="flex:none">
+      <div class="card">
+        <div class="kk">Team · 역할</div>
+        <h3>3인 · 소유가 겹치지 않게</h3>
+        <p><b>강건형</b> 팀장 · 데이터/엔진 &nbsp;|&nbsp; <b>이상민</b> 개발 &nbsp;|&nbsp; <b>이소희</b> 디자인</p>
+        <p style="margin-top:6px"><b>"한 파일 = 한 역할"</b> 소유 규칙과 역할별 브랜치로 충돌을 구조적으로 없앴습니다.</p>
+      </div>
+      <div class="card">
+        <div class="kk">Process · 협업</div>
+        <h3>문서를 코드 옆에 두었습니다</h3>
+        <p>기획 문서·화면 정의·의사결정 기록을 <b>같은 저장소</b>에 두고, 화면 현황판은 <b>코드에서 자동 생성</b>합니다.</p>
+        <p style="margin-top:6px">방향이 바뀐 결정은 <b>이유까지 기록</b>해, 나중에 "왜 이렇게 됐지"를 다시 묻지 않습니다.</p>
+      </div>
+      <div class="card">
+        <div class="kk">Stack · 운영비</div>
+        <h3>운영비 $0으로 실서비스 구조</h3>
+        <p>정적 프론트 + 서버 API + <b>Supabase(Postgres)</b>. 브랜드 실측표는 <b>서버에만</b> 두어 노출되지 않게 했습니다.</p>
+        <p style="margin-top:6px">진단·판정 계산도 서버에서 — 데이터가 곧 자산이기 때문입니다.</p>
+      </div>
+    </div>
+
+    <div class="road" style="margin-top:13px">
+      <div class="rd on">
+        <div class="when">Now · MVP</div>
+        <h4>정확도를 증명한다</h4>
+        <ul>
+          <li>킬 메트릭 <b>동의율 65%</b> 실측</li>
+          <li>UT 지적 즉시 반영(브랜드·결과 화면)</li>
+          <li>신뢰 문제 = 실측 직접 입력 검토</li>
+        </ul>
+      </div>
+      <div class="rd">
+        <div class="when">Next · v2</div>
+        <h4>매칭을 실제로 연다</h4>
+        <ul>
+          <li>수요(오픈 알림) 확인되면 실매칭 오픈</li>
+          <li>스타일리스트 매칭 수수료 = 첫 수익</li>
+          <li>브랜드 커버리지 확대(판정 수집 루프)</li>
+        </ul>
+      </div>
+      <div class="rd">
+        <div class="when">Later · v3</div>
+        <h4>데이터를 판다</h4>
+        <ul>
+          <li>축적된 사이즈 데이터를 <b>B2B API</b>로</li>
+          <li>쇼핑몰 반품률 절감이 가치 제안</li>
+          <li>상황별(면접·하객·여행) 확장</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot" style="margin-top:auto">
+      <div class="fbox g" style="border-left-width:4px; padding:12px 16px">
+        <div class="k">지금 하고 있는 것</div>
+        <div class="v" style="font-size:15px">정확도를 <b>증명하는 단계</b>입니다 — 동의율 65%를 실측하고, 사용성 테스트에서 나온 <b>신뢰 문제</b>를 풉니다</div>
+      </div>
+    </div>
+  </div>
+  <div class="pageno">16</div>
+</section>
+
+
+
+
+
+
+
+
+<!-- ═══ 18 · 클로징 ═══ -->
+<section class="slide ask close">
+  <div class="askbody">
+    <div class="cq">“이 옷, 살까 말까?”</div>
+    <div class="cbig">이제, <b>답할 수 있습니다</b></div>
+    <div class="cmark">Fitting<i></i></div>
+    <div class="cthx">감사합니다</div>
+  </div>
+</section>
+</body>
+</html>
