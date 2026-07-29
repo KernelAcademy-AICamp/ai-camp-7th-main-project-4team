@@ -16,7 +16,7 @@
    "BOTTOM",
    "TOP"
   ],
-  "note": "값은 사이즈표 '단면(flat) 원본' 그대로. 둘레=단면×2 환산·여유 계산은 규칙 모듈이 조회 시 수행. BOTTOM.waistband=밴딩 유형(hidden/side/full/partial/null) — 허리 수용범위·역산 신뢰도에 영향. BOTTOM.silhouette=형태축(skinny/slim/straight/tapered/wide/bootcut) — 수집단 `정규화실루엣` 컬럼 우선(없으면 상품명 파싱 폴백), 역산·매칭의 1차 키(fitLine 여유축과 직교). fitLine=상의 `정규화여유` 컬럼 우선. waistband는 아직 product명 추출이라 부분 커버. sizeSystem/sizeCanonical/sizeOrder=sizeLabel 원본에서 파생한 표시·정렬용(원본 불변, 엔진은 sizeLabel만 매칭). sizeSystem=letter/inch/cm/code/range — 한 셀에 여러 체계가 공존하면(uniqlo 인치+cm, 탑텐 M(28)/M(630)) flow가 체계별로 그룹핑해 재인 가능하게 제시.",
+  "note": "값은 사이즈표 '단면(flat) 원본' 그대로. 둘레=단면×2 환산·여유 계산은 규칙 모듈이 조회 시 수행. BOTTOM.waistband=밴딩 유형(full/side/back/null 등) — 허리 수용범위·역산 신뢰도에 영향. 수집단 `밴딩` 컬럼(없음/풀밴딩/사이드밴딩/뒷밴딩)에서 매핑, 없으면 product명 추측 폴백. 엔진은 truthy 여부만 사용(값 있으면 허리 역산 스킵). BOTTOM.silhouette=형태축(skinny/slim/straight/tapered/wide/bootcut) — 수집단 `정규화실루엣` 컬럼 우선(없으면 상품명 파싱 폴백), 역산·매칭의 1차 키(fitLine 여유축과 직교). fitLine=상의 `정규화여유` 컬럼 우선. sizeSystem/sizeCanonical/sizeOrder=sizeLabel 원본에서 파생한 표시·정렬용(원본 불변, 엔진은 sizeLabel만 매칭). sizeSystem=letter/inch/cm/code/range — 한 셀에 여러 체계가 공존하면(uniqlo 인치+cm, 탑텐 M(28)/M(630)) flow가 체계별로 그룹핑해 재인 가능하게 제시.",
   "parts": {
    "TOP": {
     "chest": "가슴단면(circ,flat→×2)",
@@ -9904,7 +9904,7 @@
    "sizeCanonical": "26",
    "sizeOrder": 26.0,
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -9927,7 +9927,7 @@
    "sizeCanonical": "27",
    "sizeOrder": 27.0,
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -9950,7 +9950,7 @@
    "sizeCanonical": "28",
    "sizeOrder": 28.0,
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -9973,7 +9973,7 @@
    "sizeCanonical": "29",
    "sizeOrder": 29.0,
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -9996,7 +9996,7 @@
    "sizeCanonical": "30",
    "sizeOrder": 30.0,
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10019,7 +10019,7 @@
    "sizeCanonical": "31",
    "sizeOrder": 31.0,
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10042,7 +10042,7 @@
    "sizeCanonical": "32",
    "sizeOrder": 32.0,
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10065,7 +10065,7 @@
    "sizeCanonical": "33",
    "sizeOrder": 33.0,
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10088,7 +10088,7 @@
    "sizeCanonical": "34",
    "sizeOrder": 34.0,
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10111,7 +10111,7 @@
    "sizeCanonical": "36",
    "sizeOrder": 36.0,
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10134,7 +10134,7 @@
    "sizeCanonical": "38",
    "sizeOrder": 38.0,
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10157,7 +10157,7 @@
    "sizeCanonical": "40",
    "sizeOrder": 40.0,
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10180,7 +10180,7 @@
    "sizeCanonical": "42",
    "sizeOrder": 42.0,
    "product": "세미 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10203,7 +10203,7 @@
    "sizeCanonical": "26",
    "sizeOrder": 26.0,
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10226,7 +10226,7 @@
    "sizeCanonical": "27",
    "sizeOrder": 27.0,
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10249,7 +10249,7 @@
    "sizeCanonical": "28",
    "sizeOrder": 28.0,
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10272,7 +10272,7 @@
    "sizeCanonical": "29",
    "sizeOrder": 29.0,
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10295,7 +10295,7 @@
    "sizeCanonical": "30",
    "sizeOrder": 30.0,
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10318,7 +10318,7 @@
    "sizeCanonical": "31",
    "sizeOrder": 31.0,
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10341,7 +10341,7 @@
    "sizeCanonical": "32",
    "sizeOrder": 32.0,
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10364,7 +10364,7 @@
    "sizeCanonical": "33",
    "sizeOrder": 33.0,
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10387,7 +10387,7 @@
    "sizeCanonical": "34",
    "sizeOrder": 34.0,
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10410,7 +10410,7 @@
    "sizeCanonical": "36",
    "sizeOrder": 36.0,
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10433,7 +10433,7 @@
    "sizeCanonical": "38",
    "sizeOrder": 38.0,
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10456,7 +10456,7 @@
    "sizeCanonical": "40",
    "sizeOrder": 40.0,
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10479,7 +10479,7 @@
    "sizeCanonical": "42",
    "sizeOrder": 42.0,
    "product": "리얼 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10502,7 +10502,7 @@
    "sizeCanonical": "26",
    "sizeOrder": 26.0,
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10525,7 +10525,7 @@
    "sizeCanonical": "27",
    "sizeOrder": 27.0,
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10548,7 +10548,7 @@
    "sizeCanonical": "28",
    "sizeOrder": 28.0,
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10571,7 +10571,7 @@
    "sizeCanonical": "29",
    "sizeOrder": 29.0,
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10594,7 +10594,7 @@
    "sizeCanonical": "30",
    "sizeOrder": 30.0,
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10617,7 +10617,7 @@
    "sizeCanonical": "31",
    "sizeOrder": 31.0,
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10640,7 +10640,7 @@
    "sizeCanonical": "32",
    "sizeOrder": 32.0,
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10663,7 +10663,7 @@
    "sizeCanonical": "33",
    "sizeOrder": 33.0,
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10686,7 +10686,7 @@
    "sizeCanonical": "34",
    "sizeOrder": 34.0,
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10709,7 +10709,7 @@
    "sizeCanonical": "36",
    "sizeOrder": 36.0,
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10732,7 +10732,7 @@
    "sizeCanonical": "38",
    "sizeOrder": 38.0,
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10755,7 +10755,7 @@
    "sizeCanonical": "40",
    "sizeOrder": 40.0,
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10778,7 +10778,7 @@
    "sizeCanonical": "42",
    "sizeOrder": 42.0,
    "product": "와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -10801,7 +10801,7 @@
    "sizeCanonical": "26",
    "sizeOrder": 26.0,
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -10824,7 +10824,7 @@
    "sizeCanonical": "27",
    "sizeOrder": 27.0,
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -10847,7 +10847,7 @@
    "sizeCanonical": "28",
    "sizeOrder": 28.0,
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -10870,7 +10870,7 @@
    "sizeCanonical": "29",
    "sizeOrder": 29.0,
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -10893,7 +10893,7 @@
    "sizeCanonical": "30",
    "sizeOrder": 30.0,
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -10916,7 +10916,7 @@
    "sizeCanonical": "31",
    "sizeOrder": 31.0,
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -10939,7 +10939,7 @@
    "sizeCanonical": "32",
    "sizeOrder": 32.0,
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -10962,7 +10962,7 @@
    "sizeCanonical": "33",
    "sizeOrder": 33.0,
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -10985,7 +10985,7 @@
    "sizeCanonical": "34",
    "sizeOrder": 34.0,
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -11008,7 +11008,7 @@
    "sizeCanonical": "36",
    "sizeOrder": 36.0,
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -11031,7 +11031,7 @@
    "sizeCanonical": "38",
    "sizeOrder": 38.0,
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -11054,7 +11054,7 @@
    "sizeCanonical": "40",
    "sizeOrder": 40.0,
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -11077,7 +11077,7 @@
    "sizeCanonical": "42",
    "sizeOrder": 42.0,
    "product": "스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -12549,7 +12549,7 @@
    "sizeCanonical": "XS",
    "sizeOrder": -1.0,
    "product": "우먼즈 더블 니트 투 턱 와이드 라운지 스웨트 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -12572,7 +12572,7 @@
    "sizeCanonical": "S",
    "sizeOrder": 0.0,
    "product": "우먼즈 더블 니트 투 턱 와이드 라운지 스웨트 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -12595,7 +12595,7 @@
    "sizeCanonical": "M",
    "sizeOrder": 1.0,
    "product": "우먼즈 더블 니트 투 턱 와이드 라운지 스웨트 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -12618,7 +12618,7 @@
    "sizeCanonical": "L",
    "sizeOrder": 2.0,
    "product": "우먼즈 더블 니트 투 턱 와이드 라운지 스웨트 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -12802,7 +12802,7 @@
    "sizeCanonical": "24",
    "sizeOrder": 24.0,
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -12825,7 +12825,7 @@
    "sizeCanonical": "25",
    "sizeOrder": 25.0,
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -12848,7 +12848,7 @@
    "sizeCanonical": "26",
    "sizeOrder": 26.0,
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -12871,7 +12871,7 @@
    "sizeCanonical": "27",
    "sizeOrder": 27.0,
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -12894,7 +12894,7 @@
    "sizeCanonical": "28",
    "sizeOrder": 28.0,
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -12917,7 +12917,7 @@
    "sizeCanonical": "29",
    "sizeOrder": 29.0,
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -12940,7 +12940,7 @@
    "sizeCanonical": "30",
    "sizeOrder": 30.0,
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -12963,7 +12963,7 @@
    "sizeCanonical": "31",
    "sizeOrder": 31.0,
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -12986,7 +12986,7 @@
    "sizeCanonical": "32",
    "sizeOrder": 32.0,
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -13009,7 +13009,7 @@
    "sizeCanonical": "34",
    "sizeOrder": 34.0,
    "product": "우먼즈 와이드 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -13032,7 +13032,7 @@
    "sizeCanonical": "24",
    "sizeOrder": 24.0,
    "product": "우먼즈 세미 부츠 컷 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "bootcut"
   },
   {
@@ -13055,7 +13055,7 @@
    "sizeCanonical": "25",
    "sizeOrder": 25.0,
    "product": "우먼즈 세미 부츠 컷 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "bootcut"
   },
   {
@@ -13078,7 +13078,7 @@
    "sizeCanonical": "26",
    "sizeOrder": 26.0,
    "product": "우먼즈 세미 부츠 컷 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "bootcut"
   },
   {
@@ -13101,7 +13101,7 @@
    "sizeCanonical": "27",
    "sizeOrder": 27.0,
    "product": "우먼즈 세미 부츠 컷 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "bootcut"
   },
   {
@@ -13124,7 +13124,7 @@
    "sizeCanonical": "28",
    "sizeOrder": 28.0,
    "product": "우먼즈 세미 부츠 컷 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "bootcut"
   },
   {
@@ -13147,7 +13147,7 @@
    "sizeCanonical": "29",
    "sizeOrder": 29.0,
    "product": "우먼즈 세미 부츠 컷 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "bootcut"
   },
   {
@@ -13170,7 +13170,7 @@
    "sizeCanonical": "30",
    "sizeOrder": 30.0,
    "product": "우먼즈 세미 부츠 컷 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "bootcut"
   },
   {
@@ -13193,7 +13193,7 @@
    "sizeCanonical": "34",
    "sizeOrder": 34.0,
    "product": "우먼즈 세미 부츠 컷 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "bootcut"
   },
   {
@@ -13216,7 +13216,7 @@
    "sizeCanonical": "24",
    "sizeOrder": 24.0,
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -13239,7 +13239,7 @@
    "sizeCanonical": "25",
    "sizeOrder": 25.0,
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -13262,7 +13262,7 @@
    "sizeCanonical": "26",
    "sizeOrder": 26.0,
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -13285,7 +13285,7 @@
    "sizeCanonical": "27",
    "sizeOrder": 27.0,
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -13308,7 +13308,7 @@
    "sizeCanonical": "28",
    "sizeOrder": 28.0,
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -13331,7 +13331,7 @@
    "sizeCanonical": "29",
    "sizeOrder": 29.0,
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -13354,7 +13354,7 @@
    "sizeCanonical": "30",
    "sizeOrder": 30.0,
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -13377,7 +13377,7 @@
    "sizeCanonical": "31",
    "sizeOrder": 31.0,
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -13400,7 +13400,7 @@
    "sizeCanonical": "32",
    "sizeOrder": 32.0,
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -13423,7 +13423,7 @@
    "sizeCanonical": "34",
    "sizeOrder": 34.0,
    "product": "우먼즈 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "straight"
   },
   {
@@ -13607,7 +13607,7 @@
    "sizeCanonical": "24",
    "sizeOrder": 24.0,
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "slim"
   },
   {
@@ -13630,7 +13630,7 @@
    "sizeCanonical": "25",
    "sizeOrder": 25.0,
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "slim"
   },
   {
@@ -13653,7 +13653,7 @@
    "sizeCanonical": "26",
    "sizeOrder": 26.0,
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "slim"
   },
   {
@@ -13676,7 +13676,7 @@
    "sizeCanonical": "27",
    "sizeOrder": 27.0,
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "slim"
   },
   {
@@ -13699,7 +13699,7 @@
    "sizeCanonical": "28",
    "sizeOrder": 28.0,
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "slim"
   },
   {
@@ -13722,7 +13722,7 @@
    "sizeCanonical": "29",
    "sizeOrder": 29.0,
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "slim"
   },
   {
@@ -13745,7 +13745,7 @@
    "sizeCanonical": "30",
    "sizeOrder": 30.0,
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "slim"
   },
   {
@@ -13768,7 +13768,7 @@
    "sizeCanonical": "31",
    "sizeOrder": 31.0,
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "slim"
   },
   {
@@ -13791,7 +13791,7 @@
    "sizeCanonical": "32",
    "sizeOrder": 32.0,
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "slim"
   },
   {
@@ -13814,7 +13814,7 @@
    "sizeCanonical": "34",
    "sizeOrder": 34.0,
    "product": "우먼즈 슬림 스트레이트 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "slim"
   },
   {
@@ -13837,7 +13837,7 @@
    "sizeCanonical": "XS",
    "sizeOrder": -1.0,
    "product": "우먼즈 릴렉스드 라운지 스웨트 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -13860,7 +13860,7 @@
    "sizeCanonical": "S",
    "sizeOrder": 0.0,
    "product": "우먼즈 릴렉스드 라운지 스웨트 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -13883,7 +13883,7 @@
    "sizeCanonical": "M",
    "sizeOrder": 1.0,
    "product": "우먼즈 릴렉스드 라운지 스웨트 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -13906,7 +13906,7 @@
    "sizeCanonical": "L",
    "sizeOrder": 2.0,
    "product": "우먼즈 릴렉스드 라운지 스웨트 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -15289,7 +15289,7 @@
    "sizeCanonical": "XS",
    "sizeOrder": -1.0,
    "product": "스웨트와이드팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -15312,7 +15312,7 @@
    "sizeCanonical": "S",
    "sizeOrder": 0.0,
    "product": "스웨트와이드팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -15335,7 +15335,7 @@
    "sizeCanonical": "M",
    "sizeOrder": 1.0,
    "product": "스웨트와이드팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -15358,7 +15358,7 @@
    "sizeCanonical": "L",
    "sizeOrder": 2.0,
    "product": "스웨트와이드팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -15381,7 +15381,7 @@
    "sizeCanonical": "XL",
    "sizeOrder": 3.0,
    "product": "스웨트와이드팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -15404,7 +15404,7 @@
    "sizeCanonical": "XXL",
    "sizeOrder": 4.0,
    "product": "스웨트와이드팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -15427,7 +15427,7 @@
    "sizeCanonical": "3XL",
    "sizeOrder": 5.0,
    "product": "스웨트와이드팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -15450,7 +15450,7 @@
    "sizeCanonical": "4XL",
    "sizeOrder": 6.0,
    "product": "스웨트와이드팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -15795,7 +15795,7 @@
    "sizeCanonical": "XS",
    "sizeOrder": -1.0,
    "product": "리넨블렌드이지팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -15818,7 +15818,7 @@
    "sizeCanonical": "S",
    "sizeOrder": 0.0,
    "product": "리넨블렌드이지팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -15841,7 +15841,7 @@
    "sizeCanonical": "M",
    "sizeOrder": 1.0,
    "product": "리넨블렌드이지팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -15864,7 +15864,7 @@
    "sizeCanonical": "L",
    "sizeOrder": 2.0,
    "product": "리넨블렌드이지팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -15887,7 +15887,7 @@
    "sizeCanonical": "XL",
    "sizeOrder": 3.0,
    "product": "리넨블렌드이지팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -15910,7 +15910,7 @@
    "sizeCanonical": "XXL",
    "sizeOrder": 4.0,
    "product": "리넨블렌드이지팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -15933,7 +15933,7 @@
    "sizeCanonical": "3XL",
    "sizeOrder": 5.0,
    "product": "리넨블렌드이지팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -15956,7 +15956,7 @@
    "sizeCanonical": "XS",
    "sizeOrder": -1.0,
    "product": "스웨트스트레이트팬츠(다리길이74~77cm·긴기장)",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "straight"
   },
   {
@@ -15979,7 +15979,7 @@
    "sizeCanonical": "S",
    "sizeOrder": 0.0,
    "product": "스웨트스트레이트팬츠(다리길이74~77cm·긴기장)",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "straight"
   },
   {
@@ -16002,7 +16002,7 @@
    "sizeCanonical": "M",
    "sizeOrder": 1.0,
    "product": "스웨트스트레이트팬츠(다리길이74~77cm·긴기장)",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "straight"
   },
   {
@@ -16025,7 +16025,7 @@
    "sizeCanonical": "L",
    "sizeOrder": 2.0,
    "product": "스웨트스트레이트팬츠(다리길이74~77cm·긴기장)",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "straight"
   },
   {
@@ -16048,7 +16048,7 @@
    "sizeCanonical": "XL",
    "sizeOrder": 3.0,
    "product": "스웨트스트레이트팬츠(다리길이74~77cm·긴기장)",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "straight"
   },
   {
@@ -16071,7 +16071,7 @@
    "sizeCanonical": "XXL",
    "sizeOrder": 4.0,
    "product": "스웨트스트레이트팬츠(다리길이74~77cm·긴기장)",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "straight"
   },
   {
@@ -16094,7 +16094,7 @@
    "sizeCanonical": "3XL",
    "sizeOrder": 5.0,
    "product": "스웨트스트레이트팬츠(다리길이74~77cm·긴기장)",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "straight"
   },
   {
@@ -16117,7 +16117,7 @@
    "sizeCanonical": "XS",
    "sizeOrder": -1.0,
    "product": "스웨트스트레이트팬츠(다리길이69~72cm)",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "straight"
   },
   {
@@ -16140,7 +16140,7 @@
    "sizeCanonical": "S",
    "sizeOrder": 0.0,
    "product": "스웨트스트레이트팬츠(다리길이69~72cm)",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "straight"
   },
   {
@@ -16163,7 +16163,7 @@
    "sizeCanonical": "M",
    "sizeOrder": 1.0,
    "product": "스웨트스트레이트팬츠(다리길이69~72cm)",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "straight"
   },
   {
@@ -16186,7 +16186,7 @@
    "sizeCanonical": "L",
    "sizeOrder": 2.0,
    "product": "스웨트스트레이트팬츠(다리길이69~72cm)",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "straight"
   },
   {
@@ -16209,7 +16209,7 @@
    "sizeCanonical": "XL",
    "sizeOrder": 3.0,
    "product": "스웨트스트레이트팬츠(다리길이69~72cm)",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "straight"
   },
   {
@@ -16232,7 +16232,7 @@
    "sizeCanonical": "XXL",
    "sizeOrder": 4.0,
    "product": "스웨트스트레이트팬츠(다리길이69~72cm)",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "straight"
   },
   {
@@ -16255,7 +16255,7 @@
    "sizeCanonical": "3XL",
    "sizeOrder": 5.0,
    "product": "스웨트스트레이트팬츠(다리길이69~72cm)",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "straight"
   },
   {
@@ -16278,7 +16278,7 @@
    "sizeCanonical": "XS",
    "sizeOrder": -1.0,
    "product": "이지유틸리티팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -16301,7 +16301,7 @@
    "sizeCanonical": "S",
    "sizeOrder": 0.0,
    "product": "이지유틸리티팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -16324,7 +16324,7 @@
    "sizeCanonical": "M",
    "sizeOrder": 1.0,
    "product": "이지유틸리티팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -16347,7 +16347,7 @@
    "sizeCanonical": "L",
    "sizeOrder": 2.0,
    "product": "이지유틸리티팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -16370,7 +16370,7 @@
    "sizeCanonical": "XL",
    "sizeOrder": 3.0,
    "product": "이지유틸리티팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -16393,7 +16393,7 @@
    "sizeCanonical": "XXL",
    "sizeOrder": 4.0,
    "product": "이지유틸리티팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -16416,7 +16416,7 @@
    "sizeCanonical": "3XL",
    "sizeOrder": 5.0,
    "product": "이지유틸리티팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -16761,7 +16761,7 @@
    "sizeCanonical": "28",
    "sizeOrder": 28.0,
    "product": "[COOL] 테이퍼드 슬랙스",
-   "waistband": null,
+   "waistband": "side",
    "silhouette": "tapered"
   },
   {
@@ -16784,7 +16784,7 @@
    "sizeCanonical": "30",
    "sizeOrder": 30.0,
    "product": "[COOL] 테이퍼드 슬랙스",
-   "waistband": null,
+   "waistband": "side",
    "silhouette": "tapered"
   },
   {
@@ -16807,7 +16807,7 @@
    "sizeCanonical": "32",
    "sizeOrder": 32.0,
    "product": "[COOL] 테이퍼드 슬랙스",
-   "waistband": null,
+   "waistband": "side",
    "silhouette": "tapered"
   },
   {
@@ -16830,7 +16830,7 @@
    "sizeCanonical": "34",
    "sizeOrder": 34.0,
    "product": "[COOL] 테이퍼드 슬랙스",
-   "waistband": null,
+   "waistband": "side",
    "silhouette": "tapered"
   },
   {
@@ -16853,7 +16853,7 @@
    "sizeCanonical": "36",
    "sizeOrder": 36.0,
    "product": "[COOL] 테이퍼드 슬랙스",
-   "waistband": null,
+   "waistband": "side",
    "silhouette": "tapered"
   },
   {
@@ -16876,7 +16876,7 @@
    "sizeCanonical": "28",
    "sizeOrder": 28.0,
    "product": "[COOL] 와이드 슬랙스",
-   "waistband": null,
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -16899,7 +16899,7 @@
    "sizeCanonical": "30",
    "sizeOrder": 30.0,
    "product": "[COOL] 와이드 슬랙스",
-   "waistband": null,
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -16922,7 +16922,7 @@
    "sizeCanonical": "32",
    "sizeOrder": 32.0,
    "product": "[COOL] 와이드 슬랙스",
-   "waistband": null,
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -16945,7 +16945,7 @@
    "sizeCanonical": "34",
    "sizeOrder": 34.0,
    "product": "[COOL] 와이드 슬랙스",
-   "waistband": null,
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -16968,7 +16968,7 @@
    "sizeCanonical": "36",
    "sizeOrder": 36.0,
    "product": "[COOL] 와이드 슬랙스",
-   "waistband": null,
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -17382,7 +17382,7 @@
    "sizeCanonical": "S",
    "sizeOrder": 0.0,
    "product": "골지 롱 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -17405,7 +17405,7 @@
    "sizeCanonical": "M",
    "sizeOrder": 1.0,
    "product": "골지 롱 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -17428,7 +17428,7 @@
    "sizeCanonical": "L",
    "sizeOrder": 2.0,
    "product": "골지 롱 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -17612,7 +17612,7 @@
    "sizeCanonical": "S",
    "sizeOrder": 0.0,
    "product": "와이드 사선 카고 밴딩 팬츠",
-   "waistband": "partial",
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -17635,7 +17635,7 @@
    "sizeCanonical": "M",
    "sizeOrder": 1.0,
    "product": "와이드 사선 카고 밴딩 팬츠",
-   "waistband": "partial",
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -17658,7 +17658,7 @@
    "sizeCanonical": "L",
    "sizeOrder": 2.0,
    "product": "와이드 사선 카고 밴딩 팬츠",
-   "waistband": "partial",
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -18410,7 +18410,7 @@
    "sizeCanonical": "S",
    "sizeOrder": 0.0,
    "product": "[4WAY STRETCH] 와이드핏 밴딩 슬랙스",
-   "waistband": "partial",
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -18433,7 +18433,7 @@
    "sizeCanonical": "M",
    "sizeOrder": 1.0,
    "product": "[4WAY STRETCH] 와이드핏 밴딩 슬랙스",
-   "waistband": "partial",
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -18456,7 +18456,7 @@
    "sizeCanonical": "L",
    "sizeOrder": 2.0,
    "product": "[4WAY STRETCH] 와이드핏 밴딩 슬랙스",
-   "waistband": "partial",
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -18479,7 +18479,7 @@
    "sizeCanonical": "XL",
    "sizeOrder": 3.0,
    "product": "[4WAY STRETCH] 와이드핏 밴딩 슬랙스",
-   "waistband": "partial",
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -18502,7 +18502,7 @@
    "sizeCanonical": "76",
    "sizeOrder": 76.0,
    "product": "[4WAY STRETCH] 세미와이드핏 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -18525,7 +18525,7 @@
    "sizeCanonical": "78",
    "sizeOrder": 78.0,
    "product": "[4WAY STRETCH] 세미와이드핏 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -18548,7 +18548,7 @@
    "sizeCanonical": "80",
    "sizeOrder": 80.0,
    "product": "[4WAY STRETCH] 세미와이드핏 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -18571,7 +18571,7 @@
    "sizeCanonical": "82",
    "sizeOrder": 82.0,
    "product": "[4WAY STRETCH] 세미와이드핏 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -18594,7 +18594,7 @@
    "sizeCanonical": "84",
    "sizeOrder": 84.0,
    "product": "[4WAY STRETCH] 세미와이드핏 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -18617,7 +18617,7 @@
    "sizeCanonical": "86",
    "sizeOrder": 86.0,
    "product": "[4WAY STRETCH] 세미와이드핏 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "wide"
   },
   {
@@ -18640,7 +18640,7 @@
    "sizeCanonical": "S",
    "sizeOrder": 0.0,
    "product": "와이드핏 셋업 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -18663,7 +18663,7 @@
    "sizeCanonical": "M",
    "sizeOrder": 1.0,
    "product": "와이드핏 셋업 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -18686,7 +18686,7 @@
    "sizeCanonical": "L",
    "sizeOrder": 2.0,
    "product": "와이드핏 셋업 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -18709,7 +18709,7 @@
    "sizeCanonical": "XL",
    "sizeOrder": 3.0,
    "product": "와이드핏 셋업 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -18893,7 +18893,7 @@
    "sizeCanonical": "S",
    "sizeOrder": 0.0,
    "product": "경량 코튼 이지 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -18916,7 +18916,7 @@
    "sizeCanonical": "M",
    "sizeOrder": 1.0,
    "product": "경량 코튼 이지 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -18939,7 +18939,7 @@
    "sizeCanonical": "L",
    "sizeOrder": 2.0,
    "product": "경량 코튼 이지 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -18962,7 +18962,7 @@
    "sizeCanonical": "XL",
    "sizeOrder": 3.0,
    "product": "경량 코튼 이지 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -19393,7 +19393,7 @@
    "sizeCanonical": "76",
    "sizeOrder": 76.0,
    "product": "슬림핏 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "slim"
   },
   {
@@ -19416,7 +19416,7 @@
    "sizeCanonical": "78",
    "sizeOrder": 78.0,
    "product": "슬림핏 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "slim"
   },
   {
@@ -19439,7 +19439,7 @@
    "sizeCanonical": "80",
    "sizeOrder": 80.0,
    "product": "슬림핏 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "slim"
   },
   {
@@ -19462,7 +19462,7 @@
    "sizeCanonical": "82",
    "sizeOrder": 82.0,
    "product": "슬림핏 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "slim"
   },
   {
@@ -19485,7 +19485,7 @@
    "sizeCanonical": "84",
    "sizeOrder": 84.0,
    "product": "슬림핏 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "slim"
   },
   {
@@ -19508,7 +19508,7 @@
    "sizeCanonical": "86",
    "sizeOrder": 86.0,
    "product": "슬림핏 히든 밴딩 슬랙스",
-   "waistband": "hidden",
+   "waistband": "side",
    "silhouette": "slim"
   },
   {
@@ -19531,7 +19531,7 @@
    "sizeCanonical": "64",
    "sizeOrder": 64.0,
    "product": "[올데이 크리즈] 와이드 팬츠",
-   "waistband": null,
+   "waistband": "back",
    "silhouette": "wide"
   },
   {
@@ -19554,7 +19554,7 @@
    "sizeCanonical": "67",
    "sizeOrder": 67.0,
    "product": "[올데이 크리즈] 와이드 팬츠",
-   "waistband": null,
+   "waistband": "back",
    "silhouette": "wide"
   },
   {
@@ -19577,7 +19577,7 @@
    "sizeCanonical": "70",
    "sizeOrder": 70.0,
    "product": "[올데이 크리즈] 와이드 팬츠",
-   "waistband": null,
+   "waistband": "back",
    "silhouette": "wide"
   },
   {
@@ -19600,7 +19600,7 @@
    "sizeCanonical": "73",
    "sizeOrder": 73.0,
    "product": "[올데이 크리즈] 와이드 팬츠",
-   "waistband": null,
+   "waistband": "back",
    "silhouette": "wide"
   },
   {
@@ -19623,7 +19623,7 @@
    "sizeCanonical": "76",
    "sizeOrder": 76.0,
    "product": "[올데이 크리즈] 와이드 팬츠",
-   "waistband": null,
+   "waistband": "back",
    "silhouette": "wide"
   },
   {
@@ -19646,7 +19646,7 @@
    "sizeCanonical": "64",
    "sizeOrder": 64.0,
    "product": "폴리 크레이프 밴딩 팬츠",
-   "waistband": "partial",
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -19669,7 +19669,7 @@
    "sizeCanonical": "67",
    "sizeOrder": 67.0,
    "product": "폴리 크레이프 밴딩 팬츠",
-   "waistband": "partial",
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -19692,7 +19692,7 @@
    "sizeCanonical": "70",
    "sizeOrder": 70.0,
    "product": "폴리 크레이프 밴딩 팬츠",
-   "waistband": "partial",
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -19715,7 +19715,7 @@
    "sizeCanonical": "73",
    "sizeOrder": 73.0,
    "product": "폴리 크레이프 밴딩 팬츠",
-   "waistband": "partial",
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -19738,7 +19738,7 @@
    "sizeCanonical": "76",
    "sizeOrder": 76.0,
    "product": "폴리 크레이프 밴딩 팬츠",
-   "waistband": "partial",
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -19876,7 +19876,7 @@
    "sizeCanonical": "64",
    "sizeOrder": 64.0,
    "product": "냉감 밴딩 슬랙스",
-   "waistband": "partial",
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -19899,7 +19899,7 @@
    "sizeCanonical": "67",
    "sizeOrder": 67.0,
    "product": "냉감 밴딩 슬랙스",
-   "waistband": "partial",
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -19922,7 +19922,7 @@
    "sizeCanonical": "70",
    "sizeOrder": 70.0,
    "product": "냉감 밴딩 슬랙스",
-   "waistband": "partial",
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -19945,7 +19945,7 @@
    "sizeCanonical": "73",
    "sizeOrder": 73.0,
    "product": "냉감 밴딩 슬랙스",
-   "waistband": "partial",
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -19968,7 +19968,7 @@
    "sizeCanonical": "76",
    "sizeOrder": 76.0,
    "product": "냉감 밴딩 슬랙스",
-   "waistband": "partial",
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -20957,7 +20957,7 @@
    "sizeCanonical": "29",
    "sizeOrder": 29.0,
    "product": "남성) 컴포트 COOL 테이퍼드 이지 슬랙스",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "tapered"
   },
   {
@@ -20980,7 +20980,7 @@
    "sizeCanonical": "30",
    "sizeOrder": 30.0,
    "product": "남성) 컴포트 COOL 테이퍼드 이지 슬랙스",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "tapered"
   },
   {
@@ -21003,7 +21003,7 @@
    "sizeCanonical": "31",
    "sizeOrder": 31.0,
    "product": "남성) 컴포트 COOL 테이퍼드 이지 슬랙스",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "tapered"
   },
   {
@@ -21026,7 +21026,7 @@
    "sizeCanonical": "32",
    "sizeOrder": 32.0,
    "product": "남성) 컴포트 COOL 테이퍼드 이지 슬랙스",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "tapered"
   },
   {
@@ -21049,7 +21049,7 @@
    "sizeCanonical": "33",
    "sizeOrder": 33.0,
    "product": "남성) 컴포트 COOL 테이퍼드 이지 슬랙스",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "tapered"
   },
   {
@@ -21072,7 +21072,7 @@
    "sizeCanonical": "34",
    "sizeOrder": 34.0,
    "product": "남성) 컴포트 COOL 테이퍼드 이지 슬랙스",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "tapered"
   },
   {
@@ -21095,7 +21095,7 @@
    "sizeCanonical": "36",
    "sizeOrder": 36.0,
    "product": "남성) 컴포트 COOL 테이퍼드 이지 슬랙스",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "tapered"
   },
   {
@@ -21118,7 +21118,7 @@
    "sizeCanonical": "38",
    "sizeOrder": 38.0,
    "product": "남성) 컴포트 COOL 테이퍼드 이지 슬랙스",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "tapered"
   },
   {
@@ -21141,7 +21141,7 @@
    "sizeCanonical": "40",
    "sizeOrder": 40.0,
    "product": "남성) 컴포트 COOL 테이퍼드 이지 슬랙스",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "tapered"
   },
   {
@@ -21164,7 +21164,7 @@
    "sizeCanonical": "S",
    "sizeOrder": 0.0,
    "product": "남성) 크링클 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21187,7 +21187,7 @@
    "sizeCanonical": "M",
    "sizeOrder": 1.0,
    "product": "남성) 크링클 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21210,7 +21210,7 @@
    "sizeCanonical": "L",
    "sizeOrder": 2.0,
    "product": "남성) 크링클 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21233,7 +21233,7 @@
    "sizeCanonical": "XL",
    "sizeOrder": 3.0,
    "product": "남성) 크링클 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21256,7 +21256,7 @@
    "sizeCanonical": "XXL",
    "sizeOrder": 4.0,
    "product": "남성) 크링클 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21279,7 +21279,7 @@
    "sizeCanonical": "3XL",
    "sizeOrder": 5.0,
    "product": "남성) 크링클 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21486,7 +21486,7 @@
    "sizeCanonical": "S",
    "sizeOrder": 0.0,
    "product": "남성) 파라수트 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21509,7 +21509,7 @@
    "sizeCanonical": "M",
    "sizeOrder": 1.0,
    "product": "남성) 파라수트 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21532,7 +21532,7 @@
    "sizeCanonical": "L",
    "sizeOrder": 2.0,
    "product": "남성) 파라수트 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21555,7 +21555,7 @@
    "sizeCanonical": "XL",
    "sizeOrder": 3.0,
    "product": "남성) 파라수트 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21578,7 +21578,7 @@
    "sizeCanonical": "XXL",
    "sizeOrder": 4.0,
    "product": "남성) 파라수트 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21601,7 +21601,7 @@
    "sizeCanonical": "3XL",
    "sizeOrder": 5.0,
    "product": "남성) 파라수트 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21739,7 +21739,7 @@
    "sizeCanonical": "XXS",
    "sizeOrder": -2.0,
    "product": "여성) COOL 리넨블렌드 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21762,7 +21762,7 @@
    "sizeCanonical": "XS",
    "sizeOrder": -1.0,
    "product": "여성) COOL 리넨블렌드 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21785,7 +21785,7 @@
    "sizeCanonical": "S",
    "sizeOrder": 0.0,
    "product": "여성) COOL 리넨블렌드 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21808,7 +21808,7 @@
    "sizeCanonical": "M",
    "sizeOrder": 1.0,
    "product": "여성) COOL 리넨블렌드 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21831,7 +21831,7 @@
    "sizeCanonical": "L",
    "sizeOrder": 2.0,
    "product": "여성) COOL 리넨블렌드 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21854,7 +21854,7 @@
    "sizeCanonical": "XL",
    "sizeOrder": 3.0,
    "product": "여성) COOL 리넨블렌드 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21877,7 +21877,7 @@
    "sizeCanonical": "XXL",
    "sizeOrder": 4.0,
    "product": "여성) COOL 리넨블렌드 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21900,7 +21900,7 @@
    "sizeCanonical": "XXS",
    "sizeOrder": -2.0,
    "product": "여성) COOL 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21923,7 +21923,7 @@
    "sizeCanonical": "XS",
    "sizeOrder": -1.0,
    "product": "여성) COOL 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21946,7 +21946,7 @@
    "sizeCanonical": "S",
    "sizeOrder": 0.0,
    "product": "여성) COOL 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21969,7 +21969,7 @@
    "sizeCanonical": "M",
    "sizeOrder": 1.0,
    "product": "여성) COOL 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -21992,7 +21992,7 @@
    "sizeCanonical": "L",
    "sizeOrder": 2.0,
    "product": "여성) COOL 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -22015,7 +22015,7 @@
    "sizeCanonical": "XL",
    "sizeOrder": 3.0,
    "product": "여성) COOL 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -22038,7 +22038,7 @@
    "sizeCanonical": "XXL",
    "sizeOrder": 4.0,
    "product": "여성) COOL 와이드 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -22245,7 +22245,7 @@
    "sizeCanonical": "XS",
    "sizeOrder": -1.0,
    "product": "여성) 크링클 이지 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -22268,7 +22268,7 @@
    "sizeCanonical": "S",
    "sizeOrder": 0.0,
    "product": "여성) 크링클 이지 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -22291,7 +22291,7 @@
    "sizeCanonical": "M",
    "sizeOrder": 1.0,
    "product": "여성) 크링클 이지 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -22314,7 +22314,7 @@
    "sizeCanonical": "L",
    "sizeOrder": 2.0,
    "product": "여성) 크링클 이지 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -22337,7 +22337,7 @@
    "sizeCanonical": "XL",
    "sizeOrder": 3.0,
    "product": "여성) 크링클 이지 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -22360,7 +22360,7 @@
    "sizeCanonical": "XXL",
    "sizeOrder": 4.0,
    "product": "여성) 크링클 이지 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -22383,7 +22383,7 @@
    "sizeCanonical": "3XL",
    "sizeOrder": 5.0,
    "product": "여성) 크링클 이지 팬츠",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -22866,7 +22866,7 @@
    "sizeCanonical": "25",
    "sizeOrder": 25.0,
    "product": "여성) 컴포트 와이드 이지 슬랙스",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -22889,7 +22889,7 @@
    "sizeCanonical": "26",
    "sizeOrder": 26.0,
    "product": "여성) 컴포트 와이드 이지 슬랙스",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -22912,7 +22912,7 @@
    "sizeCanonical": "27",
    "sizeOrder": 27.0,
    "product": "여성) 컴포트 와이드 이지 슬랙스",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -22935,7 +22935,7 @@
    "sizeCanonical": "28",
    "sizeOrder": 28.0,
    "product": "여성) 컴포트 와이드 이지 슬랙스",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -22958,7 +22958,7 @@
    "sizeCanonical": "29",
    "sizeOrder": 29.0,
    "product": "여성) 컴포트 와이드 이지 슬랙스",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -22981,7 +22981,7 @@
    "sizeCanonical": "30",
    "sizeOrder": 30.0,
    "product": "여성) 컴포트 와이드 이지 슬랙스",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -23004,7 +23004,7 @@
    "sizeCanonical": "31",
    "sizeOrder": 31.0,
    "product": "여성) 컴포트 와이드 이지 슬랙스",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -23027,7 +23027,7 @@
    "sizeCanonical": "32",
    "sizeOrder": 32.0,
    "product": "여성) 컴포트 와이드 이지 슬랙스",
-   "waistband": null,
+   "waistband": "full",
    "silhouette": "wide"
   },
   {
@@ -23909,7 +23909,7 @@
    "sizeCanonical": "30",
    "sizeOrder": 30.0,
    "product": "릴렉스핏 코튼 팬츠",
-   "waistband": null,
+   "waistband": "밴딩",
    "silhouette": "wide"
   },
   {
@@ -23930,7 +23930,7 @@
    "sizeCanonical": "31",
    "sizeOrder": 31.0,
    "product": "릴렉스핏 코튼 팬츠",
-   "waistband": null,
+   "waistband": "밴딩",
    "silhouette": "wide"
   },
   {
@@ -23951,7 +23951,7 @@
    "sizeCanonical": "32",
    "sizeOrder": 32.0,
    "product": "릴렉스핏 코튼 팬츠",
-   "waistband": null,
+   "waistband": "밴딩",
    "silhouette": "wide"
   },
   {
@@ -23972,7 +23972,7 @@
    "sizeCanonical": "34",
    "sizeOrder": 34.0,
    "product": "릴렉스핏 코튼 팬츠",
-   "waistband": null,
+   "waistband": "밴딩",
    "silhouette": "wide"
   },
   {

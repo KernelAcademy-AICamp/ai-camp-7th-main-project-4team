@@ -59,8 +59,8 @@ def num(s):
 
 
 def waistband_of(product):
-    """product명에서 허리 밴딩 유형 추출(수집 임시). 허리 수용범위·역산 신뢰도에 영향.
-    ⚠️ product명 의존 = 부분 커버(대부분 히든밴딩만 표기, 나머지는 불명). 정식은 수집단 `밴딩` 컬럼."""
+    """product명에서 허리 밴딩 유형 추출(폴백). 밴딩 컬럼이 비었을 때만 사용.
+    ⚠️ product명 의존 = 부분 커버(대부분 히든밴딩만 표기, 나머지는 불명)."""
     p = nfc(product or "")
     if "풀밴딩" in p or "전체밴딩" in p:
         return "full"
@@ -71,6 +71,19 @@ def waistband_of(product):
     if "밴딩" in p or "밴드" in p:
         return "partial"   # 밴딩 있으나 유형 불명
     return None            # 미표기(고정인지 불명)
+
+
+# 수집단 `밴딩` 컬럼(정식) → waistband 코드. '없음'=고정(None)→허리 역산 유효,
+# 그 외=신축→엔진이 허리 역산 스킵. 엔진은 truthy 여부만 보므로 유형 문자열은 참고용.
+BAND_MAP = {"없음": None, "풀밴딩": "full", "사이드밴딩": "side", "뒷밴딩": "back"}
+
+
+def waistband_of_row(row):
+    """정식 `밴딩` 컬럼 우선, 없으면 product명 추측으로 폴백."""
+    raw = nfc(row.get("밴딩") or "").strip()
+    if raw:
+        return BAND_MAP.get(raw, raw)   # 미지의 값은 원문 그대로(truthy 유지)
+    return waistband_of(row.get("product"))
 
 
 # 하의 실루엣(silhouette) — 상품명에서 파싱. fitLine(여유축)과 직교하는 '형태축'.
@@ -193,8 +206,8 @@ for f in sorted(raw.glob("*.csv")):
             "product": (row.get("product") or "").strip(),
         }
         if category == "BOTTOM":
-            spec["waistband"] = waistband_of(row.get("product"))  # 허리 밴딩(수용범위·역산에 영향)
-            spec["silhouette"] = sil                               # 형태축(1차 매칭키)
+            spec["waistband"] = waistband_of_row(row)  # 허리 밴딩(수용범위·역산에 영향)
+            spec["silhouette"] = sil                    # 형태축(1차 매칭키)
         specs.append(spec)
 
 cats = sorted(set(s["category"] for s in specs))
@@ -212,10 +225,12 @@ doc = {
         "collectedAt": "2026-07-07",
         "categories": cats,
         "note": "값은 사이즈표 '단면(flat) 원본' 그대로. 둘레=단면×2 환산·여유 계산은 규칙 모듈이 조회 시 수행. "
-                "BOTTOM.waistband=밴딩 유형(hidden/side/full/partial/null) — 허리 수용범위·역산 신뢰도에 영향. "
+                "BOTTOM.waistband=밴딩 유형(full/side/back/null 등) — 허리 수용범위·역산 신뢰도에 영향. "
+                "수집단 `밴딩` 컬럼(없음/풀밴딩/사이드밴딩/뒷밴딩)에서 매핑, 없으면 product명 추측 폴백. "
+                "엔진은 truthy 여부만 사용(값 있으면 허리 역산 스킵). "
                 "BOTTOM.silhouette=형태축(skinny/slim/straight/tapered/wide/bootcut) — 수집단 `정규화실루엣` 컬럼 우선"
                 "(없으면 상품명 파싱 폴백), 역산·매칭의 1차 키(fitLine 여유축과 직교). "
-                "fitLine=상의 `정규화여유` 컬럼 우선. waistband는 아직 product명 추출이라 부분 커버. "
+                "fitLine=상의 `정규화여유` 컬럼 우선. "
                 "sizeSystem/sizeCanonical/sizeOrder=sizeLabel 원본에서 파생한 표시·정렬용(원본 불변, "
                 "엔진은 sizeLabel만 매칭). sizeSystem=letter/inch/cm/code/range — 한 셀에 여러 체계가 "
                 "공존하면(uniqlo 인치+cm, 탑텐 M(28)/M(630)) flow가 체계별로 그룹핑해 재인 가능하게 제시.",
