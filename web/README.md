@@ -13,7 +13,10 @@ npm run serve      # 저장소 루트에서 → http://localhost:8000
 > `data/*.json`을 `fetch`하므로 반드시 로컬 서버로 열 것(file:// 더블클릭은 CORS로 로드 실패).
 
 ## 배포 (Vercel)
-빌드 없는 정적 사이트. Vercel 프로젝트에서 **Root Directory = `web`**, Framework Preset = **Other**로 설정하면 그대로 서빙된다(빌드 명령·output 불필요).
+`vercel.json`이 정본: **buildCommand = `npm run gen-app`**, **outputDirectory = `app`**. 공개 배포는 항상 `web/`(정본 소스)를 `app/`(큐레이트 빌드)로 변환한 결과를 서빙한다.
+
+> ⚠️ **불변식 — 공개 배포는 반드시 `app/`, 절대 `web/` 직접 아님.**
+> `app/`은 `garments.json`(브랜드 실측표=해자)을 제외하고(+빌드 시 FATAL 유출가드) config를 api 모드로 주입한다. `web/`를 직접 공개 서빙하면 proto 경로(result.js·judge.js)가 `garments.json`을 클라에 노출한다. `npm run serve`(web/ 직접)는 **로컬 개발·데모(proto) 전용** — 공개 배포에 쓰지 않는다.
 
 ## 구조
 ```
@@ -34,9 +37,7 @@ web/
   js/
     body-model.js       # 0벌 체형 추정(사이즈코리아 8차 회귀) — 실계산
     engine.js           # ★ 사이즈 엔진 유일 구현 — 추천·역산·핏지수(규칙①②③). 브라우저·node 공용
-    bodytype.js         # 8유형 체형 분류(KS드롭+로우데이터 절단값) — FitBodyType.classify. 스텁 mapToBodyType 대체
-    engine-mock.js      # diagnose() 계약 어댑터(카드·신뢰도 조립) — 사이즈 계산은 FitEngine, 8유형은 bodytype에 위임.
-                        #   아직 목업: character 서술(LLM 자리)
+    bodytype.js         # 8유형 체형 분류(KS드롭+로우데이터 절단값) — FitBodyType.classify
     index/result/card/diag-*.js  # 각 화면 로직 — HTML에서 분리(디자이너=마크업 / 개발자=이 JS)
 ```
 > 화면 로직은 인라인 `<script>`가 아니라 `js/<화면>.js`로 분리돼 있습니다(역할 분담·충돌 최소화 — [`../docs/협업가이드.md`](../docs/협업가이드.md)). HTML은 `<script src="js/<화면>.js">`로 로드.
@@ -51,7 +52,7 @@ web/
 - ✅ **8유형 데이터 단일출처**: `data/bodytypes.json` 하나에서 렌더(하드코딩 `T` 객체 제거).
 - ✅ **진단 UI 이식**: 진단 화면(기본정보·착용경험·로딩) 딥그린 재스킨 + 결과 주입 + 피드백 로깅. 홈→기본정보→착용경험→로딩→결과 엔드투엔드 동작.
   - 참고: `index.html` 안의 구 오버레이 위저드 마크업/JS는 **미사용 잔재(legacy)** — 진단이 별도 화면으로 이동. 정리 대상.
-- ✅ **실엔진 연결**: 추천·역산·핏지수는 `engine.js`, **8유형 판정은 `bodytype.js`**(KS드롭+로우데이터)가 실계산. 남은 목업은 `engine-mock.js`의 character 서술뿐.
+- ✅ **실엔진 단일정본**: 추천·역산·핏지수는 `engine.js`, **8유형 판정은 `bodytype.js`**(KS드롭+로우데이터)가 실계산. 목업 어댑터(`engine-mock.js`)는 제거 — `result.js`가 실엔진만 호출(데이터 없음/로드 실패 시 가짜 대신 정직한 상태). 남은 목업은 character(LLM) 서술뿐.
 - ⏳ **남은 작업**: `garmentCm` 시드 확장 · 하의 `EASE_BANDS`·하체 역산 정식화 · character 서술(LLM) · 분류기 절단값 실피드백 튜닝.
 
 ## 규칙

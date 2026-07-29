@@ -24,6 +24,9 @@
     ]).then(function (a) { BASE = a[0]; DIST = a[1]; return true; });
   }
 
+  /** 서버(node) 주입 — fetch 없이 시드 JSON을 직접 넣는다. /api에서 require로 로드. */
+  function seed(base, dist) { BASE = base; DIST = dist; return true; }
+
   /** '173cm 이하'·'72kg'·'200cm 이상' → 숫자. 첫 정수/실수만 뽑는다. */
   function num(s) {
     if (typeof s === "number") return s;
@@ -50,11 +53,24 @@
   /** 사용자에게 보여줄 핵심 부위(라벨은 쉬운 말). base-model 키 → 표시명. */
   var SHOW = [
     { key: "chestFull", name: "가슴둘레" },
+    { key: "chestUpper", name: "윗가슴둘레" }, // 남성 전용 축 — 8유형 BW드롭 bustPart(bodytype.js CUT.male). 여성은 chestFull을 bust축으로 쓰므로 생산 스킵(estimate 가드) — 생산하면 result 가슴둘레 표시가 젖가슴→윗가슴으로 바뀜.
     { key: "waist",     name: "허리둘레" },
     { key: "hip",       name: "엉덩이둘레" },
     { key: "shoulder",  name: "어깨너비" },
     { key: "arm",       name: "팔길이" },
-    { key: "upperArm",  name: "위팔둘레" }
+    { key: "upperArm",  name: "위팔둘레" },
+    { key: "thigh",     name: "허벅지둘레" },  // 하의 판정 부위 — 0벌 사용자도 허벅지 병목을 보게(역산되면 덮어씀)
+    { key: "belly",     name: "배둘레" },     // 미표기 부위(브랜드 사이즈표에 없음) — r²0.85. 진단 '배' fit의 몸쪽 기준
+    { key: "underbust", name: "가슴아래둘레" }, // 여성 전용(male엔 coef 없음→자동 스킵) — r²0.83. 브라 밴드둘레의 몸쪽 기준(재인 입력으로 덮어씀)
+    // 미표기 병목(flag) 부위의 몸쪽 기준 — 페인 플래그를 '측정 축'으로 승격(A축 추정 토대, docs/6 §4).
+    //   결과카드엔 미표시(result.js MEAS 별도). 소매통=upperArm(위)에 대응.
+    { key: "neck",      name: "목둘레" },
+    { key: "armhole",   name: "겨드랑둘레" },
+    { key: "calf",      name: "장딴지둘레" },
+    { key: "backLength", name: "등길이" },   // 세로축(상의 총장 판정용)
+    { key: "legOuter",  name: "다리가쪽길이" }, // 세로축(하의 기장 판정용 — 허리옆~바닥)
+    { key: "bodyRise",  name: "몸밑위" }        // 세로축(하의 밑위 판정용 — 허리높이−샅높이)
+    // ↑ 세로축 3종은 결과카드엔 미표시(result.js MEAS 별도), judge가 소비
   ];
 
   /**
@@ -69,6 +85,10 @@
 
     var coef = BASE[sex] || {}, dist = (DIST && DIST[sex]) || {};
     var parts = SHOW.map(function (s) {
+      // underbust는 여성 전용 축 — 성별 무입력이 female로 매핑되는 기본값을 타지 않게 명시 female만 통과.
+      if (s.key === "underbust" && basic.gender !== "female") return null;
+      // chestUpper는 남성 8유형(bustPart) 전용 축 — 여성은 chestFull을 bust축으로 써서 스킵(전엔 SHOW 누락으로 남성도 미생산→분류가 chestFull 폴백).
+      if (s.key === "chestUpper" && basic.gender !== "male") return null;
       var c = coef[s.key]; if (!c) return null;
       var cm = c.a_height * h + c.b_weight * w + c.c_age * a + c.intercept;
       var out = { key: s.key, name: s.name, cm: Math.round(cm * 10) / 10, rmse: c.rmse_cm, r2: c.r2, pct: null };
@@ -87,5 +107,5 @@
     return pctFromZ((cm - dp.mean) / dp.sd);
   }
 
-  global.BodyModel = { load: load, estimate: estimate, pctOf: pctOf, _num: num, _age: ageYears };
+  global.BodyModel = { load: load, seed: seed, estimate: estimate, pctOf: pctOf, _num: num, _age: ageYears };
 })(typeof window !== "undefined" ? window : this);

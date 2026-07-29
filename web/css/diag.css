@@ -1,0 +1,252 @@
+/* 스크롤바 자리 항상 확보 — 폼 길이가 다른 화면(진단 입력↔진단 중)을 오갈 때 스크롤바 유무로 폭이 바뀌어
+   가운데 정렬된 1·2·3 스텝바가 살짝 옮겨 보이던 것 방지. 스크롤 여부와 무관하게 폭 고정. */
+html{ scrollbar-gutter: stable; overflow-y: scroll; }
+
+/* 페이지 이동을 부드러운 크로스페이드로 — 교차문서 View Transition (미지원 브라우저는 기존 즉시 이동) */
+@view-transition{ navigation: auto; }
+::view-transition-old(root),::view-transition-new(root){ animation-duration:.32s; animation-timing-function:cubic-bezier(.2,.8,.2,1); }
+@media (prefers-reduced-motion:reduce){ ::view-transition-old(root),::view-transition-new(root){ animation:none; } }
+
+/* ==========================================================================
+   diag.css — sangmin 진단 화면(fitting.css "Precision 블랙")을 sohee 딥그린으로 재스킨.
+   fitting.css 뒤에 로드. 토큰만 덮고, sohee 원칙(버튼=잉크블랙 · 활성=딥그린)만 보정한다.
+   sangmin의 마크업·레이아웃·로직은 그대로 보존.
+   ========================================================================== */
+:root{
+  --canvas:#F6F6F5; --ink:#16140F; --muted:#6E6B63; --faint:#A6A29A;
+  --line:#E6E5E1; --field:#FFFFFF; --field-line:#DAD8D2;
+  --accent:#2E4A3B; --accentInk:#FFFFFF;   /* 키커·사이즈값·강조 = 딥그린 */
+  --ok:#2E4A3B; --warn:#B0553F;
+  --btnR:12px; --cardR:18px;               /* sohee 라운드 */
+  --green:#2E4A3B; --green-soft:#E7EFEA;
+}
+/* 개발용 상단 배너 숨김 (통합 앱은 자체 헤더 사용) */
+.protobar{ display:none !important; }
+
+/* 화면 전환: 부드러운 슬라이드업 + 페이드 — 단계 이동이 스무스하게 넘어가는 느낌 */
+.wstep.active, #basic-check:not(.hidden){ animation:wfade .45s cubic-bezier(.16,.7,.28,1); }   /* 인터스티셜도 스텝과 동일한 전환 */
+/* '상의/하의 진단하기' 진입 시: JS 로드 전 첫 페인트에 카테고리 선택(idx0) 숨기고 선호핏(idx1) 노출 → 깜빡임 방지 */
+html.skipcat #w-cat{ display:none; }
+html.skipcat #w-cat + .wstep{ display:block; }
+@keyframes wfade{ from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none} }
+@media (prefers-reduced-motion:reduce){ .wstep.active, #basic-check:not(.hidden){ animation:none; } }
+
+/* 버튼(주요) = 잉크블랙 (딥그린 원칙 2 — 초록 버튼 금지) */
+.btn-primary{ background:var(--ink); color:#fff; }
+.btn-primary:hover{ background:#000; opacity:1; }
+/* 선택 전 비활성 — 옅은 회색 + 흐린 글자, .15s로 부드럽게 켜짐/꺼짐 */
+.btn-primary:disabled, .btn-primary:disabled:hover{ background:var(--line); color:var(--faint); cursor:not-allowed; }
+
+/* 활성 선택 = 딥그린 (칩·부위느낌·진행바·스텝·체크·서비스) */
+.seg .opt.on, .feel-opts .opt.on{ background:var(--green) !important; border-color:var(--green) !important; color:#fff; }
+/* 옵션 선택 스무스하게 — 배경·테두리·글자색이 툭 바뀌지 않고 부드럽게 전환 */
+.seg .opt, .feel-opts .opt{ transition:background .28s cubic-bezier(.22,.61,.36,1), border-color .28s cubic-bezier(.22,.61,.36,1), color .28s cubic-bezier(.22,.61,.36,1); }
+.wprogress .bar i, .stepper .dot.now, .stepper .dot.done{ background:var(--green); }
+.cb.on, .svc.on .check{ background:var(--green); border-color:var(--green); }
+.svc.on{ border-color:var(--green); background:var(--green-soft); }
+.soon.live{ background:var(--green); }
+.notice.warn{ background:#FBEEEA; border-color:#E8D6CF; color:var(--warn); }
+
+/* 통합 앱 헤더 (진단 화면 상단) */
+/* 헤더: 로고=좌 · 진행율=로고 옆 왼쪽 정렬(sohee 스타일) · 닫기=우 끝 */
+.dhead{ position:sticky; top:0; z-index:40; background:rgba(255,255,255,.9); backdrop-filter:blur(12px); border-bottom:1px solid var(--line); }  /* 메인 헤더와 동일 */
+.dhead-in{ display:flex; align-items:center; gap:16px; padding:14px 30px; }
+.dhead .logo{ white-space:nowrap; font-size:21px; font-weight:800; letter-spacing:-.05em; color:var(--green); text-decoration:none; }  /* 메인 로고와 동일 딥그린 */
+.dhead .logo i{ display:inline-block; width:6px; height:6px; background:var(--green); margin-left:1px; vertical-align:baseline; }
+.dhead .dx{ margin-left:auto; flex:none; width:34px; height:34px; border-radius:50%; border:1px solid var(--line);
+  display:flex; align-items:center; justify-content:center; color:var(--muted); text-decoration:none; font-size:16px; }
+.dhead .dx:hover{ background:#EDEDEA; }
+/* 진행율 = 2세그먼트(기본·경험). 완료=꽉 참, 현재 단계=하위 스텝만큼 내부가 늘어남 */
+.dhead .dprog .prog{ display:flex; gap:8px; }
+.dhead .dprog .prog .seg{ width:60px; height:5px; border-radius:3px; background:var(--line); overflow:hidden; }
+.dhead .dprog .prog .seg.done{ background:var(--green); }
+.dhead .dprog .prog .seg i{ display:block; height:100%; width:0; background:var(--green); border-radius:3px; transition:width .4s cubic-bezier(.4,0,.2,1); }
+
+/* ── 진행 표시 (C타입+텍스트) — 점 사이 연결선이 곧 진행 바. 현재 단계 구간이 질문마다 채워짐 ──
+   페이지별로 .done/.now 클래스와 seg 연결선 위치만 다르게 준다. seg 칸 수 = 그 단계 질문 수. */
+.dstepc{ display:flex; align-items:flex-start; margin:16px 0 52px; padding:0 4px; }
+.dstepc .dnode{ display:flex; flex-direction:column; align-items:center; gap:8px; flex:none; width:58px; }
+.dstepc .ddot{ width:22px; height:22px; border-radius:50%; border:1.5px solid var(--line); background:var(--field);
+  display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:var(--faint); }
+.dstepc .dlbl{ font-size:13px; font-weight:700; color:var(--faint); white-space:nowrap; letter-spacing:-.02em; }
+.dstepc .dnode.done .ddot{ background:var(--green); border-color:var(--green); color:#fff; }
+.dstepc .dnode.now .ddot{ background:var(--green); border-color:var(--green); color:#fff; box-shadow:0 0 0 3.5px var(--green-soft); }
+.dstepc .dnode.done .dlbl{ color:var(--green); }
+.dstepc .dnode.now .dlbl{ color:var(--ink); }
+.dstepc .dconn{ flex:1; margin-top:10px; height:3px; display:flex; gap:3px; min-width:16px; }   /* 점 중심 높이에 맞춤 */
+.dstepc .dconn.solid{ background:var(--line); border-radius:2px; }
+.dstepc .dconn.solid.done{ background:var(--green); }
+.dstepc .dconn.seg span{ flex:1; height:100%; background:var(--line); border-radius:2px; overflow:hidden; }
+.dstepc .dconn.seg span i{ display:block; height:100%; width:0; background:var(--green); border-radius:2px; transition:width .45s cubic-bezier(.4,0,.2,1); }
+.dstepc .dconn.seg span.on i{ width:100%; }
+@media(max-width:600px){ .dstepc .dnode{ width:52px; } .dstepc .dlbl{ font-size:11.5px; } }
+
+/* ── 시스템 수렴: 각진 Precision → sohee 딥그린 리듬 (라운드·폼·간격) ───────────
+   fitting.css의 하드코딩 라운드/폼 스타일을 앱 셸과 같은 결로 통일. */
+/* 질문 → 선택지(위→아래) 단일 컬럼. 답답하지 않게 폭은 넉넉히, 중앙 정렬. */
+.flow{ max-width:700px; padding:32px 32px 48px; }
+.qhelp, .sub{ max-width:560px; }                          /* 본문은 가독 폭 유지 */
+/* 모바일: 좌우 패딩 축소 + 헤더 진행율은 바만(라벨·분수 숨겨 넘침 방지) */
+@media(max-width:600px){
+  .flow{ padding:24px 20px 40px; }
+  /* 모바일 헤더: 좌우 패딩만 축소 (로고 좌·진행율 옆·닫기 우 유지) */
+  .dhead-in{ gap:12px; padding:14px 20px; }
+  .dhead .dprog .prog .seg{ width:52px; }
+}
+
+/* 입력·선택 컨트롤: 흰 표면 + 부드러운 라운드, 포커스는 딥그린(브랜드색 노출) */
+.flow input[type=text], .flow input[type=number], .flow select, .open-note{
+  background-color:var(--field); border:1.5px solid var(--field-line); border-radius:12px;
+}
+.flow input:focus, .flow select:focus, .open-note:focus{ border-color:var(--green); background-color:#fff; }
+.seg .opt{ border-radius:12px; }
+.seg.compact .opt{ border-radius:10px; }
+.feel-opts .opt{ border-radius:10px; }
+.feel-opts .opt.on{ background:var(--green); border-color:var(--green); }
+
+/* 카드·패널·고지: 앱 카드와 같은 라운드/톤 */
+.card, .card-soft, .result-hero, .char-hero{ border-radius:18px; }
+.notice{ border-radius:12px; }
+.add-garment{ border-radius:14px; }
+.stepper .dot{ border-radius:3px; }
+
+/* 옵션 카드(선택 상태)도 딥그린 계열로 */
+.seg.stack .opt.on{ background:var(--green); border-color:var(--green); }
+
+/* 잠긴 파생 행: 시각 무게 낮추기 (죽은 행이 첫 화면을 덜 먹도록) */
+.seg.cat .opt.locked{ opacity:.4; }
+.seg.cat .opt .lockhint{ color:var(--faint); }
+
+/* ── 타이포·버튼·여백을 셸 디자인 언어에 맞춤 (index.html 값 기준) ─────────── */
+:root{ --dS:-.045em; --btnR:13px; }   /* 헤딩 자간·버튼 라운드를 셸과 동일하게 */
+
+/* 질문 헤드/보조/키커 — 셸 diaghead(h1 31/-.045)·p(15/sub)·kicker 스케일 */
+.qnum{ font-size:13px; font-weight:800; letter-spacing:.10em; color:var(--green); margin:22px 0 8px; }
+/* 제목·설명은 자연스러운 흐름 — 제목 속 인라인 강조(catword/longword)가 한 문장으로 이어지게 flex 미사용 */
+.qhead{ font-size:clamp(24px,3.4vw,29px); letter-spacing:-.045em; line-height:1.25; margin-bottom:8px; }
+.qhelp{ font-size:16px; color:var(--muted); line-height:1.6; margin-bottom:24px; }
+
+/* 진단 대상 미니 라벨 — 각 착용경험 질문 제목 위 한 줄(대상 따라 자동 변경) */
+.qtarget{ font-size:13px; font-weight:800; color:var(--green); letter-spacing:.02em; margin-bottom:6px; }
+
+/* 정확도 타임라인(입력 점검) — 세로 스텝 · 지난 단계 초록 채움 · 현재 위치 강조(점이 옷 수에 따라 이동) */
+.acc{ position:relative; padding-left:24px; }
+.acc::before{ content:""; position:absolute; left:6px; top:16px; bottom:16px; width:2px; background:var(--line); border-radius:2px; }
+.acc-row{ position:relative; display:flex; justify-content:space-between; align-items:center; gap:12px; padding:11px 0; }
+.acc-row::before{ content:""; position:absolute; left:-24px; top:50%; transform:translateY(-50%); width:12px; height:12px;
+  border-radius:50%; background:var(--field); border:2px solid var(--line); transition:background .3s, box-shadow .3s; }
+.acc-row.done::before{ background:var(--green); border-color:var(--green); }
+.acc-row.now::before{ background:var(--green); border-color:var(--green); box-shadow:0 0 0 4px var(--green-soft); }
+.acc-row .l{ font-size:15px; font-weight:700; color:var(--faint); display:inline-flex; align-items:center; }   /* '현재' 배지를 텍스트와 세로 가운데 정렬 */
+.acc-row.done .l{ color:var(--muted); }
+.acc-row.now .l{ color:var(--ink); }
+.acc-row .r{ font-size:13.5px; color:var(--faint); }
+.acc-row.now .r{ color:var(--green); font-weight:700; }
+.acc-row .cur{ display:inline-block; font-size:11px; font-weight:800; color:#fff; background:var(--green); border-radius:11px; padding:2px 8px; margin-left:7px; }
+.step-h{ letter-spacing:-.045em; }
+.sub, .lead{ font-size:16px; }
+.small{ font-size:14px; }
+
+/* 버튼 — 셸 .btn(패딩 14×24 · r13 · 15/800), 보조=흰 배경+테두리 */
+.btn-primary, .btn-line, .btn-ghost{ font-size:16px; padding:14px 24px; border-radius:13px; }
+.btn-ghost{ padding:13px 18px; }
+.btn-line{ background:#fff; border:1.5px solid var(--field-line); color:var(--ink); }
+.btn-line:hover{ border-color:var(--ink); }
+.wnav{ margin:28px 0 24px; }
+
+/* 폼 라벨·세그·간격 */
+.field{ margin-bottom:20px; }
+.field > label{ font-size:14px; font-weight:700; color:var(--ink); margin-bottom:8px; }
+/* 범위 안내는 placeholder(입력칸 안) — 입력을 시작하면 사라진다.
+   이 줄은 벗어났을 때만 뜨는 오류 문구. visibility(=자리 유지)라 떠도 레이아웃이 안 흔들린다.
+   문구는 HTML 고정 — JS는 .err만 토글한다. */
+.fhint{ display:block; font-size:12.5px; font-weight:600; color:var(--warn); margin-top:7px; visibility:hidden; }
+.fhint.err{ visibility:visible; }
+.field input.input-err{ border-color:var(--warn); }
+.seg .opt{ font-size:15px; }
+.seg.stack .opt{ font-size:16px; padding:15px 18px; }
+.feel-row .part{ font-size:15px; font-weight:700; }
+.feel-opts .opt{ font-size:13px; padding:9px 6px; }
+
+/* 상세 입력(불편·기장)은 '느낌' 다음 독립 스텝 — 접기 UI(.feel-more) 제거.
+   부위와 '추가 의견'을 같은 feel-row 리듬으로 나란히. 라벨은 다른 부위와 동일한 .part.
+   note-row만 textarea라 위 정렬로 두고 라벨을 살짝 내려 첫 줄에 맞춘다. */
+.feel-row.note-row{ align-items:start; }
+.feel-row.note-row .part{ padding-top:9px; }
+.feelbox .open-note{ margin:0; }
+/* 상세 스텝: 2값(팔·목)과 3값(기장) 행이 섞여 flex:1이면 버튼 폭이 어긋난다.
+   3열 그리드로 통일 → 2버튼도 3버튼과 같은 폭·정렬(왼쪽부터, 남는 칸은 비움). */
+#detail1 .feel-opts, #detail2 .feel-opts{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+#detail1 .note-row .feel-opts, #detail2 .note-row .feel-opts{ display:block; }
+
+/* ── 진단 중 화면 — 메인 히어로 줄자 이식 · 전부 중앙 정렬 · 위쪽 배치 ── */
+.flow:has(.loading-wrap){ padding-top:56px; }   /* 진단 중 화면만 전체 살짝 아래로 */
+.loading-wrap{ min-height:auto; justify-content:flex-start; padding-top:10px; gap:0; }
+.loading-wrap .lmark{ font-size:15px; font-weight:800; letter-spacing:.26em; color:var(--green); margin-bottom:40px; }
+.lruler{ position:relative; width:100%; max-width:360px; height:70px; margin:0 auto; user-select:none; }
+.lruler .nums{ position:absolute; left:0; right:0; top:0; display:flex; justify-content:space-between;
+  font-size:11px; font-weight:800; color:var(--faint); font-family:ui-monospace,"SF Mono",Menlo,monospace; }
+.lruler .tape{ position:absolute; left:0; right:0; top:26px; height:40px; border-radius:9px; overflow:hidden;
+  background:linear-gradient(180deg,#fff,#FBFBFA); border:1px solid var(--field-line); box-shadow:0 8px 22px rgba(20,22,28,.07); }
+.lruler .tape .lfill{ position:absolute; left:0; top:0; bottom:0; width:0; background:var(--green-soft); }
+.lruler .ticks{ position:absolute; left:0; right:0; top:26px; height:40px; pointer-events:none;
+  background-image:repeating-linear-gradient(90deg,var(--field-line) 0 1px,transparent 1px 13px); opacity:.9; }
+.lruler .ticks.major{ background-image:repeating-linear-gradient(90deg,var(--faint) 0 1.4px,transparent 1.4px 60px); height:16px; }
+.lruler .marker{ position:absolute; top:18px; bottom:0; width:2.5px; border-radius:2px; background:var(--green); left:0; box-shadow:0 0 0 4px rgba(46,74,59,.1); }
+.lruler .marker::after{ content:""; position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:11px; height:11px; border-radius:50%; background:var(--green); box-shadow:0 2px 6px rgba(46,74,59,.4); }
+.loading-wrap .lpct{ font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:12px; font-weight:700; color:var(--green); margin-top:14px; letter-spacing:.02em; }
+/* 동그란 Fit 로딩(judge .jload-* 이식) — 스피너 링 + Fit 로고 */
+.dl-mk{ position:relative; width:132px; height:132px; display:grid; place-items:center; margin:6px auto 4px; }   /* 진단중·판정·결과 로딩 공통 'Fit' 링 (unscope — result #rloading도 사용) */
+.dl-ring{ position:absolute; inset:0; width:132px; height:132px; animation:jspin 1.4s cubic-bezier(.5,.1,.5,.9) infinite; }
+.dl-ring .trk{ stroke:var(--green-soft); }
+.dl-ring .arc{ stroke:var(--green); }
+.dl-lg{ font-size:42px; font-weight:800; letter-spacing:-.05em; line-height:1; color:var(--green); }
+.dl-lg .sq{ display:inline-block; width:9px; height:9px; background:#CBDDD2; margin-left:4px; vertical-align:baseline; }
+@keyframes jspin{ to{ transform:rotate(360deg); } }
+@media(prefers-reduced-motion:reduce){ .dl-ring{ animation:none; } }
+.loading-wrap .step-h{ margin:28px 0 2px; }
+.loading-wrap .lsub{ font-size:14px; color:var(--muted); margin-top:13px; max-width:320px; }   /* 제목과 간격 */
+.loading-wrap .load-steps{ margin-top:26px; align-items:flex-start; }   /* 항목=왼쪽(아이콘 세로 정렬), 목록 블록=화면 중앙(inline-flex) */
+.loading-wrap .load-steps li{ font-size:14px; }
+.loading-wrap .load-steps li .tick{ width:18px; height:18px; }
+.loading-wrap .load-steps li.active{ color:var(--ink); }
+.loading-wrap .load-steps li.active .tick{ border-color:var(--green); }
+.loading-wrap .load-steps li.done{ color:var(--green); }
+.loading-wrap .load-steps li.done .tick{ background:var(--green); border-color:var(--green); position:relative; }
+.loading-wrap .load-steps li.done .tick::after{ content:""; position:absolute; left:6px; top:3.5px; width:4px; height:7px;
+  border:solid #fff; border-width:0 2px 2px 0; transform:rotate(45deg); box-sizing:border-box; }   /* 완료 체크 ✓ */
+
+/* 로딩 dstepc: 2→3 구간 선이 스르륵 채워짐 */
+.dstepc .dconn.fillnow{ display:block; background:var(--line); border-radius:2px; overflow:hidden; }
+.dstepc .dconn.fillnow i{ display:block; height:100%; width:0; background:var(--green); animation:dfillnow .7s cubic-bezier(.4,0,.2,1) .3s forwards; }
+@keyframes dfillnow{ to{ width:100%; } }
+@media(prefers-reduced-motion:reduce){ .dstepc .dconn.fillnow i{ animation:none; width:100%; } }
+
+/* 결과 사이즈표 — 셸 .szbox 룩(값 18/ink · 태그 딥그린 pill) */
+.size-row .brand{ font-size:15px; font-weight:700; }
+.size-row .brand small{ color:var(--faint); }
+.size-row .sz{ font-size:19px; font-weight:800; color:var(--ink); }
+.size-row .sz .conf{ font-family:var(--sans); font-size:12px; font-weight:800; color:var(--green); background:var(--green-soft); padding:4px 10px; border-radius:16px; margin-left:8px; }
+.st-head{ font-size:12px; }
+
+/* ===== 모바일: 진단 CTA 하단 고정. diag-basic·diag-fit 공통(.wnav) =====
+   ※ 터치 타깃·입력 16px 등 공통 모바일 규칙은 fitting.css(소비자 공통)로 분리 */
+@media(max-width:640px){
+  .flow{ padding-left:20px; padding-right:20px; padding-bottom:12px; }
+  .wnav{ position:sticky; bottom:0; z-index:30; margin:20px -20px 0;
+    padding:14px 20px calc(14px + env(safe-area-inset-bottom));
+    background:linear-gradient(180deg, rgba(246,246,245,0), var(--canvas) 26%); }
+}
+
+/* 안내 토스트 — 브라우저 기본 alert 대체 (index 토스트와 동일 톤) */
+.toast{position:fixed; left:50%; bottom:32px; transform:translateX(-50%) translateY(16px); max-width:min(420px,90vw); text-align:center; background:var(--ink); color:#fff; padding:13px 22px; border-radius:16px; font-size:14.5px; font-weight:700; line-height:1.5; opacity:0; pointer-events:none; transition:.25s; z-index:130;}
+.toast.on{opacity:1; transform:translateX(-50%) translateY(0);}
+
+/* 지난 진단 이력 안내 — 상단 풀폭 알림바(announcement bar), 헤더 바로 아래 딱 붙음 */
+.diaghist{display:none; position:relative; align-items:center; justify-content:center; gap:9px; width:100%; background:#E7EFEA; border-bottom:1px solid #CBDDD2; padding:11px 44px; transition:opacity .2s ease;}
+.diaghist .dh-x{position:absolute; right:10px; top:50%; transform:translateY(-50%); border:none; background:transparent; color:var(--accent,var(--accent)); font-size:13px; line-height:1; padding:7px 9px; border-radius:7px; cursor:pointer; opacity:.6;}
+.diaghist .dh-x:hover{opacity:1; background:rgba(46,74,59,.08);}
+.diaghist .dh-ic{flex:none; width:20px; height:20px; color:var(--accent,var(--accent)); display:grid; place-items:center;}
+.diaghist .dh-ic svg{width:20px; height:20px;}
+.diaghist .dh-msg{font-size:12.5px; font-weight:600; color:var(--accent,var(--accent)); line-height:1.45; text-align:center;}
+.diaghist .dh-msg b{font-weight:800;}

@@ -12,7 +12,8 @@
             items:['레귤러핏 셔츠','슬림핏 셔츠','오버핏 맨투맨','니트'],
             fit:['어깨','가슴','배'], flag:['팔(소매통)','목'], pref:['소매 기장','총장']},
     bottom:{label:'하의',  ready:true,  kind:'base', provides:'lower',
-            items:['레귤러 슬랙스','와이드 팬츠','스키니 진','트레이닝 팬츠'],
+            // 품목=실루엣(형태축). 바지는 같은 허리여도 실루엣별 허벅지·밑단이 달라 매칭 1차 키(engine silhouette).
+            items:['스키니 진','슬림 팬츠','스트레이트 팬츠','테이퍼드 팬츠','와이드 팬츠','부츠컷'],
             fit:['허리','엉덩이','허벅지'], flag:['종아리'], pref:['밑위','기장']},
     outer: {label:'아우터', ready:false, kind:'derived', needs:['upper'],
             items:['싱글 코트','블레이저','패딩','바람막이'],
@@ -33,8 +34,8 @@
   const LONGWORD={top:'긴팔',outer:'긴팔',dress:'긴팔',bottom:'긴바지',skirt:'긴 기장'};
   const sleeveType={1:'long',2:'long'}, legLength={1:'long',2:'long'};
   // facet(소매/기장)은 조회키 → '옷 N · 정보' 단계에 렌더. 바꾸면 정보 하이라이트+느낌 질문을 함께 갱신.
-  function setSleeve(g,v){ sleeveType[g]=v; renderFacet(g); renderFeel(g); }
-  function setLeg(g,v){ legLength[g]=v; renderFacet(g); renderFeel(g); }
+  function setSleeve(g,v){ sleeveType[g]=v; renderFacet(g); renderFeel(g); renderDetail(g); }
+  function setLeg(g,v){ legLength[g]=v; renderFacet(g); renderFeel(g); renderDetail(g); }
   function facetSeg(g,opts,cur,fn){
     return '<div class="seg compact">'+opts.map(([v,lab])=>'<div class="opt'+(v===cur?' on':'')+'" onclick="'+fn+'('+g+',\''+v+'\')">'+lab+'</div>').join('')+'</div>';
   }
@@ -45,8 +46,8 @@
   }
 
   /* 입력 점검(분기) 단계: 여기서 '진단하기'를 누르면 그 시점 벌 수로 진단을 끝낸다. */
-  const DIAGNOSE_AT={4:1, 7:2};   // step idx → 진단 시 입력된 벌 수 (선호핏 단계 추가로 +1 밀림)
-  const FRAC=['대상 선택','선호핏','옷 1 · 정보','옷 1 · 느낌','입력 점검','옷 2 · 정보','옷 2 · 느낌','입력 점검'];
+  const DIAGNOSE_AT={5:1, 9:2};   // step idx(입력 점검) → 진단 시 입력된 벌 수 (선호핏·상세 단계 추가로 밀림)
+  const FRAC=['대상 선택','선호핏','옷 1 · 정보','옷 1 · 느낌','옷 1 · 상세','입력 점검','옷 2 · 정보','옷 2 · 느낌','옷 2 · 상세','입력 점검'];
 
   function feelRow(name,opts,defIdx){
     return '<div class="feel-row"><span class="part">'+name+'</span><div class="feel-opts">'+
@@ -54,46 +55,57 @@
       '</div></div>';
   }
   function feelGroup(title,help,rows){
-    return '<div class="feel-group"><h4>'+title+(help?' <span class="ghelp">'+help+'</span>':'')+'</h4>'+rows+'</div>';
+    return '<div class="feel-group">'+(title?'<h4>'+title+(help?' <span class="ghelp">'+help+'</span>':'')+'</h4>':'')+rows+'</div>';
   }
-  function renderFeel(g){
-    const c=CATS[target], box=document.getElementById('feel'+g);
+  /* ②③ 조건화: 반팔·민소매 → 소매 기장 제거 / 민소매 → 팔 flag 제거 / 반바지 → 종아리 flag 제거. ①은 불변.
+     (현재 facet 선택기가 없어 항상 long — 되살아날 때를 대비해 규칙만 유지) */
+  function detailParts(g){
+    const c=CATS[target];
     const hasSleeve=SLEEVE_CATS.includes(target), st=sleeveType[g]||'long';
     const hasLeg=LEG_CATS.includes(target), lg=legLength[g]||'long';
-    // ②③ 조건화: 반팔·민소매 → 소매 기장 제거 / 민소매 → 팔 flag 제거 / 반바지 → 종아리 flag 제거. ①은 불변.
     let flags=(c.flag||[]), prefs=(c.pref||[]);
     if(hasSleeve){
       if(st==='sleeveless') flags=flags.filter(n=>!n.includes('팔'));
       if(st!=='long')       prefs=prefs.filter(n=>!n.includes('소매'));
     }
     if(hasLeg && lg==='short') flags=flags.filter(n=>!n.includes('종아리'));
-    // ① 주부위 — 쪼임→헐렁 4단계(기본 딱맞음)
-    const fit =(c.fit||[]).map(n=>feelRow(n,['끼임','딱맞음','여유','큼'],1)).join('');
-    // ② 병목 플래그 — 최소 2값(음성 '괜찮았어요' 기본). 이 신호가 브랜드 치수를 채움.
-    const flag=flags.map(n=>feelRow(n,['꼈어요','괜찮았어요'],1)).join('');
-    // ③ 기장 — 취향(선택), 역산 아님
-    const pref=prefs.map(n=>feelRow(n,['짧음','딱 좋음','긺'],1)).join('');
-    // 선택 항목(걸린 곳·기장·그 외)은 접어둠 — 필수인 착용감만 먼저 보여 압도감↓ (값은 접혀도 수집됨)
-    var optional=
-      (flag?feelGroup('혹시 걸린 곳','없으면 괜찮았어요 — 이 신호가 브랜드 치수를 채워요',flag):'')+
-      (pref?feelGroup('기장','취향 · 선택',pref):'')+
-      '<div class="feel-group"><h4>그 외 <span class="ghelp">선택 · 자유롭게</span></h4>'+
-        '<textarea class="open-note" placeholder="예: 소매 끝이 조였어요 / 밑단이 걸렸어요"></textarea></div>';
-    // 하의: 허리 밴드 토글 — 밴딩이면 허리가 신축이라 허리 역산을 건너뜀(엔진). 기본 '모름'(보수적).
-    var wband=(target==='bottom')?feelGroup('허리 밴드','고무밴드 있었나요 · 허리 사이즈 판정에 사용 · 선택',
-      '<div class="seg wband-seg">'+['모름','없음','있음'].map(function(l,i){
-        return '<div class="opt'+(i===0?' on':'')+'" onclick="pick(this)">'+l+'</div>'; }).join('')+'</div>'):'';
-    box.innerHTML=
-      feelGroup('착용감 · 부위별','한 부위씩 떠오르는 느낌 하나',fit)+ wband+
-      '<details class="feel-more"><summary>걸린 곳·기장 등 더 알려주기 <span class="opt">선택 · 없으면 넘겨도 돼요</span></summary>'+optional+'</details>';
+    return {flags:flags, prefs:prefs};
+  }
+  // ① 주부위(느낌 단계) — 쪼임→헐렁 4단계. 기본 선택 없음.
+  function renderFeel(g){
+    const c=CATS[target], box=document.getElementById('feel'+g);
+    if(!box) return;
+    const fit=(c.fit||[]).map(n=>feelRow(n,['끼임','딱맞음','여유','큼'],-1)).join('');
+    // 하의: 허리 밴드 토글 — 밴딩이면 허리가 신축이라 허리 역산을 건너뜀(엔진). 기본 미선택(보수적).
+    var wband=(target==='bottom')?
+      '<div class="feel-row"><span class="part">허리밴드</span><div class="feel-opts wband-seg">'+
+      ['모름','없음','있음'].map(function(l,i){
+        return '<div class="opt" onclick="pick(this)">'+l+'</div>'; }).join('')+'</div></div>':'';
+    box.innerHTML=feelGroup('','',fit+wband);
+  }
+  /* 상세 단계(느낌 다음) — ② 병목 플래그 + ③ 기장은 필수, 추가 의견만 선택.
+     접기(feel-more)에서 독립 스텝으로 분리: painFlags가 admin-improve의 A축 역산 보정 재료라
+     수집률이 곧 엔진 정확도. 음성('괜찮음')도 명시적으로 받아야 신호가 성립(docs/6_사이즈엔진.md). */
+  function renderDetail(g){
+    const box=document.getElementById('detail'+g); if(!box) return;
+    const p=detailParts(g);
+    // 그룹 소제목 없이 '느낌' 스텝처럼 부위를 나란히 나열(불편=2값 / 기장=3값).
+    const flag=p.flags.map(n=>feelRow(n,['끼임','괜찮음'],-1)).join('');
+    const pref=p.prefs.map(n=>feelRow(n,['짧음','딱 좋음','긺'],-1)).join('');
+    // 추가 의견(선택) — 부위 라벨과 같은 크기·색(.part)으로 맞춤. opt가 없어 게이팅에서 제외됨.
+    const note='<div class="feel-row note-row"><span class="part">추가 의견</span>'+
+      '<textarea class="open-note" placeholder="예: 소매 끝이 조였어요 / 밑단이 걸렸어요"></textarea></div>';
+    box.innerHTML=feelGroup('','',flag+pref+note);
   }
 
   function applyTarget(){
     const c=CATS[target];
-    ['item1','item2'].forEach(id=>document.getElementById(id).innerHTML=c.items.map(i=>'<option>'+i+'</option>').join(''));
+    renderItems(1); renderItems(2);   // 품목 = 브랜드별 실 수집 제품(데이터 없으면 CATS 기본)
+    renderPrefOpts();   // 선호핏 옵션(하의=실루엣 / 그 외=여유)
     document.querySelectorAll('.catword').forEach(e=>e.textContent=c.label);
     document.querySelectorAll('.longword').forEach(e=>e.textContent=LONGWORD[target]||'긴 옷');
-    renderFacet(1); renderFacet(2); renderFeel(1); renderFeel(2); renderSizes(1); renderSizes(2);
+    renderFacet(1); renderFacet(2); renderFeel(1); renderFeel(2);
+    renderDetail(1); renderDetail(2); renderSizes(1); renderSizes(2);
     // 선호핏 단계(idx1) 안내: 실측 데이터 없는 기반은 착용경험 없이 선호핏만 받는다고 알림
     var pnote=document.getElementById('prefonlynote');
     if(pnote){
@@ -115,27 +127,119 @@
   }
 
   const steps=[...document.querySelectorAll('.wstep')];
-  let cur=0;
+  // 진단 대상 미니 라벨을 각 질문(진단대상 화면 제외) 제목 위에 주입 — catword가 상의/하의 자동 반영
+  steps.forEach(function(s,i){ if(i===0) return;
+    var l=document.createElement('div'); l.className='qtarget'; l.innerHTML='<b class="catword">상의</b> 진단';
+    s.insertBefore(l, s.firstChild); });
+  let cur=0, skipCat=false;   // skipCat = ?cat=으로 카테고리 선택(idx0)을 건너뛰고 선호핏부터 시작한 진입
+  // ?cat= base면 garments fetch(→boot) 기다리지 않고 첫 페인트에 바로 선호핏(idx1)을 active로.
+  // (안 하면 idx0 '어떤 옷을 진단할까요?'가 잠깐 떴다가 idx1로 바뀌어 깜빡임)
+  (function(){
+    var qc=new URLSearchParams(location.search).get('cat');
+    if(qc && CATS[qc] && CATS[qc].kind==='base'){ cur=1; skipCat=true; steps.forEach(function(s,k){ s.classList.toggle('active', k===cur); }); }
+  })();
   // 실측 데이터 없는 기반 카테고리(구조적 예외): 선호핏(idx1) 단계에서 착용경험 없이 바로 진단.
   function isPrefOnlyBase(){ return CATS[target] && CATS[target].kind==='base' && !hasData(target); }
+  // ── '하의도 이어서 진단' 배선 ──
+  // 진단 완료 단계에서 상/하의 한쪽만 했고 다른 쪽이 남았으면 두 번째 버튼으로 바로 이어가게 한다
+  // (결과 화면을 거치지 않고 diag-fit?cat=<나머지>&reuse=1&have=<현재>로 재진입 — 결과 배너와 같은 경로).
+  function otherBaseCat(){ return target==='top'?'bottom':target==='bottom'?'top':null; }  // 파생(아우터·원피스 등)이면 null
+  function otherDone(){
+    var other=otherBaseCat(); if(!other) return true;
+    var have=(new URLSearchParams(location.search).get('have')||'').split(',').filter(Boolean);
+    if(have.indexOf(other)>=0) return true;
+    try{ var dx=JSON.parse(sessionStorage.getItem('fitting.dx')||'{}');
+      var oc=other==='top'?'TOP':'BOTTOM';
+      if((dx.experiences||[]).some(function(e){return e.category===oc;})) return true;
+      if(dx.prefs && dx.prefs[oc]) return true;
+    }catch(e){}
+    return false;
+  }
   function render(){
     steps.forEach((s,k)=>s.classList.toggle('active',k===cur));
-    document.getElementById('wfill').style.width=((cur+1)/steps.length*100)+'%';
+    var wf=document.getElementById('wfill'); if(wf) wf.style.width=((cur+1)/steps.length*100)+'%';
+    document.querySelectorAll('#qconn span').forEach(function(el,k){ el.classList.toggle('on', k<=cur); });  // 질문 진행(2→3 연결선 채움)
     const btn=document.getElementById('nextbtn');
-    if(isPrefOnlyBase() && cur===1) btn.textContent='이대로 진단하기 (선호핏만)';
-    else if(DIAGNOSE_AT[cur]) btn.textContent='이대로 진단하기 ('+DIAGNOSE_AT[cur]+'벌)';
-    else btn.textContent = cur===0 ? '이 종류로 시작' : '다음';
-    window.scrollTo({top:0,behavior:'smooth'});
+    const also=document.getElementById('alsobtn');
+    if(isPrefOnlyBase() && cur===1) btn.textContent='진단하기';
+    else if(DIAGNOSE_AT[cur]) btn.textContent='진단하기';
+    else btn.textContent = cur===0 ? '시작하기' : '다음';
+    // 옷 정보 입력을 '다 마친' 단계(DIAGNOSE_AT: 한 벌만으로도/2벌 완료)에서만 노출 — 카테고리 선택·선호핏 등
+    // 이른 단계에선 절대 안 뜬다(데이터 없어 선호핏만 받는 prefOnly 카테고리 포함). 상/하의 나머지가 남았을 때만.
+    var pair = !!DIAGNOSE_AT[cur] && !!otherBaseCat() && !otherDone();
+    // 나머지 카테고리 남은 완료단계(pair) → 질문형(가로 2분할). 제목=질문 / 본문 .vq(아니요·네 + 상의추가 링크) 노출 /
+    //   푸터 '진단하기'·'같은옷 추가' 버튼은 숨김. 그 외엔 원래 문구·푸터 진단하기.
+    if(also) also.style.display='none';   // 푸터 alsobtn 미사용(하의도는 본문 강조카드)
+    // 제목·부제는 원래 문구 그대로. 나머지 카테고리 남으면 본문 '하의도 이어서' 강조카드만 노출. 푸터 주버튼은 '진단하기'(line 165).
+    var stepEl=steps[cur], vq=stepEl?stepEl.querySelector('.vq'):null;
+    if(pair && vq){
+      var other=(target==='top'?'하의':'상의');
+      [].forEach.call(vq.querySelectorAll('.v2-other'),function(e){e.textContent=other;});
+      vq.hidden=false;
+      var addb=stepEl.querySelector('.add-garment'); if(addb) addb.style.display='none';
+      btn.textContent='이대로 진단하기';   // 본문 '하의도 이어서 진단하기'와 대비 — 상의만으로 지금 진단
+    } else if(vq){
+      vq.hidden=true;
+      var addb2=stepEl.querySelector('.add-garment'); if(addb2) addb2.style.display='';
+    }
+    btn.style.display='';
+    updateNext();
+    window.scrollTo(0,0);
   }
   function goTo(i){ cur=i; render(); }
   function next(){ if(cur<steps.length-1){cur++;render()} }
-  function prev(){ if(cur>0){cur--;render()} else location.href=PREV_URL; }
+  // 이전 = 항상 직전 단계로(그 전 입력 그대로 남아 수정 가능). idx0(대상 선택)에서만 기본정보 화면으로.
+  // skip 진입(상의/하의 진단하기)이라도 이전을 누르면 건너뛴 대상 선택(idx0)으로 내려가 편집 가능.
+  function prev(){
+    // 카테고리를 미리 정해 들어온 유입(?cat= · '이어서 진단'·결과의 'OO 진단하기')은 idx0(카테고리 선택)을 건너뛰므로,
+    // 첫 단계(idx1)에서 '이전'은 카테고리 선택이 아니라 직전 화면(예: 하의도 결정한 상의 마무리)으로 돌아가야 함.
+    if(skipCat && cur<=1){ if(history.length>1){ history.back(); } else { location.href=PREV_URL; } return; }
+    if(cur>0){cur--;render()} else location.href=PREV_URL;
+  }
   function footerAction(){
+    if(!stepDone()) return;
     if(isPrefOnlyBase() && cur===1){ collectPrefOnly(); location.href='diag-loading.html?cat='+target; return; }
     if(DIAGNOSE_AT[cur]){ collectExp(); location.href='diag-loading.html?g='+DIAGNOSE_AT[cur]+'&cat='+target; }
     else next();
   }
-  function pick(el){[...el.parentElement.children].forEach(c=>c.classList.remove('on'));el.classList.add('on')}
+  // '하의(상의)도 진단하기' — 현재 카테고리 저장 후 결과를 거치지 않고 나머지 카테고리 진단으로 재진입.
+  function footerActionAlso(){
+    if(!stepDone()) return;
+    if(isPrefOnlyBase() && cur===1) collectPrefOnly();
+    else if(DIAGNOSE_AT[cur]) collectExp();
+    else return;
+    var other=otherBaseCat(); if(!other) return;
+    location.href='diag-fit.html?cat='+other+'&reuse=1&have='+target;   // 현재 카테고리 유지, 나머지 진단 → 완료 시 전신 결과
+  }
+  function pick(el){[...el.parentElement.children].forEach(c=>c.classList.remove('on'));el.classList.add('on');updateNext();}
+  // ── 선택 게이팅: 첫 진입엔 미선택 → '다음' 비활성, 화면별 선택이 차야 활성 ──
+  function sizeDone(g){ return !!document.querySelector('#size'+g+' .opt.on'); }
+  // 느낌·상세 모두 그 단계의 .feel-row 전부가 선택돼야 통과(추가 의견 textarea는 .feel-row가 아니라 제외됨).
+  function feelDone(boxId){
+    var box=document.getElementById(boxId); if(!box) return true;
+    var rows=[].slice.call(box.querySelectorAll('.feel-row'));
+    return rows.every(function(r){
+      var opts=r.querySelector('.feel-opts');
+      return !opts || !!opts.querySelector('.opt.on');   // 옵션 없는 row(추가 의견)는 필수에서 제외
+    });
+  }
+  function stepDone(){
+    if(isPrefOnlyBase() && cur===1) return !!document.querySelector('#prefseg .opt.on');
+    switch(cur){
+      case 0: return !!document.querySelector('#target .opt.on');   // 진단 대상 고름
+      case 1: return !!document.querySelector('#prefseg .opt.on');  // 선호핏 고름
+      case 2: return sizeDone(1);                                    // 옷1 사이즈 고름
+      case 3: return feelDone('feel1');                             // 옷1 착용감(주부위) 전부
+      case 4: return feelDone('detail1');                           // 옷1 상세(불편·기장) 전부
+      case 6: return sizeDone(2);
+      case 7: return feelDone('feel2');
+      case 8: return feelDone('detail2');
+      default: return true;   // 5·9 입력 점검 등 — 입력 없음
+    }
+  }
+  function updateNext(){ var d=!stepDone();
+    var b=document.getElementById('nextbtn'); if(b) b.disabled=d;
+    var a=document.getElementById('alsobtn'); if(a) a.disabled=d; }
 
   /* 착용경험 수집 → sessionStorage(fitting.dx). 결과 화면(result.html)이 엔진 계약(diagnose)에 넘긴다.
      부위 라벨→스키마 key, 선택 라벨→값(FitRating/PainVerdict/LengthPref). 레이어는 옵션 수로 판별(4=fit·2=flag·3=pref). */
@@ -143,9 +247,11 @@
   /* 사이즈 옵션은 브랜드·성별·서브타입별로 다르다(유니클로 남성=4XL까지, H&M=XXS부터…).
      garments.json(A축)에서 실제 sizeLabel 집합을 뽑아 렌더 → 하드코딩 XS~XL 제거.
      드롭다운 표기 → garments의 brandId 매핑. 데이터 없는 브랜드/카테고리는 DEFAULT_SIZES. */
-  var BRANDID={'유니클로':'uniqlo','무신사 스탠다드':'musinsa-standard','나이키':'nike','탑텐':'topten',
-    '스파오':'spao','에잇세컨즈':'8seconds','노스페이스':'northface','H&M (편차 큼)':'hm','자라 (편차 큼)':'zara'};
-  var SIZE_ORDER=['XXS','XS','S','M','L','XL','XXL','2XL','3XL','4XL','5XL'];
+  // 착용경험 입력은 앵커 브랜드만(오프라인 시착 편의+garment실측 역산). 브랜드 목록·표시명 전부 데이터에서:
+  //  id·순서=garments $meta.anchorBrands, 표시명=spec.brandName. 하드코딩 레지스트리 없음 → 신규 브랜드 자동 반영.
+  //  option value=brandId(엔진 키), text=brandName. 앵커 밖 브랜드는 '찾는 브랜드가 없어요'(→0벌 기본진단)로 유도(폴백 옵션 없음).
+  var ANCHOR_BRANDS=[];
+  var BRAND_CAVEAT={zara:'편차 큼'};   // 사이즈 편차 UI 주석만(브랜드 레지스트리 아님) — 데이터 확장과 무관.
   var DEFAULT_SIZES=['XS','S','M','L','XL'];
   var GARMENTS=null;
   // 실측(garment cm) 데이터가 있는 카테고리 = 착용경험 역산 대상. 없으면 선호핏만 받아 진단.
@@ -160,54 +266,177 @@
     if(LEG_CATS.includes(target))    return (legLength[g]==='short')?'shorts':'long_pants';
     return null;
   }
-  // 특정 브랜드·성별·서브타입에서 실제 존재하는 사이즈 라벨(정렬) — 없으면 null.
-  function garmentSizeLabels(brandId, gender, subtype){
+  // 특정 브랜드·성별·서브타입(+선택 셀)에서 실제 존재하는 사이즈(정렬) — 없으면 null.
+  //  cellCode(핏라인/실루엣) 주면 그 셀로 스코프 — 브랜드 내 제품군마다 사이즈 체계가 달라서
+  //  (탑텐 인치 vs 600번대·유니클로 인치 vs cm) union으로 뭉치면 셀에 없는 사이즈가 섞여 조용히 버려짐.
+  //  반환: [{raw(원본 sizeLabel=엔진 매칭키), canonical(재인 라벨), system, order}] — 체계·정렬순.
+  //  원본은 sizeLabel 그대로 실어(round-trip 무손실), 표시는 canonical/체계 접두로만 정규화.
+  var SIZE_SYS_RANK={letter:0, code:1, range:2, inch:3, cm:4};
+  function garmentSizeLabels(brandId, gender, subtype, cellCode){
     if(!GARMENTS || !brandId) return null;
-    var set={};
+    var onSil=LEG_CATS.includes(target), byRaw={};
     GARMENTS.forEach(function(s){
       if(s.brandId!==brandId) return;
       if(!(s.gender===gender || s.gender==='unisex')) return;
       if(subtype && s.subtype!==subtype) return;
-      set[s.sizeLabel]=1;
+      if(cellCode){ var v=onSil?s.silhouette:s.fitLine; if(v!==cellCode) return; }
+      byRaw[s.sizeLabel]={ raw:s.sizeLabel, canonical:s.sizeCanonical||s.sizeLabel,
+        system:s.sizeSystem||'letter', order:(s.sizeOrder==null?99:s.sizeOrder) };  // 원본 라벨당 1개(제품 중복 제거)
     });
-    var labels=Object.keys(set);
-    if(!labels.length) return null;
-    labels.sort(function(a,b){
-      if(/^\d/.test(a) && /^\d/.test(b)) return parseFloat(a)-parseFloat(b);  // 숫자 사이즈(바지 26·73…) 오름차순
-      var ia=SIZE_ORDER.indexOf(a), ib=SIZE_ORDER.indexOf(b);
-      return (ia<0?99:ia)-(ib<0?99:ib);
+    var list=Object.keys(byRaw).map(function(k){ return byRaw[k]; });
+    if(!list.length) return null;
+    list.sort(function(a,b){
+      var ra=(SIZE_SYS_RANK[a.system]==null?9:SIZE_SYS_RANK[a.system]);
+      var rb=(SIZE_SYS_RANK[b.system]==null?9:SIZE_SYS_RANK[b.system]);
+      return ra-rb || a.order-b.order;
     });
-    return labels;
+    return list;
   }
-  // 사이즈 세그를 브랜드·카테고리에 맞춰 렌더. TOP만 데이터 기반, 나머지는 기본값.
+  // 셀에 물리체계가 2개 이상 공존할 때만 재인 위해 접두(인치 30 / cm 79). 단일체계는 맨라벨. letter/code/range=무접두.
+  var SIZE_SYS_TAG={inch:'인치', cm:'cm'};
+  // 사이즈 세그를 브랜드·카테고리(+선택 셀)에 맞춰 렌더. 데이터 있으면 실 사이즈, 없으면 기본값.
   function renderSizes(g){
     var el=document.getElementById('size'+g); if(!el) return;
     var bsel=document.getElementById('brand'+g);
-    var brandId=bsel?BRANDID[bsel.value]:null;
+    var brandId=(bsel&&bsel.value)?bsel.value:null;   // option value=brandId(데이터). 폴백('')=null.
     var gender=BASIC.gender||'female';
-    var labels=hasData(target) ? garmentSizeLabels(brandId, gender, subtypeOf(g)) : null;  // 데이터 있는 카테고리(TOP·BOTTOM)는 실 사이즈
-    if(!labels || !labels.length) labels=DEFAULT_SIZES;
-    var prev=el.querySelector('.opt.on'); var prevLab=prev?prev.textContent.trim():null;
-    var def = (prevLab && labels.indexOf(prevLab)>=0) ? prevLab
-            : (labels.indexOf('M')>=0 ? 'M' : labels[Math.floor(labels.length/2)]);
-    el.innerHTML=labels.map(function(l){ return '<div class="opt'+(l===def?' on':'')+'" onclick="pick(this)">'+l+'</div>'; }).join('');
+    // 선택 셀(데이터 브랜드의 핏라인/실루엣 옵션)로 사이즈 스코프 — 폴백 라벨(data-axis 없음)은 필터 안 함.
+    var isel=document.getElementById('item'+g), opt=isel&&isel.selectedOptions?isel.selectedOptions[0]:null;
+    var cellCode=(opt && opt.getAttribute('data-axis')) ? isel.value : null;
+    var list=hasData(target) ? garmentSizeLabels(brandId, gender, subtypeOf(g), cellCode) : null;
+    if(!list || !list.length){   // 폴백: 데이터 없는 브랜드/카테고리는 기본 레터
+      list=DEFAULT_SIZES.map(function(l,i){ return {raw:l, canonical:l, system:'letter', order:i}; });
+    }
+    var systems={}; list.forEach(function(o){ systems[o.system]=1; });
+    var multi=Object.keys(systems).length>1;   // 체계 공존 시에만 접두
+    list.forEach(function(o){
+      var tag=multi&&SIZE_SYS_TAG[o.system];
+      o.display=tag?(tag+' '+o.canonical):o.canonical;
+    });
+    var prev=el.querySelector('.opt.on'), prevRaw=prev?(prev.getAttribute('data-size')||prev.textContent.trim()):null;
+    var byPrev=list.filter(function(o){ return o.raw===prevRaw; })[0];
+    var defObj=byPrev || null;   // 이전 선택만 유지 — 기본 선택 없음(첫 진입엔 미선택)
+    el.innerHTML=list.map(function(o){
+      return '<div class="opt'+(o===defObj?' on':'')+'" data-size="'+o.raw+'" onclick="pick(this)">'+o.display+'</div>';
+    }).join('');
+    updateNext();
   }
-  var LABELKEY={'어깨':'shoulder','가슴':'chest','가슴·품':'chest','배':'belly','소매':'sleeve','총장':'length',
+  // 앵커 브랜드 [{id,label}] — garments 데이터에서 추출($meta.anchorBrands 순서, brandName 표시). 없으면 null.
+  function anchorBrandList(){
+    if(!GARMENTS || !ANCHOR_BRANDS.length) return null;
+    var name={};
+    GARMENTS.forEach(function(s){ if(ANCHOR_BRANDS.indexOf(s.brandId)>=0 && !name[s.brandId]) name[s.brandId]=s.brandName||s.brandId; });
+    return ANCHOR_BRANDS.filter(function(id){ return name[id]; }).map(function(id){
+      var cav=BRAND_CAVEAT[id]; return {id:id, label:name[id]+(cav?' ('+cav+')':'')};
+    });
+  }
+  // 브랜드 드롭다운을 데이터로 생성 — 하드코딩 없음, 신규 앵커 브랜드 자동 포함. 선택값(id) 보존.
+  //  데이터 로드 실패(file:// 등)면 정적 HTML 옵션 그대로 둠(폴백).
+  var _brandsInit=false;
+  function renderBrands(){
+    var list=anchorBrandList(); if(!list || !list.length) return;
+    [1,2].forEach(function(g){
+      var el=document.getElementById('brand'+g); if(!el) return;
+      // 초기 로드: 정적 HTML 기본값(자라) 대신 DB 순서 첫 브랜드(접근성 1위=탑텐)를 기본 선택. 이후 렌더는 사용자 선택 보존.
+      var prev=_brandsInit ? el.value : list[0].id;
+      // 앵커 브랜드만 노출 — 폴백('목록에 없음') 옵션은 두지 않는다. garment 실측이 없는 브랜드로 착용경험을
+      //  받으면 역산은 스킵되는데 experiences엔 남아 신뢰도·완료가 부풀기 때문(유령 경험). 목록 밖 브랜드는
+      //  '찾는 브랜드가 없어요' 링크(→ 0벌 기본진단)로 유도한다.
+      var html=list.map(function(b){ return '<option value="'+b.id+'"'+(b.id===prev?' selected':'')+'>'+b.label+'</option>'; }).join('');
+      // prev가 목록에 없으면(과거 폴백 '' 선택 잔상) 첫 브랜드로 보정.
+      if(!list.some(function(b){ return b.id===prev; })) prev=list[0].id;
+      el.innerHTML=html; el.value=prev;
+    });
+    _brandsInit=true;
+  }
+  /* 품목 드롭다운 = 셀(브랜드×핏라인/실루엣) — 제품명(SKU)이 아니라 재인 가능한 핏/실루엣만 노출.
+     엔진(bodyFromExperiences)은 이미 셀 단위(같은 fitLine/silhouette 제품들의 garmentCm 평균)로 역산하므로
+     제품명은 다운스트림과 무관. 제품명 노출은 false precision·미스매치 불안·staleness(자라 SKU 회전)를
+     유발하므로 셀로 추상화한다(anchor-sku-to-cell-abstraction). 데이터 없는 브랜드는 CATS 기본 라벨 폴백. */
+  var FITLINE_LABEL={slim:'슬림핏', regular:'레귤러핏', loose:'루즈핏', oversize:'오버핏'};
+  var SIL_LABEL={skinny:'스키니', slim:'슬림', straight:'스트레이트', tapered:'테이퍼드', wide:'와이드', bootcut:'부츠컷'};
+  var FITLINE_ORDER=['slim','regular','loose','oversize'];
+  var SIL_ORDER=['skinny','slim','straight','tapered','wide','bootcut'];
+  // 이 브랜드·성별·subtype에서 실측 데이터가 있는 셀(핏라인/실루엣)만 추출·정렬. 없으면 null.
+  function cellsForItems(brandId, gender, subtype){
+    if(!GARMENTS || !brandId) return null;
+    var onSil=LEG_CATS.includes(target), present={};
+    GARMENTS.forEach(function(s){
+      if(s.brandId!==brandId) return;
+      if(!(s.gender===gender || s.gender==='unisex')) return;
+      if(subtype && s.subtype!==subtype) return;
+      var v=onSil?s.silhouette:s.fitLine;
+      if(v) present[v]=1;
+    });
+    var order=onSil?SIL_ORDER:FITLINE_ORDER, label=onSil?SIL_LABEL:FITLINE_LABEL, axis=onSil?'silhouette':'fitLine';
+    var codes=order.filter(function(c){return present[c];});
+    Object.keys(present).forEach(function(c){ if(codes.indexOf(c)<0) codes.push(c); });  // 매핑 밖 값도 보존
+    if(!codes.length) return null;
+    return codes.map(function(c){ return {code:c, label:label[c]||c, axis:axis}; });
+  }
+  function renderItems(g){
+    var el=document.getElementById('item'+g); if(!el) return;
+    var bsel=document.getElementById('brand'+g);
+    var brandId=(bsel&&bsel.value)?bsel.value:null;   // option value=brandId(데이터). 폴백('')=null.
+    var cells=hasData(target) ? cellsForItems(brandId, BASIC.gender||'female', subtypeOf(g)) : null;
+    var prev=el.value;
+    if(cells){
+      el.innerHTML=cells.map(function(c){
+        return '<option value="'+c.code+'" data-axis="'+c.axis+'"'+(c.code===prev?' selected':'')+'>'+c.label+'</option>'; }).join('');
+    } else {
+      var items=(CATS[target]?CATS[target].items:[]);   // 폴백: value=라벨 텍스트(collectExp가 파싱)
+      el.innerHTML=items.map(function(i){ return '<option value="'+i+'"'+(i===prev?' selected':'')+'>'+i+'</option>'; }).join('');
+    }
+    // 필드 라벨: 상의=핏 / 하의=실루엣 (제품명 아님)
+    var lab=el.parentElement&&el.parentElement.querySelector('label');
+    if(lab) lab.textContent=LEG_CATS.includes(target)?'실루엣':'핏';
+    // 셀이 바뀌면 사이즈 체계도 달라질 수 있어 사이즈 재렌더(브랜드 union→셀 스코프)
+    el.onchange=function(){ renderSizes(g); };
+  }
+  /* 화면 라벨 → 축 키. fits=의류 스펙 축(engine CAT_PARTS·garments 컬럼) / painFlags·lengthPrefs=몸 축(body-model SHOW).
+     ※ 키는 진단 레코드(input.experiences)에 그대로 저장돼 admin-improve 분석 재료가 된다.
+        여기 없는 라벨은 collectFeel에서 조용히 버려지니, CATS의 fit/flag/pref 라벨을 고치면 이 표도 같이 고칠 것. */
+  var LABELKEY={'어깨':'shoulder','가슴':'chest','가슴·품':'chest','배':'belly','총장':'length',
     '허리':'waist','엉덩이':'hip','허벅지':'thigh','밑위':'rise','기장':'length',
-    '팔(소매통)':'arm','팔':'arm','목':'neck','목/칼라':'neck','암홀':'armhole','종아리':'calf','밑단':'hem','상하 비율':'ratio'};
+    '소매 기장':'sleeve','소매':'sleeve',   // 렌더 라벨은 '소매 기장'(CATS.pref) — '소매'는 facet 부활 대비 별칭
+    // 소매통·팔 페인은 팔 '둘레'(body-model upperArm=위팔둘레). arm은 팔'길이' 축이라 여기 쓰면 축이 어긋난다.
+    '팔(소매통)':'upperArm','팔':'upperArm','목':'neck','목/칼라':'neck','암홀':'armhole','종아리':'calf','밑단':'hem','상하 비율':'ratio'};
   var FITV={'끼임':'TIGHT','딱맞음':'SNUG','여유':'RELAXED','큼':'BIG'};
-  var FLAGV={'꼈어요':'TIGHT','괜찮았어요':'OK'};
+  var FLAGV={'끼임':'TIGHT','괜찮음':'OK'};
   var PREFV={'짧음':'SHORT','딱 좋음':'GOOD','긺':'LONG'};
   var FITLINE={'스키니':'skinny','슬림':'slim','레귤러':'regular','루즈':'loose','오버':'oversize','타이트':'skinny'};
-  function fitLineFromPref(){
-    var sel=document.querySelector('.wstep .seg.stack .opt.on') || document.querySelector('#derived-flow .seg.stack .opt.on');
-    if(!sel) return 'regular';
-    var word=sel.textContent.trim().split(' ')[0];
-    return FITLINE[word]||'regular';
+  // 선호핏(idx1) 옵션 — 카테고리 축이 다름: 상의/파생=여유(ease), 하의=실루엣(형태).
+  var PREFOPTS={
+    ease:[['스키니','몸에 딱 붙는'],['슬림','군더더기 없이'],['레귤러','적당한 여유'],['루즈','넉넉하게'],['오버','크게 떨어지는']],
+    silhouette:[['스키니','몸에 딱'],['슬림','다리 라인 슬림'],['스트레이트','일자'],['테이퍼드','아래로 좁아지는'],['와이드','넓게'],['부츠컷','아래로 벌어지는']]
+  };
+  var PREF_DEFAULT={ease:'레귤러', silhouette:'스트레이트'};
+  var PREF_SIL={'스키니':'skinny','슬림':'slim','스트레이트':'straight','테이퍼드':'tapered','와이드':'wide','부츠컷':'bootcut'};
+  function prefAxis(cat){ return (cat||target)==='bottom'?'silhouette':'ease'; }
+  var PREFHELP={
+    ease:'선호하는 핏을 추천에 반영해요',
+    silhouette:'선호하는 핏을 추천에 반영해요'
+  };
+  function renderPrefOpts(){
+    var pseg=document.getElementById('prefseg'); if(!pseg) return;
+    var ax=prefAxis(), def=PREF_DEFAULT[ax];
+    pseg.innerHTML=PREFOPTS[ax].map(function(o){
+      return '<div class="opt" onclick="pick(this)">'+o[0]+' — '+o[1]+'</div>'; }).join('');
+    var ph=document.getElementById('prefhelp'); if(ph) ph.innerHTML=PREFHELP[ax];
   }
-  function collectFeel(boxId){
+  // 선호핏 선택 → enum. 하의=실루엣(형태축), 그 외=fitLine(여유축). prefs[cat]에 저장.
+  function fitLineFromPref(){
+    var inDerived = CATS[target] && CATS[target].kind==='derived';
+    var sel = inDerived ? document.querySelector('#derived-flow .seg.stack .opt.on')
+                        : document.querySelector('#prefseg .opt.on');
+    if(!sel) return target==='bottom'?'straight':'regular';
+    var word=sel.textContent.trim().split(' ')[0];
+    return target==='bottom' ? (PREF_SIL[word]||'straight') : (FITLINE[word]||'regular');
+  }
+  // 느낌(#feelN)·상세(#detailN) 두 단계에 나뉜 입력을 한 착용경험으로 합쳐 수집.
+  function collectFeel(g){
     var fits={}, flags={}, prefs={};
-    document.querySelectorAll('#'+boxId+' .feel-row').forEach(function(row){
+    document.querySelectorAll('#feel'+g+' .feel-row, #detail'+g+' .feel-row').forEach(function(row){
       var part=row.querySelector('.part'), sel=row.querySelector('.feel-opts .opt.on');
       if(!part||!sel) return;
       var key=LABELKEY[part.textContent.trim()], lab=sel.textContent.trim();
@@ -217,7 +446,7 @@
       else if(n===2 && FLAGV[lab]) flags[key]=FLAGV[lab];
       else if(n===3 && PREFV[lab]) prefs[key]=PREFV[lab];
     });
-    var note=document.querySelector('#'+boxId+' .open-note');
+    var note=document.querySelector('#detail'+g+' .open-note');
     return { fits:fits, painFlags:flags, lengthPrefs:prefs, openNote:note?note.value:'' };
   }
   // 입은 옷의 핏라인(garments 조회키) — '핏/품목' 선택 라벨에서 파싱. 선호핏과 별개.
@@ -227,22 +456,45 @@
     for(var i=0;i<keys.length;i++){ if(itemTxt.indexOf(keys[i])>=0) return FITLINE[keys[i]]; }
     return 'regular';
   }
+  // 하의 실루엣(형태축) — 품목 라벨에서 파싱. build-sizespec.py silhouette_of와 동일 규칙(1차 매칭키).
+  var SILH=[['부츠컷','bootcut'],['스키니','skinny'],['세미와이드','wide'],['리얼와이드','wide'],
+    ['와이드','wide'],['벌룬','wide'],['배기','wide'],['테이퍼','tapered'],['스트레이트','straight'],
+    ['커브드','slim'],['슬림','slim']];
+  function garmentSilhouette(itemTxt){
+    itemTxt=itemTxt||'';
+    for(var i=0;i<SILH.length;i++){ if(itemTxt.indexOf(SILH[i][0])>=0) return SILH[i][1]; }
+    return null;
+  }
   function collectExp(){
     var basic={}; try{ basic=JSON.parse(sessionStorage.getItem('fitting.basic')||'{}'); }catch(e){}
     var cat=CATMAP[target]||'TOP', prefLine=fitLineFromPref();
     var exps=[], n=DIAGNOSE_AT[cur]||1;
     [1,2].slice(0,n).forEach(function(g){
-      var f=collectFeel('feel'+g);
-      var bsel=document.getElementById('brand'+g), brandTxt=bsel?bsel.value:'';
-      var isel=document.getElementById('item'+g), itemTxt=isel?isel.value:'';
+      var bsel=document.getElementById('brand'+g);
+      // 앵커 밖 브랜드(value='')는 garment 실측이 없어 역산 불가 → 유령 경험을 만들지 않는다.
+      //  (정적 HTML 폴백·file:// 대비 방어. 유령 경험은 신뢰도·완료를 부풀려 회귀 추정을 고신뢰로 오표시.)
+      if(!bsel || !bsel.value) return;
+      var f=collectFeel(g);
+      var bopt=bsel&&bsel.selectedOptions?bsel.selectedOptions[0]:null;
+      var brandTxt=bopt?bopt.textContent.trim():'';   // 표시명(brandName). id는 value.
+      var isel=document.getElementById('item'+g), opt=isel&&isel.selectedOptions?isel.selectedOptions[0]:null;
+      var itemVal=isel?isel.value:'', axis=opt?opt.getAttribute('data-axis'):null;
+      var itemLab=opt?opt.textContent.trim():itemVal;   // 표시/디버그용 라벨(엔진 미사용)
       var szEl=document.querySelector('#size'+g+' .opt.on');
-      // 하의 허리 밴드 응답 → waistband(엔진이 허리 역산 스킵 판정에 사용). 없으면 undefined('모름').
+      // 표시라벨(canonical·접두)이 아니라 data-size(원본 sizeLabel)를 엔진에 넘겨 정확일치 round-trip.
+      var szRaw=szEl?(szEl.getAttribute('data-size')||szEl.textContent.trim()):'M';
+      var brandId=(bsel&&bsel.value)||'unknown', gen=BASIC.gender||'female';   // 폴백('')·미로드=unknown → 선호핏 폴백
+      // 셀 코드 직접 사용(데이터 브랜드) / 데이터 없는 브랜드는 라벨 텍스트 파싱 폴백.
+      var fitLine = axis==='fitLine' ? itemVal : garmentFitLine(itemLab);
+      var silh    = axis==='silhouette' ? itemVal : garmentSilhouette(itemVal);
+      // 허리 밴드: 사용자 토글만(garments.json엔 밴딩 필드 없음).
       var wbEl=document.querySelector('#feel'+g+' .wband-seg .opt.on'), wbLab=wbEl?wbEl.textContent.trim():'';
       var waistband=wbLab==='없음'?'none':(wbLab==='있음'?'banded':undefined);
-      // fitLine = 입은 옷의 핏(역산 조회용). 선호핏(prefLine)은 prefs로 따로 저장.
-      exps.push({ category:cat, brandId:BRANDID[brandTxt]||'unknown', brandName:brandTxt,
-        fitLine:garmentFitLine(itemTxt), item:itemTxt, sizeLabel:szEl?szEl.textContent.trim():'M',
-        subtype:subtypeOf(g), gender:BASIC.gender||'female', waistband:waistband,
+      exps.push({ category:cat, brandId:brandId, brandName:brandTxt,
+        fitLine: fitLine, item:itemLab, sizeLabel:szRaw,
+        subtype:subtypeOf(g), gender:gen, waistband:waistband,
+        // 하의는 실루엣(형태축)이 엔진 1차 매칭키. 상의는 undefined(fitLine 사용).
+        silhouette: cat==='BOTTOM' ? silh : undefined,
         fits:f.fits, painFlags:f.painFlags, lengthPrefs:f.lengthPrefs, openNote:f.openNote });
     });
     // 기존 진단 결과에 병합 — 다른 카테고리(상↔하)는 보존하고, 같은 카테고리는 교체
@@ -258,6 +510,26 @@
     var prev={}; try{ prev=JSON.parse(sessionStorage.getItem('fitting.dx')||'{}'); }catch(e){}
     var prefs=(prev.prefs&&typeof prev.prefs==='object')?prev.prefs:{}; prefs[cat]=fitLine;
     try{ sessionStorage.setItem('fitting.dx', JSON.stringify({ basic:basic, prefs:prefs, experiences:prev.experiences||[] })); }catch(e){}
+  }
+  // '찾는 브랜드가 없어요' — 앵커 밖 브랜드는 garment 실측 역산이 불가. 곧바로 결과로 튀면
+  //  맥락이 끊기니 '기본 정보만으로도 진단할 수 있어요'(0벌) 인터스티셜을 띄워 기대치
+  //  (저신뢰·정확도 사다리)를 먼저 세팅한다. 확인 → 기본진단(skip=1) / '이전·브랜드 고르기' → 옷 정보 복귀.
+  //  주의: 선호핏(prefs)을 저장하면 result.js가 그 카테고리를 '부분 완료'로 봐 8유형 카드 대신
+  //  잠금 화면을 띄우므로(카드=상+하 완료 or 0벌만 노출), 이 경로는 prefs를 남기지 않는다.
+  // 상단 1·2·3 스텝퍼(.dstepc)는 유지해 일반 스텝과 레이아웃을 통일하고, 위저드 본문(현재 스텝)과
+  //  하단 내비만 감춘 뒤 패널을 띄운다(hideBaseWizard는 스텝퍼까지 지워 derived 전용).
+  var BASIC_HIDE='.flow > .wstep, .flow > .wnav, #wnote';
+  function skipToBasic(){
+    document.querySelectorAll(BASIC_HIDE).forEach(function(e){ e.classList.add('hidden'); });
+    var p=document.getElementById('basic-check'); if(p) p.classList.remove('hidden');
+    window.scrollTo(0,0);
+  }
+  // 인터스티셜 → 옷 정보 단계로 복귀(입력 그대로 유지). '기본 정보로 진단하기'는 패널 버튼이 직접 skip=1로 간다.
+  function exitBasicCheck(){
+    var p=document.getElementById('basic-check'); if(p) p.classList.add('hidden');
+    document.querySelectorAll(BASIC_HIDE).forEach(function(e){ e.classList.remove('hidden'); });
+    render();
+    window.scrollTo(0,0);
   }
 
   /* 결과 화면의 "이어서 진단"으로 들어온 경우:
@@ -286,7 +558,7 @@
       miss.map(r=>REGION[r].catLabel).join('·')+'</strong>를 먼저 진단하면 열려요.';
   }
   // 기반 위저드만 숨김 — 파생 패널(#derived-flow/#blocked) 내부의 .wnav는 건드리지 않도록 직계 자식만 선택
-  function hideBaseWizard(){ document.querySelectorAll('.dhead .dprog, .flow > .wstep, .flow > .wnav, #wnote').forEach(e=>e.classList.add('hidden')); }
+  function hideBaseWizard(){ document.querySelectorAll('.flow > .dstepc, .flow > .wstep, .flow > .wnav, #wnote').forEach(e=>e.classList.add('hidden')); }
   function enterDerivedFlow(){
     document.getElementById('derived-flow').classList.remove('hidden');
     var go=document.getElementById('derived-go');
@@ -351,13 +623,23 @@
   }
   function boot(){
     applyGenderFilter();
+    renderBrands();   // 앵커 브랜드만 노출(데이터 로드 후) — applyTarget이 brand select을 읽기 전에
     const routed=initFromQuery();
     applyTarget();
-    if(routed==='base'){ gateTargets(); render(); }
+    if(routed==='base'){
+      gateTargets();
+      // ?cat=으로 대상이 정해져 들어오면(결과화면 '상의/하의 진단하기') 카테고리 선택(idx0)은 건너뛰고 선호핏(idx1)부터 시작
+      var qcat=new URLSearchParams(location.search).get('cat');
+      if(qcat && CATS[qcat] && CATS[qcat].kind==='base'){ cur=1; skipCat=true; }
+      render();
+    }
   }
   // A축 사이즈 시드 로드 → 데이터 보유 카테고리(DATA_CATS) 판별 + 브랜드별 사이즈 라벨.
+  // size-catalog.json = cm-free 공개 카탈로그(브랜드·사이즈 라벨만). 실측치(garmentCm)는 서버 전용 — 해자 보호.
+  // 입력 화면은 라벨만 필요하므로 garments.json 원본을 클라에 노출하지 않는다. [scripts/gen-catalog.js]
   // 로드 후 플로우 시작(실패=file:// 등 → 현재 데이터 반영 폴백으로 boot).
-  fetch('data/garments.json').then(function(r){return r.json();})
-    .then(function(j){ GARMENTS=j.specs; DATA_CATS=categoriesWithData(j.specs); })
+  fetch('data/size-catalog.json').then(function(r){return r.json();})
+    .then(function(j){ GARMENTS=j.specs; DATA_CATS=categoriesWithData(j.specs);
+      ANCHOR_BRANDS=(j.$meta&&j.$meta.anchorBrands)||[]; })
     .catch(function(){})
     .then(boot);

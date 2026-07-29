@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# CodeRabbit 설정 — 생성물·대용량 산출물을 리뷰에서 제외해 파일 수를 줄이고 실제 소스에 집중.
+language: ko-KR
+
+reviews:
+  # 포함=기본 전체, 아래 '!'는 제외. 생성물(빌더/스탬프 산출)은 원본(md·소스)만 보면 됨.
+  path_filters:
+    - "!docs/html/**"          # 통합문서·스토리보드·와이어프레임 (build.py 생성물/대용량 시각자료)
+    - "!docs/화면-현황.md"      # gen-screens.py 생성물 (소스=화면-현황.source.json)
+    - "!web/data/*.json"       # garments·size-catalog 등 생성/시드 데이터
+    - "!**/*.min.js"
+    - "!package-lock.json"
+  auto_review:
+    enabled: true

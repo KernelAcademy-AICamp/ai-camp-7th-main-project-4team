@@ -26,16 +26,32 @@
 
 | 역할 | 소유 경로 |
 |---|---|
-| 팀장 | `data/**` · 생성물 JSON(`web/data/{garments,body-*,archetypes}.json`) |
-| 디자이너 | `web/*.html`(마크업) · `web/*.css` · `web/tokens.css` · `web/data/bodytypes.json` |
-| 개발자 | `engine/**` · `web/js/**` |
+| 팀장 | `data/**` · 생성물 JSON(`web/data/{garments,body-*,archetypes,size-catalog}.json`) |
+| 디자이너 | `web/*.html`(마크업) · `web/css/**`(`tokens.css` 포함) · `web/data/bodytypes.json` |
+| 개발자 | `engine/**` · `web/js/**` · `api/**` · `db/**` · `scripts/**` |
 | 공동 | `docs/**` |
 
+> `web/data/size-catalog.json`은 `garments.json`에서 파생된 cm-free 생성물(`scripts/gen-catalog.js`) — 손수정 금지, 소스는 팀장 `garments`. `app/`은 배포 빌드 생성물(gitignore, `scripts/gen-app.js`) — 소유 없음.
+
 - 남의 소유 경로를 바꿔야 하면 그 소유자에게 알리고 PR 리뷰어로 넣는다.
-- 색·폰트·간격은 `tokens.css` 변수만 참조(하드코딩 금지). DOM `id`/`class`는 디자이너가 정의, JS가 참조 — 바꾸면 서로 알림.
+- 색·폰트·간격은 `web/css/tokens.css` 변수만 참조(하드코딩 금지). DOM `id`/`class`는 디자이너가 정의, JS가 참조 — 바꾸면 서로 알림.
+
+## 개발 환경
+
+- **Node 버전 정본은 [.nvmrc](.nvmrc)** (현재 `24`). CI도 이 파일을 읽어 같은 버전으로 돈다.
+- 이 저장소에서 `npm`·`node` 명령을 처음 쓰기 전에 **`node -v`가 `.nvmrc`와 메이저 버전이 같은지 확인**한다.
+  다르면 조용히 진행하지 말고 사용자에게 알리고 이걸 안내한다.
+  - 맥·리눅스: 저장소 루트에서 `nvm install && nvm use` (`.nvmrc`를 자동으로 읽는다)
+  - 윈도우: `nvm install 24 && nvm use 24` (nvm-windows는 `.nvmrc` 자동 인식을 기대하지 말 것)
+  - nvm이 없으면: 맥은 `brew install nvm`, 윈도우는 [nvm-windows](https://github.com/coreybutler/nvm-windows/releases)
+- `package.json`의 `engines.node`(`>=18`)는 **배포 런타임 하한**이라 `.nvmrc`와 역할이 다르다. Vercel은 `engines`를 따르고 `.nvmrc`는 안 읽는다 — 둘을 같은 값으로 맞추려 하지 말 것.
+- **`.nvmrc` 변경은 팀 전원에게 영향**을 준다. 임의로 고치지 말고 사용자에게 확인받는다.
+- Python 스크립트(`npm run screens`·`stamp-assets`, pre-commit 훅)는 맥에서 `python3`, 윈도우에서 `py -3`으로 자동 해석된다([scripts/py.js](scripts/py.js)). 직접 `python3`을 새로 박지 말 것.
 
 ## 검증
 
 - **엔진 변경** → `npm test` (무의존성 골든 테스트, 초록불 확인).
 - **화면 변경** → `npm run serve`로 해당 화면 로드 확인.
+- **화면 추가/수정** → [docs/화면-현황.source.json](docs/화면-현황.source.json) 상태 한 줄 갱신 후 `npm run screens`로 [docs/화면-현황.md](docs/화면-현황.md) 재생성(전체 진행상황판 — 소유·JS연결·최근커밋·IA 이슈는 자동, 상태·비고만 손관리).
+- **CSS·JS 수정** → `npm run stamp-assets`로 `<link>`·`<script>`에 `?v=<내용해시>` 재스탬프(캐시버스트). pre-commit 훅이 `web/css/**`·`web/js/**` 커밋 시 자동 실행하니 보통 신경 안 써도 됨. (CSS=`web/css/`, JS=`web/js/`)
 - `web/data/*.json`은 **생성물** — 손으로 고치지 말고 소스+생성기로 재생성(협업가이드 §4). 예외: `bodytypes.json`(디자이너 직접 관리).

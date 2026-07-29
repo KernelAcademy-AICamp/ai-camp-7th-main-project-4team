@@ -7,5 +7,15 @@
   "files.trimTrailingWhitespace": true,
   "[markdown]": {
     "files.trimTrailingWhitespace": false
-  }
+  },
+  "liveServer.settings.ignoreFiles": [
+    ".git/**",
+    "node_modules/**",
+    ".vscode/**",
+    "docs/**",
+    "**/*.md",
+    "data/**",
+    "engine/**",
+    "scripts/**"
+  ]
 }

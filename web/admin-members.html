@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핏팅 관리자 — 회원·거래 운영</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/tokens.css?v=8e429c15">
+<link rel="stylesheet" href="css/admin.css?v=5846e5e3">
+</head>
+<body>
+<div class="anav"><div class="anav-in">
+  <span class="brand">fitting</span><span class="tag">관리자 · 프로토타입</span>
+  <nav class="asecs">
+    <a class="s" href="admin.html">사이즈·데이터</a>
+    <a class="s on" href="admin-members.html">회원·거래</a>
+    <a class="s" href="admin-business.html">사업현황</a>
+    <a class="s" href="admin-api.html">B2B API</a>
+    <a class="s" href="admin-ops.html">내부운영</a>
+  </nav>
+  <span class="who">👤 <b id="adminWho">—</b></span>
+  <span class="lo" onclick="adminLogout()">로그아웃</span>
+</div></div>
+
+<div class="awrap">
+  <div class="crumb"><b>회원·거래 운영 (3.B)</b></div>
+  <p class="subnote"><b>회원(진단 사용자)·전문가 심사</b>는 화면 구현. <b class="pill">화면 우선</b> — 샘플 데이터로 렌더하며 실회원 저장소·인증 배선은 마일스톤1(Supabase). 매칭·분쟁·정산·리뷰(3.B.3~6)는 실매칭 오픈(v2) 대상.</p>
+
+  <div class="atabs" id="atabs" role="tablist">
+    <div class="t on" data-tab="members" role="tab" tabindex="0" aria-selected="true" onclick="__mtab('members')">회원 <span class="muted">3.B.2</span></div>
+    <div class="t" data-tab="pros" role="tab" tabindex="0" aria-selected="false" onclick="__mtab('pros')">전문가 심사 <span class="muted">3.B.1</span></div>
+    <div class="t" data-tab="signals" role="tab" tabindex="0" aria-selected="false" onclick="__mtab('signals')">매칭 수요 신호 <span class="muted">3.B.3</span></div>
+    <div class="t" data-tab="disputes" role="tab" tabindex="0" aria-selected="false" onclick="__mtab('disputes')">분쟁·환불·신고 <span class="muted">3.B.4</span></div>
+    <div class="t" data-tab="monitor" role="tab" tabindex="0" aria-selected="false" onclick="__mtab('monitor')">매칭·정산·리뷰 <span class="muted">3.B.5·6</span></div>
+    <div class="t" data-tab="cs" role="tab" tabindex="0" aria-selected="false" onclick="__mtab('cs')">고객 문의 CS <span class="muted">3.B.7</span></div>
+  </div>
+
+  <!-- 3.B.2 회원 -->
+  <div class="apanel on" id="panel-members">
+    <div class="kpis" id="mKpis"></div>
+    <div class="sec-h">회원 <span class="muted" style="font-weight:400">— 진단 이력 기준. 상태 변경은 프로토타입(비영속)</span></div>
+    <div class="filters" id="mFilters"></div>
+    <div class="tablewrap"><table class="dt" id="memberTable"></table></div>
+  </div>
+
+  <!-- 3.B.1 전문가 심사 -->
+  <div class="apanel" id="panel-pros">
+    <div class="kpis" id="pKpis"></div>
+    <div class="sec-h">전문가(스타일리스트) 심사 대기열 <span class="muted" style="font-weight:400">— pro-signup 신청 → 자격 게이트. 승인/반려는 프로토타입</span></div>
+    <div class="filters" id="pFilters"></div>
+    <div class="tablewrap"><table class="dt" id="proTable"></table></div>
+  </div>
+
+  <!-- 3.B.3 매칭 수요 신호 (MVP 페이크도어 수집) -->
+  <div class="apanel" id="panel-signals">
+    <p class="subnote"><b>페이크도어(스타일리스트찾기)+견적요청</b>이 수집하는 <b>매칭 수요 신호</b>. 실매칭 오픈(v2) 전에 <b>어떤 서비스·상황·예산의 수요가 있는지</b>를 검증하는 게 목적. 소스: localStorage <code>fitting.reqs</code>(+샘플). 매칭 개입·분쟁·정산·리뷰(3.B.4~6)는 실매칭 오픈(v2) 대상.</p>
+    <div class="filters" id="sSrcBar"></div>
+    <div class="kpis" id="sKpis"></div>
+
+    <div class="sec-h">서비스 유형 수요 <span class="muted" style="font-weight:400">— 온라인/동행/이미지 중 어디에 수요가 몰리나</span></div>
+    <div class="tablewrap"><table class="dt" id="svcTable"></table></div>
+
+    <div class="sec-h">상황(Occasion) 수요 <span class="muted" style="font-weight:400">— 어떤 상황에 스타일링을 찾나(전문분야 우선순위)</span></div>
+    <div class="tablewrap"><table class="dt" id="occTable"></table></div>
+
+    <div class="sec-h">예산대 분포 <span class="muted" style="font-weight:400">— 오픈 견적(역경매) 기준. 가격 수용대 검증</span></div>
+    <div class="tablewrap"><table class="dt" id="budgetTable"></table></div>
+
+    <div class="sec-h">요청 로그 <span class="muted" style="font-weight:400">— 최신순. 오픈=역경매·지명=특정스타일리스트·알림=오픈알림 신청(순수 수요)</span></div>
+    <div class="tablewrap"><table class="dt" id="reqTable"></table></div>
+  </div>
+
+  <!-- 3.B.4 분쟁·환불·신고 -->
+  <div class="apanel" id="panel-disputes">
+    <p class="subnote"><b>에스크로 보관금 기준 중재 큐</b>. 소비자 신고(<code>fitting.reqs</code>)·전문가 소명(<code>fitting.pro.reqs</code>)의 <b>분쟁</b> 건을 모아 릴리스/환불을 판정 · 신고(어뷰징)는 별도 큐. 실 에스크로·PG 연동은 v2 — 조치 시 해당 거래 상태를 되써요(데모).</p>
+    <div class="kpis" id="dKpis"></div>
+    <div class="sec-h">분쟁 큐 <span class="muted" style="font-weight:400">— 에스크로 보관금 기준 중재(환불 승인/기각)</span></div>
+    <div class="tablewrap"><table class="dt" id="disputeTable"></table></div>
+    <div class="sec-h">신고 큐 <span class="muted" style="font-weight:400">— 어뷰징·부적절 콘텐츠·노쇼 → 회원 제재(3.B.2) 연계</span></div>
+    <div class="tablewrap"><table class="dt" id="reportTable"></table></div>
+  </div>
+
+  <!-- 3.B.5·6 매칭 모니터링 · 정산 · 리뷰 -->
+  <div class="apanel" id="panel-monitor">
+    <p class="subnote"><b>거래 진행 모니터링</b> — 미응답·유찰 개입, 완료 거래 <b>에스크로 정산 집행</b>, 신고 후기 모더레이션. 실매칭·정산 집행은 v2 · 조치는 데모. 소스: <code>fitting.reqs</code>·<code>fitting.pro.reqs</code>(+샘플).</p>
+    <div class="sec-h">매칭 모니터링·개입 <span class="muted" style="font-weight:400">— 미응답·유찰·어뷰징(3.B.3)</span></div>
+    <div class="tablewrap"><table class="dt" id="matchTable"></table></div>
+    <div class="sec-h">정산 집행 <span class="muted" style="font-weight:400">— 완료 거래 에스크로 릴리스·수수료(3.B.5)</span></div>
+    <div class="tablewrap"><table class="dt" id="settleTable"></table></div>
+    <div class="sec-h">리뷰 모더레이션 <span class="muted" style="font-weight:400">— 신고·부적절 후기 숨김(3.B.6)</span></div>
+    <div class="tablewrap"><table class="dt" id="reviewTable"></table></div>
+  </div>
+
+  <!-- 3.B.7 고객 문의(CS) 처리 -->
+  <div class="apanel" id="panel-cs">
+    <p class="subnote"><b>고객 문의(1:1) 처리</b> — 소비자 고객센터(<code>fitting.support</code>) 티켓을 유형·상태로 관리, 답변 전송 + 거래 문의는 분쟁 큐(3.B.4) 전환. 반복 문의는 FAQ(G.2) 승격. 실 티켓·SLA는 v2.</p>
+    <div class="kpis" id="csKpis"></div>
+    <div class="sec-h">문의 티켓 큐 <span class="muted" style="font-weight:400">— 유형·상태 · 답변/분쟁 전환</span></div>
+    <div class="tablewrap"><table class="dt" id="csTable"></table></div>
+    <div class="sec-h">FAQ 관리 <span class="muted" style="font-weight:400">— 반복 문의를 도움말로 승격(자가해결율↑)</span></div>
+    <div class="tablewrap"><table class="dt" id="faqMgmtTable"></table></div>
+  </div>
+</div>
+
+<script src="js/admin-common.js?v=33d76e93"></script>
+<script src="js/admin-members.js?v=14a6d7bd"></script>
+<script src="js/a11y.js?v=1876c5ec"></script>
+</body>
+</html>

@@ -13,3 +13,5 @@ Disallow: /diag-fit.html
 Disallow: /diag-loading.html
 Disallow: /result.html
 Disallow: /card.html
+# 관리자(운영) 전 화면 — 크롤·색인 전면 차단
+Disallow: /admin

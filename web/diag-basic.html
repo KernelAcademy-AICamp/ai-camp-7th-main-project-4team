@@ -4,25 +4,41 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>핏팅 — 기본 정보</title>
-<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="fitting.css">
-<link rel="stylesheet" href="diag.css">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+<link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
+<link rel="stylesheet" href="css/diag.css?v=c86b6818">
 </head>
 <body>
 
-<div class="dhead"><div class="dhead-in">
-  <a class="logo" href="index.html">Fitting<i></i></a>
-  <div class="dprog"><div class="prog"><span class="seg"><i id="wfill"></i></span><span class="seg"></span></div></div>
-  <a class="dx" href="index.html" title="닫기">✕</a>
-</div></div>
+<div class="dhead">
+  <div class="dhead-in">
+    <a class="logo" href="index.html">Fitting<i></i></a>
+    <a class="dx" href="index.html" title="닫기">✕</a>
+  </div>
+</div>
+
+<!-- 지난 진단 이력 안내 — 상단 풀폭 알림바(완료된 결과 있을 때만 · 아래 스크립트가 표시) -->
+<div class="diaghist" id="diagHist">
+  <span class="dh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5h.01"/></svg></span>
+  <span class="dh-msg"><b>지난 진단 결과가 있어요</b> · 다시 진단하면 지금 결과는 사라져요</span>
+  <button class="dh-x" type="button" aria-label="안내 닫기" onclick="diagHistClose()">✕</button>
+</div>
 
 <div class="flow">
+
+  <div class="dstepc">
+    <div class="dnode now"><span class="ddot">1</span><span class="dlbl">기본정보</span></div>
+    <div class="dconn seg" id="qconn"><span><i></i></span><span><i></i></span></div>
+    <div class="dnode"><span class="ddot">2</span><span class="dlbl">착용경험</span></div>
+    <div class="dconn solid"></div>
+    <div class="dnode"><span class="ddot">3</span><span class="dlbl">진단중</span></div>
+  </div>
+
   <!-- Q1 성별 -->
   <div class="wstep active">
-    <span class="qnum">Question 1</span>
     <h2 class="qhead">성별을 알려주세요</h2>
-    <p class="qhelp">브랜드 사이즈 체계가 성별로 갈려서 먼저 여쭤요.</p>
+    <p class="qhelp">성별에 따라 사이즈 기준이 달라져요</p>
     <div class="qbody">
       <div class="seg stack">
         <div class="opt" onclick="pickSex(this)">남성</div>
@@ -33,14 +49,13 @@
 
   <!-- Q2 나이·키·몸무게 (한 화면) -->
   <div class="wstep">
-    <span class="qnum">Question 2</span>
-    <h2 class="qhead">나이 · 키 · 몸무게를<br>알려주세요</h2>
-    <p class="qhelp">체형 분포를 좁히는 데 쓰여요. 특히 <strong>몸무게가 사이즈 정확도에 가장 큰 영향</strong>을 줘요.</p>
+    <h2 class="qhead">나이, 키, 몸무게를 알려주세요</h2>
+    <p class="qhelp">체형을 분석하는 데 필요한 정보예요</p>
     <div class="qbody">
       <div class="grid-3">
-        <div class="field"><label>나이</label><select id="age"></select></div>
-        <div class="field"><label>키</label><select id="height"></select></div>
-        <div class="field"><label>몸무게</label><select id="weight"></select></div>
+        <div class="field"><label>연령대</label><select id="age"></select></div>
+        <div class="field"><label>키 (cm)</label><input id="height" type="text" inputmode="numeric" maxlength="3" placeholder="140cm-200cm 사이" oninput="numOnly(this)" autocomplete="off"><small class="fhint" id="hintHeight">140cm-200cm 사이로 입력해주세요</small></div>
+        <div class="field"><label>몸무게 (kg)</label><input id="weight" type="text" inputmode="numeric" maxlength="3" placeholder="30kg-130kg 사이" oninput="numOnly(this)" autocomplete="off"><small class="fhint" id="hintWeight">30kg-130kg 사이로 입력해주세요</small></div>
       </div>
     </div>
   </div>
@@ -49,10 +64,20 @@
   <div class="wnav">
     <button class="btn-line" onclick="prev()">이전</button>
     <span class="spacer"></span>
-    <button class="btn-primary" id="nextbtn" onclick="next()">다음</button>
+    <button class="btn-primary" id="nextbtn" onclick="next()" disabled>다음</button>
   </div>
 </div>
 
-<script src="js/diag-basic.js"></script>
+<script>
+  /* 지난 진단 이력 배너 — 이번 방문에 진단 데이터(basic/dx)가 있으면 노출 */
+  (function(){
+    var has=false; try{ has=!!sessionStorage.getItem('fitting.done'); }catch(e){}   /* 완료된 진단 결과가 있을 때만 */
+    if(has){ var el=document.getElementById('diagHist'); if(el) el.style.display='flex'; }
+  })();
+  function diagHistClose(){ var el=document.getElementById('diagHist'); if(!el) return;   /* X — 자리(높이)는 유지해 본문 고정, 배너만 감춤 */
+    el.style.opacity='0'; setTimeout(function(){ el.style.visibility='hidden'; },200); }
+</script>
+<script src="js/diag-basic.js?v=d42d06ab"></script>
+<script src="js/a11y.js?v=1876c5ec"></script>
 </body>
 </html>

@@ -1,0 +1,177 @@
+  /* 스타일리스트 가입 온보딩 위저드 로직.
+     단계 0(소개)~5(완료). 수집값을 localStorage 'fitting.pro.profile'에 저장.
+     데이터 계약: docs/스타일리스트가입-화면정의서.md §5. */
+  function loadLS(k, def){ try{ var v=localStorage.getItem('fitting.'+k); return v?JSON.parse(v):def; }catch(e){ return def; } }
+  function saveLS(k, v){ try{ localStorage.setItem('fitting.'+k, JSON.stringify(v)); }catch(e){} }
+  function $(id){ return document.getElementById(id); }
+  function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(window._t); window._t=setTimeout(function(){t.classList.remove('on');},2000); }
+
+  /* 이미 가입한 스타일리스트면 온보딩 건너뛰고 포털로 (재방문 처리, 화면정의서 SP-1) */
+  (function(){ var p=loadLS('pro.profile',null); if(p&&p.registered && !/[?&]preview/.test(location.search)){ location.replace('pro.html'); } })();
+
+  var STEPS=6;               // 0~5
+  var cur=0;
+  var TAG_PRESETS=['데일리룩','소개팅룩','미니멀','오피스','하객룩','캐주얼','스트릿','미니멀'];
+  var selectedTags=[];   // B 온보딩: 전문분야는 가입 후 프로필에서(가입 단계에서 안 받음)
+  var allTags=TAG_PRESETS.slice();
+  var photos=[];             // dataURL 배열
+
+  /* ===== 단계 이동 ===== */
+  function show(step){
+    cur=Math.max(0, Math.min(STEPS-1, step));
+    var ps=document.querySelectorAll('.panel');
+    for(var i=0;i<ps.length;i++) ps[i].classList.toggle('on', parseInt(ps[i].dataset.step,10)===cur);
+    // 헤더/진행바
+    var titles=['스타일리스트 지원','스타일리스트 가입','기본 정보','이력·전문분야','포트폴리오','등록 완료'];
+    $('headTitle').textContent=titles[cur];
+    $('headStep').textContent = (cur>=1 && cur<=5) ? cur+'/5' : '';
+    $('progBar').style.width = (cur/(STEPS-1)*100)+'%';
+    $('backBtn').style.display = (cur>=1 && cur<=4) ? 'inline' : 'none';
+    window.scrollTo({top:0,behavior:'smooth'});
+    validate();
+  }
+  function go(dir){
+    // dir: 다음 단계로 갈 땐 절대 인덱스가 아니라 상대 이동(+1/-1) 또는 절대값 모두 지원
+    var target = (dir===1 || dir===-1) ? cur+dir : dir;
+    if(target>cur && !stepValid(cur)){ showErr(cur); return; }
+    show(target);
+  }
+
+  /* ===== 검증 ===== */
+  function isEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+  function isPhone(v){ return /^01[016789][-\s]?\d{3,4}[-\s]?\d{4}$/.test((v||'').trim()); }
+
+  /* ===== 계정 인증(이메일·휴대폰) — 가입 필수. 데모: 인증번호를 화면에 표기(실서비스는 이메일/문자 발송) ===== */
+  var verified={email:false, phone:false};
+  var sentCode={email:null, phone:null};
+  function contactValid(kind){ return kind==='email' ? isEmail($('email').value.trim()) : isPhone($('phone').value.trim()); }
+  function sendCode(kind){
+    if(!contactValid(kind)){ toast(kind==='email'?'이메일 형식을 확인해주세요':'휴대폰 번호를 확인해주세요 (예: 010-1234-5678)'); return; }
+    var code=''+(Math.floor(Math.random()*900000)+100000);
+    sentCode[kind]=code;
+    $(kind+'Vbox').style.display='flex';
+    $(kind+'Ok').style.display='none';
+    $(kind+'Code').value=''; $(kind+'Code').disabled=false;
+    $(kind+'Send').textContent='재전송';
+    $(kind+'Hint').textContent='데모 인증번호: '+code+' · 실서비스는 '+(kind==='email'?'이메일':'문자')+'로 발송돼요';
+    var ci=$(kind+'Code'); if(ci) ci.focus();
+    validate();
+  }
+  function checkCode(kind){
+    var v=($(kind+'Code').value||'').trim();
+    if(v && v===sentCode[kind]){
+      verified[kind]=true; $(kind+'Ok').style.display='inline';
+      $(kind+'Code').disabled=true; $(kind+'Hint').textContent='';
+      toast((kind==='email'?'이메일':'휴대폰')+' 인증이 완료됐어요');
+    } else { verified[kind]=false; toast('인증번호가 일치하지 않아요'); }
+    validate();
+  }
+  function onContact(kind){   // 연락처를 수정하면 재인증 필요
+    verified[kind]=false; sentCode[kind]=null;
+    $(kind+'Vbox').style.display='none';
+    $(kind+'Send').textContent='인증';
+    validate();
+  }
+  var SIGNUP_SERVICES=[
+    {type:'online',   label:'온라인 스타일링', row:'svcOnline',   on:'svcOnlineOn',   price:'priceOnline'},
+    {type:'shopping', label:'동행 쇼핑',       row:'svcShopping', on:'svcShoppingOn', price:'priceShopping'},
+    {type:'image',  label:'이미지 컨설팅',   row:'svcImaging',  on:'svcImagingOn',  price:'priceImaging'}
+  ];
+  function enabledServices(){
+    var s=[];
+    SIGNUP_SERVICES.forEach(function(sv){ if($(sv.on).checked) s.push({type:sv.type, label:sv.label, price:parseInt($(sv.price).value,10)||0}); });
+    return s;
+  }
+  function stepValid(step){
+    if(step===1){ return isEmail($('email').value.trim()) && isPhone($('phone').value.trim()) && verified.email && verified.phone && $('agreeReq').checked; }
+    if(step===2){ var svc=enabledServices(); return $('name').value.trim().length>0 && svc.length>0 && svc.every(function(s){return s.price>0;}); }
+    if(step===3){ return $('tagline').value.trim().length>0 && selectedTags.length>0; }
+    return true;
+  }
+  function showErr(step){ var e=$('err'+step); if(e){ e.classList.add('on'); } }
+  function validate(){
+    // 현재 단계의 [다음] 활성/비활성 + 에러 숨김(입력 중이면)
+    if(cur>=1 && cur<=3){ var e=$('err'+cur); if(e) e.classList.remove('on'); }
+    var n1=$('next1'), n2=$('next2'), n3=$('next3');
+    if(n1) n1.disabled=!stepValid(1);
+    if(n2) n2.disabled=!stepValid(2);
+    if(n3) n3.disabled=!stepValid(3);
+  }
+
+  /* ===== SP-2 서비스 토글 ===== */
+  function toggleSvc(){
+    SIGNUP_SERVICES.forEach(function(sv){
+      var on=$(sv.on).checked;
+      $(sv.row).classList.toggle('off', !on);
+      $(sv.price).disabled=!on;
+    });
+    validate();
+  }
+
+  /* ===== SP-3 태그 ===== */
+  function renderTags(){
+    $('tagList').innerHTML = allTags.map(function(t){
+      var on=selectedTags.indexOf(t)>=0;
+      return '<span class="tag'+(on?' on':'')+'" onclick="toggleTag(\''+t.replace(/'/g,"")+'\')">'+t+'</span>';
+    }).join('');
+  }
+  function toggleTag(t){
+    var i=selectedTags.indexOf(t);
+    if(i>=0) selectedTags.splice(i,1); else selectedTags.push(t);
+    renderTags(); validate();
+  }
+  function addTag(){
+    var v=$('tagInput').value.trim(); if(!v) return;
+    if(allTags.indexOf(v)<0) allTags.push(v);
+    if(selectedTags.indexOf(v)<0) selectedTags.push(v);
+    $('tagInput').value=''; renderTags(); validate();
+  }
+
+  /* ===== SP-4 포트폴리오 ===== */
+  function renderPhotos(){
+    var cells=photos.map(function(src,i){
+      return '<div class="pcell"><img src="'+src+'" alt=""><span class="del" onclick="delPhoto(event,'+i+')">✕</span></div>';
+    });
+    if(photos.length<8) cells.push('<div class="pcell" onclick="document.getElementById(\'fileInput\').click()">＋</div>');
+    $('pgrid').innerHTML=cells.join('');
+  }
+  function onFiles(ev){
+    var files=ev.target.files||[]; var room=8-photos.length;
+    var list=Array.prototype.slice.call(files,0,room);
+    var pending=list.length;
+    list.forEach(function(f){
+      if(!/^image\//.test(f.type)){ pending--; toast('이미지만 올릴 수 있어요'); return; }
+      var r=new FileReader();
+      r.onload=function(){ photos.push(r.result); if(--pending<=0) renderPhotos(); else renderPhotos(); };
+      r.readAsDataURL(f);
+    });
+    ev.target.value='';
+  }
+  function delPhoto(ev,i){ ev.stopPropagation(); photos.splice(i,1); renderPhotos(); }
+
+  /* ===== 완료: 저장 → SP-5 ===== */
+  function finish(){
+    var svc=enabledServices();
+    var profile={
+      registered:true,
+      email:$('email').value.trim(),
+      phone:$('phone').value.trim(),
+      emailVerified:verified.email, phoneVerified:verified.phone,
+      agreeMkt:$('agreeMkt').checked,
+      name:$('name').value.trim()||'스타일리스트',
+      services:svc,
+      tagline:$('tagline').value.trim(),
+      bio:$('bio').value.trim(),
+      specialties:selectedTags.slice(),
+      portfolio:photos.slice()
+    };
+    saveLS('pro.profile', profile);
+    $('doneName').textContent=profile.name;
+    show(5);
+  }
+
+  /* ===== 초기화 ===== */
+  renderTags();
+  renderPhotos();
+  toggleSvc();
+  show(0);

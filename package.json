@@ -6,8 +6,14 @@
   "scripts": {
     "test": "node engine/test.js",
     "serve": "node scripts/serve.js",
+    "dev:api": "node scripts/dev-server.js",
+    "dev:vercel": "vercel dev",
+    "gen-catalog": "node scripts/gen-catalog.js",
+    "gen-app": "node scripts/gen-app.js",
+    "screens": "node scripts/py.js scripts/gen-screens.py",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "stamp-assets": "node scripts/py.js scripts/stamp-assets.py"
   },
   "engines": {
     "node": ">=18"

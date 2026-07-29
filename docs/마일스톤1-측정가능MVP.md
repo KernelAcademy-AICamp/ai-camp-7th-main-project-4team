@@ -6,7 +6,15 @@
 ## 0. In / Out (규율)
 
 **In** — 진단 → **서버 엔진** → 결과 → **피드백 DB 저장** → **킬 메트릭 집계**. 이게 전부.
-**Out** — 로그인/계정 · 전문가 매칭 · 결제 · SEO 페이지 · 어드민 UI · 8유형 LLM 서술 · 파생 카테고리. *하나라도 끌려오면 측정이 늦어진다.*
+**Out** — 로그인/계정 · 전문가 매칭 · 결제 · SEO 페이지 · 8유형 LLM 서술 · 파생 카테고리. *하나라도 끌려오면 측정이 늦어진다.*
+
+> **진행 현황(2026-07 갱신 · D-15/D-16 상회):** 측정 경로 실배선 완료 — 아래는 **구현 방식이 문서 초안과 달라진 부분**.
+> - **구현 방식 = D-15 어댑터 스왑**: Next.js 이식이 아니라 **`web/` 단일 소스 + 데이터 어댑터(`FITTING_MODE`)** → `gen-app`이 `app/`(FITTING_MODE api·목업/pro 미배포·garments 서버전용) 생성. `web/js/data.js`가 seam.
+> - **측정 2축**: ① 진단 정확도(킬메트릭·`feedback`) ② **매칭 수요**(`lead` 웨이트리스트 이메일·페이크도어). 진단→수요 전환은 `session_id` 조인.
+> - **DB 테이블**: `diagnosis` · `feedback` · **`lead`**(db/02) · **`garment`/`garment_meta`**(db/03·실측표=진단 런타임 소스, rev 캐시) · **`brand`**(db/04·노출순서). RLS admin, 서버는 service_role.
+> - **서버 엔진**: `/api/diagnose`가 `garment` 테이블로 역산+추천 계산(garments.json 클라 미노출=해자). 브랜드 노출순서 반영.
+> - **어드민 UI = In(수정)**: MVP 4메뉴 실배선 — 사이즈·데이터(garment CRUD)·진단·정확도(+추세)·전문가 수요·엔진 강화. Google OAuth 로그인. v2 섹션은 숨김·미배포. → 문서 초안의 "어드민 UI = Out"은 **철회**.
+> - **구매 판정(Fit) = In(추가 · 2026-07-22, D-19)**: 초안 In/Out에 없던 항목을 **의도적으로 추가**했다. 이유는 두 가지 — ① 측정 대상인 엔진을 **그대로 재사용**하므로 측정 경로를 늦추지 않고 ② 판정에 올라오는 사이즈표를 `garment_submission`으로 수집(→검수→정본 승격)해 **실측 커버리지 부족(측정의 최대 제약)을 사용자 힘으로 푼다.** 배선: `/api/judge`·`/api/parse-size-table`·`/api/submit-garment` + `admin-submissions`(db/08·10).
 
 ## 1. 스택 (확정 · 운영비 $0)
 
@@ -87,7 +95,7 @@ POST /api/feedback
 |---|---|---|
 | `web/js/engine.js`(정본) | `engine/`의 **TS 모듈이 정본**, API가 import | JS는 더 이상 손수 유지 X — TS 단일 정본. 골든테스트도 TS로 이관 |
 | `web/js/body-model.js` | TS 모듈 | 〃 |
-| `web/js/engine-mock.js` | `/api/diagnose` 안의 서버 스텁(서술·8유형 매핑) | 실LLM 전까지 스텁 유지 |
+| `web/js/bodytype.js` | 8유형 판정 실계산(KS 드롭+로우데이터) — 구 `engine-mock.js` 스텁 대체 | 카드 서술(`character`)만 LLM 자리로 잔존 |
 | `web/*.html` + `web/js/<화면>.js` | `app/`의 Next 페이지/컴포넌트 | 디자이너가 이식, `tokens.css`는 전역 스타일로 |
 | `web/data/*.json` | 서버에서 import(초기) → 이후 DB | garments·body 시드는 당분간 JSON import |
 

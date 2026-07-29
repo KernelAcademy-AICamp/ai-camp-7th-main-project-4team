@@ -4,16 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>핏팅 — 이용약관</title>
-<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/variable/woff2/SUIT-Variable.css">
-<link rel="stylesheet" href="fitting.css">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+<link rel="stylesheet" href="css/fitting.css?v=3b9569c9">
+<link rel="stylesheet" href="css/auth-ui.css?v=dcc9663e">
+<link rel="stylesheet" href="css/appnav.css?v=21e67dfb">
+<!-- 공용 헤더가 api/proto·로그인 상태를 알아야 해서. defer라 문서 순서대로 실행된다. -->
+<script defer src="js/config.js?v=231f7104"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="js/auth.js?v=e6065d3b"></script>
+<script defer src="js/auth-ui.js?v=75100902"></script>
+<script defer src="js/appnav.js?v=3dd82c59"></script>
 </head>
 <body>
 
-<header class="legal-head">
-  <a class="logo" href="index.html">Fitting<i></i></a>
-  <a class="back" href="index.html">← 홈으로</a>
-</header>
+<!-- 공용 상단 내비 — appnav.js가 주입. 법적 문서는 Home만 노출(서비스 기능으로 유도할 자리가 아님).
+     기존 legal-head의 로고·"← 홈으로" 역할은 공용 로고와 Home이 대신한다. -->
+<div id="appnav" data-menu="home"></div>
 
 <div class="legal">
   <h1>서비스 이용약관</h1>
@@ -34,6 +41,12 @@
 
   <h2>제4조 (회원가입 및 비회원 이용)</h2>
   <p>이용자는 가입 없이 진단을 이용할 수 있습니다. 결과의 영구 보관, 전문가 매칭 실이용 시에는 회원가입이 필요할 수 있습니다.</p>
+  <p>회원가입은 카카오·구글 소셜 로그인 또는 이메일 링크 로그인으로 이루어지며, 알림·계정 확인을 위해 이메일 주소가 필요합니다.</p>
+
+  <h2>제4조의2 (회원 탈퇴와 진단 기록의 처리)</h2>
+  <p>회원은 언제든지 마이페이지에서 탈퇴할 수 있으며, 회사는 계정과 개인정보(이메일·표시명·프로필)를 지체 없이 파기합니다.</p>
+  <p>다만 <strong>진단을 위해 제출된 정보(성별·연령대·키·몸무게·착용 경험 및 그 결과)는 삭제하지 않고, 특정 개인을 알아볼 수 없도록 비식별 처리하여 보존</strong>합니다. 이는 사이즈 번역 정확도를 유지·개선하기 위한 것이며, 비식별 처리된 정보는 개인정보에 해당하지 않습니다. 비식별 처리 시 계정 연결과 세션 식별자를 모두 제거하여 이용자와 다시 연결할 수 없도록 합니다.</p>
+  <p>진단 기록은 서비스가 사이즈를 번역하는 근거이자 정확도를 유지하는 근간이므로, 회사는 이를 개별 삭제하는 기능을 제공하지 않습니다. 이용자는 <strong>로그인 없이 진단만 이용</strong>할 수 있으며, 회사는 <strong>로그인·저장 시점에 위 처리 방식을 미리 안내</strong>합니다.</p>
 
   <h2>제5조 (전문가 매칭 및 결제)</h2>
   <p>전문가 매칭·결제 기능은 추후 제공되며, 별도 약관 및 환불 정책이 적용됩니다.</p>
@@ -51,11 +64,8 @@
   <h2>제8조 (준거법 및 관할)</h2>
   <p>본 약관은 대한민국 법령에 따라 해석되며, 분쟁은 회사 소재지를 관할하는 법원을 제1심 관할로 합니다.</p>
 
-  <footer class="foot" style="margin-top:40px">
-    <a href="about.html">서비스 소개</a>
-    <a href="privacy.html">개인정보 처리방침</a>
-    <a href="index.html">홈</a>
-  </footer>
 </div>
+<!-- 공용 푸터 — appnav.js가 index .site-foot 정본 주입(단일 소스). -->
+<div id="appfoot"></div>
 </body>
 </html>

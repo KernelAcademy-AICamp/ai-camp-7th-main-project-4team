@@ -50,7 +50,8 @@ close(FitEngine.ratingToEase("shoulder", "BIG"), 6, "어깨 BIG = 4 + 4/2");
 close(FitEngine.ratingToEase("belly", "SNUG"), 4, "배 SNUG = (0+8)/2");
 close(FitEngine.ratingToEase("belly", "RELAXED"), 13, "배 RELAXED = (8+18)/2");
 eq(FitEngine.ratingToEase("chest", "NONSENSE"), null, "미정의 등급 → null");
-eq(FitEngine.ratingToEase("waist", "SNUG"), null, "미활성 부위(하의) → null");
+close(FitEngine.ratingToEase("waist", "SNUG"), 4, "상의 허리 SNUG=(0+8)/2 — 보조밴드 TOP:waist 활성");
+eq(FitEngine.ratingToEase("nope", "SNUG"), null, "미정의 부위 → null");
 
 /* ── 착용경험 → 인체 역산 (bodyFromExperiences) ─────────────────────────────── */
 const specsMatch = [
@@ -85,11 +86,36 @@ const bandexp = [{ category: "BOTTOM", brandId: "m", fitLine: "loose", sizeLabel
   subtype: "long_pants", fits: { waist: "SNUG", hip: "SNUG", thigh: "SNUG" } }];
 eq(FitEngine.bodyFromExperiences(bandexp, bandspec), { hip: 97, thigh: 57.5 },
    "밴딩 바지 → 허리 역산 스킵(엉덩이·허벅지만)");
+// B-2 앵커링: regBody 주면, 밴딩으로 스킵된 허리를 엉덩이 편차의 50%로 앵커링 (74 + (97−94)×.5 = 75.5)
+eq(FitEngine.bodyFromExperiences(bandexp, bandspec, { waist: 74, hip: 94 }),
+   { hip: 97, thigh: 57.5, waist: 75.5 }, "밴딩 허리 앵커링 — 엉덩이 측정편차 50% 전이");
 // 사용자 응답(e.waistband) 우선: 있음→고정 그룹이어도 스킵 / 없음→밴딩 그룹이어도 사용
 eq(FitEngine.bodyFromExperiences([Object.assign({}, bexp[0], { waistband: "banded" })], bspec),
    { hip: 97, thigh: 57.5 }, "사용자 '밴딩 있음' → 허리 스킵(그룹 무관)");
 eq(FitEngine.bodyFromExperiences([Object.assign({}, bandexp[0], { waistband: "none" })], bandspec),
    { waist: 78, hip: 97, thigh: 57.5 }, "사용자 '밴딩 없음' → 허리 사용(그룹 무관)");
+
+/* ── 하의 실루엣(형태축) 매칭 — 같은 brand·size·fitLine, 실루엣만 다름 → 실루엣이 1차 키 ───── */
+const silSpecs = [
+  { category: "BOTTOM", brandId: "m", fitLine: "regular", silhouette: "straight", sizeLabel: "30",
+    gender: "male", subtype: "long_pants", garmentCm: { waist: 40, hip: 50, thigh: 28 } },
+  { category: "BOTTOM", brandId: "m", fitLine: "regular", silhouette: "wide", sizeLabel: "30",
+    gender: "male", subtype: "long_pants", garmentCm: { waist: 40, hip: 52, thigh: 34 } },
+];
+const straightExp = [{ category: "BOTTOM", brandId: "m", fitLine: "regular", silhouette: "straight",
+  sizeLabel: "30", gender: "male", subtype: "long_pants", fits: { thigh: "SNUG" } }];
+// straight thigh 28×2 − 2.5 = 53.5 (wide 34 안 섞임)
+eq(FitEngine.bodyFromExperiences(straightExp, silSpecs), { thigh: 53.5 },
+   "실루엣 straight → straight 스펙만 매칭(wide 제외)");
+const wideExp = [{ category: "BOTTOM", brandId: "m", fitLine: "regular", silhouette: "wide",
+  sizeLabel: "30", gender: "male", subtype: "long_pants", fits: { thigh: "SNUG" } }];
+// wide thigh 34×2 − 2.5 = 65.5
+eq(FitEngine.bodyFromExperiences(wideExp, silSpecs), { thigh: 65.5 },
+   "실루엣 wide → wide 스펙만 매칭(straight 제외)");
+// 실루엣 없는 경험(구 데이터) → fitLine 폴백(둘 다 regular라 평균: (56+68)/2−2.5=59.5)
+eq(FitEngine.bodyFromExperiences([{ category: "BOTTOM", brandId: "m", fitLine: "regular", sizeLabel: "30",
+  gender: "male", subtype: "long_pants", fits: { thigh: "SNUG" } }], silSpecs), { thigh: 59.5 },
+   "실루엣 없으면 fitLine 폴백(두 스펙 평균)");
 
 /* ── 추천 사이즈 (recommend): 어깨 들어가는 것 우선 → 가슴 여유 5cm에 근접 ────── */
 const specs = [
@@ -112,6 +138,75 @@ assert.ok(recs[0].fitScore >= recs[1].fitScore, "핏 지수 내림차순 정렬"
 ["brandName", "fitLine", "size", "fit", "warn", "bottleneck", "fitScore", "chestEase"].forEach((k) => {
   assert.ok(k in recs[0], `추천 항목에 ${k} 필드 존재`); pass++;
 });
+
+/* ── 하의 추천 (recommendBottom): 선호 실루엣 안에서 허리 게이트 + 엉덩이·허벅지 수용 ──── */
+const bpspecs = [
+  { category: "BOTTOM", brandId: "p", brandName: "P", silhouette: "straight", fitLine: "regular", sizeLabel: "30",
+    gender: "male", subtype: "long_pants", garmentCm: { waist: 41, hip: 50, thigh: 29 } },
+  { category: "BOTTOM", brandId: "p", brandName: "P", silhouette: "straight", fitLine: "regular", sizeLabel: "32",
+    gender: "male", subtype: "long_pants", garmentCm: { waist: 43, hip: 52, thigh: 31 } },
+  { category: "BOTTOM", brandId: "p", brandName: "P", silhouette: "wide", fitLine: "loose", sizeLabel: "30",
+    gender: "male", subtype: "long_pants", garmentCm: { waist: 41, hip: 54, thigh: 34 } },
+];
+// body waist80·hip98·thigh56. straight30: 허리 82−80=2(목표적중)·힙 2·허벅지 2 → 다 수용 / straight32: 허리 6(큼)
+const brec = FitEngine.recommendBottom({ waist: 80, hip: 98, thigh: 56 }, "straight", "male", "long_pants", bpspecs);
+eq(brec.length, 1, "하의 추천 — 브랜드 1개 → 1건");
+eq([brec[0].silhouette, brec[0].size, brec[0].fit], ["straight", "30", "딱맞음"],
+   "선호 실루엣 straight · 허리목표 근접 30 · 딱맞음");
+assert.ok(brec[0].fitScore >= 90, "다 수용 → 핏지수 높음"); pass++;
+// 선호 wide → 같은 브랜드의 wide 채택(실루엣 전환)
+eq(FitEngine.recommendBottom({ waist: 80, hip: 98, thigh: 56 }, "wide", "male", "long_pants", bpspecs)[0].silhouette,
+   "wide", "선호 wide → wide 실루엣 채택");
+["brandName", "silhouette", "size", "fit", "bottleneck", "fitScore", "waistEase"].forEach((k) => {
+  assert.ok(k in brec[0], `하의 추천 항목에 ${k} 필드 존재`); pass++;
+});
+
+/* ── 단일 상품 판정 (judge): 사이즈 전체를 몸에 대고, 점수 하한 없이 판정 ────────── */
+const jspecs = [
+  { category: "TOP", brandId: "a", brandName: "A", fitLine: "regular", sizeLabel: "M", sizeOrder: 0,
+    gender: "male", subtype: "long_sleeve", garmentCm: { chest: 52, shoulder: 44 } },
+  { category: "TOP", brandId: "a", brandName: "A", fitLine: "regular", sizeLabel: "L", sizeOrder: 1,
+    gender: "male", subtype: "long_sleeve", garmentCm: { chest: 55, shoulder: 46 } },
+];
+// body chest96·shoulder45. M: chest 52×2−96=8(SNUG)·shoulder 44−45=−1(TIGHT) / L: chest 110−96=14(RELAXED)·shoulder 46−45=1(SNUG)
+const jr = FitEngine.judge({ chest: 96, shoulder: 45 }, jspecs);
+eq(jr.sizes.length, 2, "판정 — 사이즈 2개");
+eq(jr.sizes.map((s) => s.sizeLabel), ["M", "L"], "sizeOrder 정렬(M→L)");
+eq(jr.sizes[0].parts.find((p) => p.part === "shoulder").rating, "TIGHT", "M 어깨 −1 = 끼임");
+eq(jr.sizes[0].verdict.label, "TIGHT", "M 종합판정 = 끼임");
+eq(jr.sizes[0].verdict.ko, "어깨가 껴요", "조사 — 어깨'가'(받침 없음)");
+eq(FitEngine.judge({ chest: 120, shoulder: 52 }, jspecs).sizes[0].verdict.ko, "가슴이 껴요", "조사 — 가슴'이'(받침 있음)");
+eq(jr.pick, "L", "끼임 없는 L을 추천");
+assert.ok(jr.anyFit === true, "맞는 사이즈 있음"); pass++;
+// 점수 하한 없음: 심한 불일치는 35 밑으로도 내려간다(recommend와 다른 핵심)
+const badJ = FitEngine.judge({ chest: 130, shoulder: 60 }, jspecs);
+assert.ok(badJ.sizes[0].fitScore < 35, "판정 점수는 35 하한 없음 — '안 맞음' 표현 가능"); pass++;
+assert.ok(badJ.anyFit === false, "다 끼면 anyFit=false"); pass++;
+// 미표기 부위 → missing (판정에서 빠지고 표면에 드러남)
+const jmiss = [{ category: "TOP", brandId: "a", brandName: "A", fitLine: "regular", sizeLabel: "M",
+  gender: "male", subtype: "long_sleeve", garmentCm: { chest: 52 } }];
+eq(FitEngine.judge({ chest: 96, shoulder: 45 }, jmiss).sizes[0].missing, ["shoulder"], "어깨 미표기 → missing");
+// 오차막대: 오차구간이 끼임경계(0)를 물면 borderline. L 어깨 여유=1, ±2 → [−1,3]가 0을 물음
+const jbor = FitEngine.judge({ chest: 96, shoulder: 45 }, jspecs, { errors: { shoulder: 2 } });
+assert.ok(jbor.sizes[1].parts.find((p) => p.part === "shoulder").borderline === true,
+  "오차구간이 끼임경계 물면 borderline"); pass++;
+eq(jbor.sizes[1].parts.find((p) => p.part === "shoulder").easeLo, -1, "borderline 하한 = 여유−오차");
+// easeToRating 일반화 — 어깨 밴드 {0,1.5,4}
+eq(FitEngine.easeToRating("shoulder", -0.1, "TOP"), "TIGHT", "어깨 여유<0 = 끼임");
+eq(FitEngine.easeToRating("shoulder", 1, "TOP"), "SNUG", "어깨 여유1 = 딱맞음");
+eq(FitEngine.easeToRating("nope", 5, "TOP"), null, "밴드 없는 부위 → null");
+// recommend는 종전 하한 35 유지(판정과 분리) — 회귀 확인
+assert.ok(FitEngine.recommend({ chest: 130, shoulder: 60 }, "regular", "male", "long_sleeve", jspecs)
+  .every((r) => r.fitScore >= 35), "recommend는 하한 35 유지"); pass++;
+// 보조 부위(상의 허리): 표에 있으면 판정에 포함, 없으면 미표기로 안 캐물음
+const jwaist = [{ category: "TOP", brandId: "a", brandName: "A", fitLine: "regular", sizeLabel: "M", sizeOrder: 0,
+  gender: "male", subtype: "long_sleeve", garmentCm: { chest: 52, shoulder: 46, waist: 44 } }];
+const jw = FitEngine.judge({ chest: 96, shoulder: 45, waist: 92 }, jwaist);   // 가슴+8·어깨+1 정상, 허리 44단면=88둘레 −92 = −4 끼임
+const wp = jw.sizes[0].parts.filter((p) => p.part === "waist")[0];
+assert.ok(wp && wp.rating === "TIGHT", "상의 허리 있으면 판정 포함(88−92=−4 끼임)"); pass++;
+eq(jw.sizes[0].verdict.ko, "허리가 껴요", "상의 허리 끼면 종합판정에 반영");
+eq(FitEngine.judge({ chest: 96, shoulder: 45, waist: 92 }, jspecs).sizes[0].missing, [],
+   "허리 없는 상의는 미표기로 안 캐물음(missing 빈배열)");
 
 /* ── 실데이터 스모크: garments.json 전량으로 깨지지 않고 계약 지키는지 ───────── */
 try {
@@ -145,5 +240,51 @@ eq(FitBodyType.classify({ gender: "male" }), null, "측정 부족 → null");
 eq(FitBodyType.classify({ gender: "x", chestFull: 90, waist: 80, hip: 92 }), null, "미지 성별 → null");
 const _bt = { gender: "female", heightCm: 160, weightKg: 52, chestFull: 82, waist: 66, hip: 96 };
 eq(FitBodyType.classify(_bt), FitBodyType.classify(_bt), "분류 결정론적");
+
+/* ── 조건부 임퓨테이션 (imputeGirths) — 관측앵커 잔차로 미관측 둘레부위 추정 ────────── */
+assert.strictEqual(typeof FitEngine.imputeGirths, "function", "imputeGirths export"); pass++;
+// 미시드/앵커없음 → {} (하위호환: regBody 없이 부르던 기존 경로 무영향)
+eq(FitEngine.imputeGirths({ belly: 82 }, { waist: 85 }, "male"), {}, "미시드 → {}");
+try {
+  const corr = require("../web/data/body-correlation.json");
+  assert.ok(corr && corr.parts && corr.cov, "body-correlation.json 형태(parts·cov)"); pass++;
+  FitEngine.seedCorrelation(corr);
+  const regCm = { chestFull: 95, chestUpper: 96, waist: 80, hip: 94, thigh: 55, belly: 82, neck: 37, upperArm: 30, armhole: 42, calf: 37 };
+  const imp = FitEngine.imputeGirths(regCm, { waist: 85, hip: 96, thigh: 56 }, "male"); // 허리 회귀80→관측85(+5)
+  assert.ok(imp.waist == null && imp.hip == null && imp.thigh == null, "앵커된 부위는 임퓨트 대상 제외"); pass++;
+  assert.ok(imp.belly != null && imp.belly > regCm.belly, "배는 허리 상향관측 반영해 회귀보다 커짐(배↔허리 잔차상관 강·R²≥.30)"); pass++;
+  // R² 게이트: 앵커가 명확히 설명 못하는 부위는 채우지 않는다(false precision 회피).
+  assert.ok(imp.chestFull == null && imp.neck == null && imp.calf == null,
+    "하의앵커로 약상관 부위(가슴·목·종아리 R²<.30)는 임퓨트 안 함 → 회귀 유지"); pass++;
+  const impT = FitEngine.imputeGirths(regCm, { chest: 96, shoulder: 44 }, "male"); // 상의앵커(가슴)
+  assert.ok(impT.chestUpper != null, "상의앵커 → chestUpper는 채움(R²0.59 명확)"); pass++;
+  assert.ok(impT.waist == null && impT.belly == null && impT.hip == null,
+    "상의앵커로 교차둘레(허리·배·엉덩이 R²≤.07)는 안 채움 → 추천은 회귀 그대로"); pass++;
+  assert.deepStrictEqual(imp, FitEngine.imputeGirths(regCm, { waist: 85, hip: 96, thigh: 56 }, "male"), "임퓨트 결정론적"); pass++;
+  eq(FitEngine.imputeGirths(regCm, {}, "male"), {}, "앵커 없음 → {}");
+  FitEngine.seedCorrelation(null); // 다른 테스트에 영향 없게 원복
+} catch (e) {
+  console.log(`  (조건부 임퓨테이션 실데이터 검증 건너뜀: ${e.message})`);
+}
+
+/* ── 정체성 자연어 서술 (describe/narrate) — 스코프 A ─────────────────────── */
+assert.strictEqual(typeof FitBodyType.describe, "function", "describe export"); pass++;
+assert.strictEqual(typeof FitBodyType.narrate, "function", "narrate export"); pass++;
+// volume 버킷(BMI) · intensity 버킷(pm |dev|): balanced<12 / strong≥25 / 그외 mild
+const dLean = FitBodyType.describe("STR", "male", 180, 58, { chestFull: 50, waist: 50, hip: 50, shoulder: 50, thigh: 50 });
+eq(dLean.volume, "lean", "저BMI → lean"); eq(dLean.intensity, "balanced", "편차<12 → balanced");
+const dStr = FitBodyType.describe("INV", "male", 178, 74, { shoulder: 82, chestFull: 60, waist: 45, hip: 48, thigh: 50 });
+eq(dStr.intensity, "strong", "편차≥25 → strong");
+const dMid = FitBodyType.describe("TRI", "female", 162, 55, { hip: 65, chestFull: 50, waist: 48, shoulder: 50, thigh: 55 });
+eq(dMid.intensity, "mild", "12≤편차<25 → mild");
+// narrate 조합 + 신뢰가드: strong만 강도어, balanced/mild는 강도어 생략
+const DESC = { sil: { STR: "직선 라인", INV: "V라인", TUB: "슬림 라인", RND: "둥근 실루엣" }, volume: { lean: "슬림한", standard: "표준 볼륨의", volume: "볼륨감 있는" }, intensity: { strong: "뚜렷한", mild: "" } };
+eq(FitBodyType.narrate({ code: "INV", volume: "standard", intensity: "strong" }, DESC, null), "표준 볼륨의 뚜렷한 V라인이에요.", "strong → 강도어 포함");
+eq(FitBodyType.narrate({ code: "STR", volume: "standard", intensity: "balanced" }, DESC, null), "표준 볼륨의 직선 라인이에요.", "balanced → 강도어 생략(과신 금지)");
+eq(FitBodyType.narrate({ code: "TUB", volume: "lean", intensity: "mild" }, DESC, null), "슬림 라인이에요.", "TUB → 볼륨어 중복 제거");
+eq(FitBodyType.narrate({ code: "BAL", volume: "standard", intensity: "strong" }, { sil: { BAL: "균형 잡힌 라인" }, volume: { standard: "표준 볼륨의" }, intensity: { strong: "뚜렷한", mild: "" } }, null), "표준 볼륨의 균형 잡힌 라인이에요.", "BAL은 strong이어도 강도어 미적용('뚜렷한 균형' 모순 방지)");
+eq(FitBodyType.narrate({ code: "STR", volume: "standard", intensity: "strong" }, DESC, "시크 스트레이트"), "시크 스트레이트 — 표준 볼륨의 뚜렷한 직선 라인이에요.", "name 접두");
+eq(FitBodyType.narrate({ code: "STR", volume: "standard", intensity: "strong" }, null, null), "", "문안 없으면 ''(정적 profile 폴백)");
+eq(FitBodyType.narrate(null, DESC, null), "", "신호 없으면 ''");
 
 console.log(`\n✓ 골든 테스트 ${pass}건 통과 — engine.js·bodytype.js가 명세(docs/6)와 일치.`);
