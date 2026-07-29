@@ -57,5 +57,37 @@
   }
   function pickSex(el){ sex=el.textContent.trim(); pick(el); }   // 선택만 — 진행은 '다음' 버튼으로
 
+  /* 지난 입력 되돌려주기 — 서비스가 이미 아는 걸 다시 묻지 않는다.
+     출처는 두 곳: ① 이번 방문에 이미 진단했으면 sessionStorage(가장 최신)
+                   ② 로그인 사용자면 계정 프로필(index.js가 fitting.profile로 내려둔 값)
+     이 화면은 supabase·auth를 싣지 않으므로 서버를 부르지 않는다 — 로컬만 읽는다.
+     ※ 채우기만 하고 잠그지 않는다. 특히 몸무게는 변하는 값이라, 채워둔 사실을 배너로 밝힌다 —
+        조용히 채워져 있으면 사용자는 자기가 입력한 줄 알고 옛 값으로 진단한다. */
+  function prefillBasic(){
+    var src=null, fromProfile=false;
+    try{ src=JSON.parse(sessionStorage.getItem('fitting.basic')||'null'); }catch(e){}
+    if(!src || src.height==null){
+      try{ var p=JSON.parse(localStorage.getItem('fitting.profile')||'null'); if(p&&p.basic){ src=p.basic; fromProfile=true; } }catch(e){}
+    }
+    if(!src) return;
+    if(src.gender==='male'||src.gender==='female'){
+      var want=(src.gender==='male')?'남성':'여성';
+      document.querySelectorAll('.wstep .seg .opt').forEach(function(o){
+        if(o.textContent.trim()===want){ sex=want; o.classList.add('on'); }
+      });
+    }
+    var age=document.getElementById('age'); if(age && src.age && AGE.indexOf(src.age)>=0) age.value=src.age;
+    var h=document.getElementById('height'); if(h && src.height) h.value=src.height;
+    var w=document.getElementById('weight'); if(w && src.weight) w.value=src.weight;
+    updateNext();
+    // 배너 — 재진단 안내(이미 표시됨)가 우선. 그게 아니고 계정에서 불러온 경우에만 문구를 바꿔 띄운다.
+    if(!fromProfile) return;
+    var bar=document.getElementById('diagHist'); if(!bar || bar.style.display==='flex') return;
+    var msg=bar.querySelector('.dh-msg');
+    if(msg) msg.innerHTML='<b>저장된 정보를 불러왔어요</b> · 바뀐 게 있으면 고쳐주세요';
+    bar.style.display='flex';
+  }
+
   buildFields();
+  prefillBasic();
   render();

@@ -51,10 +51,27 @@
       if(b.gender) USER.gender=(b.gender==='female'?'female':'male');
       // age는 '30대' 같은 연령대 문자열 — 숫자로 캐스팅하면 NaN이 된다(그대로 둘 것).
       if(b.height) USER.height=+b.height; if(b.weight) USER.weight=+b.weight; if(b.age) USER.age=String(b.age);
-      var pf=p.prefs||{};   // 핏 취향(db/14) — 화면 라벨 그대로. 구 계정은 prefs가 없어 '미입력'으로 남는다.
-      if(pf.fitTop) USER.fitTop=pf.fitTop; if(pf.fitBottom) USER.fitBottom=pf.fitBottom;
+      var pf=p.prefs||{};   // 핏 취향(db/14) — 엔진 키. fitKey는 컬럼 첫날의 한글 저장분을 흡수한다.
+      if(pf.fitTop) USER.fitTop=fitKey(pf.fitTop); if(pf.fitBottom) USER.fitBottom=fitKey(pf.fitBottom);
+      bridgeProfile(p.basic, USER.fitTop, USER.fitBottom);   // 진단 화면이 읽어갈 다리(아래) — 이 시점이 서버 값을 손에 쥔 유일한 지점
       renderProfile(); renderMyAvatar(); renderAcctCard();
     });
+  }
+  /* 프로필 → 진단 화면 다리(fitting.profile · localStorage).
+     진단 화면(diag-basic·diag-fit)은 supabase·auth 스크립트를 아예 안 싣는다 — 비로그인으로
+     끝까지 도는 게 설계고, 킬메트릭이 걸린 입력 경로에 CDN·비동기 대기를 얹고 싶지 않다.
+     그래서 서버 조회를 붙이는 대신, 프로필을 손에 쥐는 이 지점에서 로컬에 한 줄 남긴다.
+     진단은 홈을 거쳐 시작하므로 로그인 사용자는 항상 이 값을 갖고 진단에 들어간다.
+     ※ 계정 모드에서만 쓴다 — 비로그인 사용자의 신체정보를 localStorage에 새로 눌러앉히지 않는다.
+        로그아웃·탈퇴 시엔 wipeLocal()이 fitting.* 를 통째로 지우므로 함께 사라진다. */
+  function bridgeProfile(basic, fitTop, fitBottom){
+    if(!apiAccounts()) return;
+    try{
+      var cur={}; try{ cur=JSON.parse(localStorage.getItem('fitting.profile')||'{}')||{}; }catch(e){}
+      var prefs=cur.prefs||{};
+      if(fitTop) prefs.fitTop=fitTop; if(fitBottom) prefs.fitBottom=fitBottom;   // 부분 갱신 — 상의만 진단해도 하의 취향이 날아가지 않는다
+      localStorage.setItem('fitting.profile', JSON.stringify({ basic: basic||cur.basic||null, prefs: prefs }));
+    }catch(e){}
   }
   // 계정카드 '연결 계정' — 계정ON·로그인 상태에서만 실 세션(provider+email)으로 대체.
   // proto/플래그off는 정적 목업(index.html) 그대로 — 프로덕션 무변경 원칙.
@@ -385,9 +402,25 @@
   /* 마이페이지 · 프로필 아바타 — 진단 전=잉크블랙+이니셜 / 진단 후=결과 카드 캐릭터 얼굴 + 유형 색(bodytypes.json 단일 출처) */
   // age = 진단(diag-basic)에서 받는 '연령대' 문자열('30대' 등). 정확한 나이는 물은 적이 없으니 나이인 척하지 않는다.
   var AGE_BANDS=['10대','20대','30대','40대','50대','60대 이상'];   // diag-basic.js AGE와 동일 — 바꾸면 같이 바꿀 것
-  var USER={ name:'김도현', initial:'김', gender:'male', age:'30대', height:172, weight:68, fitTop:'슬림', fitBottom:'와이드', type:'STR' };   // type:null = 진단 전 / 핏취향은 상·하의 별도
+  /* 핏 취향은 **엔진 키**로 들고 다닌다(화면 라벨 아님) — 진단(diag-fit)·엔진·admin·CSV가 모두
+     같은 키를 쓰므로, 여기만 한글로 저장하면 두 값을 이을 수 없고 문구를 다듬는 순간 옛 값이 깨진다.
+     목록은 진단의 선호핏 축과 같아야 한다(diag-fit.js PREFOPTS) — 어긋나면 진단에서 고른 값을
+     프로필에서 표현할 수 없다(하의 '테이퍼드'가 실제로 빠져 있었다).
+     ※ USER 초기화(아래)가 fitKey를 쓰므로 반드시 그보다 먼저 정의돼야 한다. */
+  var FIT_OPTS=[['skinny','스키니'],['slim','슬림'],['regular','레귤러'],['loose','루즈'],['oversize','오버']];          // 상의(여유축)
+  var FIT_OPTS_BOTTOM=[['skinny','스키니'],['slim','슬림'],['straight','스트레이트'],['tapered','테이퍼드'],['wide','와이드'],['bootcut','부츠컷']]; // 하의(형태축)
+  function fitLabel(v){ if(!v) return ''; var all=FIT_OPTS.concat(FIT_OPTS_BOTTOM);
+    for(var i=0;i<all.length;i++) if(all[i][0]===v) return all[i][1];
+    return v; }   // 못 찾으면 원문 — 옛 한글 값이 남아 있어도 화면은 깨지지 않는다
+  // 구 저장분(한글 라벨) → 엔진 키. 컬럼이 생긴 첫날 잠깐 한글로 저장했다(db/14).
+  function fitKey(v){ if(!v) return ''; var all=FIT_OPTS.concat(FIT_OPTS_BOTTOM);
+    for(var i=0;i<all.length;i++){ if(all[i][0]===v) return v; if(all[i][1]===v) return all[i][0]; }
+    return ''; }
+  var USER={ name:'김도현', initial:'김', gender:'male', age:'30대', height:172, weight:68, fitTop:'slim', fitBottom:'wide', type:'STR' };   // type:null = 진단 전 / 핏취향은 상·하의 별도(엔진 키)
   // 결과 페이지에서 '결과 저장' 시 기록한 진단 프로필(fitting.user)을 병합 → 마이가 실제 진단 결과를 보여줌.
-  (function(){ try{ var s=JSON.parse(localStorage.getItem('fitting.user')||'null'); if(s&&typeof s==='object') Object.assign(USER, s); }catch(e){} })();
+  (function(){ try{ var s=JSON.parse(localStorage.getItem('fitting.user')||'null'); if(s&&typeof s==='object') Object.assign(USER, s); }catch(e){}
+    // 핏 취향은 엔진 키가 정본 — 옛 저장분(한글)이 섞여 들어와도 여기서 한 번에 맞춘다.
+    USER.fitTop=fitKey(USER.fitTop); USER.fitBottom=fitKey(USER.fitBottom); })();
   /* ===== 고객센터 · 1:1 문의 (1.9 / G.2) ===== */
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
   var support = loadLS('support', [
@@ -645,9 +678,7 @@
     fetch('data/bodytypes.json').then(function(r){return r.json();}).then(function(j){ _btCache={}; j.types.forEach(function(x){_btCache[x.code]=x;}); paint(_btCache[USER.type]); }).catch(function(){});
   }
 
-  /* 마이페이지 · 프로필 기본정보 (읽기/편집) */
-  var FIT_OPTS=['스키니','슬림','레귤러','루즈','오버'];               // 상의(여유축)
-  var FIT_OPTS_BOTTOM=['스키니','슬림','스트레이트','와이드','부츠컷']; // 하의(형태축)
+  /* 마이페이지 · 프로필 기본정보 (읽기/편집) — 핏 취향 목록·변환은 위 FIT_OPTS(USER 옆) */
   var _profEdit=false;
   function renderProfile(){
     var el=document.getElementById('profCard'); if(!el) return; var U=USER;
@@ -662,8 +693,8 @@
           '<div class="field"><span>키 · 몸무게</span><span class="v">'+
             (U.height?('<span class="num">'+U.height+'</span>cm'):'미입력')+' · '+
             (U.weight?('<span class="num">'+U.weight+'</span>kg'):'미입력')+'</span></div>'+
-          '<div class="field"><span>상의 핏 취향</span><span class="v">'+esc(U.fitTop||'미입력')+'</span></div>'+
-          '<div class="field"><span>하의 핏 취향</span><span class="v">'+esc(U.fitBottom||'미입력')+'</span></div>'+
+          '<div class="field"><span>상의 핏 취향</span><span class="v">'+esc(fitLabel(U.fitTop)||'미입력')+'</span></div>'+
+          '<div class="field"><span>하의 핏 취향</span><span class="v">'+esc(fitLabel(U.fitBottom)||'미입력')+'</span></div>'+
           '<div class="note">🔒 민감정보 · 편집 시 재진단을 추천해요</div></div>'+
         '</div><div class="prof-actions"><button class="btn" onclick="editProfile()">프로필 수정하기</button></div>';
     } else {
@@ -679,8 +710,8 @@
             AGE_BANDS.map(function(a){ return '<option value="'+a+'"'+(U.age===a?' selected':'')+'>'+a+'</option>'; }).join('')+
           '</select></div><div><label>키(cm)</label><input class="inp" id="pHeight" type="number" value="'+(U.height||'')+'" placeholder="예: 172"></div>'+
           '<div><label>몸무게(kg)</label><input class="inp" id="pWeight" type="number" value="'+(U.weight||'')+'" placeholder="예: 68"></div></div>'+
-          '<div class="pedit"><label>상의 핏 취향</label><div class="seg" id="pFitTop">'+FIT_OPTS.map(function(f){return '<span class="o'+(U.fitTop===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div>'+
-          '<div class="pedit"><label>하의 핏 취향</label><div class="seg" id="pFitBottom">'+FIT_OPTS_BOTTOM.map(function(f){return '<span class="o'+(U.fitBottom===f?' on':'')+'" data-fit="'+f+'" onclick="pPick(this)">'+f+'</span>';}).join('')+'</div></div>'+
+          '<div class="pedit"><label>상의 핏 취향</label><div class="seg" id="pFitTop">'+FIT_OPTS.map(function(f){return '<span class="o'+(U.fitTop===f[0]?' on':'')+'" data-fit="'+f[0]+'" onclick="pPick(this)">'+f[1]+'</span>';}).join('')+'</div></div>'+
+          '<div class="pedit"><label>하의 핏 취향</label><div class="seg" id="pFitBottom">'+FIT_OPTS_BOTTOM.map(function(f){return '<span class="o'+(U.fitBottom===f[0]?' on':'')+'" data-fit="'+f[0]+'" onclick="pPick(this)">'+f[1]+'</span>';}).join('')+'</div></div>'+
           '<div class="note" style="color:var(--warn)">⚠️ 신체정보를 바꾸면 재진단을 추천해요</div></div>'+
         '</div><div class="prof-actions"><button class="btn ghost" onclick="cancelProfile()">취소</button><button class="btn" onclick="saveProfile()">저장하기</button></div>';
     }
@@ -699,9 +730,11 @@
     var srv=null;
     if(apiAccounts()){   // 계정 모드: 신체정보·이름·이메일·핏 취향을 서버 profile에 저장
       var em=document.getElementById('pEmail'); if(em) _acctEmail=em.value.trim();   // 아래 renderProfile이 입력칸을 지우므로 먼저 읽는다
+      var pbasic={ gender:USER.gender, height:USER.height, weight:USER.weight, age:USER.age };
       srv=FITAUTH.upsertProfile({ display_name:USER.name, email:_acctEmail||null,
-        basic:{ gender:USER.gender, height:USER.height, weight:USER.weight, age:USER.age },
+        basic:pbasic,
         prefs:{ fitTop:USER.fitTop||null, fitBottom:USER.fitBottom||null } });   // db/14 — 없으면 기기 바꿀 때 이 둘만 사라진다
+      bridgeProfile(pbasic, USER.fitTop, USER.fitBottom);   // 다음 진단이 이 값으로 채워지도록(서버 왕복을 기다리지 않는다)
       renderAcctCard();   // 프로필에서 이메일을 고치면 계정카드도 같이 갱신
     }
     _profEdit=false; renderProfile(); renderMyAvatar(); renderMyDiagDetail();

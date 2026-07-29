@@ -313,6 +313,26 @@
     return _corrP;
   }
 
+  /* 진단 → 프로필 반영. 진단에서 고른 기본정보·핏 취향을 계정 프로필에 되돌려 놓는다.
+     이게 없으면 사용자는 같은 질문에 두 번 답한다 — 진단에서 고른 취향이 마이에는 '미입력'으로 남았다.
+     · 로그인 상태에서만(비로그인 진단은 계정이 없으니 쓸 곳이 없다)
+     · '실제 진단 실행'일 때만 — 호출부가 view_only 아닐 때만 부른다(결과를 다시 볼 때마다 쓰지 않는다)
+     · prefs는 **병합**한다: 상의만 진단하면 BOTTOM이 비는데, 통째로 덮으면 하의 취향이 지워진다. */
+  function syncProfileFromDx(prefsObj){
+    if(!(window.FITAUTH && FITAUTH.ready && FITAUTH.ready())) return;
+    if(!(window.ACCOUNTS_ENABLED)) return;
+    var mine={}; if(prefsObj&&prefsObj.TOP) mine.fitTop=prefsObj.TOP; if(prefsObj&&prefsObj.BOTTOM) mine.fitBottom=prefsObj.BOTTOM;
+    if(!mine.fitTop && !mine.fitBottom && !payload.basic) return;
+    FITAUTH.getProfile().then(function(p){
+      if(!p) return;   // 프로필 행이 없다 = 로그인 안 했거나 아직 안 만들어짐 → 여기서 만들지 않는다(계정 생성은 로그인 경로의 일)
+      var prefs=p.prefs||{};
+      if(mine.fitTop) prefs.fitTop=mine.fitTop; if(mine.fitBottom) prefs.fitBottom=mine.fitBottom;
+      var patch={ prefs:prefs };
+      if(payload.basic && payload.basic.height!=null) patch.basic=payload.basic;   // 가장 최근 진단이 곧 프로필 기본정보
+      FITAUTH.upsertProfile(patch);
+    }).catch(function(){});   // 실패해도 진단은 진단대로 — 여기서 사용자를 막지 않는다
+  }
+
   // specs(garments) 의존 계산 — proto=클라 로컬(garments.json 직접) / api=서버(/api/diagnose, garments 비노출·해자 보호).
   // 반환 {eb, topRecs, botRecs, specsMissing, id}. 체형추정·8유형분류·렌더는 호출부(클라)가 공통 처리.
   function diagnoseSpecs(est, cm, prefsObj){
@@ -327,6 +347,7 @@
          view_only는 새로 추가한 필드라, 구 클라(캐시)가 안 보내면 서버는 종전대로 저장한다 —
          조용히 기록이 끊기는 회귀를 만들지 않으려고 기본값을 '저장'으로 뒀다. */
       var viewOnly = /[?&]embed/.test(location.search) || !runId;
+      if(!viewOnly) syncProfileFromDx(prefsObj);   // 이번에 '실제로' 진단한 값만 프로필에 반영(옛 결과를 다시 볼 때는 아니다 — 저장 경계와 같은 조건)
       return FDATA.diagnose({ session_id:FDATA.sessionId(), category:curCat, sex:est.sex, cm:cm,
         prefs:prefsObj, experiences:payload.experiences, basic:payload.basic, input:payload,
         run_id:runId||undefined, view_only:viewOnly,
