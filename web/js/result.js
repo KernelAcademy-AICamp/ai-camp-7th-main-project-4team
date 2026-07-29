@@ -252,6 +252,15 @@
   function renderRecsLoading(){
     document.getElementById('recs').innerHTML=recsHead(curLabel+' 기준')+recsNotice('브랜드별 추천을 계산하고 있어요…');
   }
+  /* proto인데 실측표가 없다 = 배포본을 proto로 보고 있다는 뜻(해자 보호로 garments.json 미배포).
+     이건 장애가 아니라 정상 동작이라, 일반 실패 문구('잠시 후 다시 시도')로 쓰면 기다리면 될 것처럼 읽힌다.
+     모드는 탭에 고정돼 기본 주소로 돌아가도 안 풀리므로(config.js), 배지와 같은 복귀 링크를 함께 둔다. */
+  function renderRecsProto(){
+    document.getElementById('recs').innerHTML=recsHead(curLabel+' 기준')+
+      recsNotice('<svg class="ricon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M4 10h16"/></svg> '+
+        '<b>프로토타입 모드</b>라 브랜드 추천이 비어 있어요 — 화면 확인용 모드예요. '+
+        '<a href="'+location.pathname+'?mode=api'+(location.hash||'')+'" style="color:var(--green);font-weight:800;white-space:nowrap">실서비스로 →</a>');
+  }
   // 추천 로드 실패/데이터 부족 — 가짜 대신 정직한 안내.
   function renderRecsError(msg){
     document.getElementById('recs').innerHTML=recsHead(curLabel+' 기준')+
@@ -424,11 +433,13 @@
         '<div class="dtl-note">'+measNote+'</div>';
 
       // 추천 — proto/api가 계산한 topRecs/botRecs(D)를 렌더. specs 없으면 정직한 안내.
+      //   specsMissing은 proto 경로에서만 참(api는 서버가 계산) — 그래서 원인을 지목한 문구로 가른다.
+      var missingRecs = D.specsMissing ? (FDATA.mode==='proto' ? renderRecsProto : renderRecsError) : null;
       if(fullBody && (isTop||curCat==='BOTTOM')){
-        if(D.specsMissing) renderRecsError();
+        if(missingRecs) missingRecs();
         else renderRecsBoth(D.topRecs||[], D.botRecs||[], cardReady?'전신 · 상·하의 완료':'전신 · 기본 추정');
       } else if(isTop || curCat==='BOTTOM'){
-        if(D.specsMissing) renderRecsError();
+        if(missingRecs) missingRecs();
         else {
           var out=isTop?(D.topRecs||[]):(D.botRecs||[]);
           if(out.length) renderRecs(out, true);
